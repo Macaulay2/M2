@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structbinomial_g_b_1_1gbmin__elem" kind="struct" language="C++" prot="private">
+    <compoundname>binomialGB::gbmin_elem</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbinomial_g_b_1_1gbmin__elem_ac3be319524c9407095aecbf8c62525aa_1ac3be319524c9407095aecbf8c62525aa" prot="public" static="no" mutable="no">
+        <type><ref refid="structbinomial_g_b_1_1gbmin__elem_a526faa85f221c39e4e2df1f7a11abb73_1a526faa85f221c39e4e2df1f7a11abb73" kindref="member">gbmin_elem</ref> *</type>
+        <definition>gbmin_elem* binomialGB::gbmin_elem::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>binomialGB::gbmin_elem::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="231" column="16" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="231" bodyend="-1"/>
+        <referencedby refid="classbinomial_g_b_ab4dc57aeae47627ac34f39f84c45c5f1_1ab4dc57aeae47627ac34f39f84c45c5f1" compoundref="gb-toric_8cpp" startline="681" endline="718">binomialGB::minimalize_and_insert</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structbinomial_g_b_1_1gbmin__elem_ae70e8c7334d09ef45e1ac84406cb683b_1ae70e8c7334d09ef45e1ac84406cb683b" prot="public" static="no" mutable="no">
+        <type><ref refid="structbinomial__gb__elem" kindref="compound">binomial_gb_elem</ref> *</type>
+        <definition>binomial_gb_elem* binomialGB::gbmin_elem::elem</definition>
+        <argsstring></argsstring>
+        <name>elem</name>
+        <qualifiedname>binomialGB::gbmin_elem::elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="232" column="22" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="232" bodyend="-1"/>
+        <referencedby refid="structbinomial_g_b_1_1gbmin__elem_a5fd9a37f2671da31db45b8c40e5f8473_1a5fd9a37f2671da31db45b8c40e5f8473" compoundref="gb-toric_8hpp" startline="235" endline="235">gbmin_elem</referencedby>
+        <referencedby refid="classbinomial_g_b_af9eef7673c48c15fab53b12f53daad49_1af9eef7673c48c15fab53b12f53daad49" compoundref="gb-toric_8cpp" startline="796" endline="834">binomialGB::make_new_pairs</referencedby>
+        <referencedby refid="classbinomial_g_b_ab4dc57aeae47627ac34f39f84c45c5f1_1ab4dc57aeae47627ac34f39f84c45c5f1" compoundref="gb-toric_8cpp" startline="681" endline="718">binomialGB::minimalize_and_insert</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structbinomial_g_b_1_1gbmin__elem_a57196f0207111f592b5dfbac31b027a6_1a57196f0207111f592b5dfbac31b027a6" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int binomialGB::gbmin_elem::mask</definition>
+        <argsstring></argsstring>
+        <name>mask</name>
+        <qualifiedname>binomialGB::gbmin_elem::mask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="233" column="9" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="233" bodyend="-1"/>
+        <referencedby refid="structbinomial_g_b_1_1gbmin__elem_a5fd9a37f2671da31db45b8c40e5f8473_1a5fd9a37f2671da31db45b8c40e5f8473" compoundref="gb-toric_8hpp" startline="235" endline="235">gbmin_elem</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structbinomial_g_b_1_1gbmin__elem_a526faa85f221c39e4e2df1f7a11abb73_1a526faa85f221c39e4e2df1f7a11abb73" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>binomialGB::gbmin_elem::gbmin_elem</definition>
+        <argsstring>()</argsstring>
+        <name>gbmin_elem</name>
+        <qualifiedname>binomialGB::gbmin_elem::gbmin_elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="234" column="5" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="234" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="structbinomial_g_b_1_1gbmin__elem_a5fd9a37f2671da31db45b8c40e5f8473_1a5fd9a37f2671da31db45b8c40e5f8473" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>binomialGB::gbmin_elem::gbmin_elem</definition>
+        <argsstring>(binomial_gb_elem *f, int mask0)</argsstring>
+        <name>gbmin_elem</name>
+        <qualifiedname>binomialGB::gbmin_elem::gbmin_elem</qualifiedname>
+        <param>
+          <type><ref refid="structbinomial__gb__elem" kindref="compound">binomial_gb_elem</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>mask0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="235" column="5" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="235" bodyend="235"/>
+        <references refid="structbinomial_g_b_1_1gbmin__elem_ae70e8c7334d09ef45e1ac84406cb683b_1ae70e8c7334d09ef45e1ac84406cb683b" compoundref="gb-toric_8hpp" startline="232">elem</references>
+        <references refid="structbinomial_g_b_1_1gbmin__elem_a57196f0207111f592b5dfbac31b027a6_1a57196f0207111f592b5dfbac31b027a6" compoundref="gb-toric_8hpp" startline="233">mask</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>binomialGB::gbmin_elem</label>
+        <link refid="structbinomial_g_b_1_1gbmin__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>binomial</label>
+        <link refid="structbinomial"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>lead</edgelabel>
+          <edgelabel>tail</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>binomialGB::gbmin_elem</label>
+        <link refid="structbinomial_g_b_1_1gbmin__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elem</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mask</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>binomial_gb_elem</label>
+        <link refid="structbinomial__gb__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>next</edgelabel>
+          <edgelabel>smaller</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>f</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-toric.hpp" line="229" column="3" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="230" bodyend="236"/>
+    <listofallmembers>
+      <member refid="structbinomial_g_b_1_1gbmin__elem_ae70e8c7334d09ef45e1ac84406cb683b_1ae70e8c7334d09ef45e1ac84406cb683b" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>elem</name></member>
+      <member refid="structbinomial_g_b_1_1gbmin__elem_a526faa85f221c39e4e2df1f7a11abb73_1a526faa85f221c39e4e2df1f7a11abb73" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>gbmin_elem</name></member>
+      <member refid="structbinomial_g_b_1_1gbmin__elem_a5fd9a37f2671da31db45b8c40e5f8473_1a5fd9a37f2671da31db45b8c40e5f8473" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>gbmin_elem</name></member>
+      <member refid="structbinomial_g_b_1_1gbmin__elem_a57196f0207111f592b5dfbac31b027a6_1a57196f0207111f592b5dfbac31b027a6" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>mask</name></member>
+      <member refid="structbinomial_g_b_1_1gbmin__elem_ac3be319524c9407095aecbf8c62525aa_1ac3be319524c9407095aecbf8c62525aa" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>next</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>binomialGB::gbmin_elem</scope><name>operator new[]</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

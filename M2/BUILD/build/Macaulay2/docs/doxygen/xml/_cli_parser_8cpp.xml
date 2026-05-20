@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_cli_parser_8cpp" kind="file" language="C++">
+    <compoundname>CliParser.cpp</compoundname>
+    <includes refid="_cli_parser_8h" local="yes">CliParser.h</includes>
+    <includes refid="submodules_2mathic_2src_2mathic_2error_8h" local="yes">error.h</includes>
+    <includes refid="_cli_parameter_8h" local="yes">CliParameter.h</includes>
+    <incdepgraph>
+      <node id="11">
+        <label>Action.h</label>
+        <link refid="_action_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>CliParameter.h</label>
+        <link refid="_cli_parameter_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/mathic/CliParser.cpp</label>
+        <link refid="_cli_parser_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>CliParser.h</label>
+        <link refid="_cli_parser_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>NameFactory.h</label>
+        <link refid="_name_factory_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>error.h</label>
+        <link refid="submodules_2mathic_2src_2mathic_2error_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2mathic_2stdinc_8h"/>
+      </node>
+      <node id="9">
+        <label>algorithm</label>
+      </node>
+      <node id="10">
+        <label>memory</label>
+      </node>
+      <node id="6">
+        <label>stdexcept</label>
+      </node>
+      <node id="7">
+        <label>string</label>
+      </node>
+      <node id="8">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacemathic">mathic</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_cli_parser_8h" kindref="compound">CliParser.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="submodules_2mathic_2src_2mathic_2error_8h" kindref="compound">error.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_cli_parameter_8h" kindref="compound">CliParameter.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemathic" kindref="compound">mathic</ref><sp/>{</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>are<sp/>using<sp/>a<sp/>NameFactory<sp/>just<sp/>for<sp/>its<sp/>prefix-finding<sp/>functionality,<sp/>so</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>we<sp/>set<sp/>the<sp/>thing<sp/>being<sp/>created<sp/>to<sp/>be<sp/>just<sp/>void<sp/>pointers<sp/>that<sp/>are<sp/>null.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>Dummy;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="classmathic_1_1_name_factory" kindref="compound">NameFactory&lt;Dummy&gt;</ref><sp/>ParamNames;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>ParamNames<sp/>makeParamNames(std::vector&lt;CliParameter*&gt;<sp/>params)<sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>ParamNames<sp/>names(</highlight><highlight class="stringliteral">&quot;option&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>params.size();<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>makeNull<sp/>=<sp/>[](){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::unique_ptr&lt;Dummy&gt;();};</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>names.registerProduct(params[i]-&gt;name(),<sp/>makeNull);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>names;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="classmathic_1_1_cli_parser_a40606c481f14ee2832db1e4cdc16f2d6_1a40606c481f14ee2832db1e4cdc16f2d6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmathic_1_1_cli_parser_a40606c481f14ee2832db1e4cdc16f2d6_1a40606c481f14ee2832db1e4cdc16f2d6" kindref="member">CliParser::pushBackRegisteredActionNames</ref>(</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;&amp;<sp/>names</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmathic_1_1_cli_parser_aeb6436b77520c47aea3e6831e24fdad1_1aeb6436b77520c47aea3e6831e24fdad1" kindref="member">_actions</ref>.namesWithPrefix(</highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">,<sp/>names);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="classmathic_1_1_cli_parser_aa2ecf012bb6ad0751af516b01a010bd0_1aa2ecf012bb6ad0751af516b01a010bd0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmathic_1_1_cli_parser_aa2ecf012bb6ad0751af516b01a010bd0_1aa2ecf012bb6ad0751af516b01a010bd0" kindref="member">CliParser::CliParser</ref>():<sp/><ref refid="classmathic_1_1_cli_parser_aeb6436b77520c47aea3e6831e24fdad1_1aeb6436b77520c47aea3e6831e24fdad1" kindref="member">_actions</ref>(</highlight><highlight class="stringliteral">&quot;action&quot;</highlight><highlight class="normal">)<sp/>{}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="classmathic_1_1_cli_parser_ae90023ece732a2b63acc86ce41d3b841_1ae90023ece732a2b63acc86ce41d3b841" refkind="member"><highlight class="normal"><sp/><sp/>std::unique_ptr&lt;Action&gt;<sp/><ref refid="classmathic_1_1_cli_parser_ae90023ece732a2b63acc86ce41d3b841_1ae90023ece732a2b63acc86ce41d3b841" kindref="member">CliParser::createActionWithPrefix</ref>(</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="_suffix_tree_8cpp_a268cb68e13e7e5362dae595c483ad349_1a268cb68e13e7e5362dae595c483ad349" kindref="member">prefix</ref></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>)<sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacemathic_a5161d236e6a9f0aee1175763046f56dc_1a5161d236e6a9f0aee1175763046f56dc" kindref="member">createWithPrefix</ref>(<ref refid="classmathic_1_1_cli_parser_aeb6436b77520c47aea3e6831e24fdad1_1aeb6436b77520c47aea3e6831e24fdad1" kindref="member">_actions</ref>,<sp/><ref refid="_suffix_tree_8cpp_a268cb68e13e7e5362dae595c483ad349_1a268cb68e13e7e5362dae595c483ad349" kindref="member">prefix</ref>);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="classmathic_1_1_cli_parser_ae7fc463dc8de1988a8cf76740168feef_1ae7fc463dc8de1988a8cf76740168feef" refkind="member"><highlight class="normal"><sp/><sp/>std::unique_ptr&lt;Action&gt;<sp/><ref refid="classmathic_1_1_cli_parser_ae7fc463dc8de1988a8cf76740168feef_1ae7fc463dc8de1988a8cf76740168feef" kindref="member">CliParser::parse</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)<sp/>{</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>commandLine(argv,<sp/>argv<sp/>+<sp/>argc);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmathic_1_1_cli_parser_ae7fc463dc8de1988a8cf76740168feef_1ae7fc463dc8de1988a8cf76740168feef" kindref="member">parse</ref>(commandLine);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="classmathic_1_1_cli_parser_adf739110a31009ee1b4901228586529c_1adf739110a31009ee1b4901228586529c" refkind="member"><highlight class="normal"><sp/><sp/>std::unique_ptr&lt;Action&gt;<sp/><ref refid="classmathic_1_1_cli_parser_ae7fc463dc8de1988a8cf76740168feef_1ae7fc463dc8de1988a8cf76740168feef" kindref="member">CliParser::parse</ref></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::string&gt;&amp;<sp/>commandLine)<sp/>{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(commandLine.empty())</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacemathic_a6f3ced7c6d6da355df764f8a67555ed3_1a6f3ced7c6d6da355df764f8a67555ed3" kindref="member">throwError&lt;UnknownNameException&gt;</ref>(</highlight><highlight class="stringliteral">&quot;No<sp/>action<sp/>specified.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;Action&gt;<sp/>action<sp/>=<sp/><ref refid="classmathic_1_1_cli_parser_ae90023ece732a2b63acc86ce41d3b841_1ae90023ece732a2b63acc86ce41d3b841" kindref="member">createActionWithPrefix</ref>(commandLine[0]);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;CliParameter*&gt;<sp/>params;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>action-&gt;pushBackParameters(params);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>ParamNames<sp/>paramNames<sp/>=<sp/>makeParamNames(params);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>options;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>directOptions;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>sawDash<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>1;<sp/>i<sp/>&lt;<sp/>commandLine.size();<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(commandLine[i].empty())</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(commandLine[i][0]<sp/>==<sp/></highlight><highlight class="charliteral">&apos;-&apos;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sawDash<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(sawDash)</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>options.push_back(commandLine[i]);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>directOptions.push_back(commandLine[i]);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>action-&gt;directOptions(directOptions,<sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>size_t<sp/>i<sp/>=<sp/>1;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>options.size();<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>token<sp/>=<sp/>options[i];</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(token[0]<sp/>!=<sp/></highlight><highlight class="charliteral">&apos;-&apos;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacemathic_aba2df5396ea54101a096481c819534dc_1aba2df5396ea54101a096481c819534dc" kindref="member">reportError</ref>(</highlight><highlight class="stringliteral">&quot;Expected<sp/>an<sp/>option<sp/>when<sp/>reading<sp/>\&quot;&quot;</highlight><highlight class="normal"><sp/>+</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>token<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\&quot;,<sp/>but<sp/>options<sp/>start<sp/>with<sp/>a<sp/>dash<sp/>(-).\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>noDash(token.begin()<sp/>+<sp/>1,<sp/>token.end());</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>name<sp/>=<sp/><ref refid="namespacemathic_a8bc76a489da03be98d7c5d602cfa30d1_1a8bc76a489da03be98d7c5d602cfa30d1" kindref="member">uniqueNameWithPrefix</ref>(paramNames,<sp/>noDash);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>optionArgument;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i<sp/>+<sp/>1<sp/>&lt;<sp/>options.size()<sp/>&amp;&amp;<sp/>options[i<sp/>+<sp/>1][0]<sp/>!=<sp/></highlight><highlight class="charliteral">&apos;-&apos;</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>optionArgument<sp/>=<sp/>options[i<sp/>+<sp/>1];</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++i;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(std::vector&lt;CliParameter*&gt;::iterator<sp/>it<sp/>=<sp/>params.begin();;<sp/>++it)<sp/>{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(it<sp/>==<sp/>params.end())<sp/>{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>shouldn&apos;t<sp/>get<sp/>here<sp/>as<sp/>name<sp/>was<sp/>recognized<sp/>above</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacemathic_a6870238a4090a0cc546241d8c6b3b283_1a6870238a4090a0cc546241d8c6b3b283" kindref="member">reportInternalError</ref>(</highlight><highlight class="stringliteral">&quot;Processing<sp/>non-existent<sp/>option<sp/>\&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;\&quot;.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((*it)-&gt;name()<sp/>==<sp/>name)<sp/>{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*it)-&gt;processArgument(optionArgument);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>action;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/mathic/CliParser.cpp"/>
+  </compounddef>
+</doxygen>

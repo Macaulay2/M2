@@ -1,0 +1,1185 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_k_d_entry_array" kind="class" language="C++" prot="public">
+    <compoundname>mathic::KDEntryArray</compoundname>
+    <basecompoundref refid="classmathic_1_1_div_mask_1_1_has_div_mask" prot="public" virt="non-virtual">mathic::DivMask::HasDivMask&lt; C::UseTreeDivMask &gt;</basecompoundref>
+    <includes refid="_k_d_entry_array_8h" local="no">KDEntryArray.h</includes>
+    <innerclass refid="classmathic_1_1_k_d_entry_array_1_1_split_equal_or_less" prot="public">mathic::KDEntryArray::SplitEqualOrLess</innerclass>
+    <templateparamlist>
+      <param>
+        <type>class C</type>
+      </param>
+      <param>
+        <type>class EE</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmathic_1_1_k_d_entry_array_a236726544e9396acf6cf0625dff6928f_1a236726544e9396acf6cf0625dff6928f" prot="public" static="no">
+        <type>C::Entry</type>
+        <definition>typedef C::Entry mathic::KDEntryArray&lt; C, EE &gt;::Entry</definition>
+        <argsstring></argsstring>
+        <name>Entry</name>
+        <qualifiedname>mathic::KDEntryArray::Entry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="16" column="31" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_k_d_entry_array_a5df4e3f4e4ca8986b90d46f7a91c434f_1a5df4e3f4e4ca8986b90d46f7a91c434f" prot="public" static="no">
+        <type>C::Exponent</type>
+        <definition>typedef C::Exponent mathic::KDEntryArray&lt; C, EE &gt;::Exponent</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>mathic::KDEntryArray::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="17" column="34" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_k_d_entry_array_a6fc920430e04993e851d44c085323361_1a6fc920430e04993e851d44c085323361" prot="public" static="no">
+        <type>EE</type>
+        <definition>typedef EE mathic::KDEntryArray&lt; C, EE &gt;::ExtEntry</definition>
+        <argsstring></argsstring>
+        <name>ExtEntry</name>
+        <qualifiedname>mathic::KDEntryArray::ExtEntry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="18" column="16" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_k_d_entry_array_a044c747b652ce59502dbda1e50df202e_1a044c747b652ce59502dbda1e50df202e" prot="public" static="no">
+        <type>EE *</type>
+        <definition>typedef EE* mathic::KDEntryArray&lt; C, EE &gt;::iterator</definition>
+        <argsstring></argsstring>
+        <name>iterator</name>
+        <qualifiedname>mathic::KDEntryArray::iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="19" column="16" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_k_d_entry_array_a47dfc9e6064ea87c8be3116ae8709174_1a47dfc9e6064ea87c8be3116ae8709174" prot="public" static="no">
+        <type>const EE *</type>
+        <definition>typedef const EE* mathic::KDEntryArray&lt; C, EE &gt;::const_iterator</definition>
+        <argsstring></argsstring>
+        <name>const_iterator</name>
+        <qualifiedname>mathic::KDEntryArray::const_iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="20" column="22" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_k_d_entry_array_aea04fb7e26d648df0894602364382ab8_1aea04fb7e26d648df0894602364382ab8" prot="public" static="no">
+        <type>const EE &amp;</type>
+        <definition>typedef const EE&amp; mathic::KDEntryArray&lt; C, EE &gt;::const_reference</definition>
+        <argsstring></argsstring>
+        <name>const_reference</name>
+        <qualifiedname>mathic::KDEntryArray::const_reference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="21" column="22" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_k_d_entry_array_a6127b1399d0ba44ef16dac1406b2c07c_1a6127b1399d0ba44ef16dac1406b2c07c" prot="public" static="no">
+        <type>EE</type>
+        <definition>typedef EE mathic::KDEntryArray&lt; C, EE &gt;::value_type</definition>
+        <argsstring></argsstring>
+        <name>value_type</name>
+        <qualifiedname>mathic::KDEntryArray::value_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="22" column="16" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_k_d_entry_array_a0dd735cfc5a7bde3711e175b7dd5743e_1a0dd735cfc5a7bde3711e175b7dd5743e" prot="public" static="no">
+        <type><ref refid="classmathic_1_1_div_mask_1_1_calculator" kindref="compound">DivMask::Calculator</ref>&lt; C &gt;</type>
+        <definition>typedef DivMask::Calculator&lt;C&gt; mathic::KDEntryArray&lt; C, EE &gt;::DivMaskCalculator</definition>
+        <argsstring></argsstring>
+        <name>DivMaskCalculator</name>
+        <qualifiedname>mathic::KDEntryArray::DivMaskCalculator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="23" column="33" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_k_d_entry_array_ad45912374dd784debdf2a5d679e9cb30_1ad45912374dd784debdf2a5d679e9cb30" prot="private" static="no" mutable="no">
+        <type>char</type>
+        <definition>char mathic::KDEntryArray&lt; C, EE &gt;::_beginMemory[C::LeafSize *sizeof(ExtEntry)]</definition>
+        <argsstring>[C::LeafSize *sizeof(ExtEntry)]</argsstring>
+        <name>_beginMemory</name>
+        <qualifiedname>mathic::KDEntryArray::_beginMemory</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This is the memory for the entries. It is kept as a raw char* to avoid constructing all the entries right away. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="120" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="120" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" compoundref="_k_d_entry_array_8h" startline="42" endline="42">mathic::KDEntryArray&lt; C, EE &gt;::begin</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a17a49e12305d3da23a92a4597adafcaa_1a17a49e12305d3da23a92a4597adafcaa" compoundref="_k_d_entry_array_8h" startline="43" endline="45">mathic::KDEntryArray&lt; C, EE &gt;::begin</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_k_d_entry_array_a044c747b652ce59502dbda1e50df202e_1a044c747b652ce59502dbda1e50df202e" kindref="member">iterator</ref></type>
+        <definition>iterator mathic::KDEntryArray&lt; C, EE &gt;::_end</definition>
+        <argsstring></argsstring>
+        <name>_end</name>
+        <qualifiedname>mathic::KDEntryArray::_end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="121" column="14" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="121" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a20cc8d084eba86d292209fcb3a77cc9a_1a20cc8d084eba86d292209fcb3a77cc9a" compoundref="_k_d_entry_array_8h" startline="53" endline="53">mathic::KDEntryArray&lt; C, EE &gt;::back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a20272d7fc061d02b567098763d1c3e61_1a20272d7fc061d02b567098763d1c3e61" compoundref="_k_d_entry_array_8h" startline="54" endline="54">mathic::KDEntryArray&lt; C, EE &gt;::back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a6ede30af4cb593def594b519be452bd4_1a6ede30af4cb593def594b519be452bd4" compoundref="_k_d_entry_array_8h" startline="46" endline="46">mathic::KDEntryArray&lt; C, EE &gt;::end</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_abf64b5a8be5eb9dec24f76b908455c3f_1abf64b5a8be5eb9dec24f76b908455c3f" compoundref="_k_d_entry_array_8h" startline="47" endline="47">mathic::KDEntryArray&lt; C, EE &gt;::end</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa91ad5a523579e1d3265ef08abf7d900_1aa91ad5a523579e1d3265ef08abf7d900" compoundref="_k_d_entry_array_8h" startline="218" endline="235">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a11955927aedcdec2eb81a2d0c8ceddd0_1a11955927aedcdec2eb81a2d0c8ceddd0" compoundref="_k_d_entry_array_8h" startline="196" endline="214">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a642f36f3603de6c21f870191f5183a7c_1a642f36f3603de6c21f870191f5183a7c" compoundref="_k_d_entry_array_8h" startline="186" endline="192">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a2dcac48b2713ff353bce23b178236096_1a2dcac48b2713ff353bce23b178236096" compoundref="_k_d_entry_array_8h" startline="246" endline="250">mathic::KDEntryArray&lt; C, EE &gt;::pop_back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa35f227492610e5856b85f9a79af806f_1aa35f227492610e5856b85f9a79af806f" compoundref="_k_d_entry_array_8h" startline="238" endline="243">mathic::KDEntryArray&lt; C, EE &gt;::push_back</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a642f36f3603de6c21f870191f5183a7c_1a642f36f3603de6c21f870191f5183a7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</definition>
+        <argsstring>(memt::Arena &amp;arena, const C &amp;conf)</argsstring>
+        <name>KDEntryArray</name>
+        <qualifiedname>mathic::KDEntryArray::KDEntryArray</qualifiedname>
+        <param>
+          <type><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref> &amp;</type>
+          <declname>arena</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="27" column="5" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="186" bodyend="192"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" compoundref="_k_d_entry_array_8h" startline="121">mathic::KDEntryArray&lt; C, EE &gt;::_end</references>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a2ff5c22aadb65e43f3926338f833564c_1a2ff5c22aadb65e43f3926338f833564c">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a9ea54f4f2622a35f37daf5f1a4707aac_1a9ea54f4f2622a35f37daf5f1a4707aac">mathic::KDEntryArray&lt; C, EE &gt;::operator=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a11955927aedcdec2eb81a2d0c8ceddd0_1a11955927aedcdec2eb81a2d0c8ceddd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iter</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</definition>
+        <argsstring>(Iter begin, Iter end, memt::Arena &amp;arena, const DivMaskCalculator &amp;calc, const C &amp;conf)</argsstring>
+        <name>KDEntryArray</name>
+        <qualifiedname>mathic::KDEntryArray::KDEntryArray</qualifiedname>
+        <param>
+          <type>Iter</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>Iter</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref> &amp;</type>
+          <declname>arena</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmathic_1_1_k_d_entry_array_a0dd735cfc5a7bde3711e175b7dd5743e_1a0dd735cfc5a7bde3711e175b7dd5743e" kindref="member">DivMaskCalculator</ref> &amp;</type>
+          <declname>calc</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="30" column="5" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="196" bodyend="214"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" compoundref="_k_d_entry_array_8h" startline="121">mathic::KDEntryArray&lt; C, EE &gt;::_end</references>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" compoundref="_k_d_entry_array_8h" startline="42" endline="42">mathic::KDEntryArray&lt; C, EE &gt;::begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a6ede30af4cb593def594b519be452bd4_1a6ede30af4cb593def594b519be452bd4" compoundref="_k_d_entry_array_8h" startline="46" endline="46">mathic::KDEntryArray&lt; C, EE &gt;::end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_k_d_entry_array_aa35f227492610e5856b85f9a79af806f_1aa35f227492610e5856b85f9a79af806f" compoundref="_k_d_entry_array_8h" startline="238" endline="243">mathic::KDEntryArray&lt; C, EE &gt;::push_back</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_aa91ad5a523579e1d3265ef08abf7d900_1aa91ad5a523579e1d3265ef08abf7d900" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iter</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</definition>
+        <argsstring>(Iter begin, Iter end, memt::Arena &amp;arena, const C &amp;conf)</argsstring>
+        <name>KDEntryArray</name>
+        <qualifiedname>mathic::KDEntryArray::KDEntryArray</qualifiedname>
+        <param>
+          <type>Iter</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>Iter</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref> &amp;</type>
+          <declname>arena</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="33" column="5" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="218" bodyend="235"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" compoundref="_k_d_entry_array_8h" startline="121">mathic::KDEntryArray&lt; C, EE &gt;::_end</references>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" compoundref="_k_d_entry_array_8h" startline="42" endline="42">mathic::KDEntryArray&lt; C, EE &gt;::begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a6ede30af4cb593def594b519be452bd4_1a6ede30af4cb593def594b519be452bd4" compoundref="_k_d_entry_array_8h" startline="46" endline="46">mathic::KDEntryArray&lt; C, EE &gt;::end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_k_d_entry_array_aa35f227492610e5856b85f9a79af806f_1aa35f227492610e5856b85f9a79af806f" compoundref="_k_d_entry_array_8h" startline="238" endline="243">mathic::KDEntryArray&lt; C, EE &gt;::push_back</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a1410b95a681e85b74931140a4a9517c8_1a1410b95a681e85b74931140a4a9517c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::KDEntryArray&lt; C, EE &gt;::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>mathic::KDEntryArray::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="35" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="279" bodyend="282"/>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2dcac48b2713ff353bce23b178236096_1a2dcac48b2713ff353bce23b178236096" compoundref="_k_d_entry_array_8h" startline="246" endline="250">mathic::KDEntryArray&lt; C, EE &gt;::pop_back</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_aedb2c9a95b1f0d51a43179f75a51a69f_1aedb2c9a95b1f0d51a43179f75a51a69f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::KDEntryArray&lt; C, EE &gt;::recalculateTreeDivMask</definition>
+        <argsstring>()</argsstring>
+        <name>recalculateTreeDivMask</name>
+        <qualifiedname>mathic::KDEntryArray::recalculateTreeDivMask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="37" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="473" bodyend="479"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_k_d_entry_array_a044c747b652ce59502dbda1e50df202e_1a044c747b652ce59502dbda1e50df202e" kindref="member">iterator</ref></type>
+        <definition>iterator mathic::KDEntryArray&lt; C, EE &gt;::begin</definition>
+        <argsstring>()</argsstring>
+        <name>begin</name>
+        <qualifiedname>mathic::KDEntryArray::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="42" column="14" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="42" bodyend="42"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ad45912374dd784debdf2a5d679e9cb30_1ad45912374dd784debdf2a5d679e9cb30" compoundref="_k_d_entry_array_8h" startline="120">mathic::KDEntryArray&lt; C, EE &gt;::_beginMemory</references>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a412b3c0b231c89e5dcf6601d5ed80375_1a412b3c0b231c89e5dcf6601d5ed80375" compoundref="_k_d_entry_array_8h" startline="51" endline="51">mathic::KDEntryArray&lt; C, EE &gt;::front</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_abe2c393fde072d04843c3da9a41f8e20_1abe2c393fde072d04843c3da9a41f8e20" compoundref="_k_d_entry_array_8h" startline="52" endline="52">mathic::KDEntryArray&lt; C, EE &gt;::front</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa91ad5a523579e1d3265ef08abf7d900_1aa91ad5a523579e1d3265ef08abf7d900" compoundref="_k_d_entry_array_8h" startline="218" endline="235">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a11955927aedcdec2eb81a2d0c8ceddd0_1a11955927aedcdec2eb81a2d0c8ceddd0" compoundref="_k_d_entry_array_8h" startline="196" endline="214">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ae32765702543c2bd92aa99d7f69cb8d8_1ae32765702543c2bd92aa99d7f69cb8d8" compoundref="_k_d_entry_array_8h" startline="287" endline="325">mathic::KDEntryArray&lt; C, EE &gt;::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a7ae5c192ea23a59f383faca977bbabeb_1a7ae5c192ea23a59f383faca977bbabeb" compoundref="_k_d_entry_array_8h" startline="50" endline="50">mathic::KDEntryArray&lt; C, EE &gt;::size</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a98b543308dfe36a6be460f25100ee4a4_1a98b543308dfe36a6be460f25100ee4a4" compoundref="_k_d_entry_array_8h" startline="148" endline="183">mathic::KDEntryArray&lt; C, EE &gt;::split</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a17a49e12305d3da23a92a4597adafcaa_1a17a49e12305d3da23a92a4597adafcaa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_k_d_entry_array_a47dfc9e6064ea87c8be3116ae8709174_1a47dfc9e6064ea87c8be3116ae8709174" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator mathic::KDEntryArray&lt; C, EE &gt;::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>mathic::KDEntryArray::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="43" column="20" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="43" bodyend="45"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ad45912374dd784debdf2a5d679e9cb30_1ad45912374dd784debdf2a5d679e9cb30" compoundref="_k_d_entry_array_8h" startline="120">mathic::KDEntryArray&lt; C, EE &gt;::_beginMemory</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a6ede30af4cb593def594b519be452bd4_1a6ede30af4cb593def594b519be452bd4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_k_d_entry_array_a044c747b652ce59502dbda1e50df202e_1a044c747b652ce59502dbda1e50df202e" kindref="member">iterator</ref></type>
+        <definition>iterator mathic::KDEntryArray&lt; C, EE &gt;::end</definition>
+        <argsstring>()</argsstring>
+        <name>end</name>
+        <qualifiedname>mathic::KDEntryArray::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="46" column="14" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="46" bodyend="46"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" compoundref="_k_d_entry_array_8h" startline="121">mathic::KDEntryArray&lt; C, EE &gt;::_end</references>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa91ad5a523579e1d3265ef08abf7d900_1aa91ad5a523579e1d3265ef08abf7d900" compoundref="_k_d_entry_array_8h" startline="218" endline="235">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a11955927aedcdec2eb81a2d0c8ceddd0_1a11955927aedcdec2eb81a2d0c8ceddd0" compoundref="_k_d_entry_array_8h" startline="196" endline="214">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a7ae5c192ea23a59f383faca977bbabeb_1a7ae5c192ea23a59f383faca977bbabeb" compoundref="_k_d_entry_array_8h" startline="50" endline="50">mathic::KDEntryArray&lt; C, EE &gt;::size</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a98b543308dfe36a6be460f25100ee4a4_1a98b543308dfe36a6be460f25100ee4a4" compoundref="_k_d_entry_array_8h" startline="148" endline="183">mathic::KDEntryArray&lt; C, EE &gt;::split</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_abf64b5a8be5eb9dec24f76b908455c3f_1abf64b5a8be5eb9dec24f76b908455c3f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_k_d_entry_array_a47dfc9e6064ea87c8be3116ae8709174_1a47dfc9e6064ea87c8be3116ae8709174" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator mathic::KDEntryArray&lt; C, EE &gt;::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>mathic::KDEntryArray::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="47" column="20" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="47" bodyend="47"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" compoundref="_k_d_entry_array_8h" startline="121">mathic::KDEntryArray&lt; C, EE &gt;::_end</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDEntryArray&lt; C, EE &gt;::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>mathic::KDEntryArray::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="49" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="49" bodyend="49"/>
+        <references refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" compoundref="_k_d_entry_array_8h" startline="42" endline="42">mathic::KDEntryArray&lt; C, EE &gt;::begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a6ede30af4cb593def594b519be452bd4_1a6ede30af4cb593def594b519be452bd4" compoundref="_k_d_entry_array_8h" startline="46" endline="46">mathic::KDEntryArray&lt; C, EE &gt;::end</references>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a20cc8d084eba86d292209fcb3a77cc9a_1a20cc8d084eba86d292209fcb3a77cc9a" compoundref="_k_d_entry_array_8h" startline="53" endline="53">mathic::KDEntryArray&lt; C, EE &gt;::back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a20272d7fc061d02b567098763d1c3e61_1a20272d7fc061d02b567098763d1c3e61" compoundref="_k_d_entry_array_8h" startline="54" endline="54">mathic::KDEntryArray&lt; C, EE &gt;::back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1410b95a681e85b74931140a4a9517c8_1a1410b95a681e85b74931140a4a9517c8" compoundref="_k_d_entry_array_8h" startline="279" endline="282">mathic::KDEntryArray&lt; C, EE &gt;::clear</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ac203e258b1b89430fc5c75660f826dd0_1ac203e258b1b89430fc5c75660f826dd0" compoundref="_k_d_entry_array_8h" startline="385" endline="412">mathic::KDEntryArray&lt; C, EE &gt;::findAllDivisors</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1253ea4fd593633c49b70d3a9e5a4745_1a1253ea4fd593633c49b70d3a9e5a4745" compoundref="_k_d_entry_array_8h" startline="351" endline="380">mathic::KDEntryArray&lt; C, EE &gt;::findDivisor</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a06b17a4d45a9697ec4630ce54cc3f4f9_1a06b17a4d45a9697ec4630ce54cc3f4f9" compoundref="_k_d_entry_array_8h" startline="436" endline="446">mathic::KDEntryArray&lt; C, EE &gt;::forAll</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a412b3c0b231c89e5dcf6601d5ed80375_1a412b3c0b231c89e5dcf6601d5ed80375" compoundref="_k_d_entry_array_8h" startline="51" endline="51">mathic::KDEntryArray&lt; C, EE &gt;::front</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_abe2c393fde072d04843c3da9a41f8e20_1abe2c393fde072d04843c3da9a41f8e20" compoundref="_k_d_entry_array_8h" startline="52" endline="52">mathic::KDEntryArray&lt; C, EE &gt;::front</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a2dcac48b2713ff353bce23b178236096_1a2dcac48b2713ff353bce23b178236096" compoundref="_k_d_entry_array_8h" startline="246" endline="250">mathic::KDEntryArray&lt; C, EE &gt;::pop_back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ae32765702543c2bd92aa99d7f69cb8d8_1ae32765702543c2bd92aa99d7f69cb8d8" compoundref="_k_d_entry_array_8h" startline="287" endline="325">mathic::KDEntryArray&lt; C, EE &gt;::removeMultiples</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a7ae5c192ea23a59f383faca977bbabeb_1a7ae5c192ea23a59f383faca977bbabeb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::KDEntryArray&lt; C, EE &gt;::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>mathic::KDEntryArray::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="50" column="12" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="50" bodyend="50"/>
+        <references refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" compoundref="_k_d_entry_array_8h" startline="42" endline="42">mathic::KDEntryArray&lt; C, EE &gt;::begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a6ede30af4cb593def594b519be452bd4_1a6ede30af4cb593def594b519be452bd4" compoundref="_k_d_entry_array_8h" startline="46" endline="46">mathic::KDEntryArray&lt; C, EE &gt;::end</references>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a13df25cad452ae6a6ac1f0152d3e28bb_1a13df25cad452ae6a6ac1f0152d3e28bb" compoundref="_k_d_entry_array_8h" startline="268" endline="276">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a871d5f4bb45a50748e4cfcb559ba2d85_1a871d5f4bb45a50748e4cfcb559ba2d85" compoundref="_k_d_entry_array_8h" startline="253" endline="265">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa35f227492610e5856b85f9a79af806f_1aa35f227492610e5856b85f9a79af806f" compoundref="_k_d_entry_array_8h" startline="238" endline="243">mathic::KDEntryArray&lt; C, EE &gt;::push_back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ae32765702543c2bd92aa99d7f69cb8d8_1ae32765702543c2bd92aa99d7f69cb8d8" compoundref="_k_d_entry_array_8h" startline="287" endline="325">mathic::KDEntryArray&lt; C, EE &gt;::removeMultiples</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a412b3c0b231c89e5dcf6601d5ed80375_1a412b3c0b231c89e5dcf6601d5ed80375" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>EE &amp;</type>
+        <definition>EE &amp; mathic::KDEntryArray&lt; C, EE &gt;::front</definition>
+        <argsstring>()</argsstring>
+        <name>front</name>
+        <qualifiedname>mathic::KDEntryArray::front</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="51" column="8" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="51" bodyend="51"/>
+        <references refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" compoundref="_k_d_entry_array_8h" startline="42" endline="42">mathic::KDEntryArray&lt; C, EE &gt;::begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_abe2c393fde072d04843c3da9a41f8e20_1abe2c393fde072d04843c3da9a41f8e20" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const EE &amp;</type>
+        <definition>const EE &amp; mathic::KDEntryArray&lt; C, EE &gt;::front</definition>
+        <argsstring>() const</argsstring>
+        <name>front</name>
+        <qualifiedname>mathic::KDEntryArray::front</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="52" column="14" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="52" bodyend="52"/>
+        <references refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" compoundref="_k_d_entry_array_8h" startline="42" endline="42">mathic::KDEntryArray&lt; C, EE &gt;::begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a20cc8d084eba86d292209fcb3a77cc9a_1a20cc8d084eba86d292209fcb3a77cc9a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>EE &amp;</type>
+        <definition>EE &amp; mathic::KDEntryArray&lt; C, EE &gt;::back</definition>
+        <argsstring>()</argsstring>
+        <name>back</name>
+        <qualifiedname>mathic::KDEntryArray::back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="53" column="8" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="53" bodyend="53"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" compoundref="_k_d_entry_array_8h" startline="121">mathic::KDEntryArray&lt; C, EE &gt;::_end</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a871d5f4bb45a50748e4cfcb559ba2d85_1a871d5f4bb45a50748e4cfcb559ba2d85" compoundref="_k_d_entry_array_8h" startline="253" endline="265">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a20272d7fc061d02b567098763d1c3e61_1a20272d7fc061d02b567098763d1c3e61" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const EE &amp;</type>
+        <definition>const EE &amp; mathic::KDEntryArray&lt; C, EE &gt;::back</definition>
+        <argsstring>() const</argsstring>
+        <name>back</name>
+        <qualifiedname>mathic::KDEntryArray::back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="54" column="14" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="54" bodyend="54"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" compoundref="_k_d_entry_array_8h" startline="121">mathic::KDEntryArray&lt; C, EE &gt;::_end</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_aa35f227492610e5856b85f9a79af806f_1aa35f227492610e5856b85f9a79af806f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::KDEntryArray&lt; C, EE &gt;::push_back</definition>
+        <argsstring>(const EE &amp;entry)</argsstring>
+        <name>push_back</name>
+        <qualifiedname>mathic::KDEntryArray::push_back</qualifiedname>
+        <param>
+          <type>const EE &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="56" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="238" bodyend="243"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" compoundref="_k_d_entry_array_8h" startline="121">mathic::KDEntryArray&lt; C, EE &gt;::_end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a7ae5c192ea23a59f383faca977bbabeb_1a7ae5c192ea23a59f383faca977bbabeb" compoundref="_k_d_entry_array_8h" startline="50" endline="50">mathic::KDEntryArray&lt; C, EE &gt;::size</references>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a13df25cad452ae6a6ac1f0152d3e28bb_1a13df25cad452ae6a6ac1f0152d3e28bb" compoundref="_k_d_entry_array_8h" startline="268" endline="276">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a871d5f4bb45a50748e4cfcb559ba2d85_1a871d5f4bb45a50748e4cfcb559ba2d85" compoundref="_k_d_entry_array_8h" startline="253" endline="265">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa91ad5a523579e1d3265ef08abf7d900_1aa91ad5a523579e1d3265ef08abf7d900" compoundref="_k_d_entry_array_8h" startline="218" endline="235">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a11955927aedcdec2eb81a2d0c8ceddd0_1a11955927aedcdec2eb81a2d0c8ceddd0" compoundref="_k_d_entry_array_8h" startline="196" endline="214">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a2dcac48b2713ff353bce23b178236096_1a2dcac48b2713ff353bce23b178236096" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::KDEntryArray&lt; C, EE &gt;::pop_back</definition>
+        <argsstring>()</argsstring>
+        <name>pop_back</name>
+        <qualifiedname>mathic::KDEntryArray::pop_back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="57" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="246" bodyend="250"/>
+        <references refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" compoundref="_k_d_entry_array_8h" startline="121">mathic::KDEntryArray&lt; C, EE &gt;::_end</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1410b95a681e85b74931140a4a9517c8_1a1410b95a681e85b74931140a4a9517c8" compoundref="_k_d_entry_array_8h" startline="279" endline="282">mathic::KDEntryArray&lt; C, EE &gt;::clear</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1494a764076b6ca49b4e53b1df30e0c1_1a1494a764076b6ca49b4e53b1df30e0c1" compoundref="_k_d_entry_array_8h" startline="329" endline="346">mathic::KDEntryArray&lt; C, EE &gt;::removeElement</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ae32765702543c2bd92aa99d7f69cb8d8_1ae32765702543c2bd92aa99d7f69cb8d8" compoundref="_k_d_entry_array_8h" startline="287" endline="325">mathic::KDEntryArray&lt; C, EE &gt;::removeMultiples</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a871d5f4bb45a50748e4cfcb559ba2d85_1a871d5f4bb45a50748e4cfcb559ba2d85" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::KDEntryArray&lt; C, EE &gt;::insert</definition>
+        <argsstring>(iterator it, const EE &amp;entry)</argsstring>
+        <name>insert</name>
+        <qualifiedname>mathic::KDEntryArray::insert</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_k_d_entry_array_a044c747b652ce59502dbda1e50df202e_1a044c747b652ce59502dbda1e50df202e" kindref="member">iterator</ref></type>
+          <declname>it</declname>
+        </param>
+        <param>
+          <type>const EE &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="58" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="253" bodyend="265"/>
+        <references refid="classmathic_1_1_k_d_entry_array_a20cc8d084eba86d292209fcb3a77cc9a_1a20cc8d084eba86d292209fcb3a77cc9a" compoundref="_k_d_entry_array_8h" startline="53" endline="53">mathic::KDEntryArray&lt; C, EE &gt;::back</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_k_d_entry_array_aa35f227492610e5856b85f9a79af806f_1aa35f227492610e5856b85f9a79af806f" compoundref="_k_d_entry_array_8h" startline="238" endline="243">mathic::KDEntryArray&lt; C, EE &gt;::push_back</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a7ae5c192ea23a59f383faca977bbabeb_1a7ae5c192ea23a59f383faca977bbabeb" compoundref="_k_d_entry_array_8h" startline="50" endline="50">mathic::KDEntryArray&lt; C, EE &gt;::size</references>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a13df25cad452ae6a6ac1f0152d3e28bb_1a13df25cad452ae6a6ac1f0152d3e28bb" compoundref="_k_d_entry_array_8h" startline="268" endline="276">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a13df25cad452ae6a6ac1f0152d3e28bb_1a13df25cad452ae6a6ac1f0152d3e28bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::KDEntryArray&lt; C, EE &gt;::insert</definition>
+        <argsstring>(const EE &amp;entry, const C &amp;conf)</argsstring>
+        <name>insert</name>
+        <qualifiedname>mathic::KDEntryArray::insert</qualifiedname>
+        <param>
+          <type>const EE &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="59" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="268" bodyend="276"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a871d5f4bb45a50748e4cfcb559ba2d85_1a871d5f4bb45a50748e4cfcb559ba2d85" compoundref="_k_d_entry_array_8h" startline="253" endline="265">mathic::KDEntryArray&lt; C, EE &gt;::insert</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_k_d_entry_array_aa35f227492610e5856b85f9a79af806f_1aa35f227492610e5856b85f9a79af806f" compoundref="_k_d_entry_array_8h" startline="238" endline="243">mathic::KDEntryArray&lt; C, EE &gt;::push_back</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a7ae5c192ea23a59f383faca977bbabeb_1a7ae5c192ea23a59f383faca977bbabeb" compoundref="_k_d_entry_array_8h" startline="50" endline="50">mathic::KDEntryArray&lt; C, EE &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_ae32765702543c2bd92aa99d7f69cb8d8_1ae32765702543c2bd92aa99d7f69cb8d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EM</type>
+          </param>
+          <param>
+            <type>class MO</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::KDEntryArray&lt; C, EE &gt;::removeMultiples</definition>
+        <argsstring>(const EM &amp;monomial, MO &amp;out, const C &amp;conf)</argsstring>
+        <name>removeMultiples</name>
+        <qualifiedname>mathic::KDEntryArray::removeMultiples</qualifiedname>
+        <param>
+          <type>const EM &amp;</type>
+          <declname>monomial</declname>
+        </param>
+        <param>
+          <type>MO &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns how many were removed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="63" column="12" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="287" bodyend="325"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" compoundref="_k_d_entry_array_8h" startline="42" endline="42">mathic::KDEntryArray&lt; C, EE &gt;::begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2dcac48b2713ff353bce23b178236096_1a2dcac48b2713ff353bce23b178236096" compoundref="_k_d_entry_array_8h" startline="246" endline="250">mathic::KDEntryArray&lt; C, EE &gt;::pop_back</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a7ae5c192ea23a59f383faca977bbabeb_1a7ae5c192ea23a59f383faca977bbabeb" compoundref="_k_d_entry_array_8h" startline="50" endline="50">mathic::KDEntryArray&lt; C, EE &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a1494a764076b6ca49b4e53b1df30e0c1_1a1494a764076b6ca49b4e53b1df30e0c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class M</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDEntryArray&lt; C, EE &gt;::removeElement</definition>
+        <argsstring>(const M &amp;monomial, const C &amp;conf)</argsstring>
+        <name>removeElement</name>
+        <qualifiedname>mathic::KDEntryArray::removeElement</qualifiedname>
+        <param>
+          <type>const M &amp;</type>
+          <declname>monomial</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="66" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="329" bodyend="346"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2dcac48b2713ff353bce23b178236096_1a2dcac48b2713ff353bce23b178236096" compoundref="_k_d_entry_array_8h" startline="246" endline="250">mathic::KDEntryArray&lt; C, EE &gt;::pop_back</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a1253ea4fd593633c49b70d3a9e5a4745_1a1253ea4fd593633c49b70d3a9e5a4745" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EM</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmathic_1_1_k_d_entry_array_a044c747b652ce59502dbda1e50df202e_1a044c747b652ce59502dbda1e50df202e" kindref="member">iterator</ref></type>
+        <definition>KDEntryArray&lt; C, EE &gt;::iterator mathic::KDEntryArray&lt; C, EE &gt;::findDivisor</definition>
+        <argsstring>(const EM &amp;extMonomial, const C &amp;conf)</argsstring>
+        <name>findDivisor</name>
+        <qualifiedname>mathic::KDEntryArray::findDivisor</qualifiedname>
+        <param>
+          <type>const EM &amp;</type>
+          <declname>extMonomial</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="69" column="21" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="351" bodyend="380"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_ac203e258b1b89430fc5c75660f826dd0_1ac203e258b1b89430fc5c75660f826dd0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EM</type>
+          </param>
+          <param>
+            <type>class <ref refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" kindref="member">DO</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDEntryArray&lt; C, EE &gt;::findAllDivisors</definition>
+        <argsstring>(const EM &amp;extMonomial, DO &amp;out, const C &amp;conf)</argsstring>
+        <name>findAllDivisors</name>
+        <qualifiedname>mathic::KDEntryArray::findAllDivisors</qualifiedname>
+        <param>
+          <type>const EM &amp;</type>
+          <declname>extMonomial</declname>
+        </param>
+        <param>
+          <type><ref refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" kindref="member">DO</ref> &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="72" column="17" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="385" bodyend="412"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" compoundref="res-a0_8cpp" startline="256" endline="264">DO</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_aa1046d296bf804af8da0b9e77f8333d4_1aa1046d296bf804af8da0b9e77f8333d4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EM</type>
+          </param>
+          <param>
+            <type>class Output</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDEntryArray&lt; C, EE &gt;::findAllMultiples</definition>
+        <argsstring>(const EM &amp;extMonomial, Output &amp;out, const C &amp;conf)</argsstring>
+        <name>findAllMultiples</name>
+        <qualifiedname>mathic::KDEntryArray::findAllMultiples</qualifiedname>
+        <param>
+          <type>const EM &amp;</type>
+          <declname>extMonomial</declname>
+        </param>
+        <param>
+          <type>Output &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="75" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a06b17a4d45a9697ec4630ce54cc3f4f9_1a06b17a4d45a9697ec4630ce54cc3f4f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EO</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDEntryArray&lt; C, EE &gt;::forAll</definition>
+        <argsstring>(EO &amp;eo)</argsstring>
+        <name>forAll</name>
+        <qualifiedname>mathic::KDEntryArray::forAll</qualifiedname>
+        <param>
+          <type>EO &amp;</type>
+          <declname>eo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="79" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="436" bodyend="446"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" compoundref="_k_d_entry_array_8h" startline="49" endline="49">mathic::KDEntryArray&lt; C, EE &gt;::empty</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="io-util_8cpp_a6b55c5c1639e11a6292c2f26b3fc5480_1a6b55c5c1639e11a6292c2f26b3fc5480" compoundref="io-util_8cpp" startline="122" endline="132">output</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a8976e990b2711a95c1389d4425b07b98_1a8976e990b2711a95c1389d4425b07b98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDEntryArray&lt; C, EE &gt;::allStrictlyGreaterThan</definition>
+        <argsstring>(size_t var, Exponent exp, const C &amp;conf)</argsstring>
+        <name>allStrictlyGreaterThan</name>
+        <qualifiedname>mathic::KDEntryArray::allStrictlyGreaterThan</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>var</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_k_d_entry_array_a5df4e3f4e4ca8986b90d46f7a91c434f_1a5df4e3f4e4ca8986b90d46f7a91c434f" kindref="member">Exponent</ref></type>
+          <declname>exp</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="81" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="449" bodyend="458"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a45724ff13f7254c9ffed06a54f5c1bf8_1a45724ff13f7254c9ffed06a54f5c1bf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDEntryArray&lt; C, EE &gt;::allLessThanOrEqualTo</definition>
+        <argsstring>(size_t var, Exponent exp, const C &amp;conf)</argsstring>
+        <name>allLessThanOrEqualTo</name>
+        <qualifiedname>mathic::KDEntryArray::allLessThanOrEqualTo</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>var</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_k_d_entry_array_a5df4e3f4e4ca8986b90d46f7a91c434f_1a5df4e3f4e4ca8986b90d46f7a91c434f" kindref="member">Exponent</ref></type>
+          <declname>exp</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="82" column="10" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="461" bodyend="470"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a174047e0465c482447789971095f023e_1a174047e0465c482447789971095f023e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EM</type>
+          </param>
+          <param>
+            <type>class <ref refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" kindref="member">DO</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDEntryArray&lt; C, EE &gt;::findAllMultiples</definition>
+        <argsstring>(const EM &amp;extMonomial, DO &amp;out, const C &amp;conf)</argsstring>
+        <name>findAllMultiples</name>
+        <qualifiedname>mathic::KDEntryArray::findAllMultiples</qualifiedname>
+        <param>
+          <type>const EM &amp;</type>
+          <declname>extMonomial</declname>
+        </param>
+        <param>
+          <type><ref refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" kindref="member">DO</ref> &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="416" column="21" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="417" bodyend="432"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a98b543308dfe36a6be460f25100ee4a4_1a98b543308dfe36a6be460f25100ee4a4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iter</type>
+          </param>
+        </templateparamlist>
+        <type>Iter</type>
+        <definition>Iter mathic::KDEntryArray&lt; C, EE &gt;::split</definition>
+        <argsstring>(Iter begin, Iter end, size_t &amp;var, Exponent &amp;exp, const C &amp;conf, const ExtEntry *extEntry=0)</argsstring>
+        <name>split</name>
+        <qualifiedname>mathic::KDEntryArray::split</qualifiedname>
+        <param>
+          <type>Iter</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>Iter</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &amp;</type>
+          <declname>var</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_k_d_entry_array_a5df4e3f4e4ca8986b90d46f7a91c434f_1a5df4e3f4e4ca8986b90d46f7a91c434f" kindref="member">Exponent</ref> &amp;</type>
+          <declname>exp</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmathic_1_1_k_d_entry_array_a6fc920430e04993e851d44c085323361_1a6fc920430e04993e851d44c085323361" kindref="member">ExtEntry</ref> *</type>
+          <declname>extEntry</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reorders [begin, iter) and chooses a var and an exp such that if mid is the returned value, then [begin, mid) has less than or equal to exp exponent of var and [mid,end) has strictly greater exponent. The initial value of var is a hint that var + 1 could be a good place to start the search for a suitable value of var. begin must not equal end.</para>
+<para>If not null, the entry os taken into account when deciding which split to perform. The <ref refid="classmathic_1_1_k_d_entry_array_a236726544e9396acf6cf0625dff6928f_1a236726544e9396acf6cf0625dff6928f" kindref="member">Entry</ref> is NOT inserted into [begin, end). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="94" column="17" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="148" bodyend="183"/>
+        <references refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" compoundref="_k_d_entry_array_8h" startline="42" endline="42">mathic::KDEntryArray&lt; C, EE &gt;::begin</references>
+        <references refid="classmathic_1_1_k_d_entry_array_a6ede30af4cb593def594b519be452bd4_1a6ede30af4cb593def594b519be452bd4" compoundref="_k_d_entry_array_8h" startline="46" endline="46">mathic::KDEntryArray&lt; C, EE &gt;::end</references>
+        <references refid="classmathic_1_1_k_d_entry_array_aafbb44082b21f365845f776dc09a5d7c_1aafbb44082b21f365845f776dc09a5d7c" compoundref="_k_d_entry_array_8h" startline="107" endline="107">mathic::KDEntryArray&lt; C, EE &gt;::getEntry</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" compoundref="polyroots_8cpp" startline="50">max</references>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_a43a014e569dff853b424e9e309eea137_1a43a014e569dff853b424e9e309eea137" compoundref="_binary_k_d_tree_8h" startline="331" endline="421">mathic::BinaryKDTree&lt; C &gt;::reset</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a51c5ba9765d667c15d2221e35f1871c6_1a51c5ba9765d667c15d2221e35f1871c6" compoundref="_packed_k_d_tree_8h" startline="300" endline="394">mathic::PackedKDTree&lt; C &gt;::reset</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_leaf_a7082692d7014869174eb8089463e426a_1a7082692d7014869174eb8089463e426a" compoundref="_binary_k_d_tree_8h" startline="742" endline="778">mathic::BinaryKDTree&lt; C &gt;::KDTreeLeaf::splitInsert</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_ae5445475364f298ae09f98b0ae1fc427_1ae5445475364f298ae09f98b0ae1fc427" compoundref="_packed_k_d_tree_8h" startline="672" endline="735">mathic::PackedKDTree&lt; C &gt;::Node::splitInsert</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_aafbb44082b21f365845f776dc09a5d7c_1aafbb44082b21f365845f776dc09a5d7c" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_k_d_entry_array_a236726544e9396acf6cf0625dff6928f_1a236726544e9396acf6cf0625dff6928f" kindref="member">Entry</ref> &amp;</type>
+        <definition>static Entry &amp; mathic::KDEntryArray&lt; C, EE &gt;::getEntry</definition>
+        <argsstring>(Entry &amp;e)</argsstring>
+        <name>getEntry</name>
+        <qualifiedname>mathic::KDEntryArray::getEntry</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_k_d_entry_array_a236726544e9396acf6cf0625dff6928f_1a236726544e9396acf6cf0625dff6928f" kindref="member">Entry</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="107" column="18" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="107" bodyend="107"/>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a98b543308dfe36a6be460f25100ee4a4_1a98b543308dfe36a6be460f25100ee4a4" compoundref="_k_d_entry_array_8h" startline="148" endline="183">mathic::KDEntryArray&lt; C, EE &gt;::split</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_abe83563679878024bf682629e4441d30_1abe83563679878024bf682629e4441d30" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmathic_1_1_k_d_entry_array_a236726544e9396acf6cf0625dff6928f_1a236726544e9396acf6cf0625dff6928f" kindref="member">Entry</ref> &amp;</type>
+        <definition>static const Entry &amp; mathic::KDEntryArray&lt; C, EE &gt;::getEntry</definition>
+        <argsstring>(const Entry &amp;e)</argsstring>
+        <name>getEntry</name>
+        <qualifiedname>mathic::KDEntryArray::getEntry</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_k_d_entry_array_a236726544e9396acf6cf0625dff6928f_1a236726544e9396acf6cf0625dff6928f" kindref="member">Entry</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="108" column="24" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="108" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_ae4e92b58418ac7d20d064cde9fd9805f_1ae4e92b58418ac7d20d064cde9fd9805f" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_k_d_entry_array_a236726544e9396acf6cf0625dff6928f_1a236726544e9396acf6cf0625dff6928f" kindref="member">Entry</ref> &amp;</type>
+        <definition>static Entry &amp; mathic::KDEntryArray&lt; C, EE &gt;::getEntry</definition>
+        <argsstring>(ExtEntry &amp;e)</argsstring>
+        <name>getEntry</name>
+        <qualifiedname>mathic::KDEntryArray::getEntry</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_k_d_entry_array_a6fc920430e04993e851d44c085323361_1a6fc920430e04993e851d44c085323361" kindref="member">ExtEntry</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="109" column="18" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="109" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a3c3d5c368b221e3607e9ed9466b26806_1a3c3d5c368b221e3607e9ed9466b26806" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmathic_1_1_k_d_entry_array_a236726544e9396acf6cf0625dff6928f_1a236726544e9396acf6cf0625dff6928f" kindref="member">Entry</ref> &amp;</type>
+        <definition>static const Entry &amp; mathic::KDEntryArray&lt; C, EE &gt;::getEntry</definition>
+        <argsstring>(const ExtEntry &amp;e)</argsstring>
+        <name>getEntry</name>
+        <qualifiedname>mathic::KDEntryArray::getEntry</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_k_d_entry_array_a6fc920430e04993e851d44c085323361_1a6fc920430e04993e851d44c085323361" kindref="member">ExtEntry</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="110" column="24" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="110" bodyend="110"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a2ff5c22aadb65e43f3926338f833564c_1a2ff5c22aadb65e43f3926338f833564c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</definition>
+        <argsstring>(const KDEntryArray &amp;)</argsstring>
+        <name>KDEntryArray</name>
+        <qualifiedname>mathic::KDEntryArray::KDEntryArray</qualifiedname>
+        <param>
+          <type>const KDEntryArray &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="112" column="5"/>
+        <references refid="classmathic_1_1_k_d_entry_array_a642f36f3603de6c21f870191f5183a7c_1a642f36f3603de6c21f870191f5183a7c" compoundref="_k_d_entry_array_8h" startline="186" endline="192">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_entry_array_a9ea54f4f2622a35f37daf5f1a4707aac_1a9ea54f4f2622a35f37daf5f1a4707aac" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::KDEntryArray&lt; C, EE &gt;::operator=</definition>
+        <argsstring>(const KDEntryArray &amp;)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>mathic::KDEntryArray::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_k_d_entry_array_a642f36f3603de6c21f870191f5183a7c_1a642f36f3603de6c21f870191f5183a7c" kindref="member">KDEntryArray</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="113" column="10"/>
+        <references refid="classmathic_1_1_k_d_entry_array_a642f36f3603de6c21f870191f5183a7c_1a642f36f3603de6c21f870191f5183a7c" compoundref="_k_d_entry_array_8h" startline="186" endline="192">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>mathic::DivMask::HasDivMask&lt; UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask"/>
+      </node>
+      <node id="2">
+        <label>mathic::DivMask::HasDivMask&lt; C::UseTreeDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; C::UseTreeDivMask &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::KDEntryArray&lt; C, EE &gt;</label>
+        <link refid="classmathic_1_1_k_d_entry_array"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mathic::KDEntryArray&lt; C, mathic::DivMask::Extender&lt; Entry, C::UseDivMask &gt; &gt;</label>
+        <link refid="classmathic_1_1_k_d_entry_array"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; C, mathic::DivMask::Extender&lt; Entry, C::UseDivMask &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="5">
+        <label>EE *</label>
+      </node>
+      <node id="4">
+        <label>char</label>
+      </node>
+      <node id="3">
+        <label>mathic::DivMask::HasDivMask&lt; UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask"/>
+      </node>
+      <node id="2">
+        <label>mathic::DivMask::HasDivMask&lt; C::UseTreeDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; C::UseTreeDivMask &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::KDEntryArray&lt; C, EE &gt;</label>
+        <link refid="classmathic_1_1_k_d_entry_array"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_beginMemory</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_end</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/KDEntryArray.h" line="14" column="3" bodyfile="submodules/mathic/src/mathic/KDEntryArray.h" bodystart="14" bodyend="125"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_k_d_entry_array_ad45912374dd784debdf2a5d679e9cb30_1ad45912374dd784debdf2a5d679e9cb30" prot="private" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>_beginMemory</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_ac3d68696291db78797229b305808cd85_1ac3d68696291db78797229b305808cd85" prot="private" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>_end</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a45724ff13f7254c9ffed06a54f5c1bf8_1a45724ff13f7254c9ffed06a54f5c1bf8" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>allLessThanOrEqualTo</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a8976e990b2711a95c1389d4425b07b98_1a8976e990b2711a95c1389d4425b07b98" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>allStrictlyGreaterThan</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a20cc8d084eba86d292209fcb3a77cc9a_1a20cc8d084eba86d292209fcb3a77cc9a" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>back</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a20272d7fc061d02b567098763d1c3e61_1a20272d7fc061d02b567098763d1c3e61" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>back</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a1b3ea595d4df3aa10809ac2092f05aae_1a1b3ea595d4df3aa10809ac2092f05aae" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>begin</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a17a49e12305d3da23a92a4597adafcaa_1a17a49e12305d3da23a92a4597adafcaa" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>begin</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a1410b95a681e85b74931140a4a9517c8_1a1410b95a681e85b74931140a4a9517c8" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>clear</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a47dfc9e6064ea87c8be3116ae8709174_1a47dfc9e6064ea87c8be3116ae8709174" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>const_iterator</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_aea04fb7e26d648df0894602364382ab8_1aea04fb7e26d648df0894602364382ab8" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>const_reference</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a0dd735cfc5a7bde3711e175b7dd5743e_1a0dd735cfc5a7bde3711e175b7dd5743e" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>DivMaskCalculator</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a2ba85990af7d087e40191e3d93292c59_1a2ba85990af7d087e40191e3d93292c59" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>empty</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a6ede30af4cb593def594b519be452bd4_1a6ede30af4cb593def594b519be452bd4" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>end</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_abf64b5a8be5eb9dec24f76b908455c3f_1abf64b5a8be5eb9dec24f76b908455c3f" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>end</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a236726544e9396acf6cf0625dff6928f_1a236726544e9396acf6cf0625dff6928f" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>Entry</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a5df4e3f4e4ca8986b90d46f7a91c434f_1a5df4e3f4e4ca8986b90d46f7a91c434f" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>Exponent</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a6fc920430e04993e851d44c085323361_1a6fc920430e04993e851d44c085323361" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>ExtEntry</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_ac203e258b1b89430fc5c75660f826dd0_1ac203e258b1b89430fc5c75660f826dd0" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>findAllDivisors</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_aa1046d296bf804af8da0b9e77f8333d4_1aa1046d296bf804af8da0b9e77f8333d4" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>findAllMultiples</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a174047e0465c482447789971095f023e_1a174047e0465c482447789971095f023e" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>findAllMultiples</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a1253ea4fd593633c49b70d3a9e5a4745_1a1253ea4fd593633c49b70d3a9e5a4745" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>findDivisor</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a06b17a4d45a9697ec4630ce54cc3f4f9_1a06b17a4d45a9697ec4630ce54cc3f4f9" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>forAll</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a412b3c0b231c89e5dcf6601d5ed80375_1a412b3c0b231c89e5dcf6601d5ed80375" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>front</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_abe2c393fde072d04843c3da9a41f8e20_1abe2c393fde072d04843c3da9a41f8e20" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>front</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_aafbb44082b21f365845f776dc09a5d7c_1aafbb44082b21f365845f776dc09a5d7c" prot="private" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>getEntry</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_abe83563679878024bf682629e4441d30_1abe83563679878024bf682629e4441d30" prot="private" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>getEntry</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_ae4e92b58418ac7d20d064cde9fd9805f_1ae4e92b58418ac7d20d064cde9fd9805f" prot="private" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>getEntry</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a3c3d5c368b221e3607e9ed9466b26806_1a3c3d5c368b221e3607e9ed9466b26806" prot="private" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>getEntry</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a871d5f4bb45a50748e4cfcb559ba2d85_1a871d5f4bb45a50748e4cfcb559ba2d85" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>insert</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a13df25cad452ae6a6ac1f0152d3e28bb_1a13df25cad452ae6a6ac1f0152d3e28bb" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>insert</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a044c747b652ce59502dbda1e50df202e_1a044c747b652ce59502dbda1e50df202e" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>iterator</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a642f36f3603de6c21f870191f5183a7c_1a642f36f3603de6c21f870191f5183a7c" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>KDEntryArray</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a11955927aedcdec2eb81a2d0c8ceddd0_1a11955927aedcdec2eb81a2d0c8ceddd0" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>KDEntryArray</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_aa91ad5a523579e1d3265ef08abf7d900_1aa91ad5a523579e1d3265ef08abf7d900" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>KDEntryArray</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a2ff5c22aadb65e43f3926338f833564c_1a2ff5c22aadb65e43f3926338f833564c" prot="private" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>KDEntryArray</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a9ea54f4f2622a35f37daf5f1a4707aac_1a9ea54f4f2622a35f37daf5f1a4707aac" prot="private" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>operator=</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a2dcac48b2713ff353bce23b178236096_1a2dcac48b2713ff353bce23b178236096" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>pop_back</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_aa35f227492610e5856b85f9a79af806f_1aa35f227492610e5856b85f9a79af806f" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>push_back</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_aedb2c9a95b1f0d51a43179f75a51a69f_1aedb2c9a95b1f0d51a43179f75a51a69f" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>recalculateTreeDivMask</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a1494a764076b6ca49b4e53b1df30e0c1_1a1494a764076b6ca49b4e53b1df30e0c1" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>removeElement</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_ae32765702543c2bd92aa99d7f69cb8d8_1ae32765702543c2bd92aa99d7f69cb8d8" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>removeMultiples</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a7ae5c192ea23a59f383faca977bbabeb_1a7ae5c192ea23a59f383faca977bbabeb" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>size</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a98b543308dfe36a6be460f25100ee4a4_1a98b543308dfe36a6be460f25100ee4a4" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>split</name></member>
+      <member refid="classmathic_1_1_k_d_entry_array_a6127b1399d0ba44ef16dac1406b2c07c_1a6127b1399d0ba44ef16dac1406b2c07c" prot="public" virt="non-virtual"><scope>mathic::KDEntryArray</scope><name>value_type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

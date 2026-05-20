@@ -1,0 +1,935 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_marked_g_b__sorter" kind="struct" language="C++" prot="public">
+    <compoundname>MarkedGB_sorter</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_marked_g_b__sorter_afbcfd2be34a127d92c274acc8eb79963_1afbcfd2be34a127d92c274acc8eb79963" prot="public" static="no" mutable="no">
+        <type><ref refid="class_g_b_ring" kindref="compound">GBRing</ref> *</type>
+        <definition>GBRing* MarkedGB_sorter::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>MarkedGB_sorter::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-marked.cpp" line="36" column="10" bodyfile="Macaulay2/e/reducedgb-marked.cpp" bodystart="36" bodyend="-1"/>
+        <referencedby refid="struct_marked_g_b__sorter_a9c0d06a0e2f1a3bee75965a56b6922b3_1a9c0d06a0e2f1a3bee75965a56b6922b3" compoundref="reducedgb-marked_8cpp" startline="39" endline="42">MarkedGB_sorter</referencedby>
+        <referencedby refid="struct_marked_g_b__sorter_a72fec896340757cc9890d8e20226b02f_1a72fec896340757cc9890d8e20226b02f" compoundref="reducedgb-marked_8cpp" startline="43" endline="48">operator()</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_marked_g_b__sorter_a3b93c382800b6a147ac5d8fa36dba84c_1a3b93c382800b6a147ac5d8fa36dba84c" prot="public" static="no" mutable="no">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule* MarkedGB_sorter::F</definition>
+        <argsstring></argsstring>
+        <name>F</name>
+        <qualifiedname>MarkedGB_sorter::F</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-marked.cpp" line="37" column="20" bodyfile="Macaulay2/e/reducedgb-marked.cpp" bodystart="37" bodyend="-1"/>
+        <referencedby refid="struct_marked_g_b__sorter_a9c0d06a0e2f1a3bee75965a56b6922b3_1a9c0d06a0e2f1a3bee75965a56b6922b3" compoundref="reducedgb-marked_8cpp" startline="39" endline="42">MarkedGB_sorter</referencedby>
+        <referencedby refid="struct_marked_g_b__sorter_a72fec896340757cc9890d8e20226b02f_1a72fec896340757cc9890d8e20226b02f" compoundref="reducedgb-marked_8cpp" startline="43" endline="48">operator()</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_marked_g_b__sorter_a48c8036489258e36ba326846a21ae34c_1a48c8036489258e36ba326846a21ae34c" prot="public" static="no" const="no" explicit="no" inline="no" refqual="lvalue" virt="non-virtual">
+        <type>const</type>
+        <definition>const MarkedGB_sorter::VECTOR</definition>
+        <argsstring>(POLY) &amp;gb</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>MarkedGB_sorter::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="struct_p_o_l_y" kindref="compound">POLY</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-marked.cpp" line="38" column="9"/>
+        <references refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" compoundref="franzi-gb_8cpp" startline="430" endline="471">gb</references>
+        <references refid="poly_8cpp_af4c97ae01895f6d3290e9c2ec19a5809_1af4c97ae01895f6d3290e9c2ec19a5809" compoundref="poly_8cpp" startline="23">POLY</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_marked_g_b__sorter_a9c0d06a0e2f1a3bee75965a56b6922b3_1a9c0d06a0e2f1a3bee75965a56b6922b3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MarkedGB_sorter::MarkedGB_sorter</definition>
+        <argsstring>(GBRing *R0, const FreeModule *F0, const VECTOR(POLY) &amp;gb0)</argsstring>
+        <name>MarkedGB_sorter</name>
+        <qualifiedname>MarkedGB_sorter::MarkedGB_sorter</qualifiedname>
+        <param>
+          <type><ref refid="class_g_b_ring" kindref="compound">GBRing</ref> *</type>
+          <declname>R0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_marked_g_b__sorter_a48c8036489258e36ba326846a21ae34c_1a48c8036489258e36ba326846a21ae34c" kindref="member">VECTOR</ref>(<ref refid="struct_p_o_l_y" kindref="compound">POLY</ref>) &amp;</type>
+          <declname>gb0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-marked.cpp" line="39" column="3" bodyfile="Macaulay2/e/reducedgb-marked.cpp" bodystart="39" bodyend="42"/>
+        <references refid="struct_marked_g_b__sorter_a3b93c382800b6a147ac5d8fa36dba84c_1a3b93c382800b6a147ac5d8fa36dba84c" compoundref="reducedgb-marked_8cpp" startline="37">F</references>
+        <references refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" compoundref="franzi-gb_8cpp" startline="430" endline="471">gb</references>
+        <references refid="poly_8cpp_af4c97ae01895f6d3290e9c2ec19a5809_1af4c97ae01895f6d3290e9c2ec19a5809" compoundref="poly_8cpp" startline="23">POLY</references>
+        <references refid="struct_marked_g_b__sorter_afbcfd2be34a127d92c274acc8eb79963_1afbcfd2be34a127d92c274acc8eb79963" compoundref="reducedgb-marked_8cpp" startline="36">R</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_marked_g_b__sorter_a72fec896340757cc9890d8e20226b02f_1a72fec896340757cc9890d8e20226b02f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MarkedGB_sorter::operator()</definition>
+        <argsstring>(int xx, int yy)</argsstring>
+        <name>operator()</name>
+        <qualifiedname>MarkedGB_sorter::operator()</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>xx</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>yy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-marked.cpp" line="43" column="8" bodyfile="Macaulay2/e/reducedgb-marked.cpp" bodystart="43" bodyend="48"/>
+        <references refid="struct_marked_g_b__sorter_a3b93c382800b6a147ac5d8fa36dba84c_1a3b93c382800b6a147ac5d8fa36dba84c" compoundref="reducedgb-marked_8cpp" startline="37">F</references>
+        <references refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" compoundref="franzi-gb_8cpp" startline="430" endline="471">gb</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aaf56b99cbe34023f42ce5b7878c827d8_1aaf56b99cbe34023f42ce5b7878c827d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="18">LT</references>
+        <references refid="struct_marked_g_b__sorter_afbcfd2be34a127d92c274acc8eb79963_1afbcfd2be34a127d92c274acc8eb79963" compoundref="reducedgb-marked_8cpp" startline="36">R</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Index comparator for sorting a <computeroutput><ref refid="class_marked_g_b" kindref="compound">MarkedGB</ref></computeroutput>&apos;s <computeroutput><ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref></computeroutput> array by the lead-term ordering induced by the user-supplied marking. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Same shape as <computeroutput><ref refid="struct_reduced_g_b___field__sorter" kindref="compound">ReducedGB_Field_sorter</ref></computeroutput>: captures references to <computeroutput><ref refid="class_g_b_ring" kindref="compound">GBRing</ref></computeroutput>, <computeroutput><ref refid="class_free_module" kindref="compound">FreeModule</ref></computeroutput>, and <computeroutput><ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref></computeroutput>, and <computeroutput>operator()(a, b)</computeroutput> dispatches to the lead-term comparator. Used in the marked-GB code path where the leading monomials of the basis elements are pinned by the caller rather than chosen by the monomial order. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="16">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+        <childnode refid="66" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>MarkedGB_sorter</label>
+        <link refid="struct_marked_g_b__sorter"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>F</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="44" relation="private-inheritance">
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="46" relation="public-inheritance">
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="40" relation="private-inheritance">
+        </childnode>
+        <childnode refid="43" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="53">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="46">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="47" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="36" relation="public-inheritance">
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="38" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>CoefficientType</label>
+      </node>
+      <node id="76">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="35" relation="public-inheritance">
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>T</label>
+      </node>
+      <node id="71">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="35" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="28">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="4">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="26">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="28" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="30" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>char</label>
+      </node>
+      <node id="15">
+        <label>const ARing *</label>
+      </node>
+      <node id="31">
+        <label>const void *</label>
+      </node>
+      <node id="21">
+        <label>double</label>
+      </node>
+      <node id="62">
+        <label>overflow_type *</label>
+      </node>
+      <node id="59">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="61">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="77">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="8">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="20">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>long</label>
+      </node>
+      <node id="48">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="41" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="52" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>mon_part</label>
+      </node>
+      <node id="25">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="24">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="22">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="23">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="7">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="17">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>size_t</label>
+      </node>
+      <node id="68">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>spinLock</label>
+      </node>
+      <node id="67">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="57">
+        <label>std::string</label>
+        <childnode refid="58" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="14" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="57" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/reducedgb-marked.cpp" line="34" column="1" bodyfile="Macaulay2/e/reducedgb-marked.cpp" bodystart="35" bodyend="49"/>
+    <listofallmembers>
+      <member refid="struct_marked_g_b__sorter_a3b93c382800b6a147ac5d8fa36dba84c_1a3b93c382800b6a147ac5d8fa36dba84c" prot="public" virt="non-virtual"><scope>MarkedGB_sorter</scope><name>F</name></member>
+      <member refid="struct_marked_g_b__sorter_a9c0d06a0e2f1a3bee75965a56b6922b3_1a9c0d06a0e2f1a3bee75965a56b6922b3" prot="public" virt="non-virtual"><scope>MarkedGB_sorter</scope><name>MarkedGB_sorter</name></member>
+      <member refid="struct_marked_g_b__sorter_a72fec896340757cc9890d8e20226b02f_1a72fec896340757cc9890d8e20226b02f" prot="public" virt="non-virtual"><scope>MarkedGB_sorter</scope><name>operator()</name></member>
+      <member refid="struct_marked_g_b__sorter_afbcfd2be34a127d92c274acc8eb79963_1afbcfd2be34a127d92c274acc8eb79963" prot="public" virt="non-virtual"><scope>MarkedGB_sorter</scope><name>R</name></member>
+      <member refid="struct_marked_g_b__sorter_a48c8036489258e36ba326846a21ae34c_1a48c8036489258e36ba326846a21ae34c" prot="public" virt="non-virtual"><scope>MarkedGB_sorter</scope><name>VECTOR</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_0d135213212237015321034034320124075155130313334315" kind="namespace" language="C++">
+    <compoundname></compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/ubuntu/M2-docs/M2/Macaulay2/e/schreyer-resolution/res-schreyer-frame.cpp" line="22" column="1"/>
+  </compounddef>
+</doxygen>

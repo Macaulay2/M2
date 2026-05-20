@@ -1,0 +1,1539 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_coefficient_ring_r" kind="class" language="C++" prot="public">
+    <compoundname>CoefficientRingR</compoundname>
+    <includes refid="coeffrings_8hpp" local="no">coeffrings.hpp</includes>
+    <innerclass refid="class_coefficient_ring_r_1_1_element" prot="public">CoefficientRingR::Element</innerclass>
+    <innerclass refid="class_coefficient_ring_r_1_1_element_array" prot="public">CoefficientRingR::ElementArray</innerclass>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_coefficient_ring_r_a1f4407e4d69c728bd677194772f1e07a_1a1f4407e4d69c728bd677194772f1e07a" prot="public" static="no">
+        <type><ref refid="class_ring" kindref="compound">Ring</ref></type>
+        <definition>typedef Ring CoefficientRingR::ring_type</definition>
+        <argsstring></argsstring>
+        <name>ring_type</name>
+        <qualifiedname>CoefficientRingR::ring_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="256" column="16" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="256" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" prot="public" static="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>typedef ring_elem CoefficientRingR::elem</definition>
+        <argsstring></argsstring>
+        <name>elem</name>
+        <qualifiedname>CoefficientRingR::elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="257" column="21" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" prot="public" static="no">
+        <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+        <definition>typedef elem CoefficientRingR::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>CoefficientRingR::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="258" column="16" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="258" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>const Ring* CoefficientRingR::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>CoefficientRingR::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="253" column="14" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="253" bodyend="-1"/>
+        <referencedby refid="class_coefficient_ring_r_ae6ac9430457679f855af6398e2c50199_1ae6ac9430457679f855af6398e2c50199" compoundref="coeffrings_8hpp" startline="324" endline="324">add</referencedby>
+        <referencedby refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" compoundref="coeffrings_8hpp" startline="304" endline="304">CoefficientRingR</referencedby>
+        <referencedby refid="class_coefficient_ring_r_aaea242279a6f6085e04456500c87cf95_1aaea242279a6f6085e04456500c87cf95" compoundref="coeffrings_8hpp" startline="332" endline="332">divide</referencedby>
+        <referencedby refid="class_coefficient_ring_r_a3a6d400dc9f7a0cf28b15b2581366c30_1a3a6d400dc9f7a0cf28b15b2581366c30" compoundref="coeffrings_8cpp" startline="21" endline="28">elem_text_out</referencedby>
+        <referencedby refid="class_coefficient_ring_r_af9205fc585fe72e91eea2a427d851843_1af9205fc585fe72e91eea2a427d851843" compoundref="coeffrings_8hpp" startline="306" endline="306">init</referencedby>
+        <referencedby refid="class_coefficient_ring_r_aef37cea92f29b30b3ed678b65cc3db6a_1aef37cea92f29b30b3ed678b65cc3db6a" compoundref="coeffrings_8hpp" startline="316" endline="316">invert</referencedby>
+        <referencedby refid="class_coefficient_ring_r_afda9e33cbd9e04e46696f0e56cdc8a5a_1afda9e33cbd9e04e46696f0e56cdc8a5a" compoundref="coeffrings_8hpp" startline="314" endline="314">is_equal</referencedby>
+        <referencedby refid="class_coefficient_ring_r_a911e7beef46df8d976380af889b0e4dc_1a911e7beef46df8d976380af889b0e4dc" compoundref="coeffrings_8hpp" startline="315" endline="315">is_unit</referencedby>
+        <referencedby refid="class_coefficient_ring_r_ae816c227d149c2edc25e55847f3a57c3_1ae816c227d149c2edc25e55847f3a57c3" compoundref="coeffrings_8hpp" startline="313" endline="313">is_zero</referencedby>
+        <referencedby refid="class_coefficient_ring_r_afb17bcf04fc7d90c7226798b8ad443bf_1afb17bcf04fc7d90c7226798b8ad443bf" compoundref="coeffrings_8hpp" startline="331" endline="331">mult</referencedby>
+        <referencedby refid="class_coefficient_ring_r_aa585dca2d7be123a072e231e8c1452f0_1aa585dca2d7be123a072e231e8c1452f0" compoundref="coeffrings_8hpp" startline="325" endline="325">negate</referencedby>
+        <referencedby refid="class_coefficient_ring_r_ad5e5ed790edaf40bc1c4a6acbd825c9a_1ad5e5ed790edaf40bc1c4a6acbd825c9a" compoundref="coeffrings_8hpp" startline="311" endline="311">set_from_long</referencedby>
+        <referencedby refid="class_coefficient_ring_r_a910f2ff7b991149489e9cea60e527563_1a910f2ff7b991149489e9cea60e527563" compoundref="coeffrings_8hpp" startline="312" endline="312">set_from_mpz</referencedby>
+        <referencedby refid="class_coefficient_ring_r_a7dde5c0614861b4c47baf0484a8322ca_1a7dde5c0614861b4c47baf0484a8322ca" compoundref="coeffrings_8hpp" startline="309" endline="309">set_zero</referencedby>
+        <referencedby refid="class_coefficient_ring_r_aa82da8d26da8b5baad1b352c5d1a367f_1aa82da8d26da8b5baad1b352c5d1a367f" compoundref="coeffrings_8hpp" startline="326" endline="329">subtract</referencedby>
+        <referencedby refid="class_coefficient_ring_r_a618250607f5beb401af79b2d0e1a778e_1a618250607f5beb401af79b2d0e1a778e" compoundref="coeffrings_8hpp" startline="317" endline="322">subtract_multiple</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_coefficient_ring_r_af1dc85cfb7a831bb231084e0ac6e9ac0_1af1dc85cfb7a831bb231084e0ac6e9ac0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>typedef</type>
+        <definition>typedef CoefficientRingR::VECTOR</definition>
+        <argsstring>(elem) ElementContainerType</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>CoefficientRingR::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="259" column="11"/>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>CoefficientRingR::CoefficientRingR</definition>
+        <argsstring>(const Ring *R0)</argsstring>
+        <name>CoefficientRingR</name>
+        <qualifiedname>CoefficientRingR::CoefficientRingR</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>R0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="304" column="3" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="304" bodyend="304"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <referencedby refid="class_coefficient_ring_r_1_1_element_a3dd2a90800051dc3631f149b618f0a14_1a3dd2a90800051dc3631f149b618f0a14" compoundref="coeffrings_8hpp" startline="272" endline="272">CoefficientRingR::Element::Element</referencedby>
+        <referencedby refid="class_coefficient_ring_r_1_1_element_a1ecd1179cdbd97775ccc341acbbc98ac_1a1ecd1179cdbd97775ccc341acbbc98ac" compoundref="coeffrings_8hpp" startline="273" endline="276">CoefficientRingR::Element::Element</referencedby>
+        <referencedby refid="class_coefficient_ring_r_1_1_element_array_abdb0e22d8e6245eddeeadf65a960fe20_1abdb0e22d8e6245eddeeadf65a960fe20" compoundref="coeffrings_8hpp" startline="292" endline="296">CoefficientRingR::ElementArray::ElementArray</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a36d1f7295817c94ceb7d7125fc810d2e_1a36d1f7295817c94ceb7d7125fc810d2e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::init_set</definition>
+        <argsstring>(elem &amp;result, elem a) const</argsstring>
+        <name>init_set</name>
+        <qualifiedname>CoefficientRingR::init_set</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="305" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="305" bodyend="305"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_coefficient_ring_r_1_1_element_a1ecd1179cdbd97775ccc341acbbc98ac_1a1ecd1179cdbd97775ccc341acbbc98ac" compoundref="coeffrings_8hpp" startline="273" endline="276">CoefficientRingR::Element::Element</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_af9205fc585fe72e91eea2a427d851843_1af9205fc585fe72e91eea2a427d851843" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::init</definition>
+        <argsstring>(elem &amp;result) const</argsstring>
+        <name>init</name>
+        <qualifiedname>CoefficientRingR::init</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="306" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="306" bodyend="306"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_coefficient_ring_r_1_1_element_a3dd2a90800051dc3631f149b618f0a14_1a3dd2a90800051dc3631f149b618f0a14" compoundref="coeffrings_8hpp" startline="272" endline="272">CoefficientRingR::Element::Element</referencedby>
+        <referencedby refid="class_coefficient_ring_r_1_1_element_array_abdb0e22d8e6245eddeeadf65a960fe20_1abdb0e22d8e6245eddeeadf65a960fe20" compoundref="coeffrings_8hpp" startline="292" endline="296">CoefficientRingR::ElementArray::ElementArray</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a63b417ef02718d6363198e7a83ea71e8_1a63b417ef02718d6363198e7a83ea71e8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::clear</definition>
+        <argsstring>(elem &amp;result) const</argsstring>
+        <name>clear</name>
+        <qualifiedname>CoefficientRingR::clear</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="307" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="307" bodyend="307"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a7dde5c0614861b4c47baf0484a8322ca_1a7dde5c0614861b4c47baf0484a8322ca" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::set_zero</definition>
+        <argsstring>(elem &amp;result) const</argsstring>
+        <name>set_zero</name>
+        <qualifiedname>CoefficientRingR::set_zero</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="309" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="309" bodyend="309"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_ad39131a957167f406627feec7ce7cc5e_1ad39131a957167f406627feec7ce7cc5e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::set</definition>
+        <argsstring>(elem &amp;result, elem a) const</argsstring>
+        <name>set</name>
+        <qualifiedname>CoefficientRingR::set</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="310" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="310" bodyend="310"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_ad5e5ed790edaf40bc1c4a6acbd825c9a_1ad5e5ed790edaf40bc1c4a6acbd825c9a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::set_from_long</definition>
+        <argsstring>(elem &amp;result, long a) const</argsstring>
+        <name>set_from_long</name>
+        <qualifiedname>CoefficientRingR::set_from_long</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="311" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="311" bodyend="311"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a910f2ff7b991149489e9cea60e527563_1a910f2ff7b991149489e9cea60e527563" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::set_from_mpz</definition>
+        <argsstring>(elem &amp;result, mpz_t a) const</argsstring>
+        <name>set_from_mpz</name>
+        <qualifiedname>CoefficientRingR::set_from_mpz</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>mpz_t</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="312" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="312" bodyend="312"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_ae816c227d149c2edc25e55847f3a57c3_1ae816c227d149c2edc25e55847f3a57c3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool CoefficientRingR::is_zero</definition>
+        <argsstring>(elem result) const</argsstring>
+        <name>is_zero</name>
+        <qualifiedname>CoefficientRingR::is_zero</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="313" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="313" bodyend="313"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_afda9e33cbd9e04e46696f0e56cdc8a5a_1afda9e33cbd9e04e46696f0e56cdc8a5a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool CoefficientRingR::is_equal</definition>
+        <argsstring>(elem a, elem b) const</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>CoefficientRingR::is_equal</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="314" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="314" bodyend="314"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a911e7beef46df8d976380af889b0e4dc_1a911e7beef46df8d976380af889b0e4dc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool CoefficientRingR::is_unit</definition>
+        <argsstring>(elem f) const</argsstring>
+        <name>is_unit</name>
+        <qualifiedname>CoefficientRingR::is_unit</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="315" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="315" bodyend="315"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_aef37cea92f29b30b3ed678b65cc3db6a_1aef37cea92f29b30b3ed678b65cc3db6a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::invert</definition>
+        <argsstring>(elem &amp;result, elem a) const</argsstring>
+        <name>invert</name>
+        <qualifiedname>CoefficientRingR::invert</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="316" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="316" bodyend="316"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a618250607f5beb401af79b2d0e1a778e_1a618250607f5beb401af79b2d0e1a778e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::subtract_multiple</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>subtract_multiple</name>
+        <qualifiedname>CoefficientRingR::subtract_multiple</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="317" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="317" bodyend="322"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_ae6ac9430457679f855af6398e2c50199_1ae6ac9430457679f855af6398e2c50199" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::add</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>add</name>
+        <qualifiedname>CoefficientRingR::add</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="324" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="324" bodyend="324"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_aa585dca2d7be123a072e231e8c1452f0_1aa585dca2d7be123a072e231e8c1452f0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::negate</definition>
+        <argsstring>(elem &amp;result, elem a) const</argsstring>
+        <name>negate</name>
+        <qualifiedname>CoefficientRingR::negate</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="325" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="325" bodyend="325"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_aa82da8d26da8b5baad1b352c5d1a367f_1aa82da8d26da8b5baad1b352c5d1a367f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::subtract</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>subtract</name>
+        <qualifiedname>CoefficientRingR::subtract</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="326" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="326" bodyend="329"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_afb17bcf04fc7d90c7226798b8ad443bf_1afb17bcf04fc7d90c7226798b8ad443bf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::mult</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>mult</name>
+        <qualifiedname>CoefficientRingR::mult</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="331" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="331" bodyend="331"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_aaea242279a6f6085e04456500c87cf95_1aaea242279a6f6085e04456500c87cf95" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::divide</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>divide</name>
+        <qualifiedname>CoefficientRingR::divide</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="332" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="332" bodyend="332"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a243c74a922e310c12a44c12455d2e59e_1a243c74a922e310c12a44c12455d2e59e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::to_ring_elem</definition>
+        <argsstring>(ring_elem &amp;result, const elem &amp;a) const</argsstring>
+        <name>to_ring_elem</name>
+        <qualifiedname>CoefficientRingR::to_ring_elem</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="333" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="333" bodyend="333"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a48984464b741d68fd90ee397ac02e029_1a48984464b741d68fd90ee397ac02e029" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::from_ring_elem</definition>
+        <argsstring>(elem &amp;result, const ring_elem &amp;a) const</argsstring>
+        <name>from_ring_elem</name>
+        <qualifiedname>CoefficientRingR::from_ring_elem</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="334" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="334" bodyend="334"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a81e6b91ec0451a799a58a057ef7b25df_1a81e6b91ec0451a799a58a057ef7b25df" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref></type>
+        <definition>elem CoefficientRingR::from_ring_elem_const</definition>
+        <argsstring>(const ring_elem &amp;a) const</argsstring>
+        <name>from_ring_elem_const</name>
+        <qualifiedname>CoefficientRingR::from_ring_elem_const</qualifiedname>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="337" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="337" bodyend="337"/>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_afaa4fe1095ab5c5e43a6f3a00329b6f9_1afaa4fe1095ab5c5e43a6f3a00329b6f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::swap</definition>
+        <argsstring>(elem &amp;a, elem &amp;b) const</argsstring>
+        <name>swap</name>
+        <qualifiedname>CoefficientRingR::swap</qualifiedname>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="338" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="338" bodyend="343"/>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_a3a6d400dc9f7a0cf28b15b2581366c30_1a3a6d400dc9f7a0cf28b15b2581366c30" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::elem_text_out</definition>
+        <argsstring>(buffer &amp;o, ElementType a, bool p_one=true, bool p_plus=false, bool p_parens=false) const</argsstring>
+        <name>elem_text_out</name>
+        <qualifiedname>CoefficientRingR::elem_text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type><ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_one</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_plus</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_parens</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="345" column="8" bodyfile="Macaulay2/e/coeffrings.cpp" bodystart="21" bodyend="28"/>
+        <references refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" compoundref="coeffrings_8hpp" startline="253">R</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_afaecd76a3211d309dd872fb9c7dd8cd2_1afaecd76a3211d309dd872fb9c7dd8cd2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void CoefficientRingR::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>CoefficientRingR::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="351" column="8" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="351" bodyend="351"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Generic <computeroutput>CoefficientRing</computeroutput> adapter that wraps an arbitrary <computeroutput>const Ring*</computeroutput> and forwards every operation to it. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The catch-all implementation used wherever code expects the <computeroutput>CoefficientRing</computeroutput> operation surface but talks to a ring without a faster specialisation. All <computeroutput><ref refid="class_coefficient_ring_r_ae6ac9430457679f855af6398e2c50199_1ae6ac9430457679f855af6398e2c50199" kindref="member">add</ref></computeroutput> / <computeroutput><ref refid="class_coefficient_ring_r_afb17bcf04fc7d90c7226798b8ad443bf_1afb17bcf04fc7d90c7226798b8ad443bf" kindref="member">mult</ref></computeroutput> / <computeroutput><ref refid="class_coefficient_ring_r_aa82da8d26da8b5baad1b352c5d1a367f_1aa82da8d26da8b5baad1b352c5d1a367f" kindref="member">subtract</ref></computeroutput> / <computeroutput><ref refid="class_coefficient_ring_r_aef37cea92f29b30b3ed678b65cc3db6a_1aef37cea92f29b30b3ed678b65cc3db6a" kindref="member">invert</ref></computeroutput> calls delegate to the corresponding <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput> virtual methods on <computeroutput><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref></computeroutput>, and <computeroutput><ref refid="class_coefficient_ring_r_1_1_element" kindref="compound">Element</ref></computeroutput> / <computeroutput><ref refid="class_coefficient_ring_r_1_1_element_array" kindref="compound">ElementArray</ref></computeroutput> (defined nested here) supply the value-semantics wrappers the templated linear algebra code expects. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="66" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="67" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="67" relation="public-inheritance">
+        </childnode>
+        <childnode refid="68" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="29" relation="private-inheritance">
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="31" relation="public-inheritance">
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="24" relation="private-inheritance">
+        </childnode>
+        <childnode refid="28" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="53">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="31">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="32" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>CoefficientType</label>
+      </node>
+      <node id="77">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="49">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="9">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="47">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="42" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>char</label>
+      </node>
+      <node id="79">
+        <label>const ARing *</label>
+      </node>
+      <node id="21">
+        <label>const void *</label>
+      </node>
+      <node id="42">
+        <label>double</label>
+      </node>
+      <node id="63">
+        <label>overflow_type *</label>
+      </node>
+      <node id="60">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="62">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="78">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="6">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="41">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="38" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>long</label>
+      </node>
+      <node id="33">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="34" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>mon_part</label>
+      </node>
+      <node id="46">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="45">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="43">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="44">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="4">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="38">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>size_t</label>
+      </node>
+      <node id="70">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>spinLock</label>
+      </node>
+      <node id="69">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="57">
+        <label>std::string</label>
+        <childnode refid="58" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="17" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="57" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>unsigned</label>
+      </node>
+      <node id="18">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="22">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/coeffrings.hpp" line="251" column="1" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="252" bodyend="352"/>
+    <listofallmembers>
+      <member refid="class_coefficient_ring_r_ae6ac9430457679f855af6398e2c50199_1ae6ac9430457679f855af6398e2c50199" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>add</name></member>
+      <member refid="class_coefficient_ring_r_a63b417ef02718d6363198e7a83ea71e8_1a63b417ef02718d6363198e7a83ea71e8" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>clear</name></member>
+      <member refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>CoefficientRingR</name></member>
+      <member refid="class_coefficient_ring_r_aaea242279a6f6085e04456500c87cf95_1aaea242279a6f6085e04456500c87cf95" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>divide</name></member>
+      <member refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>elem</name></member>
+      <member refid="class_coefficient_ring_r_a3a6d400dc9f7a0cf28b15b2581366c30_1a3a6d400dc9f7a0cf28b15b2581366c30" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>elem_text_out</name></member>
+      <member refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>ElementType</name></member>
+      <member refid="class_coefficient_ring_r_a48984464b741d68fd90ee397ac02e029_1a48984464b741d68fd90ee397ac02e029" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>from_ring_elem</name></member>
+      <member refid="class_coefficient_ring_r_a81e6b91ec0451a799a58a057ef7b25df_1a81e6b91ec0451a799a58a057ef7b25df" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>from_ring_elem_const</name></member>
+      <member refid="class_coefficient_ring_r_af9205fc585fe72e91eea2a427d851843_1af9205fc585fe72e91eea2a427d851843" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>init</name></member>
+      <member refid="class_coefficient_ring_r_a36d1f7295817c94ceb7d7125fc810d2e_1a36d1f7295817c94ceb7d7125fc810d2e" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>init_set</name></member>
+      <member refid="class_coefficient_ring_r_aef37cea92f29b30b3ed678b65cc3db6a_1aef37cea92f29b30b3ed678b65cc3db6a" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>invert</name></member>
+      <member refid="class_coefficient_ring_r_afda9e33cbd9e04e46696f0e56cdc8a5a_1afda9e33cbd9e04e46696f0e56cdc8a5a" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>is_equal</name></member>
+      <member refid="class_coefficient_ring_r_a911e7beef46df8d976380af889b0e4dc_1a911e7beef46df8d976380af889b0e4dc" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>is_unit</name></member>
+      <member refid="class_coefficient_ring_r_ae816c227d149c2edc25e55847f3a57c3_1ae816c227d149c2edc25e55847f3a57c3" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>is_zero</name></member>
+      <member refid="class_coefficient_ring_r_afb17bcf04fc7d90c7226798b8ad443bf_1afb17bcf04fc7d90c7226798b8ad443bf" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>mult</name></member>
+      <member refid="class_coefficient_ring_r_aa585dca2d7be123a072e231e8c1452f0_1aa585dca2d7be123a072e231e8c1452f0" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>negate</name></member>
+      <member refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" prot="private" virt="non-virtual"><scope>CoefficientRingR</scope><name>R</name></member>
+      <member refid="class_coefficient_ring_r_a1f4407e4d69c728bd677194772f1e07a_1a1f4407e4d69c728bd677194772f1e07a" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>ring_type</name></member>
+      <member refid="class_coefficient_ring_r_ad39131a957167f406627feec7ce7cc5e_1ad39131a957167f406627feec7ce7cc5e" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>set</name></member>
+      <member refid="class_coefficient_ring_r_ad5e5ed790edaf40bc1c4a6acbd825c9a_1ad5e5ed790edaf40bc1c4a6acbd825c9a" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>set_from_long</name></member>
+      <member refid="class_coefficient_ring_r_a910f2ff7b991149489e9cea60e527563_1a910f2ff7b991149489e9cea60e527563" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>set_from_mpz</name></member>
+      <member refid="class_coefficient_ring_r_a7dde5c0614861b4c47baf0484a8322ca_1a7dde5c0614861b4c47baf0484a8322ca" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>set_zero</name></member>
+      <member refid="class_coefficient_ring_r_aa82da8d26da8b5baad1b352c5d1a367f_1aa82da8d26da8b5baad1b352c5d1a367f" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>subtract</name></member>
+      <member refid="class_coefficient_ring_r_a618250607f5beb401af79b2d0e1a778e_1a618250607f5beb401af79b2d0e1a778e" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>subtract_multiple</name></member>
+      <member refid="class_coefficient_ring_r_afaa4fe1095ab5c5e43a6f3a00329b6f9_1afaa4fe1095ab5c5e43a6f3a00329b6f9" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>swap</name></member>
+      <member refid="class_coefficient_ring_r_afaecd76a3211d309dd872fb9c7dd8cd2_1afaecd76a3211d309dd872fb9c7dd8cd2" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>text_out</name></member>
+      <member refid="class_coefficient_ring_r_a243c74a922e310c12a44c12455d2e59e_1a243c74a922e310c12a44c12455d2e59e" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>to_ring_elem</name></member>
+      <member refid="class_coefficient_ring_r_af1dc85cfb7a831bb231084e0ac6e9ac0_1af1dc85cfb7a831bb231084e0ac6e9ac0" prot="public" virt="non-virtual"><scope>CoefficientRingR</scope><name>VECTOR</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

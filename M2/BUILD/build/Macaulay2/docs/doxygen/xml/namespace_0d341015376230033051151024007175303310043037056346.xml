@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_0d341015376230033051151024007175303310043037056346" kind="namespace" language="C++">
+    <compoundname></compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/test/Scanner.cpp" line="10" column="1"/>
+  </compounddef>
+</doxygen>

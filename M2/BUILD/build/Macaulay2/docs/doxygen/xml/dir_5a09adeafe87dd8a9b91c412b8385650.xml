@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_5a09adeafe87dd8a9b91c412b8385650" kind="dir">
+    <compoundname>/home/ubuntu/M2-docs/M2/Macaulay2/e/NCResolutions</compoundname>
+    <innerfile refid="nc-res-computation_8cpp">nc-res-computation.cpp</innerfile>
+    <innerfile refid="nc-res-computation_8hpp">nc-res-computation.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/ubuntu/M2-docs/M2/Macaulay2/e/NCResolutions/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,473 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_k_d_tree_model" kind="class" language="C++" prot="public">
+    <compoundname>KDTreeModel</compoundname>
+    <includes refid="_k_d_tree_model_8h" local="no">KDTreeModel.h</includes>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>UseDivMask</declname>
+        <defname>UseDivMask</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>UseTreeDivMask</declname>
+        <defname>UseTreeDivMask</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>PackedTree</declname>
+        <defname>PackedTree</defname>
+      </param>
+      <param>
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <declname>LeafSize</declname>
+        <defname>LeafSize</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>AllowRemovals</declname>
+        <defname>AllowRemovals</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_k_d_tree_model_ae6e3239f5302c74e02facfa0a1305068_1ae6e3239f5302c74e02facfa0a1305068" prot="private" static="no">
+        <type><ref refid="class_k_d_tree_model_configuration" kindref="compound">KDTreeModelConfiguration</ref>&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;</type>
+        <definition>typedef KDTreeModelConfiguration&lt;UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals&gt; KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::C</definition>
+        <argsstring></argsstring>
+        <name>C</name>
+        <qualifiedname>KDTreeModel::C</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="102" column="6" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_k_d_tree_model_a5b410168ca65de0c3e999fc0ad527ffa_1a5b410168ca65de0c3e999fc0ad527ffa" prot="private" static="no">
+        <type><ref refid="classmathic_1_1_k_d_tree" kindref="compound">mathic::KDTree</ref>&lt; <ref refid="class_k_d_tree_model_ae6e3239f5302c74e02facfa0a1305068_1ae6e3239f5302c74e02facfa0a1305068" kindref="member">C</ref> &gt;</type>
+        <definition>typedef mathic::KDTree&lt;C&gt; KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::Finder</definition>
+        <argsstring></argsstring>
+        <name>Finder</name>
+        <qualifiedname>KDTreeModel::Finder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="103" column="26" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_k_d_tree_model_a15136456306b85fc1dd3c04577c0073c_1a15136456306b85fc1dd3c04577c0073c" prot="public" static="no">
+        <type><ref refid="classmathic_1_1_k_d_tree_a442886ec0d36fadc305867329a1ab59d_1a442886ec0d36fadc305867329a1ab59d" kindref="member">Finder::Monomial</ref></type>
+        <definition>typedef Finder::Monomial KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::Monomial</definition>
+        <argsstring></argsstring>
+        <name>Monomial</name>
+        <qualifiedname>KDTreeModel::Monomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="105" column="37" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_k_d_tree_model_abfb27066f8fbd307eea40afddb0ce0d4_1abfb27066f8fbd307eea40afddb0ce0d4" prot="public" static="no">
+        <type><ref refid="classmathic_1_1_k_d_tree_a95ffb11a0a7bbbd785e402cdf7bccef0_1a95ffb11a0a7bbbd785e402cdf7bccef0" kindref="member">Finder::Entry</ref></type>
+        <definition>typedef Finder::Entry KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::Entry</definition>
+        <argsstring></argsstring>
+        <name>Entry</name>
+        <qualifiedname>KDTreeModel::Entry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="106" column="34" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" prot="private" static="no" mutable="no">
+        <type><ref refid="class_k_d_tree_model_a5b410168ca65de0c3e999fc0ad527ffa_1a5b410168ca65de0c3e999fc0ad527ffa" kindref="member">Finder</ref></type>
+        <definition>Finder KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</definition>
+        <argsstring></argsstring>
+        <name>_finder</name>
+        <qualifiedname>KDTreeModel::_finder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="157" column="10" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="157" bodyend="-1"/>
+        <referencedby refid="class_k_d_tree_model_a1973403356f2275d61634673cd7ff9fd_1a1973403356f2275d61634673cd7ff9fd" compoundref="_k_d_tree_model_8h" startline="133" endline="135">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::findAllDivisors</referencedby>
+        <referencedby refid="class_k_d_tree_model_a96447cc6cbe4f4d244ea69c474fcd2c1_1a96447cc6cbe4f4d244ea69c474fcd2c1" compoundref="_k_d_tree_model_8h" startline="137" endline="139">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::findAllDivisors</referencedby>
+        <referencedby refid="class_k_d_tree_model_a096b4fed40996d8500a664588c4383ab_1a096b4fed40996d8500a664588c4383ab" compoundref="_k_d_tree_model_8h" startline="124" endline="126">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::findDivisor</referencedby>
+        <referencedby refid="class_k_d_tree_model_ae9728eb59efe2b66e20ef00ab44abd3e_1ae9728eb59efe2b66e20ef00ab44abd3e" compoundref="_k_d_tree_model_8h" startline="127" endline="129">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::findDivisor</referencedby>
+        <referencedby refid="class_k_d_tree_model_a07fd91422b0d719ba88330983eeedc59_1a07fd91422b0d719ba88330983eeedc59" compoundref="_k_d_tree_model_8h" startline="141" endline="143">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::forAll</referencedby>
+        <referencedby refid="class_k_d_tree_model_a64eaacb32a45b2136f9764797c221031_1a64eaacb32a45b2136f9764797c221031" compoundref="_k_d_tree_model_8h" startline="145" endline="147">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::forAll</referencedby>
+        <referencedby refid="class_k_d_tree_model_a2e8c6c46d61978b5c4e527c90d575f83_1a2e8c6c46d61978b5c4e527c90d575f83" compoundref="_k_d_tree_model_8h" startline="150" endline="152">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::getExpQueryCount</referencedby>
+        <referencedby refid="class_k_d_tree_model_a09c94c1a84f1674ac86b2cf7253f5367_1a09c94c1a84f1674ac86b2cf7253f5367" compoundref="_k_d_tree_model_8h" startline="188" endline="191">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::getName</referencedby>
+        <referencedby refid="class_k_d_tree_model_a5979238181310860dc6f50b74b8b6b44_1a5979238181310860dc6f50b74b8b6b44" compoundref="_k_d_tree_model_8h" startline="162" endline="171">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::insert</referencedby>
+        <referencedby refid="class_k_d_tree_model_a02910010d6f4dfff80ecdff55999ee90_1a02910010d6f4dfff80ecdff55999ee90" compoundref="_k_d_tree_model_8h" startline="176" endline="185">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::insert</referencedby>
+        <referencedby refid="class_k_d_tree_model_a6f17748d6348551fa1260b9aadf992b3_1a6f17748d6348551fa1260b9aadf992b3" compoundref="_k_d_tree_model_8h" startline="108" endline="117">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::KDTreeModel</referencedby>
+        <referencedby refid="class_k_d_tree_model_a9a5d78ff4531f98f14ccfe6625455438_1a9a5d78ff4531f98f14ccfe6625455438" compoundref="_k_d_tree_model_8h" startline="148" endline="148">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::size</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_k_d_tree_model_aa595619561e9b577014240c7d433af28_1aa595619561e9b577014240c7d433af28" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_minimizeOnInsert</definition>
+        <argsstring></argsstring>
+        <name>_minimizeOnInsert</name>
+        <qualifiedname>KDTreeModel::_minimizeOnInsert</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="158" column="8" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="158" bodyend="-1"/>
+        <referencedby refid="class_k_d_tree_model_a09c94c1a84f1674ac86b2cf7253f5367_1a09c94c1a84f1674ac86b2cf7253f5367" compoundref="_k_d_tree_model_8h" startline="188" endline="191">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::getName</referencedby>
+        <referencedby refid="class_k_d_tree_model_a5979238181310860dc6f50b74b8b6b44_1a5979238181310860dc6f50b74b8b6b44" compoundref="_k_d_tree_model_8h" startline="162" endline="171">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::insert</referencedby>
+        <referencedby refid="class_k_d_tree_model_a02910010d6f4dfff80ecdff55999ee90_1a02910010d6f4dfff80ecdff55999ee90" compoundref="_k_d_tree_model_8h" startline="176" endline="185">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::insert</referencedby>
+        <referencedby refid="class_k_d_tree_model_a6f17748d6348551fa1260b9aadf992b3_1a6f17748d6348551fa1260b9aadf992b3" compoundref="_k_d_tree_model_8h" startline="108" endline="117">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::KDTreeModel</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_k_d_tree_model_a6f17748d6348551fa1260b9aadf992b3_1a6f17748d6348551fa1260b9aadf992b3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::KDTreeModel</definition>
+        <argsstring>(size_t varCount, bool minimizeOnInsert, bool sortOnInsert, bool useDivisorCache, double rebuildRatio, size_t minRebuild)</argsstring>
+        <name>KDTreeModel</name>
+        <qualifiedname>KDTreeModel::KDTreeModel</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>varCount</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>minimizeOnInsert</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>sortOnInsert</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>useDivisorCache</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>rebuildRatio</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>minRebuild</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="108" column="2" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="108" bodyend="117"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+        <references refid="class_k_d_tree_model_aa595619561e9b577014240c7d433af28_1aa595619561e9b577014240c7d433af28" compoundref="_k_d_tree_model_8h" startline="158">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_minimizeOnInsert</references>
+        <references refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" compoundref="mathic_2src_2divsim_2stdinc_8h" startline="53">ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a5979238181310860dc6f50b74b8b6b44_1a5979238181310860dc6f50b74b8b6b44" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void KDTreeModel&lt; UDM, UTDM, PT, LS, AR &gt;::insert</definition>
+        <argsstring>(const Entry &amp;entry)</argsstring>
+        <name>insert</name>
+        <qualifiedname>KDTreeModel::insert</qualifiedname>
+        <param>
+          <type>const <ref refid="class_k_d_tree_model_abfb27066f8fbd307eea40afddb0ce0d4_1abfb27066f8fbd307eea40afddb0ce0d4" kindref="member">Entry</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="120" column="8" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="162" bodyend="171"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+        <references refid="class_k_d_tree_model_aa595619561e9b577014240c7d433af28_1aa595619561e9b577014240c7d433af28" compoundref="_k_d_tree_model_8h" startline="158">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_minimizeOnInsert</references>
+        <references refid="franzi-gb_8cpp_a4830bc0186c91553f896bf52fb2e9d2c_1a4830bc0186c91553f896bf52fb2e9d2c" compoundref="franzi-gb_8cpp" startline="291" endline="310">findDivisor</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a02910010d6f4dfff80ecdff55999ee90_1a02910010d6f4dfff80ecdff55999ee90" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class MultipleOutput</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void KDTreeModel&lt; UDM, UTDM, PT, LS, AR &gt;::insert</definition>
+        <argsstring>(const Entry &amp;entry, MultipleOutput &amp;removed)</argsstring>
+        <name>insert</name>
+        <qualifiedname>KDTreeModel::insert</qualifiedname>
+        <param>
+          <type>const <ref refid="class_k_d_tree_model_abfb27066f8fbd307eea40afddb0ce0d4_1abfb27066f8fbd307eea40afddb0ce0d4" kindref="member">Entry</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <param>
+          <type>MultipleOutput &amp;</type>
+          <declname>removed</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="122" column="8" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="176" bodyend="185"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+        <references refid="class_k_d_tree_model_aa595619561e9b577014240c7d433af28_1aa595619561e9b577014240c7d433af28" compoundref="_k_d_tree_model_8h" startline="158">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_minimizeOnInsert</references>
+        <references refid="franzi-gb_8cpp_a4830bc0186c91553f896bf52fb2e9d2c_1a4830bc0186c91553f896bf52fb2e9d2c" compoundref="franzi-gb_8cpp" startline="291" endline="310">findDivisor</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a096b4fed40996d8500a664588c4383ab_1a096b4fed40996d8500a664588c4383ab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_k_d_tree_model_abfb27066f8fbd307eea40afddb0ce0d4_1abfb27066f8fbd307eea40afddb0ce0d4" kindref="member">Entry</ref> *</type>
+        <definition>Entry * KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::findDivisor</definition>
+        <argsstring>(const Monomial &amp;monomial)</argsstring>
+        <name>findDivisor</name>
+        <qualifiedname>KDTreeModel::findDivisor</qualifiedname>
+        <param>
+          <type>const <ref refid="class_k_d_tree_model_a15136456306b85fc1dd3c04577c0073c_1a15136456306b85fc1dd3c04577c0073c" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>monomial</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="124" column="9" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="124" bodyend="126"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_ae9728eb59efe2b66e20ef00ab44abd3e_1ae9728eb59efe2b66e20ef00ab44abd3e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_k_d_tree_model_abfb27066f8fbd307eea40afddb0ce0d4_1abfb27066f8fbd307eea40afddb0ce0d4" kindref="member">Entry</ref> *</type>
+        <definition>const Entry * KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::findDivisor</definition>
+        <argsstring>(const Monomial &amp;monomial) const</argsstring>
+        <name>findDivisor</name>
+        <qualifiedname>KDTreeModel::findDivisor</qualifiedname>
+        <param>
+          <type>const <ref refid="class_k_d_tree_model_a15136456306b85fc1dd3c04577c0073c_1a15136456306b85fc1dd3c04577c0073c" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>monomial</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="127" column="15" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="127" bodyend="129"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a09c94c1a84f1674ac86b2cf7253f5367_1a09c94c1a84f1674ac86b2cf7253f5367" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string KDTreeModel&lt; UDM, UTDM, PT, LS, AR &gt;::getName</definition>
+        <argsstring>() const</argsstring>
+        <name>getName</name>
+        <qualifiedname>KDTreeModel::getName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="130" column="15" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="188" bodyend="191"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+        <references refid="class_k_d_tree_model_aa595619561e9b577014240c7d433af28_1aa595619561e9b577014240c7d433af28" compoundref="_k_d_tree_model_8h" startline="158">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_minimizeOnInsert</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a1973403356f2275d61634673cd7ff9fd_1a1973403356f2275d61634673cd7ff9fd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" kindref="member">DO</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::findAllDivisors</definition>
+        <argsstring>(const Monomial &amp;monomial, DO &amp;out)</argsstring>
+        <name>findAllDivisors</name>
+        <qualifiedname>KDTreeModel::findAllDivisors</qualifiedname>
+        <param>
+          <type>const <ref refid="class_k_d_tree_model_a15136456306b85fc1dd3c04577c0073c_1a15136456306b85fc1dd3c04577c0073c" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>monomial</declname>
+        </param>
+        <param>
+          <type><ref refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" kindref="member">DO</ref> &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="133" column="8" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="133" bodyend="135"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+        <references refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" compoundref="res-a0_8cpp" startline="256" endline="264">DO</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a96447cc6cbe4f4d244ea69c474fcd2c1_1a96447cc6cbe4f4d244ea69c474fcd2c1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" kindref="member">DO</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::findAllDivisors</definition>
+        <argsstring>(const Monomial &amp;monomial, DO &amp;out) const</argsstring>
+        <name>findAllDivisors</name>
+        <qualifiedname>KDTreeModel::findAllDivisors</qualifiedname>
+        <param>
+          <type>const <ref refid="class_k_d_tree_model_a15136456306b85fc1dd3c04577c0073c_1a15136456306b85fc1dd3c04577c0073c" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>monomial</declname>
+        </param>
+        <param>
+          <type><ref refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" kindref="member">DO</ref> &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="137" column="8" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="137" bodyend="139"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+        <references refid="res-a0_8cpp_a22b3b0829c405b6fd63eaebeef4c5622_1a22b3b0829c405b6fd63eaebeef4c5622" compoundref="res-a0_8cpp" startline="256" endline="264">DO</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a07fd91422b0d719ba88330983eeedc59_1a07fd91422b0d719ba88330983eeedc59" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EO</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::forAll</definition>
+        <argsstring>(EO &amp;out)</argsstring>
+        <name>forAll</name>
+        <qualifiedname>KDTreeModel::forAll</qualifiedname>
+        <param>
+          <type>EO &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="141" column="8" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="141" bodyend="143"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a64eaacb32a45b2136f9764797c221031_1a64eaacb32a45b2136f9764797c221031" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EO</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::forAll</definition>
+        <argsstring>(EO &amp;out) const</argsstring>
+        <name>forAll</name>
+        <qualifiedname>KDTreeModel::forAll</qualifiedname>
+        <param>
+          <type>EO &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="145" column="8" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="145" bodyend="147"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a9a5d78ff4531f98f14ccfe6625455438_1a9a5d78ff4531f98f14ccfe6625455438" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>KDTreeModel::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="148" column="10" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="148" bodyend="148"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+      </memberdef>
+      <memberdef kind="function" id="class_k_d_tree_model_a2e8c6c46d61978b5c4e527c90d575f83_1a2e8c6c46d61978b5c4e527c90d575f83" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::getExpQueryCount</definition>
+        <argsstring>() const</argsstring>
+        <name>getExpQueryCount</name>
+        <qualifiedname>KDTreeModel::getExpQueryCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="150" column="22" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="150" bodyend="152"/>
+        <references refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" compoundref="_k_d_tree_model_8h" startline="157">KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;::_finder</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>An instantiation of the capabilities of KDTree. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>KDTreeModel&lt; UseDivMask, UseTreeDivMask, PackedTree, LeafSize, AllowRemovals &gt;</label>
+        <link refid="class_k_d_tree_model"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_finder</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_minimizeOnInsert</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="2">
+        <label>KDTree&lt; C &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/divsim/KDTreeModel.h" line="99" column="1" bodyfile="submodules/mathic/src/divsim/KDTreeModel.h" bodystart="99" bodyend="159"/>
+    <listofallmembers>
+      <member refid="class_k_d_tree_model_ab6e0492dcaca8add2e4490e0a70bc316_1ab6e0492dcaca8add2e4490e0a70bc316" prot="private" virt="non-virtual"><scope>KDTreeModel</scope><name>_finder</name></member>
+      <member refid="class_k_d_tree_model_aa595619561e9b577014240c7d433af28_1aa595619561e9b577014240c7d433af28" prot="private" virt="non-virtual"><scope>KDTreeModel</scope><name>_minimizeOnInsert</name></member>
+      <member refid="class_k_d_tree_model_ae6e3239f5302c74e02facfa0a1305068_1ae6e3239f5302c74e02facfa0a1305068" prot="private" virt="non-virtual"><scope>KDTreeModel</scope><name>C</name></member>
+      <member refid="class_k_d_tree_model_abfb27066f8fbd307eea40afddb0ce0d4_1abfb27066f8fbd307eea40afddb0ce0d4" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>Entry</name></member>
+      <member refid="class_k_d_tree_model_a1973403356f2275d61634673cd7ff9fd_1a1973403356f2275d61634673cd7ff9fd" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>findAllDivisors</name></member>
+      <member refid="class_k_d_tree_model_a96447cc6cbe4f4d244ea69c474fcd2c1_1a96447cc6cbe4f4d244ea69c474fcd2c1" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>findAllDivisors</name></member>
+      <member refid="class_k_d_tree_model_a096b4fed40996d8500a664588c4383ab_1a096b4fed40996d8500a664588c4383ab" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>findDivisor</name></member>
+      <member refid="class_k_d_tree_model_ae9728eb59efe2b66e20ef00ab44abd3e_1ae9728eb59efe2b66e20ef00ab44abd3e" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>findDivisor</name></member>
+      <member refid="class_k_d_tree_model_a5b410168ca65de0c3e999fc0ad527ffa_1a5b410168ca65de0c3e999fc0ad527ffa" prot="private" virt="non-virtual"><scope>KDTreeModel</scope><name>Finder</name></member>
+      <member refid="class_k_d_tree_model_a07fd91422b0d719ba88330983eeedc59_1a07fd91422b0d719ba88330983eeedc59" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>forAll</name></member>
+      <member refid="class_k_d_tree_model_a64eaacb32a45b2136f9764797c221031_1a64eaacb32a45b2136f9764797c221031" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>forAll</name></member>
+      <member refid="class_k_d_tree_model_a2e8c6c46d61978b5c4e527c90d575f83_1a2e8c6c46d61978b5c4e527c90d575f83" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>getExpQueryCount</name></member>
+      <member refid="class_k_d_tree_model_a09c94c1a84f1674ac86b2cf7253f5367_1a09c94c1a84f1674ac86b2cf7253f5367" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>getName</name></member>
+      <member refid="class_k_d_tree_model_a5979238181310860dc6f50b74b8b6b44_1a5979238181310860dc6f50b74b8b6b44" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>insert</name></member>
+      <member refid="class_k_d_tree_model_a02910010d6f4dfff80ecdff55999ee90_1a02910010d6f4dfff80ecdff55999ee90" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>insert</name></member>
+      <member refid="class_k_d_tree_model_a6f17748d6348551fa1260b9aadf992b3_1a6f17748d6348551fa1260b9aadf992b3" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>KDTreeModel</name></member>
+      <member refid="class_k_d_tree_model_a15136456306b85fc1dd3c04577c0073c_1a15136456306b85fc1dd3c04577c0073c" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>Monomial</name></member>
+      <member refid="class_k_d_tree_model_a9a5d78ff4531f98f14ccfe6625455438_1a9a5d78ff4531f98f14ccfe6625455438" prot="public" virt="non-virtual"><scope>KDTreeModel</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

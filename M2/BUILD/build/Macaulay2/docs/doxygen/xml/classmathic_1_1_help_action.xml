@@ -1,0 +1,363 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_help_action" kind="class" language="C++" prot="public">
+    <compoundname>mathic::HelpAction</compoundname>
+    <basecompoundref refid="classmathic_1_1_action" prot="public" virt="non-virtual">mathic::Action</basecompoundref>
+    <derivedcompoundref refid="class_help_action" prot="public" virt="non-virtual">HelpAction</derivedcompoundref>
+    <includes refid="_help_action_8h" local="no">HelpAction.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_help_action_ab13c4433f0174eedd6cfeb08772915a6_1ab13c4433f0174eedd6cfeb08772915a6" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_cli_parser" kindref="compound">CliParser</ref> *</type>
+        <definition>CliParser* mathic::HelpAction::_parser</definition>
+        <argsstring></argsstring>
+        <name>_parser</name>
+        <qualifiedname>mathic::HelpAction::_parser</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="32" column="15" bodyfile="submodules/mathic/src/mathic/HelpAction.h" bodystart="32" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_help_action_aa8661c945a05b4528edace0fa6cd8660_1aa8661c945a05b4528edace0fa6cd8660" compoundref="src_2mathic_2_help_action_8cpp" startline="30" endline="39">directOptions</referencedby>
+        <referencedby refid="classmathic_1_1_help_action_ad1d32eed6ea295d17ac62fa584b35743_1ad1d32eed6ea295d17ac62fa584b35743" compoundref="src_2mathic_2_help_action_8cpp" startline="81" endline="106">performAction</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_help_action_a53741f7678ec3802dc1a5ffa919fcf7f_1a53741f7678ec3802dc1a5ffa919fcf7f" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string mathic::HelpAction::_topic</definition>
+        <argsstring></argsstring>
+        <name>_topic</name>
+        <qualifiedname>mathic::HelpAction::_topic</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="33" column="17" bodyfile="submodules/mathic/src/mathic/HelpAction.h" bodystart="33" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_help_action_aa8661c945a05b4528edace0fa6cd8660_1aa8661c945a05b4528edace0fa6cd8660" compoundref="src_2mathic_2_help_action_8cpp" startline="30" endline="39">directOptions</referencedby>
+        <referencedby refid="classmathic_1_1_help_action_ad1d32eed6ea295d17ac62fa584b35743_1ad1d32eed6ea295d17ac62fa584b35743" compoundref="src_2mathic_2_help_action_8cpp" startline="81" endline="106">performAction</referencedby>
+        <referencedby refid="classmathic_1_1_help_action_a556e926e5493b60917297d3f69948920_1a556e926e5493b60917297d3f69948920" compoundref="src_2mathic_2_help_action_8cpp" startline="112" endline="114">topic</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_help_action_a459652f1d572178e5c441f13f8f9ecf1_1a459652f1d572178e5c441f13f8f9ecf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HelpAction::HelpAction</definition>
+        <argsstring>()</argsstring>
+        <name>HelpAction</name>
+        <qualifiedname>mathic::HelpAction::HelpAction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="11" column="5" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="13" bodyend="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_help_action_aa8661c945a05b4528edace0fa6cd8660_1aa8661c945a05b4528edace0fa6cd8660" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void HelpAction::directOptions</definition>
+        <argsstring>(std::vector&lt; std::string &gt; tokens, CliParser &amp;parser)</argsstring>
+        <name>directOptions</name>
+        <qualifiedname>mathic::HelpAction::directOptions</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_aa7da7f5378296c7de9dcc6ec051e9b85_1aa7da7f5378296c7de9dcc6ec051e9b85">directOptions</reimplements>
+        <param>
+          <type>std::vector&lt; std::string &gt;</type>
+          <declname>tokens</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_cli_parser" kindref="compound">CliParser</ref> &amp;</type>
+          <declname>parser</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="13" column="18" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="30" bodyend="39"/>
+        <references refid="classmathic_1_1_help_action_ab13c4433f0174eedd6cfeb08772915a6_1ab13c4433f0174eedd6cfeb08772915a6" compoundref="_help_action_8h" startline="32">_parser</references>
+        <references refid="classmathic_1_1_help_action_a53741f7678ec3802dc1a5ffa919fcf7f_1a53741f7678ec3802dc1a5ffa919fcf7f" compoundref="_help_action_8h" startline="33">_topic</references>
+        <references refid="namespacemathic_aba2df5396ea54101a096481c819534dc_1aba2df5396ea54101a096481c819534dc" compoundref="error_8cpp" startline="5" endline="7">mathic::reportError</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_help_action_ad1d32eed6ea295d17ac62fa584b35743_1ad1d32eed6ea295d17ac62fa584b35743" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void HelpAction::performAction</definition>
+        <argsstring>()</argsstring>
+        <name>performAction</name>
+        <qualifiedname>mathic::HelpAction::performAction</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a6e987a99ab445d6abdaa8709a659c37a_1a6e987a99ab445d6abdaa8709a659c37a">performAction</reimplements>
+        <reimplementedby refid="class_help_action_aa60a78713473d6c92a8dc4d390fc8521_1aa60a78713473d6c92a8dc4d390fc8521">performAction</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="15" column="18" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="81" bodyend="106"/>
+        <references refid="classmathic_1_1_help_action_ab13c4433f0174eedd6cfeb08772915a6_1ab13c4433f0174eedd6cfeb08772915a6" compoundref="_help_action_8h" startline="32">_parser</references>
+        <references refid="classmathic_1_1_help_action_a53741f7678ec3802dc1a5ffa919fcf7f_1a53741f7678ec3802dc1a5ffa919fcf7f" compoundref="_help_action_8h" startline="33">_topic</references>
+        <references refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" compoundref="_column_printer_8cpp" startline="32" endline="43">mathic::ColumnPrinter::addColumn</references>
+        <references refid="namespacemathic_aa0a90bd228458c0cbad2e032bfe60f72_1aa0a90bd228458c0cbad2e032bfe60f72" compoundref="display_8cpp" startline="115" endline="117">mathic::display</references>
+        <references refid="classmathic_1_1_help_action_ad106dceb559d984a831569eac67f640a_1ad106dceb559d984a831569eac67f640a" compoundref="src_2mathic_2_help_action_8cpp" startline="54" endline="79">displayActionHelp</references>
+        <references refid="classmathic_1_1_column_printer_a8274b1a0e3b12ea1a6cf4f16a5c123da_1a8274b1a0e3b12ea1a6cf4f16a5c123da" compoundref="_column_printer_8cpp" startline="65" endline="158">mathic::ColumnPrinter::print</references>
+        <referencedby refid="class_help_action_aa60a78713473d6c92a8dc4d390fc8521_1aa60a78713473d6c92a8dc4d390fc8521" compoundref="b_2src_2cli_2_help_action_8cpp" startline="12" endline="83">HelpAction::performAction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_help_action_a67e0c19659248437e2619d09d6c478ea_1a67e0c19659248437e2619d09d6c478ea" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * HelpAction::name</definition>
+        <argsstring>() const</argsstring>
+        <name>name</name>
+        <qualifiedname>mathic::HelpAction::name</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a33d9f68f939a171145e49b0839c6ec56_1a33d9f68f939a171145e49b0839c6ec56">name</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="17" column="24" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="15" bodyend="17"/>
+        <references refid="classmathic_1_1_help_action_aa388d9953a7b8a88fd7bb852568e8d72_1aa388d9953a7b8a88fd7bb852568e8d72" compoundref="src_2mathic_2_help_action_8cpp" startline="108" endline="110">staticName</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_help_action_a8263b39c2357db6b405b4de0bc4a6ce1_1a8263b39c2357db6b405b4de0bc4a6ce1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * HelpAction::description</definition>
+        <argsstring>() const</argsstring>
+        <name>description</name>
+        <qualifiedname>mathic::HelpAction::description</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a9b68c910283cdf1c6f08ca0b85f3d001_1a9b68c910283cdf1c6f08ca0b85f3d001">description</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="18" column="24" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="19" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_help_action_ade23b3566f223d9bb4ab114e2b69836a_1ade23b3566f223d9bb4ab114e2b69836a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * HelpAction::shortDescription</definition>
+        <argsstring>() const</argsstring>
+        <name>shortDescription</name>
+        <qualifiedname>mathic::HelpAction::shortDescription</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a560176988354a3e8e89d0bed5e931d7b_1a560176988354a3e8e89d0bed5e931d7b">shortDescription</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="19" column="24" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="26" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_help_action_a8e7019bb31b610c96891495ac72ff1af_1a8e7019bb31b610c96891495ac72ff1af" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void HelpAction::pushBackParameters</definition>
+        <argsstring>(std::vector&lt; CliParameter * &gt; &amp;parameters)</argsstring>
+        <name>pushBackParameters</name>
+        <qualifiedname>mathic::HelpAction::pushBackParameters</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a2a55e9dd992666f1d3e111536866222f_1a2a55e9dd992666f1d3e111536866222f">pushBackParameters</reimplements>
+        <param>
+          <type>std::vector&lt; <ref refid="classmathic_1_1_cli_parameter" kindref="compound">CliParameter</ref> * &gt; &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="20" column="18" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="41" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_help_action_a4bf158fe979e168553cd94a9ab8eb606_1a4bf158fe979e168553cd94a9ab8eb606" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool mathic::HelpAction::isHelpAction</definition>
+        <argsstring>() const</argsstring>
+        <name>isHelpAction</name>
+        <qualifiedname>mathic::HelpAction::isHelpAction</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_afb19093560a9e774ec3451cef12e68a6_1afb19093560a9e774ec3451cef12e68a6">isHelpAction</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="22" column="18" bodyfile="submodules/mathic/src/mathic/HelpAction.h" bodystart="22" bodyend="22"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmathic_1_1_help_action_aa388d9953a7b8a88fd7bb852568e8d72_1aa388d9953a7b8a88fd7bb852568e8d72" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * HelpAction::staticName</definition>
+        <argsstring>()</argsstring>
+        <name>staticName</name>
+        <qualifiedname>mathic::HelpAction::staticName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="24" column="23" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="108" bodyend="110"/>
+        <referencedby refid="classmathic_1_1_help_action_a67e0c19659248437e2619d09d6c478ea_1a67e0c19659248437e2619d09d6c478ea" compoundref="src_2mathic_2_help_action_8cpp" startline="15" endline="17">name</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classmathic_1_1_help_action_a556e926e5493b60917297d3f69948920_1a556e926e5493b60917297d3f69948920" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; HelpAction::topic</definition>
+        <argsstring>() const</argsstring>
+        <name>topic</name>
+        <qualifiedname>mathic::HelpAction::topic</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="27" column="23" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="112" bodyend="114"/>
+        <references refid="classmathic_1_1_help_action_a53741f7678ec3802dc1a5ffa919fcf7f_1a53741f7678ec3802dc1a5ffa919fcf7f" compoundref="_help_action_8h" startline="33">_topic</references>
+        <referencedby refid="class_help_action_aa60a78713473d6c92a8dc4d390fc8521_1aa60a78713473d6c92a8dc4d390fc8521" compoundref="b_2src_2cli_2_help_action_8cpp" startline="12" endline="83">HelpAction::performAction</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmathic_1_1_help_action_ad106dceb559d984a831569eac67f640a_1ad106dceb559d984a831569eac67f640a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void HelpAction::displayActionHelp</definition>
+        <argsstring>(Action &amp;action)</argsstring>
+        <name>displayActionHelp</name>
+        <qualifiedname>mathic::HelpAction::displayActionHelp</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_action" kindref="compound">Action</ref> &amp;</type>
+          <declname>action</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HelpAction.h" line="30" column="10" bodyfile="submodules/mathic/src/mathic/HelpAction.cpp" bodystart="54" bodyend="79"/>
+        <references refid="classmathic_1_1_action_a9b68c910283cdf1c6f08ca0b85f3d001_1a9b68c910283cdf1c6f08ca0b85f3d001">mathic::Action::description</references>
+        <references refid="namespacemathic_aa0a90bd228458c0cbad2e032bfe60f72_1aa0a90bd228458c0cbad2e032bfe60f72" compoundref="display_8cpp" startline="115" endline="117">mathic::display</references>
+        <references refid="classmathic_1_1_action_a33d9f68f939a171145e49b0839c6ec56_1a33d9f68f939a171145e49b0839c6ec56">mathic::Action::name</references>
+        <references refid="classmathic_1_1_action_a2a55e9dd992666f1d3e111536866222f_1a2a55e9dd992666f1d3e111536866222f">mathic::Action::pushBackParameters</references>
+        <referencedby refid="classmathic_1_1_help_action_ad1d32eed6ea295d17ac62fa584b35743_1ad1d32eed6ea295d17ac62fa584b35743" compoundref="src_2mathic_2_help_action_8cpp" startline="81" endline="106">performAction</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>HelpAction</label>
+        <link refid="class_help_action"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mathic::Action</label>
+        <link refid="classmathic_1_1_action"/>
+      </node>
+      <node id="1">
+        <label>mathic::HelpAction</label>
+        <link refid="classmathic_1_1_help_action"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="7">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>mathic::Action</label>
+        <link refid="classmathic_1_1_action"/>
+      </node>
+      <node id="3">
+        <label>mathic::CliParser</label>
+        <link refid="classmathic_1_1_cli_parser"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_actions</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_helpPostMessage</edgelabel>
+          <edgelabel>_helpPreMessage</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::HelpAction</label>
+        <link refid="classmathic_1_1_help_action"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_parser</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_topic</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>mathic::NameFactory&lt; AbstractProduct &gt;</label>
+        <link refid="classmathic_1_1_name_factory"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_pairs</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_abstractName</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mathic::NameFactory&lt; mathic::Action &gt;</label>
+        <link refid="classmathic_1_1_name_factory"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_pairs</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_abstractName</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; mathic::Action &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="8">
+        <label>std::string</label>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; Pair &gt;</label>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; Pair &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/HelpAction.h" line="9" column="3" bodyfile="submodules/mathic/src/mathic/HelpAction.h" bodystart="9" bodyend="34"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_help_action_ab13c4433f0174eedd6cfeb08772915a6_1ab13c4433f0174eedd6cfeb08772915a6" prot="private" virt="non-virtual"><scope>mathic::HelpAction</scope><name>_parser</name></member>
+      <member refid="classmathic_1_1_help_action_a53741f7678ec3802dc1a5ffa919fcf7f_1a53741f7678ec3802dc1a5ffa919fcf7f" prot="private" virt="non-virtual"><scope>mathic::HelpAction</scope><name>_topic</name></member>
+      <member refid="classmathic_1_1_help_action_a8263b39c2357db6b405b4de0bc4a6ce1_1a8263b39c2357db6b405b4de0bc4a6ce1" prot="public" virt="virtual"><scope>mathic::HelpAction</scope><name>description</name></member>
+      <member refid="classmathic_1_1_help_action_aa8661c945a05b4528edace0fa6cd8660_1aa8661c945a05b4528edace0fa6cd8660" prot="public" virt="virtual"><scope>mathic::HelpAction</scope><name>directOptions</name></member>
+      <member refid="classmathic_1_1_help_action_ad106dceb559d984a831569eac67f640a_1ad106dceb559d984a831569eac67f640a" prot="private" virt="non-virtual"><scope>mathic::HelpAction</scope><name>displayActionHelp</name></member>
+      <member refid="classmathic_1_1_help_action_a459652f1d572178e5c441f13f8f9ecf1_1a459652f1d572178e5c441f13f8f9ecf1" prot="public" virt="non-virtual"><scope>mathic::HelpAction</scope><name>HelpAction</name></member>
+      <member refid="classmathic_1_1_help_action_a4bf158fe979e168553cd94a9ab8eb606_1a4bf158fe979e168553cd94a9ab8eb606" prot="public" virt="virtual"><scope>mathic::HelpAction</scope><name>isHelpAction</name></member>
+      <member refid="classmathic_1_1_help_action_a67e0c19659248437e2619d09d6c478ea_1a67e0c19659248437e2619d09d6c478ea" prot="public" virt="virtual"><scope>mathic::HelpAction</scope><name>name</name></member>
+      <member refid="classmathic_1_1_help_action_ad1d32eed6ea295d17ac62fa584b35743_1ad1d32eed6ea295d17ac62fa584b35743" prot="public" virt="virtual"><scope>mathic::HelpAction</scope><name>performAction</name></member>
+      <member refid="classmathic_1_1_help_action_a8e7019bb31b610c96891495ac72ff1af_1a8e7019bb31b610c96891495ac72ff1af" prot="public" virt="virtual"><scope>mathic::HelpAction</scope><name>pushBackParameters</name></member>
+      <member refid="classmathic_1_1_help_action_ade23b3566f223d9bb4ab114e2b69836a_1ade23b3566f223d9bb4ab114e2b69836a" prot="public" virt="virtual"><scope>mathic::HelpAction</scope><name>shortDescription</name></member>
+      <member refid="classmathic_1_1_help_action_aa388d9953a7b8a88fd7bb852568e8d72_1aa388d9953a7b8a88fd7bb852568e8d72" prot="public" virt="non-virtual"><scope>mathic::HelpAction</scope><name>staticName</name></member>
+      <member refid="classmathic_1_1_help_action_a556e926e5493b60917297d3f69948920_1a556e926e5493b60917297d3f69948920" prot="protected" virt="non-virtual"><scope>mathic::HelpAction</scope><name>topic</name></member>
+      <member refid="classmathic_1_1_action_a1df019d99d092e2ca328a4ff65c71c0b_1a1df019d99d092e2ca328a4ff65c71c0b" prot="public" virt="virtual"><scope>mathic::HelpAction</scope><name>~Action</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

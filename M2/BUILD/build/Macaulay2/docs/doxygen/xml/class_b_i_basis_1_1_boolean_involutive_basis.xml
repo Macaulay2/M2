@@ -1,0 +1,1273 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_b_i_basis_1_1_boolean_involutive_basis" kind="class" language="C++" prot="public">
+    <compoundname>BIBasis::BooleanInvolutiveBasis</compoundname>
+    <includes refid="involutive_8hpp" local="no">involutive.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MonomType</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_b_i_basis_1_1_boolean_involutive_basis_a2699399d6811282ef4b261b37131ea03_1a2699399d6811282ef4b261b37131ea03" prot="private" static="no" mutable="no">
+        <type>std::list&lt; <ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; * &gt;</type>
+        <definition>std::list&lt;Polynom&lt;MonomType&gt;*&gt; BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::GBasis</definition>
+        <argsstring></argsstring>
+        <name>GBasis</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::GBasis</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="59" column="19" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a039ae74301e69625de286641b152eb77_1a039ae74301e69625de286641b152eb77" compoundref="involutive_8hpp" startline="90" endline="115">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::BooleanInvolutiveBasis</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_ab4a384aed568a9e7628f8f9be5dc013e_1ab4a384aed568a9e7628f8f9be5dc013e" compoundref="involutive_8hpp" startline="402" endline="421">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Construct</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_afb431a99717ccba3eb9219fd8095dd3d_1afb431a99717ccba3eb9219fd8095dd3d" compoundref="involutive_8hpp" startline="135" endline="138">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Length</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_abf4b594758b610880aaec33904845d4d_1abf4b594758b610880aaec33904845d4d" compoundref="involutive_8hpp" startline="124" endline="132">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::operator[]</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_af3e66a95feffdff58c6c96af6d37c57d_1af3e66a95feffdff58c6c96af6d37c57d" compoundref="involutive_8hpp" startline="343" endline="391">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ReduceSet</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_aa363e6a444468d147b17af48dc42f884_1aa363e6a444468d147b17af48dc42f884" compoundref="involutive_8hpp" startline="394" endline="399">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reset</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a489d0fe4083f14ddd090e1ca4429cdc8_1a489d0fe4083f14ddd090e1ca4429cdc8" compoundref="involutive_8hpp" startline="141" endline="184">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ToMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_b_i_basis_1_1_boolean_involutive_basis_a293abdd8b8233275e5ee33ecb52641fb_1a293abdd8b8233275e5ee33ecb52641fb" prot="private" static="no" mutable="no">
+        <type><ref refid="class_b_i_basis_1_1_t_set" kindref="compound">TSet</ref>&lt; MonomType &gt;</type>
+        <definition>TSet&lt;MonomType&gt; BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::IntermediateBasis</definition>
+        <argsstring></argsstring>
+        <name>IntermediateBasis</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::IntermediateBasis</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="60" column="14" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a039ae74301e69625de286641b152eb77_1a039ae74301e69625de286641b152eb77" compoundref="involutive_8hpp" startline="90" endline="115">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::BooleanInvolutiveBasis</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_ab4a384aed568a9e7628f8f9be5dc013e_1ab4a384aed568a9e7628f8f9be5dc013e" compoundref="involutive_8hpp" startline="402" endline="421">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Construct</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a6c87af65a48c3df1f215c7291007744f_1a6c87af65a48c3df1f215c7291007744f" compoundref="involutive_8hpp" startline="424" endline="484">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ConstructInvolutiveBasis</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a8ff5ffc9f4b5b941cb1bebe5b05b3332_1a8ff5ffc9f4b5b941cb1bebe5b05b3332" compoundref="involutive_8hpp" startline="234" endline="279">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::NormalForm</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_aa363e6a444468d147b17af48dc42f884_1aa363e6a444468d147b17af48dc42f884" compoundref="involutive_8hpp" startline="394" endline="399">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_b_i_basis_1_1_boolean_involutive_basis_a9314d34e9765ba007da11ce53a8e847f_1a9314d34e9765ba007da11ce53a8e847f" prot="private" static="no" mutable="no">
+        <type><ref refid="class_b_i_basis_1_1_q_set" kindref="compound">QSet</ref>&lt; MonomType &gt;</type>
+        <definition>QSet&lt;MonomType&gt; BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ProlongationsSet</definition>
+        <argsstring></argsstring>
+        <name>ProlongationsSet</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::ProlongationsSet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="61" column="14" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a039ae74301e69625de286641b152eb77_1a039ae74301e69625de286641b152eb77" compoundref="involutive_8hpp" startline="90" endline="115">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::BooleanInvolutiveBasis</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_ab4a384aed568a9e7628f8f9be5dc013e_1ab4a384aed568a9e7628f8f9be5dc013e" compoundref="involutive_8hpp" startline="402" endline="421">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Construct</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a6c87af65a48c3df1f215c7291007744f_1a6c87af65a48c3df1f215c7291007744f" compoundref="involutive_8hpp" startline="424" endline="484">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ConstructInvolutiveBasis</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_aa363e6a444468d147b17af48dc42f884_1aa363e6a444468d147b17af48dc42f884" compoundref="involutive_8hpp" startline="394" endline="399">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_b_i_basis_1_1_boolean_involutive_basis_a4d83dd71e13976c0dd38426b0980a3c8_1a4d83dd71e13976c0dd38426b0980a3c8" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *const</type>
+        <definition>const PolynomialRing* const BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::PRing</definition>
+        <argsstring></argsstring>
+        <name>PRing</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::PRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="62" column="36" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="62" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a039ae74301e69625de286641b152eb77_1a039ae74301e69625de286641b152eb77" compoundref="involutive_8hpp" startline="90" endline="115">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::BooleanInvolutiveBasis</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_ab7a30c46a2caf5c404dc785d6988c5d7_1ab7a30c46a2caf5c404dc785d6988c5d7" compoundref="involutive_8hpp" startline="187" endline="231">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::FillInitialSet</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a489d0fe4083f14ddd090e1ca4429cdc8_1a489d0fe4083f14ddd090e1ca4429cdc8" compoundref="involutive_8hpp" startline="141" endline="184">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ToMatrix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_a039ae74301e69625de286641b152eb77_1a039ae74301e69625de286641b152eb77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::BooleanInvolutiveBasis</definition>
+        <argsstring>(const Matrix *matrix, bool toGroebner)</argsstring>
+        <name>BooleanInvolutiveBasis</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::BooleanInvolutiveBasis</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>toGroebner</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="65" column="9" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="90" bodyend="115"/>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_ab4a384aed568a9e7628f8f9be5dc013e_1ab4a384aed568a9e7628f8f9be5dc013e" compoundref="involutive_8hpp" startline="402" endline="421">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Construct</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_ab7a30c46a2caf5c404dc785d6988c5d7_1ab7a30c46a2caf5c404dc785d6988c5d7" compoundref="involutive_8hpp" startline="187" endline="231">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::FillInitialSet</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a2699399d6811282ef4b261b37131ea03_1a2699399d6811282ef4b261b37131ea03" compoundref="involutive_8hpp" startline="59">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::GBasis</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a293abdd8b8233275e5ee33ecb52641fb_1a293abdd8b8233275e5ee33ecb52641fb" compoundref="involutive_8hpp" startline="60">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::IntermediateBasis</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a4d83dd71e13976c0dd38426b0980a3c8_1a4d83dd71e13976c0dd38426b0980a3c8" compoundref="involutive_8hpp" startline="62">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::PRing</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a9314d34e9765ba007da11ce53a8e847f_1a9314d34e9765ba007da11ce53a8e847f" compoundref="involutive_8hpp" startline="61">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ProlongationsSet</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_aa363e6a444468d147b17af48dc42f884_1aa363e6a444468d147b17af48dc42f884" compoundref="involutive_8hpp" startline="394" endline="399">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reset</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_ac7429c5da1fd26e8ffb8c5bca6ab2f89_1ac7429c5da1fd26e8ffb8c5bca6ab2f89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::~BooleanInvolutiveBasis</definition>
+        <argsstring>()</argsstring>
+        <name>~BooleanInvolutiveBasis</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::~BooleanInvolutiveBasis</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="66" column="9" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="118" bodyend="121"/>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_aa363e6a444468d147b17af48dc42f884_1aa363e6a444468d147b17af48dc42f884" compoundref="involutive_8hpp" startline="394" endline="399">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reset</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_abf4b594758b610880aaec33904845d4d_1abf4b594758b610880aaec33904845d4d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; &amp;</type>
+        <definition>const Polynom&lt; MonomType &gt; &amp; BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::operator[]</definition>
+        <argsstring>(int number) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>number</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="68" column="23" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="124" bodyend="132"/>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a2699399d6811282ef4b261b37131ea03_1a2699399d6811282ef4b261b37131ea03" compoundref="involutive_8hpp" startline="59">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::GBasis</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_afb431a99717ccba3eb9219fd8095dd3d_1afb431a99717ccba3eb9219fd8095dd3d" compoundref="involutive_8hpp" startline="135" endline="138">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Length</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_afb431a99717ccba3eb9219fd8095dd3d_1afb431a99717ccba3eb9219fd8095dd3d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned</type>
+        <definition>unsigned BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Length</definition>
+        <argsstring>() const</argsstring>
+        <name>Length</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::Length</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="69" column="18" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="135" bodyend="138"/>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a2699399d6811282ef4b261b37131ea03_1a2699399d6811282ef4b261b37131ea03" compoundref="involutive_8hpp" startline="59">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::GBasis</references>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_abf4b594758b610880aaec33904845d4d_1abf4b594758b610880aaec33904845d4d" compoundref="involutive_8hpp" startline="124" endline="132">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::operator[]</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_a489d0fe4083f14ddd090e1ca4429cdc8_1a489d0fe4083f14ddd090e1ca4429cdc8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ToMatrix</definition>
+        <argsstring>() const</argsstring>
+        <name>ToMatrix</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::ToMatrix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="71" column="22" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="141" bodyend="184"/>
+        <references refid="class_matrix_constructor_a6cac2dfdd6d7e76cb4be7ce3862fcaf6_1a6cac2dfdd6d7e76cb4be7ce3862fcaf6" compoundref="matrix-con_8cpp" startline="35" endline="42">MatrixConstructor::append</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="class_monoid_af796c73504cb5e1cdb2737b73468eb04_1af796c73504cb5e1cdb2737b73468eb04" compoundref="monoid_8cpp" startline="742" endline="745">Monoid::from_expvector</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a2699399d6811282ef4b261b37131ea03_1a2699399d6811282ef4b261b37131ea03" compoundref="involutive_8hpp" startline="59">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::GBasis</references>
+        <references refid="class_monoid_a6f3936578edf5076153f30833bc552fe_1a6f3936578edf5076153f30833bc552fe" compoundref="monoid_8cpp" startline="455" endline="461">Monoid::make_one</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="newdelete_8hpp_a2b649d56ac729e3aeea956a89d0c03ea_1a2b649d56ac729e3aeea956a89d0c03ea" compoundref="newdelete_8hpp" startline="91" endline="92">newarray_atomic_clear</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a4d83dd71e13976c0dd38426b0980a3c8_1a4d83dd71e13976c0dd38426b0980a3c8" compoundref="involutive_8hpp" startline="62">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::PRing</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+        <referencedby refid="class_b_i_basis_1_1_launcher_adf7849f2ffaa0bc3daed172deaa5d4d3_1adf7849f2ffaa0bc3daed172deaa5d4d3" compoundref="launcher_8cpp" startline="21" endline="48">BIBasis::Launcher::GetBIBasisMatrix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_ab7a30c46a2caf5c404dc785d6988c5d7_1ab7a30c46a2caf5c404dc785d6988c5d7" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::FillInitialSet</definition>
+        <argsstring>(const Matrix *matrix, std::list&lt; Polynom&lt; MonomType &gt; * &gt; &amp;initialSet) const</argsstring>
+        <name>FillInitialSet</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::FillInitialSet</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>std::list&lt; <ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; * &gt; &amp;</type>
+          <declname>initialSet</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="74" column="14" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="187" bodyend="231"/>
+        <references refid="class_matrix_a0dd3516d8526ad736fe69848aacd1406_1a0dd3516d8526ad736fe69848aacd1406" compoundref="matrix_8cpp" startline="307" endline="310">Matrix::elem</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="struct_nterm_a7d8ae0809fcf1cf7cdb9aa339538e6e7_1a7d8ae0809fcf1cf7cdb9aa339538e6e7" compoundref="ringelem_8hpp" startline="156">Nterm::monom</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a4d83dd71e13976c0dd38426b0980a3c8_1a4d83dd71e13976c0dd38426b0980a3c8" compoundref="involutive_8hpp" startline="62">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::PRing</references>
+        <references refid="class_monoid_a134514e900a32c809126bf4dd6c891c4_1a134514e900a32c809126bf4dd6c891c4" compoundref="monoid_8cpp" startline="747" endline="750">Monoid::to_expvector</references>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a039ae74301e69625de286641b152eb77_1a039ae74301e69625de286641b152eb77" compoundref="involutive_8hpp" startline="90" endline="115">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::BooleanInvolutiveBasis</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_a8ff5ffc9f4b5b941cb1bebe5b05b3332_1a8ff5ffc9f4b5b941cb1bebe5b05b3332" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; *</type>
+        <definition>Polynom&lt; MonomType &gt; * BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::NormalForm</definition>
+        <argsstring>(const Triple&lt; MonomType &gt; *triple) const</argsstring>
+        <name>NormalForm</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::NormalForm</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; *</type>
+          <declname>triple</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="76" column="17" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="234" bodyend="279"/>
+        <references refid="class_b_i_basis_1_1_triple_a182d4f2d6c02147dfcd882b57f4b8301_1a182d4f2d6c02147dfcd882b57f4b8301" compoundref="triple_8hpp" startline="153" endline="156">BIBasis::Triple&lt; MonomType &gt;::GetPolynom</references>
+        <references refid="class_b_i_basis_1_1_triple_a8be17d60f7413dcf79a85a1e3999fa31_1a8be17d60f7413dcf79a85a1e3999fa31" compoundref="triple_8hpp" startline="177" endline="180">BIBasis::Triple&lt; MonomType &gt;::GetVariable</references>
+        <references refid="class_b_i_basis_1_1_triple_a13b57ddc86c7a10457440058fffb5679_1a13b57ddc86c7a10457440058fffb5679" compoundref="triple_8hpp" startline="171" endline="174">BIBasis::Triple&lt; MonomType &gt;::GetWeakAncestor</references>
+        <references refid="class_b_i_basis_1_1_polynom_afc4e27c24e98adb4a0c336c65498e655_1afc4e27c24e98adb4a0c336c65498e655" compoundref="polynom_8hpp" startline="590" endline="617">BIBasis::Polynom&lt; MonomType &gt;::HeadReduction</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a293abdd8b8233275e5ee33ecb52641fb_1a293abdd8b8233275e5ee33ecb52641fb" compoundref="involutive_8hpp" startline="60">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::IntermediateBasis</references>
+        <references refid="class_b_i_basis_1_1_polynom_a851f427e4c35d4c0a1ca848132908523_1a851f427e4c35d4c0a1ca848132908523" compoundref="polynom_8hpp" startline="155" endline="158">BIBasis::Polynom&lt; MonomType &gt;::IsZero</references>
+        <references refid="class_b_i_basis_1_1_polynom_a9f8b68ca0728a15c615fc9187ed764e6_1a9f8b68ca0728a15c615fc9187ed764e6" compoundref="polynom_8hpp" startline="187" endline="197">BIBasis::Polynom&lt; MonomType &gt;::Lm</references>
+        <references refid="class_b_i_basis_1_1_polynom_a1fccfd8f64b21694ec5f03c544f230cb_1a1fccfd8f64b21694ec5f03c544f230cb" compoundref="polynom_8hpp" startline="200" endline="208">BIBasis::Polynom&lt; MonomType &gt;::RidOfLm</references>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a6c87af65a48c3df1f215c7291007744f_1a6c87af65a48c3df1f215c7291007744f" compoundref="involutive_8hpp" startline="424" endline="484">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ConstructInvolutiveBasis</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_aa128a2888a73cd97fc37cf378e7f232a_1aa128a2888a73cd97fc37cf378e7f232a" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; *</type>
+        <definition>const Polynom&lt; MonomType &gt; * BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::FindDivisor</definition>
+        <argsstring>(const Polynom&lt; MonomType &gt; *polynom, const std::list&lt; Polynom&lt; MonomType &gt; * &gt; &amp;set, bool toGroebner) const</argsstring>
+        <name>FindDivisor</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::FindDivisor</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; *</type>
+          <declname>polynom</declname>
+        </param>
+        <param>
+          <type>const std::list&lt; <ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; * &gt; &amp;</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>toGroebner</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="77" column="23" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="282" bodyend="308"/>
+        <references refid="class_b_i_basis_1_1_polynom_a851f427e4c35d4c0a1ca848132908523_1a851f427e4c35d4c0a1ca848132908523" compoundref="polynom_8hpp" startline="155" endline="158">BIBasis::Polynom&lt; MonomType &gt;::IsZero</references>
+        <references refid="class_b_i_basis_1_1_polynom_a9f8b68ca0728a15c615fc9187ed764e6_1a9f8b68ca0728a15c615fc9187ed764e6" compoundref="polynom_8hpp" startline="187" endline="197">BIBasis::Polynom&lt; MonomType &gt;::Lm</references>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a825fff9d63072dc9d06f0cb2bf47c4b6_1a825fff9d63072dc9d06f0cb2bf47c4b6" compoundref="involutive_8hpp" startline="311" endline="340">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reduce</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_a825fff9d63072dc9d06f0cb2bf47c4b6_1a825fff9d63072dc9d06f0cb2bf47c4b6" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; *</type>
+        <definition>Polynom&lt; MonomType &gt; * BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reduce</definition>
+        <argsstring>(Polynom&lt; MonomType &gt; *polynom, const std::list&lt; Polynom&lt; MonomType &gt; * &gt; &amp;set, bool toGroebner) const</argsstring>
+        <name>Reduce</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::Reduce</qualifiedname>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; *</type>
+          <declname>polynom</declname>
+        </param>
+        <param>
+          <type>const std::list&lt; <ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; * &gt; &amp;</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>toGroebner</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="80" column="17" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="311" bodyend="340"/>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_aa128a2888a73cd97fc37cf378e7f232a_1aa128a2888a73cd97fc37cf378e7f232a" compoundref="involutive_8hpp" startline="282" endline="308">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::FindDivisor</references>
+        <references refid="class_b_i_basis_1_1_polynom_a851f427e4c35d4c0a1ca848132908523_1a851f427e4c35d4c0a1ca848132908523" compoundref="polynom_8hpp" startline="155" endline="158">BIBasis::Polynom&lt; MonomType &gt;::IsZero</references>
+        <references refid="class_b_i_basis_1_1_polynom_a9f8b68ca0728a15c615fc9187ed764e6_1a9f8b68ca0728a15c615fc9187ed764e6" compoundref="polynom_8hpp" startline="187" endline="197">BIBasis::Polynom&lt; MonomType &gt;::Lm</references>
+        <references refid="class_b_i_basis_1_1_polynom_a45513111f99a8243655f006aeb6dec16_1a45513111f99a8243655f006aeb6dec16" compoundref="polynom_8hpp" startline="537" endline="587">BIBasis::Polynom&lt; MonomType &gt;::Reduction</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_b_i_basis_1_1_polynom_a1fccfd8f64b21694ec5f03c544f230cb_1a1fccfd8f64b21694ec5f03c544f230cb" compoundref="polynom_8hpp" startline="200" endline="208">BIBasis::Polynom&lt; MonomType &gt;::RidOfLm</references>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_af3e66a95feffdff58c6c96af6d37c57d_1af3e66a95feffdff58c6c96af6d37c57d" compoundref="involutive_8hpp" startline="343" endline="391">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ReduceSet</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_af3e66a95feffdff58c6c96af6d37c57d_1af3e66a95feffdff58c6c96af6d37c57d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ReduceSet</definition>
+        <argsstring>(bool toGroebner)</argsstring>
+        <name>ReduceSet</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::ReduceSet</qualifiedname>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>toGroebner</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="83" column="14" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="343" bodyend="391"/>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a2699399d6811282ef4b261b37131ea03_1a2699399d6811282ef4b261b37131ea03" compoundref="involutive_8hpp" startline="59">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::GBasis</references>
+        <references refid="class_b_i_basis_1_1_polynom_a851f427e4c35d4c0a1ca848132908523_1a851f427e4c35d4c0a1ca848132908523" compoundref="polynom_8hpp" startline="155" endline="158">BIBasis::Polynom&lt; MonomType &gt;::IsZero</references>
+        <references refid="class_b_i_basis_1_1_polynom_a9f8b68ca0728a15c615fc9187ed764e6_1a9f8b68ca0728a15c615fc9187ed764e6" compoundref="polynom_8hpp" startline="187" endline="197">BIBasis::Polynom&lt; MonomType &gt;::Lm</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a825fff9d63072dc9d06f0cb2bf47c4b6_1a825fff9d63072dc9d06f0cb2bf47c4b6" compoundref="involutive_8hpp" startline="311" endline="340">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reduce</references>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_ab4a384aed568a9e7628f8f9be5dc013e_1ab4a384aed568a9e7628f8f9be5dc013e" compoundref="involutive_8hpp" startline="402" endline="421">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Construct</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_aa363e6a444468d147b17af48dc42f884_1aa363e6a444468d147b17af48dc42f884" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::Reset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="84" column="14" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="394" bodyend="399"/>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a2699399d6811282ef4b261b37131ea03_1a2699399d6811282ef4b261b37131ea03" compoundref="involutive_8hpp" startline="59">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::GBasis</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a293abdd8b8233275e5ee33ecb52641fb_1a293abdd8b8233275e5ee33ecb52641fb" compoundref="involutive_8hpp" startline="60">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::IntermediateBasis</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a9314d34e9765ba007da11ce53a8e847f_1a9314d34e9765ba007da11ce53a8e847f" compoundref="involutive_8hpp" startline="61">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ProlongationsSet</references>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a039ae74301e69625de286641b152eb77_1a039ae74301e69625de286641b152eb77" compoundref="involutive_8hpp" startline="90" endline="115">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::BooleanInvolutiveBasis</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_ab4a384aed568a9e7628f8f9be5dc013e_1ab4a384aed568a9e7628f8f9be5dc013e" compoundref="involutive_8hpp" startline="402" endline="421">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Construct</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_ac7429c5da1fd26e8ffb8c5bca6ab2f89_1ac7429c5da1fd26e8ffb8c5bca6ab2f89" compoundref="involutive_8hpp" startline="118" endline="121">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::~BooleanInvolutiveBasis</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_ab4a384aed568a9e7628f8f9be5dc013e_1ab4a384aed568a9e7628f8f9be5dc013e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Construct</definition>
+        <argsstring>(const std::list&lt; Polynom&lt; MonomType &gt; * &gt; &amp;set, bool toGroebner)</argsstring>
+        <name>Construct</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::Construct</qualifiedname>
+        <param>
+          <type>const std::list&lt; <ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom</ref>&lt; MonomType &gt; * &gt; &amp;</type>
+          <declname>set</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>toGroebner</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="85" column="14" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="402" bodyend="421"/>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a6c87af65a48c3df1f215c7291007744f_1a6c87af65a48c3df1f215c7291007744f" compoundref="involutive_8hpp" startline="424" endline="484">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ConstructInvolutiveBasis</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a2699399d6811282ef4b261b37131ea03_1a2699399d6811282ef4b261b37131ea03" compoundref="involutive_8hpp" startline="59">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::GBasis</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a293abdd8b8233275e5ee33ecb52641fb_1a293abdd8b8233275e5ee33ecb52641fb" compoundref="involutive_8hpp" startline="60">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::IntermediateBasis</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a9314d34e9765ba007da11ce53a8e847f_1a9314d34e9765ba007da11ce53a8e847f" compoundref="involutive_8hpp" startline="61">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ProlongationsSet</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_af3e66a95feffdff58c6c96af6d37c57d_1af3e66a95feffdff58c6c96af6d37c57d" compoundref="involutive_8hpp" startline="343" endline="391">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ReduceSet</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_aa363e6a444468d147b17af48dc42f884_1aa363e6a444468d147b17af48dc42f884" compoundref="involutive_8hpp" startline="394" endline="399">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Reset</references>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_a039ae74301e69625de286641b152eb77_1a039ae74301e69625de286641b152eb77" compoundref="involutive_8hpp" startline="90" endline="115">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::BooleanInvolutiveBasis</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_boolean_involutive_basis_a6c87af65a48c3df1f215c7291007744f_1a6c87af65a48c3df1f215c7291007744f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ConstructInvolutiveBasis</definition>
+        <argsstring>()</argsstring>
+        <name>ConstructInvolutiveBasis</name>
+        <qualifiedname>BIBasis::BooleanInvolutiveBasis::ConstructInvolutiveBasis</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/involutive.hpp" line="86" column="14" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="424" bodyend="484"/>
+        <references refid="class_b_i_basis_1_1_polynom_a40eab96210071af9de89d7bb3da4089c_1a40eab96210071af9de89d7bb3da4089c" compoundref="polynom_8hpp" startline="174" endline="184">BIBasis::Polynom&lt; MonomType &gt;::Degree</references>
+        <references refid="class_b_i_basis_1_1_triple_ab0d1d13983f98eb69b46d9722ddb4a2b_1ab0d1d13983f98eb69b46d9722ddb4a2b" compoundref="triple_8hpp" startline="165" endline="168">BIBasis::Triple&lt; MonomType &gt;::GetAncestor</references>
+        <references refid="class_b_i_basis_1_1_triple_a6edb99465122ad5b7b84e89881a86fcd_1a6edb99465122ad5b7b84e89881a86fcd" compoundref="triple_8hpp" startline="183" endline="186">BIBasis::Triple&lt; MonomType &gt;::GetNmp</references>
+        <references refid="class_b_i_basis_1_1_triple_af48b57c12a175c35d6d1bde3d88c4325_1af48b57c12a175c35d6d1bde3d88c4325" compoundref="triple_8hpp" startline="159" endline="162">BIBasis::Triple&lt; MonomType &gt;::GetPolynomLm</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a293abdd8b8233275e5ee33ecb52641fb_1a293abdd8b8233275e5ee33ecb52641fb" compoundref="involutive_8hpp" startline="60">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::IntermediateBasis</references>
+        <references refid="class_b_i_basis_1_1_polynom_a851f427e4c35d4c0a1ca848132908523_1a851f427e4c35d4c0a1ca848132908523" compoundref="polynom_8hpp" startline="155" endline="158">BIBasis::Polynom&lt; MonomType &gt;::IsZero</references>
+        <references refid="class_b_i_basis_1_1_polynom_a9f8b68ca0728a15c615fc9187ed764e6_1a9f8b68ca0728a15c615fc9187ed764e6" compoundref="polynom_8hpp" startline="187" endline="197">BIBasis::Polynom&lt; MonomType &gt;::Lm</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a8ff5ffc9f4b5b941cb1bebe5b05b3332_1a8ff5ffc9f4b5b941cb1bebe5b05b3332" compoundref="involutive_8hpp" startline="234" endline="279">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::NormalForm</references>
+        <references refid="class_b_i_basis_1_1_boolean_involutive_basis_a9314d34e9765ba007da11ce53a8e847f_1a9314d34e9765ba007da11ce53a8e847f" compoundref="involutive_8hpp" startline="61">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::ProlongationsSet</references>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_ab4a384aed568a9e7628f8f9be5dc013e_1ab4a384aed568a9e7628f8f9be5dc013e" compoundref="involutive_8hpp" startline="402" endline="421">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::Construct</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;</label>
+        <link refid="class_b_i_basis_1_1_boolean_involutive_basis"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>GBasis</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>IntermediateBasis</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>ProlongationsSet</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>PRing</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Polynom&lt; MonomType &gt; *</label>
+      </node>
+      <node id="18">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="68">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="69" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="79" relation="public-inheritance">
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="70" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="70" relation="public-inheritance">
+        </childnode>
+        <childnode refid="71" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="79" relation="public-inheritance">
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="47" relation="private-inheritance">
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="43" relation="private-inheritance">
+        </childnode>
+        <childnode refid="46" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="34" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="34" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="57">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="49">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="50" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="39" relation="public-inheritance">
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="41" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>QSet&lt; MonomType &gt;</label>
+      </node>
+      <node id="9">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>CoefficientType</label>
+      </node>
+      <node id="81">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="77">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="38" relation="public-inheritance">
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>T</label>
+      </node>
+      <node id="6">
+        <label>TSet&lt; MonomType &gt;</label>
+      </node>
+      <node id="76">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="38" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="30">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="34">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="28">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="23" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="30" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="31">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="32" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>char</label>
+      </node>
+      <node id="17">
+        <label>const ARing *</label>
+      </node>
+      <node id="33">
+        <label>const void *</label>
+      </node>
+      <node id="23">
+        <label>double</label>
+      </node>
+      <node id="66">
+        <label>overflow_type *</label>
+      </node>
+      <node id="63">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="65">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="82">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="13">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="22">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>long</label>
+      </node>
+      <node id="51">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="44" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="52" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="54" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="55" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>mon_part</label>
+      </node>
+      <node id="27">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="26">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="24">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="25">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="11">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="19">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>size_t</label>
+      </node>
+      <node id="73">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>spinLock</label>
+      </node>
+      <node id="72">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="4">
+        <label>std::list&lt; T &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::list&lt; BIBasis::Polynom&lt; MonomType &gt; * &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; BIBasis::Polynom&lt; MonomType &gt; * &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>std::string</label>
+        <childnode refid="62" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="34" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="61" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/bibasis/involutive.hpp" line="56" column="5" bodyfile="Macaulay2/e/bibasis/involutive.hpp" bodystart="57" bodyend="87"/>
+    <listofallmembers>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_a039ae74301e69625de286641b152eb77_1a039ae74301e69625de286641b152eb77" prot="public" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>BooleanInvolutiveBasis</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_ab4a384aed568a9e7628f8f9be5dc013e_1ab4a384aed568a9e7628f8f9be5dc013e" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>Construct</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_a6c87af65a48c3df1f215c7291007744f_1a6c87af65a48c3df1f215c7291007744f" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>ConstructInvolutiveBasis</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_ab7a30c46a2caf5c404dc785d6988c5d7_1ab7a30c46a2caf5c404dc785d6988c5d7" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>FillInitialSet</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_aa128a2888a73cd97fc37cf378e7f232a_1aa128a2888a73cd97fc37cf378e7f232a" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>FindDivisor</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_a2699399d6811282ef4b261b37131ea03_1a2699399d6811282ef4b261b37131ea03" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>GBasis</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_a293abdd8b8233275e5ee33ecb52641fb_1a293abdd8b8233275e5ee33ecb52641fb" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>IntermediateBasis</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_afb431a99717ccba3eb9219fd8095dd3d_1afb431a99717ccba3eb9219fd8095dd3d" prot="public" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>Length</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_a8ff5ffc9f4b5b941cb1bebe5b05b3332_1a8ff5ffc9f4b5b941cb1bebe5b05b3332" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>NormalForm</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_abf4b594758b610880aaec33904845d4d_1abf4b594758b610880aaec33904845d4d" prot="public" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>operator[]</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_a4d83dd71e13976c0dd38426b0980a3c8_1a4d83dd71e13976c0dd38426b0980a3c8" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>PRing</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_a9314d34e9765ba007da11ce53a8e847f_1a9314d34e9765ba007da11ce53a8e847f" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>ProlongationsSet</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_a825fff9d63072dc9d06f0cb2bf47c4b6_1a825fff9d63072dc9d06f0cb2bf47c4b6" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>Reduce</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_af3e66a95feffdff58c6c96af6d37c57d_1af3e66a95feffdff58c6c96af6d37c57d" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>ReduceSet</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_aa363e6a444468d147b17af48dc42f884_1aa363e6a444468d147b17af48dc42f884" prot="private" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>Reset</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_a489d0fe4083f14ddd090e1ca4429cdc8_1a489d0fe4083f14ddd090e1ca4429cdc8" prot="public" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>ToMatrix</name></member>
+      <member refid="class_b_i_basis_1_1_boolean_involutive_basis_ac7429c5da1fd26e8ffb8c5bca6ab2f89_1ac7429c5da1fd26e8ffb8c5bca6ab2f89" prot="public" virt="non-virtual"><scope>BIBasis::BooleanInvolutiveBasis</scope><name>~BooleanInvolutiveBasis</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

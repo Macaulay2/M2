@@ -1,0 +1,325 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4" kind="class" language="C++" prot="public">
+    <compoundname>mathic::DivMask::Extender&lt; T, false &gt;</compoundname>
+    <basecompoundref refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4" prot="public" virt="non-virtual">mathic::DivMask::HasDivMask&lt; false &gt;</basecompoundref>
+    <includes refid="_div_mask_8h" local="no">DivMask.h</includes>
+    <templateparamlist>
+      <param>
+        <type>class <ref refid="struct_t" kindref="compound">T</ref></type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a39a65159eb28380b4d8e7e34f2d9ea9a_1a39a65159eb28380b4d8e7e34f2d9ea9a" prot="private" static="no">
+        <type><ref refid="structmathic_1_1_div_mask_1_1_ref" kindref="compound">Ref</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt;<ref refid="structmathic_1_1_div_mask_1_1_ref" kindref="compound">::RefType</ref></type>
+        <definition>typedef Ref&lt;T&gt;::RefType mathic::DivMask::Extender&lt; T, false &gt;::Reference</definition>
+        <argsstring></argsstring>
+        <name>Reference</name>
+        <qualifiedname>mathic::DivMask::Extender&lt; T, false &gt;::Reference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="443" column="36" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="443" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_add14d2db969b465aa0d292fe7c15c207_1add14d2db969b465aa0d292fe7c15c207" prot="private" static="no">
+        <type><ref refid="structmathic_1_1_div_mask_1_1_ref" kindref="compound">Ref</ref>&lt; constT &gt;<ref refid="structmathic_1_1_div_mask_1_1_ref" kindref="compound">::RefType</ref></type>
+        <definition>typedef Ref&lt;constT&gt;::RefType mathic::DivMask::Extender&lt; T, false &gt;::ConstReference</definition>
+        <argsstring></argsstring>
+        <name>ConstReference</name>
+        <qualifiedname>mathic::DivMask::Extender&lt; T, false &gt;::ConstReference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="444" column="36" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="444" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a089d49bb0caa2db87498d611f28e5161_1a089d49bb0caa2db87498d611f28e5161" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref></type>
+        <definition>T mathic::DivMask::Extender&lt; T, false &gt;::_t</definition>
+        <argsstring></argsstring>
+        <name>_t</name>
+        <qualifiedname>mathic::DivMask::Extender&lt; T, false &gt;::_t</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="463" column="7" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="463" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a167085a45390d18ced7b067c9c2a292d_1a167085a45390d18ced7b067c9c2a292d" compoundref="_div_mask_8h" startline="446" endline="446">Extender</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a3dad5732711edfba53882fe81fa71728_1a3dad5732711edfba53882fe81fa71728" compoundref="_div_mask_8h" startline="448" endline="449">Extender</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a1179354bf57d7e64cef7baf545e50579_1a1179354bf57d7e64cef7baf545e50579" compoundref="_div_mask_8h" startline="459" endline="459">get</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a5561f43a61f9db5fa429ce18ed16be6c_1a5561f43a61f9db5fa429ce18ed16be6c" compoundref="_div_mask_8h" startline="460" endline="460">get</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a167085a45390d18ced7b067c9c2a292d_1a167085a45390d18ced7b067c9c2a292d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::DivMask::Extender&lt; T, false &gt;::Extender</definition>
+        <argsstring>()</argsstring>
+        <name>Extender</name>
+        <qualifiedname>mathic::DivMask::Extender&lt; T, false &gt;::Extender</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="446" column="3" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="446" bodyend="446"/>
+        <references refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a089d49bb0caa2db87498d611f28e5161_1a089d49bb0caa2db87498d611f28e5161" compoundref="_div_mask_8h" startline="463">_t</references>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_ab432a239540476823f1918b6420d58d5_1ab432a239540476823f1918b6420d58d5" compoundref="_div_mask_8h" startline="452" endline="454">divides</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a3dad5732711edfba53882fe81fa71728_1a3dad5732711edfba53882fe81fa71728" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class C</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>mathic::DivMask::Extender&lt; T, false &gt;::Extender</definition>
+        <argsstring>(ConstReference t, const Calculator&lt; C &gt; &amp;calc, const C &amp;conf)</argsstring>
+        <name>Extender</name>
+        <qualifiedname>mathic::DivMask::Extender&lt; T, false &gt;::Extender</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_add14d2db969b465aa0d292fe7c15c207_1add14d2db969b465aa0d292fe7c15c207" kindref="member">ConstReference</ref></type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmathic_1_1_div_mask_1_1_calculator" kindref="compound">Calculator</ref>&lt; C &gt; &amp;</type>
+          <declname>calc</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="448" column="7" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="448" bodyend="449"/>
+        <references refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a089d49bb0caa2db87498d611f28e5161_1a089d49bb0caa2db87498d611f28e5161" compoundref="_div_mask_8h" startline="463">_t</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_ab432a239540476823f1918b6420d58d5_1ab432a239540476823f1918b6420d58d5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class S</type>
+          </param>
+          <param>
+            <type>class C</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::DivMask::Extender&lt; T, false &gt;::divides</definition>
+        <argsstring>(const Extender&lt; S, false &gt; &amp;t, const C &amp;conf) const</argsstring>
+        <name>divides</name>
+        <qualifiedname>mathic::DivMask::Extender&lt; T, false &gt;::divides</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a167085a45390d18ced7b067c9c2a292d_1a167085a45390d18ced7b067c9c2a292d" kindref="member">Extender</ref>&lt; S, false &gt; &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="452" column="12" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="452" bodyend="454"/>
+        <references refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a167085a45390d18ced7b067c9c2a292d_1a167085a45390d18ced7b067c9c2a292d" compoundref="_div_mask_8h" startline="446" endline="446">Extender</references>
+        <references refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a1179354bf57d7e64cef7baf545e50579_1a1179354bf57d7e64cef7baf545e50579" compoundref="_div_mask_8h" startline="459" endline="459">get</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_ae21add9ca97cc6072590f599a32a4fa3_1ae21add9ca97cc6072590f599a32a4fa3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class C</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mathic::DivMask::Extender&lt; T, false &gt;::recalculateDivMask</definition>
+        <argsstring>(const Calculator&lt; C &gt; &amp;calc, const C &amp;conf)</argsstring>
+        <name>recalculateDivMask</name>
+        <qualifiedname>mathic::DivMask::Extender&lt; T, false &gt;::recalculateDivMask</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_div_mask_1_1_calculator" kindref="compound">Calculator</ref>&lt; C &gt; &amp;</type>
+          <declname>calc</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="457" column="12" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="457" bodyend="457"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a1179354bf57d7e64cef7baf545e50579_1a1179354bf57d7e64cef7baf545e50579" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a39a65159eb28380b4d8e7e34f2d9ea9a_1a39a65159eb28380b4d8e7e34f2d9ea9a" kindref="member">Reference</ref></type>
+        <definition>Reference mathic::DivMask::Extender&lt; T, false &gt;::get</definition>
+        <argsstring>()</argsstring>
+        <name>get</name>
+        <qualifiedname>mathic::DivMask::Extender&lt; T, false &gt;::get</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="459" column="15" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="459" bodyend="459"/>
+        <references refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a089d49bb0caa2db87498d611f28e5161_1a089d49bb0caa2db87498d611f28e5161" compoundref="_div_mask_8h" startline="463">_t</references>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_ab432a239540476823f1918b6420d58d5_1ab432a239540476823f1918b6420d58d5" compoundref="_div_mask_8h" startline="452" endline="454">divides</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a5561f43a61f9db5fa429ce18ed16be6c_1a5561f43a61f9db5fa429ce18ed16be6c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_add14d2db969b465aa0d292fe7c15c207_1add14d2db969b465aa0d292fe7c15c207" kindref="member">ConstReference</ref></type>
+        <definition>ConstReference mathic::DivMask::Extender&lt; T, false &gt;::get</definition>
+        <argsstring>() const</argsstring>
+        <name>get</name>
+        <qualifiedname>mathic::DivMask::Extender&lt; T, false &gt;::get</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="460" column="20" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="460" bodyend="460"/>
+        <references refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a089d49bb0caa2db87498d611f28e5161_1a089d49bb0caa2db87498d611f28e5161" compoundref="_div_mask_8h" startline="463">_t</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="4">
+        <label>mathic::DivMask::Extender&lt; T, UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender"/>
+      </node>
+      <node id="1">
+        <label>mathic::DivMask::Extender&lt; T, false &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; T, false &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mathic::DivMask::HasDivMask&lt; UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask"/>
+      </node>
+      <node id="2">
+        <label>mathic::DivMask::HasDivMask&lt; false &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; false &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>const void *</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="11">
+        <label>mathic::DivMask::Extender&lt; T, UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender"/>
+      </node>
+      <node id="1">
+        <label>mathic::DivMask::Extender&lt; T, false &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_t</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; T, false &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mathic::DivMask::HasDivMask&lt; UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask"/>
+      </node>
+      <node id="2">
+        <label>mathic::DivMask::HasDivMask&lt; false &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; false &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>unsigned</label>
+      </node>
+      <node id="6">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="10">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/DivMask.h" line="441" column="5" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="441" bodyend="464"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a089d49bb0caa2db87498d611f28e5161_1a089d49bb0caa2db87498d611f28e5161" prot="private" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>_t</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a788f5b3b0476ea3da7d870b92316c183_1a788f5b3b0476ea3da7d870b92316c183" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>canDivide</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_add14d2db969b465aa0d292fe7c15c207_1add14d2db969b465aa0d292fe7c15c207" prot="private" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>ConstReference</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_ab432a239540476823f1918b6420d58d5_1ab432a239540476823f1918b6420d58d5" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>divides</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a167085a45390d18ced7b067c9c2a292d_1a167085a45390d18ced7b067c9c2a292d" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>Extender</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a3dad5732711edfba53882fe81fa71728_1a3dad5732711edfba53882fe81fa71728" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>Extender</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a1179354bf57d7e64cef7baf545e50579_1a1179354bf57d7e64cef7baf545e50579" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>get</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a5561f43a61f9db5fa429ce18ed16be6c_1a5561f43a61f9db5fa429ce18ed16be6c" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>get</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a7f6d6b3516a218e63bac9aa7be43b815_1a7f6d6b3516a218e63bac9aa7be43b815" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>getDivMask</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_ae21add9ca97cc6072590f599a32a4fa3_1ae21add9ca97cc6072590f599a32a4fa3" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>recalculateDivMask</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4_a39a65159eb28380b4d8e7e34f2d9ea9a_1a39a65159eb28380b4d8e7e34f2d9ea9a" prot="private" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>Reference</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_adc1db10bffd3e288418e85d394811882_1adc1db10bffd3e288418e85d394811882" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>resetDivMask</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a50249b685d51535096249d6634f0265d_1a50249b685d51535096249d6634f0265d" prot="public" virt="non-virtual"><scope>mathic::DivMask::Extender&lt; T, false &gt;</scope><name>updateToLowerBound</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_static_mono_lookup_1_1_lambda_wrap" kind="class" language="C++" prot="public">
+    <compoundname>StaticMonoLookup::LambdaWrap</compoundname>
+    <includes refid="_static_mono_map_8hpp" local="no">StaticMonoMap.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class Lambda</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_static_mono_lookup_1_1_lambda_wrap_a7df136d5ceaedb89d7546bb1396535d8_1a7df136d5ceaedb89d7546bb1396535d8" prot="private" static="no" mutable="no">
+        <type>Lambda &amp;</type>
+        <definition>Lambda&amp; StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::LambdaWrap&lt; Lambda &gt;::mLambda</definition>
+        <argsstring></argsstring>
+        <name>mLambda</name>
+        <qualifiedname>StaticMonoLookup::LambdaWrap::mLambda</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="147" column="12" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="147" bodyend="-1"/>
+        <referencedby refid="class_static_mono_lookup_1_1_lambda_wrap_a0841c8783e0ed0aa80c6ca7517395f3d_1a0841c8783e0ed0aa80c6ca7517395f3d" compoundref="_static_mono_map_8hpp" startline="144" endline="144">StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::LambdaWrap&lt; Lambda &gt;::LambdaWrap</referencedby>
+        <referencedby refid="class_static_mono_lookup_1_1_lambda_wrap_a14810b71c0ae72d0f3b64f6e24edb4af_1a14810b71c0ae72d0f3b64f6e24edb4af" compoundref="_static_mono_map_8hpp" startline="145" endline="145">StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::LambdaWrap&lt; Lambda &gt;::proceed</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_static_mono_lookup_1_1_lambda_wrap_a0841c8783e0ed0aa80c6ca7517395f3d_1a0841c8783e0ed0aa80c6ca7517395f3d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::LambdaWrap&lt; Lambda &gt;::LambdaWrap</definition>
+        <argsstring>(Lambda &amp;lambda)</argsstring>
+        <name>LambdaWrap</name>
+        <qualifiedname>StaticMonoLookup::LambdaWrap::LambdaWrap</qualifiedname>
+        <param>
+          <type>Lambda &amp;</type>
+          <declname>lambda</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="144" column="5" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="144" bodyend="144"/>
+        <references refid="class_static_mono_lookup_1_1_lambda_wrap_a7df136d5ceaedb89d7546bb1396535d8_1a7df136d5ceaedb89d7546bb1396535d8" compoundref="_static_mono_map_8hpp" startline="147">StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::LambdaWrap&lt; Lambda &gt;::mLambda</references>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_1_1_lambda_wrap_a14810b71c0ae72d0f3b64f6e24edb4af_1a14810b71c0ae72d0f3b64f6e24edb4af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::LambdaWrap&lt; Lambda &gt;::proceed</definition>
+        <argsstring>(const Entry &amp;entry) const</argsstring>
+        <name>proceed</name>
+        <qualifiedname>StaticMonoLookup::LambdaWrap::proceed</qualifiedname>
+        <param>
+          <type>const <ref refid="class_static_mono_lookup_a9dcee866f5caea31f0dd2edc0a6782e1_1a9dcee866f5caea31f0dd2edc0a6782e1" kindref="member">Entry</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="145" column="10" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="145" bodyend="145"/>
+        <references refid="class_static_mono_lookup_1_1_lambda_wrap_a7df136d5ceaedb89d7546bb1396535d8_1a7df136d5ceaedb89d7546bb1396535d8" compoundref="_static_mono_map_8hpp" startline="147">StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::LambdaWrap&lt; Lambda &gt;::mLambda</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Lambda &amp;</label>
+      </node>
+      <node id="1">
+        <label>StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::LambdaWrap&lt; Lambda &gt;</label>
+        <link refid="class_static_mono_lookup_1_1_lambda_wrap"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mLambda</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="142" column="3" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="142" bodyend="148"/>
+    <listofallmembers>
+      <member refid="class_static_mono_lookup_1_1_lambda_wrap_a0841c8783e0ed0aa80c6ca7517395f3d_1a0841c8783e0ed0aa80c6ca7517395f3d" prot="public" virt="non-virtual"><scope>StaticMonoLookup::LambdaWrap</scope><name>LambdaWrap</name></member>
+      <member refid="class_static_mono_lookup_1_1_lambda_wrap_a7df136d5ceaedb89d7546bb1396535d8_1a7df136d5ceaedb89d7546bb1396535d8" prot="private" virt="non-virtual"><scope>StaticMonoLookup::LambdaWrap</scope><name>mLambda</name></member>
+      <member refid="class_static_mono_lookup_1_1_lambda_wrap_a14810b71c0ae72d0f3b64f6e24edb4af_1a14810b71c0ae72d0f3b64f6e24edb4af" prot="public" virt="non-virtual"><scope>StaticMonoLookup::LambdaWrap</scope><name>proceed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

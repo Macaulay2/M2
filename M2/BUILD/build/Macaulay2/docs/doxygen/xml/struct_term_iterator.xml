@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_term_iterator" kind="struct" language="C++" prot="public">
+    <compoundname>TermIterator</compoundname>
+    <includes refid="ringelem_8hpp" local="no">ringelem.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename <ref refid="struct_t" kindref="compound">T</ref></type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>T* TermIterator&lt; T &gt;::p</definition>
+        <argsstring></argsstring>
+        <name>p</name>
+        <qualifiedname>TermIterator::p</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="176" column="5" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="176" bodyend="-1"/>
+        <referencedby refid="struct_term_iterator_ac9b4c62e7f01abc33aeffbc0b60d1c60_1ac9b4c62e7f01abc33aeffbc0b60d1c60" compoundref="ringelem_8hpp" startline="190" endline="190">TermIterator&lt; T &gt;::operator!=</referencedby>
+        <referencedby refid="struct_term_iterator_ac7379efed47f1ffb944f7d4128892c0a_1ac7379efed47f1ffb944f7d4128892c0a" compoundref="ringelem_8hpp" startline="185" endline="185">TermIterator&lt; T &gt;::operator*</referencedby>
+        <referencedby refid="struct_term_iterator_ae4c6b324f225326bb13f9729d41da1d8_1ae4c6b324f225326bb13f9729d41da1d8" compoundref="ringelem_8hpp" startline="184" endline="184">TermIterator&lt; T &gt;::operator*</referencedby>
+        <referencedby refid="struct_term_iterator_ad6d5388aa606be4657512c0d4da05f31_1ad6d5388aa606be4657512c0d4da05f31" compoundref="ringelem_8hpp" startline="182" endline="182">TermIterator&lt; T &gt;::operator++</referencedby>
+        <referencedby refid="struct_term_iterator_aab6e7fdf7d5c41c7e7e0411e69cd68af_1aab6e7fdf7d5c41c7e7e0411e69cd68af" compoundref="ringelem_8hpp" startline="187" endline="187">TermIterator&lt; T &gt;::operator-&gt;</referencedby>
+        <referencedby refid="struct_term_iterator_a9a1f73e0a7bc68f640042a7f19303b5f_1a9a1f73e0a7bc68f640042a7f19303b5f" compoundref="ringelem_8hpp" startline="186" endline="186">TermIterator&lt; T &gt;::operator-&gt;</referencedby>
+        <referencedby refid="struct_term_iterator_a51c29658a4d3f7144db9c9e4198ebc1a_1a51c29658a4d3f7144db9c9e4198ebc1a" compoundref="ringelem_8hpp" startline="189" endline="189">TermIterator&lt; T &gt;::operator==</referencedby>
+        <referencedby refid="struct_term_iterator_a679dca5d131a83cef5b3052440a6a64e_1a679dca5d131a83cef5b3052440a6a64e" compoundref="ringelem_8hpp" startline="178" endline="178">TermIterator&lt; T &gt;::TermIterator</referencedby>
+        <referencedby refid="struct_term_iterator_aaef2f914d26db7995fc325cfcae33e72_1aaef2f914d26db7995fc325cfcae33e72" compoundref="ringelem_8hpp" startline="180" endline="180">TermIterator&lt; T &gt;::TermIterator</referencedby>
+        <referencedby refid="struct_term_iterator_a56d283c9e5ccad4710d5ea5f576b6d7b_1a56d283c9e5ccad4710d5ea5f576b6d7b" compoundref="ringelem_8hpp" startline="179" endline="179">TermIterator&lt; T &gt;::TermIterator</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_term_iterator_a679dca5d131a83cef5b3052440a6a64e_1a679dca5d131a83cef5b3052440a6a64e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TermIterator&lt; T &gt;::TermIterator</definition>
+        <argsstring>()</argsstring>
+        <name>TermIterator</name>
+        <qualifiedname>TermIterator::TermIterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="178" column="3" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="178" bodyend="178"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+        <referencedby refid="struct_term_iterator_ac9b4c62e7f01abc33aeffbc0b60d1c60_1ac9b4c62e7f01abc33aeffbc0b60d1c60" compoundref="ringelem_8hpp" startline="190" endline="190">TermIterator&lt; T &gt;::operator!=</referencedby>
+        <referencedby refid="struct_term_iterator_ad6d5388aa606be4657512c0d4da05f31_1ad6d5388aa606be4657512c0d4da05f31" compoundref="ringelem_8hpp" startline="182" endline="182">TermIterator&lt; T &gt;::operator++</referencedby>
+        <referencedby refid="struct_term_iterator_a51c29658a4d3f7144db9c9e4198ebc1a_1a51c29658a4d3f7144db9c9e4198ebc1a" compoundref="ringelem_8hpp" startline="189" endline="189">TermIterator&lt; T &gt;::operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_term_iterator_a56d283c9e5ccad4710d5ea5f576b6d7b_1a56d283c9e5ccad4710d5ea5f576b6d7b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TermIterator&lt; T &gt;::TermIterator</definition>
+        <argsstring>(T *ptr)</argsstring>
+        <name>TermIterator</name>
+        <qualifiedname>TermIterator::TermIterator</qualifiedname>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="179" column="3" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="179" bodyend="179"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_term_iterator_aaef2f914d26db7995fc325cfcae33e72_1aaef2f914d26db7995fc325cfcae33e72" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TermIterator&lt; T &gt;::TermIterator</definition>
+        <argsstring>(ring_elem ptr)</argsstring>
+        <name>TermIterator</name>
+        <qualifiedname>TermIterator::TermIterator</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="180" column="3" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="180" bodyend="180"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_term_iterator_ad6d5388aa606be4657512c0d4da05f31_1ad6d5388aa606be4657512c0d4da05f31" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="struct_term_iterator" kindref="compound">TermIterator</ref> &amp;</type>
+        <definition>TermIterator &amp; TermIterator&lt; T &gt;::operator++</definition>
+        <argsstring>()</argsstring>
+        <name>operator++</name>
+        <qualifiedname>TermIterator::operator++</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="182" column="16" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="182" bodyend="182"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+        <references refid="struct_term_iterator_a679dca5d131a83cef5b3052440a6a64e_1a679dca5d131a83cef5b3052440a6a64e" compoundref="ringelem_8hpp" startline="178" endline="178">TermIterator&lt; T &gt;::TermIterator</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_term_iterator_ae4c6b324f225326bb13f9729d41da1d8_1ae4c6b324f225326bb13f9729d41da1d8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="struct_t" kindref="compound">T</ref> const &amp;</type>
+        <definition>T const  &amp; TermIterator&lt; T &gt;::operator*</definition>
+        <argsstring>() const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>TermIterator::operator*</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="184" column="11" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="184" bodyend="184"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_term_iterator_ac7379efed47f1ffb944f7d4128892c0a_1ac7379efed47f1ffb944f7d4128892c0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="struct_t" kindref="compound">T</ref> &amp;</type>
+        <definition>T &amp; TermIterator&lt; T &gt;::operator*</definition>
+        <argsstring>()</argsstring>
+        <name>operator*</name>
+        <qualifiedname>TermIterator::operator*</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="185" column="11" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="185" bodyend="185"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_term_iterator_a9a1f73e0a7bc68f640042a7f19303b5f_1a9a1f73e0a7bc68f640042a7f19303b5f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="struct_t" kindref="compound">T</ref> const *</type>
+        <definition>T const  * TermIterator&lt; T &gt;::operator-&gt;</definition>
+        <argsstring>() const</argsstring>
+        <name>operator-&gt;</name>
+        <qualifiedname>TermIterator::operator-&gt;</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="186" column="11" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="186" bodyend="186"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_term_iterator_aab6e7fdf7d5c41c7e7e0411e69cd68af_1aab6e7fdf7d5c41c7e7e0411e69cd68af" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>T * TermIterator&lt; T &gt;::operator-&gt;</definition>
+        <argsstring>()</argsstring>
+        <name>operator-&gt;</name>
+        <qualifiedname>TermIterator::operator-&gt;</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="187" column="11" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="187" bodyend="187"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_term_iterator_a51c29658a4d3f7144db9c9e4198ebc1a_1a51c29658a4d3f7144db9c9e4198ebc1a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool TermIterator&lt; T &gt;::operator==</definition>
+        <argsstring>(TermIterator const &amp;rhs) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>TermIterator::operator==</qualifiedname>
+        <param>
+          <type><ref refid="struct_term_iterator" kindref="compound">TermIterator</ref> const &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="189" column="8" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="189" bodyend="189"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+        <references refid="struct_term_iterator_a679dca5d131a83cef5b3052440a6a64e_1a679dca5d131a83cef5b3052440a6a64e" compoundref="ringelem_8hpp" startline="178" endline="178">TermIterator&lt; T &gt;::TermIterator</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_term_iterator_ac9b4c62e7f01abc33aeffbc0b60d1c60_1ac9b4c62e7f01abc33aeffbc0b60d1c60" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool TermIterator&lt; T &gt;::operator!=</definition>
+        <argsstring>(TermIterator const &amp;rhs) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>TermIterator::operator!=</qualifiedname>
+        <param>
+          <type><ref refid="struct_term_iterator" kindref="compound">TermIterator</ref> const &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="190" column="8" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="190" bodyend="190"/>
+        <references refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" compoundref="ringelem_8hpp" startline="176">TermIterator&lt; T &gt;::p</references>
+        <references refid="struct_term_iterator_a679dca5d131a83cef5b3052440a6a64e_1a679dca5d131a83cef5b3052440a6a64e" compoundref="ringelem_8hpp" startline="178" endline="178">TermIterator&lt; T &gt;::TermIterator</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TermIterator&lt; T &gt;</label>
+        <link refid="struct_term_iterator"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>p</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>const void *</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="5">
+        <label>unsigned</label>
+      </node>
+      <node id="4">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="8">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/ringelem.hpp" line="174" column="1" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="175" bodyend="191"/>
+    <listofallmembers>
+      <member refid="struct_term_iterator_ac9b4c62e7f01abc33aeffbc0b60d1c60_1ac9b4c62e7f01abc33aeffbc0b60d1c60" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>operator!=</name></member>
+      <member refid="struct_term_iterator_ae4c6b324f225326bb13f9729d41da1d8_1ae4c6b324f225326bb13f9729d41da1d8" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>operator*</name></member>
+      <member refid="struct_term_iterator_ac7379efed47f1ffb944f7d4128892c0a_1ac7379efed47f1ffb944f7d4128892c0a" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>operator*</name></member>
+      <member refid="struct_term_iterator_ad6d5388aa606be4657512c0d4da05f31_1ad6d5388aa606be4657512c0d4da05f31" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>operator++</name></member>
+      <member refid="struct_term_iterator_a9a1f73e0a7bc68f640042a7f19303b5f_1a9a1f73e0a7bc68f640042a7f19303b5f" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>operator-&gt;</name></member>
+      <member refid="struct_term_iterator_aab6e7fdf7d5c41c7e7e0411e69cd68af_1aab6e7fdf7d5c41c7e7e0411e69cd68af" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>operator-&gt;</name></member>
+      <member refid="struct_term_iterator_a51c29658a4d3f7144db9c9e4198ebc1a_1a51c29658a4d3f7144db9c9e4198ebc1a" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>operator==</name></member>
+      <member refid="struct_term_iterator_a85bf286dd201fbaaeb74ee74c8573e9a_1a85bf286dd201fbaaeb74ee74c8573e9a" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>p</name></member>
+      <member refid="struct_term_iterator_a679dca5d131a83cef5b3052440a6a64e_1a679dca5d131a83cef5b3052440a6a64e" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>TermIterator</name></member>
+      <member refid="struct_term_iterator_a56d283c9e5ccad4710d5ea5f576b6d7b_1a56d283c9e5ccad4710d5ea5f576b6d7b" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>TermIterator</name></member>
+      <member refid="struct_term_iterator_aaef2f914d26db7995fc325cfcae33e72_1aaef2f914d26db7995fc325cfcae33e72" prot="public" virt="non-virtual"><scope>TermIterator</scope><name>TermIterator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

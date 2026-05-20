@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_monomial_table_z_z_1_1mon__term" kind="struct" language="C++" prot="public">
+    <compoundname>MonomialTableZZ::mon_term</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="montable_z_z_8hpp" local="no">montableZZ.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_monomial_table_z_z_1_1mon__term_a9ab1d0cfbd078b2cba4e3f03fd85ad9a_1a9ab1d0cfbd078b2cba4e3f03fd85ad9a" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_monomial_table_z_z_1_1mon__term" kindref="compound">mon_term</ref> *</type>
+        <definition>mon_term* MonomialTableZZ::mon_term::_next</definition>
+        <argsstring></argsstring>
+        <name>_next</name>
+        <qualifiedname>MonomialTableZZ::mon_term::_next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.hpp" line="87" column="14" bodyfile="Macaulay2/e/montableZZ.hpp" bodystart="87" bodyend="-1"/>
+        <referencedby refid="class_monomial_table_z_z_ae22d96eac632a856896159de018e6321_1ae22d96eac632a856896159de018e6321" compoundref="montable_z_z_8cpp" startline="325" endline="349">MonomialTableZZ::find_exact</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a0ff6410e17c69b8335278f6b8fcfd4f4_1a0ff6410e17c69b8335278f6b8fcfd4f4" compoundref="montable_z_z_8cpp" startline="351" endline="390">MonomialTableZZ::find_exact_monomial</referencedby>
+        <referencedby refid="class_monomial_table_z_z_ad749936bc238918e69200110aeb2c7e2_1ad749936bc238918e69200110aeb2c7e2" compoundref="montable_z_z_8cpp" startline="281" endline="323">MonomialTableZZ::find_monomial_divisors</referencedby>
+        <referencedby refid="class_monomial_table_z_z_aca15e8e9e0e9027c31706b0daa1bf3de_1aca15e8e9e0e9027c31706b0daa1bf3de" compoundref="montable_z_z_8cpp" startline="247" endline="279">MonomialTableZZ::find_smallest_coeff_divisor</referencedby>
+        <referencedby refid="class_monomial_table_z_z_affa7d941666cc5b136452e74ade07a46_1affa7d941666cc5b136452e74ade07a46" compoundref="montable_z_z_8cpp" startline="145" endline="191">MonomialTableZZ::find_term_divisors</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a1a1e4238379cd480edae5725130836ab_1a1a1e4238379cd480edae5725130836ab" compoundref="montable_z_z_8cpp" startline="400" endline="439">MonomialTableZZ::insert</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a9364a6d8f7ff0c1dbf944bb8f7573aff_1a9364a6d8f7ff0c1dbf944bb8f7573aff" compoundref="montable_z_z_8cpp" startline="193" endline="240">MonomialTableZZ::is_weak_member</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a18189f3f041e81e638d9d7e6c09f0149_1a18189f3f041e81e638d9d7e6c09f0149" compoundref="montable_z_z_8cpp" startline="53" endline="61">MonomialTableZZ::make_list_head</referencedby>
+        <referencedby refid="class_monomial_table_z_z_ababd65c26909d812970730b92556750e_1ababd65c26909d812970730b92556750e" compoundref="montable_z_z_8cpp" startline="672" endline="692">MonomialTableZZ::show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_monomial_table_z_z_1_1mon__term_a03f5cb7bb18e4cf678892b306c08b911_1a03f5cb7bb18e4cf678892b306c08b911" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_monomial_table_z_z_1_1mon__term" kindref="compound">mon_term</ref> *</type>
+        <definition>mon_term* MonomialTableZZ::mon_term::_prev</definition>
+        <argsstring></argsstring>
+        <name>_prev</name>
+        <qualifiedname>MonomialTableZZ::mon_term::_prev</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.hpp" line="88" column="14" bodyfile="Macaulay2/e/montableZZ.hpp" bodystart="88" bodyend="-1"/>
+        <referencedby refid="class_monomial_table_z_z_a1a1e4238379cd480edae5725130836ab_1a1a1e4238379cd480edae5725130836ab" compoundref="montable_z_z_8cpp" startline="400" endline="439">MonomialTableZZ::insert</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a18189f3f041e81e638d9d7e6c09f0149_1a18189f3f041e81e638d9d7e6c09f0149" compoundref="montable_z_z_8cpp" startline="53" endline="61">MonomialTableZZ::make_list_head</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_monomial_table_z_z_1_1mon__term_a093531ca16e523c4165f132570cb177f_1a093531ca16e523c4165f132570cb177f" prot="public" static="no" mutable="no">
+        <type><ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref></type>
+        <definition>exponents_t MonomialTableZZ::mon_term::_lead</definition>
+        <argsstring></argsstring>
+        <name>_lead</name>
+        <qualifiedname>MonomialTableZZ::mon_term::_lead</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.hpp" line="89" column="17" bodyfile="Macaulay2/e/montableZZ.hpp" bodystart="89" bodyend="-1"/>
+        <referencedby refid="class_monomial_table_z_z_ae22d96eac632a856896159de018e6321_1ae22d96eac632a856896159de018e6321" compoundref="montable_z_z_8cpp" startline="325" endline="349">MonomialTableZZ::find_exact</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a0ff6410e17c69b8335278f6b8fcfd4f4_1a0ff6410e17c69b8335278f6b8fcfd4f4" compoundref="montable_z_z_8cpp" startline="351" endline="390">MonomialTableZZ::find_exact_monomial</referencedby>
+        <referencedby refid="class_monomial_table_z_z_ad749936bc238918e69200110aeb2c7e2_1ad749936bc238918e69200110aeb2c7e2" compoundref="montable_z_z_8cpp" startline="281" endline="323">MonomialTableZZ::find_monomial_divisors</referencedby>
+        <referencedby refid="class_monomial_table_z_z_aca15e8e9e0e9027c31706b0daa1bf3de_1aca15e8e9e0e9027c31706b0daa1bf3de" compoundref="montable_z_z_8cpp" startline="247" endline="279">MonomialTableZZ::find_smallest_coeff_divisor</referencedby>
+        <referencedby refid="class_monomial_table_z_z_affa7d941666cc5b136452e74ade07a46_1affa7d941666cc5b136452e74ade07a46" compoundref="montable_z_z_8cpp" startline="145" endline="191">MonomialTableZZ::find_term_divisors</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a1a1e4238379cd480edae5725130836ab_1a1a1e4238379cd480edae5725130836ab" compoundref="montable_z_z_8cpp" startline="400" endline="439">MonomialTableZZ::insert</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a9364a6d8f7ff0c1dbf944bb8f7573aff_1a9364a6d8f7ff0c1dbf944bb8f7573aff" compoundref="montable_z_z_8cpp" startline="193" endline="240">MonomialTableZZ::is_weak_member</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a18189f3f041e81e638d9d7e6c09f0149_1a18189f3f041e81e638d9d7e6c09f0149" compoundref="montable_z_z_8cpp" startline="53" endline="61">MonomialTableZZ::make_list_head</referencedby>
+        <referencedby refid="class_monomial_table_z_z_ae93c1d8052a8618baf033213c686d962_1ae93c1d8052a8618baf033213c686d962" compoundref="montable_z_z_8cpp" startline="646" endline="649">MonomialTableZZ::show_mon_term</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_monomial_table_z_z_1_1mon__term_adae34395d2fd33044df4167b2475ac6d_1adae34395d2fd33044df4167b2475ac6d" prot="public" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialTableZZ::mon_term::_mask</definition>
+        <argsstring></argsstring>
+        <name>_mask</name>
+        <qualifiedname>MonomialTableZZ::mon_term::_mask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.hpp" line="90" column="19" bodyfile="Macaulay2/e/montableZZ.hpp" bodystart="90" bodyend="-1"/>
+        <referencedby refid="class_monomial_table_z_z_ae22d96eac632a856896159de018e6321_1ae22d96eac632a856896159de018e6321" compoundref="montable_z_z_8cpp" startline="325" endline="349">MonomialTableZZ::find_exact</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a0ff6410e17c69b8335278f6b8fcfd4f4_1a0ff6410e17c69b8335278f6b8fcfd4f4" compoundref="montable_z_z_8cpp" startline="351" endline="390">MonomialTableZZ::find_exact_monomial</referencedby>
+        <referencedby refid="class_monomial_table_z_z_ad749936bc238918e69200110aeb2c7e2_1ad749936bc238918e69200110aeb2c7e2" compoundref="montable_z_z_8cpp" startline="281" endline="323">MonomialTableZZ::find_monomial_divisors</referencedby>
+        <referencedby refid="class_monomial_table_z_z_aca15e8e9e0e9027c31706b0daa1bf3de_1aca15e8e9e0e9027c31706b0daa1bf3de" compoundref="montable_z_z_8cpp" startline="247" endline="279">MonomialTableZZ::find_smallest_coeff_divisor</referencedby>
+        <referencedby refid="class_monomial_table_z_z_affa7d941666cc5b136452e74ade07a46_1affa7d941666cc5b136452e74ade07a46" compoundref="montable_z_z_8cpp" startline="145" endline="191">MonomialTableZZ::find_term_divisors</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a1a1e4238379cd480edae5725130836ab_1a1a1e4238379cd480edae5725130836ab" compoundref="montable_z_z_8cpp" startline="400" endline="439">MonomialTableZZ::insert</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a9364a6d8f7ff0c1dbf944bb8f7573aff_1a9364a6d8f7ff0c1dbf944bb8f7573aff" compoundref="montable_z_z_8cpp" startline="193" endline="240">MonomialTableZZ::is_weak_member</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_monomial_table_z_z_1_1mon__term_aca643be66cac981079cd841b8d5dd10d_1aca643be66cac981079cd841b8d5dd10d" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialTableZZ::mon_term::_val</definition>
+        <argsstring></argsstring>
+        <name>_val</name>
+        <qualifiedname>MonomialTableZZ::mon_term::_val</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.hpp" line="91" column="9" bodyfile="Macaulay2/e/montableZZ.hpp" bodystart="91" bodyend="-1"/>
+        <referencedby refid="class_monomial_table_z_z_a86e578338358414f767d8d675d48f9ce_1a86e578338358414f767d8d675d48f9ce" compoundref="montable_z_z_8cpp" startline="392" endline="398">MonomialTableZZ::change_coefficient</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a0ff6410e17c69b8335278f6b8fcfd4f4_1a0ff6410e17c69b8335278f6b8fcfd4f4" compoundref="montable_z_z_8cpp" startline="351" endline="390">MonomialTableZZ::find_exact_monomial</referencedby>
+        <referencedby refid="class_monomial_table_z_z_aca15e8e9e0e9027c31706b0daa1bf3de_1aca15e8e9e0e9027c31706b0daa1bf3de" compoundref="montable_z_z_8cpp" startline="247" endline="279">MonomialTableZZ::find_smallest_coeff_divisor</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a1a1e4238379cd480edae5725130836ab_1a1a1e4238379cd480edae5725130836ab" compoundref="montable_z_z_8cpp" startline="400" endline="439">MonomialTableZZ::insert</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a18189f3f041e81e638d9d7e6c09f0149_1a18189f3f041e81e638d9d7e6c09f0149" compoundref="montable_z_z_8cpp" startline="53" endline="61">MonomialTableZZ::make_list_head</referencedby>
+        <referencedby refid="classgb_a_aa8f38461d0118ce46f2f5bb1e4cfc479_1aa8f38461d0118ce46f2f5bb1e4cfc479" compoundref="gb-default_8cpp" startline="1451" endline="1592">gbA::reduce_ZZ</referencedby>
+        <referencedby refid="classgb_a_a4d9b0ac32a2395305f6db8eecf4113ac_1a4d9b0ac32a2395305f6db8eecf4113ac" compoundref="gb-default_8cpp" startline="2232" endline="2290">gbA::replace_gb_element_ZZ</referencedby>
+        <referencedby refid="class_monomial_table_z_z_ae93c1d8052a8618baf033213c686d962_1ae93c1d8052a8618baf033213c686d962" compoundref="montable_z_z_8cpp" startline="646" endline="649">MonomialTableZZ::show_mon_term</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_monomial_table_z_z_1_1mon__term_a4b78dc3344300423705d7dbc380243bd_1a4b78dc3344300423705d7dbc380243bd" prot="public" static="no" mutable="no">
+        <type>mpz_srcptr</type>
+        <definition>mpz_srcptr MonomialTableZZ::mon_term::_coeff</definition>
+        <argsstring></argsstring>
+        <name>_coeff</name>
+        <qualifiedname>MonomialTableZZ::mon_term::_coeff</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.hpp" line="92" column="16" bodyfile="Macaulay2/e/montableZZ.hpp" bodystart="92" bodyend="-1"/>
+        <referencedby refid="class_monomial_table_z_z_a86e578338358414f767d8d675d48f9ce_1a86e578338358414f767d8d675d48f9ce" compoundref="montable_z_z_8cpp" startline="392" endline="398">MonomialTableZZ::change_coefficient</referencedby>
+        <referencedby refid="class_monomial_table_z_z_ae22d96eac632a856896159de018e6321_1ae22d96eac632a856896159de018e6321" compoundref="montable_z_z_8cpp" startline="325" endline="349">MonomialTableZZ::find_exact</referencedby>
+        <referencedby refid="class_monomial_table_z_z_aca15e8e9e0e9027c31706b0daa1bf3de_1aca15e8e9e0e9027c31706b0daa1bf3de" compoundref="montable_z_z_8cpp" startline="247" endline="279">MonomialTableZZ::find_smallest_coeff_divisor</referencedby>
+        <referencedby refid="class_monomial_table_z_z_affa7d941666cc5b136452e74ade07a46_1affa7d941666cc5b136452e74ade07a46" compoundref="montable_z_z_8cpp" startline="145" endline="191">MonomialTableZZ::find_term_divisors</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a1a1e4238379cd480edae5725130836ab_1a1a1e4238379cd480edae5725130836ab" compoundref="montable_z_z_8cpp" startline="400" endline="439">MonomialTableZZ::insert</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a9364a6d8f7ff0c1dbf944bb8f7573aff_1a9364a6d8f7ff0c1dbf944bb8f7573aff" compoundref="montable_z_z_8cpp" startline="193" endline="240">MonomialTableZZ::is_weak_member</referencedby>
+        <referencedby refid="class_monomial_table_z_z_a18189f3f041e81e638d9d7e6c09f0149_1a18189f3f041e81e638d9d7e6c09f0149" compoundref="montable_z_z_8cpp" startline="53" endline="61">MonomialTableZZ::make_list_head</referencedby>
+        <referencedby refid="class_monomial_table_z_z_ae93c1d8052a8618baf033213c686d962_1ae93c1d8052a8618baf033213c686d962" compoundref="montable_z_z_8cpp" startline="646" endline="649">MonomialTableZZ::show_mon_term</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="struct_monomial_table_1_1mon__term" kindref="compound">MonomialTable::mon_term</ref></computeroutput> plus an <computeroutput><ref refid="struct_monomial_table_z_z_1_1mon__term_a4b78dc3344300423705d7dbc380243bd_1a4b78dc3344300423705d7dbc380243bd" kindref="member">_coeff</ref></computeroutput> slot pointing at the entry&apos;s leading <computeroutput><ref refid="ringelem_8hpp_afea72c39052b53d15e7acad8d36847c1_1afea72c39052b53d15e7acad8d36847c1" kindref="member">ZZ</ref></computeroutput> coefficient (or <computeroutput>nullptr</computeroutput> for the coefficient-blind case). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The coefficient itself is owned by whatever stored the entry (typically a GB element), so the lifetime of <computeroutput><ref refid="struct_monomial_table_z_z_1_1mon__term_a4b78dc3344300423705d7dbc380243bd_1a4b78dc3344300423705d7dbc380243bd" kindref="member">_coeff</ref></computeroutput> must outlive this <computeroutput><ref refid="struct_monomial_table_z_z_1_1mon__term" kindref="compound">mon_term</ref></computeroutput>. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>MonomialTableZZ::mon_term</label>
+        <link refid="struct_monomial_table_z_z_1_1mon__term"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>MonomialTableZZ::mon_term</label>
+        <link refid="struct_monomial_table_z_z_1_1mon__term"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_next</edgelabel>
+          <edgelabel>_prev</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_lead</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_mask</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_coeff</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Exponents</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>long</label>
+      </node>
+      <node id="6">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/montableZZ.hpp" line="85" column="3" bodyfile="Macaulay2/e/montableZZ.hpp" bodystart="86" bodyend="93"/>
+    <listofallmembers>
+      <member refid="struct_monomial_table_z_z_1_1mon__term_a4b78dc3344300423705d7dbc380243bd_1a4b78dc3344300423705d7dbc380243bd" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>_coeff</name></member>
+      <member refid="struct_monomial_table_z_z_1_1mon__term_a093531ca16e523c4165f132570cb177f_1a093531ca16e523c4165f132570cb177f" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>_lead</name></member>
+      <member refid="struct_monomial_table_z_z_1_1mon__term_adae34395d2fd33044df4167b2475ac6d_1adae34395d2fd33044df4167b2475ac6d" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>_mask</name></member>
+      <member refid="struct_monomial_table_z_z_1_1mon__term_a9ab1d0cfbd078b2cba4e3f03fd85ad9a_1a9ab1d0cfbd078b2cba4e3f03fd85ad9a" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>_next</name></member>
+      <member refid="struct_monomial_table_z_z_1_1mon__term_a03f5cb7bb18e4cf678892b306c08b911_1a03f5cb7bb18e4cf678892b306c08b911" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>_prev</name></member>
+      <member refid="struct_monomial_table_z_z_1_1mon__term_aca643be66cac981079cd841b8d5dd10d_1aca643be66cac981079cd841b8d5dd10d" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>_val</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>MonomialTableZZ::mon_term</scope><name>operator new[]</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

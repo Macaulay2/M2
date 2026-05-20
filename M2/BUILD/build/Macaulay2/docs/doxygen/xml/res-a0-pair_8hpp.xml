@@ -1,0 +1,545 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="res-a0-pair_8hpp" kind="file" language="C++">
+    <compoundname>res-a0-pair.hpp</compoundname>
+    <includes refid="newdelete_8hpp" local="no">newdelete.hpp</includes>
+    <includes refid="monideal_8hpp" local="no">monideal.hpp</includes>
+    <includedby refid="res-a0-poly_8hpp" local="yes">Macaulay2/e/res-a0-poly.hpp</includedby>
+    <incdepgraph>
+      <node id="49">
+        <label>../system/mutex.h</label>
+      </node>
+      <node id="28">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="15">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>int-bag.hpp</label>
+        <link refid="int-bag_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>interface/computation.h</label>
+        <link refid="computation_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>mem.hpp</label>
+        <link refid="mem_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>monideal.hpp</label>
+        <link refid="monideal_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>qring.hpp</label>
+        <link refid="qring_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/res-a0-pair.hpp</label>
+        <link refid="res-a0-pair_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="20">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>M2/config.h</label>
+      </node>
+      <node id="6">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="24">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="11">
+        <label>assert.h</label>
+      </node>
+      <node id="18">
+        <label>cassert</label>
+      </node>
+      <node id="43">
+        <label>cstddef</label>
+      </node>
+      <node id="29">
+        <label>cstdio</label>
+      </node>
+      <node id="7">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="27">
+        <label>iostream</label>
+      </node>
+      <node id="34">
+        <label>memory</label>
+      </node>
+      <node id="37">
+        <label>stddef.h</label>
+      </node>
+      <node id="16">
+        <label>stdexcept</label>
+      </node>
+      <node id="23">
+        <label>stdint.h</label>
+      </node>
+      <node id="4">
+        <label>stdlib.h</label>
+      </node>
+      <node id="17">
+        <label>string</label>
+      </node>
+      <node id="12">
+        <label>string.h</label>
+      </node>
+      <node id="13">
+        <label>type_traits</label>
+      </node>
+      <node id="32">
+        <label>utility</label>
+      </node>
+      <node id="5">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="8">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="7">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/debug.cpp</label>
+        <link refid="debug_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/res-a0-pair.hpp</label>
+        <link refid="res-a0-pair_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/res-a0-poly.cpp</label>
+        <link refid="res-a0-poly_8cpp"/>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/res-a0-poly.hpp</label>
+        <link refid="res-a0-poly_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/res-a0.cpp</label>
+        <link refid="res-a0_8cpp"/>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/res-a0.hpp</label>
+        <link refid="res-a0_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structres2__pair" prot="public">res2_pair</innerclass>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73" prot="public" static="no" strong="no">
+        <type></type>
+        <name></name>
+        <enumvalue id="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a9190d14b5e5454f578c1102119d948eb" prot="public">
+          <name>SYZ2_S_PAIR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a2033ce1640b1f5994133d9f94f1ac39a" prot="public">
+          <name>SYZ2_MAYBE_MINIMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73acd3e02fc90cae14baf5e19bc44abc374" prot="public">
+          <name>SYZ2_MINIMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a8e3edcbe1e7c7ea9edd28d2a7f342318" prot="public">
+          <name>SYZ2_NOT_MINIMAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a8a60fdfaeadac3cc838b44993fed3ad1" prot="public">
+          <name>SYZ2_NOT_NEEDED</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a0-pair.hpp" line="12" column="1" bodyfile="Macaulay2/e/res-a0-pair.hpp" bodystart="12" bodyend="22"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>1996.<sp/><sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_respair_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_respair_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="newdelete_8hpp" kindref="compound">newdelete.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="monideal_8hpp" kindref="compound">monideal.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structres2term" kindref="compound">res2term</ref>;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>are<sp/>the<sp/>possible<sp/>types<sp/>of<sp/>res_pairs&apos;s</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="13" refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a9190d14b5e5454f578c1102119d948eb" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a9190d14b5e5454f578c1102119d948eb" kindref="member">SYZ2_S_PAIR</ref>,<sp/><sp/></highlight><highlight class="comment">//<sp/>Pre<sp/>computation:<sp/>s-pair</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a2033ce1640b1f5994133d9f94f1ac39a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a2033ce1640b1f5994133d9f94f1ac39a" kindref="member">SYZ2_MAYBE_MINIMAL</ref>,<sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>s-pair<sp/>was<sp/>computed<sp/>before<sp/>all<sp/>of<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>pairs<sp/>in<sp/>the<sp/>next<sp/>level<sp/>were<sp/>computed,<sp/>meaning<sp/>that</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>this<sp/>element<sp/>may<sp/>not<sp/>correspond<sp/>to<sp/>a<sp/>minimal<sp/>syz.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Instead,<sp/>it<sp/>may<sp/>be<sp/>a<sp/>SYZ2_NOT_MINIMAL.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73acd3e02fc90cae14baf5e19bc44abc374" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73acd3e02fc90cae14baf5e19bc44abc374" kindref="member">SYZ2_MINIMAL</ref>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Post<sp/>s-pair<sp/>computation:<sp/>element<sp/>is<sp/>minimal<sp/>syzygy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a8e3edcbe1e7c7ea9edd28d2a7f342318" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a8e3edcbe1e7c7ea9edd28d2a7f342318" kindref="member">SYZ2_NOT_MINIMAL</ref>,<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Post<sp/>s-pair<sp/>computation:<sp/>element<sp/>is<sp/>not<sp/>minimal</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a8a60fdfaeadac3cc838b44993fed3ad1" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-a0-pair_8hpp_aa6be3983579bc88a5d0d073e53cacc73_1aa6be3983579bc88a5d0d073e53cacc73a8a60fdfaeadac3cc838b44993fed3ad1" kindref="member">SYZ2_NOT_NEEDED</ref><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>S-pair<sp/>computation<sp/>for<sp/>this<sp/>pair<sp/>cancelled</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="structres2__pair" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structres2__pair" kindref="compound">res2_pair</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structour__new__delete" kindref="compound">our_new_delete</ref></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="26" refid="structres2__pair_ac9d36b180e8abc8f4d85c50195c68fda_1ac9d36b180e8abc8f4d85c50195c68fda" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structres2__pair" kindref="compound">res2_pair</ref><sp/>*<ref refid="structres2__pair_ac9d36b180e8abc8f4d85c50195c68fda_1ac9d36b180e8abc8f4d85c50195c68fda" kindref="member">next</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>Next<sp/>pair<sp/>in<sp/>the<sp/>list</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="structres2__pair_a19dcbc6443d974943e450290c993a59a_1a19dcbc6443d974943e450290c993a59a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structres2__pair_a19dcbc6443d974943e450290c993a59a_1a19dcbc6443d974943e450290c993a59a" kindref="member">me</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>Used<sp/>for<sp/>making<sp/>the<sp/>matrices,<sp/>either<sp/>minimal<sp/>or<sp/>not.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="structres2__pair_a423b51fee7dacb584d7e45adcc201e82_1a423b51fee7dacb584d7e45adcc201e82" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structres2__pair_a423b51fee7dacb584d7e45adcc201e82_1a423b51fee7dacb584d7e45adcc201e82" kindref="member">pair_num</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>A<sp/>sequence<sp/>number<sp/>for<sp/>which<sp/>pair<sp/>this<sp/>is.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Used<sp/>in<sp/>division<sp/>to<sp/>determine<sp/>which<sp/>pair<sp/>to<sp/>reduce<sp/>by.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="structres2__pair_af5fc482995c85d25a94473aea28ebe5b_1af5fc482995c85d25a94473aea28ebe5b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structres2__pair_af5fc482995c85d25a94473aea28ebe5b_1af5fc482995c85d25a94473aea28ebe5b" kindref="member">syz_type</ref>;</highlight></codeline>
+<codeline lineno="31" refid="structres2__pair_a3cb44c724a719b6eaa15719a4e933333_1a3cb44c724a719b6eaa15719a4e933333" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="structres2__pair_a3cb44c724a719b6eaa15719a4e933333_1a3cb44c724a719b6eaa15719a4e933333" kindref="member">level</ref>;</highlight></codeline>
+<codeline lineno="32" refid="structres2__pair_a0bb2f6d9036044bf843e52894a4ed80d_1a0bb2f6d9036044bf843e52894a4ed80d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/><ref refid="structres2__pair_a0bb2f6d9036044bf843e52894a4ed80d_1a0bb2f6d9036044bf843e52894a4ed80d" kindref="member">degree</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="structres2__pair_aedc08fe18a754d8aa9bbd3abb97716de_1aedc08fe18a754d8aa9bbd3abb97716de" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structres2__pair_aedc08fe18a754d8aa9bbd3abb97716de_1aedc08fe18a754d8aa9bbd3abb97716de" kindref="member">compare_num</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>don&apos;t<sp/>need<sp/>a<sp/>full<sp/>32<sp/>(or<sp/>64)<sp/>bit<sp/>number<sp/>for<sp/>this...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="structres2__pair_a7d60f70d3b47135b94cdffc28dcc5f42_1a7d60f70d3b47135b94cdffc28dcc5f42" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structres2term" kindref="compound">res2term</ref><sp/>*<ref refid="structres2__pair_a7d60f70d3b47135b94cdffc28dcc5f42_1a7d60f70d3b47135b94cdffc28dcc5f42" kindref="member">syz</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>syzygy<sp/>itself,<sp/>once<sp/>computed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Before<sp/>being<sp/>computed,<sp/>this<sp/>is<sp/>the<sp/>1<sp/>or<sp/>2<sp/>term<sp/>syzygy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>saying<sp/>what<sp/>the<sp/>syzygy<sp/>is.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structres2__pair_a78e90d97ef490b0c33bd86c0bb5a9411_1a78e90d97ef490b0c33bd86c0bb5a9411" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="structres2__pair_a78e90d97ef490b0c33bd86c0bb5a9411_1a78e90d97ef490b0c33bd86c0bb5a9411" kindref="member">mi</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/>union<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>MonomialIdeal<sp/>mi;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Monomial<sp/>ideal<sp/>of<sp/>total<sp/>monomials</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>struct<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Maybe:<sp/>want<sp/>a<sp/>pointer<sp/>to<sp/>this...?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/>res2_pair<sp/>*mi2;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>List<sp/>of<sp/>res_pairs<sp/>having<sp/>this<sp/>as<sp/>lead<sp/>term</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/>res2_pair<sp/>*next_mi;<sp/><sp/><sp/><sp/>//<sp/>If<sp/>this<sp/>is<sp/>part<sp/>of<sp/>a<sp/>list<sp/>of<sp/>mi2,<sp/>this<sp/>is<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>next-link.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>monomial_mask;<sp/><sp/><sp/><sp/><sp/>//<sp/>Do<sp/>we<sp/>really<sp/>want<sp/>this?<sp/><sp/>If<sp/>so:<sp/>should<sp/>probably</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>refer<sp/>to<sp/>the<sp/>non-total<sp/>monomial.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/>}<sp/>monideal;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>are<sp/>used<sp/>only<sp/>for<sp/>minimalization<sp/>of<sp/>the<sp/>resolution</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="structres2__pair_ae21943a72ceb5c79cb48c3ed9fb7b69b_1ae21943a72ceb5c79cb48c3ed9fb7b69b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structres2term" kindref="compound">res2term</ref><sp/>*<ref refid="structres2__pair_ae21943a72ceb5c79cb48c3ed9fb7b69b_1ae21943a72ceb5c79cb48c3ed9fb7b69b" kindref="member">pivot_term</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>SYZ2_NOT_MINIMAL:<sp/>Points<sp/>into<sp/>&apos;syz&apos;,<sp/>to<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>term<sp/>containing<sp/>the<sp/>constant.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Is<sp/>this<sp/>always<sp/>the<sp/>last<sp/>term??</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>so,<sp/>we<sp/>probably<sp/>don&apos;t<sp/>need<sp/>this<sp/>field...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/res-a0-pair.hpp"/>
+  </compounddef>
+</doxygen>

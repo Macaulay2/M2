@@ -1,0 +1,301 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_polynomial_heap" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>PolynomialHeap</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <derivedcompoundref refid="class_map_polynomial_heap" prot="public" virt="non-virtual">MapPolynomialHeap</derivedcompoundref>
+    <derivedcompoundref refid="class_naive_dedup_polynomial_heap" prot="public" virt="non-virtual">NaiveDedupPolynomialHeap&lt; Queue &gt;</derivedcompoundref>
+    <derivedcompoundref refid="class_naive_polynomial_heap" prot="public" virt="non-virtual">NaivePolynomialHeap&lt; Queue &gt;</derivedcompoundref>
+    <derivedcompoundref refid="class_priority_queue_polynomial_heap" prot="public" virt="non-virtual">PriorityQueuePolynomialHeap</derivedcompoundref>
+    <derivedcompoundref refid="class_trivial_polynomial_heap" prot="public" virt="non-virtual">TrivialPolynomialHeap</derivedcompoundref>
+    <includes refid="_n_c_reduction_8hpp" local="no">NCReduction.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_polynomial_heap_a0a1da95bf2281726edf8adb156a8888f_1a0a1da95bf2281726edf8adb156a8888f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual PolynomialHeap::~PolynomialHeap</definition>
+        <argsstring>()</argsstring>
+        <name>~PolynomialHeap</name>
+        <qualifiedname>PolynomialHeap::~PolynomialHeap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="63" column="11" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.hpp" bodystart="63" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_heap_af4c187f2289d9351aa0eae34ffb59ff2_1af4c187f2289d9351aa0eae34ffb59ff2" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="class_polynomial_heap" kindref="compound">PolynomialHeap</ref> &amp;</type>
+        <definition>virtual PolynomialHeap &amp; PolynomialHeap::addPolynomial</definition>
+        <argsstring>(const Poly &amp;poly)=0</argsstring>
+        <name>addPolynomial</name>
+        <qualifiedname>PolynomialHeap::addPolynomial</qualifiedname>
+        <reimplementedby refid="class_map_polynomial_heap_acb71836dac4d779779d98892b9b3b63c_1acb71836dac4d779779d98892b9b3b63c">addPolynomial</reimplementedby>
+        <reimplementedby refid="class_naive_dedup_polynomial_heap_a903481418fc5ac9907a6758ea4d72775_1a903481418fc5ac9907a6758ea4d72775">addPolynomial</reimplementedby>
+        <reimplementedby refid="class_naive_polynomial_heap_a85c74a63ec790d22c5cf7f346d1fb8d4_1a85c74a63ec790d22c5cf7f346d1fb8d4">addPolynomial</reimplementedby>
+        <reimplementedby refid="class_priority_queue_polynomial_heap_a2f9a6802f6edcef9129f8e5e9c5f0593_1a2f9a6802f6edcef9129f8e5e9c5f0593">addPolynomial</reimplementedby>
+        <reimplementedby refid="class_trivial_polynomial_heap_afcf8e946582c45cdebdbd964d25183ea_1afcf8e946582c45cdebdbd964d25183ea">addPolynomial</reimplementedby>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="65" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_heap_ab3a41775539f9ca6aed0b32f4018b652_1ab3a41775539f9ca6aed0b32f4018b652" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="class_polynomial_heap" kindref="compound">PolynomialHeap</ref> &amp;</type>
+        <definition>virtual PolynomialHeap &amp; PolynomialHeap::addPolynomial</definition>
+        <argsstring>(ring_elem coeff, Word left, Word right, const Poly &amp;poly)=0</argsstring>
+        <name>addPolynomial</name>
+        <qualifiedname>PolynomialHeap::addPolynomial</qualifiedname>
+        <reimplementedby refid="class_map_polynomial_heap_a75fbd70973727db11fbd22c285aef283_1a75fbd70973727db11fbd22c285aef283">addPolynomial</reimplementedby>
+        <reimplementedby refid="class_naive_dedup_polynomial_heap_a9af779c64bee0be92f05d8dc09c17fce_1a9af779c64bee0be92f05d8dc09c17fce">addPolynomial</reimplementedby>
+        <reimplementedby refid="class_naive_polynomial_heap_a0725e48fd30b58953a7504925ff9d0eb_1a0725e48fd30b58953a7504925ff9d0eb">addPolynomial</reimplementedby>
+        <reimplementedby refid="class_priority_queue_polynomial_heap_a0d205e5dac9de879be64d3b02516b9e0_1a0d205e5dac9de879be64d3b02516b9e0">addPolynomial</reimplementedby>
+        <reimplementedby refid="class_trivial_polynomial_heap_a3a06e222c713645cedc9acf9f05e7360_1a3a06e222c713645cedc9acf9f05e7360">addPolynomial</reimplementedby>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>coeff</declname>
+        </param>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>left</declname>
+        </param>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>right</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="67" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_heap_a83c60fa2685f2cebc01fd35d7ba4528a_1a83c60fa2685f2cebc01fd35d7ba4528a" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool PolynomialHeap::isZero</definition>
+        <argsstring>()=0</argsstring>
+        <name>isZero</name>
+        <qualifiedname>PolynomialHeap::isZero</qualifiedname>
+        <reimplementedby refid="class_map_polynomial_heap_a63dcf85b2612ff45059a3736836181ac_1a63dcf85b2612ff45059a3736836181ac">isZero</reimplementedby>
+        <reimplementedby refid="class_naive_dedup_polynomial_heap_a163c877296fc63cacb879759da828660_1a163c877296fc63cacb879759da828660">isZero</reimplementedby>
+        <reimplementedby refid="class_naive_polynomial_heap_a08307cc01c3fd459e37c8b93d2ae6b64_1a08307cc01c3fd459e37c8b93d2ae6b64">isZero</reimplementedby>
+        <reimplementedby refid="class_priority_queue_polynomial_heap_a4a6131099741d5edf1f774b798dec18c_1a4a6131099741d5edf1f774b798dec18c">isZero</reimplementedby>
+        <reimplementedby refid="class_trivial_polynomial_heap_afb2d92382aa536e2a621847c53460c75_1afb2d92382aa536e2a621847c53460c75">isZero</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="72" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_heap_a89b00f6fe26727dfe9a932d3113ea091_1a89b00f6fe26727dfe9a932d3113ea091" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::pair&lt; <ref refid="struct_monom" kindref="compound">Monom</ref>, <ref refid="unionring__elem" kindref="compound">ring_elem</ref> &gt;</type>
+        <definition>virtual std::pair&lt; Monom, ring_elem &gt; PolynomialHeap::viewLeadTerm</definition>
+        <argsstring>()=0</argsstring>
+        <name>viewLeadTerm</name>
+        <qualifiedname>PolynomialHeap::viewLeadTerm</qualifiedname>
+        <reimplementedby refid="class_map_polynomial_heap_aaae8bba7eca73939342c29d2e43ecfdb_1aaae8bba7eca73939342c29d2e43ecfdb">viewLeadTerm</reimplementedby>
+        <reimplementedby refid="class_naive_dedup_polynomial_heap_afb5c7120b76acd0f3f2b36a7604a8a15_1afb5c7120b76acd0f3f2b36a7604a8a15">viewLeadTerm</reimplementedby>
+        <reimplementedby refid="class_naive_polynomial_heap_ac962bda2923830ddc3c1de77495a3be1_1ac962bda2923830ddc3c1de77495a3be1">viewLeadTerm</reimplementedby>
+        <reimplementedby refid="class_priority_queue_polynomial_heap_a3c05fc699423fe799b0a09561e49d12e_1a3c05fc699423fe799b0a09561e49d12e">viewLeadTerm</reimplementedby>
+        <reimplementedby refid="class_trivial_polynomial_heap_ac22d397a6906a55d399c6dca8170ec29_1ac22d397a6906a55d399c6dca8170ec29">viewLeadTerm</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="75" column="21"/>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_heap_a1a78c3f79d20c92047c3490a97ab9535_1a1a78c3f79d20c92047c3490a97ab9535" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void PolynomialHeap::removeLeadTerm</definition>
+        <argsstring>()=0</argsstring>
+        <name>removeLeadTerm</name>
+        <qualifiedname>PolynomialHeap::removeLeadTerm</qualifiedname>
+        <reimplementedby refid="class_map_polynomial_heap_aa3fffdba1357d5baf8ef95f271208078_1aa3fffdba1357d5baf8ef95f271208078">removeLeadTerm</reimplementedby>
+        <reimplementedby refid="class_naive_dedup_polynomial_heap_a289e041948fbef8d514322237e2c9003_1a289e041948fbef8d514322237e2c9003">removeLeadTerm</reimplementedby>
+        <reimplementedby refid="class_naive_polynomial_heap_ad3d885fe3e938a187ebf69ef5f43b40f_1ad3d885fe3e938a187ebf69ef5f43b40f">removeLeadTerm</reimplementedby>
+        <reimplementedby refid="class_priority_queue_polynomial_heap_a6c08fd94a9969d8b7e0cb694316b7997_1a6c08fd94a9969d8b7e0cb694316b7997">removeLeadTerm</reimplementedby>
+        <reimplementedby refid="class_trivial_polynomial_heap_a9daf2619364cf0efa00ad6380411bdc4_1a9daf2619364cf0efa00ad6380411bdc4">removeLeadTerm</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="78" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_heap_a9ce26f0d81792fc6109a1c207a161a2e_1a9ce26f0d81792fc6109a1c207a161a2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="class_poly" kindref="compound">Poly</ref> *</type>
+        <definition>virtual Poly * PolynomialHeap::value</definition>
+        <argsstring>()=0</argsstring>
+        <name>value</name>
+        <qualifiedname>PolynomialHeap::value</qualifiedname>
+        <reimplementedby refid="class_map_polynomial_heap_a3a2be00e79a5dca1e322ca763519ec68_1a3a2be00e79a5dca1e322ca763519ec68">value</reimplementedby>
+        <reimplementedby refid="class_naive_dedup_polynomial_heap_aa2987cf6716d2f0d33c65bf44c44083f_1aa2987cf6716d2f0d33c65bf44c44083f">value</reimplementedby>
+        <reimplementedby refid="class_naive_polynomial_heap_aa8ee2ec1b638e026d6f9340db8868bcf_1aa8ee2ec1b638e026d6f9340db8868bcf">value</reimplementedby>
+        <reimplementedby refid="class_priority_queue_polynomial_heap_ab2b9dbcadb1d7ad7596cffd610b39e9f_1ab2b9dbcadb1d7ad7596cffd610b39e9f">value</reimplementedby>
+        <reimplementedby refid="class_trivial_polynomial_heap_a076b8c8704d7b7268f96fa4853237a65_1a076b8c8704d7b7268f96fa4853237a65">value</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="80" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_heap_ac43baa874bbfd36a11f554b77d5d5afc_1ac43baa874bbfd36a11f554b77d5d5afc" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t PolynomialHeap::getMemoryUsedInBytes</definition>
+        <argsstring>()=0</argsstring>
+        <name>getMemoryUsedInBytes</name>
+        <qualifiedname>PolynomialHeap::getMemoryUsedInBytes</qualifiedname>
+        <reimplementedby refid="class_map_polynomial_heap_aa9f790da2ad60713edff59d47a0d3e90_1aa9f790da2ad60713edff59d47a0d3e90">getMemoryUsedInBytes</reimplementedby>
+        <reimplementedby refid="class_naive_dedup_polynomial_heap_a025a578b10e92ea02c57f0c2158b1f87_1a025a578b10e92ea02c57f0c2158b1f87">getMemoryUsedInBytes</reimplementedby>
+        <reimplementedby refid="class_naive_polynomial_heap_ab8b2b98fe3032bc8e55ead3913e307b7_1ab8b2b98fe3032bc8e55ead3913e307b7">getMemoryUsedInBytes</reimplementedby>
+        <reimplementedby refid="class_priority_queue_polynomial_heap_a78af46d6821543964fb47c0988e676d6_1a78af46d6821543964fb47c0988e676d6">getMemoryUsedInBytes</reimplementedby>
+        <reimplementedby refid="class_trivial_polynomial_heap_ab3ad21cc015be327a7c6989254c50ee1_1ab3ad21cc015be327a7c6989254c50ee1">getMemoryUsedInBytes</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="82" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_heap_ac213e70a22f90f0c4348f474c81f029f_1ac213e70a22f90f0c4348f474c81f029f" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void PolynomialHeap::clear</definition>
+        <argsstring>()=0</argsstring>
+        <name>clear</name>
+        <qualifiedname>PolynomialHeap::clear</qualifiedname>
+        <reimplementedby refid="class_map_polynomial_heap_a6e639a4460c0949e190bcb90f49689cb_1a6e639a4460c0949e190bcb90f49689cb">clear</reimplementedby>
+        <reimplementedby refid="class_naive_dedup_polynomial_heap_a2c66603b9d03f1292f807e96edd83c29_1a2c66603b9d03f1292f807e96edd83c29">clear</reimplementedby>
+        <reimplementedby refid="class_naive_polynomial_heap_a77be4f7507ff2484ed95e7cee79d9116_1a77be4f7507ff2484ed95e7cee79d9116">clear</reimplementedby>
+        <reimplementedby refid="class_priority_queue_polynomial_heap_ad6a4d3993f380b292efec0d80be520fd_1ad6a4d3993f380b292efec0d80be520fd">clear</reimplementedby>
+        <reimplementedby refid="class_trivial_polynomial_heap_a742df64e5fc128bca492498e2114ea55_1a742df64e5fc128bca492498e2114ea55">clear</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="84" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_heap_adfdb96830d59652b38e671e7da2e30c8_1adfdb96830d59652b38e671e7da2e30c8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::string</type>
+        <definition>virtual std::string PolynomialHeap::getName</definition>
+        <argsstring>() const =0</argsstring>
+        <name>getName</name>
+        <qualifiedname>PolynomialHeap::getName</qualifiedname>
+        <reimplementedby refid="class_map_polynomial_heap_a49eebc42b2bc764213f3a295ee4464fc_1a49eebc42b2bc764213f3a295ee4464fc">getName</reimplementedby>
+        <reimplementedby refid="class_naive_dedup_polynomial_heap_a8f7afe4c0cedf8a3ad4ff5661d729e15_1a8f7afe4c0cedf8a3ad4ff5661d729e15">getName</reimplementedby>
+        <reimplementedby refid="class_naive_polynomial_heap_ad461a3ec8ea0a44eceeb98f803ebbfec_1ad461a3ec8ea0a44eceeb98f803ebbfec">getName</reimplementedby>
+        <reimplementedby refid="class_priority_queue_polynomial_heap_ab61534f01738f6e4bca9e731c68ad8a3_1ab61534f01738f6e4bca9e731c68ad8a3">getName</reimplementedby>
+        <reimplementedby refid="class_trivial_polynomial_heap_a1c3a5308f14a0659b955a4eff9e6ab79_1a1c3a5308f14a0659b955a4eff9e6ab79">getName</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="86" column="23"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Abstract interface for accumulating a polynomial as a sum of <computeroutput>(coeff, left * poly * right)</computeroutput> contributions in the free algebra. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The standard &quot;geobucket&quot;-shaped API used by <computeroutput><ref refid="class_n_c_groebner" kindref="compound">NCGroebner</ref></computeroutput> / <computeroutput><ref refid="class_n_c_f4" kindref="compound">NCF4</ref></computeroutput> reduction loops: <computeroutput><ref refid="class_polynomial_heap_af4c187f2289d9351aa0eae34ffb59ff2_1af4c187f2289d9351aa0eae34ffb59ff2" kindref="member">addPolynomial</ref></computeroutput> slots a new contribution in, <computeroutput><ref refid="class_polynomial_heap_a83c60fa2685f2cebc01fd35d7ba4528a_1a83c60fa2685f2cebc01fd35d7ba4528a" kindref="member">isZero</ref></computeroutput> collapses the heap until either a non-zero lead term is available or the heap is genuinely empty, <computeroutput><ref refid="class_polynomial_heap_a89b00f6fe26727dfe9a932d3113ea091_1a89b00f6fe26727dfe9a932d3113ea091" kindref="member">viewLeadTerm</ref></computeroutput> / <computeroutput><ref refid="class_polynomial_heap_a1a78c3f79d20c92047c3490a97ab9535_1a1a78c3f79d20c92047c3490a97ab9535" kindref="member">removeLeadTerm</ref></computeroutput> walk the result, and <computeroutput><ref refid="class_polynomial_heap_a9ce26f0d81792fc6109a1c207a161a2e_1a9ce26f0d81792fc6109a1c207a161a2e" kindref="member">value()</ref></computeroutput> materialises everything into a <computeroutput><ref refid="class_poly" kindref="compound">Poly</ref></computeroutput>. Concrete subclasses (<computeroutput><ref refid="class_trivial_polynomial_heap" kindref="compound">TrivialPolynomialHeap</ref></computeroutput>, <computeroutput><ref refid="class_map_polynomial_heap" kindref="compound">MapPolynomialHeap</ref></computeroutput>, <computeroutput><ref refid="class_priority_queue_polynomial_heap" kindref="compound">PriorityQueuePolynomialHeap</ref></computeroutput>, the geobucket-backed <computeroutput><ref refid="class_naive_polynomial_heap" kindref="compound">NaivePolynomialHeap</ref>&lt;Queue&gt;</computeroutput>) live in <computeroutput><ref refid="_n_c_reduction_8cpp" kindref="compound">NCReduction.cpp</ref></computeroutput> and make different storage / deduplication trade-offs. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>MapPolynomialHeap</label>
+        <link refid="class_map_polynomial_heap"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>NaiveDedupPolynomialHeap&lt; Queue &gt;</label>
+        <link refid="class_naive_dedup_polynomial_heap"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>NaivePolynomialHeap&lt; Queue &gt;</label>
+        <link refid="class_naive_polynomial_heap"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>PolynomialHeap</label>
+        <link refid="class_polynomial_heap"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>PriorityQueuePolynomialHeap</label>
+        <link refid="class_priority_queue_polynomial_heap"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>TrivialPolynomialHeap</label>
+        <link refid="class_trivial_polynomial_heap"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>PolynomialHeap</label>
+        <link refid="class_polynomial_heap"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/NCAlgebras/NCReduction.hpp" line="60" column="1" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.hpp" bodystart="61" bodyend="87"/>
+    <listofallmembers>
+      <member refid="class_polynomial_heap_af4c187f2289d9351aa0eae34ffb59ff2_1af4c187f2289d9351aa0eae34ffb59ff2" prot="public" virt="pure-virtual"><scope>PolynomialHeap</scope><name>addPolynomial</name></member>
+      <member refid="class_polynomial_heap_ab3a41775539f9ca6aed0b32f4018b652_1ab3a41775539f9ca6aed0b32f4018b652" prot="public" virt="pure-virtual"><scope>PolynomialHeap</scope><name>addPolynomial</name></member>
+      <member refid="class_polynomial_heap_ac213e70a22f90f0c4348f474c81f029f_1ac213e70a22f90f0c4348f474c81f029f" prot="public" virt="pure-virtual"><scope>PolynomialHeap</scope><name>clear</name></member>
+      <member refid="class_polynomial_heap_ac43baa874bbfd36a11f554b77d5d5afc_1ac43baa874bbfd36a11f554b77d5d5afc" prot="public" virt="pure-virtual"><scope>PolynomialHeap</scope><name>getMemoryUsedInBytes</name></member>
+      <member refid="class_polynomial_heap_adfdb96830d59652b38e671e7da2e30c8_1adfdb96830d59652b38e671e7da2e30c8" prot="public" virt="pure-virtual"><scope>PolynomialHeap</scope><name>getName</name></member>
+      <member refid="class_polynomial_heap_a83c60fa2685f2cebc01fd35d7ba4528a_1a83c60fa2685f2cebc01fd35d7ba4528a" prot="public" virt="pure-virtual"><scope>PolynomialHeap</scope><name>isZero</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>PolynomialHeap</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>PolynomialHeap</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>PolynomialHeap</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>PolynomialHeap</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>PolynomialHeap</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>PolynomialHeap</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>PolynomialHeap</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>PolynomialHeap</scope><name>operator new[]</name></member>
+      <member refid="class_polynomial_heap_a1a78c3f79d20c92047c3490a97ab9535_1a1a78c3f79d20c92047c3490a97ab9535" prot="public" virt="pure-virtual"><scope>PolynomialHeap</scope><name>removeLeadTerm</name></member>
+      <member refid="class_polynomial_heap_a9ce26f0d81792fc6109a1c207a161a2e_1a9ce26f0d81792fc6109a1c207a161a2e" prot="public" virt="pure-virtual"><scope>PolynomialHeap</scope><name>value</name></member>
+      <member refid="class_polynomial_heap_a89b00f6fe26727dfe9a932d3113ea091_1a89b00f6fe26727dfe9a932d3113ea091" prot="public" virt="pure-virtual"><scope>PolynomialHeap</scope><name>viewLeadTerm</name></member>
+      <member refid="class_polynomial_heap_a0a1da95bf2281726edf8adb156a8888f_1a0a1da95bf2281726edf8adb156a8888f" prot="public" virt="virtual"><scope>PolynomialHeap</scope><name>~PolynomialHeap</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

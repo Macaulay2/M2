@@ -1,0 +1,26 @@
+var dir_6d3e1fc03a2c0fe268d053df8b4dd308 =
+[
+    [ "allocator.cpp", "allocator_8cpp.html", "allocator_8cpp" ],
+    [ "allocator.hpp", "allocator_8hpp.html", "allocator_8hpp" ],
+    [ "bibasis.cpp", "bibasis_8cpp.html", "bibasis_8cpp" ],
+    [ "bibasis.hpp", "bibasis_8hpp.html", null ],
+    [ "involutive.hpp", "involutive_8hpp.html", "involutive_8hpp" ],
+    [ "janettree.hpp", "janettree_8hpp.html", "janettree_8hpp" ],
+    [ "launcher.cpp", "launcher_8cpp.html", null ],
+    [ "launcher.hpp", "launcher_8hpp.html", "launcher_8hpp" ],
+    [ "monom.cpp", "monom_8cpp.html", null ],
+    [ "monom.hpp", "monom_8hpp.html", "monom_8hpp" ],
+    [ "monomDL.cpp", "monom_d_l_8cpp.html", null ],
+    [ "monomDL.hpp", "monom_d_l_8hpp.html", "monom_d_l_8hpp" ],
+    [ "monomDRL.cpp", "monom_d_r_l_8cpp.html", null ],
+    [ "monomDRL.hpp", "monom_d_r_l_8hpp.html", "monom_d_r_l_8hpp" ],
+    [ "monomLex.cpp", "monom_lex_8cpp.html", null ],
+    [ "monomLex.hpp", "monom_lex_8hpp.html", "monom_lex_8hpp" ],
+    [ "pcomparator.hpp", "pcomparator_8hpp.html", "pcomparator_8hpp" ],
+    [ "polynom.hpp", "polynom_8hpp.html", "polynom_8hpp" ],
+    [ "qset.hpp", "qset_8hpp.html", "qset_8hpp" ],
+    [ "settings-manager.cpp", "settings-manager_8cpp.html", "settings-manager_8cpp" ],
+    [ "settings-manager.hpp", "settings-manager_8hpp.html", "settings-manager_8hpp" ],
+    [ "triple.hpp", "triple_8hpp.html", "triple_8hpp" ],
+    [ "tset.hpp", "tset_8hpp.html", "tset_8hpp" ]
+];

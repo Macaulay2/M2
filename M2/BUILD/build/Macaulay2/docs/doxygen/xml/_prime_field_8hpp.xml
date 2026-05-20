@@ -1,0 +1,1197 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_prime_field_8hpp" kind="file" language="C++">
+    <compoundname>PrimeField.hpp</compoundname>
+    <includes local="no">vector</includes>
+    <includes local="no">limits</includes>
+    <includes local="no">type_traits</includes>
+    <includes local="no">ostream</includes>
+    <includedby refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" local="yes">submodules/mathicgb/src/mathicgb/PolyRing.hpp</includedby>
+    <includedby refid="mathicgb_2_scanner_8hpp" local="yes">submodules/mathicgb/src/mathicgb/Scanner.hpp</includedby>
+    <includedby refid="_prime_field_8cpp" local="yes">submodules/mathicgb/src/test/PrimeField.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/PrimeField.hpp</label>
+        <link refid="_prime_field_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>limits</label>
+      </node>
+      <node id="5">
+        <label>ostream</label>
+      </node>
+      <node id="4">
+        <label>type_traits</label>
+      </node>
+      <node id="2">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="6">
+        <label>submodules/mathicgb/src/cli/GBAction.cpp</label>
+        <link refid="_g_b_action_8cpp"/>
+      </node>
+      <node id="52">
+        <label>submodules/mathicgb/src/cli/GBCommonParams.cpp</label>
+        <link refid="_g_b_common_params_8cpp"/>
+      </node>
+      <node id="69">
+        <label>submodules/mathicgb/src/cli/MatrixAction.cpp</label>
+        <link refid="_matrix_action_8cpp"/>
+      </node>
+      <node id="7">
+        <label>submodules/mathicgb/src/cli/SigGBAction.cpp</label>
+        <link refid="_sig_g_b_action_8cpp"/>
+      </node>
+      <node id="3">
+        <label>submodules/mathicgb/src/mathicgb.cpp</label>
+        <link refid="mathicgb_8cpp"/>
+      </node>
+      <node id="4">
+        <label>submodules/mathicgb/src/mathicgb/Basis.cpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_basis_8cpp"/>
+      </node>
+      <node id="5">
+        <label>submodules/mathicgb/src/mathicgb/Basis.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_basis_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>submodules/mathicgb/src/mathicgb/ClassicGBAlg.cpp</label>
+        <link refid="_classic_g_b_alg_8cpp"/>
+      </node>
+      <node id="36">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp</label>
+        <link refid="mathicgb_2_f4_matrix_builder_8cpp"/>
+      </node>
+      <node id="35">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp</label>
+        <link refid="_f4_matrix_builder_8hpp"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder2.cpp</label>
+        <link refid="_f4_matrix_builder2_8cpp"/>
+      </node>
+      <node id="38">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder2.hpp</label>
+        <link refid="_f4_matrix_builder2_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp</label>
+        <link refid="_f4_matrix_projection_8cpp"/>
+      </node>
+      <node id="42">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp</label>
+        <link refid="_f4_matrix_projection_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp</label>
+        <link refid="mathicgb_2_f4_matrix_reducer_8cpp"/>
+      </node>
+      <node id="74">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixReducer.hpp</label>
+        <link refid="_f4_matrix_reducer_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>submodules/mathicgb/src/mathicgb/F4ProtoMatrix.cpp</label>
+        <link refid="_f4_proto_matrix_8cpp"/>
+      </node>
+      <node id="41">
+        <label>submodules/mathicgb/src/mathicgb/F4ProtoMatrix.hpp</label>
+        <link refid="_f4_proto_matrix_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>submodules/mathicgb/src/mathicgb/F4Reducer.cpp</label>
+        <link refid="_f4_reducer_8cpp"/>
+      </node>
+      <node id="45">
+        <label>submodules/mathicgb/src/mathicgb/FixedSizeMonomialMap.h</label>
+        <link refid="_fixed_size_monomial_map_8h"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>submodules/mathicgb/src/mathicgb/KoszulQueue.hpp</label>
+        <link refid="_koszul_queue_8hpp"/>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>submodules/mathicgb/src/mathicgb/MESClassicGBAlg.cpp</label>
+        <link refid="_m_e_s_classic_g_b_alg_8cpp"/>
+      </node>
+      <node id="10">
+        <label>submodules/mathicgb/src/mathicgb/MathicIO.hpp</label>
+        <link refid="_mathic_i_o_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp</label>
+        <link refid="_module_mono_set_8cpp"/>
+      </node>
+      <node id="51">
+        <label>submodules/mathicgb/src/mathicgb/ModuleMonoSet.hpp</label>
+        <link refid="_module_mono_set_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>submodules/mathicgb/src/mathicgb/MonoLookup.cpp</label>
+        <link refid="_mono_lookup_8cpp"/>
+      </node>
+      <node id="53">
+        <label>submodules/mathicgb/src/mathicgb/MonoLookup.hpp</label>
+        <link refid="_mono_lookup_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>submodules/mathicgb/src/mathicgb/MonoProcessor.hpp</label>
+        <link refid="_mono_processor_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>submodules/mathicgb/src/mathicgb/MonomialMap.hpp</label>
+        <link refid="_monomial_map_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>submodules/mathicgb/src/mathicgb/Poly.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>submodules/mathicgb/src/mathicgb/PolyBasis.cpp</label>
+        <link refid="_poly_basis_8cpp"/>
+      </node>
+      <node id="54">
+        <label>submodules/mathicgb/src/mathicgb/PolyBasis.hpp</label>
+        <link refid="_poly_basis_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>submodules/mathicgb/src/mathicgb/PolyHashTable.cpp</label>
+        <link refid="_poly_hash_table_8cpp"/>
+      </node>
+      <node id="57">
+        <label>submodules/mathicgb/src/mathicgb/PolyHashTable.hpp</label>
+        <link refid="_poly_hash_table_8hpp"/>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>submodules/mathicgb/src/mathicgb/PolyRing.cpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8cpp"/>
+      </node>
+      <node id="2">
+        <label>submodules/mathicgb/src/mathicgb/PolyRing.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/PrimeField.hpp</label>
+        <link refid="_prime_field_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>submodules/mathicgb/src/mathicgb/QuadMatrix.cpp</label>
+        <link refid="_quad_matrix_8cpp"/>
+      </node>
+      <node id="68">
+        <label>submodules/mathicgb/src/mathicgb/QuadMatrix.hpp</label>
+        <link refid="_quad_matrix_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.cpp</label>
+        <link refid="mathicgb_2_quad_matrix_builder_8cpp"/>
+      </node>
+      <node id="47">
+        <label>submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp</label>
+        <link refid="_quad_matrix_builder_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>submodules/mathicgb/src/mathicgb/Reducer.cpp</label>
+        <link refid="_reducer_8cpp"/>
+      </node>
+      <node id="70">
+        <label>submodules/mathicgb/src/mathicgb/Reducer.hpp</label>
+        <link refid="_reducer_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>submodules/mathicgb/src/mathicgb/ReducerDedup.cpp</label>
+        <link refid="_reducer_dedup_8cpp"/>
+      </node>
+      <node id="59">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHash.cpp</label>
+        <link refid="_reducer_hash_8cpp"/>
+      </node>
+      <node id="60">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp</label>
+        <link refid="_reducer_hash_pack_8cpp"/>
+      </node>
+      <node id="71">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHelper.hpp</label>
+        <link refid="_reducer_helper_8hpp"/>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp</label>
+        <link refid="_reducer_no_dedup_8cpp"/>
+      </node>
+      <node id="65">
+        <label>submodules/mathicgb/src/mathicgb/ReducerPack.cpp</label>
+        <link refid="_reducer_pack_8cpp"/>
+      </node>
+      <node id="66">
+        <label>submodules/mathicgb/src/mathicgb/ReducerPackDedup.cpp</label>
+        <link refid="_reducer_pack_dedup_8cpp"/>
+      </node>
+      <node id="13">
+        <label>submodules/mathicgb/src/mathicgb/SPairs.cpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp"/>
+      </node>
+      <node id="55">
+        <label>submodules/mathicgb/src/mathicgb/SPairs.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="77">
+        <label>submodules/mathicgb/src/mathicgb/Scanner.cpp</label>
+        <link refid="mathicgb_2_scanner_8cpp"/>
+      </node>
+      <node id="76">
+        <label>submodules/mathicgb/src/mathicgb/Scanner.hpp</label>
+        <link refid="mathicgb_2_scanner_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>submodules/mathicgb/src/mathicgb/SigPolyBasis.cpp</label>
+        <link refid="_sig_poly_basis_8cpp"/>
+      </node>
+      <node id="26">
+        <label>submodules/mathicgb/src/mathicgb/SigPolyBasis.hpp</label>
+        <link refid="_sig_poly_basis_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairQueue.cpp</label>
+        <link refid="_sig_s_pair_queue_8cpp"/>
+      </node>
+      <node id="72">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairQueue.hpp</label>
+        <link refid="_sig_s_pair_queue_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairs.cpp</label>
+        <link refid="_sig_s_pairs_8cpp"/>
+      </node>
+      <node id="50">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairs.hpp</label>
+        <link refid="_sig_s_pairs_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>submodules/mathicgb/src/mathicgb/SignatureGB.cpp</label>
+        <link refid="_signature_g_b_8cpp"/>
+      </node>
+      <node id="31">
+        <label>submodules/mathicgb/src/mathicgb/SignatureGB.hpp</label>
+        <link refid="_signature_g_b_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>submodules/mathicgb/src/mathicgb/SparseMatrix.cpp</label>
+        <link refid="mathicgb_2_sparse_matrix_8cpp"/>
+      </node>
+      <node id="73">
+        <label>submodules/mathicgb/src/mathicgb/SparseMatrix.hpp</label>
+        <link refid="_sparse_matrix_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp</label>
+        <link refid="_static_mono_map_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>submodules/mathicgb/src/mathicgb/TypicalReducer.cpp</label>
+        <link refid="_typical_reducer_8cpp"/>
+      </node>
+      <node id="62">
+        <label>submodules/mathicgb/src/mathicgb/TypicalReducer.hpp</label>
+        <link refid="_typical_reducer_8hpp"/>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>submodules/mathicgb/src/mathicgb/io-util.cpp</label>
+        <link refid="io-util_8cpp"/>
+      </node>
+      <node id="75">
+        <label>submodules/mathicgb/src/mathicgb/io-util.hpp</label>
+        <link refid="io-util_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>submodules/mathicgb/src/test/F4MatrixBuilder.cpp</label>
+        <link refid="test_2_f4_matrix_builder_8cpp"/>
+      </node>
+      <node id="18">
+        <label>submodules/mathicgb/src/test/F4MatrixReducer.cpp</label>
+        <link refid="test_2_f4_matrix_reducer_8cpp"/>
+      </node>
+      <node id="19">
+        <label>submodules/mathicgb/src/test/MathicIO.cpp</label>
+        <link refid="_mathic_i_o_8cpp"/>
+      </node>
+      <node id="20">
+        <label>submodules/mathicgb/src/test/MonoMonoid.cpp</label>
+        <link refid="_mono_monoid_8cpp"/>
+      </node>
+      <node id="79">
+        <label>submodules/mathicgb/src/test/PrimeField.cpp</label>
+        <link refid="_prime_field_8cpp"/>
+      </node>
+      <node id="21">
+        <label>submodules/mathicgb/src/test/QuadMatrixBuilder.cpp</label>
+        <link refid="test_2_quad_matrix_builder_8cpp"/>
+      </node>
+      <node id="78">
+        <label>submodules/mathicgb/src/test/Scanner.cpp</label>
+        <link refid="test_2_scanner_8cpp"/>
+      </node>
+      <node id="22">
+        <label>submodules/mathicgb/src/test/SparseMatrix.cpp</label>
+        <link refid="test_2_sparse_matrix_8cpp"/>
+      </node>
+      <node id="23">
+        <label>submodules/mathicgb/src/test/gb-test.cpp</label>
+        <link refid="gb-test_8cpp"/>
+      </node>
+      <node id="24">
+        <label>submodules/mathicgb/src/test/poly-test.cpp</label>
+        <link refid="poly-test_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_prime_field" prot="public">PrimeField</innerclass>
+    <innerclass refid="class_prime_field_1_1_element" prot="public">PrimeField::Element</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type" prot="public">PrimeFieldInternal::ModularProdType</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint8_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; uint8 &gt;</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint16_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; uint16 &gt;</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint32_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; uint32 &gt;</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int8_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; int8 &gt;</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int16_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; int16 &gt;</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int32_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; int32 &gt;</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint64_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; uint64 &gt;</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01long_01unsigned_01int_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; long unsigned int &gt;</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int64_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; int64 &gt;</innerclass>
+    <innerclass refid="struct_prime_field_internal_1_1_modular_prod_type_3_01long_01int_01_4" prot="public">PrimeFieldInternal::ModularProdType&lt; long int &gt;</innerclass>
+    <innernamespace refid="namespace_prime_field_internal">PrimeFieldInternal</innernamespace>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_prime_field_8hpp_a80a953c690ce54940b2af706956a2548_1a80a953c690ce54940b2af706956a2548" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class E</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool operator==</definition>
+        <argsstring>(const PrimeField&lt; E &gt; &amp;a, const PrimeField&lt; E &gt; &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="class_prime_field" kindref="compound">PrimeField</ref>&lt; E &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_prime_field" kindref="compound">PrimeField</ref>&lt; E &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Returns true if a and b are the same object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PrimeField.hpp" line="275" column="6" bodyfile="submodules/mathicgb/src/mathicgb/PrimeField.hpp" bodystart="275" bodyend="277"/>
+      </memberdef>
+      <memberdef kind="function" id="_prime_field_8hpp_ac457da9a8c1aa8329a01570661f0150a_1ac457da9a8c1aa8329a01570661f0150a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class E</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const PrimeField&lt; E &gt; &amp;a, const PrimeField&lt; E &gt; &amp;b)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="class_prime_field" kindref="compound">PrimeField</ref>&lt; E &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_prime_field" kindref="compound">PrimeField</ref>&lt; E &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>As !(a == b). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PrimeField.hpp" line="281" column="6" bodyfile="submodules/mathicgb/src/mathicgb/PrimeField.hpp" bodystart="281" bodyend="283"/>
+      </memberdef>
+      <memberdef kind="function" id="_prime_field_8hpp_a72e3b95508bb53b3098e963008a08772_1a72e3b95508bb53b3098e963008a08772" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="struct_t" kindref="compound">T</ref></type>
+          </param>
+        </templateparamlist>
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;out, typename PrimeField&lt; T &gt;::Element e)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>typename <ref refid="class_prime_field" kindref="compound">PrimeField</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt;::Element</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PrimeField.hpp" line="286" column="1" bodyfile="submodules/mathicgb/src/mathicgb/PrimeField.hpp" bodystart="286" bodyend="292"/>
+        <references refid="class_prime_field_1_1_element_a22896925860560feb1623a895472056e_1a22896925860560feb1623a895472056e" compoundref="_prime_field_8hpp" startline="58" endline="58">PrimeField&lt; T &gt;::Element::value</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>MathicGB<sp/>copyright<sp/>2012<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHICGB_PRIME_FIELD_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_PRIME_FIELD_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;limits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;type_traits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><ref refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n" kindref="compound">MATHICGB_NAMESPACE_BEGIN</ref></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="17" refid="class_prime_field" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_prime_field_a1cb1544cf60bd79baac764d00a1a5d70_1a1cb1544cf60bd79baac764d00a1a5d70" kindref="member">PrimeField</ref><sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="19" refid="class_prime_field_a2085f646b1842a375907bae22e227a4a_1a2085f646b1842a375907bae22e227a4a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/><ref refid="class_prime_field_a2085f646b1842a375907bae22e227a4a_1a2085f646b1842a375907bae22e227a4a" kindref="member">RawElement</ref>;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="class_prime_field_1_1_element" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_prime_field_1_1_element_a0b8be0bf448b7ce88e40e922433688df_1a0b8be0bf448b7ce88e40e922433688df" kindref="member">Element</ref><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Re-instate<sp/>this<sp/>assert<sp/>once<sp/>all<sp/>code<sp/>has<sp/>moved<sp/>to<sp/>using<sp/>PrimeField</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>properly<sp/>so<sp/>that<sp/>coefficients<sp/>are<sp/>no<sp/>longer<sp/>signed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//static_assert(!std::numeric_limits&lt;T&gt;::is_signed,<sp/>&quot;&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static_assert</highlight><highlight class="normal">(std::numeric_limits&lt;T&gt;::is_integer,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="class_prime_field_1_1_element_a0b8be0bf448b7ce88e40e922433688df_1a0b8be0bf448b7ce88e40e922433688df" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_prime_field_1_1_element_a0b8be0bf448b7ce88e40e922433688df_1a0b8be0bf448b7ce88e40e922433688df" kindref="member">Element</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a2085f646b1842a375907bae22e227a4a_1a2085f646b1842a375907bae22e227a4a" kindref="member">RawElement</ref>&amp;<sp/>e):<sp/><ref refid="class_prime_field_1_1_element_a57adc1b30d0f041035f681bf945e70bb_1a57adc1b30d0f041035f681bf945e70bb" kindref="member">mValue</ref>(e)<sp/>{}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="class_prime_field_1_1_element_a29d2aab908a4398097b9e231194e66d8_1a29d2aab908a4398097b9e231194e66d8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a2085f646b1842a375907bae22e227a4a_1a2085f646b1842a375907bae22e227a4a" kindref="member">RawElement</ref>&amp;()<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a57adc1b30d0f041035f681bf945e70bb_1a57adc1b30d0f041035f681bf945e70bb" kindref="member">mValue</ref>;}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="class_prime_field_1_1_element_a46825e57ba89d90e46e59a1ad3dd5d5d_1a46825e57ba89d90e46e59a1ad3dd5d5d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a2085f646b1842a375907bae22e227a4a_1a2085f646b1842a375907bae22e227a4a" kindref="member">RawElement</ref>&amp;()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a57adc1b30d0f041035f681bf945e70bb_1a57adc1b30d0f041035f681bf945e70bb" kindref="member">mValue</ref>;}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="class_prime_field_1_1_element_afb06239ce52d9d8b226658562c90825d_1afb06239ce52d9d8b226658562c90825d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_afb06239ce52d9d8b226658562c90825d_1afb06239ce52d9d8b226658562c90825d" kindref="member">operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a2085f646b1842a375907bae22e227a4a_1a2085f646b1842a375907bae22e227a4a" kindref="member">RawElement</ref><sp/>e)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a22896925860560feb1623a895472056e_1a22896925860560feb1623a895472056e" kindref="member">value</ref>()<sp/>==<sp/>e.value();}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="class_prime_field_1_1_element_a65fc56aadf3164cf2d91582f5e346b51_1a65fc56aadf3164cf2d91582f5e346b51" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a65fc56aadf3164cf2d91582f5e346b51_1a65fc56aadf3164cf2d91582f5e346b51" kindref="member">operator!=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a2085f646b1842a375907bae22e227a4a_1a2085f646b1842a375907bae22e227a4a" kindref="member">RawElement</ref><sp/>e)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!(*</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>==<sp/>e);}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="class_prime_field_1_1_element_a1f83b9c2dd7a5dee34c1205a75e1d115_1a1f83b9c2dd7a5dee34c1205a75e1d115" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_prime_field_1_1_element_a1f83b9c2dd7a5dee34c1205a75e1d115_1a1f83b9c2dd7a5dee34c1205a75e1d115" kindref="member">Element</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a0b8be0bf448b7ce88e40e922433688df_1a0b8be0bf448b7ce88e40e922433688df" kindref="member">Element</ref>&amp;<sp/>e):<sp/><ref refid="class_prime_field_1_1_element_a57adc1b30d0f041035f681bf945e70bb_1a57adc1b30d0f041035f681bf945e70bb" kindref="member">mValue</ref>(e.<ref refid="class_prime_field_1_1_element_a22896925860560feb1623a895472056e_1a22896925860560feb1623a895472056e" kindref="member">value</ref>())<sp/>{}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="class_prime_field_1_1_element_ac35273cee9ed2fa168d3aff0d2f2ca52_1ac35273cee9ed2fa168d3aff0d2f2ca52" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_prime_field_1_1_element_a0b8be0bf448b7ce88e40e922433688df_1a0b8be0bf448b7ce88e40e922433688df" kindref="member">Element</ref>&amp;<sp/><ref refid="class_prime_field_1_1_element_ac35273cee9ed2fa168d3aff0d2f2ca52_1ac35273cee9ed2fa168d3aff0d2f2ca52" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a0b8be0bf448b7ce88e40e922433688df_1a0b8be0bf448b7ce88e40e922433688df" kindref="member">Element</ref>&amp;<sp/>e)<sp/>{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_prime_field_1_1_element_a57adc1b30d0f041035f681bf945e70bb_1a57adc1b30d0f041035f681bf945e70bb" kindref="member">mValue</ref><sp/>=<sp/>e.<ref refid="class_prime_field_1_1_element_a22896925860560feb1623a895472056e_1a22896925860560feb1623a895472056e" kindref="member">value</ref>();</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="class_prime_field_1_1_element_a258f0fa97fbc203dbcf1c90bc00ddea2_1a258f0fa97fbc203dbcf1c90bc00ddea2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a258f0fa97fbc203dbcf1c90bc00ddea2_1a258f0fa97fbc203dbcf1c90bc00ddea2" kindref="member">operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a0b8be0bf448b7ce88e40e922433688df_1a0b8be0bf448b7ce88e40e922433688df" kindref="member">Element</ref><sp/>e)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a22896925860560feb1623a895472056e_1a22896925860560feb1623a895472056e" kindref="member">value</ref>()<sp/>==<sp/>e.<ref refid="class_prime_field_1_1_element_a22896925860560feb1623a895472056e_1a22896925860560feb1623a895472056e" kindref="member">value</ref>();}</highlight></codeline>
+<codeline lineno="56" refid="class_prime_field_1_1_element_a13f84788ba60d249ac6ca1baa3f6d87b_1a13f84788ba60d249ac6ca1baa3f6d87b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a13f84788ba60d249ac6ca1baa3f6d87b_1a13f84788ba60d249ac6ca1baa3f6d87b" kindref="member">operator!=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a0b8be0bf448b7ce88e40e922433688df_1a0b8be0bf448b7ce88e40e922433688df" kindref="member">Element</ref><sp/>e)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!(*</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>==<sp/>e);}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="class_prime_field_1_1_element_a22896925860560feb1623a895472056e_1a22896925860560feb1623a895472056e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/><ref refid="class_prime_field_1_1_element_a22896925860560feb1623a895472056e_1a22896925860560feb1623a895472056e" kindref="member">value</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element_a57adc1b30d0f041035f681bf945e70bb_1a57adc1b30d0f041035f681bf945e70bb" kindref="member">mValue</ref>;}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="61" refid="class_prime_field_1_1_element_a52faa27fab519f0de0b8016eed701651_1a52faa27fab519f0de0b8016eed701651" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_prime_field_1_1_element_a52faa27fab519f0de0b8016eed701651_1a52faa27fab519f0de0b8016eed701651" kindref="member">PrimeField</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Uncomment<sp/>this<sp/>constructor<sp/>once<sp/>the<sp/>public<sp/>one<sp/>is<sp/>gone.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Element(const<sp/>T<sp/>value):<sp/>mValue(value)<sp/>{}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="class_prime_field_1_1_element_aaebdede9cd0a865d7b9738a9aa55e397_1aaebdede9cd0a865d7b9738a9aa55e397" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_prime_field_1_1_element_aaebdede9cd0a865d7b9738a9aa55e397_1aaebdede9cd0a865d7b9738a9aa55e397" kindref="member">PrimeFile</ref>;</highlight></codeline>
+<codeline lineno="66" refid="class_prime_field_1_1_element_a57adc1b30d0f041035f681bf945e70bb_1a57adc1b30d0f041035f681bf945e70bb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/><ref refid="class_prime_field_1_1_element_a57adc1b30d0f041035f681bf945e70bb_1a57adc1b30d0f041035f681bf945e70bb" kindref="member">mValue</ref>;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="class_prime_field_acd8b3291975d53291e16c8da21fa73d7_1acd8b3291975d53291e16c8da21fa73d7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>Element&amp;<sp/><ref refid="class_prime_field_acd8b3291975d53291e16c8da21fa73d7_1acd8b3291975d53291e16c8da21fa73d7" kindref="member">ElementRef</ref>;</highlight></codeline>
+<codeline lineno="70" refid="class_prime_field_aa43b7e064bd5e40fb5a859fcf2c375cf_1aa43b7e064bd5e40fb5a859fcf2c375cf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element&amp;<sp/><ref refid="class_prime_field_aa43b7e064bd5e40fb5a859fcf2c375cf_1aa43b7e064bd5e40fb5a859fcf2c375cf" kindref="member">ConstElementRef</ref>;</highlight></codeline>
+<codeline lineno="71" refid="class_prime_field_a90bd5558a0bef662971afd7be4a39235_1a90bd5558a0bef662971afd7be4a39235" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>Element*<sp/><ref refid="class_prime_field_a90bd5558a0bef662971afd7be4a39235_1a90bd5558a0bef662971afd7be4a39235" kindref="member">ElementPtr</ref>;</highlight></codeline>
+<codeline lineno="72" refid="class_prime_field_a70ff11b2519a70122704bdab7c9c711b_1a70ff11b2519a70122704bdab7c9c711b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element*<sp/><ref refid="class_prime_field_a70ff11b2519a70122704bdab7c9c711b_1a70ff11b2519a70122704bdab7c9c711b" kindref="member">ConstElementPtr</ref>;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="class_prime_field_a68ed82b92db103bf858e39e62fc39939_1a68ed82b92db103bf858e39e62fc39939" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::vector&lt;Element&gt;<sp/><ref refid="class_prime_field_a68ed82b92db103bf858e39e62fc39939_1a68ed82b92db103bf858e39e62fc39939" kindref="member">ElementVector</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="class_prime_field_a1cb1544cf60bd79baac764d00a1a5d70_1a1cb1544cf60bd79baac764d00a1a5d70" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_prime_field_a1cb1544cf60bd79baac764d00a1a5d70_1a1cb1544cf60bd79baac764d00a1a5d70" kindref="member">PrimeField</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/>primeCharacteristic):<sp/><ref refid="class_prime_field_a4851753f7fe1e4a4007f3b5405e47322_1a4851753f7fe1e4a4007f3b5405e47322" kindref="member">mCharac</ref>(primeCharacteristic)<sp/>{}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="class_prime_field_adcbff735fc4f99d08105a49ffb47cd7e_1adcbff735fc4f99d08105a49ffb47cd7e" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_adcbff735fc4f99d08105a49ffb47cd7e_1adcbff735fc4f99d08105a49ffb47cd7e" kindref="member">zero</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(0);}</highlight></codeline>
+<codeline lineno="79" refid="class_prime_field_ace15e697222680609d82796ac5ee699d_1ace15e697222680609d82796ac5ee699d" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_ace15e697222680609d82796ac5ee699d_1ace15e697222680609d82796ac5ee699d" kindref="member">one</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(1);}</highlight></codeline>
+<codeline lineno="80" refid="class_prime_field_ae24f1c6b83a6817e756e1efe9e675487_1ae24f1c6b83a6817e756e1efe9e675487" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_ae24f1c6b83a6817e756e1efe9e675487_1ae24f1c6b83a6817e756e1efe9e675487" kindref="member">minusOne</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(<ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>()<sp/>-<sp/>1);}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="class_prime_field_ab55c6197ec0f10dd0e485907dd0da1bf_1ab55c6197ec0f10dd0e485907dd0da1bf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_ab55c6197ec0f10dd0e485907dd0da1bf_1ab55c6197ec0f10dd0e485907dd0da1bf" kindref="member">isZero</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a<sp/>==<sp/><ref refid="class_prime_field_adcbff735fc4f99d08105a49ffb47cd7e_1adcbff735fc4f99d08105a49ffb47cd7e" kindref="member">zero</ref>();}</highlight></codeline>
+<codeline lineno="83" refid="class_prime_field_a21da9cf373d51fe6078cbd95eb1f293f_1a21da9cf373d51fe6078cbd95eb1f293f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a21da9cf373d51fe6078cbd95eb1f293f_1a21da9cf373d51fe6078cbd95eb1f293f" kindref="member">isOne</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a<sp/>==<sp/><ref refid="class_prime_field_ace15e697222680609d82796ac5ee699d_1ace15e697222680609d82796ac5ee699d" kindref="member">one</ref>();}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="class_prime_field_ac7862c9af5d00cbcc2673c75422160ca_1ac7862c9af5d00cbcc2673c75422160ca" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_ac7862c9af5d00cbcc2673c75422160ca_1ac7862c9af5d00cbcc2673c75422160ca" kindref="member">isNegative</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a.value()<sp/>&gt;<sp/>(<ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>()<sp/>+<sp/>1)<sp/>/<sp/>2;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a4851753f7fe1e4a4007f3b5405e47322_1a4851753f7fe1e4a4007f3b5405e47322" kindref="member">mCharac</ref>;}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Integer&gt;</highlight></codeline>
+<codeline lineno="96" refid="class_prime_field_ae03dd14536760a194d828ae6e10c63e7_1ae03dd14536760a194d828ae6e10c63e7" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_ae03dd14536760a194d828ae6e10c63e7_1ae03dd14536760a194d828ae6e10c63e7" kindref="member">toElementInRange</ref>(<ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref>&amp;&amp;<sp/>i)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::remove_reference&lt;Integer&gt;::type<sp/>NoRefInteger;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static_assert</highlight><highlight class="normal">(std::numeric_limits&lt;NoRefInteger&gt;::is_integer,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(0<sp/>&lt;=<sp/>i);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//replace<sp/>the<sp/>below<sp/>assert<sp/>with<sp/>these<sp/>2<sp/>commented<sp/>lines<sp/>once<sp/>we<sp/>get<sp/>rid</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//of<sp/>signed<sp/>element<sp/>types.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//typedef<sp/>typename<sp/>std::make_unsigned&lt;NoRefInteger&gt;::type<sp/>Unsigned;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//MATHICGB_ASSERT(static_cast&lt;Unsigned&gt;(i)<sp/>&lt;<sp/>charac());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(i<sp/>&lt;<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(i);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Integer&gt;</highlight></codeline>
+<codeline lineno="110" refid="class_prime_field_a4024cd4b1a3cdc5cf61f8bd68f7e1026_1a4024cd4b1a3cdc5cf61f8bd68f7e1026" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_a4024cd4b1a3cdc5cf61f8bd68f7e1026_1a4024cd4b1a3cdc5cf61f8bd68f7e1026" kindref="member">toElement</ref>(<ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref>&amp;&amp;<sp/>i)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::remove_reference&lt;Integer&gt;::type<sp/>NoRefInteger;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static_assert</highlight><highlight class="normal">(std::numeric_limits&lt;NoRefInteger&gt;::is_integer,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>need<sp/>to<sp/>take<sp/>the<sp/>modulus<sp/>of<sp/>i<sp/>to<sp/>put<sp/>it<sp/>into<sp/>the<sp/>range<sp/>[0;charac()).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>That<sp/>is<sp/>more<sp/>tricky<sp/>to<sp/>get<sp/>right<sp/>than<sp/>it<sp/>might<sp/>seem.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>sign<sp/>of<sp/>a<sp/>%<sp/>b<sp/>is<sp/>implementation<sp/>defined<sp/>in<sp/>C++<sp/>if<sp/>either<sp/>of<sp/>a<sp/>or<sp/>b</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>are<sp/>negative.<sp/>We<sp/>need<sp/>the<sp/>positive<sp/>remainder<sp/>so<sp/>the<sp/>operands<sp/>have<sp/>to<sp/>be</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>positive.<sp/>Another<sp/>reason<sp/>for<sp/>this<sp/>is<sp/>that<sp/>we<sp/>could<sp/>not<sp/>allow<sp/>b<sp/>to<sp/>be</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>converted<sp/>to<sp/>a<sp/>signed<sp/>integer<sp/>since<sp/>it<sp/>might<sp/>not<sp/>be<sp/>representable<sp/>that</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>way.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>Integer<sp/>is<sp/>signed<sp/>and<sp/>i<sp/>is<sp/>std::numeric_limits&lt;Integer&gt;::min()<sp/>then</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>it<sp/>is<sp/>undefined<sp/>behavior<sp/>to<sp/>evaluate<sp/>the<sp/>expression<sp/>-i<sp/>since<sp/>-i<sp/>is<sp/>not</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>representable,<sp/>leading<sp/>to<sp/>a<sp/>signed<sp/>overflow.<sp/>So<sp/>we<sp/>have<sp/>to<sp/>cast<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>unsigned<sp/>before<sp/>doing<sp/>the<sp/>minus.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::make_unsigned&lt;NoRefInteger&gt;::type<sp/>Unsigned;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i<sp/>&lt;<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Negate<sp/>i<sp/>to<sp/>get<sp/>a<sp/>positive<sp/>number,<sp/>then<sp/>negate<sp/>again<sp/>to<sp/>cancel<sp/>out</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>the<sp/>first<sp/>negation.<sp/>The<sp/>first<sp/>cast<sp/>to<sp/>unsigned<sp/>is<sp/>to<sp/>avoid</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>undefined<sp/>behavior<sp/>from<sp/>-i.<sp/>The<sp/>second<sp/>is<sp/>there<sp/>because<sp/>apparently,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>at<sp/>least<sp/>on<sp/>GCC,<sp/>the<sp/>unary<sp/>-<sp/>re-introduces<sp/>signed<sp/>and<sp/>we<sp/>need<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>be<sp/>unsigned<sp/>to<sp/>avoid<sp/>sign<sp/>extension.<sp/>We<sp/>need<sp/>zero<sp/>extension.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>unsignedNegative<sp/>=</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">Unsigned</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(-</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">Unsigned</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(i));</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a7f76f8b8e8fc74992c4f4ee1792b6eed_1a7f76f8b8e8fc74992c4f4ee1792b6eed" kindref="member">negative</ref>(Element(unsignedNegative<sp/>%<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>()));</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">Unsigned</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(i)<sp/>%<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="class_prime_field_afb789994731ca59b4250238e39cdd920_1afb789994731ca59b4250238e39cdd920" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/><ref refid="class_prime_field_afb789994731ca59b4250238e39cdd920_1afb789994731ca59b4250238e39cdd920" kindref="member">toValue</ref>(Element<sp/>e)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>e.value;}</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="class_prime_field_a779b0832d6b331275177dc37e53ee3e7_1a779b0832d6b331275177dc37e53ee3e7" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_a779b0832d6b331275177dc37e53ee3e7_1a779b0832d6b331275177dc37e53ee3e7" kindref="member">sum</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>b)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref><sp/>=<sp/>a.value()<sp/>+<sp/>b.value();</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>sum<sp/>overflowed<sp/>if<sp/>and<sp/>only<sp/>if<sp/>a.value()<sp/>&gt;<sp/>s.<sp/>In<sp/>that<sp/>case</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>subtraction<sp/>of<sp/>charac()<sp/>will<sp/>overflow<sp/>again<sp/>in<sp/>the<sp/>other<sp/>direction,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>leaving<sp/>us<sp/>with<sp/>the<sp/>correct<sp/>result.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>@todo:<sp/>extend<sp/>precision<sp/>to<sp/>rule<sp/>out<sp/>overflow<sp/>without<sp/>a<sp/>branch.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.value()<sp/>&gt;<sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref><sp/>||<sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref><sp/>&gt;=<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref><sp/>-<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>()<sp/>&lt;<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(<ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref><sp/>-<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(<ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="class_prime_field_ab2807d0d3626d6d1ca73cabb2a2ce117_1ab2807d0d3626d6d1ca73cabb2a2ce117" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_ab2807d0d3626d6d1ca73cabb2a2ce117_1ab2807d0d3626d6d1ca73cabb2a2ce117" kindref="member">plusOne</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref><sp/>=<sp/>a.value()<sp/>+<sp/>1;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref><sp/>==<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>())</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(0);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(<ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164" refid="class_prime_field_a5f267b5af3349cefee6eef508dc32a37_1a5f267b5af3349cefee6eef508dc32a37" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_a5f267b5af3349cefee6eef508dc32a37_1a5f267b5af3349cefee6eef508dc32a37" kindref="member">difference</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>b)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.value()<sp/>&lt;<sp/>b.value())<sp/>{</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(a.value()<sp/>-<sp/>b.value()<sp/>+<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>()<sp/>&lt;<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(a.value()<sp/>-<sp/>b.value()<sp/>+<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(a.value()<sp/>-<sp/>b.value());</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172" refid="class_prime_field_a7f76f8b8e8fc74992c4f4ee1792b6eed_1a7f76f8b8e8fc74992c4f4ee1792b6eed" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_a7f76f8b8e8fc74992c4f4ee1792b6eed_1a7f76f8b8e8fc74992c4f4ee1792b6eed" kindref="member">negative</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.value()<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a8415787857df2cb06fbb56ce72b2a96f_1a8415787857df2cb06fbb56ce72b2a96f" kindref="member">negativeNonZero</ref>(a);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179" refid="class_prime_field_a8415787857df2cb06fbb56ce72b2a96f_1a8415787857df2cb06fbb56ce72b2a96f" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_a8415787857df2cb06fbb56ce72b2a96f_1a8415787857df2cb06fbb56ce72b2a96f" kindref="member">negativeNonZero</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(!<ref refid="class_prime_field_ab55c6197ec0f10dd0e485907dd0da1bf_1ab55c6197ec0f10dd0e485907dd0da1bf" kindref="member">isZero</ref>(a));</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Element(<ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>()<sp/>-<sp/>a.value());</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184" refid="class_prime_field_a584312c515c5abbc3e57485720396e08_1a584312c515c5abbc3e57485720396e08" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_a584312c515c5abbc3e57485720396e08_1a584312c515c5abbc3e57485720396e08" kindref="member">product</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>b)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="class_prime_field_a21384afdf71ab78eb2a32c0b6cd60c65_1a21384afdf71ab78eb2a32c0b6cd60c65" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_a21384afdf71ab78eb2a32c0b6cd60c65_1a21384afdf71ab78eb2a32c0b6cd60c65" kindref="member">quotient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>b)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a584312c515c5abbc3e57485720396e08_1a584312c515c5abbc3e57485720396e08" kindref="member">product</ref>(a,<sp/><ref refid="class_prime_field_a7e16eb1199c4adc8c61c593cff1fd711_1a7e16eb1199c4adc8c61c593cff1fd711" kindref="member">inverse</ref>(b));</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192" refid="class_prime_field_a7e16eb1199c4adc8c61c593cff1fd711_1a7e16eb1199c4adc8c61c593cff1fd711" refkind="member"><highlight class="normal"><sp/><sp/>Element<sp/><ref refid="class_prime_field_a7e16eb1199c4adc8c61c593cff1fd711_1a7e16eb1199c4adc8c61c593cff1fd711" kindref="member">inverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Element<sp/>a)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="195" refid="class_prime_field_a4851753f7fe1e4a4007f3b5405e47322_1a4851753f7fe1e4a4007f3b5405e47322" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/><ref refid="class_prime_field_a4851753f7fe1e4a4007f3b5405e47322_1a4851753f7fe1e4a4007f3b5405e47322" kindref="member">mCharac</ref>;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198" refid="namespace_prime_field_internal" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_prime_field_internal" kindref="compound">PrimeFieldInternal</ref><sp/>{</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="200" refid="struct_prime_field_internal_1_1_modular_prod_type" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref><sp/>{};</highlight></codeline>
+<codeline lineno="201" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint8_01_4_a37da034cca2359df9983476de9bd53ed_1a37da034cca2359df9983476de9bd53ed" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_adde6aaee8457bee49c2a92621fe22b79_1adde6aaee8457bee49c2a92621fe22b79" kindref="member">uint8</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a05f6b0ae8f6a6e135b0e290c25fe0e4e_1a05f6b0ae8f6a6e135b0e290c25fe0e4e" kindref="member">uint16</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint8_01_4_a37da034cca2359df9983476de9bd53ed_1a37da034cca2359df9983476de9bd53ed" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="202" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint16_01_4_af8748796c4dfa644b34d8ce9ae2c70e9_1af8748796c4dfa644b34d8ce9ae2c70e9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a05f6b0ae8f6a6e135b0e290c25fe0e4e_1a05f6b0ae8f6a6e135b0e290c25fe0e4e" kindref="member">uint16</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a1134b580f8da4de94ca6b1de4d37975e_1a1134b580f8da4de94ca6b1de4d37975e" kindref="member">uint32</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint16_01_4_af8748796c4dfa644b34d8ce9ae2c70e9_1af8748796c4dfa644b34d8ce9ae2c70e9" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="203" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint32_01_4_a687424242ca4418be212bd0798835bdd_1a687424242ca4418be212bd0798835bdd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a1134b580f8da4de94ca6b1de4d37975e_1a1134b580f8da4de94ca6b1de4d37975e" kindref="member">uint32</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint32_01_4_a687424242ca4418be212bd0798835bdd_1a687424242ca4418be212bd0798835bdd" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int8_01_4_aed274b9d9f8974b9f892549db47609a2_1aed274b9d9f8974b9f892549db47609a2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a1b956fe1df85f3c132b21edb4e116458_1a1b956fe1df85f3c132b21edb4e116458" kindref="member">int8</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a259fa4834387bd68627ddf37bb3ebdb9_1a259fa4834387bd68627ddf37bb3ebdb9" kindref="member">int16</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int8_01_4_aed274b9d9f8974b9f892549db47609a2_1aed274b9d9f8974b9f892549db47609a2" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="206" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int16_01_4_a5b676446b852d118d9a54be0de8b868f_1a5b676446b852d118d9a54be0de8b868f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a259fa4834387bd68627ddf37bb3ebdb9_1a259fa4834387bd68627ddf37bb3ebdb9" kindref="member">int16</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a43d43196463bde49cb067f5c20ab8481_1a43d43196463bde49cb067f5c20ab8481" kindref="member">int32</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int16_01_4_a5b676446b852d118d9a54be0de8b868f_1a5b676446b852d118d9a54be0de8b868f" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="207" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int32_01_4_a60045bfcc9459a0dc9ce621778b738c1_1a60045bfcc9459a0dc9ce621778b738c1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a43d43196463bde49cb067f5c20ab8481_1a43d43196463bde49cb067f5c20ab8481" kindref="member">int32</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a87dc1c46a17e3ee6037afdb6aef76632_1a87dc1c46a17e3ee6037afdb6aef76632" kindref="member">int64</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int32_01_4_a60045bfcc9459a0dc9ce621778b738c1_1a60045bfcc9459a0dc9ce621778b738c1" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@todo:<sp/>Remove<sp/>this<sp/>typedef<sp/>when<sp/>possible.<sp/>64<sp/>bits<sp/>is<sp/>not<sp/>enough</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>to<sp/>store<sp/>a<sp/>64<sp/>bit<sp/>product.<sp/>We<sp/>need<sp/>it<sp/>right<sp/>now<sp/>because</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>coefficients<sp/>are<sp/>handled<sp/>as<sp/>64<sp/>bit<sp/>in<sp/>the<sp/>legacy<sp/>PolyRing.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint64_01_4_a6a31f305d1b45774f8b5013979d7ff59_1a6a31f305d1b45774f8b5013979d7ff59" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;<ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01uint64_01_4_a6a31f305d1b45774f8b5013979d7ff59_1a6a31f305d1b45774f8b5013979d7ff59" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="213" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01long_01unsigned_01int_01_4_abc31ced66203162a89eca2a686c4d5f9_1abc31ced66203162a89eca2a686c4d5f9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;long<sp/>unsigned<sp/><ref refid="classint" kindref="compound">int</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01long_01unsigned_01int_01_4_abc31ced66203162a89eca2a686c4d5f9_1abc31ced66203162a89eca2a686c4d5f9" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="214" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int64_01_4_a8f914ad54bf6e564b921f5ac23a810f9_1a8f914ad54bf6e564b921f5ac23a810f9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a87dc1c46a17e3ee6037afdb6aef76632_1a87dc1c46a17e3ee6037afdb6aef76632" kindref="member">int64</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01int64_01_4_a8f914ad54bf6e564b921f5ac23a810f9_1a8f914ad54bf6e564b921f5ac23a810f9" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="215" refid="struct_prime_field_internal_1_1_modular_prod_type_3_01long_01int_01_4_a9261209762436f0f9f089e872ca1aa1f_1a9261209762436f0f9f089e872ca1aa1f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">ModularProdType</ref>&lt;long<sp/><ref refid="classint" kindref="compound">int</ref>&gt;<sp/>{</highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type_3_01long_01int_01_4_a9261209762436f0f9f089e872ca1aa1f_1a9261209762436f0f9f089e872ca1aa1f" kindref="member">type</ref>;};</highlight></codeline>
+<codeline lineno="216"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="219" refid="class_prime_field_a584312c515c5abbc3e57485720396e08_1a584312c515c5abbc3e57485720396e08" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a584312c515c5abbc3e57485720396e08_1a584312c515c5abbc3e57485720396e08" kindref="member">PrimeField&lt;T&gt;::product</ref>(</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element" kindref="compound">Element</ref><sp/>a,</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element" kindref="compound">Element</ref><sp/>b</highlight></codeline>
+<codeline lineno="222"><highlight class="normal">)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>-&gt;<sp/><ref refid="class_prime_field_1_1_element" kindref="compound">Element</ref><sp/>{</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="struct_prime_field_internal_1_1_modular_prod_type" kindref="compound">PrimeFieldInternal::ModularProdType&lt;T&gt;::type</ref><sp/>BigT;</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/>BigT<sp/>bigProd<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">BigT</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(a.value())<sp/>*<sp/>b.value();</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(a.value()<sp/>==<sp/>0<sp/>||<sp/>bigProd<sp/>/<sp/>a.value()<sp/>==<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">BigT</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(b.value()));</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element" kindref="compound">Element</ref>(</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(bigProd<sp/>%<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>()));</highlight></codeline>
+<codeline lineno="227"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="230" refid="class_prime_field_a7e16eb1199c4adc8c61c593cff1fd711_1a7e16eb1199c4adc8c61c593cff1fd711" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_a7e16eb1199c4adc8c61c593cff1fd711_1a7e16eb1199c4adc8c61c593cff1fd711" kindref="member">PrimeField&lt;T&gt;::inverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element" kindref="compound">Element</ref><sp/>elementA)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>-&gt;<sp/><ref refid="class_prime_field_1_1_element" kindref="compound">Element</ref><sp/>{</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>do<sp/>two<sp/>turns<sp/>of<sp/>the<sp/>extended<sp/>Euclidian<sp/>algorithm<sp/>per</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>loop.<sp/>Usually<sp/>the<sp/>sign<sp/>of<sp/>x<sp/>changes<sp/>each<sp/>time<sp/>through<sp/>the<sp/>loop,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>but<sp/>we<sp/>avoid<sp/>that<sp/>by<sp/>representing<sp/>every<sp/>other<sp/>x<sp/>as<sp/>its<sp/>negative,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>which<sp/>is<sp/>the<sp/>value<sp/>minusLastX.<sp/>This<sp/>way<sp/>no<sp/>negative<sp/>values<sp/>ever</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>appear<sp/>and<sp/>we<sp/>do<sp/>not<sp/>need<sp/>any<sp/>extra<sp/>bits.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>a<sp/>=<sp/>elementA.value();</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(0<sp/>&lt;<sp/>a);</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(a<sp/>&lt;<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>b<sp/>=<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>();</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>minusLastX<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(0);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(1);</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">true</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>&lt;=<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(minusLastX<sp/>&lt;=<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>first<sp/>turn</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>==<sp/>1)</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>firstQuotient<sp/>=<sp/>b<sp/>/<sp/>a;</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/>b<sp/>-=<sp/>firstQuotient<sp/>*<sp/>a;</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/>minusLastX<sp/>+=<sp/>firstQuotient<sp/>*<sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>second<sp/>turn</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(b<sp/>==<sp/>1)<sp/>{</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(!<ref refid="class_prime_field_ab55c6197ec0f10dd0e485907dd0da1bf_1ab55c6197ec0f10dd0e485907dd0da1bf" kindref="member">isZero</ref>(minusLastX));</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(minusLastX<sp/>&lt;<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>=<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>()<sp/>-<sp/>minusLastX;</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>secondQuotient<sp/>=<sp/>a<sp/>/<sp/>b;</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>a<sp/>-=<sp/>secondQuotient<sp/>*<sp/>b;</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>+=<sp/>secondQuotient<sp/>*<sp/>minusLastX;</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>&gt;=<sp/>1);</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>&lt;<sp/><ref refid="class_prime_field_a80b8721e03acb8c2cf017f5b18193467_1a80b8721e03acb8c2cf017f5b18193467" kindref="member">charac</ref>());</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><sp/><ref refid="class_prime_field_1_1_element" kindref="compound">Element</ref><sp/>inverseElement(<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>);</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="class_prime_field_a21da9cf373d51fe6078cbd95eb1f293f_1a21da9cf373d51fe6078cbd95eb1f293f" kindref="member">isOne</ref>(<ref refid="class_prime_field_a584312c515c5abbc3e57485720396e08_1a584312c515c5abbc3e57485720396e08" kindref="member">product</ref>(elementA,<sp/>inverseElement)));</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>inverseElement;</highlight></codeline>
+<codeline lineno="271"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>E&gt;</highlight></codeline>
+<codeline lineno="275" refid="_prime_field_8hpp_a80a953c690ce54940b2af706956a2548_1a80a953c690ce54940b2af706956a2548" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="_prime_field_8hpp_a80a953c690ce54940b2af706956a2548_1a80a953c690ce54940b2af706956a2548" kindref="member">operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field" kindref="compound">PrimeField&lt;E&gt;</ref>&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field" kindref="compound">PrimeField&lt;E&gt;</ref>&amp;<sp/>b)<sp/>{</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>&amp;a<sp/>==<sp/>&amp;b;</highlight></codeline>
+<codeline lineno="277"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>E&gt;</highlight></codeline>
+<codeline lineno="281" refid="_prime_field_8hpp_ac457da9a8c1aa8329a01570661f0150a_1ac457da9a8c1aa8329a01570661f0150a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="_prime_field_8hpp_ac457da9a8c1aa8329a01570661f0150a_1ac457da9a8c1aa8329a01570661f0150a" kindref="member">operator!=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field" kindref="compound">PrimeField&lt;E&gt;</ref>&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_prime_field" kindref="compound">PrimeField&lt;E&gt;</ref>&amp;<sp/>b)<sp/>{</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!(a<sp/>==<sp/>b);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="286" refid="_prime_field_8hpp_a72e3b95508bb53b3098e963008a08772_1a72e3b95508bb53b3098e963008a08772" refkind="member"><highlight class="normal">std::ostream&amp;<sp/><ref refid="_prime_field_8hpp_a72e3b95508bb53b3098e963008a08772_1a72e3b95508bb53b3098e963008a08772" kindref="member">operator&lt;&lt;</ref>(</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>out,</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="class_prime_field_1_1_element" kindref="compound">PrimeField&lt;T&gt;::Element</ref><sp/>e</highlight></codeline>
+<codeline lineno="289"><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/>e.<ref refid="class_prime_field_1_1_element_a22896925860560feb1623a895472056e_1a22896925860560feb1623a895472056e" kindref="member">value</ref>();</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>out;</highlight></codeline>
+<codeline lineno="292"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a3dd074a16d8db719c612d38d30802066_1a3dd074a16d8db719c612d38d30802066" kindref="member">MATHICGB_NAMESPACE_END</ref></highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/mathicgb/PrimeField.hpp"/>
+  </compounddef>
+</doxygen>

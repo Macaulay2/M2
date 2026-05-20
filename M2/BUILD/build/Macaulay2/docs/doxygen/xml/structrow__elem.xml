@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structrow__elem" kind="struct" language="C++" prot="public">
+    <compoundname>row_elem</compoundname>
+    <includes refid="f4-types_8hpp" local="no">f4-types.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structrow__elem_a6dc2ee8628397e49bd792a0511988230_1a6dc2ee8628397e49bd792a0511988230" prot="public" static="no" mutable="no">
+        <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+        <definition>packed_monomial row_elem::monom</definition>
+        <argsstring></argsstring>
+        <name>monom</name>
+        <qualifiedname>row_elem::monom</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="153" column="19" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="153" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a09377712b38bdbec774d2e6f58c54ac5_1a09377712b38bdbec774d2e6f58c54ac5" compoundref="f4_8cpp" startline="591" endline="601">F4GB::get_coeffs_array</referencedby>
+        <referencedby refid="class_f4_g_b_aaa00410ec515a944cf1dfd1e877c271f_1aaa00410ec515a944cf1dfd1e877c271f" compoundref="f4_8cpp" startline="196" endline="218">F4GB::load_gen</referencedby>
+        <referencedby refid="class_f4_g_b_a6babb76c1df3d323fa211b6972d6c9f3_1a6babb76c1df3d323fa211b6972d6c9f3" compoundref="f4_8cpp" startline="220" endline="241">F4GB::load_row</referencedby>
+        <referencedby refid="class_f4to_m2_interface_a1c5497ca412e3a4b7f745443ad3bfbd7_1a1c5497ca412e3a4b7f745443ad3bfbd7" compoundref="f4-m2-interface_8cpp" startline="141" endline="173">F4toM2Interface::to_M2_MutableMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structrow__elem_ace99c2f70e80922c30dba50f0d1c91ca_1ace99c2f70e80922c30dba50f0d1c91ca" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int row_elem::elem</definition>
+        <argsstring></argsstring>
+        <name>elem</name>
+        <qualifiedname>row_elem::elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="154" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="154" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a09377712b38bdbec774d2e6f58c54ac5_1a09377712b38bdbec774d2e6f58c54ac5" compoundref="f4_8cpp" startline="591" endline="601">F4GB::get_coeffs_array</referencedby>
+        <referencedby refid="class_f4_g_b_aaa00410ec515a944cf1dfd1e877c271f_1aaa00410ec515a944cf1dfd1e877c271f" compoundref="f4_8cpp" startline="196" endline="218">F4GB::load_gen</referencedby>
+        <referencedby refid="class_f4_g_b_a6babb76c1df3d323fa211b6972d6c9f3_1a6babb76c1df3d323fa211b6972d6c9f3" compoundref="f4_8cpp" startline="220" endline="241">F4GB::load_row</referencedby>
+        <referencedby refid="class_f4to_m2_interface_a1c5497ca412e3a4b7f745443ad3bfbd7_1a1c5497ca412e3a4b7f745443ad3bfbd7" compoundref="f4-m2-interface_8cpp" startline="141" endline="173">F4toM2Interface::to_M2_MutableMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structrow__elem_a08550122c80deea057b24808496c4e57_1a08550122c80deea057b24808496c4e57" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int row_elem::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <qualifiedname>row_elem::len</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="157" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="157" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_abbfdd9ce8989f4064073bd36d6781e29_1abbfdd9ce8989f4064073bd36d6781e29" compoundref="f4_8cpp" startline="612" endline="739">F4GB::gauss_reduce</referencedby>
+        <referencedby refid="class_f4_g_b_af8a814037b954b343cbdfa95cc862a4c_1af8a814037b954b343cbdfa95cc862a4c" compoundref="f4_8cpp" startline="749" endline="814">F4GB::gauss_reduce_row</referencedby>
+        <referencedby refid="class_f4_g_b_a09377712b38bdbec774d2e6f58c54ac5_1a09377712b38bdbec774d2e6f58c54ac5" compoundref="f4_8cpp" startline="591" endline="601">F4GB::get_coeffs_array</referencedby>
+        <referencedby refid="class_f4_g_b_ac129a0a9d0bf6e59362e6110405af6b1_1ac129a0a9d0bf6e59362e6110405af6b1" compoundref="f4_8cpp" startline="899" endline="974">F4GB::insert_gb_element</referencedby>
+        <referencedby refid="class_f4_g_b_a3095d006fca1c7aa9fa8db27354b779b_1a3095d006fca1c7aa9fa8db27354b779b" compoundref="f4_8cpp" startline="603" endline="610">F4GB::is_new_GB_row</referencedby>
+        <referencedby refid="class_f4_g_b_aaa00410ec515a944cf1dfd1e877c271f_1aaa00410ec515a944cf1dfd1e877c271f" compoundref="f4_8cpp" startline="196" endline="218">F4GB::load_gen</referencedby>
+        <referencedby refid="class_f4_g_b_a6babb76c1df3d323fa211b6972d6c9f3_1a6babb76c1df3d323fa211b6972d6c9f3" compoundref="f4_8cpp" startline="220" endline="241">F4GB::load_row</referencedby>
+        <referencedby refid="class_f4_g_b_a8e003d4628d4cd6f6f16a57c40a1a3dd_1a8e003d4628d4cd6f6f16a57c40a1a3dd" compoundref="f4_8cpp" startline="322" endline="407">F4GB::reorder_columns</referencedby>
+        <referencedby refid="class_f4_g_b_a1209fe2f8991338e4f5d02639aac65f1_1a1209fe2f8991338e4f5d02639aac65f1" compoundref="f4_8cpp" startline="1306" endline="1334">F4GB::show_new_rows_matrix</referencedby>
+        <referencedby refid="class_f4_g_b_a0171bead5acbebb00213e0378fb06443_1a0171bead5acbebb00213e0378fb06443" compoundref="f4_8cpp" startline="817" endline="893">F4GB::tail_reduce</referencedby>
+        <referencedby refid="class_f4to_m2_interface_a1c5497ca412e3a4b7f745443ad3bfbd7_1a1c5497ca412e3a4b7f745443ad3bfbd7" compoundref="f4-m2-interface_8cpp" startline="141" endline="173">F4toM2Interface::to_M2_MutableMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structrow__elem_ae5514cb7665850f5d08042eb15fe3530_1ae5514cb7665850f5d08042eb15fe3530" prot="public" static="no" mutable="no">
+        <type><ref refid="class_element_array" kindref="compound">ElementArray</ref></type>
+        <definition>ElementArray row_elem::coeffs</definition>
+        <argsstring></argsstring>
+        <name>coeffs</name>
+        <qualifiedname>row_elem::coeffs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="158" column="16" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="158" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_abbfdd9ce8989f4064073bd36d6781e29_1abbfdd9ce8989f4064073bd36d6781e29" compoundref="f4_8cpp" startline="612" endline="739">F4GB::gauss_reduce</referencedby>
+        <referencedby refid="class_f4_g_b_af8a814037b954b343cbdfa95cc862a4c_1af8a814037b954b343cbdfa95cc862a4c" compoundref="f4_8cpp" startline="749" endline="814">F4GB::gauss_reduce_row</referencedby>
+        <referencedby refid="class_f4_g_b_a09377712b38bdbec774d2e6f58c54ac5_1a09377712b38bdbec774d2e6f58c54ac5" compoundref="f4_8cpp" startline="591" endline="601">F4GB::get_coeffs_array</referencedby>
+        <referencedby refid="class_f4_g_b_ac129a0a9d0bf6e59362e6110405af6b1_1ac129a0a9d0bf6e59362e6110405af6b1" compoundref="f4_8cpp" startline="899" endline="974">F4GB::insert_gb_element</referencedby>
+        <referencedby refid="class_f4_g_b_a3095d006fca1c7aa9fa8db27354b779b_1a3095d006fca1c7aa9fa8db27354b779b" compoundref="f4_8cpp" startline="603" endline="610">F4GB::is_new_GB_row</referencedby>
+        <referencedby refid="class_f4_g_b_a0171bead5acbebb00213e0378fb06443_1a0171bead5acbebb00213e0378fb06443" compoundref="f4_8cpp" startline="817" endline="893">F4GB::tail_reduce</referencedby>
+        <referencedby refid="class_f4to_m2_interface_a1c5497ca412e3a4b7f745443ad3bfbd7_1a1c5497ca412e3a4b7f745443ad3bfbd7" compoundref="f4-m2-interface_8cpp" startline="141" endline="173">F4toM2Interface::to_M2_MutableMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structrow__elem_a7c465bf81ecb52a1f67cb7878e90b340_1a7c465bf81ecb52a1f67cb7878e90b340" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* row_elem::comps</definition>
+        <argsstring></argsstring>
+        <name>comps</name>
+        <qualifiedname>row_elem::comps</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="159" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="159" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_abbfdd9ce8989f4064073bd36d6781e29_1abbfdd9ce8989f4064073bd36d6781e29" compoundref="f4_8cpp" startline="612" endline="739">F4GB::gauss_reduce</referencedby>
+        <referencedby refid="class_f4_g_b_af8a814037b954b343cbdfa95cc862a4c_1af8a814037b954b343cbdfa95cc862a4c" compoundref="f4_8cpp" startline="749" endline="814">F4GB::gauss_reduce_row</referencedby>
+        <referencedby refid="class_f4_g_b_ac129a0a9d0bf6e59362e6110405af6b1_1ac129a0a9d0bf6e59362e6110405af6b1" compoundref="f4_8cpp" startline="899" endline="974">F4GB::insert_gb_element</referencedby>
+        <referencedby refid="class_f4_g_b_a757c4bf189beff2cdf211f47a9cbee62_1a757c4bf189beff2cdf211f47a9cbee62" compoundref="f4_8cpp" startline="741" endline="747">F4GB::is_pivot_row</referencedby>
+        <referencedby refid="class_f4_g_b_aaa00410ec515a944cf1dfd1e877c271f_1aaa00410ec515a944cf1dfd1e877c271f" compoundref="f4_8cpp" startline="196" endline="218">F4GB::load_gen</referencedby>
+        <referencedby refid="class_f4_g_b_a6babb76c1df3d323fa211b6972d6c9f3_1a6babb76c1df3d323fa211b6972d6c9f3" compoundref="f4_8cpp" startline="220" endline="241">F4GB::load_row</referencedby>
+        <referencedby refid="class_f4_g_b_a8e003d4628d4cd6f6f16a57c40a1a3dd_1a8e003d4628d4cd6f6f16a57c40a1a3dd" compoundref="f4_8cpp" startline="322" endline="407">F4GB::reorder_columns</referencedby>
+        <referencedby refid="class_f4_g_b_a1209fe2f8991338e4f5d02639aac65f1_1a1209fe2f8991338e4f5d02639aac65f1" compoundref="f4_8cpp" startline="1306" endline="1334">F4GB::show_new_rows_matrix</referencedby>
+        <referencedby refid="class_f4_g_b_a0171bead5acbebb00213e0378fb06443_1a0171bead5acbebb00213e0378fb06443" compoundref="f4_8cpp" startline="817" endline="893">F4GB::tail_reduce</referencedby>
+        <referencedby refid="class_f4to_m2_interface_a1c5497ca412e3a4b7f745443ad3bfbd7_1a1c5497ca412e3a4b7f745443ad3bfbd7" compoundref="f4-m2-interface_8cpp" startline="141" endline="173">F4toM2Interface::to_M2_MutableMatrix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+      <node id="1">
+        <label>row_elem</label>
+        <link refid="structrow__elem"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>comps</edgelabel>
+          <edgelabel>elem</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>coeffs</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/f4-types.hpp" line="150" column="1" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="151" bodyend="160"/>
+    <listofallmembers>
+      <member refid="structrow__elem_ae5514cb7665850f5d08042eb15fe3530_1ae5514cb7665850f5d08042eb15fe3530" prot="public" virt="non-virtual"><scope>row_elem</scope><name>coeffs</name></member>
+      <member refid="structrow__elem_a7c465bf81ecb52a1f67cb7878e90b340_1a7c465bf81ecb52a1f67cb7878e90b340" prot="public" virt="non-virtual"><scope>row_elem</scope><name>comps</name></member>
+      <member refid="structrow__elem_ace99c2f70e80922c30dba50f0d1c91ca_1ace99c2f70e80922c30dba50f0d1c91ca" prot="public" virt="non-virtual"><scope>row_elem</scope><name>elem</name></member>
+      <member refid="structrow__elem_a08550122c80deea057b24808496c4e57_1a08550122c80deea057b24808496c4e57" prot="public" virt="non-virtual"><scope>row_elem</scope><name>len</name></member>
+      <member refid="structrow__elem_a6dc2ee8628397e49bd792a0511988230_1a6dc2ee8628397e49bd792a0511988230" prot="public" virt="non-virtual"><scope>row_elem</scope><name>monom</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

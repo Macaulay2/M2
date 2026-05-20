@@ -1,0 +1,201 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_simulator_8h" kind="file" language="C++">
+    <compoundname>Simulator.h</compoundname>
+    <includes refid="_item_8h" local="yes">Item.h</includes>
+    <includes local="no">queue</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">ctime</includes>
+    <includes local="no">algorithm</includes>
+    <includes local="no">sstream</includes>
+    <includes local="no">iostream</includes>
+    <includes local="no">string</includes>
+    <includedby refid="_simulator_8cpp" local="yes">submodules/mathic/src/pqsim/Simulator.cpp</includedby>
+    <includedby refid="pq_main_8cpp" local="yes">submodules/mathic/src/pqsim/pqMain.cpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>Item.h</label>
+        <link refid="_item_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/pqsim/Simulator.h</label>
+        <link refid="_simulator_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>algorithm</label>
+      </node>
+      <node id="6">
+        <label>ctime</label>
+      </node>
+      <node id="9">
+        <label>iostream</label>
+      </node>
+      <node id="3">
+        <label>ostream</label>
+      </node>
+      <node id="5">
+        <label>queue</label>
+      </node>
+      <node id="8">
+        <label>sstream</label>
+      </node>
+      <node id="10">
+        <label>string</label>
+      </node>
+      <node id="4">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>submodules/mathic/src/pqsim/Simulator.cpp</label>
+        <link refid="_simulator_8cpp"/>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/pqsim/Simulator.h</label>
+        <link refid="_simulator_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>submodules/mathic/src/pqsim/pqMain.cpp</label>
+        <link refid="pq_main_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_simulator" prot="public">Simulator</innerclass>
+    <innerclass refid="struct_simulator_1_1_event" prot="public">Simulator::Event</innerclass>
+    <innerclass refid="struct_simulator_1_1_sim_data" prot="private">Simulator::SimData</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>SIMULATOR_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SIMULATOR_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_item_8h" kindref="compound">Item.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;queue&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ctime&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;algorithm&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="class_simulator" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_simulator_aed7f8a8812836f83b69aa02401d2c776_1aed7f8a8812836f83b69aa02401d2c776" kindref="member">Simulator</ref><sp/>{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="15" refid="class_simulator_aed7f8a8812836f83b69aa02401d2c776_1aed7f8a8812836f83b69aa02401d2c776" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_simulator_aed7f8a8812836f83b69aa02401d2c776_1aed7f8a8812836f83b69aa02401d2c776" kindref="member">Simulator</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>repeats):<sp/><ref refid="class_simulator_a0b4159e5cd3b2419e079a3cceb2b5b47_1a0b4159e5cd3b2419e079a3cceb2b5b47" kindref="member">_repeats</ref>(repeats),<sp/><ref refid="class_simulator_a5ae0061ef0ce4428775d89b29c453dbe_1a5ae0061ef0ce4428775d89b29c453dbe" kindref="member">_simType</ref>(</highlight><highlight class="stringliteral">&quot;none&quot;</highlight><highlight class="normal">)<sp/>{}</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a4ea2373c60a88c480bcfa11e117e0d38_1a4ea2373c60a88c480bcfa11e117e0d38" kindref="member">dupSpans</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pushSumGoal,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>avgSpan,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>avgLiveGoal,</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dupPercentage);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_ac958360913e47d9f4040b907bf9f15b5_1ac958360913e47d9f4040b907bf9f15b5" kindref="member">orderSpans</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>spanCount,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>spanSize,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>avgSize);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a56f804781905dd369b8e230713ad8f7e_1a56f804781905dd369b8e230713ad8f7e" kindref="member">randomSpans</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>spanCount,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>spanSize,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>initialSize);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>PQueue&gt;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_ad16df28339f9b3f91c087a1f4598957f_1ad16df28339f9b3f91c087a1f4598957f" kindref="member">run</ref>(PQueue&amp;<sp/>pq,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a7bc0f3057aa5118d839d312e50269cb5_1a7bc0f3057aa5118d839d312e50269cb5" kindref="member">printData</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>printStates<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_ad42d0c129fc1f8dd4cd72ddd2bc07dbf_1ad42d0c129fc1f8dd4cd72ddd2bc07dbf" kindref="member">printEventSummary</ref>(std::ostream&amp;<sp/>out)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a6eb6d1c02bad29995a544773dd5f9f02_1a6eb6d1c02bad29995a544773dd5f9f02" kindref="member">printEvents</ref>(std::ostream&amp;<sp/>out)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a7bc0f3057aa5118d839d312e50269cb5_1a7bc0f3057aa5118d839d312e50269cb5" kindref="member">printData</ref>(std::ostream&amp;<sp/>out)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="struct_simulator_1_1_event" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_simulator_1_1_event_a0bd715370a55c3f0907348846c130e49_1a0bd715370a55c3f0907348846c130e49" kindref="member">Event</ref><sp/>{</highlight></codeline>
+<codeline lineno="30" refid="struct_simulator_1_1_event_a0bd715370a55c3f0907348846c130e49_1a0bd715370a55c3f0907348846c130e49" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_simulator_1_1_event_a0bd715370a55c3f0907348846c130e49_1a0bd715370a55c3f0907348846c130e49" kindref="member">Event</ref>():<sp/><ref refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" kindref="member">size</ref>(0)<sp/>{}</highlight></codeline>
+<codeline lineno="31" refid="struct_simulator_1_1_event_adcc2e2fed058d7fffad84a40bd3f44d1_1adcc2e2fed058d7fffad84a40bd3f44d1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_event_adcc2e2fed058d7fffad84a40bd3f44d1_1adcc2e2fed058d7fffad84a40bd3f44d1" kindref="member">begin</ref>;</highlight></codeline>
+<codeline lineno="32" refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" kindref="member">size</ref>;<sp/></highlight><highlight class="comment">//<sp/>insert<sp/>_mem(<sp/>[begin,<sp/>begin<sp/>+<sp/>size)<sp/>)<sp/>if<sp/>size<sp/>&gt;<sp/>0.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="struct_simulator_1_1_event_a84003c09884f2e9a8043c20622cff1d4_1a84003c09884f2e9a8043c20622cff1d4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/><ref refid="struct_simulator_1_1_event_a84003c09884f2e9a8043c20622cff1d4_1a84003c09884f2e9a8043c20622cff1d4" kindref="member">popValue</ref>;<sp/></highlight><highlight class="comment">//<sp/>pop<sp/>this<sp/>value<sp/>if<sp/>size<sp/>==<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="37" refid="struct_simulator_1_1_sim_data" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_simulator_1_1_sim_data" kindref="compound">SimData</ref><sp/>{</highlight></codeline>
+<codeline lineno="38" refid="struct_simulator_1_1_sim_data_a616ea556edcc8c5d9733ccdae1cada07_1a616ea556edcc8c5d9733ccdae1cada07" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="struct_simulator_1_1_sim_data_a616ea556edcc8c5d9733ccdae1cada07_1a616ea556edcc8c5d9733ccdae1cada07" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="39" refid="struct_simulator_1_1_sim_data_aaf9d0b7ca0da313fd8b8e7ac3c610b25_1aaf9d0b7ca0da313fd8b8e7ac3c610b25" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data_aaf9d0b7ca0da313fd8b8e7ac3c610b25_1aaf9d0b7ca0da313fd8b8e7ac3c610b25" kindref="member">comparisons</ref>;</highlight></codeline>
+<codeline lineno="40" refid="struct_simulator_1_1_sim_data_a82d1e42e796b54ece39ca07064a779c8_1a82d1e42e796b54ece39ca07064a779c8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data_a82d1e42e796b54ece39ca07064a779c8_1a82d1e42e796b54ece39ca07064a779c8" kindref="member">mseconds</ref>;</highlight></codeline>
+<codeline lineno="41" refid="struct_simulator_1_1_sim_data_a532ce519b62e5882395e086483f8575e_1a532ce519b62e5882395e086483f8575e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data_a532ce519b62e5882395e086483f8575e_1a532ce519b62e5882395e086483f8575e" kindref="member">memoryUse</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data_a665670642bf93d7ecfa2a3f8bc9b4f60_1a665670642bf93d7ecfa2a3f8bc9b4f60" kindref="member">operator&lt;</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data" kindref="compound">SimData</ref>&amp;<sp/>sd)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data_ab596056aa08a3ed0aa16ff23252251f3_1ab596056aa08a3ed0aa16ff23252251f3" kindref="member">print</ref>(std::ostream&amp;<sp/>out);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a1bce3c5af053666392a80c01c809eb68_1a1bce3c5af053666392a80c01c809eb68" kindref="member">setupEvents</ref>();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a6e6ff45b952ac84ee3c3c9cf0bb49a38_1a6e6ff45b952ac84ee3c3c9cf0bb49a38" kindref="member">print</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_event" kindref="compound">Event</ref>&amp;<sp/>e,<sp/>std::ostream&amp;<sp/>out)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;Event&gt;<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>;</highlight></codeline>
+<codeline lineno="50" refid="class_simulator_a880fc56cf6ab74393ada38788758fe5e_1a880fc56cf6ab74393ada38788758fe5e" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;SimData&gt;<sp/><ref refid="class_simulator_a880fc56cf6ab74393ada38788758fe5e_1a880fc56cf6ab74393ada38788758fe5e" kindref="member">_data</ref>;</highlight></codeline>
+<codeline lineno="51" refid="class_simulator_a3f04faec7c4ca3ed4f96004292b62af8_1a3f04faec7c4ca3ed4f96004292b62af8" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;Value&gt;<sp/><ref refid="class_simulator_a3f04faec7c4ca3ed4f96004292b62af8_1a3f04faec7c4ca3ed4f96004292b62af8" kindref="member">_mem</ref>;</highlight></codeline>
+<codeline lineno="52" refid="class_simulator_ac8b5904644d6c50f9a187c4889ac6fa3_1ac8b5904644d6c50f9a187c4889ac6fa3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_simulator_ac8b5904644d6c50f9a187c4889ac6fa3_1ac8b5904644d6c50f9a187c4889ac6fa3" kindref="member">_spanCount</ref>;</highlight></codeline>
+<codeline lineno="53" refid="class_simulator_aaad620d61c496b0e41945166dac9c47b_1aaad620d61c496b0e41945166dac9c47b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_simulator_aaad620d61c496b0e41945166dac9c47b_1aaad620d61c496b0e41945166dac9c47b" kindref="member">_spanSize</ref>;</highlight></codeline>
+<codeline lineno="54" refid="class_simulator_a81af662ff0c0dfb4dfbb65ae7613e516_1a81af662ff0c0dfb4dfbb65ae7613e516" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a81af662ff0c0dfb4dfbb65ae7613e516_1a81af662ff0c0dfb4dfbb65ae7613e516" kindref="member">_avgSize</ref>;</highlight></codeline>
+<codeline lineno="55" refid="class_simulator_a0b4159e5cd3b2419e079a3cceb2b5b47_1a0b4159e5cd3b2419e079a3cceb2b5b47" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a0b4159e5cd3b2419e079a3cceb2b5b47_1a0b4159e5cd3b2419e079a3cceb2b5b47" kindref="member">_repeats</ref>;</highlight></codeline>
+<codeline lineno="56" refid="class_simulator_a5ae0061ef0ce4428775d89b29c453dbe_1a5ae0061ef0ce4428775d89b29c453dbe" refkind="member"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="class_simulator_a5ae0061ef0ce4428775d89b29c453dbe_1a5ae0061ef0ce4428775d89b29c453dbe" kindref="member">_simType</ref>;</highlight></codeline>
+<codeline lineno="57" refid="class_simulator_a4dfed2944ceff285714f703e9d4c65bb_1a4dfed2944ceff285714f703e9d4c65bb" refkind="member"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="class_simulator_a4dfed2944ceff285714f703e9d4c65bb_1a4dfed2944ceff285714f703e9d4c65bb" kindref="member">_description</ref>;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>PQueue&gt;</highlight></codeline>
+<codeline lineno="61" refid="class_simulator_ad16df28339f9b3f91c087a1f4598957f_1ad16df28339f9b3f91c087a1f4598957f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_ad16df28339f9b3f91c087a1f4598957f_1ad16df28339f9b3f91c087a1f4598957f" kindref="member">Simulator::run</ref>(PQueue&amp;<sp/>pqueue,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a7bc0f3057aa5118d839d312e50269cb5_1a7bc0f3057aa5118d839d312e50269cb5" kindref="member">printData</ref>,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>printStates)<sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><ref refid="classclock__t" kindref="compound">clock_t</ref><sp/>timeBegin<sp/>=<sp/>clock();</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>std::vector&lt;Event&gt;::const_iterator<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref><sp/>=<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>.end();</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>turn<sp/>=<sp/>0;<sp/>turn<sp/>&lt;<sp/><ref refid="class_simulator_a0b4159e5cd3b2419e079a3cceb2b5b47_1a0b4159e5cd3b2419e079a3cceb2b5b47" kindref="member">_repeats</ref>;<sp/>++turn)<sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::vector&lt;Event&gt;::const_iterator<sp/>CIterator;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>CIterator<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref><sp/>=<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>.end();</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(CIterator<sp/>it<sp/>=<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>.begin();<sp/>it<sp/>!=<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>;<sp/>++it)<sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_event" kindref="compound">Event</ref>&amp;<sp/>e<sp/>=<sp/>*it;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(printStates)<sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;***<sp/>The<sp/>next<sp/>event<sp/>is\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_simulator_a6e6ff45b952ac84ee3c3c9cf0bb49a38_1a6e6ff45b952ac84ee3c3c9cf0bb49a38" kindref="member">print</ref>(e,<sp/>std::cerr);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;***<sp/>The<sp/>state<sp/>of<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>pqueue.getName()</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>(&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>pqueue.getComparisons()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>comparisons)<sp/>is\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pqueue.print(std::cerr);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(e.<ref refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" kindref="member">size</ref><sp/>==<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>item<sp/>=<sp/>pqueue.pop();</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!(item<sp/>==<sp/>e.<ref refid="struct_simulator_1_1_event_a84003c09884f2e9a8043c20622cff1d4_1a84003c09884f2e9a8043c20622cff1d4" kindref="member">popValue</ref>))<sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>queue<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>pqueue.getName()</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>gave<sp/>incorrect<sp/>value<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>item<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref>*<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref><sp/>=<sp/>&amp;<ref refid="class_simulator_a3f04faec7c4ca3ed4f96004292b62af8_1a3f04faec7c4ca3ed4f96004292b62af8" kindref="member">_mem</ref>[e.<ref refid="struct_simulator_1_1_event_adcc2e2fed058d7fffad84a40bd3f44d1_1adcc2e2fed058d7fffad84a40bd3f44d1" kindref="member">begin</ref>];</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pqueue.push(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref><sp/>+<sp/>e.<ref refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" kindref="member">size</ref>);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><ref refid="classclock__t" kindref="compound">clock_t</ref><sp/>timeEnd<sp/>=<sp/>clock();</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><ref refid="struct_simulator_1_1_sim_data" kindref="compound">SimData</ref><sp/>data;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>data.<ref refid="struct_simulator_1_1_sim_data_a616ea556edcc8c5d9733ccdae1cada07_1a616ea556edcc8c5d9733ccdae1cada07" kindref="member">name</ref><sp/>=<sp/>pqueue.getName();</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>data.<ref refid="struct_simulator_1_1_sim_data_a532ce519b62e5882395e086483f8575e_1a532ce519b62e5882395e086483f8575e" kindref="member">memoryUse</ref><sp/>=<sp/>pqueue.getMemoryUse();</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/>data.<ref refid="struct_simulator_1_1_sim_data_aaf9d0b7ca0da313fd8b8e7ac3c610b25_1aaf9d0b7ca0da313fd8b8e7ac3c610b25" kindref="member">comparisons</ref><sp/>=<sp/>pqueue.getComparisons();</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>data.<ref refid="struct_simulator_1_1_sim_data_a82d1e42e796b54ece39ca07064a779c8_1a82d1e42e796b54ece39ca07064a779c8" kindref="member">mseconds</ref><sp/>=<sp/>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/>long)</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>((</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(timeEnd)<sp/>-<sp/>timeBegin)<sp/>*<sp/>1000)<sp/>/<sp/>CLOCKS_PER_SEC;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><ref refid="class_simulator_a880fc56cf6ab74393ada38788758fe5e_1a880fc56cf6ab74393ada38788758fe5e" kindref="member">_data</ref>.push_back(data);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_simulator_a7bc0f3057aa5118d839d312e50269cb5_1a7bc0f3057aa5118d839d312e50269cb5" kindref="member">printData</ref>)</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>data.<ref refid="struct_simulator_1_1_sim_data_ab596056aa08a3ed0aa16ff23252251f3_1ab596056aa08a3ed0aa16ff23252251f3" kindref="member">print</ref>(std::cerr);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/pqsim/Simulator.h"/>
+  </compounddef>
+</doxygen>

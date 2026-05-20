@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_item_8cpp" kind="file" language="C++">
+    <compoundname>Item.cpp</compoundname>
+    <includes refid="mathic_2src_2pqsim_2stdinc_8h" local="yes">stdinc.h</includes>
+    <includes refid="_item_8h" local="yes">Item.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathic/src/pqsim/Item.cpp</label>
+        <link refid="_item_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Item.h</label>
+        <link refid="_item_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2pqsim_2stdinc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>cstddef</label>
+      </node>
+      <node id="4">
+        <label>memory</label>
+      </node>
+      <node id="6">
+        <label>ostream</label>
+      </node>
+      <node id="7">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mathic_2src_2pqsim_2stdinc_8h" kindref="compound">stdinc.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_item_8h" kindref="compound">Item.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4" refid="class_item_a4b26ff6cfd5148afe1b9bf516f245567_1a4b26ff6cfd5148afe1b9bf516f245567" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_item_a4b26ff6cfd5148afe1b9bf516f245567_1a4b26ff6cfd5148afe1b9bf516f245567" kindref="member">Item::print</ref>(std::ostream&amp;<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_item_ab41b5981b1f328c4ffb56ee7c04229f2_1ab41b5981b1f328c4ffb56ee7c04229f2" kindref="member">atEnd</ref>())</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;invalid&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/><ref refid="class_item_aaa634de2406781e5eec91e7cebc7e00e_1aaa634de2406781e5eec91e7cebc7e00e" kindref="member">getValue</ref>();</highlight></codeline>
+<codeline lineno="9"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/pqsim/Item.cpp"/>
+  </compounddef>
+</doxygen>

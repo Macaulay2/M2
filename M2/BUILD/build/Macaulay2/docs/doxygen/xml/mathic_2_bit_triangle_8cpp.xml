@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="mathic_2_bit_triangle_8cpp" kind="file" language="C++">
+    <compoundname>BitTriangle.cpp</compoundname>
+    <includes refid="mathic_2src_2mathic_2stdinc_8h" local="yes">stdinc.h</includes>
+    <includes refid="_bit_triangle_8h" local="yes">BitTriangle.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathic/src/mathic/BitTriangle.cpp</label>
+        <link refid="mathic_2_bit_triangle_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>BitTriangle.h</label>
+        <link refid="_bit_triangle_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2mathic_2stdinc_8h"/>
+      </node>
+      <node id="5">
+        <label>memory</label>
+      </node>
+      <node id="4">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacemathic">mathic</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mathic_2src_2mathic_2stdinc_8h" kindref="compound">stdinc.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_bit_triangle_8h" kindref="compound">BitTriangle.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemathic" kindref="compound">mathic</ref><sp/>{</highlight></codeline>
+<codeline lineno="5" refid="classmathic_1_1_bit_triangle_a013911c05b7193c3e794032538c2b802_1a013911c05b7193c3e794032538c2b802" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmathic_1_1_bit_triangle_a013911c05b7193c3e794032538c2b802_1a013911c05b7193c3e794032538c2b802" kindref="member">BitTriangle::getMemoryUse</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="6"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>sum<sp/>=<sp/><ref refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" kindref="member">mColumns</ref>.capacity()<sp/>*<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<ref refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" kindref="member">mColumns</ref>.front());</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>stop<sp/>=<sp/><ref refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" kindref="member">mColumns</ref>.size();</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>!=<sp/>stop;<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>capacity<sp/>=<sp/><ref refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" kindref="member">mColumns</ref>[i].capacity();</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sum<sp/>+=<sp/>(capacity<sp/>+<sp/>7)<sp/>/<sp/>8;<sp/></highlight><highlight class="comment">//<sp/>8<sp/>bits<sp/>per<sp/>byte<sp/>rounded<sp/>up</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sum;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/mathic/BitTriangle.cpp"/>
+  </compounddef>
+</doxygen>

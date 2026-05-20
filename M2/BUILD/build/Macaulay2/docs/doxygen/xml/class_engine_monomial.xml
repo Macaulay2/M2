@@ -1,0 +1,745 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_engine_monomial" kind="class" language="C++" prot="public">
+    <compoundname>EngineMonomial</compoundname>
+    <basecompoundref refid="class_engine_object" prot="public" virt="non-virtual">EngineObject</basecompoundref>
+    <includes refid="monomial_8hpp" local="no">monomial.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" prot="private" static="no" mutable="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>gc_vector&lt;int&gt; EngineMonomial::val</definition>
+        <argsstring></argsstring>
+        <name>val</name>
+        <qualifiedname>EngineMonomial::val</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="60" column="13" bodyfile="Macaulay2/e/monomial.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="class_engine_monomial_ac4f8974abbecbe4c44f724002071f393_1ac4f8974abbecbe4c44f724002071f393" compoundref="monomial_8cpp" startline="64" endline="67">computeHashValue</referencedby>
+        <referencedby refid="class_engine_monomial_a283e3ba13c4240b56a1b91b22b95a519_1a283e3ba13c4240b56a1b91b22b95a519" compoundref="monomial_8cpp" startline="23" endline="23">EngineMonomial</referencedby>
+        <referencedby refid="class_engine_monomial_a450cab61d3feeeeb5fc90e248be5381a_1a450cab61d3feeeeb5fc90e248be5381a" compoundref="monomial_8cpp" startline="21" endline="21">EngineMonomial</referencedby>
+        <referencedby refid="class_engine_monomial_ab06f061a70ed9668c8a9b4316654bac7_1ab06f061a70ed9668c8a9b4316654bac7" compoundref="monomial_8cpp" startline="22" endline="22">EngineMonomial</referencedby>
+        <referencedby refid="class_engine_monomial_ab4557e62938001702fff5d4eab1b0b27_1ab4557e62938001702fff5d4eab1b0b27" compoundref="monomial_8cpp" startline="24" endline="24">EngineMonomial</referencedby>
+        <referencedby refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</referencedby>
+        <referencedby refid="class_engine_monomial_a639d69041f3641306801228bceb8a3dd_1a639d69041f3641306801228bceb8a3dd" compoundref="monomial_8hpp" startline="81" endline="81">ints</referencedby>
+        <referencedby refid="class_engine_monomial_aa1b71edddd18a8260363ea27cc5afdc4_1aa1b71edddd18a8260363ea27cc5afdc4" compoundref="monomial_8cpp" startline="115" endline="120">monsyz</referencedby>
+        <referencedby refid="class_engine_monomial_a51b64ae0f71da12b723c9eabd2e3c7b4_1a51b64ae0f71da12b723c9eabd2e3c7b4" compoundref="monomial_8hpp" startline="99" endline="99">text_out</referencedby>
+        <referencedby refid="class_engine_monomial_ad87ea63ca623ec5bf7511ba15401c418_1ad87ea63ca623ec5bf7511ba15401c418" compoundref="monomial_8hpp" startline="100" endline="100">to_arrayint</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>EngineMonomial::EngineMonomial</definition>
+        <argsstring>()</argsstring>
+        <name>EngineMonomial</name>
+        <qualifiedname>EngineMonomial::EngineMonomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="62" column="3" bodyfile="Macaulay2/e/monomial.cpp" bodystart="7" bodyend="11"/>
+        <referencedby refid="class_engine_monomial_a60670e37087358ec9446767395702244_1a60670e37087358ec9446767395702244" compoundref="monomial_8cpp" startline="76" endline="86">compare</referencedby>
+        <referencedby refid="class_engine_monomial_a4bee86a8691e61cd43c04b611a8846a1_1a4bee86a8691e61cd43c04b611a8846a1" compoundref="monomial_8cpp" startline="88" endline="98">divides</referencedby>
+        <referencedby refid="class_engine_monomial_a2193540dfaa49b6ebb62f9f3e6ffdd84_1a2193540dfaa49b6ebb62f9f3e6ffdd84" compoundref="monomial_8cpp" startline="137" endline="142">erase</referencedby>
+        <referencedby refid="class_engine_monomial_aa155d9dbb40ed04fe20412808852e530_1aa155d9dbb40ed04fe20412808852e530" compoundref="monomial_8cpp" startline="108" endline="113">gcd</referencedby>
+        <referencedby refid="class_engine_monomial_a5ccbcee8f59bb69393ed719725f5ce4d_1a5ccbcee8f59bb69393ed719725f5ce4d" compoundref="monomial_8cpp" startline="70" endline="74">is_equal</referencedby>
+        <referencedby refid="class_engine_monomial_aac068ab63dd1bb1fb5d9ad4e4f3be2e5_1aac068ab63dd1bb1fb5d9ad4e4f3be2e5" compoundref="monomial_8cpp" startline="101" endline="106">lcm</referencedby>
+        <referencedby refid="class_engine_monomial_a8afb93ddd0730efdffc0b792922bedbd_1a8afb93ddd0730efdffc0b792922bedbd" compoundref="monomial_8cpp" startline="51" endline="56">make</referencedby>
+        <referencedby refid="class_engine_monomial_acc0e94857840eaa81378088dad4d1192_1acc0e94857840eaa81378088dad4d1192" compoundref="monomial_8cpp" startline="58" endline="62">make</referencedby>
+        <referencedby refid="class_engine_monomial_ae07ff3fe0b8019f3dba3218a4c098524_1ae07ff3fe0b8019f3dba3218a4c098524" compoundref="monomial_8cpp" startline="26" endline="31">make</referencedby>
+        <referencedby refid="class_engine_monomial_ada95981824ad007f16fd294e152b806c_1ada95981824ad007f16fd294e152b806c" compoundref="monomial_8cpp" startline="33" endline="49">make</referencedby>
+        <referencedby refid="class_engine_monomial_aa1b71edddd18a8260363ea27cc5afdc4_1aa1b71edddd18a8260363ea27cc5afdc4" compoundref="monomial_8cpp" startline="115" endline="120">monsyz</referencedby>
+        <referencedby refid="class_engine_monomial_a14b8e894a1e3801d430c04fde33d5809_1a14b8e894a1e3801d430c04fde33d5809" compoundref="monomial_8cpp" startline="122" endline="128">operator*</referencedby>
+        <referencedby refid="class_engine_monomial_aeec299c7270a0c2281378e11b2607255_1aeec299c7270a0c2281378e11b2607255" compoundref="monomial_8cpp" startline="130" endline="135">operator/</referencedby>
+        <referencedby refid="class_engine_monomial_a61709688c003166caf1978ad29c11887_1a61709688c003166caf1978ad29c11887" compoundref="monomial_8cpp" startline="144" endline="150">power</referencedby>
+        <referencedby refid="class_engine_monomial_a8cf5fbfc917b3bb1d369f7f93c1c9144_1a8cf5fbfc917b3bb1d369f7f93c1c9144" compoundref="monomial_8cpp" startline="152" endline="157">radical</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_ab06f061a70ed9668c8a9b4316654bac7_1ab06f061a70ed9668c8a9b4316654bac7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>EngineMonomial::EngineMonomial</definition>
+        <argsstring>(int v, int e)</argsstring>
+        <name>EngineMonomial</name>
+        <qualifiedname>EngineMonomial::EngineMonomial</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="63" column="3" bodyfile="Macaulay2/e/monomial.cpp" bodystart="22" bodyend="22"/>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+        <references refid="class_exponent_list_aedb7f52aae3a3400ec67997e6515120a_1aedb7f52aae3a3400ec67997e6515120a" compoundref="_exponent_list_8hpp" startline="129" endline="136">ExponentList&lt; int, true &gt;::var</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a283e3ba13c4240b56a1b91b22b95a519_1a283e3ba13c4240b56a1b91b22b95a519" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>EngineMonomial::EngineMonomial</definition>
+        <argsstring>(const int *vp)</argsstring>
+        <name>EngineMonomial</name>
+        <qualifiedname>EngineMonomial::EngineMonomial</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="64" column="3" bodyfile="Macaulay2/e/monomial.cpp" bodystart="23" bodyend="23"/>
+        <references refid="class_exponent_list_a9921b7b5ae8c2d301e539ca00419aed6_1a9921b7b5ae8c2d301e539ca00419aed6" compoundref="_exponent_list_8hpp" startline="137" endline="140">ExponentList&lt; int, true &gt;::copy</references>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_ab4557e62938001702fff5d4eab1b0b27_1ab4557e62938001702fff5d4eab1b0b27" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>EngineMonomial::EngineMonomial</definition>
+        <argsstring>(M2_arrayint a)</argsstring>
+        <name>EngineMonomial</name>
+        <qualifiedname>EngineMonomial::EngineMonomial</qualifiedname>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="65" column="3" bodyfile="Macaulay2/e/monomial.cpp" bodystart="24" bodyend="24"/>
+        <references refid="class_exponent_list_a6cea2b61ef2f1115c3137cfcac1c92a1_1a6cea2b61ef2f1115c3137cfcac1c92a1" compoundref="_exponent_list_8cpp" startline="33" endline="49">ExponentList&lt; int, true &gt;::from_arrayint</references>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a450cab61d3feeeeb5fc90e248be5381a_1a450cab61d3feeeeb5fc90e248be5381a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>EngineMonomial::EngineMonomial</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;vp)</argsstring>
+        <name>EngineMonomial</name>
+        <qualifiedname>EngineMonomial::EngineMonomial</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="66" column="3" bodyfile="Macaulay2/e/monomial.cpp" bodystart="21" bodyend="21"/>
+        <references refid="class_exponent_list_a9921b7b5ae8c2d301e539ca00419aed6_1a9921b7b5ae8c2d301e539ca00419aed6" compoundref="_exponent_list_8hpp" startline="137" endline="140">ExponentList&lt; int, true &gt;::copy</references>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_engine_monomial_ac4f8974abbecbe4c44f724002071f393_1ac4f8974abbecbe4c44f724002071f393" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int EngineMonomial::computeHashValue</definition>
+        <argsstring>() const</argsstring>
+        <name>computeHashValue</name>
+        <qualifiedname>EngineMonomial::computeHashValue</qualifiedname>
+        <reimplements refid="class_engine_object_a5d41cd24b788df6502ef4359593fd046_1a5d41cd24b788df6502ef4359593fd046">computeHashValue</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="69" column="24" bodyfile="Macaulay2/e/monomial.cpp" bodystart="64" bodyend="67"/>
+        <references refid="class_exponent_list_a49c1dda26e1794071a241df52ce77bc1_1a49c1dda26e1794071a241df52ce77bc1" compoundref="_exponent_list_8hpp" startline="73" endline="79">ExponentList&lt; int, true &gt;::computeHashValue</references>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_engine_monomial_ae07ff3fe0b8019f3dba3218a4c098524_1ae07ff3fe0b8019f3dba3218a4c098524" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::make</definition>
+        <argsstring>(int v, int e)</argsstring>
+        <name>make</name>
+        <qualifiedname>EngineMonomial::make</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="72" column="25" bodyfile="Macaulay2/e/monomial.cpp" bodystart="26" bodyend="31"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_ring_element_a447e8cf63da8e98304f0c0050cdf133a_1a447e8cf63da8e98304f0c0050cdf133a" compoundref="relem_8cpp" startline="197" endline="223">RingElement::lead_monom</referencedby>
+        <referencedby refid="class_m2_free_algebra_ad8a8c9047a356a6563573ee19d8317db_1ad8a8c9047a356a6563573ee19d8317db" compoundref="_m2_free_algebra_8cpp" startline="348" endline="383">M2FreeAlgebra::list_form</referencedby>
+        <referencedby refid="class_poly_ring_ae9b8ecaaaf7173addac81adeff948c88_1ae9b8ecaaaf7173addac81adeff948c88" compoundref="poly_8cpp" startline="1789" endline="1828">PolyRing::list_form</referencedby>
+        <referencedby refid="class_schur_ring2_abbde84b578a5bd8fa27fb5e552a63adf_1abbde84b578a5bd8fa27fb5e552a63adf" compoundref="schur2_8cpp" startline="682" endline="716">SchurRing2::list_form</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_ada95981824ad007f16fd294e152b806c_1ada95981824ad007f16fd294e152b806c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::make</definition>
+        <argsstring>(M2_arrayint m)</argsstring>
+        <name>make</name>
+        <qualifiedname>EngineMonomial::make</qualifiedname>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="73" column="25" bodyfile="Macaulay2/e/monomial.cpp" bodystart="33" bodyend="49"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a8afb93ddd0730efdffc0b792922bedbd_1a8afb93ddd0730efdffc0b792922bedbd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::make</definition>
+        <argsstring>(const int *vp)</argsstring>
+        <name>make</name>
+        <qualifiedname>EngineMonomial::make</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="74" column="25" bodyfile="Macaulay2/e/monomial.cpp" bodystart="51" bodyend="56"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_acc0e94857840eaa81378088dad4d1192_1acc0e94857840eaa81378088dad4d1192" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::make</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;vp)</argsstring>
+        <name>make</name>
+        <qualifiedname>EngineMonomial::make</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="75" column="25" bodyfile="Macaulay2/e/monomial.cpp" bodystart="58" bodyend="62"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int * EngineMonomial::ints</definition>
+        <argsstring>()</argsstring>
+        <name>ints</name>
+        <qualifiedname>EngineMonomial::ints</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="80" column="8" bodyfile="Macaulay2/e/monomial.hpp" bodystart="80" bodyend="80"/>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+        <referencedby refid="class_engine_monomial_a60670e37087358ec9446767395702244_1a60670e37087358ec9446767395702244" compoundref="monomial_8cpp" startline="76" endline="86">compare</referencedby>
+        <referencedby refid="class_engine_monomial_a4bee86a8691e61cd43c04b611a8846a1_1a4bee86a8691e61cd43c04b611a8846a1" compoundref="monomial_8cpp" startline="88" endline="98">divides</referencedby>
+        <referencedby refid="class_engine_monomial_a2193540dfaa49b6ebb62f9f3e6ffdd84_1a2193540dfaa49b6ebb62f9f3e6ffdd84" compoundref="monomial_8cpp" startline="137" endline="142">erase</referencedby>
+        <referencedby refid="class_engine_monomial_aa155d9dbb40ed04fe20412808852e530_1aa155d9dbb40ed04fe20412808852e530" compoundref="monomial_8cpp" startline="108" endline="113">gcd</referencedby>
+        <referencedby refid="class_ring_element_ae474f0a814b2a875c83549eb9d9874a8_1ae474f0a814b2a875c83549eb9d9874a8" compoundref="relem_8cpp" startline="185" endline="195">RingElement::get_coeff</referencedby>
+        <referencedby refid="ringelement_8cpp_a0b291882fbb398b121040b5a1b9ec844_1a0b291882fbb398b121040b5a1b9ec844" compoundref="ringelement_8cpp" startline="529" endline="567">IM2_RingElement_term</referencedby>
+        <referencedby refid="class_engine_monomial_a5ccbcee8f59bb69393ed719725f5ce4d_1a5ccbcee8f59bb69393ed719725f5ce4d" compoundref="monomial_8cpp" startline="70" endline="74">is_equal</referencedby>
+        <referencedby refid="class_engine_monomial_a648481425d3647358a8927cb5258796b_1a648481425d3647358a8927cb5258796b" compoundref="monomial_8cpp" startline="69" endline="69">is_one</referencedby>
+        <referencedby refid="class_engine_monomial_aac068ab63dd1bb1fb5d9ad4e4f3be2e5_1aac068ab63dd1bb1fb5d9ad4e4f3be2e5" compoundref="monomial_8cpp" startline="101" endline="106">lcm</referencedby>
+        <referencedby refid="class_engine_monomial_aa1b71edddd18a8260363ea27cc5afdc4_1aa1b71edddd18a8260363ea27cc5afdc4" compoundref="monomial_8cpp" startline="115" endline="120">monsyz</referencedby>
+        <referencedby refid="class_engine_monomial_a14b8e894a1e3801d430c04fde33d5809_1a14b8e894a1e3801d430c04fde33d5809" compoundref="monomial_8cpp" startline="122" endline="128">operator*</referencedby>
+        <referencedby refid="class_engine_monomial_aeec299c7270a0c2281378e11b2607255_1aeec299c7270a0c2281378e11b2607255" compoundref="monomial_8cpp" startline="130" endline="135">operator/</referencedby>
+        <referencedby refid="class_engine_monomial_a61709688c003166caf1978ad29c11887_1a61709688c003166caf1978ad29c11887" compoundref="monomial_8cpp" startline="144" endline="150">power</referencedby>
+        <referencedby refid="class_engine_monomial_a8cf5fbfc917b3bb1d369f7f93c1c9144_1a8cf5fbfc917b3bb1d369f7f93c1c9144" compoundref="monomial_8cpp" startline="152" endline="157">radical</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_ad8493080b587ae51aa464e65975b3b6f_1ad8493080b587ae51aa464e65975b3b6f" compoundref="monomial-ideal_8cpp" startline="120" endline="134">rawColonMonomialIdeal1</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_a9a3f12fee39ade208f93ea6758082015_1a9a3f12fee39ade208f93ea6758082015" compoundref="monomial-ideal_8cpp" startline="159" endline="173">rawSaturateMonomialIdeal1</referencedby>
+        <referencedby refid="class_engine_monomial_a168f36323e4684ff3698cf1c78592125_1a168f36323e4684ff3698cf1c78592125" compoundref="monomial_8cpp" startline="100" endline="100">simple_degree</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a639d69041f3641306801228bceb8a3dd_1a639d69041f3641306801228bceb8a3dd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>const int * EngineMonomial::ints</definition>
+        <argsstring>() const</argsstring>
+        <name>ints</name>
+        <qualifiedname>EngineMonomial::ints</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="81" column="14" bodyfile="Macaulay2/e/monomial.hpp" bodystart="81" bodyend="81"/>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a14b8e894a1e3801d430c04fde33d5809_1a14b8e894a1e3801d430c04fde33d5809" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::operator*</definition>
+        <argsstring>(const EngineMonomial &amp;b) const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>EngineMonomial::operator*</qualifiedname>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="83" column="18" bodyfile="Macaulay2/e/monomial.cpp" bodystart="122" bodyend="128"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_exponent_list_a6a491949bdc39b77a66387d425836158_1a6a491949bdc39b77a66387d425836158" compoundref="_exponent_list_8cpp" startline="92" endline="140">ExponentList&lt; int, true &gt;::mult</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_aeec299c7270a0c2281378e11b2607255_1aeec299c7270a0c2281378e11b2607255" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::operator/</definition>
+        <argsstring>(const EngineMonomial &amp;b) const</argsstring>
+        <name>operator/</name>
+        <qualifiedname>EngineMonomial::operator/</qualifiedname>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="84" column="18" bodyfile="Macaulay2/e/monomial.cpp" bodystart="130" bodyend="135"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_exponent_list_a727729f43af6a8d06245b5cfb6ff069b_1a727729f43af6a8d06245b5cfb6ff069b" compoundref="_exponent_list_8cpp" startline="143" endline="190">ExponentList&lt; int, true &gt;::quotient</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a61709688c003166caf1978ad29c11887_1a61709688c003166caf1978ad29c11887" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::power</definition>
+        <argsstring>(int n) const</argsstring>
+        <name>power</name>
+        <qualifiedname>EngineMonomial::power</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="85" column="18" bodyfile="Macaulay2/e/monomial.cpp" bodystart="144" bodyend="150"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_exponent_list_afd77d7ad562847d818e83f6b8d849639_1afd77d7ad562847d818e83f6b8d849639">ExponentList&lt; int, true &gt;::power</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_aa1b71edddd18a8260363ea27cc5afdc4_1aa1b71edddd18a8260363ea27cc5afdc4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void EngineMonomial::monsyz</definition>
+        <argsstring>(const EngineMonomial &amp;b, EngineMonomial *&amp;sa, EngineMonomial *&amp;sb) const</argsstring>
+        <name>monsyz</name>
+        <qualifiedname>EngineMonomial::monsyz</qualifiedname>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *&amp;</type>
+          <declname>sa</declname>
+        </param>
+        <param>
+          <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *&amp;</type>
+          <declname>sb</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="86" column="8" bodyfile="Macaulay2/e/monomial.cpp" bodystart="115" bodyend="120"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_exponent_list_a94eb234b6b38a513b9b4b436d16a605d_1a94eb234b6b38a513b9b4b436d16a605d" compoundref="_exponent_list_8cpp" startline="242" endline="301">ExponentList&lt; int, true &gt;::monsyz</references>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_aac068ab63dd1bb1fb5d9ad4e4f3be2e5_1aac068ab63dd1bb1fb5d9ad4e4f3be2e5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::lcm</definition>
+        <argsstring>(const EngineMonomial &amp;b) const</argsstring>
+        <name>lcm</name>
+        <qualifiedname>EngineMonomial::lcm</qualifiedname>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="87" column="18" bodyfile="Macaulay2/e/monomial.cpp" bodystart="101" bodyend="106"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_exponent_list_a6353b867b000fa4475bf606d5a652027_1a6353b867b000fa4475bf606d5a652027" compoundref="_exponent_list_8cpp" startline="304" endline="349">ExponentList&lt; int, true &gt;::lcm</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_aa155d9dbb40ed04fe20412808852e530_1aa155d9dbb40ed04fe20412808852e530" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::gcd</definition>
+        <argsstring>(const EngineMonomial &amp;b) const</argsstring>
+        <name>gcd</name>
+        <qualifiedname>EngineMonomial::gcd</qualifiedname>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="88" column="18" bodyfile="Macaulay2/e/monomial.cpp" bodystart="108" bodyend="113"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="class_exponent_list_a805334ea88831c93da08bca254fe6e9b_1a805334ea88831c93da08bca254fe6e9b" compoundref="_exponent_list_8cpp" startline="352" endline="393">ExponentList&lt; int, true &gt;::gcd</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a8cf5fbfc917b3bb1d369f7f93c1c9144_1a8cf5fbfc917b3bb1d369f7f93c1c9144" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::radical</definition>
+        <argsstring>() const</argsstring>
+        <name>radical</name>
+        <qualifiedname>EngineMonomial::radical</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="90" column="18" bodyfile="Macaulay2/e/monomial.cpp" bodystart="152" bodyend="157"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_exponent_list_a2f79771dea5e1bd963858834c6a66285_1a2f79771dea5e1bd963858834c6a66285" compoundref="_exponent_list_8cpp" startline="438" endline="450">ExponentList&lt; int, true &gt;::radical</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a2193540dfaa49b6ebb62f9f3e6ffdd84_1a2193540dfaa49b6ebb62f9f3e6ffdd84" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * EngineMonomial::erase</definition>
+        <argsstring>(const EngineMonomial &amp;b) const</argsstring>
+        <name>erase</name>
+        <qualifiedname>EngineMonomial::erase</qualifiedname>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="91" column="18" bodyfile="Macaulay2/e/monomial.cpp" bodystart="137" bodyend="142"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="class_exponent_list_a94eccfbc2d4e39fcef2fc2e510b1e4e4_1a94eccfbc2d4e39fcef2fc2e510b1e4e4" compoundref="_exponent_list_8cpp" startline="396" endline="435">ExponentList&lt; int, true &gt;::erase</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a648481425d3647358a8927cb5258796b_1a648481425d3647358a8927cb5258796b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EngineMonomial::is_one</definition>
+        <argsstring>() const</argsstring>
+        <name>is_one</name>
+        <qualifiedname>EngineMonomial::is_one</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="93" column="8" bodyfile="Macaulay2/e/monomial.cpp" bodystart="69" bodyend="69"/>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_exponent_list_a21f3bfebd0ccebbf64e5216e1fd5a014_1a21f3bfebd0ccebbf64e5216e1fd5a014" compoundref="_exponent_list_8hpp" startline="118" endline="118">ExponentList&lt; int, true &gt;::is_one</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a5ccbcee8f59bb69393ed719725f5ce4d_1a5ccbcee8f59bb69393ed719725f5ce4d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EngineMonomial::is_equal</definition>
+        <argsstring>(const EngineMonomial &amp;b) const</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>EngineMonomial::is_equal</qualifiedname>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="94" column="8" bodyfile="Macaulay2/e/monomial.cpp" bodystart="70" bodyend="74"/>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_exponent_list_ae5f5da2ea1046f06369a00e1658b83e1_1ae5f5da2ea1046f06369a00e1658b83e1" compoundref="_exponent_list_8hpp" startline="119" endline="122">ExponentList&lt; int, true &gt;::is_equal</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a4bee86a8691e61cd43c04b611a8846a1_1a4bee86a8691e61cd43c04b611a8846a1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EngineMonomial::divides</definition>
+        <argsstring>(const Monoid *M, const EngineMonomial &amp;b) const</argsstring>
+        <name>divides</name>
+        <qualifiedname>EngineMonomial::divides</qualifiedname>
+        <param>
+          <type>const <ref refid="class_monoid" kindref="compound">Monoid</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="95" column="8" bodyfile="Macaulay2/e/monomial.cpp" bodystart="88" bodyend="98"/>
+        <references refid="class_monoid_a8ef40a6a76257be804e873927943f397_1a8ef40a6a76257be804e873927943f397" compoundref="monoid_8cpp" startline="493" endline="509">Monoid::divides</references>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="class_monoid_a582c5ae84a2b6da96dc4194478c210c9_1a582c5ae84a2b6da96dc4194478c210c9" compoundref="monoid_8cpp" startline="728" endline="733">Monoid::from_varpower</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_monoid_a6f3936578edf5076153f30833bc552fe_1a6f3936578edf5076153f30833bc552fe" compoundref="monoid_8cpp" startline="455" endline="461">Monoid::make_one</references>
+        <references refid="_n_c_groebner_test_8cpp_a2f2212490921bb285f632adaa35fb508_1a2f2212490921bb285f632adaa35fb508" compoundref="_n_c_groebner_test_8cpp" startline="89" endline="89">monom1</references>
+        <references refid="_n_c_groebner_test_8cpp_a70c72728e36f10238c6463ccd46a9902_1a70c72728e36f10238c6463ccd46a9902" compoundref="_n_c_groebner_test_8cpp" startline="90" endline="90">monom2</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_monoid_a879b583be62c5c95d1f2a0da056894c3_1a879b583be62c5c95d1f2a0da056894c3" compoundref="monoid_8cpp" startline="462" endline="468">Monoid::remove</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a60670e37087358ec9446767395702244_1a60670e37087358ec9446767395702244" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int EngineMonomial::compare</definition>
+        <argsstring>(const Monoid *M, const EngineMonomial &amp;b) const</argsstring>
+        <name>compare</name>
+        <qualifiedname>EngineMonomial::compare</qualifiedname>
+        <param>
+          <type>const <ref refid="class_monoid" kindref="compound">Monoid</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="96" column="7" bodyfile="Macaulay2/e/monomial.cpp" bodystart="76" bodyend="86"/>
+        <references refid="class_monoid_a85091ad699cd882228ad2cdab4e6439e_1a85091ad699cd882228ad2cdab4e6439e" compoundref="monoid_8hpp" startline="222" endline="232">Monoid::compare</references>
+        <references refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" compoundref="monomial_8cpp" startline="7" endline="11">EngineMonomial</references>
+        <references refid="class_monoid_a582c5ae84a2b6da96dc4194478c210c9_1a582c5ae84a2b6da96dc4194478c210c9" compoundref="monoid_8cpp" startline="728" endline="733">Monoid::from_varpower</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_monoid_a6f3936578edf5076153f30833bc552fe_1a6f3936578edf5076153f30833bc552fe" compoundref="monoid_8cpp" startline="455" endline="461">Monoid::make_one</references>
+        <references refid="_n_c_groebner_test_8cpp_a2f2212490921bb285f632adaa35fb508_1a2f2212490921bb285f632adaa35fb508" compoundref="_n_c_groebner_test_8cpp" startline="89" endline="89">monom1</references>
+        <references refid="_n_c_groebner_test_8cpp_a70c72728e36f10238c6463ccd46a9902_1a70c72728e36f10238c6463ccd46a9902" compoundref="_n_c_groebner_test_8cpp" startline="90" endline="90">monom2</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_monoid_a879b583be62c5c95d1f2a0da056894c3_1a879b583be62c5c95d1f2a0da056894c3" compoundref="monoid_8cpp" startline="462" endline="468">Monoid::remove</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a168f36323e4684ff3698cf1c78592125_1a168f36323e4684ff3698cf1c78592125" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int EngineMonomial::simple_degree</definition>
+        <argsstring>() const</argsstring>
+        <name>simple_degree</name>
+        <qualifiedname>EngineMonomial::simple_degree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="97" column="7" bodyfile="Macaulay2/e/monomial.cpp" bodystart="100" bodyend="100"/>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">ints</references>
+        <references refid="class_exponent_list_a8f93a2bbf849dc82e50a7170dfafd371_1a8f93a2bbf849dc82e50a7170dfafd371" compoundref="_exponent_list_8hpp" startline="174" endline="179">ExponentList&lt; int, true &gt;::simple_degree</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_a51b64ae0f71da12b723c9eabd2e3c7b4_1a51b64ae0f71da12b723c9eabd2e3c7b4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void EngineMonomial::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>EngineMonomial::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="99" column="8" bodyfile="Macaulay2/e/monomial.hpp" bodystart="99" bodyend="99"/>
+        <references refid="class_exponent_list_a920862509eb101ceffe75d61900f2bae_1a920862509eb101ceffe75d61900f2bae" compoundref="_exponent_list_8hpp" startline="81" endline="100">ExponentList&lt; int, true &gt;::elem_text_out</references>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_engine_monomial_ad87ea63ca623ec5bf7511ba15401c418_1ad87ea63ca623ec5bf7511ba15401c418" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        <definition>M2_arrayint EngineMonomial::to_arrayint</definition>
+        <argsstring>() const</argsstring>
+        <name>to_arrayint</name>
+        <qualifiedname>EngineMonomial::to_arrayint</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial.hpp" line="100" column="15" bodyfile="Macaulay2/e/monomial.hpp" bodystart="100" bodyend="100"/>
+        <references refid="class_exponent_list_aa3b6bdd7cd94aded4877bf9c6a076c77_1aa3b6bdd7cd94aded4877bf9c6a076c77" compoundref="_exponent_list_8cpp" startline="52" endline="58">ExponentList&lt; int, true &gt;::to_arrayint</references>
+        <references refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" compoundref="monomial_8hpp" startline="60">val</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Engine-side immutable monomial value type wrapping a varpower- encoded exponent vector. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Storage is <computeroutput>[2n+1, v_1, e_1, ..., v_n, e_n]</computeroutput> (per <computeroutput><ref refid="_exponent_list_8hpp" kindref="compound">ExponentList.hpp</ref></computeroutput>): leading length, then alternating variable indices and exponents. Inherits from <computeroutput><ref refid="class_engine_object" kindref="compound">EngineObject</ref></computeroutput> so the monomial can carry a stable content-based hash once exposed to the front end. The <computeroutput>TODO</computeroutput> at the top of the file notes a planned template-based unification with the lower-level varpower routines. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>EngineMonomial</label>
+        <link refid="class_engine_monomial"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>EngineMonomial</label>
+        <link refid="class_engine_monomial"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>val</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/monomial.hpp" line="56" column="1" bodyfile="Macaulay2/e/monomial.hpp" bodystart="57" bodyend="101"/>
+    <listofallmembers>
+      <member refid="class_engine_monomial_a60670e37087358ec9446767395702244_1a60670e37087358ec9446767395702244" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>compare</name></member>
+      <member refid="class_engine_monomial_ac4f8974abbecbe4c44f724002071f393_1ac4f8974abbecbe4c44f724002071f393" prot="protected" virt="virtual"><scope>EngineMonomial</scope><name>computeHashValue</name></member>
+      <member refid="class_engine_monomial_a4bee86a8691e61cd43c04b611a8846a1_1a4bee86a8691e61cd43c04b611a8846a1" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>divides</name></member>
+      <member refid="class_engine_monomial_a6ef12ebd1ec826e49f0fcf7183d7254f_1a6ef12ebd1ec826e49f0fcf7183d7254f" prot="private" virt="non-virtual"><scope>EngineMonomial</scope><name>EngineMonomial</name></member>
+      <member refid="class_engine_monomial_ab06f061a70ed9668c8a9b4316654bac7_1ab06f061a70ed9668c8a9b4316654bac7" prot="private" virt="non-virtual"><scope>EngineMonomial</scope><name>EngineMonomial</name></member>
+      <member refid="class_engine_monomial_a283e3ba13c4240b56a1b91b22b95a519_1a283e3ba13c4240b56a1b91b22b95a519" prot="private" virt="non-virtual"><scope>EngineMonomial</scope><name>EngineMonomial</name></member>
+      <member refid="class_engine_monomial_ab4557e62938001702fff5d4eab1b0b27_1ab4557e62938001702fff5d4eab1b0b27" prot="private" virt="non-virtual"><scope>EngineMonomial</scope><name>EngineMonomial</name></member>
+      <member refid="class_engine_monomial_a450cab61d3feeeeb5fc90e248be5381a_1a450cab61d3feeeeb5fc90e248be5381a" prot="private" virt="non-virtual"><scope>EngineMonomial</scope><name>EngineMonomial</name></member>
+      <member refid="class_engine_object_a185a3226f366bf527283905e9478614f_1a185a3226f366bf527283905e9478614f" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>EngineObject</name></member>
+      <member refid="class_engine_monomial_a2193540dfaa49b6ebb62f9f3e6ffdd84_1a2193540dfaa49b6ebb62f9f3e6ffdd84" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>erase</name></member>
+      <member refid="class_engine_monomial_aa155d9dbb40ed04fe20412808852e530_1aa155d9dbb40ed04fe20412808852e530" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>gcd</name></member>
+      <member refid="class_engine_object_a633723c198b26de8f513e91c4bf3120a_1a633723c198b26de8f513e91c4bf3120a" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>hash</name></member>
+      <member refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>ints</name></member>
+      <member refid="class_engine_monomial_a639d69041f3641306801228bceb8a3dd_1a639d69041f3641306801228bceb8a3dd" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>ints</name></member>
+      <member refid="class_engine_monomial_a5ccbcee8f59bb69393ed719725f5ce4d_1a5ccbcee8f59bb69393ed719725f5ce4d" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>is_equal</name></member>
+      <member refid="class_engine_monomial_a648481425d3647358a8927cb5258796b_1a648481425d3647358a8927cb5258796b" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>is_one</name></member>
+      <member refid="class_engine_monomial_aac068ab63dd1bb1fb5d9ad4e4f3be2e5_1aac068ab63dd1bb1fb5d9ad4e4f3be2e5" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>lcm</name></member>
+      <member refid="class_engine_monomial_ae07ff3fe0b8019f3dba3218a4c098524_1ae07ff3fe0b8019f3dba3218a4c098524" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>make</name></member>
+      <member refid="class_engine_monomial_ada95981824ad007f16fd294e152b806c_1ada95981824ad007f16fd294e152b806c" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>make</name></member>
+      <member refid="class_engine_monomial_a8afb93ddd0730efdffc0b792922bedbd_1a8afb93ddd0730efdffc0b792922bedbd" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>make</name></member>
+      <member refid="class_engine_monomial_acc0e94857840eaa81378088dad4d1192_1acc0e94857840eaa81378088dad4d1192" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>make</name></member>
+      <member refid="class_engine_object_a86178bff24d1f06ec3eba664501bd839_1a86178bff24d1f06ec3eba664501bd839" prot="private" virt="non-virtual"><scope>EngineMonomial</scope><name>mHashValue</name></member>
+      <member refid="class_engine_monomial_aa1b71edddd18a8260363ea27cc5afdc4_1aa1b71edddd18a8260363ea27cc5afdc4" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>monsyz</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator new[]</name></member>
+      <member refid="class_engine_monomial_a14b8e894a1e3801d430c04fde33d5809_1a14b8e894a1e3801d430c04fde33d5809" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator*</name></member>
+      <member refid="class_engine_monomial_aeec299c7270a0c2281378e11b2607255_1aeec299c7270a0c2281378e11b2607255" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>operator/</name></member>
+      <member refid="class_engine_monomial_a61709688c003166caf1978ad29c11887_1a61709688c003166caf1978ad29c11887" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>power</name></member>
+      <member refid="class_engine_monomial_a8cf5fbfc917b3bb1d369f7f93c1c9144_1a8cf5fbfc917b3bb1d369f7f93c1c9144" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>radical</name></member>
+      <member refid="class_engine_monomial_a168f36323e4684ff3698cf1c78592125_1a168f36323e4684ff3698cf1c78592125" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>simple_degree</name></member>
+      <member refid="class_engine_monomial_a51b64ae0f71da12b723c9eabd2e3c7b4_1a51b64ae0f71da12b723c9eabd2e3c7b4" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>text_out</name></member>
+      <member refid="class_engine_monomial_ad87ea63ca623ec5bf7511ba15401c418_1ad87ea63ca623ec5bf7511ba15401c418" prot="public" virt="non-virtual"><scope>EngineMonomial</scope><name>to_arrayint</name></member>
+      <member refid="class_engine_monomial_a4609f57de910a4f2e8553bb75a6be3c9_1a4609f57de910a4f2e8553bb75a6be3c9" prot="private" virt="non-virtual"><scope>EngineMonomial</scope><name>val</name></member>
+      <member refid="class_engine_object_aa11464cbf65ef39203feda038521e700_1aa11464cbf65ef39203feda038521e700" prot="public" virt="virtual"><scope>EngineMonomial</scope><name>~EngineObject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

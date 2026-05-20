@@ -1,0 +1,28 @@
+var class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4 =
+[
+    [ "ACoeffRing", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a571a7fba9fe59ef879082c49c9ef3414.html#a571a7fba9fe59ef879082c49c9ef3414", null ],
+    [ "CoeffRing", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a04cc72daf2a92792d14bfe53402efa36.html#a04cc72daf2a92792d14bfe53402efa36", null ],
+    [ "Element", "class_d_mat_ab01d6e06ca7c9ba9ba767ab3947e2de0.html#ab01d6e06ca7c9ba9ba767ab3947e2de0", null ],
+    [ "ElementType", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a4f8fe4a49db59d20d17477dc878a6975.html#a4f8fe4a49db59d20d17477dc878a6975", null ],
+    [ "DMat", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a40c7f3c4d908b7d26ab44a30c1b58a19.html#a40c7f3c4d908b7d26ab44a30c1b58a19", null ],
+    [ "DMat", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_aa34a1ea0332c63b6c158ee716e444c2d.html#aa34a1ea0332c63b6c158ee716e444c2d", null ],
+    [ "DMat", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_acadfb2c3ba46681914519990d72d1d1b.html#acadfb2c3ba46681914519990d72d1d1b", null ],
+    [ "~DMat", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a3e17f4115315fba6ebc8df290f89c74e.html#a3e17f4115315fba6ebc8df290f89c74e", null ],
+    [ "entry", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a7ea513bbdcc2efd8c7a5066543e8adc6.html#a7ea513bbdcc2efd8c7a5066543e8adc6", null ],
+    [ "entry", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_afca8700b4a6d2af3b814194730e32f2b.html#afca8700b4a6d2af3b814194730e32f2b", null ],
+    [ "fq_nmod_mat", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a5cc778c7a4a884e6ea0fc751f7f0c4c1.html#a5cc778c7a4a884e6ea0fc751f7f0c4c1", null ],
+    [ "fq_nmod_mat", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_ac8f764f53f1e6ec033023db6424bca14.html#ac8f764f53f1e6ec033023db6424bca14", null ],
+    [ "numColumns", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a7716072466d29149da1c0c7e2512f0fd.html#a7716072466d29149da1c0c7e2512f0fd", null ],
+    [ "numRows", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_aeb59b41bcb795329562b36436054f864.html#aeb59b41bcb795329562b36436054f864", null ],
+    [ "resize", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a0edc623502e2015b0300d4535d3a8253.html#a0edc623502e2015b0300d4535d3a8253", null ],
+    [ "ring", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a608d5b35594b0ebc8e82fc61c899f7f7.html#a608d5b35594b0ebc8e82fc61c899f7f7", null ],
+    [ "rowMajorArray", "class_d_mat_aea59563009327a673da4d7321f520e35.html#aea59563009327a673da4d7321f520e35", null ],
+    [ "swap", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_aedfbc6aaeeb8b5f8270272c17d53dcae.html#aedfbc6aaeeb8b5f8270272c17d53dcae", null ],
+    [ "unsafeArray", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_af9ef3fcf348b937395b9192b2eae7b33.html#af9ef3fcf348b937395b9192b2eae7b33", null ],
+    [ "unsafeArray", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a00dc704e28f3869d5091441cee285914.html#a00dc704e28f3869d5091441cee285914", null ],
+    [ "mArray", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a7e2d070dc454dcbdcb1a2675bd2ced9a.html#a7e2d070dc454dcbdcb1a2675bd2ced9a", null ],
+    [ "mNumColumns", "class_d_mat_a2a075af3a9dd6d0509df6b7a46318746.html#a2a075af3a9dd6d0509df6b7a46318746", null ],
+    [ "mNumRows", "class_d_mat_a6d1ff369db27b5aa3b2a8c98e50ce907.html#a6d1ff369db27b5aa3b2a8c98e50ce907", null ],
+    [ "mRing", "class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_ae2c8883c9e216da1da6599fbd8d93092.html#ae2c8883c9e216da1da6599fbd8d93092", null ],
+    [ "mRowPointers", "class_d_mat_a38f628377c19730bf5388a467ee7561a.html#a38f628377c19730bf5388a467ee7561a", null ]
+];

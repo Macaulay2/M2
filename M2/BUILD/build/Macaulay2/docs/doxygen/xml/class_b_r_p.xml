@@ -1,0 +1,574 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_b_r_p" kind="class" language="C++" prot="public">
+    <compoundname>BRP</compoundname>
+    <includes refid="franzi-brp_8hpp" local="no">franzi-brp.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" prot="public" static="no" mutable="no">
+        <type><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref></type>
+        <definition>monomials BRP::m</definition>
+        <argsstring></argsstring>
+        <name>m</name>
+        <qualifiedname>BRP::m</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="83" column="13" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="83" bodyend="-1"/>
+        <referencedby refid="class_b_r_p_a1bbe837d403f3b278ef8394301bf2ee3_1a1bbe837d403f3b278ef8394301bf2ee3" compoundref="franzi-brp_8cpp" startline="27" endline="55">addition</referencedby>
+        <referencedby refid="class_b_r_p_aae87c37a8c5a905398a02d1291d4e9d6_1aae87c37a8c5a905398a02d1291d4e9d6" compoundref="franzi-brp_8hpp" startline="101" endline="101">BRP</referencedby>
+        <referencedby refid="class_b_r_p_ae6944bd1b904ccdee422d8e3b6e715fa_1ae6944bd1b904ccdee422d8e3b6e715fa" compoundref="franzi-brp_8hpp" startline="99" endline="99">BRP</referencedby>
+        <referencedby refid="class_b_r_p_a351c5b4c1bc6432df2c19e628ceb7152_1a351c5b4c1bc6432df2c19e628ceb7152" compoundref="franzi-brp_8cpp" startline="5" endline="11">BRP</referencedby>
+        <referencedby refid="class_b_r_p_a9f6b6ae3b9709c6a284b563b78b697ee_1a9f6b6ae3b9709c6a284b563b78b697ee" compoundref="franzi-brp_8cpp" startline="13" endline="13">isZero</referencedby>
+        <referencedby refid="class_b_r_p_a7308446857ece6ed788fd5bc3b19fd1d_1a7308446857ece6ed788fd5bc3b19fd1d" compoundref="franzi-brp_8hpp" startline="120" endline="127">LT</referencedby>
+        <referencedby refid="class_b_r_p_a26d60fcd097b25449dec8f4c038f6208_1a26d60fcd097b25449dec8f4c038f6208" compoundref="franzi-brp_8cpp" startline="80" endline="123">operator*</referencedby>
+        <referencedby refid="class_b_r_p_a11876cab99506eab6ae808ac28d83c83_1a11876cab99506eab6ae808ac28d83c83" compoundref="franzi-brp_8cpp" startline="64" endline="77">operator*</referencedby>
+        <referencedby refid="class_b_r_p_abcbe055ce6f1d044bb644958ed9000b3_1abcbe055ce6f1d044bb644958ed9000b3" compoundref="franzi-brp_8cpp" startline="57" endline="62">operator+</referencedby>
+        <referencedby refid="class_b_r_p_a75a067aacd4243a2a893c037758ad115_1a75a067aacd4243a2a893c037758ad115" compoundref="franzi-brp_8hpp" startline="72" endline="80">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_b_r_p_ac73e6081c9bedb8a899e7a53c07c4a93_1ac73e6081c9bedb8a899e7a53c07c4a93" compoundref="franzi-brp_8cpp" startline="14" endline="25">operator==</referencedby>
+        <referencedby refid="class_b_r_p_a4b5c25f6720b5862c73b0b62b28097e7_1a4b5c25f6720b5862c73b0b62b28097e7" compoundref="franzi-brp_8hpp" startline="105" endline="105">operator==</referencedby>
+        <referencedby refid="class_b_r_p_a12ae3cfd7f5aaaa46fb848129d71da21_1a12ae3cfd7f5aaaa46fb848129d71da21" compoundref="franzi-brp_8cpp" startline="159" endline="190">reduceTail</referencedby>
+        <referencedby refid="class_b_r_p_a8c6ba213a26f4c8b2e5ec7306f64bb8e_1a8c6ba213a26f4c8b2e5ec7306f64bb8e" compoundref="franzi-brp_8cpp" startline="138" endline="152">remainder</referencedby>
+        <referencedby refid="class_b_r_p_ad9dd8e1137364ba84986e90de9ab9a40_1ad9dd8e1137364ba84986e90de9ab9a40" compoundref="franzi-brp_8hpp" startline="113" endline="113">size</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_b_r_p_a75a067aacd4243a2a893c037758ad115_1a75a067aacd4243a2a893c037758ad115" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;out, const BRP &amp;self)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>BRP::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+          <declname>self</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="72" column="10" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="72" bodyend="80"/>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_b_r_p_a0deec19189159ee8dd18519c51715016_1a0deec19189159ee8dd18519c51715016" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>static bool BRP::isDivisibleBy</definition>
+        <argsstring>(const brMonomial &amp;a, const brMonomial &amp;b)</argsstring>
+        <name>isDivisibleBy</name>
+        <qualifiedname>BRP::isDivisibleBy</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="85" column="15" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="85" bodyend="90"/>
+        <referencedby refid="franzi-gb_8cpp_a8089e5515ec6e0c72b5ced95a06e5a98_1a8089e5515ec6e0c72b5ced95a06e5a98" compoundref="franzi-gb_8cpp" startline="213" endline="257">isGoodPair</referencedby>
+        <referencedby refid="class_b_r_p_ab84b396b117a6db7d54afcb3a02e1c1e_1ab84b396b117a6db7d54afcb3a02e1c1e" compoundref="franzi-brp_8cpp" startline="132" endline="135">isLeadingReducibleBy</referencedby>
+        <referencedby refid="class_b_r_p_a4afc3529c91adf5c857ccff63f29b925_1a4afc3529c91adf5c857ccff63f29b925" compoundref="franzi-brp_8cpp" startline="125" endline="130">isLeadingReducibleBy</referencedby>
+        <referencedby refid="class_b_r_p_a12ae3cfd7f5aaaa46fb848129d71da21_1a12ae3cfd7f5aaaa46fb848129d71da21" compoundref="franzi-brp_8cpp" startline="159" endline="190">reduceTail</referencedby>
+        <referencedby refid="class_b_r_p_a8c6ba213a26f4c8b2e5ec7306f64bb8e_1a8c6ba213a26f4c8b2e5ec7306f64bb8e" compoundref="franzi-brp_8cpp" startline="138" endline="152">remainder</referencedby>
+        <referencedby refid="franzi-brp-test_8cpp_afcb0ca44a4146a99122a3adfbb92d8fd_1afcb0ca44a4146a99122a3adfbb92d8fd" compoundref="franzi-brp-test_8cpp" startline="261" endline="277">testDivide</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_ad5dbfffc63596c3a8ed013e55efe8b9e_1ad5dbfffc63596c3a8ed013e55efe8b9e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>static bool BRP::isRelativelyPrime</definition>
+        <argsstring>(const brMonomial &amp;a, const brMonomial &amp;b)</argsstring>
+        <name>isRelativelyPrime</name>
+        <qualifiedname>BRP::isRelativelyPrime</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="92" column="15" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="92" bodyend="96"/>
+        <referencedby refid="franzi-gb_8cpp_a8089e5515ec6e0c72b5ced95a06e5a98_1a8089e5515ec6e0c72b5ced95a06e5a98" compoundref="franzi-gb_8cpp" startline="213" endline="257">isGoodPair</referencedby>
+        <referencedby refid="class_pair_a8f96481b7793ce173045217ab6a77888_1a8f96481b7793ce173045217ab6a77888" compoundref="franzi-gb_8cpp" startline="58" endline="95">Pair::Pair</referencedby>
+        <referencedby refid="franzi-brp-test_8cpp_a3dfd9560dda60dd69de7813f1d96879b_1a3dfd9560dda60dd69de7813f1d96879b" compoundref="franzi-brp-test_8cpp" startline="343" endline="374">testIsRelativelyPrime</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BRP::BRP</definition>
+        <argsstring>()</argsstring>
+        <name>BRP</name>
+        <qualifiedname>BRP::BRP</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="98" column="3" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="98" bodyend="98"/>
+        <referencedby refid="class_b_r_p_a1bbe837d403f3b278ef8394301bf2ee3_1a1bbe837d403f3b278ef8394301bf2ee3" compoundref="franzi-brp_8cpp" startline="27" endline="55">addition</referencedby>
+        <referencedby refid="class_b_r_p_a4afc3529c91adf5c857ccff63f29b925_1a4afc3529c91adf5c857ccff63f29b925" compoundref="franzi-brp_8cpp" startline="125" endline="130">isLeadingReducibleBy</referencedby>
+        <referencedby refid="class_b_r_p_a4c8ef7c72fba6bc5f761d563072f4394_1a4c8ef7c72fba6bc5f761d563072f4394" compoundref="franzi-brp_8hpp" startline="106" endline="106">operator!=</referencedby>
+        <referencedby refid="class_b_r_p_a26d60fcd097b25449dec8f4c038f6208_1a26d60fcd097b25449dec8f4c038f6208" compoundref="franzi-brp_8cpp" startline="80" endline="123">operator*</referencedby>
+        <referencedby refid="class_b_r_p_a11876cab99506eab6ae808ac28d83c83_1a11876cab99506eab6ae808ac28d83c83" compoundref="franzi-brp_8cpp" startline="64" endline="77">operator*</referencedby>
+        <referencedby refid="class_b_r_p_abcbe055ce6f1d044bb644958ed9000b3_1abcbe055ce6f1d044bb644958ed9000b3" compoundref="franzi-brp_8cpp" startline="57" endline="62">operator+</referencedby>
+        <referencedby refid="class_b_r_p_a75a067aacd4243a2a893c037758ad115_1a75a067aacd4243a2a893c037758ad115" compoundref="franzi-brp_8hpp" startline="72" endline="80">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_b_r_p_a4b5c25f6720b5862c73b0b62b28097e7_1a4b5c25f6720b5862c73b0b62b28097e7" compoundref="franzi-brp_8hpp" startline="105" endline="105">operator==</referencedby>
+        <referencedby refid="class_b_r_p_a12ae3cfd7f5aaaa46fb848129d71da21_1a12ae3cfd7f5aaaa46fb848129d71da21" compoundref="franzi-brp_8cpp" startline="159" endline="190">reduceTail</referencedby>
+        <referencedby refid="class_b_r_p_a8c6ba213a26f4c8b2e5ec7306f64bb8e_1a8c6ba213a26f4c8b2e5ec7306f64bb8e" compoundref="franzi-brp_8cpp" startline="138" endline="152">remainder</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_ae6944bd1b904ccdee422d8e3b6e715fa_1ae6944bd1b904ccdee422d8e3b6e715fa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BRP::BRP</definition>
+        <argsstring>(const monomials &amp;other)</argsstring>
+        <name>BRP</name>
+        <qualifiedname>BRP::BRP</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="99" column="3" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="99" bodyend="99"/>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a351c5b4c1bc6432df2c19e628ceb7152_1a351c5b4c1bc6432df2c19e628ceb7152" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BRP::BRP</definition>
+        <argsstring>(const monomials_set &amp;other)</argsstring>
+        <name>BRP</name>
+        <qualifiedname>BRP::BRP</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a3ce6889ce4e384d2b166a8c4c80511c6_1a3ce6889ce4e384d2b166a8c4c80511c6" kindref="member">monomials_set</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="100" column="3" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="5" bodyend="11"/>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_aae87c37a8c5a905398a02d1291d4e9d6_1aae87c37a8c5a905398a02d1291d4e9d6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BRP::BRP</definition>
+        <argsstring>(const brMonomial &amp;val)</argsstring>
+        <name>BRP</name>
+        <qualifiedname>BRP::BRP</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="101" column="3" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="101" bodyend="101"/>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a9f6b6ae3b9709c6a284b563b78b697ee_1a9f6b6ae3b9709c6a284b563b78b697ee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BRP::isZero</definition>
+        <argsstring>() const</argsstring>
+        <name>isZero</name>
+        <qualifiedname>BRP::isZero</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="102" column="8" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="13" bodyend="13"/>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+        <referencedby refid="franzi-gb_8cpp_a4830bc0186c91553f896bf52fb2e9d2c_1a4830bc0186c91553f896bf52fb2e9d2c" compoundref="franzi-gb_8cpp" startline="291" endline="310">findDivisor</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" compoundref="franzi-gb_8cpp" startline="430" endline="471">gb</referencedby>
+        <referencedby refid="franzi-gb_8cpp_ade743e7887924fddaf6ced548360f652_1ade743e7887924fddaf6ced548360f652" compoundref="franzi-gb_8cpp" startline="354" endline="368">reduce</referencedby>
+        <referencedby refid="franzi-gb_8cpp_ab670b05591ce570520f8a3dc85224c95_1ab670b05591ce570520f8a3dc85224c95" compoundref="franzi-gb_8cpp" startline="314" endline="327">reduceLt</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a3a32cf3388d74be94b3317c0cd7e9488_1a3a32cf3388d74be94b3317c0cd7e9488" compoundref="franzi-gb_8cpp" startline="330" endline="350">reduceTail</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_ac73e6081c9bedb8a899e7a53c07c4a93_1ac73e6081c9bedb8a899e7a53c07c4a93" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BRP::operator==</definition>
+        <argsstring>(const brMonomial &amp;val) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>BRP::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="103" column="8" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="14" bodyend="25"/>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a1c3648a2998dbbd8873c0f5a822994b3_1a1c3648a2998dbbd8873c0f5a822994b3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BRP::operator!=</definition>
+        <argsstring>(const brMonomial &amp;val) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>BRP::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="104" column="8" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="104" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a4b5c25f6720b5862c73b0b62b28097e7_1a4b5c25f6720b5862c73b0b62b28097e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BRP::operator==</definition>
+        <argsstring>(const BRP &amp;other) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>BRP::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="105" column="8" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="105" bodyend="105"/>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a4c8ef7c72fba6bc5f761d563072f4394_1a4c8ef7c72fba6bc5f761d563072f4394" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BRP::operator!=</definition>
+        <argsstring>(const BRP &amp;other) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>BRP::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="106" column="8" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="106" bodyend="106"/>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_abcbe055ce6f1d044bb644958ed9000b3_1abcbe055ce6f1d044bb644958ed9000b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+        <definition>BRP &amp; BRP::operator+</definition>
+        <argsstring>(const BRP &amp;other)</argsstring>
+        <name>operator+</name>
+        <qualifiedname>BRP::operator+</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="107" column="7" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="57" bodyend="62"/>
+        <references refid="class_b_r_p_a1bbe837d403f3b278ef8394301bf2ee3_1a1bbe837d403f3b278ef8394301bf2ee3" compoundref="franzi-brp_8cpp" startline="27" endline="55">addition</references>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a1bbe837d403f3b278ef8394301bf2ee3_1a1bbe837d403f3b278ef8394301bf2ee3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BRP::addition</definition>
+        <argsstring>(const BRP &amp;other, monomials::iterator pos)</argsstring>
+        <name>addition</name>
+        <qualifiedname>BRP::addition</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <param>
+          <type>monomials::iterator</type>
+          <declname>pos</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="108" column="8" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="27" bodyend="55"/>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+        <referencedby refid="class_b_r_p_abcbe055ce6f1d044bb644958ed9000b3_1abcbe055ce6f1d044bb644958ed9000b3" compoundref="franzi-brp_8cpp" startline="57" endline="62">operator+</referencedby>
+        <referencedby refid="class_b_r_p_a12ae3cfd7f5aaaa46fb848129d71da21_1a12ae3cfd7f5aaaa46fb848129d71da21" compoundref="franzi-brp_8cpp" startline="159" endline="190">reduceTail</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a11876cab99506eab6ae808ac28d83c83_1a11876cab99506eab6ae808ac28d83c83" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_r_p" kindref="compound">BRP</ref></type>
+        <definition>BRP BRP::operator*</definition>
+        <argsstring>(const BRP &amp;other) const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>BRP::operator*</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="110" column="7" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="64" bodyend="77"/>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a26d60fcd097b25449dec8f4c038f6208_1a26d60fcd097b25449dec8f4c038f6208" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_r_p" kindref="compound">BRP</ref></type>
+        <definition>BRP BRP::operator*</definition>
+        <argsstring>(const brMonomial &amp;other) const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>BRP::operator*</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="111" column="7" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="80" bodyend="123"/>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="franzi-brp_8cpp_a67fc85e2740cd77a99ac9625d03213fc_1a67fc85e2740cd77a99ac9625d03213fc" compoundref="franzi-brp_8cpp" startline="79" endline="79">funccomp</references>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_ad9dd8e1137364ba84986e90de9ab9a40_1ad9dd8e1137364ba84986e90de9ab9a40" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int BRP::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>BRP::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="113" column="16" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="113" bodyend="113"/>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+        <referencedby refid="franzi-gb_8cpp_a8089e5515ec6e0c72b5ced95a06e5a98_1a8089e5515ec6e0c72b5ced95a06e5a98" compoundref="franzi-gb_8cpp" startline="213" endline="257">isGoodPair</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a4afc3529c91adf5c857ccff63f29b925_1a4afc3529c91adf5c857ccff63f29b925" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BRP::isLeadingReducibleBy</definition>
+        <argsstring>(const BRP &amp;other) const</argsstring>
+        <name>isLeadingReducibleBy</name>
+        <qualifiedname>BRP::isLeadingReducibleBy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="114" column="8" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="125" bodyend="130"/>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+        <references refid="class_b_r_p_a0deec19189159ee8dd18519c51715016_1a0deec19189159ee8dd18519c51715016" compoundref="franzi-brp_8hpp" startline="85" endline="90">isDivisibleBy</references>
+        <references refid="class_b_r_p_a7308446857ece6ed788fd5bc3b19fd1d_1a7308446857ece6ed788fd5bc3b19fd1d" compoundref="franzi-brp_8hpp" startline="120" endline="127">LT</references>
+        <referencedby refid="franzi-gb_8cpp_a4830bc0186c91553f896bf52fb2e9d2c_1a4830bc0186c91553f896bf52fb2e9d2c" compoundref="franzi-gb_8cpp" startline="291" endline="310">findDivisor</referencedby>
+        <referencedby refid="franzi-brp-test_8cpp_ad2801982604c492c6f7a6628b3c6cc92_1ad2801982604c492c6f7a6628b3c6cc92" compoundref="franzi-brp-test_8cpp" startline="307" endline="322">testIsLeadingReducibleBy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_ab84b396b117a6db7d54afcb3a02e1c1e_1ab84b396b117a6db7d54afcb3a02e1c1e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BRP::isLeadingReducibleBy</definition>
+        <argsstring>(const brMonomial &amp;other) const</argsstring>
+        <name>isLeadingReducibleBy</name>
+        <qualifiedname>BRP::isLeadingReducibleBy</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="115" column="8" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="132" bodyend="135"/>
+        <references refid="class_b_r_p_a0deec19189159ee8dd18519c51715016_1a0deec19189159ee8dd18519c51715016" compoundref="franzi-brp_8hpp" startline="85" endline="90">isDivisibleBy</references>
+        <references refid="class_b_r_p_a7308446857ece6ed788fd5bc3b19fd1d_1a7308446857ece6ed788fd5bc3b19fd1d" compoundref="franzi-brp_8hpp" startline="120" endline="127">LT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a8c6ba213a26f4c8b2e5ec7306f64bb8e_1a8c6ba213a26f4c8b2e5ec7306f64bb8e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_r_p" kindref="compound">BRP</ref></type>
+        <definition>BRP BRP::remainder</definition>
+        <argsstring>(const BRP &amp;x) const</argsstring>
+        <name>remainder</name>
+        <qualifiedname>BRP::remainder</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="117" column="7" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="138" bodyend="152"/>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_b_r_p_a0deec19189159ee8dd18519c51715016_1a0deec19189159ee8dd18519c51715016" compoundref="franzi-brp_8hpp" startline="85" endline="90">isDivisibleBy</references>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="franzi-brp-test_8cpp_aa8e49b18e76a9d842dd5099d5c6b62d3_1aa8e49b18e76a9d842dd5099d5c6b62d3" compoundref="franzi-brp-test_8cpp" startline="324" endline="341">testRemainder</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a7308446857ece6ed788fd5bc3b19fd1d_1a7308446857ece6ed788fd5bc3b19fd1d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref></type>
+        <definition>brMonomial BRP::LT</definition>
+        <argsstring>() const</argsstring>
+        <name>LT</name>
+        <qualifiedname>BRP::LT</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="120" column="14" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="120" bodyend="127"/>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+        <referencedby refid="franzi-gb_8cpp_a132af7da2c774e8ecbf8636ad8fdf2df_1a132af7da2c774e8ecbf8636ad8fdf2df" compoundref="franzi-gb_8cpp" startline="282" endline="286">cancelLeadTerm</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a8089e5515ec6e0c72b5ced95a06e5a98_1a8089e5515ec6e0c72b5ced95a06e5a98" compoundref="franzi-gb_8cpp" startline="213" endline="257">isGoodPair</referencedby>
+        <referencedby refid="class_b_r_p_ab84b396b117a6db7d54afcb3a02e1c1e_1ab84b396b117a6db7d54afcb3a02e1c1e" compoundref="franzi-brp_8cpp" startline="132" endline="135">isLeadingReducibleBy</referencedby>
+        <referencedby refid="class_b_r_p_a4afc3529c91adf5c857ccff63f29b925_1a4afc3529c91adf5c857ccff63f29b925" compoundref="franzi-brp_8cpp" startline="125" endline="130">isLeadingReducibleBy</referencedby>
+        <referencedby refid="class_b_r_p_a12ae3cfd7f5aaaa46fb848129d71da21_1a12ae3cfd7f5aaaa46fb848129d71da21" compoundref="franzi-brp_8cpp" startline="159" endline="190">reduceTail</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a3594684979fc905c97144b6eb7d3caf9_1a3594684979fc905c97144b6eb7d3caf9" compoundref="franzi-gb_8cpp" startline="260" endline="279">sPolynomial</referencedby>
+        <referencedby refid="franzi-brp-test_8cpp_a3dfd9560dda60dd69de7813f1d96879b_1a3dfd9560dda60dd69de7813f1d96879b" compoundref="franzi-brp-test_8cpp" startline="343" endline="374">testIsRelativelyPrime</referencedby>
+        <referencedby refid="franzi-brp-test_8cpp_a3b783e5fd81f98f3b020390f2fc666f5_1a3b783e5fd81f98f3b020390f2fc666f5" compoundref="franzi-brp-test_8cpp" startline="279" endline="305">testLT</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_r_p_a12ae3cfd7f5aaaa46fb848129d71da21_1a12ae3cfd7f5aaaa46fb848129d71da21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BRP::reduceTail</definition>
+        <argsstring>(const BRP &amp;g)</argsstring>
+        <name>reduceTail</name>
+        <qualifiedname>BRP::reduceTail</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="129" column="8" bodyfile="Macaulay2/e/franzi-brp.cpp" bodystart="159" bodyend="190"/>
+        <references refid="class_b_r_p_a1bbe837d403f3b278ef8394301bf2ee3_1a1bbe837d403f3b278ef8394301bf2ee3" compoundref="franzi-brp_8cpp" startline="27" endline="55">addition</references>
+        <references refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" compoundref="franzi-brp_8hpp" startline="98" endline="98">BRP</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_b_r_p_a0deec19189159ee8dd18519c51715016_1a0deec19189159ee8dd18519c51715016" compoundref="franzi-brp_8hpp" startline="85" endline="90">isDivisibleBy</references>
+        <references refid="class_b_r_p_a7308446857ece6ed788fd5bc3b19fd1d_1a7308446857ece6ed788fd5bc3b19fd1d" compoundref="franzi-brp_8hpp" startline="120" endline="127">LT</references>
+        <references refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" compoundref="franzi-brp_8hpp" startline="83">m</references>
+        <referencedby refid="franzi-gb_8cpp_a3a32cf3388d74be94b3317c0cd7e9488_1a3a32cf3388d74be94b3317c0cd7e9488" compoundref="franzi-gb_8cpp" startline="330" endline="350">reduceTail</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Boolean (<computeroutput>F_2</computeroutput>-coefficient) polynomial stored as an ordered list of square-free monomials. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Coefficient ring is implicit (always 1 in <computeroutput>F_2</computeroutput>); the polynomial is just the symmetric-difference sum of the listed monomials. Underlying storage is a <computeroutput><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref></computeroutput> (<computeroutput>std::list&lt;<ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref>&gt;</computeroutput>) kept sorted under the lex comparator declared above, so the leading term is <computeroutput>m.front()</computeroutput> and addition is a linear merge. Used by the Franzi GB code path for boolean polynomial rings. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>BRP</label>
+        <link refid="class_b_r_p"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>m</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>T</label>
+      </node>
+      <node id="3">
+        <label>std::list&lt; T &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::list&lt; brMonomial &gt;</label>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; brMonomial &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/franzi-brp.hpp" line="70" column="1" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="71" bodyend="133"/>
+    <listofallmembers>
+      <member refid="class_b_r_p_a1bbe837d403f3b278ef8394301bf2ee3_1a1bbe837d403f3b278ef8394301bf2ee3" prot="public" virt="non-virtual"><scope>BRP</scope><name>addition</name></member>
+      <member refid="class_b_r_p_a1200bc568642fa841cf054b23863efff_1a1200bc568642fa841cf054b23863efff" prot="public" virt="non-virtual"><scope>BRP</scope><name>BRP</name></member>
+      <member refid="class_b_r_p_ae6944bd1b904ccdee422d8e3b6e715fa_1ae6944bd1b904ccdee422d8e3b6e715fa" prot="public" virt="non-virtual"><scope>BRP</scope><name>BRP</name></member>
+      <member refid="class_b_r_p_a351c5b4c1bc6432df2c19e628ceb7152_1a351c5b4c1bc6432df2c19e628ceb7152" prot="public" virt="non-virtual"><scope>BRP</scope><name>BRP</name></member>
+      <member refid="class_b_r_p_aae87c37a8c5a905398a02d1291d4e9d6_1aae87c37a8c5a905398a02d1291d4e9d6" prot="public" virt="non-virtual"><scope>BRP</scope><name>BRP</name></member>
+      <member refid="class_b_r_p_a0deec19189159ee8dd18519c51715016_1a0deec19189159ee8dd18519c51715016" prot="public" virt="non-virtual"><scope>BRP</scope><name>isDivisibleBy</name></member>
+      <member refid="class_b_r_p_a4afc3529c91adf5c857ccff63f29b925_1a4afc3529c91adf5c857ccff63f29b925" prot="public" virt="non-virtual"><scope>BRP</scope><name>isLeadingReducibleBy</name></member>
+      <member refid="class_b_r_p_ab84b396b117a6db7d54afcb3a02e1c1e_1ab84b396b117a6db7d54afcb3a02e1c1e" prot="public" virt="non-virtual"><scope>BRP</scope><name>isLeadingReducibleBy</name></member>
+      <member refid="class_b_r_p_ad5dbfffc63596c3a8ed013e55efe8b9e_1ad5dbfffc63596c3a8ed013e55efe8b9e" prot="public" virt="non-virtual"><scope>BRP</scope><name>isRelativelyPrime</name></member>
+      <member refid="class_b_r_p_a9f6b6ae3b9709c6a284b563b78b697ee_1a9f6b6ae3b9709c6a284b563b78b697ee" prot="public" virt="non-virtual"><scope>BRP</scope><name>isZero</name></member>
+      <member refid="class_b_r_p_a7308446857ece6ed788fd5bc3b19fd1d_1a7308446857ece6ed788fd5bc3b19fd1d" prot="public" virt="non-virtual"><scope>BRP</scope><name>LT</name></member>
+      <member refid="class_b_r_p_a9cf2fc66d420cfee42a74d151e1fcb24_1a9cf2fc66d420cfee42a74d151e1fcb24" prot="public" virt="non-virtual"><scope>BRP</scope><name>m</name></member>
+      <member refid="class_b_r_p_a1c3648a2998dbbd8873c0f5a822994b3_1a1c3648a2998dbbd8873c0f5a822994b3" prot="public" virt="non-virtual"><scope>BRP</scope><name>operator!=</name></member>
+      <member refid="class_b_r_p_a4c8ef7c72fba6bc5f761d563072f4394_1a4c8ef7c72fba6bc5f761d563072f4394" prot="public" virt="non-virtual"><scope>BRP</scope><name>operator!=</name></member>
+      <member refid="class_b_r_p_a11876cab99506eab6ae808ac28d83c83_1a11876cab99506eab6ae808ac28d83c83" prot="public" virt="non-virtual"><scope>BRP</scope><name>operator*</name></member>
+      <member refid="class_b_r_p_a26d60fcd097b25449dec8f4c038f6208_1a26d60fcd097b25449dec8f4c038f6208" prot="public" virt="non-virtual"><scope>BRP</scope><name>operator*</name></member>
+      <member refid="class_b_r_p_abcbe055ce6f1d044bb644958ed9000b3_1abcbe055ce6f1d044bb644958ed9000b3" prot="public" virt="non-virtual"><scope>BRP</scope><name>operator+</name></member>
+      <member refid="class_b_r_p_a75a067aacd4243a2a893c037758ad115_1a75a067aacd4243a2a893c037758ad115" prot="private" virt="non-virtual"><scope>BRP</scope><name>operator&lt;&lt;</name></member>
+      <member refid="class_b_r_p_ac73e6081c9bedb8a899e7a53c07c4a93_1ac73e6081c9bedb8a899e7a53c07c4a93" prot="public" virt="non-virtual"><scope>BRP</scope><name>operator==</name></member>
+      <member refid="class_b_r_p_a4b5c25f6720b5862c73b0b62b28097e7_1a4b5c25f6720b5862c73b0b62b28097e7" prot="public" virt="non-virtual"><scope>BRP</scope><name>operator==</name></member>
+      <member refid="class_b_r_p_a12ae3cfd7f5aaaa46fb848129d71da21_1a12ae3cfd7f5aaaa46fb848129d71da21" prot="public" virt="non-virtual"><scope>BRP</scope><name>reduceTail</name></member>
+      <member refid="class_b_r_p_a8c6ba213a26f4c8b2e5ec7306f64bb8e_1a8c6ba213a26f4c8b2e5ec7306f64bb8e" prot="public" virt="non-virtual"><scope>BRP</scope><name>remainder</name></member>
+      <member refid="class_b_r_p_ad9dd8e1137364ba84986e90de9ab9a40_1ad9dd8e1137364ba84986e90de9ab9a40" prot="public" virt="non-virtual"><scope>BRP</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

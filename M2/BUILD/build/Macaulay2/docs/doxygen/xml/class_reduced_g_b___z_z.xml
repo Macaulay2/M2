@@ -1,0 +1,1357 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_reduced_g_b___z_z" kind="class" language="C++" prot="public">
+    <compoundname>ReducedGB_ZZ</compoundname>
+    <basecompoundref refid="class_reduced_g_b" prot="public" virt="non-virtual">ReducedGB</basecompoundref>
+    <includes refid="reducedgb-_z_z_8hpp" local="no">reducedgb-ZZ.hpp</includes>
+    <sectiondef kind="private-type">
+      <memberdef kind="enum" id="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2" prot="private" static="no" strong="no">
+        <type></type>
+        <name>divisor_type</name>
+        <qualifiedname>ReducedGB_ZZ::divisor_type</qualifiedname>
+        <enumvalue id="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2afa73a797a9287cf6e98799ca4c1e642b" prot="private">
+          <name>DIVISOR_NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2a5405c5d33a36885c187a208338f8d6a0" prot="private">
+          <name>DIVISOR_RING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2ae4de9955255ca2d73016246eb4fc6067" prot="private">
+          <name>DIVISOR_MODULE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="20" column="3" bodyfile="Macaulay2/e/reducedgb-ZZ.hpp" bodystart="20" bodyend="20"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_reduced_g_b___z_z_a4b7ec256f9f20d4da4fb638ee19fac77_1a4b7ec256f9f20d4da4fb638ee19fac77" prot="private" static="no" mutable="no">
+        <type><ref refid="class_monomial_table_z_z" kindref="compound">MonomialTableZZ</ref> *</type>
+        <definition>MonomialTableZZ* ReducedGB_ZZ::T</definition>
+        <argsstring></argsstring>
+        <name>T</name>
+        <qualifiedname>ReducedGB_ZZ::T</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="22" column="19" bodyfile="Macaulay2/e/reducedgb-ZZ.hpp" bodystart="22" bodyend="-1"/>
+        <referencedby refid="class_reduced_g_b___z_z_af44320ef62dbd6c7260a3c113bc41d93_1af44320ef62dbd6c7260a3c113bc41d93" compoundref="reducedgb-_z_z_8cpp" startline="114" endline="144">find_divisor</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_a730d13d1922e4ecb75f2bec6abca72d2_1a730d13d1922e4ecb75f2bec6abca72d2" compoundref="reducedgb-_z_z_8cpp" startline="64" endline="112">minimalize</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_a0cd43015d61184533f000f4cb28fa49c_1a0cd43015d61184533f000f4cb28fa49c" compoundref="reducedgb-_z_z_8cpp" startline="14" endline="25">ReducedGB_ZZ</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_ac55d6f1be22da3747d7af946f72d1cd9_1ac55d6f1be22da3747d7af946f72d1cd9" compoundref="reducedgb-_z_z_8cpp" startline="8" endline="12">~ReducedGB_ZZ</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_reduced_g_b___z_z_a11e45024cbb3b78c52644b8a792a5c06_1a11e45024cbb3b78c52644b8a792a5c06" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_monomial_table_z_z" kindref="compound">MonomialTableZZ</ref> *</type>
+        <definition>const MonomialTableZZ* ReducedGB_ZZ::ringtableZZ</definition>
+        <argsstring></argsstring>
+        <name>ringtableZZ</name>
+        <qualifiedname>ReducedGB_ZZ::ringtableZZ</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="23" column="25" bodyfile="Macaulay2/e/reducedgb-ZZ.hpp" bodystart="23" bodyend="-1"/>
+        <referencedby refid="class_reduced_g_b___z_z_af44320ef62dbd6c7260a3c113bc41d93_1af44320ef62dbd6c7260a3c113bc41d93" compoundref="reducedgb-_z_z_8cpp" startline="114" endline="144">find_divisor</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_a730d13d1922e4ecb75f2bec6abca72d2_1a730d13d1922e4ecb75f2bec6abca72d2" compoundref="reducedgb-_z_z_8cpp" startline="64" endline="112">minimalize</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_a0cd43015d61184533f000f4cb28fa49c_1a0cd43015d61184533f000f4cb28fa49c" compoundref="reducedgb-_z_z_8cpp" startline="14" endline="25">ReducedGB_ZZ</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_ac55d6f1be22da3747d7af946f72d1cd9_1ac55d6f1be22da3747d7af946f72d1cd9" compoundref="reducedgb-_z_z_8cpp" startline="8" endline="12">~ReducedGB_ZZ</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_reduced_g_b___z_z_ab4de10bdf3efa5e3df040a09a8bf142c_1ab4de10bdf3efa5e3df040a09a8bf142c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_reduced_g_b" kindref="compound">ReducedGB</ref> *</type>
+        <definition>ReducedGB * ReducedGB::create</definition>
+        <argsstring>(const PolynomialRing *originalR0, const FreeModule *F0, const FreeModule *Fsyz0, const GBWeight *wt0)</argsstring>
+        <name>ReducedGB::create</name>
+        <qualifiedname>ReducedGB_ZZ::create</qualifiedname>
+        <param>
+          <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+          <declname>originalR0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>Fsyz0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_g_b_weight" kindref="compound">GBWeight</ref> *</type>
+          <declname>wt0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="15" column="20"/>
+        <references refid="class_reduced_g_b_afb440d8ed7bbd8d179a63cfff470cc85_1afb440d8ed7bbd8d179a63cfff470cc85" compoundref="reducedgb_8cpp" startline="35" endline="42">ReducedGB::ReducedGB</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_reduced_g_b___z_z_af44320ef62dbd6c7260a3c113bc41d93_1af44320ef62dbd6c7260a3c113bc41d93" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2" kindref="member">divisor_type</ref></type>
+        <definition>enum ReducedGB_ZZ::divisor_type ReducedGB_ZZ::find_divisor</definition>
+        <argsstring>(exponents_t exp, int comp, int &amp;result_loc)</argsstring>
+        <name>find_divisor</name>
+        <qualifiedname>ReducedGB_ZZ::find_divisor</qualifiedname>
+        <param>
+          <type><ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref></type>
+          <declname>exp</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>comp</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>result_loc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="25" column="20" bodyfile="Macaulay2/e/reducedgb-ZZ.cpp" bodystart="114" bodyend="144"/>
+        <references refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2ae4de9955255ca2d73016246eb4fc6067" compoundref="reducedgb-_z_z_8hpp" startline="20">DIVISOR_MODULE</references>
+        <references refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2afa73a797a9287cf6e98799ca4c1e642b" compoundref="reducedgb-_z_z_8hpp" startline="20">DIVISOR_NONE</references>
+        <references refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2a5405c5d33a36885c187a208338f8d6a0" compoundref="reducedgb-_z_z_8hpp" startline="20">DIVISOR_RING</references>
+        <references refid="class_reduced_g_b_a9a69675ed6fa35f9fc767151aec808de_1a9a69675ed6fa35f9fc767151aec808de" compoundref="reducedgb_8hpp" startline="63">ReducedGB::originalR</references>
+        <references refid="class_reduced_g_b___z_z_a11e45024cbb3b78c52644b8a792a5c06_1a11e45024cbb3b78c52644b8a792a5c06" compoundref="reducedgb-_z_z_8hpp" startline="23">ringtableZZ</references>
+        <references refid="class_reduced_g_b___z_z_a4b7ec256f9f20d4da4fb638ee19fac77_1a4b7ec256f9f20d4da4fb638ee19fac77" compoundref="reducedgb-_z_z_8hpp" startline="22">T</references>
+        <referencedby refid="class_reduced_g_b___z_z_aec4ba0cd56865dcfd322a8b5920beb37_1aec4ba0cd56865dcfd322a8b5920beb37" compoundref="reducedgb-_z_z_8cpp" startline="191" endline="241">remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_ac3c1c390dfc64c42bcadb3b3666352ef_1ac3c1c390dfc64c42bcadb3b3666352ef" compoundref="reducedgb-_z_z_8cpp" startline="146" endline="189">remainder</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_reduced_g_b___z_z_a0cd43015d61184533f000f4cb28fa49c_1a0cd43015d61184533f000f4cb28fa49c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ReducedGB_ZZ::ReducedGB_ZZ</definition>
+        <argsstring>(GBRing *R0, const PolynomialRing *originalR0, const FreeModule *F0, const FreeModule *Fsyz0)</argsstring>
+        <name>ReducedGB_ZZ</name>
+        <qualifiedname>ReducedGB_ZZ::ReducedGB_ZZ</qualifiedname>
+        <param>
+          <type><ref refid="class_g_b_ring" kindref="compound">GBRing</ref> *</type>
+          <declname>R0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+          <declname>originalR0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>Fsyz0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="27" column="3" bodyfile="Macaulay2/e/reducedgb-ZZ.cpp" bodystart="14" bodyend="25"/>
+        <references refid="class_monomial_table_z_z_a4af69f9dd7fe1bb4c65c4126dd88cdc3_1a4af69f9dd7fe1bb4c65c4126dd88cdc3" compoundref="montable_z_z_8cpp" startline="63" endline="74">MonomialTableZZ::make</references>
+        <references refid="class_g_b_ring_adbe13bf9147c68bf0d5167eca152761c_1adbe13bf9147c68bf0d5167eca152761c" compoundref="gbring_8hpp" startline="226" endline="226">GBRing::n_vars</references>
+        <references refid="class_reduced_g_b_a9a69675ed6fa35f9fc767151aec808de_1a9a69675ed6fa35f9fc767151aec808de" compoundref="reducedgb_8hpp" startline="63">ReducedGB::originalR</references>
+        <references refid="class_reduced_g_b_afb440d8ed7bbd8d179a63cfff470cc85_1afb440d8ed7bbd8d179a63cfff470cc85" compoundref="reducedgb_8cpp" startline="35" endline="42">ReducedGB::ReducedGB</references>
+        <references refid="class_reduced_g_b___z_z_a11e45024cbb3b78c52644b8a792a5c06_1a11e45024cbb3b78c52644b8a792a5c06" compoundref="reducedgb-_z_z_8hpp" startline="23">ringtableZZ</references>
+        <references refid="class_reduced_g_b___z_z_a4b7ec256f9f20d4da4fb638ee19fac77_1a4b7ec256f9f20d4da4fb638ee19fac77" compoundref="reducedgb-_z_z_8hpp" startline="22">T</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_reduced_g_b___z_z_ac55d6f1be22da3747d7af946f72d1cd9_1ac55d6f1be22da3747d7af946f72d1cd9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>ReducedGB_ZZ::~ReducedGB_ZZ</definition>
+        <argsstring>()</argsstring>
+        <name>~ReducedGB_ZZ</name>
+        <qualifiedname>ReducedGB_ZZ::~ReducedGB_ZZ</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="33" column="11" bodyfile="Macaulay2/e/reducedgb-ZZ.cpp" bodystart="8" bodyend="12"/>
+        <references refid="class_reduced_g_b___z_z_a11e45024cbb3b78c52644b8a792a5c06_1a11e45024cbb3b78c52644b8a792a5c06" compoundref="reducedgb-_z_z_8hpp" startline="23">ringtableZZ</references>
+        <references refid="class_reduced_g_b___z_z_a4b7ec256f9f20d4da4fb638ee19fac77_1a4b7ec256f9f20d4da4fb638ee19fac77" compoundref="reducedgb-_z_z_8hpp" startline="22">T</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reduced_g_b___z_z_aa8a2141742b78c1cdcfe4daaf64d99c5_1aa8a2141742b78c1cdcfe4daaf64d99c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void ReducedGB_ZZ::remove_gb</definition>
+        <argsstring>()</argsstring>
+        <name>remove_gb</name>
+        <qualifiedname>ReducedGB_ZZ::remove_gb</qualifiedname>
+        <reimplements refid="class_g_b_computation_aaedf225d5aaf90a2582ff2372e9c6ccd_1aaedf225d5aaf90a2582ff2372e9c6ccd">remove_gb</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="35" column="16" bodyfile="Macaulay2/e/reducedgb-ZZ.hpp" bodystart="35" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reduced_g_b___z_z_a3203b8fe85d0471b7e389a3f7cc37a93_1a3203b8fe85d0471b7e389a3f7cc37a93" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ReducedGB_ZZ::set_gb</definition>
+        <argsstring>(VECTOR(POLY) &amp;polys0)</argsstring>
+        <name>set_gb</name>
+        <qualifiedname>ReducedGB_ZZ::set_gb</qualifiedname>
+        <reimplements refid="class_reduced_g_b_a8696b46bda5395cf8eaa24b76441f786_1a8696b46bda5395cf8eaa24b76441f786">set_gb</reimplements>
+        <param>
+          <type><ref refid="class_reduced_g_b_a2a2a6036d7e89583ebbc30c650c9150c_1a2a2a6036d7e89583ebbc30c650c9150c" kindref="member">VECTOR</ref>(<ref refid="struct_p_o_l_y" kindref="compound">POLY</ref>) &amp;</type>
+          <declname>polys0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="36" column="16" bodyfile="Macaulay2/e/reducedgb-ZZ.cpp" bodystart="27" bodyend="27"/>
+        <references refid="poly_8cpp_af4c97ae01895f6d3290e9c2ec19a5809_1af4c97ae01895f6d3290e9c2ec19a5809" compoundref="poly_8cpp" startline="23">POLY</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reduced_g_b___z_z_a730d13d1922e4ecb75f2bec6abca72d2_1a730d13d1922e4ecb75f2bec6abca72d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ReducedGB_ZZ::minimalize</definition>
+        <argsstring>(const VECTOR(POLY) &amp;polys0, bool auto_reduced)</argsstring>
+        <name>minimalize</name>
+        <qualifiedname>ReducedGB_ZZ::minimalize</qualifiedname>
+        <reimplements refid="class_reduced_g_b_a25636c7fde33daba519d76b46b33c791_1a25636c7fde33daba519d76b46b33c791">minimalize</reimplements>
+        <param>
+          <type>const <ref refid="class_reduced_g_b_a2a2a6036d7e89583ebbc30c650c9150c_1a2a2a6036d7e89583ebbc30c650c9150c" kindref="member">VECTOR</ref>(<ref refid="struct_p_o_l_y" kindref="compound">POLY</ref>) &amp;</type>
+          <declname>polys0</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>auto_reduced</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="38" column="16" bodyfile="Macaulay2/e/reducedgb-ZZ.cpp" bodystart="64" bodyend="112"/>
+        <references refid="structgbvector_a185cb3a8e35ce8178aac8ab39a79c4be_1a185cb3a8e35ce8178aac8ab39a79c4be" compoundref="gbring_8hpp" startline="79">gbvector::coeff</references>
+        <references refid="structgbvector_a857b617c77d0b7e4b5ec6e2bf8d73b89_1a857b617c77d0b7e4b5ec6e2bf8d73b89" compoundref="gbring_8hpp" startline="80">gbvector::comp</references>
+        <references refid="class_reduced_g_b_ad565fd513e9b90bad99de07405765b79_1ad565fd513e9b90bad99de07405765b79" compoundref="reducedgb_8hpp" startline="64">ReducedGB::F</references>
+        <references refid="struct_p_o_l_y_a99d4e7b185b16968de58cb6c47ef605e_1a99d4e7b185b16968de58cb6c47ef605e" compoundref="gbring_8hpp" startline="94">POLY::f</references>
+        <references refid="struct_p_o_l_y_a7efdb8993698f844b8afabb2f926eecd_1a7efdb8993698f844b8afabb2f926eecd" compoundref="gbring_8hpp" startline="95">POLY::fsyz</references>
+        <references refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" compoundref="ringelem_8hpp" startline="125" endline="125">ring_elem::get_mpz</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="style_8hpp_ae9befcbff10f3a4ff986f206da609a90_1ae9befcbff10f3a4ff986f206da609a90" compoundref="style_8hpp" startline="35">INTSIZE</references>
+        <references refid="poly_8cpp_af4c97ae01895f6d3290e9c2ec19a5809_1af4c97ae01895f6d3290e9c2ec19a5809" compoundref="poly_8cpp" startline="23">POLY</references>
+        <references refid="class_reduced_g_b_a88515b65250c4e3add7d965800b3b83d_1a88515b65250c4e3add7d965800b3b83d" compoundref="reducedgb_8hpp" startline="62">ReducedGB::R</references>
+        <references refid="class_reduced_g_b___z_z_ac3c1c390dfc64c42bcadb3b3666352ef_1ac3c1c390dfc64c42bcadb3b3666352ef" compoundref="reducedgb-_z_z_8cpp" startline="146" endline="189">remainder</references>
+        <references refid="class_reduced_g_b___z_z_a11e45024cbb3b78c52644b8a792a5c06_1a11e45024cbb3b78c52644b8a792a5c06" compoundref="reducedgb-_z_z_8hpp" startline="23">ringtableZZ</references>
+        <references refid="class_reduced_g_b___z_z_a4b7ec256f9f20d4da4fb638ee19fac77_1a4b7ec256f9f20d4da4fb638ee19fac77" compoundref="reducedgb-_z_z_8hpp" startline="22">T</references>
+        <references refid="newdelete_8hpp_a5eb7456054852de52b377090e128822e_1a5eb7456054852de52b377090e128822e" compoundref="newdelete_8hpp" startline="76">VECTOR</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reduced_g_b___z_z_ac3c1c390dfc64c42bcadb3b3666352ef_1ac3c1c390dfc64c42bcadb3b3666352ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ReducedGB_ZZ::remainder</definition>
+        <argsstring>(POLY &amp;f, bool use_denom, ring_elem &amp;denom)</argsstring>
+        <name>remainder</name>
+        <qualifiedname>ReducedGB_ZZ::remainder</qualifiedname>
+        <reimplements refid="class_reduced_g_b_a74288a99fb26c9b3d441b73263fed1c4_1a74288a99fb26c9b3d441b73263fed1c4">remainder</reimplements>
+        <param>
+          <type><ref refid="struct_p_o_l_y" kindref="compound">POLY</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>use_denom</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>denom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="41" column="16" bodyfile="Macaulay2/e/reducedgb-ZZ.cpp" bodystart="146" bodyend="189"/>
+        <references refid="monoid_8hpp_a337de43f0792d2f0364a64ba9905116d_1a337de43f0792d2f0364a64ba9905116d" compoundref="monoid_8hpp" startline="60">ALLOCATE_EXPONENTS</references>
+        <references refid="structgbvector_a857b617c77d0b7e4b5ec6e2bf8d73b89_1a857b617c77d0b7e4b5ec6e2bf8d73b89" compoundref="gbring_8hpp" startline="80">gbvector::comp</references>
+        <references refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2ae4de9955255ca2d73016246eb4fc6067" compoundref="reducedgb-_z_z_8hpp" startline="20">DIVISOR_MODULE</references>
+        <references refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2afa73a797a9287cf6e98799ca4c1e642b" compoundref="reducedgb-_z_z_8hpp" startline="20">DIVISOR_NONE</references>
+        <references refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2a5405c5d33a36885c187a208338f8d6a0" compoundref="reducedgb-_z_z_8hpp" startline="20">DIVISOR_RING</references>
+        <references refid="class_reduced_g_b_ad565fd513e9b90bad99de07405765b79_1ad565fd513e9b90bad99de07405765b79" compoundref="reducedgb_8hpp" startline="64">ReducedGB::F</references>
+        <references refid="struct_p_o_l_y_a99d4e7b185b16968de58cb6c47ef605e_1a99d4e7b185b16968de58cb6c47ef605e" compoundref="gbring_8hpp" startline="94">POLY::f</references>
+        <references refid="class_reduced_g_b___z_z_af44320ef62dbd6c7260a3c113bc41d93_1af44320ef62dbd6c7260a3c113bc41d93" compoundref="reducedgb-_z_z_8cpp" startline="114" endline="144">find_divisor</references>
+        <references refid="class_reduced_g_b_a6e4f488a27d6c8765953357ddd35df44_1a6e4f488a27d6c8765953357ddd35df44" compoundref="reducedgb_8hpp" startline="65">ReducedGB::Fsyz</references>
+        <references refid="struct_p_o_l_y_a7efdb8993698f844b8afabb2f926eecd_1a7efdb8993698f844b8afabb2f926eecd" compoundref="gbring_8hpp" startline="95">POLY::fsyz</references>
+        <references refid="structgbvector_a3cc2bd9a347521ac3e6d6d89de1a3a26_1a3cc2bd9a347521ac3e6d6d89de1a3a26" compoundref="gbring_8hpp" startline="78">gbvector::next</references>
+        <references refid="class_reduced_g_b_a9a69675ed6fa35f9fc767151aec808de_1a9a69675ed6fa35f9fc767151aec808de" compoundref="reducedgb_8hpp" startline="63">ReducedGB::originalR</references>
+        <references refid="poly_8cpp_af4c97ae01895f6d3290e9c2ec19a5809_1af4c97ae01895f6d3290e9c2ec19a5809" compoundref="poly_8cpp" startline="23">POLY</references>
+        <references refid="class_reduced_g_b_a88515b65250c4e3add7d965800b3b83d_1a88515b65250c4e3add7d965800b3b83d" compoundref="reducedgb_8hpp" startline="62">ReducedGB::R</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <references refid="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" compoundref="godbolt_test_8cpp" startline="35">zero</references>
+        <referencedby refid="class_reduced_g_b___z_z_a730d13d1922e4ecb75f2bec6abca72d2_1a730d13d1922e4ecb75f2bec6abca72d2" compoundref="reducedgb-_z_z_8cpp" startline="64" endline="112">minimalize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_reduced_g_b___z_z_aec4ba0cd56865dcfd322a8b5920beb37_1aec4ba0cd56865dcfd322a8b5920beb37" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ReducedGB_ZZ::remainder</definition>
+        <argsstring>(gbvector *&amp;f, bool use_denom, ring_elem &amp;denom)</argsstring>
+        <name>remainder</name>
+        <qualifiedname>ReducedGB_ZZ::remainder</qualifiedname>
+        <reimplements refid="class_reduced_g_b_afe9a474118d1a13f65a99a3c611d5983_1afe9a474118d1a13f65a99a3c611d5983">remainder</reimplements>
+        <param>
+          <type><ref refid="structgbvector" kindref="compound">gbvector</ref> *&amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>use_denom</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>denom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="44" column="16" bodyfile="Macaulay2/e/reducedgb-ZZ.cpp" bodystart="191" bodyend="241"/>
+        <references refid="monoid_8hpp_a337de43f0792d2f0364a64ba9905116d_1a337de43f0792d2f0364a64ba9905116d" compoundref="monoid_8hpp" startline="60">ALLOCATE_EXPONENTS</references>
+        <references refid="structgbvector_a857b617c77d0b7e4b5ec6e2bf8d73b89_1a857b617c77d0b7e4b5ec6e2bf8d73b89" compoundref="gbring_8hpp" startline="80">gbvector::comp</references>
+        <references refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2ae4de9955255ca2d73016246eb4fc6067" compoundref="reducedgb-_z_z_8hpp" startline="20">DIVISOR_MODULE</references>
+        <references refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2afa73a797a9287cf6e98799ca4c1e642b" compoundref="reducedgb-_z_z_8hpp" startline="20">DIVISOR_NONE</references>
+        <references refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2a5405c5d33a36885c187a208338f8d6a0" compoundref="reducedgb-_z_z_8hpp" startline="20">DIVISOR_RING</references>
+        <references refid="text-io_8cpp_a5bd0b57b7653fb12e1dcaa8c4d09ce4e_1a5bd0b57b7653fb12e1dcaa8c4d09ce4e" compoundref="text-io_8cpp" startline="41" endline="45">emit</references>
+        <references refid="class_reduced_g_b_ad565fd513e9b90bad99de07405765b79_1ad565fd513e9b90bad99de07405765b79" compoundref="reducedgb_8hpp" startline="64">ReducedGB::F</references>
+        <references refid="struct_p_o_l_y_a99d4e7b185b16968de58cb6c47ef605e_1a99d4e7b185b16968de58cb6c47ef605e" compoundref="gbring_8hpp" startline="94">POLY::f</references>
+        <references refid="class_reduced_g_b___z_z_af44320ef62dbd6c7260a3c113bc41d93_1af44320ef62dbd6c7260a3c113bc41d93" compoundref="reducedgb-_z_z_8cpp" startline="114" endline="144">find_divisor</references>
+        <references refid="class_reduced_g_b_a6e4f488a27d6c8765953357ddd35df44_1a6e4f488a27d6c8765953357ddd35df44" compoundref="reducedgb_8hpp" startline="65">ReducedGB::Fsyz</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <references refid="structgbvector_a3cc2bd9a347521ac3e6d6d89de1a3a26_1a3cc2bd9a347521ac3e6d6d89de1a3a26" compoundref="gbring_8hpp" startline="78">gbvector::next</references>
+        <references refid="class_reduced_g_b_a9a69675ed6fa35f9fc767151aec808de_1a9a69675ed6fa35f9fc767151aec808de" compoundref="reducedgb_8hpp" startline="63">ReducedGB::originalR</references>
+        <references refid="poly_8cpp_af4c97ae01895f6d3290e9c2ec19a5809_1af4c97ae01895f6d3290e9c2ec19a5809" compoundref="poly_8cpp" startline="23">POLY</references>
+        <references refid="class_reduced_g_b_a88515b65250c4e3add7d965800b3b83d_1a88515b65250c4e3add7d965800b3b83d" compoundref="reducedgb_8hpp" startline="62">ReducedGB::R</references>
+        <references refid="classbuffer_a39972fb7c929bb9e42ed60cddbc1109f_1a39972fb7c929bb9e42ed60cddbc1109f" compoundref="buffer_8hpp" startline="70" endline="74">buffer::str</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <references refid="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" compoundref="godbolt_test_8cpp" startline="35">zero</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><ref refid="class_computation" kindref="compound">Computation</ref> of a reduced GB w.r.t. a term order, over <ref refid="ringelem_8hpp_afea72c39052b53d15e7acad8d36847c1_1afea72c39052b53d15e7acad8d36847c1" kindref="member">ZZ</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="4">
+        <label>Computation</label>
+        <link refid="class_computation"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>GBComputation</label>
+        <link refid="class_g_b_computation"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ReducedGB</label>
+        <link refid="class_reduced_g_b"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ReducedGB_ZZ</label>
+        <link refid="class_reduced_g_b___z_z"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="23">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="70" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Computation</label>
+        <link refid="class_computation"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>computation_status</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>stop_</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="80" relation="public-inheritance">
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>GBComputation</label>
+        <link refid="class_g_b_computation"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="71" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="71" relation="public-inheritance">
+        </childnode>
+        <childnode refid="72" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>M2_arrayint</label>
+        <link refid="class_m2__arrayint"/>
+      </node>
+      <node id="79">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="80" relation="public-inheritance">
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="51" relation="private-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="53" relation="public-inheritance">
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="47" relation="private-inheritance">
+        </childnode>
+        <childnode refid="50" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="59">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="84">
+        <label>MonomialTableZZ</label>
+        <link refid="class_monomial_table_z_z"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_count</edgelabel>
+          <edgelabel>_nvars</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="53">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="54" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="16" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="17" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="45" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ReducedGB</label>
+        <link refid="class_reduced_g_b"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>originalR</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>F</edgelabel>
+          <edgelabel>Fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ReducedGB_ZZ</label>
+        <link refid="class_reduced_g_b___z_z"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="84" relation="usage">
+          <edgelabel>T</edgelabel>
+          <edgelabel>ringtableZZ</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>CoefficientType</label>
+      </node>
+      <node id="82">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="42" relation="public-inheritance">
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>StopConditions</label>
+        <link refid="struct_stop_conditions"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>always_stop</edgelabel>
+          <edgelabel>just_min_gens</edgelabel>
+          <edgelabel>stop_after_degree</edgelabel>
+          <edgelabel>use_codim_limit</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>degree_limit</edgelabel>
+          <edgelabel>length_limit</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>basis_element_limit</edgelabel>
+          <edgelabel>codim_limit</edgelabel>
+          <edgelabel>pair_limit</edgelabel>
+          <edgelabel>subring_limit</edgelabel>
+          <edgelabel>syzygy_limit</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>T</label>
+      </node>
+      <node id="77">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="42" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="35">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="14">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="33">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="28" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>char</label>
+      </node>
+      <node id="22">
+        <label>const ARing *</label>
+      </node>
+      <node id="38">
+        <label>const void *</label>
+      </node>
+      <node id="28">
+        <label>double</label>
+      </node>
+      <node id="9">
+        <label>enum ComputationStatusCode</label>
+      </node>
+      <node id="68">
+        <label>overflow_type *</label>
+      </node>
+      <node id="65">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="67">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="83">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="8">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="27">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="24" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>long</label>
+      </node>
+      <node id="55">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="48" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="56" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="58" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>mon_part</label>
+      </node>
+      <node id="32">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="31">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="29">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="30">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="6">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="24">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>size_t</label>
+      </node>
+      <node id="74">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>spinLock</label>
+      </node>
+      <node id="73">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="63">
+        <label>std::string</label>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="21" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="20" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="66">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="14" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="20" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="63" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/reducedgb-ZZ.hpp" line="13" column="1" bodyfile="Macaulay2/e/reducedgb-ZZ.hpp" bodystart="14" bodyend="45"/>
+    <listofallmembers>
+      <member refid="class_reduced_g_b_ad74c0f708a36dc1b3afe44ba302f4b63_1ad74c0f708a36dc1b3afe44ba302f4b63" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>cast_to_GBComputation</name></member>
+      <member refid="class_computation_a4d7b512061b6d0cfe740ee06e160bba9_1a4d7b512061b6d0cfe740ee06e160bba9" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>cast_to_ResolutionComputation</name></member>
+      <member refid="class_g_b_computation_aaff7a8f858cded7550f977b4bf34f01b_1aaff7a8f858cded7550f977b4bf34f01b" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>choose_gb</name></member>
+      <member refid="class_reduced_g_b_aea695e0672c1346c4cdf298cf9c61c06_1aea695e0672c1346c4cdf298cf9c61c06" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>complete_thru_degree</name></member>
+      <member refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>Computation</name></member>
+      <member refid="class_computation_a16a66d725f6681f25a4b36670818633b_1a16a66d725f6681f25a4b36670818633b" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>computation_status</name></member>
+      <member refid="class_reduced_g_b_a747269a57b029a8193bc0f236b66fff7_1a747269a57b029a8193bc0f236b66fff7" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>contains</name></member>
+      <member refid="class_reduced_g_b_a7b66fb4c7fbefbd3c42c4356dfc8ba78_1a7b66fb4c7fbefbd3c42c4356dfc8ba78" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>create</name></member>
+      <member refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2ae4de9955255ca2d73016246eb4fc6067" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>DIVISOR_MODULE</name></member>
+      <member refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2afa73a797a9287cf6e98799ca4c1e642b" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>DIVISOR_NONE</name></member>
+      <member refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2a5405c5d33a36885c187a208338f8d6a0" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>DIVISOR_RING</name></member>
+      <member refid="class_reduced_g_b___z_z_aacdaeb9eb38a0703b0a19bd6e211c5b2_1aacdaeb9eb38a0703b0a19bd6e211c5b2" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>divisor_type</name></member>
+      <member refid="class_reduced_g_b_ad565fd513e9b90bad99de07405765b79_1ad565fd513e9b90bad99de07405765b79" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>F</name></member>
+      <member refid="class_reduced_g_b___z_z_af44320ef62dbd6c7260a3c113bc41d93_1af44320ef62dbd6c7260a3c113bc41d93" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>find_divisor</name></member>
+      <member refid="class_reduced_g_b_a6e4f488a27d6c8765953357ddd35df44_1a6e4f488a27d6c8765953357ddd35df44" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>Fsyz</name></member>
+      <member refid="class_g_b_computation_a79fd4b4b3d036051a3b6b08ab15c6e5f_1a79fd4b4b3d036051a3b6b08ab15c6e5f" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>GBComputation</name></member>
+      <member refid="class_reduced_g_b_a3e7decf0d99557e744d23097d2bc163d_1a3e7decf0d99557e744d23097d2bc163d" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>get_change</name></member>
+      <member refid="class_reduced_g_b_a7cd3700612daeb267c03ebf7b3dbae3c_1a7cd3700612daeb267c03ebf7b3dbae3c" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>get_gb</name></member>
+      <member refid="class_reduced_g_b_a62c0b403d3ce5d9cdd1391f8cba6be0b_1a62c0b403d3ce5d9cdd1391f8cba6be0b" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>get_initial</name></member>
+      <member refid="class_reduced_g_b_a581823ba45ddac4ef7a8e7626c257669_1a581823ba45ddac4ef7a8e7626c257669" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>get_mingens</name></member>
+      <member refid="class_reduced_g_b_a656d5a0a30336fa9c6107d03839b817d_1a656d5a0a30336fa9c6107d03839b817d" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>get_parallel_lead_terms</name></member>
+      <member refid="class_reduced_g_b_a99096cda472ad671914a0ff6033d7cb7_1a99096cda472ad671914a0ff6033d7cb7" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>get_ring</name></member>
+      <member refid="class_reduced_g_b_a58b817c615f2875be6efc3a6dcd07604_1a58b817c615f2875be6efc3a6dcd07604" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>get_syzygies</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>hash</name></member>
+      <member refid="class_reduced_g_b_ac8eb52e0c0f0f993b8bdbab0eeaed7ed_1ac8eb52e0c0f0f993b8bdbab0eeaed7ed" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>matrix_lift</name></member>
+      <member refid="class_reduced_g_b_a0aff9a7ba7739e909dc8cb503124c728_1a0aff9a7ba7739e909dc8cb503124c728" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>matrix_remainder</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>mHashValue</name></member>
+      <member refid="class_reduced_g_b___z_z_a730d13d1922e4ecb75f2bec6abca72d2_1a730d13d1922e4ecb75f2bec6abca72d2" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>minimalize</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>MutableEngineObject</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>operator new[]</name></member>
+      <member refid="class_reduced_g_b_a9a69675ed6fa35f9fc767151aec808de_1a9a69675ed6fa35f9fc767151aec808de" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>originalR</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_reduced_g_b_a88515b65250c4e3add7d965800b3b83d_1a88515b65250c4e3add7d965800b3b83d" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>R</name></member>
+      <member refid="class_reduced_g_b_afb440d8ed7bbd8d179a63cfff470cc85_1afb440d8ed7bbd8d179a63cfff470cc85" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>ReducedGB</name></member>
+      <member refid="class_reduced_g_b___z_z_ab4de10bdf3efa5e3df040a09a8bf142c_1ab4de10bdf3efa5e3df040a09a8bf142c" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>ReducedGB::create</name></member>
+      <member refid="class_reduced_g_b___z_z_a0cd43015d61184533f000f4cb28fa49c_1a0cd43015d61184533f000f4cb28fa49c" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>ReducedGB_ZZ</name></member>
+      <member refid="class_reduced_g_b___z_z_ac3c1c390dfc64c42bcadb3b3666352ef_1ac3c1c390dfc64c42bcadb3b3666352ef" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>remainder</name></member>
+      <member refid="class_reduced_g_b___z_z_aec4ba0cd56865dcfd322a8b5920beb37_1aec4ba0cd56865dcfd322a8b5920beb37" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>remainder</name></member>
+      <member refid="class_reduced_g_b___z_z_aa8a2141742b78c1cdcfe4daaf64d99c5_1aa8a2141742b78c1cdcfe4daaf64d99c5" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>remove_gb</name></member>
+      <member refid="class_reduced_g_b___z_z_a11e45024cbb3b78c52644b8a792a5c06_1a11e45024cbb3b78c52644b8a792a5c06" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>ringtableZZ</name></member>
+      <member refid="class_reduced_g_b___z_z_a3203b8fe85d0471b7e389a3f7cc37a93_1a3203b8fe85d0471b7e389a3f7cc37a93" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>set_gb</name></member>
+      <member refid="class_g_b_computation_a06654fcd4834e0599e4b6b3d58d3d81e_1a06654fcd4834e0599e4b6b3d58d3d81e" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>set_hilbert_function</name></member>
+      <member refid="class_computation_a3d43eb6c869405fa62a9b9662f1bdb1d_1a3d43eb6c869405fa62a9b9662f1bdb1d" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>set_status</name></member>
+      <member refid="class_computation_a19ec1bd9578a00958d0a042793471775_1a19ec1bd9578a00958d0a042793471775" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>set_stop_conditions</name></member>
+      <member refid="class_computation_adff8240febcd395f34ede78c797c7ac8_1adff8240febcd395f34ede78c797c7ac8" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>show</name></member>
+      <member refid="class_reduced_g_b_ac5fa14c58ca5da227c6293e57af598a8_1ac5fa14c58ca5da227c6293e57af598a8" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>start_computation</name></member>
+      <member refid="class_computation_a277e8e7771dccf6b37f5ab03edb2e503_1a277e8e7771dccf6b37f5ab03edb2e503" prot="public" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>status</name></member>
+      <member refid="class_computation_a3e6f044f649095c4907660aa0c36b3a4_1a3e6f044f649095c4907660aa0c36b3a4" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>stop_</name></member>
+      <member refid="class_reduced_g_b_a703faf0c35e35a71ae9721a9595c2621_1a703faf0c35e35a71ae9721a9595c2621" prot="protected" virt="virtual"><scope>ReducedGB_ZZ</scope><name>stop_conditions_ok</name></member>
+      <member refid="class_reduced_g_b___z_z_a4b7ec256f9f20d4da4fb638ee19fac77_1a4b7ec256f9f20d4da4fb638ee19fac77" prot="private" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>T</name></member>
+      <member refid="class_reduced_g_b_a5ff129bf27bd00885dd8bc848dbef33a_1a5ff129bf27bd00885dd8bc848dbef33a" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>text_out</name></member>
+      <member refid="class_reduced_g_b_a2a2a6036d7e89583ebbc30c650c9150c_1a2a2a6036d7e89583ebbc30c650c9150c" prot="protected" virt="non-virtual"><scope>ReducedGB_ZZ</scope><name>VECTOR</name></member>
+      <member refid="class_computation_aad14e9593597150e351ee5d3a9a87ebe_1aad14e9593597150e351ee5d3a9a87ebe" prot="protected" virt="virtual"><scope>ReducedGB_ZZ</scope><name>~Computation</name></member>
+      <member refid="class_g_b_computation_a279d5f9b9161e846c7e6afd10badb59a_1a279d5f9b9161e846c7e6afd10badb59a" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>~GBComputation</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>~our_gc_cleanup</name></member>
+      <member refid="class_reduced_g_b_ae209201b4097aa401fba906579c1da14_1ae209201b4097aa401fba906579c1da14" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>~ReducedGB</name></member>
+      <member refid="class_reduced_g_b___z_z_ac55d6f1be22da3747d7af946f72d1cd9_1ac55d6f1be22da3747d7af946f72d1cd9" prot="public" virt="virtual"><scope>ReducedGB_ZZ</scope><name>~ReducedGB_ZZ</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

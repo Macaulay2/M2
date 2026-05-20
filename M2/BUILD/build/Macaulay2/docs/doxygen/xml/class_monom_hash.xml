@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monom_hash" kind="class" language="C++" prot="public">
+    <compoundname>MonomHash</compoundname>
+    <includes refid="_free_monoid_8hpp" local="no">FreeMonoid.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_monom_hash_a4d31dbd126b641be5b315d8048d93f10_1a4d31dbd126b641be5b315d8048d93f10" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomHash::operator()</definition>
+        <argsstring>(const Monom &amp;V) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>MonomHash::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_monom" kindref="compound">Monom</ref> &amp;</type>
+          <declname>V</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/FreeMonoid.hpp" line="267" column="7" bodyfile="Macaulay2/e/NCAlgebras/FreeMonoid.hpp" bodystart="267" bodyend="273"/>
+      </memberdef>
+      <memberdef kind="function" id="class_monom_hash_a1f1f45998af4b10a7f11c7139ddaa48e_1a1f1f45998af4b10a7f11c7139ddaa48e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomHash::operator()</definition>
+        <argsstring>(const Word &amp;V) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>MonomHash::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="class_word" kindref="compound">Word</ref> &amp;</type>
+          <declname>V</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/FreeMonoid.hpp" line="274" column="7" bodyfile="Macaulay2/e/NCAlgebras/FreeMonoid.hpp" bodystart="274" bodyend="280"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">Word::begin</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Hash functor on <computeroutput><ref refid="struct_monom" kindref="compound">Monom</ref></computeroutput> (or <computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput>) suitable for <computeroutput>std::unordered_map</computeroutput> / <computeroutput>std::unordered_set</computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Seeds the hash with the first int (length / first word position), then folds each remaining int in with the boost-style mix <computeroutput>hash ^= i + 0x9e3779b9 + (hash &lt;&lt; 6) + (hash &gt;&gt; 2)</computeroutput>. Same algorithm for both <computeroutput><ref refid="struct_monom" kindref="compound">Monom</ref></computeroutput> and <computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput> overloads. </para>
+    </detaileddescription>
+    <location file="Macaulay2/e/NCAlgebras/FreeMonoid.hpp" line="265" column="1" bodyfile="Macaulay2/e/NCAlgebras/FreeMonoid.hpp" bodystart="265" bodyend="281"/>
+    <listofallmembers>
+      <member refid="class_monom_hash_a4d31dbd126b641be5b315d8048d93f10_1a4d31dbd126b641be5b315d8048d93f10" prot="public" virt="non-virtual"><scope>MonomHash</scope><name>operator()</name></member>
+      <member refid="class_monom_hash_a1f1f45998af4b10a7f11c7139ddaa48e_1a1f1f45998af4b10a7f11c7139ddaa48e" prot="public" virt="non-virtual"><scope>MonomHash</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

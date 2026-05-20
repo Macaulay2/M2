@@ -1,0 +1,1391 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_raw_vector" kind="class" language="C++" prot="public">
+    <compoundname>RawVector</compoundname>
+    <includes refid="_raw_vector_8hpp" local="no">RawVector.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class <ref refid="struct_t" kindref="compound">T</ref></type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_raw_vector_a6533ecdd018182c26244ef10e3f46e51_1a6533ecdd018182c26244ef10e3f46e51" prot="public" static="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref> &amp;</type>
+        <definition>typedef T&amp; RawVector&lt; T &gt;::reference</definition>
+        <argsstring></argsstring>
+        <name>reference</name>
+        <qualifiedname>RawVector::reference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="31" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_a54d1ff5b1f6dae431d99d17d32aa31e5_1a54d1ff5b1f6dae431d99d17d32aa31e5" prot="public" static="no">
+        <type>const <ref refid="struct_t" kindref="compound">T</ref> &amp;</type>
+        <definition>typedef const T&amp; RawVector&lt; T &gt;::const_reference</definition>
+        <argsstring></argsstring>
+        <name>const_reference</name>
+        <qualifiedname>RawVector::const_reference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="32" column="19" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_ac58aed4a43d32c7456d932de303e2ab3_1ac58aed4a43d32c7456d932de303e2ab3" prot="public" static="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>typedef T* RawVector&lt; T &gt;::iterator</definition>
+        <argsstring></argsstring>
+        <name>iterator</name>
+        <qualifiedname>RawVector::iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="33" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_a2cc1643815f83208710b782965a2e794_1a2cc1643815f83208710b782965a2e794" prot="public" static="no">
+        <type>const <ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>typedef const T* RawVector&lt; T &gt;::const_iterator</definition>
+        <argsstring></argsstring>
+        <name>const_iterator</name>
+        <qualifiedname>RawVector::const_iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="34" column="19" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" prot="public" static="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>typedef size_t RawVector&lt; T &gt;::size_type</definition>
+        <argsstring></argsstring>
+        <name>size_type</name>
+        <qualifiedname>RawVector::size_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="35" column="18" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_a8437cb005250a4063a17f79b7815e105_1a8437cb005250a4063a17f79b7815e105" prot="public" static="no">
+        <type>ptrdiff_t</type>
+        <definition>typedef ptrdiff_t RawVector&lt; T &gt;::difference_type</definition>
+        <argsstring></argsstring>
+        <name>difference_type</name>
+        <qualifiedname>RawVector::difference_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="36" column="21" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_aec19db5c4afa90ac242593e278ac0bdb_1aec19db5c4afa90ac242593e278ac0bdb" prot="public" static="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref></type>
+        <definition>typedef T RawVector&lt; T &gt;::value_type</definition>
+        <argsstring></argsstring>
+        <name>value_type</name>
+        <qualifiedname>RawVector::value_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="37" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" prot="public" static="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>typedef T* RawVector&lt; T &gt;::pointer</definition>
+        <argsstring></argsstring>
+        <name>pointer</name>
+        <qualifiedname>RawVector::pointer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="38" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_af9ec8583eb37e5a1417b147b05ca8550_1af9ec8583eb37e5a1417b147b05ca8550" prot="public" static="no">
+        <type>const <ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>typedef const T* RawVector&lt; T &gt;::const_pointer</definition>
+        <argsstring></argsstring>
+        <name>const_pointer</name>
+        <qualifiedname>RawVector::const_pointer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="39" column="19" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_afffaa584cdf2206afaacac01ce1fda60_1afffaa584cdf2206afaacac01ce1fda60" prot="public" static="no">
+        <type>std::reverse_iterator&lt; <ref refid="class_raw_vector_ac58aed4a43d32c7456d932de303e2ab3_1ac58aed4a43d32c7456d932de303e2ab3" kindref="member">iterator</ref> &gt;</type>
+        <definition>typedef std::reverse_iterator&lt;iterator&gt; RawVector&lt; T &gt;::reverse_iterator</definition>
+        <argsstring></argsstring>
+        <name>reverse_iterator</name>
+        <qualifiedname>RawVector::reverse_iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="40" column="33" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_raw_vector_a364019505653653848364282d4e19ee2_1a364019505653653848364282d4e19ee2" prot="public" static="no">
+        <type>std::reverse_iterator&lt; <ref refid="class_raw_vector_a2cc1643815f83208710b782965a2e794_1a2cc1643815f83208710b782965a2e794" kindref="member">const_iterator</ref> &gt;</type>
+        <definition>typedef std::reverse_iterator&lt;const_iterator&gt; RawVector&lt; T &gt;::const_reverse_iterator</definition>
+        <argsstring></argsstring>
+        <name>const_reverse_iterator</name>
+        <qualifiedname>RawVector::const_reverse_iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="41" column="33" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>T* RawVector&lt; T &gt;::mBegin</definition>
+        <argsstring></argsstring>
+        <name>mBegin</name>
+        <qualifiedname>RawVector::mBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="300" column="5" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="300" bodyend="-1"/>
+        <referencedby refid="class_raw_vector_a68b227c8430f357390ee4487b98eb9c6_1a68b227c8430f357390ee4487b98eb9c6" compoundref="_raw_vector_8hpp" startline="140" endline="144">RawVector&lt; T &gt;::at</referencedby>
+        <referencedby refid="class_raw_vector_a028054a95584c619b9aca13842de43a3_1a028054a95584c619b9aca13842de43a3" compoundref="_raw_vector_8hpp" startline="146" endline="150">RawVector&lt; T &gt;::at</referencedby>
+        <referencedby refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</referencedby>
+        <referencedby refid="class_raw_vector_ad11429e10e3098de372517ed04b22a46_1ad11429e10e3098de372517ed04b22a46" compoundref="_raw_vector_8hpp" startline="100" endline="100">RawVector&lt; T &gt;::begin</referencedby>
+        <referencedby refid="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" compoundref="_raw_vector_8hpp" startline="126" endline="126">RawVector&lt; T &gt;::capacity</referencedby>
+        <referencedby refid="class_raw_vector_a87507128b6718142f8acc957262ff8bb_1a87507128b6718142f8acc957262ff8bb" compoundref="_raw_vector_8hpp" startline="286" endline="297">RawVector&lt; T &gt;::clearAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" compoundref="_raw_vector_8hpp" startline="128" endline="128">RawVector&lt; T &gt;::empty</referencedby>
+        <referencedby refid="class_raw_vector_af1dd8a92430f4d8b084c436e675ed1be_1af1dd8a92430f4d8b084c436e675ed1be" compoundref="_raw_vector_8hpp" startline="152" endline="155">RawVector&lt; T &gt;::front</referencedby>
+        <referencedby refid="class_raw_vector_a623d55141c46472952dde4f6f56274f6_1a623d55141c46472952dde4f6f56274f6" compoundref="_raw_vector_8hpp" startline="157" endline="160">RawVector&lt; T &gt;::front</referencedby>
+        <referencedby refid="class_raw_vector_af3475ad6dfacdfcfd92ae081490cb4d8_1af3475ad6dfacdfcfd92ae081490cb4d8" compoundref="_raw_vector_8hpp" startline="83" endline="88">RawVector&lt; T &gt;::operator=</referencedby>
+        <referencedby refid="class_raw_vector_a60adf4fb35ed92d46da512cd90c34422_1a60adf4fb35ed92d46da512cd90c34422" compoundref="_raw_vector_8hpp" startline="91" endline="97">RawVector&lt; T &gt;::operator=</referencedby>
+        <referencedby refid="class_raw_vector_afe9afe1c7522fc3745fa9699ad38bf7e_1afe9afe1c7522fc3745fa9699ad38bf7e" compoundref="_raw_vector_8hpp" startline="130" endline="133">RawVector&lt; T &gt;::operator[]</referencedby>
+        <referencedby refid="class_raw_vector_af00d77a5183a9d7ad7098d1fab1382ec_1af00d77a5183a9d7ad7098d1fab1382ec" compoundref="_raw_vector_8hpp" startline="135" endline="138">RawVector&lt; T &gt;::operator[]</referencedby>
+        <referencedby refid="class_raw_vector_a265d6ebd75cacaffbb3f13c167f009f2_1a265d6ebd75cacaffbb3f13c167f009f2" compoundref="_raw_vector_8hpp" startline="182" endline="188">RawVector&lt; T &gt;::rawAssign</referencedby>
+        <referencedby refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a5c74fa4cae09a84deac812e74205d787_1a5c74fa4cae09a84deac812e74205d787" compoundref="_raw_vector_8hpp" startline="47" endline="50">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a22edb72f2b389c1d43e9cc389299a9ed_1a22edb72f2b389c1d43e9cc389299a9ed" compoundref="_raw_vector_8hpp" startline="61" endline="64">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aeca9df96aa26771fcf8256312881316d_1aeca9df96aa26771fcf8256312881316d" compoundref="_raw_vector_8hpp" startline="66" endline="69">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aa8533b709ee43492011ca42736d155ce_1aa8533b709ee43492011ca42736d155ce" compoundref="_raw_vector_8hpp" startline="53" endline="59">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a0b1972a87f5700af215d0cbd4ffa9cd8_1a0b1972a87f5700af215d0cbd4ffa9cd8" compoundref="_raw_vector_8hpp" startline="271" endline="281">RawVector&lt; T &gt;::releaseAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a223c12c7d3844437ebe47ca0131116f5_1a223c12c7d3844437ebe47ca0131116f5" compoundref="_raw_vector_8hpp" startline="246" endline="252">RawVector&lt; T &gt;::releaseMemory</referencedby>
+        <referencedby refid="class_raw_vector_a03eb0bbd2cbd86eb378ed43f6ce789c1_1a03eb0bbd2cbd86eb378ed43f6ce789c1" compoundref="_raw_vector_8hpp" startline="257" endline="267">RawVector&lt; T &gt;::setMemoryAndCopy</referencedby>
+        <referencedby refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</referencedby>
+        <referencedby refid="class_raw_vector_a58cc6272a9e7f9a22dcff053f1e87ac2_1a58cc6272a9e7f9a22dcff053f1e87ac2" compoundref="_raw_vector_8hpp" startline="213" endline="217">RawVector&lt; T &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>T* RawVector&lt; T &gt;::mEnd</definition>
+        <argsstring></argsstring>
+        <name>mEnd</name>
+        <qualifiedname>RawVector::mEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="301" column="5" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="301" bodyend="-1"/>
+        <referencedby refid="class_raw_vector_a5dfdefc9b20705cb0092c27adda9a9e4_1a5dfdefc9b20705cb0092c27adda9a9e4" compoundref="_raw_vector_8hpp" startline="240" endline="242">RawVector&lt; T &gt;::atCapacity</referencedby>
+        <referencedby refid="class_raw_vector_a8b3b44a1f341e8c71194ddc44781748a_1a8b3b44a1f341e8c71194ddc44781748a" compoundref="_raw_vector_8hpp" startline="162" endline="165">RawVector&lt; T &gt;::back</referencedby>
+        <referencedby refid="class_raw_vector_a6c6f4697e5367b7495ef78a9e2f82185_1a6c6f4697e5367b7495ef78a9e2f82185" compoundref="_raw_vector_8hpp" startline="167" endline="170">RawVector&lt; T &gt;::back</referencedby>
+        <referencedby refid="class_raw_vector_af77bfe7c6b0ea235842f19fcf9d3d99a_1af77bfe7c6b0ea235842f19fcf9d3d99a" compoundref="_raw_vector_8hpp" startline="234" endline="236">RawVector&lt; T &gt;::capacityToGo</referencedby>
+        <referencedby refid="class_raw_vector_a87507128b6718142f8acc957262ff8bb_1a87507128b6718142f8acc957262ff8bb" compoundref="_raw_vector_8hpp" startline="286" endline="297">RawVector&lt; T &gt;::clearAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" compoundref="_raw_vector_8hpp" startline="128" endline="128">RawVector&lt; T &gt;::empty</referencedby>
+        <referencedby refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</referencedby>
+        <referencedby refid="class_raw_vector_ad4dab94b2a9c1b1c077c89bec3c4f1c3_1ad4dab94b2a9c1b1c077c89bec3c4f1c3" compoundref="_raw_vector_8hpp" startline="102" endline="102">RawVector&lt; T &gt;::end</referencedby>
+        <referencedby refid="class_raw_vector_a2c692682a6271cb70ae907f3947392ca_1a2c692682a6271cb70ae907f3947392ca" compoundref="_raw_vector_8hpp" startline="227" endline="231">RawVector&lt; T &gt;::memcpy</referencedby>
+        <referencedby refid="class_raw_vector_af3475ad6dfacdfcfd92ae081490cb4d8_1af3475ad6dfacdfcfd92ae081490cb4d8" compoundref="_raw_vector_8hpp" startline="83" endline="88">RawVector&lt; T &gt;::operator=</referencedby>
+        <referencedby refid="class_raw_vector_a60adf4fb35ed92d46da512cd90c34422_1a60adf4fb35ed92d46da512cd90c34422" compoundref="_raw_vector_8hpp" startline="91" endline="97">RawVector&lt; T &gt;::operator=</referencedby>
+        <referencedby refid="class_raw_vector_a4265cb61d171bacd36b53900a5b694cc_1a4265cb61d171bacd36b53900a5b694cc" compoundref="_raw_vector_8hpp" startline="207" endline="211">RawVector&lt; T &gt;::pop_back</referencedby>
+        <referencedby refid="class_raw_vector_a1f18577747d662bbf1a91448277c7959_1a1f18577747d662bbf1a91448277c7959" compoundref="_raw_vector_8hpp" startline="201" endline="205">RawVector&lt; T &gt;::rawPushBack</referencedby>
+        <referencedby refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a5c74fa4cae09a84deac812e74205d787_1a5c74fa4cae09a84deac812e74205d787" compoundref="_raw_vector_8hpp" startline="47" endline="50">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a22edb72f2b389c1d43e9cc389299a9ed_1a22edb72f2b389c1d43e9cc389299a9ed" compoundref="_raw_vector_8hpp" startline="61" endline="64">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aeca9df96aa26771fcf8256312881316d_1aeca9df96aa26771fcf8256312881316d" compoundref="_raw_vector_8hpp" startline="66" endline="69">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aa8533b709ee43492011ca42736d155ce_1aa8533b709ee43492011ca42736d155ce" compoundref="_raw_vector_8hpp" startline="53" endline="59">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a0b1972a87f5700af215d0cbd4ffa9cd8_1a0b1972a87f5700af215d0cbd4ffa9cd8" compoundref="_raw_vector_8hpp" startline="271" endline="281">RawVector&lt; T &gt;::releaseAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a223c12c7d3844437ebe47ca0131116f5_1a223c12c7d3844437ebe47ca0131116f5" compoundref="_raw_vector_8hpp" startline="246" endline="252">RawVector&lt; T &gt;::releaseMemory</referencedby>
+        <referencedby refid="class_raw_vector_ae1a0bc04c1d0bcb11953225f97c432f4_1ae1a0bc04c1d0bcb11953225f97c432f4" compoundref="_raw_vector_8hpp" startline="113" endline="124">RawVector&lt; T &gt;::resize</referencedby>
+        <referencedby refid="class_raw_vector_a03eb0bbd2cbd86eb378ed43f6ce789c1_1a03eb0bbd2cbd86eb378ed43f6ce789c1" compoundref="_raw_vector_8hpp" startline="257" endline="267">RawVector&lt; T &gt;::setMemoryAndCopy</referencedby>
+        <referencedby refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</referencedby>
+        <referencedby refid="class_raw_vector_a58cc6272a9e7f9a22dcff053f1e87ac2_1a58cc6272a9e7f9a22dcff053f1e87ac2" compoundref="_raw_vector_8hpp" startline="213" endline="217">RawVector&lt; T &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>T* RawVector&lt; T &gt;::mCapacityEnd</definition>
+        <argsstring></argsstring>
+        <name>mCapacityEnd</name>
+        <qualifiedname>RawVector::mCapacityEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="302" column="5" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="302" bodyend="-1"/>
+        <referencedby refid="class_raw_vector_a5dfdefc9b20705cb0092c27adda9a9e4_1a5dfdefc9b20705cb0092c27adda9a9e4" compoundref="_raw_vector_8hpp" startline="240" endline="242">RawVector&lt; T &gt;::atCapacity</referencedby>
+        <referencedby refid="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" compoundref="_raw_vector_8hpp" startline="126" endline="126">RawVector&lt; T &gt;::capacity</referencedby>
+        <referencedby refid="class_raw_vector_af77bfe7c6b0ea235842f19fcf9d3d99a_1af77bfe7c6b0ea235842f19fcf9d3d99a" compoundref="_raw_vector_8hpp" startline="234" endline="236">RawVector&lt; T &gt;::capacityToGo</referencedby>
+        <referencedby refid="class_raw_vector_a87507128b6718142f8acc957262ff8bb_1a87507128b6718142f8acc957262ff8bb" compoundref="_raw_vector_8hpp" startline="286" endline="297">RawVector&lt; T &gt;::clearAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_af3475ad6dfacdfcfd92ae081490cb4d8_1af3475ad6dfacdfcfd92ae081490cb4d8" compoundref="_raw_vector_8hpp" startline="83" endline="88">RawVector&lt; T &gt;::operator=</referencedby>
+        <referencedby refid="class_raw_vector_a60adf4fb35ed92d46da512cd90c34422_1a60adf4fb35ed92d46da512cd90c34422" compoundref="_raw_vector_8hpp" startline="91" endline="97">RawVector&lt; T &gt;::operator=</referencedby>
+        <referencedby refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a5c74fa4cae09a84deac812e74205d787_1a5c74fa4cae09a84deac812e74205d787" compoundref="_raw_vector_8hpp" startline="47" endline="50">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a22edb72f2b389c1d43e9cc389299a9ed_1a22edb72f2b389c1d43e9cc389299a9ed" compoundref="_raw_vector_8hpp" startline="61" endline="64">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aeca9df96aa26771fcf8256312881316d_1aeca9df96aa26771fcf8256312881316d" compoundref="_raw_vector_8hpp" startline="66" endline="69">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aa8533b709ee43492011ca42736d155ce_1aa8533b709ee43492011ca42736d155ce" compoundref="_raw_vector_8hpp" startline="53" endline="59">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a0b1972a87f5700af215d0cbd4ffa9cd8_1a0b1972a87f5700af215d0cbd4ffa9cd8" compoundref="_raw_vector_8hpp" startline="271" endline="281">RawVector&lt; T &gt;::releaseAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a223c12c7d3844437ebe47ca0131116f5_1a223c12c7d3844437ebe47ca0131116f5" compoundref="_raw_vector_8hpp" startline="246" endline="252">RawVector&lt; T &gt;::releaseMemory</referencedby>
+        <referencedby refid="class_raw_vector_a58cc6272a9e7f9a22dcff053f1e87ac2_1a58cc6272a9e7f9a22dcff053f1e87ac2" compoundref="_raw_vector_8hpp" startline="213" endline="217">RawVector&lt; T &gt;::swap</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RawVector&lt; T &gt;::RawVector</definition>
+        <argsstring>()</argsstring>
+        <name>RawVector</name>
+        <qualifiedname>RawVector::RawVector</qualifiedname>
+        <briefdescription>
+<para>Initializes to the null state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="44" column="3" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="44" bodyend="44"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <referencedby refid="class_raw_vector_a775f77a953450e3ee3c674a48c0eafb4_1a775f77a953450e3ee3c674a48c0eafb4" compoundref="_raw_vector_8hpp" startline="78" endline="80">RawVector&lt; T &gt;::contentsEqual</referencedby>
+        <referencedby refid="class_raw_vector_af3475ad6dfacdfcfd92ae081490cb4d8_1af3475ad6dfacdfcfd92ae081490cb4d8" compoundref="_raw_vector_8hpp" startline="83" endline="88">RawVector&lt; T &gt;::operator=</referencedby>
+        <referencedby refid="class_raw_vector_a60adf4fb35ed92d46da512cd90c34422_1a60adf4fb35ed92d46da512cd90c34422" compoundref="_raw_vector_8hpp" startline="91" endline="97">RawVector&lt; T &gt;::operator=</referencedby>
+        <referencedby refid="class_raw_vector_a5c74fa4cae09a84deac812e74205d787_1a5c74fa4cae09a84deac812e74205d787" compoundref="_raw_vector_8hpp" startline="47" endline="50">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aa8533b709ee43492011ca42736d155ce_1aa8533b709ee43492011ca42736d155ce" compoundref="_raw_vector_8hpp" startline="53" endline="59">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a03eb0bbd2cbd86eb378ed43f6ce789c1_1a03eb0bbd2cbd86eb378ed43f6ce789c1" compoundref="_raw_vector_8hpp" startline="257" endline="267">RawVector&lt; T &gt;::setMemoryAndCopy</referencedby>
+        <referencedby refid="class_raw_vector_a58cc6272a9e7f9a22dcff053f1e87ac2_1a58cc6272a9e7f9a22dcff053f1e87ac2" compoundref="_raw_vector_8hpp" startline="213" endline="217">RawVector&lt; T &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a5c74fa4cae09a84deac812e74205d787_1a5c74fa4cae09a84deac812e74205d787" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RawVector&lt; T &gt;::RawVector</definition>
+        <argsstring>(const RawVector &amp;v)</argsstring>
+        <name>RawVector</name>
+        <qualifiedname>RawVector::RawVector</qualifiedname>
+        <param>
+          <type>const <ref refid="class_raw_vector" kindref="compound">RawVector</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Copies the pointers from v. It is a shallow copy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="47" column="3" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="47" bodyend="50"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <references refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_aa8533b709ee43492011ca42736d155ce_1aa8533b709ee43492011ca42736d155ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RawVector&lt; T &gt;::RawVector</definition>
+        <argsstring>(RawVector &amp;&amp;v)</argsstring>
+        <name>RawVector</name>
+        <qualifiedname>RawVector::RawVector</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector" kindref="compound">RawVector</ref> &amp;&amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Copies the pointers from v. It is a shallow copy. Sets v to a null state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="53" column="3" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="53" bodyend="59"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <references refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a22edb72f2b389c1d43e9cc389299a9ed_1a22edb72f2b389c1d43e9cc389299a9ed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RawVector&lt; T &gt;::RawVector</definition>
+        <argsstring>(pointer begin, pointer end)</argsstring>
+        <name>RawVector</name>
+        <qualifiedname>RawVector::RawVector</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="61" column="3" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="61" bodyend="64"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+        <references refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_aeca9df96aa26771fcf8256312881316d_1aeca9df96aa26771fcf8256312881316d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RawVector&lt; T &gt;::RawVector</definition>
+        <argsstring>(pointer begin, pointer end, pointer capacityEnd)</argsstring>
+        <name>RawVector</name>
+        <qualifiedname>RawVector::RawVector</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>capacityEnd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="66" column="3" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="66" bodyend="69"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+        <references refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a6ae0610f917de7856e1f6c24f7539694_1a6ae0610f917de7856e1f6c24f7539694" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RawVector&lt; T &gt;::~RawVector</definition>
+        <argsstring>()</argsstring>
+        <name>~RawVector</name>
+        <qualifiedname>RawVector::~RawVector</qualifiedname>
+        <briefdescription>
+<para>As <ref refid="class_raw_vector_ad88b90691f586373aa645f9f080d6b3c_1ad88b90691f586373aa645f9f080d6b3c" kindref="member">clear()</ref> <mdash/> does not free memory. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="72" column="3" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="72" bodyend="74"/>
+        <references refid="class_raw_vector_ad88b90691f586373aa645f9f080d6b3c_1ad88b90691f586373aa645f9f080d6b3c" compoundref="_raw_vector_8hpp" startline="219" endline="222">RawVector&lt; T &gt;::clear</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a775f77a953450e3ee3c674a48c0eafb4_1a775f77a953450e3ee3c674a48c0eafb4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RawVector&lt; T &gt;::contentsEqual</definition>
+        <argsstring>(const RawVector&lt; T &gt; &amp;v) const</argsstring>
+        <name>contentsEqual</name>
+        <qualifiedname>RawVector::contentsEqual</qualifiedname>
+        <param>
+          <type>const <ref refid="class_raw_vector" kindref="compound">RawVector</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>There is no operator== to avoid confusion about whether it compares pointers or contents. Instead, there is this. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="78" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="78" bodyend="80"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+        <references refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</references>
+        <references refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_af3475ad6dfacdfcfd92ae081490cb4d8_1af3475ad6dfacdfcfd92ae081490cb4d8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector" kindref="compound">RawVector</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt; &amp;</type>
+        <definition>RawVector&lt; T &gt; &amp; RawVector&lt; T &gt;::operator=</definition>
+        <argsstring>(const RawVector &amp;v)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>RawVector::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_raw_vector" kindref="compound">RawVector</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Copies the pointers from v. It is a shallow copy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="83" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="83" bodyend="88"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <references refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a60adf4fb35ed92d46da512cd90c34422_1a60adf4fb35ed92d46da512cd90c34422" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector" kindref="compound">RawVector</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt; &amp;</type>
+        <definition>RawVector&lt; T &gt; &amp; RawVector&lt; T &gt;::operator=</definition>
+        <argsstring>(RawVector &amp;&amp;v)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>RawVector::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector" kindref="compound">RawVector</ref> &amp;&amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Copies the pointers from v. It is a shallow copy. Sets v to the null state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="91" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="91" bodyend="97"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <references refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_ac58aed4a43d32c7456d932de303e2ab3_1ac58aed4a43d32c7456d932de303e2ab3" kindref="member">iterator</ref></type>
+        <definition>iterator RawVector&lt; T &gt;::begin</definition>
+        <argsstring>()</argsstring>
+        <name>begin</name>
+        <qualifiedname>RawVector::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="99" column="12" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="99" bodyend="99"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <referencedby refid="class_sparse_matrix_a32fcb07eee89026ec10f2b5eb31265ca_1a32fcb07eee89026ec10f2b5eb31265ca" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="82" endline="90">SparseMatrix::applyColumnMap</referencedby>
+        <referencedby refid="class_raw_vector_a87507128b6718142f8acc957262ff8bb_1a87507128b6718142f8acc957262ff8bb" compoundref="_raw_vector_8hpp" startline="286" endline="297">RawVector&lt; T &gt;::clearAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a775f77a953450e3ee3c674a48c0eafb4_1a775f77a953450e3ee3c674a48c0eafb4" compoundref="_raw_vector_8hpp" startline="78" endline="80">RawVector&lt; T &gt;::contentsEqual</referencedby>
+        <referencedby refid="class_raw_vector_a265d6ebd75cacaffbb3f13c167f009f2_1a265d6ebd75cacaffbb3f13c167f009f2" compoundref="_raw_vector_8hpp" startline="182" endline="188">RawVector&lt; T &gt;::rawAssign</referencedby>
+        <referencedby refid="class_raw_vector_a0f89f588fefae184d32d8833b3ee3e2b_1a0f89f588fefae184d32d8833b3ee3e2b" compoundref="_raw_vector_8hpp" startline="191" endline="196">RawVector&lt; T &gt;::rawAssign</referencedby>
+        <referencedby refid="class_raw_vector_a22edb72f2b389c1d43e9cc389299a9ed_1a22edb72f2b389c1d43e9cc389299a9ed" compoundref="_raw_vector_8hpp" startline="61" endline="64">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aeca9df96aa26771fcf8256312881316d_1aeca9df96aa26771fcf8256312881316d" compoundref="_raw_vector_8hpp" startline="66" endline="69">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_a0b1972a87f5700af215d0cbd4ffa9cd8_1a0b1972a87f5700af215d0cbd4ffa9cd8" compoundref="_raw_vector_8hpp" startline="271" endline="281">RawVector&lt; T &gt;::releaseAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a33e527c05999ff6a7281920f70b02374_1a33e527c05999ff6a7281920f70b02374" compoundref="_raw_vector_8hpp" startline="106" endline="106">RawVector&lt; T &gt;::rend</referencedby>
+        <referencedby refid="class_raw_vector_a450403b7287932e13168c3ec6d20234c_1a450403b7287932e13168c3ec6d20234c" compoundref="_raw_vector_8hpp" startline="107" endline="107">RawVector&lt; T &gt;::rend</referencedby>
+        <referencedby refid="class_raw_vector_a03eb0bbd2cbd86eb378ed43f6ce789c1_1a03eb0bbd2cbd86eb378ed43f6ce789c1" compoundref="_raw_vector_8hpp" startline="257" endline="267">RawVector&lt; T &gt;::setMemoryAndCopy</referencedby>
+        <referencedby refid="class_sparse_matrix_a87d83cc5c0106480c6541ad4732dc380_1a87d83cc5c0106480c6541ad4732dc380" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="304" endline="313">SparseMatrix::trimLeadingZeroColumns</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_ad11429e10e3098de372517ed04b22a46_1ad11429e10e3098de372517ed04b22a46" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a2cc1643815f83208710b782965a2e794_1a2cc1643815f83208710b782965a2e794" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator RawVector&lt; T &gt;::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>RawVector::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="100" column="18" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="100" bodyend="100"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_ac58aed4a43d32c7456d932de303e2ab3_1ac58aed4a43d32c7456d932de303e2ab3" kindref="member">iterator</ref></type>
+        <definition>iterator RawVector&lt; T &gt;::end</definition>
+        <argsstring>()</argsstring>
+        <name>end</name>
+        <qualifiedname>RawVector::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="101" column="12" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="101" bodyend="101"/>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <referencedby refid="class_sparse_matrix_a32fcb07eee89026ec10f2b5eb31265ca_1a32fcb07eee89026ec10f2b5eb31265ca" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="82" endline="90">SparseMatrix::applyColumnMap</referencedby>
+        <referencedby refid="class_raw_vector_a87507128b6718142f8acc957262ff8bb_1a87507128b6718142f8acc957262ff8bb" compoundref="_raw_vector_8hpp" startline="286" endline="297">RawVector&lt; T &gt;::clearAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a775f77a953450e3ee3c674a48c0eafb4_1a775f77a953450e3ee3c674a48c0eafb4" compoundref="_raw_vector_8hpp" startline="78" endline="80">RawVector&lt; T &gt;::contentsEqual</referencedby>
+        <referencedby refid="class_raw_vector_a265d6ebd75cacaffbb3f13c167f009f2_1a265d6ebd75cacaffbb3f13c167f009f2" compoundref="_raw_vector_8hpp" startline="182" endline="188">RawVector&lt; T &gt;::rawAssign</referencedby>
+        <referencedby refid="class_raw_vector_a22edb72f2b389c1d43e9cc389299a9ed_1a22edb72f2b389c1d43e9cc389299a9ed" compoundref="_raw_vector_8hpp" startline="61" endline="64">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aeca9df96aa26771fcf8256312881316d_1aeca9df96aa26771fcf8256312881316d" compoundref="_raw_vector_8hpp" startline="66" endline="69">RawVector&lt; T &gt;::RawVector</referencedby>
+        <referencedby refid="class_raw_vector_aad1643004f730b544cc4859c1f556e3c_1aad1643004f730b544cc4859c1f556e3c" compoundref="_raw_vector_8hpp" startline="104" endline="104">RawVector&lt; T &gt;::rbegin</referencedby>
+        <referencedby refid="class_raw_vector_a1abd615d1d3ed5dc455b434aa249efd2_1a1abd615d1d3ed5dc455b434aa249efd2" compoundref="_raw_vector_8hpp" startline="105" endline="105">RawVector&lt; T &gt;::rbegin</referencedby>
+        <referencedby refid="class_raw_vector_a0b1972a87f5700af215d0cbd4ffa9cd8_1a0b1972a87f5700af215d0cbd4ffa9cd8" compoundref="_raw_vector_8hpp" startline="271" endline="281">RawVector&lt; T &gt;::releaseAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a03eb0bbd2cbd86eb378ed43f6ce789c1_1a03eb0bbd2cbd86eb378ed43f6ce789c1" compoundref="_raw_vector_8hpp" startline="257" endline="267">RawVector&lt; T &gt;::setMemoryAndCopy</referencedby>
+        <referencedby refid="class_sparse_matrix_a87d83cc5c0106480c6541ad4732dc380_1a87d83cc5c0106480c6541ad4732dc380" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="304" endline="313">SparseMatrix::trimLeadingZeroColumns</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_ad4dab94b2a9c1b1c077c89bec3c4f1c3_1ad4dab94b2a9c1b1c077c89bec3c4f1c3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a2cc1643815f83208710b782965a2e794_1a2cc1643815f83208710b782965a2e794" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator RawVector&lt; T &gt;::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>RawVector::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="102" column="18" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="102" bodyend="102"/>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_aad1643004f730b544cc4859c1f556e3c_1aad1643004f730b544cc4859c1f556e3c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_afffaa584cdf2206afaacac01ce1fda60_1afffaa584cdf2206afaacac01ce1fda60" kindref="member">reverse_iterator</ref></type>
+        <definition>reverse_iterator RawVector&lt; T &gt;::rbegin</definition>
+        <argsstring>()</argsstring>
+        <name>rbegin</name>
+        <qualifiedname>RawVector::rbegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="104" column="20" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="104" bodyend="104"/>
+        <references refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a1abd615d1d3ed5dc455b434aa249efd2_1a1abd615d1d3ed5dc455b434aa249efd2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a364019505653653848364282d4e19ee2_1a364019505653653848364282d4e19ee2" kindref="member">const_reverse_iterator</ref></type>
+        <definition>const_reverse_iterator RawVector&lt; T &gt;::rbegin</definition>
+        <argsstring>() const</argsstring>
+        <name>rbegin</name>
+        <qualifiedname>RawVector::rbegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="105" column="26" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="105" bodyend="105"/>
+        <references refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a33e527c05999ff6a7281920f70b02374_1a33e527c05999ff6a7281920f70b02374" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_afffaa584cdf2206afaacac01ce1fda60_1afffaa584cdf2206afaacac01ce1fda60" kindref="member">reverse_iterator</ref></type>
+        <definition>reverse_iterator RawVector&lt; T &gt;::rend</definition>
+        <argsstring>()</argsstring>
+        <name>rend</name>
+        <qualifiedname>RawVector::rend</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="106" column="20" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="106" bodyend="106"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a450403b7287932e13168c3ec6d20234c_1a450403b7287932e13168c3ec6d20234c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a364019505653653848364282d4e19ee2_1a364019505653653848364282d4e19ee2" kindref="member">const_reverse_iterator</ref></type>
+        <definition>const_reverse_iterator RawVector&lt; T &gt;::rend</definition>
+        <argsstring>() const</argsstring>
+        <name>rend</name>
+        <qualifiedname>RawVector::rend</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="107" column="26" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="107" bodyend="107"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" kindref="member">size_type</ref></type>
+        <definition>size_type RawVector&lt; T &gt;::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>RawVector::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="109" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="109" bodyend="109"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <referencedby refid="class_raw_vector_a68b227c8430f357390ee4487b98eb9c6_1a68b227c8430f357390ee4487b98eb9c6" compoundref="_raw_vector_8hpp" startline="140" endline="144">RawVector&lt; T &gt;::at</referencedby>
+        <referencedby refid="class_raw_vector_a028054a95584c619b9aca13842de43a3_1a028054a95584c619b9aca13842de43a3" compoundref="_raw_vector_8hpp" startline="146" endline="150">RawVector&lt; T &gt;::at</referencedby>
+        <referencedby refid="class_sparse_matrix_a5fd42820a655f2d9d2403d4674f78d8e_1a5fd42820a655f2d9d2403d4674f78d8e" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="399" endline="405">SparseMatrix::entryCount</referencedby>
+        <referencedby refid="class_raw_vector_a07f050df625a2bee0e43604a54250651_1a07f050df625a2bee0e43604a54250651" compoundref="_raw_vector_8hpp" startline="176" endline="178">RawVector&lt; T &gt;::memoryUseTrimmed</referencedby>
+        <referencedby refid="class_raw_vector_afe9afe1c7522fc3745fa9699ad38bf7e_1afe9afe1c7522fc3745fa9699ad38bf7e" compoundref="_raw_vector_8hpp" startline="130" endline="133">RawVector&lt; T &gt;::operator[]</referencedby>
+        <referencedby refid="class_raw_vector_af00d77a5183a9d7ad7098d1fab1382ec_1af00d77a5183a9d7ad7098d1fab1382ec" compoundref="_raw_vector_8hpp" startline="135" endline="138">RawVector&lt; T &gt;::operator[]</referencedby>
+        <referencedby refid="class_raw_vector_a265d6ebd75cacaffbb3f13c167f009f2_1a265d6ebd75cacaffbb3f13c167f009f2" compoundref="_raw_vector_8hpp" startline="182" endline="188">RawVector&lt; T &gt;::rawAssign</referencedby>
+        <referencedby refid="class_raw_vector_a0f89f588fefae184d32d8833b3ee3e2b_1a0f89f588fefae184d32d8833b3ee3e2b" compoundref="_raw_vector_8hpp" startline="191" endline="196">RawVector&lt; T &gt;::rawAssign</referencedby>
+        <referencedby refid="class_raw_vector_a1f18577747d662bbf1a91448277c7959_1a1f18577747d662bbf1a91448277c7959" compoundref="_raw_vector_8hpp" startline="201" endline="205">RawVector&lt; T &gt;::rawPushBack</referencedby>
+        <referencedby refid="class_raw_vector_ae1a0bc04c1d0bcb11953225f97c432f4_1ae1a0bc04c1d0bcb11953225f97c432f4" compoundref="_raw_vector_8hpp" startline="113" endline="124">RawVector&lt; T &gt;::resize</referencedby>
+        <referencedby refid="class_raw_vector_a03eb0bbd2cbd86eb378ed43f6ce789c1_1a03eb0bbd2cbd86eb378ed43f6ce789c1" compoundref="_raw_vector_8hpp" startline="257" endline="267">RawVector&lt; T &gt;::setMemoryAndCopy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_af7d4398627ef91318a587afde5a776e3_1af7d4398627ef91318a587afde5a776e3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" kindref="member">size_type</ref></type>
+        <definition>size_type RawVector&lt; T &gt;::max_size</definition>
+        <argsstring>() const</argsstring>
+        <name>max_size</name>
+        <qualifiedname>RawVector::max_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="110" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_ae1a0bc04c1d0bcb11953225f97c432f4_1ae1a0bc04c1d0bcb11953225f97c432f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void RawVector&lt; T &gt;::resize</definition>
+        <argsstring>(const size_type newSize)</argsstring>
+        <name>resize</name>
+        <qualifiedname>RawVector::resize</qualifiedname>
+        <param>
+          <type>const <ref refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" kindref="member">size_type</ref></type>
+          <declname>newSize</declname>
+        </param>
+        <briefdescription>
+<para>There must be enough capacity for the new size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="113" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="113" bodyend="124"/>
+        <references refid="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" compoundref="_raw_vector_8hpp" startline="126" endline="126">RawVector&lt; T &gt;::capacity</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <referencedby refid="class_raw_vector_a265d6ebd75cacaffbb3f13c167f009f2_1a265d6ebd75cacaffbb3f13c167f009f2" compoundref="_raw_vector_8hpp" startline="182" endline="188">RawVector&lt; T &gt;::rawAssign</referencedby>
+        <referencedby refid="class_raw_vector_a0f89f588fefae184d32d8833b3ee3e2b_1a0f89f588fefae184d32d8833b3ee3e2b" compoundref="_raw_vector_8hpp" startline="191" endline="196">RawVector&lt; T &gt;::rawAssign</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" kindref="member">size_type</ref></type>
+        <definition>size_type RawVector&lt; T &gt;::capacity</definition>
+        <argsstring>() const</argsstring>
+        <name>capacity</name>
+        <qualifiedname>RawVector::capacity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="126" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="126" bodyend="126"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <referencedby refid="class_raw_vector_ac31306fe2c4eefcbf4a3ce8562bb90c6_1ac31306fe2c4eefcbf4a3ce8562bb90c6" compoundref="_raw_vector_8hpp" startline="172" endline="174">RawVector&lt; T &gt;::memoryUse</referencedby>
+        <referencedby refid="class_raw_vector_a265d6ebd75cacaffbb3f13c167f009f2_1a265d6ebd75cacaffbb3f13c167f009f2" compoundref="_raw_vector_8hpp" startline="182" endline="188">RawVector&lt; T &gt;::rawAssign</referencedby>
+        <referencedby refid="class_raw_vector_a0f89f588fefae184d32d8833b3ee3e2b_1a0f89f588fefae184d32d8833b3ee3e2b" compoundref="_raw_vector_8hpp" startline="191" endline="196">RawVector&lt; T &gt;::rawAssign</referencedby>
+        <referencedby refid="class_raw_vector_a1f18577747d662bbf1a91448277c7959_1a1f18577747d662bbf1a91448277c7959" compoundref="_raw_vector_8hpp" startline="201" endline="205">RawVector&lt; T &gt;::rawPushBack</referencedby>
+        <referencedby refid="class_raw_vector_ae1a0bc04c1d0bcb11953225f97c432f4_1ae1a0bc04c1d0bcb11953225f97c432f4" compoundref="_raw_vector_8hpp" startline="113" endline="124">RawVector&lt; T &gt;::resize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RawVector&lt; T &gt;::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>RawVector::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="128" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="128" bodyend="128"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <referencedby refid="class_raw_vector_a8b3b44a1f341e8c71194ddc44781748a_1a8b3b44a1f341e8c71194ddc44781748a" compoundref="_raw_vector_8hpp" startline="162" endline="165">RawVector&lt; T &gt;::back</referencedby>
+        <referencedby refid="class_raw_vector_a6c6f4697e5367b7495ef78a9e2f82185_1a6c6f4697e5367b7495ef78a9e2f82185" compoundref="_raw_vector_8hpp" startline="167" endline="170">RawVector&lt; T &gt;::back</referencedby>
+        <referencedby refid="class_raw_vector_ad88b90691f586373aa645f9f080d6b3c_1ad88b90691f586373aa645f9f080d6b3c" compoundref="_raw_vector_8hpp" startline="219" endline="222">RawVector&lt; T &gt;::clear</referencedby>
+        <referencedby refid="class_raw_vector_af1dd8a92430f4d8b084c436e675ed1be_1af1dd8a92430f4d8b084c436e675ed1be" compoundref="_raw_vector_8hpp" startline="152" endline="155">RawVector&lt; T &gt;::front</referencedby>
+        <referencedby refid="class_raw_vector_a623d55141c46472952dde4f6f56274f6_1a623d55141c46472952dde4f6f56274f6" compoundref="_raw_vector_8hpp" startline="157" endline="160">RawVector&lt; T &gt;::front</referencedby>
+        <referencedby refid="class_raw_vector_a4265cb61d171bacd36b53900a5b694cc_1a4265cb61d171bacd36b53900a5b694cc" compoundref="_raw_vector_8hpp" startline="207" endline="211">RawVector&lt; T &gt;::pop_back</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_afe9afe1c7522fc3745fa9699ad38bf7e_1afe9afe1c7522fc3745fa9699ad38bf7e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a6533ecdd018182c26244ef10e3f46e51_1a6533ecdd018182c26244ef10e3f46e51" kindref="member">reference</ref></type>
+        <definition>reference RawVector&lt; T &gt;::operator[]</definition>
+        <argsstring>(size_type index)</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>RawVector::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" kindref="member">size_type</ref></type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="130" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="130" bodyend="133"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_af00d77a5183a9d7ad7098d1fab1382ec_1af00d77a5183a9d7ad7098d1fab1382ec" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a54d1ff5b1f6dae431d99d17d32aa31e5_1a54d1ff5b1f6dae431d99d17d32aa31e5" kindref="member">const_reference</ref></type>
+        <definition>const_reference RawVector&lt; T &gt;::operator[]</definition>
+        <argsstring>(size_type index) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>RawVector::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" kindref="member">size_type</ref></type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="135" column="19" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="135" bodyend="138"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a68b227c8430f357390ee4487b98eb9c6_1a68b227c8430f357390ee4487b98eb9c6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a6533ecdd018182c26244ef10e3f46e51_1a6533ecdd018182c26244ef10e3f46e51" kindref="member">reference</ref></type>
+        <definition>reference RawVector&lt; T &gt;::at</definition>
+        <argsstring>(size_type index)</argsstring>
+        <name>at</name>
+        <qualifiedname>RawVector::at</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" kindref="member">size_type</ref></type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="140" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="140" bodyend="144"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a028054a95584c619b9aca13842de43a3_1a028054a95584c619b9aca13842de43a3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a54d1ff5b1f6dae431d99d17d32aa31e5_1a54d1ff5b1f6dae431d99d17d32aa31e5" kindref="member">const_reference</ref></type>
+        <definition>const_reference RawVector&lt; T &gt;::at</definition>
+        <argsstring>(size_type index) const</argsstring>
+        <name>at</name>
+        <qualifiedname>RawVector::at</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" kindref="member">size_type</ref></type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="146" column="19" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="146" bodyend="150"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_af1dd8a92430f4d8b084c436e675ed1be_1af1dd8a92430f4d8b084c436e675ed1be" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a6533ecdd018182c26244ef10e3f46e51_1a6533ecdd018182c26244ef10e3f46e51" kindref="member">reference</ref></type>
+        <definition>reference RawVector&lt; T &gt;::front</definition>
+        <argsstring>()</argsstring>
+        <name>front</name>
+        <qualifiedname>RawVector::front</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="152" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="152" bodyend="155"/>
+        <references refid="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" compoundref="_raw_vector_8hpp" startline="128" endline="128">RawVector&lt; T &gt;::empty</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a623d55141c46472952dde4f6f56274f6_1a623d55141c46472952dde4f6f56274f6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a54d1ff5b1f6dae431d99d17d32aa31e5_1a54d1ff5b1f6dae431d99d17d32aa31e5" kindref="member">const_reference</ref></type>
+        <definition>const_reference RawVector&lt; T &gt;::front</definition>
+        <argsstring>() const</argsstring>
+        <name>front</name>
+        <qualifiedname>RawVector::front</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="157" column="19" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="157" bodyend="160"/>
+        <references refid="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" compoundref="_raw_vector_8hpp" startline="128" endline="128">RawVector&lt; T &gt;::empty</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a8b3b44a1f341e8c71194ddc44781748a_1a8b3b44a1f341e8c71194ddc44781748a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a6533ecdd018182c26244ef10e3f46e51_1a6533ecdd018182c26244ef10e3f46e51" kindref="member">reference</ref></type>
+        <definition>reference RawVector&lt; T &gt;::back</definition>
+        <argsstring>()</argsstring>
+        <name>back</name>
+        <qualifiedname>RawVector::back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="162" column="13" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="162" bodyend="165"/>
+        <references refid="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" compoundref="_raw_vector_8hpp" startline="128" endline="128">RawVector&lt; T &gt;::empty</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a6c6f4697e5367b7495ef78a9e2f82185_1a6c6f4697e5367b7495ef78a9e2f82185" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_a54d1ff5b1f6dae431d99d17d32aa31e5_1a54d1ff5b1f6dae431d99d17d32aa31e5" kindref="member">const_reference</ref></type>
+        <definition>const_reference RawVector&lt; T &gt;::back</definition>
+        <argsstring>() const</argsstring>
+        <name>back</name>
+        <qualifiedname>RawVector::back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="167" column="19" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="167" bodyend="170"/>
+        <references refid="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" compoundref="_raw_vector_8hpp" startline="128" endline="128">RawVector&lt; T &gt;::empty</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_ac31306fe2c4eefcbf4a3ce8562bb90c6_1ac31306fe2c4eefcbf4a3ce8562bb90c6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t RawVector&lt; T &gt;::memoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>memoryUse</name>
+        <qualifiedname>RawVector::memoryUse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="172" column="10" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="172" bodyend="174"/>
+        <references refid="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" compoundref="_raw_vector_8hpp" startline="126" endline="126">RawVector&lt; T &gt;::capacity</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a07f050df625a2bee0e43604a54250651_1a07f050df625a2bee0e43604a54250651" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t RawVector&lt; T &gt;::memoryUseTrimmed</definition>
+        <argsstring>() const</argsstring>
+        <name>memoryUseTrimmed</name>
+        <qualifiedname>RawVector::memoryUseTrimmed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="176" column="10" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="176" bodyend="178"/>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a265d6ebd75cacaffbb3f13c167f009f2_1a265d6ebd75cacaffbb3f13c167f009f2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iter</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void RawVector&lt; T &gt;::rawAssign</definition>
+        <argsstring>(Iter begin, Iter end)</argsstring>
+        <name>rawAssign</name>
+        <qualifiedname>RawVector::rawAssign</qualifiedname>
+        <param>
+          <type>Iter</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>Iter</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para>There must be enough capacity for the new size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="182" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="182" bodyend="188"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+        <references refid="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" compoundref="_raw_vector_8hpp" startline="126" endline="126">RawVector&lt; T &gt;::capacity</references>
+        <references refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_ae1a0bc04c1d0bcb11953225f97c432f4_1ae1a0bc04c1d0bcb11953225f97c432f4" compoundref="_raw_vector_8hpp" startline="113" endline="124">RawVector&lt; T &gt;::resize</references>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a0f89f588fefae184d32d8833b3ee3e2b_1a0f89f588fefae184d32d8833b3ee3e2b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void RawVector&lt; T &gt;::rawAssign</definition>
+        <argsstring>(size_type count, const T &amp;t)</argsstring>
+        <name>rawAssign</name>
+        <qualifiedname>RawVector::rawAssign</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" kindref="member">size_type</ref></type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_t" kindref="compound">T</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>There must be enough capacity for the new size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="191" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="191" bodyend="196"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+        <references refid="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" compoundref="_raw_vector_8hpp" startline="126" endline="126">RawVector&lt; T &gt;::capacity</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_ae1a0bc04c1d0bcb11953225f97c432f4_1ae1a0bc04c1d0bcb11953225f97c432f4" compoundref="_raw_vector_8hpp" startline="113" endline="124">RawVector&lt; T &gt;::resize</references>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a1f18577747d662bbf1a91448277c7959_1a1f18577747d662bbf1a91448277c7959" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void RawVector&lt; T &gt;::rawPushBack</definition>
+        <argsstring>(const T &amp;t)</argsstring>
+        <name>rawPushBack</name>
+        <qualifiedname>RawVector::rawPushBack</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_t" kindref="compound">T</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>There must be enough capacity for the new size. This is why there is no push_back and only a rawPushBack <mdash/> to remind you of the changed contract. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="201" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="201" bodyend="205"/>
+        <references refid="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" compoundref="_raw_vector_8hpp" startline="126" endline="126">RawVector&lt; T &gt;::capacity</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a4265cb61d171bacd36b53900a5b694cc_1a4265cb61d171bacd36b53900a5b694cc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void RawVector&lt; T &gt;::pop_back</definition>
+        <argsstring>()</argsstring>
+        <name>pop_back</name>
+        <qualifiedname>RawVector::pop_back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="207" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="207" bodyend="211"/>
+        <references refid="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" compoundref="_raw_vector_8hpp" startline="128" endline="128">RawVector&lt; T &gt;::empty</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <referencedby refid="class_raw_vector_ad88b90691f586373aa645f9f080d6b3c_1ad88b90691f586373aa645f9f080d6b3c" compoundref="_raw_vector_8hpp" startline="219" endline="222">RawVector&lt; T &gt;::clear</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a58cc6272a9e7f9a22dcff053f1e87ac2_1a58cc6272a9e7f9a22dcff053f1e87ac2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void RawVector&lt; T &gt;::swap</definition>
+        <argsstring>(RawVector&lt; T &gt; &amp;v)</argsstring>
+        <name>swap</name>
+        <qualifiedname>RawVector::swap</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector" kindref="compound">RawVector</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="213" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="213" bodyend="217"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <references refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_ad88b90691f586373aa645f9f080d6b3c_1ad88b90691f586373aa645f9f080d6b3c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void RawVector&lt; T &gt;::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>RawVector::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="219" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="219" bodyend="222"/>
+        <references refid="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" compoundref="_raw_vector_8hpp" startline="128" endline="128">RawVector&lt; T &gt;::empty</references>
+        <references refid="class_raw_vector_a4265cb61d171bacd36b53900a5b694cc_1a4265cb61d171bacd36b53900a5b694cc" compoundref="_raw_vector_8hpp" startline="207" endline="211">RawVector&lt; T &gt;::pop_back</references>
+        <referencedby refid="class_raw_vector_a87507128b6718142f8acc957262ff8bb_1a87507128b6718142f8acc957262ff8bb" compoundref="_raw_vector_8hpp" startline="286" endline="297">RawVector&lt; T &gt;::clearAndSetMemory</referencedby>
+        <referencedby refid="class_raw_vector_a6ae0610f917de7856e1f6c24f7539694_1a6ae0610f917de7856e1f6c24f7539694" compoundref="_raw_vector_8hpp" startline="72" endline="74">RawVector&lt; T &gt;::~RawVector</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a2c692682a6271cb70ae907f3947392ca_1a2c692682a6271cb70ae907f3947392ca" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void RawVector&lt; T &gt;::memcpy</definition>
+        <argsstring>(const T *from, size_t countOfT)</argsstring>
+        <name>memcpy</name>
+        <qualifiedname>RawVector::memcpy</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_t" kindref="compound">T</ref> *</type>
+          <declname>from</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>countOfT</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="227" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="227" bodyend="231"/>
+        <references refid="class_raw_vector_af77bfe7c6b0ea235842f19fcf9d3d99a_1af77bfe7c6b0ea235842f19fcf9d3d99a" compoundref="_raw_vector_8hpp" startline="234" endline="236">RawVector&lt; T &gt;::capacityToGo</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_af77bfe7c6b0ea235842f19fcf9d3d99a_1af77bfe7c6b0ea235842f19fcf9d3d99a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t RawVector&lt; T &gt;::capacityToGo</definition>
+        <argsstring>() const</argsstring>
+        <name>capacityToGo</name>
+        <qualifiedname>RawVector::capacityToGo</qualifiedname>
+        <briefdescription>
+<para>Unused capacity. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="234" column="10" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="234" bodyend="236"/>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <referencedby refid="class_raw_vector_a2c692682a6271cb70ae907f3947392ca_1a2c692682a6271cb70ae907f3947392ca" compoundref="_raw_vector_8hpp" startline="227" endline="231">RawVector&lt; T &gt;::memcpy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a5dfdefc9b20705cb0092c27adda9a9e4_1a5dfdefc9b20705cb0092c27adda9a9e4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RawVector&lt; T &gt;::atCapacity</definition>
+        <argsstring>() const</argsstring>
+        <name>atCapacity</name>
+        <qualifiedname>RawVector::atCapacity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if there is no more capacity left. That is, if <ref refid="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" kindref="member">capacity()</ref> == <ref refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" kindref="member">size()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="240" column="8" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="240" bodyend="242"/>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a223c12c7d3844437ebe47ca0131116f5_1a223c12c7d3844437ebe47ca0131116f5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+        <definition>pointer RawVector&lt; T &gt;::releaseMemory</definition>
+        <argsstring>()</argsstring>
+        <name>releaseMemory</name>
+        <qualifiedname>RawVector::releaseMemory</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets this object to its null state without destructing memory. Returns a pointer to the previous beginning of the buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="246" column="11" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="246" bodyend="252"/>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <referencedby refid="class_sparse_matrix_a8624e99c23cc0d0d9f517909b85883f5_1a8624e99c23cc0d0d9f517909b85883f5" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="239" endline="252">SparseMatrix::clear</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a03eb0bbd2cbd86eb378ed43f6ce789c1_1a03eb0bbd2cbd86eb378ed43f6ce789c1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+        <definition>pointer RawVector&lt; T &gt;::setMemoryAndCopy</definition>
+        <argsstring>(pointer begin, pointer capacityEnd)</argsstring>
+        <name>setMemoryAndCopy</name>
+        <qualifiedname>RawVector::setMemoryAndCopy</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>capacityEnd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Takes over the new memory that is passed in, copies the old values to the new memory and destructs the old values. Returns a pointer to the previous beginning of the buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="257" column="11" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="257" bodyend="267"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+        <references refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+        <references refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" compoundref="_raw_vector_8hpp" startline="44" endline="44">RawVector&lt; T &gt;::RawVector</references>
+        <references refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" compoundref="_raw_vector_8hpp" startline="109" endline="109">RawVector&lt; T &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a0b1972a87f5700af215d0cbd4ffa9cd8_1a0b1972a87f5700af215d0cbd4ffa9cd8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+        <definition>pointer RawVector&lt; T &gt;::releaseAndSetMemory</definition>
+        <argsstring>(pointer begin, pointer end, pointer capacityEnd)</argsstring>
+        <name>releaseAndSetMemory</name>
+        <qualifiedname>RawVector::releaseAndSetMemory</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>capacityEnd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Takes over the new memory that is passed in without destructing memory. Returns a pointer to the previous beginning of the buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="271" column="11" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="271" bodyend="281"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+        <references refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+      </memberdef>
+      <memberdef kind="function" id="class_raw_vector_a87507128b6718142f8acc957262ff8bb_1a87507128b6718142f8acc957262ff8bb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+        <definition>pointer RawVector&lt; T &gt;::clearAndSetMemory</definition>
+        <argsstring>(pointer begin, pointer end, pointer capacityEnd)</argsstring>
+        <name>clearAndSetMemory</name>
+        <qualifiedname>RawVector::clearAndSetMemory</qualifiedname>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" kindref="member">pointer</ref></type>
+          <declname>capacityEnd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Destructs memory and then takes over the new memory that is passed in. Does not deallocate the backing memory. Returns a pointer to the previous beginning of the buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="286" column="11" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="286" bodyend="297"/>
+        <references refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" compoundref="_raw_vector_8hpp" startline="99" endline="99">RawVector&lt; T &gt;::begin</references>
+        <references refid="class_raw_vector_ad88b90691f586373aa645f9f080d6b3c_1ad88b90691f586373aa645f9f080d6b3c" compoundref="_raw_vector_8hpp" startline="219" endline="222">RawVector&lt; T &gt;::clear</references>
+        <references refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" compoundref="_raw_vector_8hpp" startline="101" endline="101">RawVector&lt; T &gt;::end</references>
+        <references refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" compoundref="_raw_vector_8hpp" startline="300">RawVector&lt; T &gt;::mBegin</references>
+        <references refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" compoundref="_raw_vector_8hpp" startline="302">RawVector&lt; T &gt;::mCapacityEnd</references>
+        <references refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" compoundref="_raw_vector_8hpp" startline="301">RawVector&lt; T &gt;::mEnd</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="class_raw_vector" kindref="compound">RawVector</ref> mimics std::vector except that it does not do memory management. So you can directly access the pointers to memory and you can replace them with any other pointers that you need to.</para>
+<para>Warning: <ref refid="class_raw_vector" kindref="compound">RawVector</ref> is called raw because it does not allocate any memory, so it is an error to insert elements that there is not enough space for - you need to make sure ahead of time that there is enough space.</para>
+<para>This class makes it possible to have a lot of the convenience of the std::vector interface even in places where std::vector cannot be used because of a need for manual memory management. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>RawVector&lt; ColIndex &gt;</label>
+        <link refid="class_raw_vector"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ColIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>RawVector&lt; Scalar &gt;</label>
+        <link refid="class_raw_vector"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; Scalar &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>RawVector&lt; T &gt;</label>
+        <link refid="class_raw_vector"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>RawVector&lt; T &gt;</label>
+        <link refid="class_raw_vector"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mCapacityEnd</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>const void *</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="5">
+        <label>unsigned</label>
+      </node>
+      <node id="4">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="8">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/RawVector.hpp" line="29" column="1" bodyfile="submodules/mathicgb/src/mathicgb/RawVector.hpp" bodystart="29" bodyend="303"/>
+    <listofallmembers>
+      <member refid="class_raw_vector_a68b227c8430f357390ee4487b98eb9c6_1a68b227c8430f357390ee4487b98eb9c6" prot="public" virt="non-virtual"><scope>RawVector</scope><name>at</name></member>
+      <member refid="class_raw_vector_a028054a95584c619b9aca13842de43a3_1a028054a95584c619b9aca13842de43a3" prot="public" virt="non-virtual"><scope>RawVector</scope><name>at</name></member>
+      <member refid="class_raw_vector_a5dfdefc9b20705cb0092c27adda9a9e4_1a5dfdefc9b20705cb0092c27adda9a9e4" prot="public" virt="non-virtual"><scope>RawVector</scope><name>atCapacity</name></member>
+      <member refid="class_raw_vector_a8b3b44a1f341e8c71194ddc44781748a_1a8b3b44a1f341e8c71194ddc44781748a" prot="public" virt="non-virtual"><scope>RawVector</scope><name>back</name></member>
+      <member refid="class_raw_vector_a6c6f4697e5367b7495ef78a9e2f82185_1a6c6f4697e5367b7495ef78a9e2f82185" prot="public" virt="non-virtual"><scope>RawVector</scope><name>back</name></member>
+      <member refid="class_raw_vector_ae69c8fe3004cfbb9aef0a129a09b161b_1ae69c8fe3004cfbb9aef0a129a09b161b" prot="public" virt="non-virtual"><scope>RawVector</scope><name>begin</name></member>
+      <member refid="class_raw_vector_ad11429e10e3098de372517ed04b22a46_1ad11429e10e3098de372517ed04b22a46" prot="public" virt="non-virtual"><scope>RawVector</scope><name>begin</name></member>
+      <member refid="class_raw_vector_a65ac94b0ee483049342c1a3c23936dd8_1a65ac94b0ee483049342c1a3c23936dd8" prot="public" virt="non-virtual"><scope>RawVector</scope><name>capacity</name></member>
+      <member refid="class_raw_vector_af77bfe7c6b0ea235842f19fcf9d3d99a_1af77bfe7c6b0ea235842f19fcf9d3d99a" prot="public" virt="non-virtual"><scope>RawVector</scope><name>capacityToGo</name></member>
+      <member refid="class_raw_vector_ad88b90691f586373aa645f9f080d6b3c_1ad88b90691f586373aa645f9f080d6b3c" prot="public" virt="non-virtual"><scope>RawVector</scope><name>clear</name></member>
+      <member refid="class_raw_vector_a87507128b6718142f8acc957262ff8bb_1a87507128b6718142f8acc957262ff8bb" prot="public" virt="non-virtual"><scope>RawVector</scope><name>clearAndSetMemory</name></member>
+      <member refid="class_raw_vector_a2cc1643815f83208710b782965a2e794_1a2cc1643815f83208710b782965a2e794" prot="public" virt="non-virtual"><scope>RawVector</scope><name>const_iterator</name></member>
+      <member refid="class_raw_vector_af9ec8583eb37e5a1417b147b05ca8550_1af9ec8583eb37e5a1417b147b05ca8550" prot="public" virt="non-virtual"><scope>RawVector</scope><name>const_pointer</name></member>
+      <member refid="class_raw_vector_a54d1ff5b1f6dae431d99d17d32aa31e5_1a54d1ff5b1f6dae431d99d17d32aa31e5" prot="public" virt="non-virtual"><scope>RawVector</scope><name>const_reference</name></member>
+      <member refid="class_raw_vector_a364019505653653848364282d4e19ee2_1a364019505653653848364282d4e19ee2" prot="public" virt="non-virtual"><scope>RawVector</scope><name>const_reverse_iterator</name></member>
+      <member refid="class_raw_vector_a775f77a953450e3ee3c674a48c0eafb4_1a775f77a953450e3ee3c674a48c0eafb4" prot="public" virt="non-virtual"><scope>RawVector</scope><name>contentsEqual</name></member>
+      <member refid="class_raw_vector_a8437cb005250a4063a17f79b7815e105_1a8437cb005250a4063a17f79b7815e105" prot="public" virt="non-virtual"><scope>RawVector</scope><name>difference_type</name></member>
+      <member refid="class_raw_vector_a21793c5bc60c3e937dc25cfa8f0ca9e1_1a21793c5bc60c3e937dc25cfa8f0ca9e1" prot="public" virt="non-virtual"><scope>RawVector</scope><name>empty</name></member>
+      <member refid="class_raw_vector_ac7b48f27958baa99c62edd95a4766905_1ac7b48f27958baa99c62edd95a4766905" prot="public" virt="non-virtual"><scope>RawVector</scope><name>end</name></member>
+      <member refid="class_raw_vector_ad4dab94b2a9c1b1c077c89bec3c4f1c3_1ad4dab94b2a9c1b1c077c89bec3c4f1c3" prot="public" virt="non-virtual"><scope>RawVector</scope><name>end</name></member>
+      <member refid="class_raw_vector_af1dd8a92430f4d8b084c436e675ed1be_1af1dd8a92430f4d8b084c436e675ed1be" prot="public" virt="non-virtual"><scope>RawVector</scope><name>front</name></member>
+      <member refid="class_raw_vector_a623d55141c46472952dde4f6f56274f6_1a623d55141c46472952dde4f6f56274f6" prot="public" virt="non-virtual"><scope>RawVector</scope><name>front</name></member>
+      <member refid="class_raw_vector_ac58aed4a43d32c7456d932de303e2ab3_1ac58aed4a43d32c7456d932de303e2ab3" prot="public" virt="non-virtual"><scope>RawVector</scope><name>iterator</name></member>
+      <member refid="class_raw_vector_af7d4398627ef91318a587afde5a776e3_1af7d4398627ef91318a587afde5a776e3" prot="public" virt="non-virtual"><scope>RawVector</scope><name>max_size</name></member>
+      <member refid="class_raw_vector_a47623de4857155c22ed2c615568892d7_1a47623de4857155c22ed2c615568892d7" prot="private" virt="non-virtual"><scope>RawVector</scope><name>mBegin</name></member>
+      <member refid="class_raw_vector_aed91446df09d6153eb4e65d21cdabfc0_1aed91446df09d6153eb4e65d21cdabfc0" prot="private" virt="non-virtual"><scope>RawVector</scope><name>mCapacityEnd</name></member>
+      <member refid="class_raw_vector_a2c692682a6271cb70ae907f3947392ca_1a2c692682a6271cb70ae907f3947392ca" prot="public" virt="non-virtual"><scope>RawVector</scope><name>memcpy</name></member>
+      <member refid="class_raw_vector_ac31306fe2c4eefcbf4a3ce8562bb90c6_1ac31306fe2c4eefcbf4a3ce8562bb90c6" prot="public" virt="non-virtual"><scope>RawVector</scope><name>memoryUse</name></member>
+      <member refid="class_raw_vector_a07f050df625a2bee0e43604a54250651_1a07f050df625a2bee0e43604a54250651" prot="public" virt="non-virtual"><scope>RawVector</scope><name>memoryUseTrimmed</name></member>
+      <member refid="class_raw_vector_a78a74ba6369c9923181b8acd22b248ab_1a78a74ba6369c9923181b8acd22b248ab" prot="private" virt="non-virtual"><scope>RawVector</scope><name>mEnd</name></member>
+      <member refid="class_raw_vector_af3475ad6dfacdfcfd92ae081490cb4d8_1af3475ad6dfacdfcfd92ae081490cb4d8" prot="public" virt="non-virtual"><scope>RawVector</scope><name>operator=</name></member>
+      <member refid="class_raw_vector_a60adf4fb35ed92d46da512cd90c34422_1a60adf4fb35ed92d46da512cd90c34422" prot="public" virt="non-virtual"><scope>RawVector</scope><name>operator=</name></member>
+      <member refid="class_raw_vector_afe9afe1c7522fc3745fa9699ad38bf7e_1afe9afe1c7522fc3745fa9699ad38bf7e" prot="public" virt="non-virtual"><scope>RawVector</scope><name>operator[]</name></member>
+      <member refid="class_raw_vector_af00d77a5183a9d7ad7098d1fab1382ec_1af00d77a5183a9d7ad7098d1fab1382ec" prot="public" virt="non-virtual"><scope>RawVector</scope><name>operator[]</name></member>
+      <member refid="class_raw_vector_ac8cfbe2e9c1c189476d5091799a8bb6e_1ac8cfbe2e9c1c189476d5091799a8bb6e" prot="public" virt="non-virtual"><scope>RawVector</scope><name>pointer</name></member>
+      <member refid="class_raw_vector_a4265cb61d171bacd36b53900a5b694cc_1a4265cb61d171bacd36b53900a5b694cc" prot="public" virt="non-virtual"><scope>RawVector</scope><name>pop_back</name></member>
+      <member refid="class_raw_vector_a265d6ebd75cacaffbb3f13c167f009f2_1a265d6ebd75cacaffbb3f13c167f009f2" prot="public" virt="non-virtual"><scope>RawVector</scope><name>rawAssign</name></member>
+      <member refid="class_raw_vector_a0f89f588fefae184d32d8833b3ee3e2b_1a0f89f588fefae184d32d8833b3ee3e2b" prot="public" virt="non-virtual"><scope>RawVector</scope><name>rawAssign</name></member>
+      <member refid="class_raw_vector_a1f18577747d662bbf1a91448277c7959_1a1f18577747d662bbf1a91448277c7959" prot="public" virt="non-virtual"><scope>RawVector</scope><name>rawPushBack</name></member>
+      <member refid="class_raw_vector_a504f8cc392991cb00507f00f536c7ee4_1a504f8cc392991cb00507f00f536c7ee4" prot="public" virt="non-virtual"><scope>RawVector</scope><name>RawVector</name></member>
+      <member refid="class_raw_vector_a5c74fa4cae09a84deac812e74205d787_1a5c74fa4cae09a84deac812e74205d787" prot="public" virt="non-virtual"><scope>RawVector</scope><name>RawVector</name></member>
+      <member refid="class_raw_vector_aa8533b709ee43492011ca42736d155ce_1aa8533b709ee43492011ca42736d155ce" prot="public" virt="non-virtual"><scope>RawVector</scope><name>RawVector</name></member>
+      <member refid="class_raw_vector_a22edb72f2b389c1d43e9cc389299a9ed_1a22edb72f2b389c1d43e9cc389299a9ed" prot="public" virt="non-virtual"><scope>RawVector</scope><name>RawVector</name></member>
+      <member refid="class_raw_vector_aeca9df96aa26771fcf8256312881316d_1aeca9df96aa26771fcf8256312881316d" prot="public" virt="non-virtual"><scope>RawVector</scope><name>RawVector</name></member>
+      <member refid="class_raw_vector_aad1643004f730b544cc4859c1f556e3c_1aad1643004f730b544cc4859c1f556e3c" prot="public" virt="non-virtual"><scope>RawVector</scope><name>rbegin</name></member>
+      <member refid="class_raw_vector_a1abd615d1d3ed5dc455b434aa249efd2_1a1abd615d1d3ed5dc455b434aa249efd2" prot="public" virt="non-virtual"><scope>RawVector</scope><name>rbegin</name></member>
+      <member refid="class_raw_vector_a6533ecdd018182c26244ef10e3f46e51_1a6533ecdd018182c26244ef10e3f46e51" prot="public" virt="non-virtual"><scope>RawVector</scope><name>reference</name></member>
+      <member refid="class_raw_vector_a0b1972a87f5700af215d0cbd4ffa9cd8_1a0b1972a87f5700af215d0cbd4ffa9cd8" prot="public" virt="non-virtual"><scope>RawVector</scope><name>releaseAndSetMemory</name></member>
+      <member refid="class_raw_vector_a223c12c7d3844437ebe47ca0131116f5_1a223c12c7d3844437ebe47ca0131116f5" prot="public" virt="non-virtual"><scope>RawVector</scope><name>releaseMemory</name></member>
+      <member refid="class_raw_vector_a33e527c05999ff6a7281920f70b02374_1a33e527c05999ff6a7281920f70b02374" prot="public" virt="non-virtual"><scope>RawVector</scope><name>rend</name></member>
+      <member refid="class_raw_vector_a450403b7287932e13168c3ec6d20234c_1a450403b7287932e13168c3ec6d20234c" prot="public" virt="non-virtual"><scope>RawVector</scope><name>rend</name></member>
+      <member refid="class_raw_vector_ae1a0bc04c1d0bcb11953225f97c432f4_1ae1a0bc04c1d0bcb11953225f97c432f4" prot="public" virt="non-virtual"><scope>RawVector</scope><name>resize</name></member>
+      <member refid="class_raw_vector_afffaa584cdf2206afaacac01ce1fda60_1afffaa584cdf2206afaacac01ce1fda60" prot="public" virt="non-virtual"><scope>RawVector</scope><name>reverse_iterator</name></member>
+      <member refid="class_raw_vector_a03eb0bbd2cbd86eb378ed43f6ce789c1_1a03eb0bbd2cbd86eb378ed43f6ce789c1" prot="public" virt="non-virtual"><scope>RawVector</scope><name>setMemoryAndCopy</name></member>
+      <member refid="class_raw_vector_aac9df22f218816ff0722d6af67640ccb_1aac9df22f218816ff0722d6af67640ccb" prot="public" virt="non-virtual"><scope>RawVector</scope><name>size</name></member>
+      <member refid="class_raw_vector_a59e3bc73f88ed0ce397258f1c8ba9256_1a59e3bc73f88ed0ce397258f1c8ba9256" prot="public" virt="non-virtual"><scope>RawVector</scope><name>size_type</name></member>
+      <member refid="class_raw_vector_a58cc6272a9e7f9a22dcff053f1e87ac2_1a58cc6272a9e7f9a22dcff053f1e87ac2" prot="public" virt="non-virtual"><scope>RawVector</scope><name>swap</name></member>
+      <member refid="class_raw_vector_aec19db5c4afa90ac242593e278ac0bdb_1aec19db5c4afa90ac242593e278ac0bdb" prot="public" virt="non-virtual"><scope>RawVector</scope><name>value_type</name></member>
+      <member refid="class_raw_vector_a6ae0610f917de7856e1f6c24f7539694_1a6ae0610f917de7856e1f6c24f7539694" prot="public" virt="non-virtual"><scope>RawVector</scope><name>~RawVector</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

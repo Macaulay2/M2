@@ -1,0 +1,486 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_8a97dbb03e513ea63050801abc9266fe" kind="dir">
+    <compoundname>Macaulay2/e</compoundname>
+    <innerdir refid="dir_6d3e1fc03a2c0fe268d053df8b4dd308">Macaulay2/e/bibasis</innerdir>
+    <innerdir refid="dir_8ed8434bc3d991323934987a3489e746">Macaulay2/e/f4</innerdir>
+    <innerdir refid="dir_46c62c7923ec94477cb2a52e63da755a">Macaulay2/e/gb-f4</innerdir>
+    <innerdir refid="dir_8587dbd6c5a5c081f70c427936cccafd">Macaulay2/e/interface</innerdir>
+    <innerdir refid="dir_3bd4c1e8abe0cd95d07e5be4652cd377">Macaulay2/e/NCAlgebras</innerdir>
+    <innerdir refid="dir_23afb875d2d911a61a070793ea5cfc92">Macaulay2/e/NCResolutions</innerdir>
+    <innerdir refid="dir_208df166e208656f2e3436240a4845e8">Macaulay2/e/schreyer-resolution</innerdir>
+    <innerdir refid="dir_cb190e7768d1e7821fcc13efdd565523">Macaulay2/e/unit-tests</innerdir>
+    <innerfile refid="aring-_c_c_8cpp">aring-CC.cpp</innerfile>
+    <innerfile refid="aring-_c_c_8hpp">aring-CC.hpp</innerfile>
+    <innerfile refid="aring-_c_c_c_8cpp">aring-CCC.cpp</innerfile>
+    <innerfile refid="aring-_c_c_c_8hpp">aring-CCC.hpp</innerfile>
+    <innerfile refid="aring-_c_ci_8cpp">aring-CCi.cpp</innerfile>
+    <innerfile refid="aring-_c_ci_8hpp">aring-CCi.hpp</innerfile>
+    <innerfile refid="aring-gf-flint-big_8cpp">aring-gf-flint-big.cpp</innerfile>
+    <innerfile refid="aring-gf-flint-big_8hpp">aring-gf-flint-big.hpp</innerfile>
+    <innerfile refid="aring-gf-flint_8cpp">aring-gf-flint.cpp</innerfile>
+    <innerfile refid="aring-gf-flint_8hpp">aring-gf-flint.hpp</innerfile>
+    <innerfile refid="aring-glue_8hpp">aring-glue.hpp</innerfile>
+    <innerfile refid="aring-m2-gf_8cpp">aring-m2-gf.cpp</innerfile>
+    <innerfile refid="aring-m2-gf_8hpp">aring-m2-gf.hpp</innerfile>
+    <innerfile refid="aring-qq-flint_8cpp">aring-qq-flint.cpp</innerfile>
+    <innerfile refid="aring-qq-flint_8hpp">aring-qq-flint.hpp</innerfile>
+    <innerfile refid="aring-qq-gmp_8cpp">aring-qq-gmp.cpp</innerfile>
+    <innerfile refid="aring-qq-gmp_8hpp">aring-qq-gmp.hpp</innerfile>
+    <innerfile refid="aring-qq_8hpp">aring-qq.hpp</innerfile>
+    <innerfile refid="aring-_r_r_8cpp">aring-RR.cpp</innerfile>
+    <innerfile refid="aring-_r_r_8hpp">aring-RR.hpp</innerfile>
+    <innerfile refid="aring-_r_ri_8cpp">aring-RRi.cpp</innerfile>
+    <innerfile refid="aring-_r_ri_8hpp">aring-RRi.hpp</innerfile>
+    <innerfile refid="aring-_r_r_r_8cpp">aring-RRR.cpp</innerfile>
+    <innerfile refid="aring-_r_r_r_8hpp">aring-RRR.hpp</innerfile>
+    <innerfile refid="aring-tower_8cpp">aring-tower.cpp</innerfile>
+    <innerfile refid="aring-tower_8hpp">aring-tower.hpp</innerfile>
+    <innerfile refid="aring-translate_8hpp">aring-translate.hpp</innerfile>
+    <innerfile refid="aring-wrap_8cpp">aring-wrap.cpp</innerfile>
+    <innerfile refid="aring-wrap_8hpp">aring-wrap.hpp</innerfile>
+    <innerfile refid="aring-zz-flint_8cpp">aring-zz-flint.cpp</innerfile>
+    <innerfile refid="aring-zz-flint_8hpp">aring-zz-flint.hpp</innerfile>
+    <innerfile refid="aring-zz-gmp_8cpp">aring-zz-gmp.cpp</innerfile>
+    <innerfile refid="aring-zz-gmp_8hpp">aring-zz-gmp.hpp</innerfile>
+    <innerfile refid="aring-zzp-ffpack_8cpp">aring-zzp-ffpack.cpp</innerfile>
+    <innerfile refid="aring-zzp-ffpack_8hpp">aring-zzp-ffpack.hpp</innerfile>
+    <innerfile refid="aring-zzp-flint_8cpp">aring-zzp-flint.cpp</innerfile>
+    <innerfile refid="aring-zzp-flint_8hpp">aring-zzp-flint.hpp</innerfile>
+    <innerfile refid="aring-zzp_8cpp">aring-zzp.cpp</innerfile>
+    <innerfile refid="aring-zzp_8hpp">aring-zzp.hpp</innerfile>
+    <innerfile refid="aring_8cpp">aring.cpp</innerfile>
+    <innerfile refid="aring_8hpp">aring.hpp</innerfile>
+    <innerfile refid="assprime_8cpp">assprime.cpp</innerfile>
+    <innerfile refid="assprime_8hpp">assprime.hpp</innerfile>
+    <innerfile refid="_basic_poly_8cpp">BasicPoly.cpp</innerfile>
+    <innerfile refid="_basic_poly_8hpp">BasicPoly.hpp</innerfile>
+    <innerfile refid="_basic_poly_list_8cpp">BasicPolyList.cpp</innerfile>
+    <innerfile refid="_basic_poly_list_8hpp">BasicPolyList.hpp</innerfile>
+    <innerfile refid="_basic_poly_list_parser_8cpp">BasicPolyListParser.cpp</innerfile>
+    <innerfile refid="_basic_poly_list_parser_8hpp">BasicPolyListParser.hpp</innerfile>
+    <innerfile refid="betti_8cpp">betti.cpp</innerfile>
+    <innerfile refid="betti_8hpp">betti.hpp</innerfile>
+    <innerfile refid="buffer_8cpp">buffer.cpp</innerfile>
+    <innerfile refid="buffer_8hpp">buffer.hpp</innerfile>
+    <innerfile refid="coeffrings_8cpp">coeffrings.cpp</innerfile>
+    <innerfile refid="coeffrings_8hpp">coeffrings.hpp</innerfile>
+    <innerfile refid="comb_8cpp">comb.cpp</innerfile>
+    <innerfile refid="comb_8hpp">comb.hpp</innerfile>
+    <innerfile refid="comp-gb-declared_8cpp">comp-gb-declared.cpp</innerfile>
+    <innerfile refid="comp-gb-declared_8hpp">comp-gb-declared.hpp</innerfile>
+    <innerfile refid="comp-gb-proxy_8cpp">comp-gb-proxy.cpp</innerfile>
+    <innerfile refid="comp-gb-proxy_8hpp">comp-gb-proxy.hpp</innerfile>
+    <innerfile refid="comp-gb_8cpp">comp-gb.cpp</innerfile>
+    <innerfile refid="comp-gb_8hpp">comp-gb.hpp</innerfile>
+    <innerfile refid="comp-res_8cpp">comp-res.cpp</innerfile>
+    <innerfile refid="comp-res_8hpp">comp-res.hpp</innerfile>
+    <innerfile refid="comp_8cpp">comp.cpp</innerfile>
+    <innerfile refid="comp_8hpp">comp.hpp</innerfile>
+    <innerfile refid="complex_8c">complex.c</innerfile>
+    <innerfile refid="complex_8h">complex.h</innerfile>
+    <innerfile refid="cra_8cpp">cra.cpp</innerfile>
+    <innerfile refid="cra_8hpp">cra.hpp</innerfile>
+    <innerfile refid="debug_8cpp">debug.cpp</innerfile>
+    <innerfile refid="debug_8hpp">debug.hpp</innerfile>
+    <innerfile refid="defgroups_8h">defgroups.h</innerfile>
+    <innerfile refid="det_8cpp">det.cpp</innerfile>
+    <innerfile refid="det_8hpp">det.hpp</innerfile>
+    <innerfile refid="dmat-ffpack_8cpp">dmat-ffpack.cpp</innerfile>
+    <innerfile refid="dmat-gf-flint-big_8hpp">dmat-gf-flint-big.hpp</innerfile>
+    <innerfile refid="dmat-gf-flint_8hpp">dmat-gf-flint.hpp</innerfile>
+    <innerfile refid="dmat-lu-inplace_8hpp">dmat-lu-inplace.hpp</innerfile>
+    <innerfile refid="dmat-lu-qq_8hpp">dmat-lu-qq.hpp</innerfile>
+    <innerfile refid="dmat-lu-zzp-ffpack_8hpp">dmat-lu-zzp-ffpack.hpp</innerfile>
+    <innerfile refid="dmat-lu-zzp-flint_8hpp">dmat-lu-zzp-flint.hpp</innerfile>
+    <innerfile refid="dmat-lu_8hpp">dmat-lu.hpp</innerfile>
+    <innerfile refid="dmat-qq-flint_8hpp">dmat-qq-flint.hpp</innerfile>
+    <innerfile refid="dmat-qq-interface-flint_8hpp">dmat-qq-interface-flint.hpp</innerfile>
+    <innerfile refid="dmat-zz-flint_8hpp">dmat-zz-flint.hpp</innerfile>
+    <innerfile refid="dmat-zzp-flint_8hpp">dmat-zzp-flint.hpp</innerfile>
+    <innerfile refid="dmat_8cpp">dmat.cpp</innerfile>
+    <innerfile refid="dmat_8hpp">dmat.hpp</innerfile>
+    <innerfile refid="dpoly_8cpp">dpoly.cpp</innerfile>
+    <innerfile refid="dpoly_8hpp">dpoly.hpp</innerfile>
+    <innerfile refid="eigen_8cpp">eigen.cpp</innerfile>
+    <innerfile refid="eigen_8hpp">eigen.hpp</innerfile>
+    <innerfile refid="engine-includes_8hpp">engine-includes.hpp</innerfile>
+    <innerfile refid="engine_8cpp">engine.cpp</innerfile>
+    <innerfile refid="engine_8h">engine.h</innerfile>
+    <innerfile refid="error_8c">error.c</innerfile>
+    <innerfile refid="_macaulay2_2e_2error_8h">error.h</innerfile>
+    <innerfile refid="_eschreyer_8cpp">Eschreyer.cpp</innerfile>
+    <innerfile refid="_eschreyer_8hpp">Eschreyer.hpp</innerfile>
+    <innerfile refid="exceptions_8hpp">exceptions.hpp</innerfile>
+    <innerfile refid="_exponent_list_8cpp">ExponentList.cpp</innerfile>
+    <innerfile refid="_exponent_list_8hpp">ExponentList.hpp</innerfile>
+    <innerfile refid="_exponent_vector_8hpp">ExponentVector.hpp</innerfile>
+    <innerfile refid="exptable_8c">exptable.c</innerfile>
+    <innerfile refid="exptable_8h">exptable.h</innerfile>
+    <innerfile refid="finalize_8cpp">finalize.cpp</innerfile>
+    <innerfile refid="finalize_8hpp">finalize.hpp</innerfile>
+    <innerfile refid="fplll-interface_8cpp">fplll-interface.cpp</innerfile>
+    <innerfile refid="fplll-interface_8hpp">fplll-interface.hpp</innerfile>
+    <innerfile refid="frac_8cpp">frac.cpp</innerfile>
+    <innerfile refid="frac_8hpp">frac.hpp</innerfile>
+    <innerfile refid="fractionfree_l_u_8cpp">fractionfreeLU.cpp</innerfile>
+    <innerfile refid="fractionfree_l_u_8hpp">fractionfreeLU.hpp</innerfile>
+    <innerfile refid="franzi-brp-test_8cpp">franzi-brp-test.cpp</innerfile>
+    <innerfile refid="franzi-brp_8cpp">franzi-brp.cpp</innerfile>
+    <innerfile refid="franzi-brp_8hpp">franzi-brp.hpp</innerfile>
+    <innerfile refid="franzi-gb_8cpp">franzi-gb.cpp</innerfile>
+    <innerfile refid="franzi-interface_8cpp">franzi-interface.cpp</innerfile>
+    <innerfile refid="freemod_8cpp">freemod.cpp</innerfile>
+    <innerfile refid="freemod_8hpp">freemod.hpp</innerfile>
+    <innerfile refid="gauss_8cpp">gauss.cpp</innerfile>
+    <innerfile refid="gauss_8hpp">gauss.hpp</innerfile>
+    <innerfile refid="gb-default_8cpp">gb-default.cpp</innerfile>
+    <innerfile refid="gb-default_8hpp">gb-default.hpp</innerfile>
+    <innerfile refid="gb-homog2_8cpp">gb-homog2.cpp</innerfile>
+    <innerfile refid="gb-homog2_8hpp">gb-homog2.hpp</innerfile>
+    <innerfile refid="gb-sugarless_8cpp">gb-sugarless.cpp</innerfile>
+    <innerfile refid="gb-sugarless_8hpp">gb-sugarless.hpp</innerfile>
+    <innerfile refid="gb-toric_8cpp">gb-toric.cpp</innerfile>
+    <innerfile refid="gb-toric_8hpp">gb-toric.hpp</innerfile>
+    <innerfile refid="gb-walk_8cpp">gb-walk.cpp</innerfile>
+    <innerfile refid="gb-walk_8hpp">gb-walk.hpp</innerfile>
+    <innerfile refid="gbring_8cpp">gbring.cpp</innerfile>
+    <innerfile refid="gbring_8hpp">gbring.hpp</innerfile>
+    <innerfile refid="gbweight_8cpp">gbweight.cpp</innerfile>
+    <innerfile refid="gbweight_8hpp">gbweight.hpp</innerfile>
+    <innerfile refid="geobucket_8hpp">geobucket.hpp</innerfile>
+    <innerfile refid="geopoly_8hpp">geopoly.hpp</innerfile>
+    <innerfile refid="geovec_8hpp">geovec.hpp</innerfile>
+    <innerfile refid="_g_f_8cpp">GF.cpp</innerfile>
+    <innerfile refid="_g_f_8hpp">GF.hpp</innerfile>
+    <innerfile refid="godbolt_test_8cpp">godboltTest.cpp</innerfile>
+    <innerfile refid="hash_8hpp">hash.hpp</innerfile>
+    <innerfile refid="hermite_8cpp">hermite.cpp</innerfile>
+    <innerfile refid="hermite_8hpp">hermite.hpp</innerfile>
+    <innerfile refid="hilb_8cpp">hilb.cpp</innerfile>
+    <innerfile refid="hilb_8hpp">hilb.hpp</innerfile>
+    <innerfile refid="imonorder_8cpp">imonorder.cpp</innerfile>
+    <innerfile refid="imonorder_8hpp">imonorder.hpp</innerfile>
+    <innerfile refid="int-bag_8cpp">int-bag.cpp</innerfile>
+    <innerfile refid="int-bag_8hpp">int-bag.hpp</innerfile>
+    <innerfile refid="interreduce_8cpp">interreduce.cpp</innerfile>
+    <innerfile refid="interreduce_8hpp">interreduce.hpp</innerfile>
+    <innerfile refid="interrupted_8cpp">interrupted.cpp</innerfile>
+    <innerfile refid="interrupted_8hpp">interrupted.hpp</innerfile>
+    <innerfile refid="lapack_8cpp">lapack.cpp</innerfile>
+    <innerfile refid="lapack_8hpp">lapack.hpp</innerfile>
+    <innerfile refid="_l_l_l_8cpp">LLL.cpp</innerfile>
+    <innerfile refid="_l_l_l_8hpp">LLL.hpp</innerfile>
+    <innerfile refid="localring_8cpp">localring.cpp</innerfile>
+    <innerfile refid="localring_8hpp">localring.hpp</innerfile>
+    <innerfile refid="_m2_free_algebra_8cpp">M2FreeAlgebra.cpp</innerfile>
+    <innerfile refid="_m2_free_algebra_8hpp">M2FreeAlgebra.hpp</innerfile>
+    <innerfile refid="_m2_free_algebra_quotient_8cpp">M2FreeAlgebraQuotient.cpp</innerfile>
+    <innerfile refid="_m2_free_algebra_quotient_8hpp">M2FreeAlgebraQuotient.hpp</innerfile>
+    <innerfile refid="m2tbb_8hpp">m2tbb.hpp</innerfile>
+    <innerfile refid="mat-arith_8hpp">mat-arith.hpp</innerfile>
+    <innerfile refid="mat-elem-ops_8hpp">mat-elem-ops.hpp</innerfile>
+    <innerfile refid="mat-linalg_8hpp">mat-linalg.hpp</innerfile>
+    <innerfile refid="mat-util_8hpp">mat-util.hpp</innerfile>
+    <innerfile refid="mat_8cpp">mat.cpp</innerfile>
+    <innerfile refid="mat_8hpp">mat.hpp</innerfile>
+    <innerfile refid="matrix-con_8cpp">matrix-con.cpp</innerfile>
+    <innerfile refid="matrix-con_8hpp">matrix-con.hpp</innerfile>
+    <innerfile refid="matrix-kbasis_8cpp">matrix-kbasis.cpp</innerfile>
+    <innerfile refid="matrix-ncbasis_8cpp">matrix-ncbasis.cpp</innerfile>
+    <innerfile refid="matrix-ncbasis_8hpp">matrix-ncbasis.hpp</innerfile>
+    <innerfile refid="matrix-sort_8cpp">matrix-sort.cpp</innerfile>
+    <innerfile refid="matrix-stream_8cpp">matrix-stream.cpp</innerfile>
+    <innerfile refid="matrix-stream_8hpp">matrix-stream.hpp</innerfile>
+    <innerfile refid="matrix-symm_8cpp">matrix-symm.cpp</innerfile>
+    <innerfile refid="matrix_8cpp">matrix.cpp</innerfile>
+    <innerfile refid="matrix_8hpp">matrix.hpp</innerfile>
+    <innerfile refid="mem_8cpp">mem.cpp</innerfile>
+    <innerfile refid="mem_8hpp">mem.hpp</innerfile>
+    <innerfile refid="memory-status_8cpp">memory-status.cpp</innerfile>
+    <innerfile refid="memory-status_8hpp">memory-status.hpp</innerfile>
+    <innerfile refid="_memory_block_8hpp">MemoryBlock.hpp</innerfile>
+    <innerfile refid="monideal-minprimes_8cpp">monideal-minprimes.cpp</innerfile>
+    <innerfile refid="monideal-minprimes_8hpp">monideal-minprimes.hpp</innerfile>
+    <innerfile refid="monideal_8cpp">monideal.cpp</innerfile>
+    <innerfile refid="monideal_8hpp">monideal.hpp</innerfile>
+    <innerfile refid="monoid_8cpp">monoid.cpp</innerfile>
+    <innerfile refid="monoid_8hpp">monoid.hpp</innerfile>
+    <innerfile refid="monomial-collection_8cpp">monomial-collection.cpp</innerfile>
+    <innerfile refid="monomial-collection_8hpp">monomial-collection.hpp</innerfile>
+    <innerfile refid="monomial-sets_8cpp">monomial-sets.cpp</innerfile>
+    <innerfile refid="monomial-sets_8hpp">monomial-sets.hpp</innerfile>
+    <innerfile refid="monomial_8cpp">monomial.cpp</innerfile>
+    <innerfile refid="monomial_8hpp">monomial.hpp</innerfile>
+    <innerfile refid="monordering_8hpp">monordering.hpp</innerfile>
+    <innerfile refid="monsort_8cpp">monsort.cpp</innerfile>
+    <innerfile refid="monsort_8hpp">monsort.hpp</innerfile>
+    <innerfile refid="montable_8cpp">montable.cpp</innerfile>
+    <innerfile refid="montable_8hpp">montable.hpp</innerfile>
+    <innerfile refid="montable_z_z_8cpp">montableZZ.cpp</innerfile>
+    <innerfile refid="montable_z_z_8hpp">montableZZ.hpp</innerfile>
+    <innerfile refid="mpreal_8h">mpreal.h</innerfile>
+    <innerfile refid="mutablecomplex_8cpp">mutablecomplex.cpp</innerfile>
+    <innerfile refid="mutablecomplex_8hpp">mutablecomplex.hpp</innerfile>
+    <innerfile refid="mutablemat-defs_8hpp">mutablemat-defs.hpp</innerfile>
+    <innerfile refid="mutablemat-imp_8hpp">mutablemat-imp.hpp</innerfile>
+    <innerfile refid="mutablemat_8hpp">mutablemat.hpp</innerfile>
+    <innerfile refid="myalloc_8cpp">myalloc.cpp</innerfile>
+    <innerfile refid="myalloc_8hpp">myalloc.hpp</innerfile>
+    <innerfile refid="_n_a_g_8cpp">NAG.cpp</innerfile>
+    <innerfile refid="_n_a_g_8hpp">NAG.hpp</innerfile>
+    <innerfile refid="newdelete_8hpp">newdelete.hpp</innerfile>
+    <innerfile refid="ntl-debugio_8cpp">ntl-debugio.cpp</innerfile>
+    <innerfile refid="ntl-interface_8cpp">ntl-interface.cpp</innerfile>
+    <innerfile refid="ntl-interface_8hpp">ntl-interface.hpp</innerfile>
+    <innerfile refid="ntl-internal_8cpp">ntl-internal.cpp</innerfile>
+    <innerfile refid="overflow-test_8cpp">overflow-test.cpp</innerfile>
+    <innerfile refid="overflow_8cpp">overflow.cpp</innerfile>
+    <innerfile refid="overflow_8hpp">overflow.hpp</innerfile>
+    <innerfile refid="pfaff_8cpp">pfaff.cpp</innerfile>
+    <innerfile refid="pfaff_8hpp">pfaff.hpp</innerfile>
+    <innerfile refid="points_8cpp">points.cpp</innerfile>
+    <innerfile refid="points_8hpp">points.hpp</innerfile>
+    <innerfile refid="poly_8cpp">poly.cpp</innerfile>
+    <innerfile refid="_macaulay2_2e_2poly_8hpp">poly.hpp</innerfile>
+    <innerfile refid="_polynomial_8cpp">Polynomial.cpp</innerfile>
+    <innerfile refid="_polynomial_8hpp">Polynomial.hpp</innerfile>
+    <innerfile refid="_polynomial_stream_8hpp">PolynomialStream.hpp</innerfile>
+    <innerfile refid="polyquotient_8cpp">polyquotient.cpp</innerfile>
+    <innerfile refid="polyquotient_8hpp">polyquotient.hpp</innerfile>
+    <innerfile refid="_macaulay2_2e_2polyring_8cpp">polyring.cpp</innerfile>
+    <innerfile refid="_macaulay2_2e_2polyring_8hpp">polyring.hpp</innerfile>
+    <innerfile refid="qring_8cpp">qring.cpp</innerfile>
+    <innerfile refid="qring_8hpp">qring.hpp</innerfile>
+    <innerfile refid="reader_8cpp">reader.cpp</innerfile>
+    <innerfile refid="reader_8hpp">reader.hpp</innerfile>
+    <innerfile refid="reducedgb-field-local_8cpp">reducedgb-field-local.cpp</innerfile>
+    <innerfile refid="reducedgb-field-local_8hpp">reducedgb-field-local.hpp</innerfile>
+    <innerfile refid="reducedgb-field_8cpp">reducedgb-field.cpp</innerfile>
+    <innerfile refid="reducedgb-field_8hpp">reducedgb-field.hpp</innerfile>
+    <innerfile refid="reducedgb-marked_8cpp">reducedgb-marked.cpp</innerfile>
+    <innerfile refid="reducedgb-marked_8hpp">reducedgb-marked.hpp</innerfile>
+    <innerfile refid="reducedgb-_z_z_8cpp">reducedgb-ZZ.cpp</innerfile>
+    <innerfile refid="reducedgb-_z_z_8hpp">reducedgb-ZZ.hpp</innerfile>
+    <innerfile refid="reducedgb_8cpp">reducedgb.cpp</innerfile>
+    <innerfile refid="reducedgb_8hpp">reducedgb.hpp</innerfile>
+    <innerfile refid="relem_8cpp">relem.cpp</innerfile>
+    <innerfile refid="relem_8hpp">relem.hpp</innerfile>
+    <innerfile refid="res-a0-pair_8hpp">res-a0-pair.hpp</innerfile>
+    <innerfile refid="res-a0-poly_8cpp">res-a0-poly.cpp</innerfile>
+    <innerfile refid="res-a0-poly_8hpp">res-a0-poly.hpp</innerfile>
+    <innerfile refid="res-a0_8cpp">res-a0.cpp</innerfile>
+    <innerfile refid="res-a0_8hpp">res-a0.hpp</innerfile>
+    <innerfile refid="res-a1-poly_8cpp">res-a1-poly.cpp</innerfile>
+    <innerfile refid="res-a1-poly_8hpp">res-a1-poly.hpp</innerfile>
+    <innerfile refid="res-a1_8cpp">res-a1.cpp</innerfile>
+    <innerfile refid="res-a1_8hpp">res-a1.hpp</innerfile>
+    <innerfile refid="res-a2-gb_8cpp">res-a2-gb.cpp</innerfile>
+    <innerfile refid="res-a2_8cpp">res-a2.cpp</innerfile>
+    <innerfile refid="res-a2_8hpp">res-a2.hpp</innerfile>
+    <innerfile refid="ring-vecs_8cpp">ring-vecs.cpp</innerfile>
+    <innerfile refid="ring_8cpp">ring.cpp</innerfile>
+    <innerfile refid="ring_8hpp">ring.hpp</innerfile>
+    <innerfile refid="ringelem_8cpp">ringelem.cpp</innerfile>
+    <innerfile refid="ringelem_8hpp">ringelem.hpp</innerfile>
+    <innerfile refid="ringmap_8cpp">ringmap.cpp</innerfile>
+    <innerfile refid="ringmap_8hpp">ringmap.hpp</innerfile>
+    <innerfile refid="sagbi_8cpp">sagbi.cpp</innerfile>
+    <innerfile refid="sagbi_8hpp">sagbi.hpp</innerfile>
+    <innerfile refid="schorder_8cpp">schorder.cpp</innerfile>
+    <innerfile refid="schorder_8hpp">schorder.hpp</innerfile>
+    <innerfile refid="schur-poly-heap_8hpp">schur-poly-heap.hpp</innerfile>
+    <innerfile refid="schur_8cpp">schur.cpp</innerfile>
+    <innerfile refid="schur_8hpp">schur.hpp</innerfile>
+    <innerfile refid="schur2_8cpp">schur2.cpp</innerfile>
+    <innerfile refid="schur2_8hpp">schur2.hpp</innerfile>
+    <innerfile refid="schur_sn_8cpp">schurSn.cpp</innerfile>
+    <innerfile refid="schur_sn_8hpp">schurSn.hpp</innerfile>
+    <innerfile refid="skew_8cpp">skew.cpp</innerfile>
+    <innerfile refid="skew_8hpp">skew.hpp</innerfile>
+    <innerfile refid="skewpoly_8cpp">skewpoly.cpp</innerfile>
+    <innerfile refid="skewpoly_8hpp">skewpoly.hpp</innerfile>
+    <innerfile refid="_s_l_p-defs_8hpp">SLP-defs.hpp</innerfile>
+    <innerfile refid="_s_l_p-imp_8hpp">SLP-imp.hpp</innerfile>
+    <innerfile refid="_s_l_p_8cpp">SLP.cpp</innerfile>
+    <innerfile refid="_s_l_p_8hpp">SLP.hpp</innerfile>
+    <innerfile refid="smat_8hpp">smat.hpp</innerfile>
+    <innerfile refid="solvable_8cpp">solvable.cpp</innerfile>
+    <innerfile refid="solvable_8hpp">solvable.hpp</innerfile>
+    <innerfile refid="spair_8cpp">spair.cpp</innerfile>
+    <innerfile refid="spair_8hpp">spair.hpp</innerfile>
+    <innerfile refid="style_8hpp">style.hpp</innerfile>
+    <innerfile refid="table_8c">table.c</innerfile>
+    <innerfile refid="table_8h">table.h</innerfile>
+    <innerfile refid="text-io_8cpp">text-io.cpp</innerfile>
+    <innerfile refid="text-io_8hpp">text-io.hpp</innerfile>
+    <innerfile refid="timing_8hpp">timing.hpp</innerfile>
+    <innerfile refid="tower_8cpp">tower.cpp</innerfile>
+    <innerfile refid="tower_8hpp">tower.hpp</innerfile>
+    <innerfile refid="util_8hpp">util.hpp</innerfile>
+    <innerfile refid="_vector_arithmetic_8hpp">VectorArithmetic.hpp</innerfile>
+    <innerfile refid="weylalg_8cpp">weylalg.cpp</innerfile>
+    <innerfile refid="weylalg_8hpp">weylalg.hpp</innerfile>
+    <innerfile refid="_z_z_8cpp">ZZ.cpp</innerfile>
+    <innerfile refid="_z_z_8hpp">ZZ.hpp</innerfile>
+    <innerfile refid="_z_zp_8cpp">ZZp.cpp</innerfile>
+    <innerfile refid="_z_zp_8hpp">ZZp.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><heading level="2">Fall 2020 Work in Progress</heading>
+</para>
+<para><orderedlist>
+<listitem><para>Parallel directory structure in e, d, m2</para>
+</listitem></orderedlist>
+<itemizedlist>
+<listitem><para>Main header: <computeroutput><ref refid="engine_8h" kindref="compound">e/engine.h</ref></computeroutput><itemizedlist>
+<listitem><para>should be short, mostly include other headers</para>
+</listitem><listitem><para>organize interface functions in <computeroutput>e/interface</computeroutput>; eg: <verbatim>e/interface/matrix.h   // defining types currently in engine.h
+e/interface/matrix.cpp // previously x-mat.cpp
+</verbatim></para>
+</listitem></itemizedlist>
+</para>
+<para><itemizedlist>
+<listitem><para>each should be self contained, include minimal dependencies (specifically, not <computeroutput><ref refid="engine_8h" kindref="compound">engine.h</ref></computeroutput>)</para>
+</listitem><listitem><para>associated interpreter and top level code should be placed in appropriate files; eg: <verbatim>d/matrix.dd
+m2/matrix.m2
+</verbatim></para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+<para><itemizedlist>
+<listitem><para>unit tests should be provided for all interface routines; eg: <verbatim>  e/unit-test/matrix.cpp
+</verbatim></para>
+</listitem></itemizedlist>
+</para>
+<para><itemizedlist>
+<listitem><para>Internal routines<itemizedlist>
+<listitem><para>should be in respective directories, filename based on the classes; eg: <verbatim>e/matrix/matrix.hpp
+e/matrix/dense.hpp
+</verbatim></para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+<para><orderedlist>
+<listitem><para>GC barrier between engine and front end</para>
+</listitem></orderedlist>
+<itemizedlist>
+<listitem><para>issue: ringelem, <ref refid="structour__new__delete" kindref="compound">our_new_delete</ref> vs our_new_gc</para>
+</listitem><listitem><para>goal: ability to hotswap the GC backend by editing only one file</para>
+</listitem><listitem><para>benefit: allow easy comparison and benchmarking</para>
+</listitem></itemizedlist>
+<orderedlist>
+<listitem><para>Computations to be written or rewritten</para>
+</listitem></orderedlist>
+<itemizedlist>
+<listitem><para>e.g. gb, smith normal form, etc.</para>
+</listitem></itemizedlist>
+</para>
+<para><heading level="2">Engine</heading>
+</para>
+<para><itemizedlist>
+<listitem><para><ref refid="engine_8h" kindref="compound">engine.h</ref> and x-*</para>
+</listitem><listitem><para>newdelete hash</para>
+</listitem><listitem><para>Arithmetic<itemizedlist>
+<listitem><para>Flint</para>
+</listitem><listitem><para>GMP</para>
+</listitem><listitem><para>MPFR</para>
+</listitem><listitem><para>Arb, etc.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para><ref refid="class_monoids" kindref="compound">Monoids</ref></para>
+</listitem><listitem><para>Rings</para>
+</listitem><listitem><para>RingElements</para>
+</listitem><listitem><para>RingMaps</para>
+</listitem><listitem><para>Matrices</para>
+</listitem><listitem><para>FreeModules</para>
+</listitem><listitem><para>Computations<itemizedlist>
+<listitem><para>LLL</para>
+</listitem><listitem><para>GB</para>
+</listitem><listitem><para>Resolution</para>
+</listitem><listitem><para>Hilbert*</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>NAG</para>
+</listitem><listitem><para>Util</para>
+</listitem><listitem><para>Interface</para>
+</listitem></itemizedlist>
+</para>
+<para><hruler/>
+ <ndash/> 12/26/2011 MES Cleaning up code todo:<orderedlist>
+<listitem><para>get gtest working i.e. a make file target</para>
+</listitem><listitem><para>create a gtest file linking test file</para>
+</listitem><listitem><para>DONE tabs --&gt; spaces DONE put in tab-mode-null into each file change copyrights</para>
+</listitem><listitem><para>remove as many includes as possible</para>
+</listitem><listitem><para>maybe make a set of subdirectories of &apos;e&apos;: rings matrices computations util commands tests (gtest stuff)</para>
+</listitem><listitem><para>buffer --&gt; use ostringstream?</para>
+</listitem><listitem><para>text-io --&gt; maybe keep these except for bignum_text_out?</para>
+</listitem><listitem><para>DONE at some point, merge back in the stuff with Jakob, preferably soon 9.</para>
+</listitem></orderedlist>
+</para>
+<para><hruler/>
+</para>
+<para>these files really use overflow facilities: <verbatim>gbring.o
+imonorder.o
+matrix-kbasis.o
+matrix.o
+monoid.o
+monorder.o
+overflow.o
+polyring.o
+varpower.o
+</verbatim></para>
+<para>these files depends on <ref refid="overflow_8hpp" kindref="compound">overflow.hpp</ref> <verbatim>CC.o
+CCC.o
+Eschreyer.o
+GF.o
+QQ.o
+RR.o
+RRR.o
+ZZ.o
+ZZp.o
+comp-gb-declared.o
+comp-gb.o
+comp-res.o
+debug.o
+frac.o
+freemod.o
+gb-default.o
+gb-homog2.o
+gb-sugarless.o
+gb-toric.o
+gbring.o
+gbweight.o
+imonorder.o
+matrix-kbasis.o
+matrix.o
+monoid.o
+monorder.o
+montable.o
+ntuple.o
+overflow.o
+polyring.o
+qring.o
+reducedgb-ZZ.o
+reducedgb-field-local.o
+reducedgb-field.o
+reducedgb.o
+res-a2-gb.o
+res-a2.o
+schorder.o
+skewpoly.o
+solvable.o
+spair.o
+varpower.o
+weylalg.o
+x-gb.o
+x-mat.o
+x-relem.o
+</verbatim> </para>
+    </detaileddescription>
+    <location file="Macaulay2/e/"/>
+  </compounddef>
+</doxygen>

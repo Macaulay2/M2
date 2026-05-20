@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structgm__elem" kind="struct" language="C++" prot="public">
+    <compoundname>gm_elem</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="gauss_8hpp" local="no">gauss.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgm__elem_ac0a2653f3c6762c6af97b4526573e8d0_1ac0a2653f3c6762c6af97b4526573e8d0" prot="public" static="no" mutable="no">
+        <type><ref refid="structgm__elem" kindref="compound">gm_elem</ref> *</type>
+        <definition>gm_elem* gm_elem::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>gm_elem::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gauss.hpp" line="41" column="11" bodyfile="Macaulay2/e/gauss.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgm__elem_a3bea8838fd347ffaff4d37d559eac356_1a3bea8838fd347ffaff4d37d559eac356" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int gm_elem::nterms</definition>
+        <argsstring></argsstring>
+        <name>nterms</name>
+        <qualifiedname>gm_elem::nterms</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gauss.hpp" line="42" column="7" bodyfile="Macaulay2/e/gauss.hpp" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structgm__elem_a7073248ec3da3d5eb9312cec1ee7dfd7_1a7073248ec3da3d5eb9312cec1ee7dfd7" prot="public" static="no" mutable="no">
+        <type>vec</type>
+        <definition>vec gm_elem::f</definition>
+        <argsstring></argsstring>
+        <name>f</name>
+        <qualifiedname>gm_elem::f</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gauss.hpp" line="43" column="7" bodyfile="Macaulay2/e/gauss.hpp" bodystart="43" bodyend="-1"/>
+        <referencedby refid="class_gauss_elim_computation_ace8837a7803cdd7d404e225e40c63ea0_1ace8837a7803cdd7d404e225e40c63ea0" compoundref="gauss_8cpp" startline="130" endline="150">GaussElimComputation::reduce</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structgm__elem_a549b7851176dc9ff1fe196d4c38f510f_1a549b7851176dc9ff1fe196d4c38f510f" prot="public" static="no" mutable="no">
+        <type>vec</type>
+        <definition>vec gm_elem::fsyz</definition>
+        <argsstring></argsstring>
+        <name>fsyz</name>
+        <qualifiedname>gm_elem::fsyz</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gauss.hpp" line="44" column="7" bodyfile="Macaulay2/e/gauss.hpp" bodystart="44" bodyend="-1"/>
+        <referencedby refid="class_gauss_elim_computation_ace8837a7803cdd7d404e225e40c63ea0_1ace8837a7803cdd7d404e225e40c63ea0" compoundref="gauss_8cpp" startline="130" endline="150">GaussElimComputation::reduce</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>gm_elem</label>
+        <link refid="structgm__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>gm_elem</label>
+        <link refid="structgm__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>nterms</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="4">
+        <label>vec</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gauss.hpp" line="39" column="1" bodyfile="Macaulay2/e/gauss.hpp" bodystart="40" bodyend="45"/>
+    <listofallmembers>
+      <member refid="structgm__elem_a7073248ec3da3d5eb9312cec1ee7dfd7_1a7073248ec3da3d5eb9312cec1ee7dfd7" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>f</name></member>
+      <member refid="structgm__elem_a549b7851176dc9ff1fe196d4c38f510f_1a549b7851176dc9ff1fe196d4c38f510f" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>fsyz</name></member>
+      <member refid="structgm__elem_ac0a2653f3c6762c6af97b4526573e8d0_1ac0a2653f3c6762c6af97b4526573e8d0" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>next</name></member>
+      <member refid="structgm__elem_a3bea8838fd347ffaff4d37d559eac356_1a3bea8838fd347ffaff4d37d559eac356" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>nterms</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>gm_elem</scope><name>operator new[]</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,570 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="ringelem_8cpp" kind="file" language="C++">
+    <compoundname>ringelem.cpp</compoundname>
+    <includes refid="ringelem_8hpp" local="no">ringelem.hpp</includes>
+    <incdepgraph>
+      <node id="8">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/ringelem.cpp</label>
+        <link refid="ringelem_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>M2/config.h</label>
+      </node>
+      <node id="14">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="3">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="16">
+        <label>assert.h</label>
+      </node>
+      <node id="22">
+        <label>cassert</label>
+      </node>
+      <node id="9">
+        <label>cstdio</label>
+      </node>
+      <node id="28">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="31">
+        <label>iostream</label>
+      </node>
+      <node id="5">
+        <label>stddef.h</label>
+      </node>
+      <node id="21">
+        <label>stdexcept</label>
+      </node>
+      <node id="13">
+        <label>stdint.h</label>
+      </node>
+      <node id="26">
+        <label>stdlib.h</label>
+      </node>
+      <node id="6">
+        <label>string</label>
+      </node>
+      <node id="17">
+        <label>string.h</label>
+      </node>
+      <node id="18">
+        <label>type_traits</label>
+      </node>
+      <node id="27">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="7">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_term_iterator" kindref="compound">TermIterator</ref>&lt; <ref refid="struct_nterm" kindref="compound">Nterm</ref> &gt;</type>
+        <definition>TermIterator&lt; Nterm &gt; begin</definition>
+        <argsstring>(Nterm *ptr)</argsstring>
+        <name>begin</name>
+        <param>
+          <type><ref refid="struct_nterm" kindref="compound">Nterm</ref> *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.cpp" line="4" column="14" bodyfile="Macaulay2/e/ringelem.cpp" bodystart="4" bodyend="4"/>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8bdd1154c37307c1687eee75973f548c_1a8bdd1154c37307c1687eee75973f548c" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="126" endline="166">MATHICGB_NAMESPACE_BEGIN::DenseRow::addRowMultiple</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="361" endline="382">adjPairRange</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a45724ff13f7254c9ffed06a54f5c1bf8_1a45724ff13f7254c9ffed06a54f5c1bf8" compoundref="_k_d_entry_array_8h" startline="461" endline="470">mathic::KDEntryArray&lt; C, EE &gt;::allLessThanOrEqualTo</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a8976e990b2711a95c1389d4425b07b98_1a8976e990b2711a95c1389d4425b07b98" compoundref="_k_d_entry_array_8h" startline="449" endline="458">mathic::KDEntryArray&lt; C, EE &gt;::allStrictlyGreaterThan</referencedby>
+        <referencedby refid="class_f4_matrix_builder2_1_1_builder_a96b7700f1e2af79f5866a26fee51fb6b_1a96b7700f1e2af79f5866a26fee51fb6b" compoundref="_f4_matrix_builder2_8cpp" startline="346" endline="398">F4MatrixBuilder2::Builder::appendRow</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a65a9e17af17e29aec4cf79cefc97c4c1_1a65a9e17af17e29aec4cf79cefc97c4c1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="274" endline="305">F4MatrixBuilder::appendRowBottom</referencedby>
+        <referencedby refid="class_schreyer_frame_a7aa65f42ee24c75759a741038edb3e34_1a7aa65f42ee24c75759a741038edb3e34" compoundref="res-schreyer-frame_8cpp" startline="480" endline="543">SchreyerFrame::computeIdealQuotient</referencedby>
+        <referencedby refid="class_schreyer_frame_a6d867419a1cd70cca463a5380d2e6bfc_1a6d867419a1cd70cca463a5380d2e6bfc" compoundref="res-schreyer-frame_8cpp" startline="545" endline="570">SchreyerFrame::computeNextLevel</referencedby>
+        <referencedby refid="class_f4_s_pair_set_a013c0429f3ad8bc8a44d86a0e29a8e76_1a013c0429f3ad8bc8a44d86a0e29a8e76" compoundref="f4-spairs_8cpp" startline="246" endline="321">F4SPairSet::construct_pairs</referencedby>
+        <referencedby refid="class_n_c_f4_a9db64da88a2d4f32a9a1a6a2849148fa_1a9db64da88a2d4f32a9a1a6a2849148fa" compoundref="_n_c_f4_8cpp" startline="301" endline="313">NCF4::createOverlapLeadWord</referencedby>
+        <referencedby refid="class_n_c_groebner_ab62796ac971ea5dfde81bf93604b5e84_1ab62796ac971ea5dfde81bf93604b5e84" compoundref="_n_c_groebner_8cpp" startline="351" endline="369">NCGroebner::createOverlapPoly</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_fast_allocator_a6f693eca1a57a46541f47058ea501b81_1a6f693eca1a57a46541f47058ea501b81" compoundref="allocator_8cpp" startline="34" endline="53">BIBasis::FastAllocator::ExpandMemory</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ac203e258b1b89430fc5c75660f826dd0_1ac203e258b1b89430fc5c75660f826dd0" compoundref="_k_d_entry_array_8h" startline="385" endline="412">mathic::KDEntryArray&lt; C, EE &gt;::findAllDivisors</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a174047e0465c482447789971095f023e_1a174047e0465c482447789971095f023e" compoundref="_k_d_entry_array_8h" startline="417" endline="432">mathic::KDEntryArray&lt; C, mathic::DivMask::Extender&lt; Entry, C::UseDivMask &gt; &gt;::findAllMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1253ea4fd593633c49b70d3a9e5a4745_1a1253ea4fd593633c49b70d3a9e5a4745" compoundref="_k_d_entry_array_8h" startline="351" endline="380">mathic::KDEntryArray&lt; C, EE &gt;::findDivisor</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_a8a9f78ac1814d8cefaf24c8d65b7106e_1a8a9f78ac1814d8cefaf24c8d65b7106e" compoundref="_div_list_8h" startline="557" endline="562">mathic::DivList&lt; C &gt;::forAll</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a06b17a4d45a9697ec4630ce54cc3f4f9_1a06b17a4d45a9697ec4630ce54cc3f4f9" compoundref="_k_d_entry_array_8h" startline="436" endline="446">mathic::KDEntryArray&lt; C, EE &gt;::forAll</referencedby>
+        <referencedby refid="classmemt_1_1_arena_ae70e8179c054881deb5f2fd06d4cd640_1ae70e8179c054881deb5f2fd06d4cd640" compoundref="_arena_8cpp" startline="66" endline="80">memt::Arena::freeAndAllAfterFromOldBlock</referencedby>
+        <referencedby refid="class_memory_block_a18a3ac120f1cf2669df90751df54a613_1a18a3ac120f1cf2669df90751df54a613" compoundref="_memory_block_8hpp" startline="87" endline="90">MemoryBlock::freeTopArray</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="236" endline="241">indexRange</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5dacfcdefe66e4a0bec733890fefe07b_1a5dacfcdefe66e4a0bec733890fefe07b" compoundref="_geobucket_8h" startline="706" endline="739">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5dacfcdefe66e4a0bec733890fefe07b_1a5dacfcdefe66e4a0bec733890fefe07b" compoundref="_geobucket_8h" startline="706" endline="739">mathic::Geobucket&lt; Model::Configuration &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a13df25cad452ae6a6ac1f0152d3e28bb_1a13df25cad452ae6a6ac1f0152d3e28bb" compoundref="_k_d_entry_array_8h" startline="268" endline="276">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_aabfbe3fdb1fa0e47ab67c6415ecb1e94_1aabfbe3fdb1fa0e47ab67c6415ecb1e94" compoundref="_k_d_tree_8h" startline="154" endline="167">mathic::KDTree&lt; C &gt;::insert</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="210" endline="212">intRange</referencedby>
+        <referencedby refid="class_poly_ring_a6b409cb315cde0f4f0b3551249c2523f_1a6b409cb315cde0f4f0b3551249c2523f" compoundref="poly_8cpp" startline="533" endline="549">PolyRing::is_homogeneous</referencedby>
+        <referencedby refid="class_poly_ring_a607a97a1b04b467928a45a9eda66bf8d_1a607a97a1b04b467928a45a9eda66bf8d" compoundref="poly_8cpp" startline="478" endline="485">PolyRing::is_unit</referencedby>
+        <referencedby refid="classmemt_1_1_memory_blocks_1_1_block_af4c4752a03d19a6c03ed6df8a693e2e3_1af4c4752a03d19a6c03ed6df8a693e2e3" compoundref="_memory_blocks_8h" startline="225" endline="233">memt::MemoryBlocks::Block::isInBlock</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa91ad5a523579e1d3265ef08abf7d900_1aa91ad5a523579e1d3265ef08abf7d900" compoundref="_k_d_entry_array_8h" startline="218" endline="235">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a11955927aedcdec2eb81a2d0c8ceddd0_1a11955927aedcdec2eb81a2d0c8ceddd0" compoundref="_k_d_entry_array_8h" startline="196" endline="214">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a642f36f3603de6c21f870191f5183a7c_1a642f36f3603de6c21f870191f5183a7c" compoundref="_k_d_entry_array_8h" startline="186" endline="192">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_leaf_ad6713d5e5dc4c40ba05d2a68959542da_1ad6713d5e5dc4c40ba05d2a68959542da" compoundref="_binary_k_d_tree_8h" startline="717" endline="722">mathic::BinaryKDTree&lt; C &gt;::KDTreeLeaf::KDTreeLeaf</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_leaf_a2a0f6dd480ac38ec74b4203bf29b4bb7_1a2a0f6dd480ac38ec74b4203bf29b4bb7" compoundref="_binary_k_d_tree_8h" startline="707" endline="713">mathic::BinaryKDTree&lt; C &gt;::KDTreeLeaf::KDTreeLeaf</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_a7e7c34f9ba320543e6c0b415686662dd_1a7e7c34f9ba320543e6c0b415686662dd" compoundref="_packed_k_d_tree_8h" startline="43" endline="47">mathic::PackedKDTree&lt; C &gt;::Node::makeNode</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_a5b9514edd8717b27e734cccca080d099_1a5b9514edd8717b27e734cccca080d099" compoundref="_packed_k_d_tree_8h" startline="50" endline="54">mathic::PackedKDTree&lt; C &gt;::Node::makeNode</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; Model::Configuration &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5df953315a6b918cc667649cecc751e6_1a5df953315a6b918cc667649cecc751e6" compoundref="_geobucket_8h" startline="566" endline="576">mathic::Geobucket&lt; Model::Configuration &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="res-f4-monlookup_8cpp_ab0b464de6dd148214b23783b5f2ee934_1ab0b464de6dd148214b23783b5f2ee934" compoundref="res-f4-monlookup_8cpp" startline="540" endline="573">minimalize_res_varpower_monomials</referencedby>
+        <referencedby refid="_polynomial_8hpp_aec9d3b408075a9b2a619d5a107c18891_1aec9d3b408075a9b2a619d5a107c18891" compoundref="_polynomial_8hpp" startline="181" endline="191">monomToModuleMonom</referencedby>
+        <referencedby refid="namespacemathic_1_1_div_list_helper_ab53cc4f731bcb754b5314d7e2b37f0e0_1ab53cc4f731bcb754b5314d7e2b37f0e0" compoundref="_div_list_8h" startline="293" endline="302">mathic::DivListHelper::moveToFront</referencedby>
+        <referencedby refid="class_poly_ring_acb856967218704f37951aa35db9fc990_1acb856967218704f37951aa35db9fc990" compoundref="poly_8cpp" startline="553" endline="578">PolyRing::multi_degree</referencedby>
+        <referencedby refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a3b549d346a7c6af9ed00ef5e41505614_1a3b549d346a7c6af9ed00ef5e41505614" compoundref="_reducer_hash_pack_8cpp" startline="115" endline="126">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::MultipleWithPos</referencedby>
+        <referencedby refid="struct_reducer_pack_1_1_multiple_with_pos_ae8ff856d30b8d416d7e4e9aad883d72e_1ae8ff856d30b8d416d7e4e9aad883d72e" compoundref="_reducer_pack_8cpp" startline="118" endline="129">ReducerPack&lt; Queue &gt;::MultipleWithPos::MultipleWithPos</referencedby>
+        <referencedby refid="struct_reducer_pack_dedup_1_1_multiple_with_pos_a142ad455874d17599f450c954b186c82_1a142ad455874d17599f450c954b186c82" compoundref="_reducer_pack_dedup_8cpp" startline="143" endline="155">ReducerPackDedup&lt; Queue &gt;::MultipleWithPos::MultipleWithPos</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_a8a53f79525e62121e17bf3ba7f8cf2a0_1a8a53f79525e62121e17bf3ba7f8cf2a0" compoundref="_packed_k_d_tree_8h" startline="192" endline="200">mathic::PackedKDTree&lt; C &gt;::Node::Node</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_af18afa49cd051a347e08a8a4af92de27_1af18afa49cd051a347e08a8a4af92de27" compoundref="_packed_k_d_tree_8h" startline="204" endline="213">mathic::PackedKDTree&lt; C &gt;::Node::Node</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_a2e190e59946b15826281660dc6aef77b_1a2e190e59946b15826281660dc6aef77b">mathic::PackedKDTree&lt; C &gt;::Node::operator=</referencedby>
+        <referencedby refid="class_suffix_tree_aa3dc925ac222174a8c805bee83dc1074_1aa3dc925ac222174a8c805bee83dc1074" compoundref="_suffix_tree_8cpp" startline="649" endline="653">SuffixTree::operator[]</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="328" endline="333">oppositePairRange</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_aa98e5ab99841dd85808c0ce4b3cfdbef_1aa98e5ab99841dd85808c0ce4b3cfdbef" compoundref="_geobucket_8h" startline="404" endline="434">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; Model::Configuration &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_heap_a4dc1e0be09ce1531839d3c3c132d9888_1a4dc1e0be09ce1531839d3c3c132d9888" compoundref="_heap_8h" startline="106" endline="109">mathic::Heap&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_heap_a17a3c6360f4146644f3ed8416f0e2c4a_1a17a3c6360f4146644f3ed8416f0e2c4a" compoundref="_heap_8h" startline="98" endline="102">mathic::Heap&lt; Model::Configuration &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_stl_set_ac3743e353832f950e671d64b79da462f_1ac3743e353832f950e671d64b79da462f" compoundref="_stl_set_8h" startline="23" endline="26">mathic::StlSet&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_add07edd215eddb327fce63b3e0e35805_1add07edd215eddb327fce63b3e0e35805" compoundref="_tour_tree_8h" startline="147" endline="150">mathic::TourTree&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_add07edd215eddb327fce63b3e0e35805_1add07edd215eddb327fce63b3e0e35805">mathic::TourTree&lt; QueueConfiguration &gt;::push</referencedby>
+        <referencedby refid="class_model_adffc7a83fbda6d0ecc662ab1d8aae529_1adffc7a83fbda6d0ecc662ab1d8aae529" compoundref="_model_8h" startline="50" endline="52">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::push</referencedby>
+        <referencedby refid="namespace_model_helper_a8ed56c0482156c1167f746f490d377a0_1a8ed56c0482156c1167f746f490d377a0" compoundref="_model_8h" startline="111" endline="113">ModelHelper::push</referencedby>
+        <referencedby refid="namespace_model_helper_a7b47e093ebf63f3b53c5c4e9c6671152_1a7b47e093ebf63f3b53c5c4e9c6671152" compoundref="_model_8h" startline="115" endline="117">ModelHelper::push</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="256" endline="263">rangeToVector</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_a16b5b214ab73e07ac65d3b9a530c8640_1a16b5b214ab73e07ac65d3b9a530c8640" compoundref="_div_list_8h" startline="591" endline="601">mathic::DivList&lt; C &gt;::rebuild</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01false_01_4_a6ef433c65a78dddedc47c4b9a4aac6c3_1a6ef433c65a78dddedc47c4b9a4aac6c3" compoundref="_div_mask_8h" startline="350" endline="350">mathic::DivMask::Calculator&lt; C, false &gt;::rebuild</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_aa68b3910ce9898ff1a4a116b80e29130_1aa68b3910ce9898ff1a4a116b80e29130" compoundref="_div_mask_8h" startline="207" endline="310">mathic::DivMask::Calculator&lt; C, true &gt;::rebuild</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aedb2c9a95b1f0d51a43179f75a51a69f_1aedb2c9a95b1f0d51a43179f75a51a69f" compoundref="_k_d_entry_array_8h" startline="473" endline="479">mathic::KDEntryArray&lt; C, EE &gt;::recalculateTreeDivMask</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1494a764076b6ca49b4e53b1df30e0c1_1a1494a764076b6ca49b4e53b1df30e0c1" compoundref="_k_d_entry_array_8h" startline="329" endline="346">mathic::KDEntryArray&lt; C, EE &gt;::removeElement</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_ad71c23ce91edfc5187e93e55c959c0fe_1ad71c23ce91edfc5187e93e55c959c0fe">mathic::BinaryKDTree&lt; C &gt;::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ae32765702543c2bd92aa99d7f69cb8d8_1ae32765702543c2bd92aa99d7f69cb8d8" compoundref="_k_d_entry_array_8h" startline="287" endline="325">mathic::KDEntryArray&lt; C, EE &gt;::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a35e5e2a7793b016a79c3bc9422ef8c07_1a35e5e2a7793b016a79c3bc9422ef8c07">mathic::PackedKDTree&lt; C &gt;::removeMultiples</referencedby>
+        <referencedby refid="class_sparse_matrix_af3c8669c0d071923ac9e4e372e189c73_1af3c8669c0d071923ac9e4e372e189c73" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="315" endline="367">SparseMatrix::reserveFreeEntries</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a51c5ba9765d667c15d2221e35f1871c6_1a51c5ba9765d667c15d2221e35f1871c6" compoundref="_packed_k_d_tree_8h" startline="300" endline="394">mathic::PackedKDTree&lt; C &gt;::reset</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3dbc5e9230f94d1f22fc5ee20e441ce5_1a3dbc5e9230f94d1f22fc5ee20e441ce5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="168" endline="188">MATHICGB_NAMESPACE_BEGIN::DenseRow::rowReduceByUnitary</referencedby>
+        <referencedby refid="class_simulator_ad16df28339f9b3f91c087a1f4598957f_1ad16df28339f9b3f91c087a1f4598957f" compoundref="_simulator_8h" startline="61" endline="101">Simulator::run</referencedby>
+        <referencedby refid="class_scanner_a19cfe48d0647bf87ca1a571dfa492417_1a19cfe48d0647bf87ca1a571dfa492417" compoundref="checksource_2_scanner_8cpp" startline="42" endline="51">Scanner::Scanner</referencedby>
+        <referencedby refid="class_scanner_a2a78b0b1fc4077fa0f44bfcb20b5be48_1a2a78b0b1fc4077fa0f44bfcb20b5be48" compoundref="checksource_2_scanner_8cpp" startline="53" endline="62">Scanner::Scanner</referencedby>
+        <referencedby refid="classschur__poly__iterator_a0350682b42de39561f0087f22b78cc74_1a0350682b42de39561f0087f22b78cc74" compoundref="schur2_8hpp" startline="104" endline="107">schur_poly_iterator::schur_poly_iterator</referencedby>
+        <referencedby refid="class_simulator_a1bce3c5af053666392a80c01c809eb68_1a1bce3c5af053666392a80c01c809eb68" compoundref="_simulator_8cpp" startline="294" endline="314">Simulator::setupEvents</referencedby>
+        <referencedby refid="class_memory_block_a4b88b7a973793352118cf9faa8a6b982_1a4b88b7a973793352118cf9faa8a6b982" compoundref="_memory_block_8hpp" startline="78" endline="84">MemoryBlock::shrinkLastAllocate</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a319c96a70888a9e9beb4ac4e02c4df04_1a319c96a70888a9e9beb4ac4e02c4df04">mathic::Geobucket&lt; C &gt;::singleInsert</referencedby>
+        <referencedby refid="class_quick_sorter_ad5f52e7d1dd96fefd52563691d0bffbc_1ad5f52e7d1dd96fefd52563691d0bffbc" compoundref="monsort_8hpp" startline="128" endline="160">QuickSorter&lt; Sorter &gt;::sort2</referencedby>
+        <referencedby refid="class_quick_sorter_a376ec7d936a8d37864268f33ca9a3bec_1a376ec7d936a8d37864268f33ca9a3bec" compoundref="monsort_8hpp" startline="167" endline="200">QuickSorter&lt; Sorter &gt;::sort2depth</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_leaf_a7082692d7014869174eb8089463e426a_1a7082692d7014869174eb8089463e426a" compoundref="_binary_k_d_tree_8h" startline="742" endline="778">mathic::BinaryKDTree&lt; C &gt;::KDTreeLeaf::splitInsert</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_ae5445475364f298ae09f98b0ae1fc427_1ae5445475364f298ae09f98b0ae1fc427" compoundref="_packed_k_d_tree_8h" startline="672" endline="735">mathic::PackedKDTree&lt; C &gt;::Node::splitInsert</referencedby>
+        <referencedby refid="_pair_queue_8cpp_a8e1d916141e7747b824a083c2ca4498e_1a8e1d916141e7747b824a083c2ca4498e" compoundref="_pair_queue_8cpp" startline="109" endline="204">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a66f4f53727985fc43d232a409888af50_1a66f4f53727985fc43d232a409888af50" compoundref="_range_8cpp" startline="114" endline="132">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_term_iterator" kindref="compound">TermIterator</ref>&lt; <ref refid="struct_nterm" kindref="compound">Nterm</ref> &gt;</type>
+        <definition>TermIterator&lt; Nterm &gt; end</definition>
+        <argsstring>(Nterm *)</argsstring>
+        <name>end</name>
+        <param>
+          <type><ref refid="struct_nterm" kindref="compound">Nterm</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.cpp" line="5" column="14" bodyfile="Macaulay2/e/ringelem.cpp" bodystart="5" bodyend="5"/>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a97a5785346d4b6238c2f0183146e41fa_1a97a5785346d4b6238c2f0183146e41fa" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="116" endline="123">MATHICGB_NAMESPACE_BEGIN::DenseRow::addRow</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8bdd1154c37307c1687eee75973f548c_1a8bdd1154c37307c1687eee75973f548c" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="126" endline="166">MATHICGB_NAMESPACE_BEGIN::DenseRow::addRowMultiple</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="361" endline="382">adjPairRange</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a45724ff13f7254c9ffed06a54f5c1bf8_1a45724ff13f7254c9ffed06a54f5c1bf8" compoundref="_k_d_entry_array_8h" startline="461" endline="470">mathic::KDEntryArray&lt; C, EE &gt;::allLessThanOrEqualTo</referencedby>
+        <referencedby refid="classmemt_1_1_buffer_pool_aa391af0a9745e0cae1b792148cb0a663_1aa391af0a9745e0cae1b792148cb0a663" compoundref="_buffer_pool_8h" startline="101" endline="113">memt::BufferPool::alloc</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a8976e990b2711a95c1389d4425b07b98_1a8976e990b2711a95c1389d4425b07b98" compoundref="_k_d_entry_array_8h" startline="449" endline="458">mathic::KDEntryArray&lt; C, EE &gt;::allStrictlyGreaterThan</referencedby>
+        <referencedby refid="class_schreyer_order_a3ede03c89f6de48af0dfbceccfe9d430_1a3ede03c89f6de48af0dfbceccfe9d430" compoundref="schorder_8cpp" startline="19" endline="27">SchreyerOrder::append</referencedby>
+        <referencedby refid="class_f4_matrix_builder2_1_1_builder_a96b7700f1e2af79f5866a26fee51fb6b_1a96b7700f1e2af79f5866a26fee51fb6b" compoundref="_f4_matrix_builder2_8cpp" startline="346" endline="398">F4MatrixBuilder2::Builder::appendRow</referencedby>
+        <referencedby refid="class_sparse_matrix_a082ba7fdcb0633d82de019e44f0d0d28_1a082ba7fdcb0633d82de019e44f0d0d28" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="152" endline="175">SparseMatrix::appendRowAndNormalize</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a65a9e17af17e29aec4cf79cefc97c4c1_1a65a9e17af17e29aec4cf79cefc97c4c1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="274" endline="305">F4MatrixBuilder::appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_left_right_a44c702d3f5220abc6b32075b71bc378a_1a44c702d3f5220abc6b32075b71bc378a" compoundref="_f4_matrix_projection_8cpp" startline="142" endline="153">F4MatrixProjection::LeftRight::appendRows</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_left_right_a4274ab8ba145c3291295cca4aeebcd12_1a4274ab8ba145c3291295cca4aeebcd12" compoundref="_f4_matrix_projection_8cpp" startline="136" endline="140">F4MatrixProjection::LeftRight::appendRowsPermuted</referencedby>
+        <referencedby refid="class_f4_matrix_builder_acc4c82697e6b57c22a45b8a17d039bd1_1acc4c82697e6b57c22a45b8a17d039bd1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="307" endline="351">F4MatrixBuilder::appendRowTop</referencedby>
+        <referencedby refid="class_sparse_matrix_a32fcb07eee89026ec10f2b5eb31265ca_1a32fcb07eee89026ec10f2b5eb31265ca" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="82" endline="90">SparseMatrix::applyColumnMap</referencedby>
+        <referencedby refid="res-poly-ring_8cpp_af83ad328e6e0ad73005764957446b874_1af83ad328e6e0ad73005764957446b874" compoundref="res-poly-ring_8cpp" startline="61" endline="73">check_poly</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a8e61c01a591f17ee5414a43b27e01313_1a8e61c01a591f17ee5414a43b27e01313" compoundref="_div_mask_8h" startline="332" endline="342">mathic::DivMask::Calculator&lt; C, true &gt;::compute</referencedby>
+        <referencedby refid="class_sparse_matrix_a89726a8163d623b6a61d63107f1d09bd_1a89726a8163d623b6a61d63107f1d09bd" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="227" endline="237">SparseMatrix::computeColCount</referencedby>
+        <referencedby refid="class_schreyer_frame_a6d867419a1cd70cca463a5380d2e6bfc_1a6d867419a1cd70cca463a5380d2e6bfc" compoundref="res-schreyer-frame_8cpp" startline="545" endline="570">SchreyerFrame::computeNextLevel</referencedby>
+        <referencedby refid="class_f4_s_pair_set_a013c0429f3ad8bc8a44d86a0e29a8e76_1a013c0429f3ad8bc8a44d86a0e29a8e76" compoundref="f4-spairs_8cpp" startline="246" endline="321">F4SPairSet::construct_pairs</referencedby>
+        <referencedby refid="_m2_free_algebra_8cpp_a4a116dabef5fc374f622bd0cc144d700_1a4a116dabef5fc374f622bd0cc144d700" compoundref="_m2_free_algebra_8cpp" startline="14" endline="27">copyPolyVector</referencedby>
+        <referencedby refid="class_f4_res_a5afb2e2b278f1d3e4f7c0ff0dfb21249_1a5afb2e2b278f1d3e4f7c0ff0dfb21249" compoundref="res-f4_8cpp" startline="715" endline="724">F4Res::debugOutputColumns</referencedby>
+        <referencedby refid="class_f4_res_a0bd25e67eb358bd543dd282a886d797a_1a0bd25e67eb358bd543dd282a886d797a" compoundref="res-f4_8cpp" startline="705" endline="714">F4Res::debugOutputReducers</referencedby>
+        <referencedby refid="res-poly-ring_8hpp_ad01ce2340b834693daae348440d8b079_1ad01ce2340b834693daae348440d8b079" compoundref="res-poly-ring_8hpp" startline="278" endline="288">display_poly</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_fast_allocator_a6f693eca1a57a46541f47058ea501b81_1a6f693eca1a57a46541f47058ea501b81" compoundref="allocator_8cpp" startline="34" endline="53">BIBasis::FastAllocator::ExpandMemory</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ac203e258b1b89430fc5c75660f826dd0_1ac203e258b1b89430fc5c75660f826dd0" compoundref="_k_d_entry_array_8h" startline="385" endline="412">mathic::KDEntryArray&lt; C, EE &gt;::findAllDivisors</referencedby>
+        <referencedby refid="namespacemathic_1_1_div_list_helper_a86a08c5111bc4c71302398bfeed972e6_1a86a08c5111bc4c71302398bfeed972e6" compoundref="_div_list_8h" startline="388" endline="404">mathic::DivListHelper::findAllDivisorsSorted</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a174047e0465c482447789971095f023e_1a174047e0465c482447789971095f023e" compoundref="_k_d_entry_array_8h" startline="417" endline="432">mathic::KDEntryArray&lt; C, mathic::DivMask::Extender&lt; Entry, C::UseDivMask &gt; &gt;::findAllMultiples</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a4830bc0186c91553f896bf52fb2e9d2c_1a4830bc0186c91553f896bf52fb2e9d2c" compoundref="franzi-gb_8cpp" startline="291" endline="310">findDivisor</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1253ea4fd593633c49b70d3a9e5a4745_1a1253ea4fd593633c49b70d3a9e5a4745" compoundref="_k_d_entry_array_8h" startline="351" endline="380">mathic::KDEntryArray&lt; C, EE &gt;::findDivisor</referencedby>
+        <referencedby refid="namespacemathic_1_1_div_list_helper_a6e0094ef0b0bb671fd42ada1f8f209c3_1a6e0094ef0b0bb671fd42ada1f8f209c3" compoundref="_div_list_8h" startline="355" endline="371">mathic::DivListHelper::findDivisorSorted</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_a8a9f78ac1814d8cefaf24c8d65b7106e_1a8a9f78ac1814d8cefaf24c8d65b7106e" compoundref="_div_list_8h" startline="557" endline="562">mathic::DivList&lt; C &gt;::forAll</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a06b17a4d45a9697ec4630ce54cc3f4f9_1a06b17a4d45a9697ec4630ce54cc3f4f9" compoundref="_k_d_entry_array_8h" startline="436" endline="446">mathic::KDEntryArray&lt; C, EE &gt;::forAll</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a0a5fc7d7efa303d7021d1b90764b0633_1a0a5fc7d7efa303d7021d1b90764b0633" compoundref="_tour_tree_8h" startline="46" endline="52">mathic::TourTree&lt; QueueConfiguration &gt;::forAll</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a702d604a3d75dde480eaaea4974a316a_1a702d604a3d75dde480eaaea4974a316a" compoundref="_tour_tree_8h" startline="37" endline="43">mathic::TourTree&lt; QueueConfiguration &gt;::forAll</referencedby>
+        <referencedby refid="class_memory_block_a18a3ac120f1cf2669df90751df54a613_1a18a3ac120f1cf2669df90751df54a613" compoundref="_memory_block_8hpp" startline="87" endline="90">MemoryBlock::freeTopArray</referencedby>
+        <referencedby refid="class_function_pair_a649c913ae338ba76e99db1ea7e11a5d6_1a649c913ae338ba76e99db1ea7e11a5d6" compoundref="franzi-gb_8cpp" startline="124" endline="149">FunctionPair::FunctionPair</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="236" endline="241">indexRange</referencedby>
+        <referencedby refid="class_common_params_a9d7606fa4594bba924cdd00b8fdc805e_1a9d7606fa4594bba924cdd00b8fdc805e" compoundref="_common_params_8cpp" startline="90" endline="102">CommonParams::inputFileNameExtension</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5dacfcdefe66e4a0bec733890fefe07b_1a5dacfcdefe66e4a0bec733890fefe07b" compoundref="_geobucket_8h" startline="706" endline="739">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5dacfcdefe66e4a0bec733890fefe07b_1a5dacfcdefe66e4a0bec733890fefe07b" compoundref="_geobucket_8h" startline="706" endline="739">mathic::Geobucket&lt; Model::Configuration &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a13df25cad452ae6a6ac1f0152d3e28bb_1a13df25cad452ae6a6ac1f0152d3e28bb" compoundref="_k_d_entry_array_8h" startline="268" endline="276">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a871d5f4bb45a50748e4cfcb559ba2d85_1a871d5f4bb45a50748e4cfcb559ba2d85" compoundref="_k_d_entry_array_8h" startline="253" endline="265">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_aabfbe3fdb1fa0e47ab67c6415ecb1e94_1aabfbe3fdb1fa0e47ab67c6415ecb1e94" compoundref="_k_d_tree_8h" startline="154" endline="167">mathic::KDTree&lt; C &gt;::insert</referencedby>
+        <referencedby refid="class_reducer_dedup_a76d9f43fe44c15966efa41ec80a9b587_1a76d9f43fe44c15966efa41ec80a9b587" compoundref="_reducer_dedup_8cpp" startline="98" endline="109">ReducerDedup&lt; Queue &gt;::insert</referencedby>
+        <referencedby refid="class_reducer_hash_a01fc006872fd205bdd4e5127b61e7c45_1a01fc006872fd205bdd4e5127b61e7c45" compoundref="_reducer_hash_8cpp" startline="83" endline="93">ReducerHash&lt; Queue &gt;::insert</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a31652c56c45e6505af07dfbc5e3c556b_1a31652c56c45e6505af07dfbc5e3c556b" compoundref="_reducer_no_dedup_8cpp" startline="91" endline="102">ReducerNoDedup&lt; Queue &gt;::insert</referencedby>
+        <referencedby refid="class_sig_poly_basis_a725cd240bef1d209d76fb0c859620cfc_1a725cd240bef1d209d76fb0c859620cfc" compoundref="_sig_poly_basis_8cpp" startline="57" endline="166">SigPolyBasis::insert</referencedby>
+        <referencedby refid="namespacemathic_1_1_div_list_helper_a3ce25861e5515031bd7b709ce614f019_1a3ce25861e5515031bd7b709ce614f019" compoundref="_div_list_8h" startline="311" endline="319">mathic::DivListHelper::insertSort</referencedby>
+        <referencedby refid="class_reducer_dedup_ad6512ca042c49d6fd9dd61e0d2d5cee0_1ad6512ca042c49d6fd9dd61e0d2d5cee0" compoundref="_reducer_dedup_8cpp" startline="81" endline="95">ReducerDedup&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="class_reducer_hash_a3514d9673440029ab41a2b0bfebf4d55_1a3514d9673440029ab41a2b0bfebf4d55" compoundref="_reducer_hash_8cpp" startline="66" endline="80">ReducerHash&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a0cadee6b69935771144f2da77919bc07_1a0cadee6b69935771144f2da77919bc07" compoundref="_reducer_no_dedup_8cpp" startline="74" endline="88">ReducerNoDedup&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a1a3761822c6b39b16ad02d4de6ff3f16_1a1a3761822c6b39b16ad02d4de6ff3f16" compoundref="franzi-gb_8cpp" startline="397" endline="427">interreduction</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="210" endline="212">intRange</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a927154c78a6f5f6e40ee6dfd2924a8d7_1a927154c78a6f5f6e40ee6dfd2924a8d7" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="216" endline="218">intRange</referencedby>
+        <referencedby refid="class_free_algebra_a39f440d08bcf38dcbd4125fe534dc9a7_1a39f440d08bcf38dcbd4125fe534dc9a7" compoundref="_free_algebra_8cpp" startline="815" endline="836">FreeAlgebra::is_homogeneous</referencedby>
+        <referencedby refid="class_poly_ring_a6b409cb315cde0f4f0b3551249c2523f_1a6b409cb315cde0f4f0b3551249c2523f" compoundref="poly_8cpp" startline="533" endline="549">PolyRing::is_homogeneous</referencedby>
+        <referencedby refid="class_poly_ring_a607a97a1b04b467928a45a9eda66bf8d_1a607a97a1b04b467928a45a9eda66bf8d" compoundref="poly_8cpp" startline="478" endline="485">PolyRing::is_unit</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a8089e5515ec6e0c72b5ced95a06e5a98_1a8089e5515ec6e0c72b5ced95a06e5a98" compoundref="franzi-gb_8cpp" startline="213" endline="257">isGoodPair</referencedby>
+        <referencedby refid="classmemt_1_1_memory_blocks_1_1_block_af4c4752a03d19a6c03ed6df8a693e2e3_1af4c4752a03d19a6c03ed6df8a693e2e3" compoundref="_memory_blocks_8h" startline="225" endline="233">memt::MemoryBlocks::Block::isInBlock</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa91ad5a523579e1d3265ef08abf7d900_1aa91ad5a523579e1d3265ef08abf7d900" compoundref="_k_d_entry_array_8h" startline="218" endline="235">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a11955927aedcdec2eb81a2d0c8ceddd0_1a11955927aedcdec2eb81a2d0c8ceddd0" compoundref="_k_d_entry_array_8h" startline="196" endline="214">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_leaf_ad6713d5e5dc4c40ba05d2a68959542da_1ad6713d5e5dc4c40ba05d2a68959542da" compoundref="_binary_k_d_tree_8h" startline="717" endline="722">mathic::BinaryKDTree&lt; C &gt;::KDTreeLeaf::KDTreeLeaf</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_leaf_a2a0f6dd480ac38ec74b4203bf29b4bb7_1a2a0f6dd480ac38ec74b4203bf29b4bb7" compoundref="_binary_k_d_tree_8h" startline="707" endline="713">mathic::BinaryKDTree&lt; C &gt;::KDTreeLeaf::KDTreeLeaf</referencedby>
+        <referencedby refid="class_local_ring_a331b1a804dcc8bb8d2671077f56e433c_1a331b1a804dcc8bb8d2671077f56e433c" compoundref="localring_8cpp" startline="227" endline="265">LocalRing::lift_up</referencedby>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">F4Res::loadRow</referencedby>
+        <referencedby refid="class_det_computation_a3a5289dd0f43e0b569e8d3bb04fccd83_1a3a5289dd0f43e0b569e8d3bb04fccd83" compoundref="det_8cpp" startline="94" endline="188">DetComputation::make_dynamic_cache</referencedby>
+        <referencedby refid="class_monomial_table_a86e08b9151e25dfc06c3428ddf010739_1a86e08b9151e25dfc06c3428ddf010739" compoundref="montable_8cpp" startline="367" endline="417">MonomialTable::make_minimal</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a129e311d03f91a67c4ed34e642c2a176_1a129e311d03f91a67c4ed34e642c2a176" compoundref="franzi-gb_8cpp" startline="155" endline="178">makeList</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a29ff16b6eaf37f5d2b983a2aec3b564b_1a29ff16b6eaf37f5d2b983a2aec3b564b" compoundref="franzi-gb_8cpp" startline="181" endline="202">makeNewPairs</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_a7e7c34f9ba320543e6c0b415686662dd_1a7e7c34f9ba320543e6c0b415686662dd" compoundref="_packed_k_d_tree_8h" startline="43" endline="47">mathic::PackedKDTree&lt; C &gt;::Node::makeNode</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_a5b9514edd8717b27e734cccca080d099_1a5b9514edd8717b27e734cccca080d099" compoundref="_packed_k_d_tree_8h" startline="50" endline="54">mathic::PackedKDTree&lt; C &gt;::Node::makeNode</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2413fcea0a589585e643abc500a7ee56_1a2413fcea0a589585e643abc500a7ee56" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="98" endline="114">MATHICGB_NAMESPACE_BEGIN::DenseRow::makeUnitary</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; Model::Configuration &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5df953315a6b918cc667649cecc751e6_1a5df953315a6b918cc667649cecc751e6" compoundref="_geobucket_8h" startline="566" endline="576">mathic::Geobucket&lt; Model::Configuration &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="class_monomial_table_ae304ce5e19a5ca70ec72faaeeb3cb45a_1ae304ce5e19a5ca70ec72faaeeb3cb45a" compoundref="montable_8cpp" startline="297" endline="365">MonomialTable::minimalize</referencedby>
+        <referencedby refid="classgb_a_a1212629742c9cda0dc6b030a9e2d67fd_1a1212629742c9cda0dc6b030a9e2d67fd" compoundref="gb-default_8cpp" startline="786" endline="852">gbA::minimalize_pairs_non_ZZ</referencedby>
+        <referencedby refid="class_poly_ring_acb856967218704f37951aa35db9fc990_1acb856967218704f37951aa35db9fc990" compoundref="poly_8cpp" startline="553" endline="578">PolyRing::multi_degree</referencedby>
+        <referencedby refid="class_sparse_matrix_a9b2b457368eb486ebf067c71283b9a92_1a9b2b457368eb486ebf067c71283b9a92" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="92" endline="101">SparseMatrix::multiplyRow</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_a8a53f79525e62121e17bf3ba7f8cf2a0_1a8a53f79525e62121e17bf3ba7f8cf2a0" compoundref="_packed_k_d_tree_8h" startline="192" endline="200">mathic::PackedKDTree&lt; C &gt;::Node::Node</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_af18afa49cd051a347e08a8a4af92de27_1af18afa49cd051a347e08a8a4af92de27" compoundref="_packed_k_d_tree_8h" startline="204" endline="213">mathic::PackedKDTree&lt; C &gt;::Node::Node</referencedby>
+        <referencedby refid="class_b_r_p_a26d60fcd097b25449dec8f4c038f6208_1a26d60fcd097b25449dec8f4c038f6208" compoundref="franzi-brp_8cpp" startline="80" endline="123">BRP::operator*</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_a2e190e59946b15826281660dc6aef77b_1a2e190e59946b15826281660dc6aef77b">mathic::PackedKDTree&lt; C &gt;::Node::operator=</referencedby>
+        <referencedby refid="class_sparse_matrix_a898fd13f12334100d5e98dc30da285c0_1a898fd13f12334100d5e98dc30da285c0" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="211" endline="225">SparseMatrix::operator==</referencedby>
+        <referencedby refid="class_suffix_tree_aa3dc925ac222174a8c805bee83dc1074_1aa3dc925ac222174a8c805bee83dc1074" compoundref="_suffix_tree_8cpp" startline="649" endline="653">SuffixTree::operator[]</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="328" endline="333">oppositePairRange</referencedby>
+        <referencedby refid="class_pair_a8f96481b7793ce173045217ab6a77888_1a8f96481b7793ce173045217ab6a77888" compoundref="franzi-gb_8cpp" startline="58" endline="95">Pair::Pair</referencedby>
+        <referencedby refid="class_simulator_a6e6ff45b952ac84ee3c3c9cf0bb49a38_1a6e6ff45b952ac84ee3c3c9cf0bb49a38" compoundref="_simulator_8cpp" startline="262" endline="273">Simulator::print</referencedby>
+        <referencedby refid="class_sparse_matrix_a1fd42e0a7d9d8d9cc51c71b866da3fdb_1a1fd42e0a7d9d8d9cc51c71b866da3fdb" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="103" endline="113">SparseMatrix::print</referencedby>
+        <referencedby refid="class_log_domain_set_a4db01d3e5a68e5b693746de685bad953_1a4db01d3e5a68e5b693746de685bad953" compoundref="_log_domain_set_8cpp" startline="124" endline="148">LogDomainSet::printCountReport</referencedby>
+        <referencedby refid="class_log_domain_set_ad14986093bd9c226cd79c5c003507da7_1ad14986093bd9c226cd79c5c003507da7" compoundref="_log_domain_set_8cpp" startline="150" endline="200">LogDomainSet::printTimeReport</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_aa98e5ab99841dd85808c0ce4b3cfdbef_1aa98e5ab99841dd85808c0ce4b3cfdbef" compoundref="_geobucket_8h" startline="404" endline="434">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; Model::Configuration &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_heap_a4dc1e0be09ce1531839d3c3c132d9888_1a4dc1e0be09ce1531839d3c3c132d9888" compoundref="_heap_8h" startline="106" endline="109">mathic::Heap&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_heap_a17a3c6360f4146644f3ed8416f0e2c4a_1a17a3c6360f4146644f3ed8416f0e2c4a" compoundref="_heap_8h" startline="98" endline="102">mathic::Heap&lt; Model::Configuration &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_stl_set_ac3743e353832f950e671d64b79da462f_1ac3743e353832f950e671d64b79da462f" compoundref="_stl_set_8h" startline="23" endline="26">mathic::StlSet&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_add07edd215eddb327fce63b3e0e35805_1add07edd215eddb327fce63b3e0e35805" compoundref="_tour_tree_8h" startline="147" endline="150">mathic::TourTree&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_add07edd215eddb327fce63b3e0e35805_1add07edd215eddb327fce63b3e0e35805">mathic::TourTree&lt; QueueConfiguration &gt;::push</referencedby>
+        <referencedby refid="class_model_adffc7a83fbda6d0ecc662ab1d8aae529_1adffc7a83fbda6d0ecc662ab1d8aae529" compoundref="_model_8h" startline="50" endline="52">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::push</referencedby>
+        <referencedby refid="namespace_model_helper_a8ed56c0482156c1167f746f490d377a0_1a8ed56c0482156c1167f746f490d377a0" compoundref="_model_8h" startline="111" endline="113">ModelHelper::push</referencedby>
+        <referencedby refid="namespace_model_helper_a7b47e093ebf63f3b53c5c4e9c6671152_1a7b47e093ebf63f3b53c5c4e9c6671152" compoundref="_model_8h" startline="115" endline="117">ModelHelper::push</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="256" endline="263">rangeToVector</referencedby>
+        <referencedby refid="class_d_poly_ac38175d165a55aad9036f094ab547c56_1ac38175d165a55aad9036f094ab547c56" compoundref="dpoly_8cpp" startline="341" endline="381">DPoly::read_poly_0</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_a16b5b214ab73e07ac65d3b9a530c8640_1a16b5b214ab73e07ac65d3b9a530c8640" compoundref="_div_list_8h" startline="591" endline="601">mathic::DivList&lt; C &gt;::rebuild</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01false_01_4_a6ef433c65a78dddedc47c4b9a4aac6c3_1a6ef433c65a78dddedc47c4b9a4aac6c3" compoundref="_div_mask_8h" startline="350" endline="350">mathic::DivMask::Calculator&lt; C, false &gt;::rebuild</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_aa68b3910ce9898ff1a4a116b80e29130_1aa68b3910ce9898ff1a4a116b80e29130" compoundref="_div_mask_8h" startline="207" endline="310">mathic::DivMask::Calculator&lt; C, true &gt;::rebuild</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aedb2c9a95b1f0d51a43179f75a51a69f_1aedb2c9a95b1f0d51a43179f75a51a69f" compoundref="_k_d_entry_array_8h" startline="473" endline="479">mathic::KDEntryArray&lt; C, EE &gt;::recalculateTreeDivMask</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+        <referencedby refid="franzi-gb_8cpp_ab670b05591ce570520f8a3dc85224c95_1ab670b05591ce570520f8a3dc85224c95" compoundref="franzi-gb_8cpp" startline="314" endline="327">reduceLt</referencedby>
+        <referencedby refid="class_b_r_p_a12ae3cfd7f5aaaa46fb848129d71da21_1a12ae3cfd7f5aaaa46fb848129d71da21" compoundref="franzi-brp_8cpp" startline="159" endline="190">BRP::reduceTail</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a3a32cf3388d74be94b3317c0cd7e9488_1a3a32cf3388d74be94b3317c0cd7e9488" compoundref="franzi-gb_8cpp" startline="330" endline="350">reduceTail</referencedby>
+        <referencedby refid="mathicgb_2_f4_matrix_reducer_8cpp_a52071f745752cd9e4149a4aa2bdb5142_1a52071f745752cd9e4149a4aa2bdb5142" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="661" endline="696">reduceToEchelonFormShrawan</referencedby>
+        <referencedby refid="mathicgb_2_f4_matrix_reducer_8cpp_ac8415c8bd0009dc4d8eb5e34c1a3b1aa_1ac8415c8bd0009dc4d8eb5e34c1a3b1aa" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="698" endline="733">reduceToEchelonFormShrawanDelayedModulus</referencedby>
+        <referencedby refid="class_b_r_p_a8c6ba213a26f4c8b2e5ec7306f64bb8e_1a8c6ba213a26f4c8b2e5ec7306f64bb8e" compoundref="franzi-brp_8cpp" startline="138" endline="152">BRP::remainder</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1494a764076b6ca49b4e53b1df30e0c1_1a1494a764076b6ca49b4e53b1df30e0c1" compoundref="_k_d_entry_array_8h" startline="329" endline="346">mathic::KDEntryArray&lt; C, EE &gt;::removeElement</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_ad71c23ce91edfc5187e93e55c959c0fe_1ad71c23ce91edfc5187e93e55c959c0fe">mathic::BinaryKDTree&lt; C &gt;::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ae32765702543c2bd92aa99d7f69cb8d8_1ae32765702543c2bd92aa99d7f69cb8d8" compoundref="_k_d_entry_array_8h" startline="287" endline="325">mathic::KDEntryArray&lt; C, EE &gt;::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a35e5e2a7793b016a79c3bc9422ef8c07_1a35e5e2a7793b016a79c3bc9422ef8c07">mathic::PackedKDTree&lt; C &gt;::removeMultiples</referencedby>
+        <referencedby refid="class_log_domain_set_a350a2834831112e5dd9429ab7dc4b9ba_1a350a2834831112e5dd9429ab7dc4b9ba" compoundref="_log_domain_set_8cpp" startline="202" endline="209">LogDomainSet::reset</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_a43a014e569dff853b424e9e309eea137_1a43a014e569dff853b424e9e309eea137" compoundref="_binary_k_d_tree_8h" startline="331" endline="421">mathic::BinaryKDTree&lt; C &gt;::reset</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a51c5ba9765d667c15d2221e35f1871c6_1a51c5ba9765d667c15d2221e35f1871c6" compoundref="_packed_k_d_tree_8h" startline="300" endline="394">mathic::PackedKDTree&lt; C &gt;::reset</referencedby>
+        <referencedby refid="classmemt_1_1_arena_aead7a1d220eeb7e4cd01119e898d8418_1aead7a1d220eeb7e4cd01119e898d8418" compoundref="_arena_8h" startline="423" endline="456">memt::Arena::restoreToGuardPoint</referencedby>
+        <referencedby refid="class_sparse_matrix_ac6ee1cc257e9bb7e4665259ce954370f_1ac6ee1cc257e9bb7e4665259ce954370f" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="34" endline="48">SparseMatrix::rowToPolynomial</referencedby>
+        <referencedby refid="class_simulator_ad16df28339f9b3f91c087a1f4598957f_1ad16df28339f9b3f91c087a1f4598957f" compoundref="_simulator_8h" startline="61" endline="101">Simulator::run</referencedby>
+        <referencedby refid="class_scanner_a2a78b0b1fc4077fa0f44bfcb20b5be48_1a2a78b0b1fc4077fa0f44bfcb20b5be48" compoundref="checksource_2_scanner_8cpp" startline="53" endline="62">Scanner::Scanner</referencedby>
+        <referencedby refid="class_scanner_af92fe233e07b952b9841e6bb64d832f5_1af92fe233e07b952b9841e6bb64d832f5" compoundref="checksource_2_scanner_8cpp" startline="20" endline="29">Scanner::Scanner</referencedby>
+        <referencedby refid="class_scanner_a82c0143a5274b93736529b7429e8def7_1a82c0143a5274b93736529b7429e8def7" compoundref="checksource_2_scanner_8cpp" startline="31" endline="40">Scanner::Scanner</referencedby>
+        <referencedby refid="classschur__poly__iterator_ac4b0bcb7d03bcb072083465046075c61_1ac4b0bcb7d03bcb072083465046075c61" compoundref="schur2_8hpp" startline="108" endline="108">schur_poly_iterator::schur_poly_iterator</referencedby>
+        <referencedby refid="class_simulator_a1bce3c5af053666392a80c01c809eb68_1a1bce3c5af053666392a80c01c809eb68" compoundref="_simulator_8cpp" startline="294" endline="314">Simulator::setupEvents</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a2f5a351339c320a95334f8aaee4d207d_1a2f5a351339c320a95334f8aaee4d207d" compoundref="res-moninfo-sparse_8cpp" startline="101" endline="110">ResMonoidSparse::showAlpha</referencedby>
+        <referencedby refid="class_memory_block_a4b88b7a973793352118cf9faa8a6b982_1a4b88b7a973793352118cf9faa8a6b982" compoundref="_memory_block_8hpp" startline="78" endline="84">MemoryBlock::shrinkLastAllocate</referencedby>
+        <referencedby refid="class_quick_sorter_ad5f52e7d1dd96fefd52563691d0bffbc_1ad5f52e7d1dd96fefd52563691d0bffbc" compoundref="monsort_8hpp" startline="128" endline="160">QuickSorter&lt; Sorter &gt;::sort2</referencedby>
+        <referencedby refid="class_quick_sorter_a376ec7d936a8d37864268f33ca9a3bec_1a376ec7d936a8d37864268f33ca9a3bec" compoundref="monsort_8hpp" startline="167" endline="200">QuickSorter&lt; Sorter &gt;::sort2depth</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_leaf_a7082692d7014869174eb8089463e426a_1a7082692d7014869174eb8089463e426a" compoundref="_binary_k_d_tree_8h" startline="742" endline="778">mathic::BinaryKDTree&lt; C &gt;::KDTreeLeaf::splitInsert</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_ae5445475364f298ae09f98b0ae1fc427_1ae5445475364f298ae09f98b0ae1fc427" compoundref="_packed_k_d_tree_8h" startline="672" endline="735">mathic::PackedKDTree&lt; C &gt;::Node::splitInsert</referencedby>
+        <referencedby refid="table_8c_a5dd514e4a6882a789b1008aebb9e4d6f_1a5dd514e4a6882a789b1008aebb9e4d6f" compoundref="table_8c" startline="150" endline="165">Table_toArray</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_accd71fa7d1c245807951f4af3ff53bec_1accd71fa7d1c245807951f4af3ff53bec" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="67" endline="76">MATHICGB_NAMESPACE_BEGIN::DenseRow::takeModulus</referencedby>
+        <referencedby refid="_pair_queue_8cpp_a8e1d916141e7747b824a083c2ca4498e_1a8e1d916141e7747b824a083c2ca4498e" compoundref="_pair_queue_8cpp" startline="109" endline="204">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a66f4f53727985fc43d232a409888af50_1a66f4f53727985fc43d232a409888af50" compoundref="_range_8cpp" startline="114" endline="132">TEST</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_ae80ce7723ce85a6a1f269d7df4ed3749_1ae80ce7723ce85a6a1f269d7df4ed3749" compoundref="res-f4-m2-interface_8cpp" startline="320" endline="374">ResF4toM2Interface::to_M2_MutableMatrix</referencedby>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3b9bca2865f35bb84a20d66e13f64880_1a3b9bca2865f35bb84a20d66e13f64880" compoundref="_s_l_p-imp_8hpp" startline="381" endline="803">HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::track</referencedby>
+        <referencedby refid="class_sparse_matrix_a87d83cc5c0106480c6541ad4732dc380_1a87d83cc5c0106480c6541ad4732dc380" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="304" endline="313">SparseMatrix::trimLeadingZeroColumns</referencedby>
+        <referencedby refid="class_sparse_matrix_ae012b01ef3ec0520f2e2867d51e8330d_1ae012b01ef3ec0520f2e2867d51e8330d" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="551" endline="578">SparseMatrix::writePBM</referencedby>
+        <referencedby refid="class_mathic_i_o_a99339c3b8d84dd6cc9a78781a2712d73_1a99339c3b8d84dd6cc9a78781a2712d73" compoundref="_mathic_i_o_8hpp" startline="409" endline="430">MathicIO&lt; M, BF &gt;::writePoly</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="ringelem_8cpp_ab1b1cb64daaf1f901dd95f1380506fb9_1ab1b1cb64daaf1f901dd95f1380506fb9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_term_iterator" kindref="compound">TermIterator</ref>&lt; <ref refid="structvecterm" kindref="compound">vecterm</ref> &gt;</type>
+        <definition>TermIterator&lt; vecterm &gt; begin</definition>
+        <argsstring>(vecterm *ptr)</argsstring>
+        <name>begin</name>
+        <param>
+          <type><ref refid="structvecterm" kindref="compound">vecterm</ref> *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.cpp" line="7" column="14" bodyfile="Macaulay2/e/ringelem.cpp" bodystart="7" bodyend="7"/>
+      </memberdef>
+      <memberdef kind="function" id="ringelem_8cpp_a5ae7f4516603af6d63b5b6f55036a5a6_1a5ae7f4516603af6d63b5b6f55036a5a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_term_iterator" kindref="compound">TermIterator</ref>&lt; <ref refid="structvecterm" kindref="compound">vecterm</ref> &gt;</type>
+        <definition>TermIterator&lt; vecterm &gt; end</definition>
+        <argsstring>(vecterm *)</argsstring>
+        <name>end</name>
+        <param>
+          <type><ref refid="structvecterm" kindref="compound">vecterm</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.cpp" line="8" column="14" bodyfile="Macaulay2/e/ringelem.cpp" bodystart="8" bodyend="8"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;<ref refid="ringelem_8hpp" kindref="compound">ringelem.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//<sp/>TODO:<sp/>don&apos;t<sp/>use<sp/>NULL<sp/>or<sp/>0<sp/>to<sp/>check<sp/>end<sp/>of<sp/>Nterm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4" refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" refkind="member"><highlight class="normal"><ref refid="struct_term_iterator" kindref="compound">TermIterator&lt;Nterm&gt;</ref><sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>(<ref refid="struct_nterm" kindref="compound">Nterm</ref>*<sp/>ptr)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_term_iterator" kindref="compound">TermIterator&lt;Nterm&gt;</ref>(ptr);<sp/>}</highlight></codeline>
+<codeline lineno="5" refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" refkind="member"><highlight class="normal"><ref refid="struct_term_iterator" kindref="compound">TermIterator&lt;Nterm&gt;</ref><sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>(<ref refid="struct_nterm" kindref="compound">Nterm</ref>*)<sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_term_iterator" kindref="compound">TermIterator&lt;Nterm&gt;</ref>{};<sp/>}</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7" refid="ringelem_8cpp_ab1b1cb64daaf1f901dd95f1380506fb9_1ab1b1cb64daaf1f901dd95f1380506fb9" refkind="member"><highlight class="normal"><ref refid="struct_term_iterator" kindref="compound">TermIterator&lt;vecterm&gt;</ref><sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>(<ref refid="structvecterm" kindref="compound">vecterm</ref>*<sp/>ptr)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_term_iterator" kindref="compound">TermIterator&lt;vecterm&gt;</ref>(ptr);<sp/>}</highlight></codeline>
+<codeline lineno="8" refid="ringelem_8cpp_a5ae7f4516603af6d63b5b6f55036a5a6_1a5ae7f4516603af6d63b5b6f55036a5a6" refkind="member"><highlight class="normal"><ref refid="struct_term_iterator" kindref="compound">TermIterator&lt;vecterm&gt;</ref><sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>(<ref refid="structvecterm" kindref="compound">vecterm</ref>*)<sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_term_iterator" kindref="compound">TermIterator&lt;vecterm&gt;</ref>{};<sp/>}</highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/ringelem.cpp"/>
+  </compounddef>
+</doxygen>

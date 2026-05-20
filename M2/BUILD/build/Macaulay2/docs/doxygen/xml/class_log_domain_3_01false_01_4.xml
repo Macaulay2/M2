@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_log_domain_3_01false_01_4" kind="class" language="C++" prot="public">
+    <compoundname>LogDomain&lt; false &gt;</compoundname>
+    <includes refid="_log_domain_8hpp" local="no">LogDomain.hpp</includes>
+    <innerclass refid="class_log_domain_3_01false_01_4_1_1_timer" prot="public">LogDomain&lt; false &gt;::Timer</innerclass>
+    <templateparamlist>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_log_domain_3_01false_01_4_af056b9f148ed007da0e03bce7d9b2d04_1af056b9f148ed007da0e03bce7d9b2d04" prot="public" static="no">
+        <type>unsigned long long</type>
+        <definition>typedef unsigned long long LogDomain&lt; false &gt;::Counter</definition>
+        <argsstring></argsstring>
+        <name>Counter</name>
+        <qualifiedname>LogDomain&lt; false &gt;::Counter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="173" column="30" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="173" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_log_domain_3_01false_01_4_ab0b0d42037a5c927e4456e4cc8f713e0_1ab0b0d42037a5c927e4456e4cc8f713e0" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool LogDomain&lt; false &gt;::compileTimeEnabled</definition>
+        <argsstring></argsstring>
+        <name>compileTimeEnabled</name>
+        <qualifiedname>LogDomain&lt; false &gt;::compileTimeEnabled</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="148" column="21" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_log_domain_3_01false_01_4_a176c3271be84c52b7b3bbc03ed3dae0c_1a176c3271be84c52b7b3bbc03ed3dae0c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>LogDomain&lt; false &gt;::LogDomain</definition>
+        <argsstring>(const char *const, const char *const, const bool)</argsstring>
+        <name>LogDomain</name>
+        <qualifiedname>LogDomain&lt; false &gt;::LogDomain</qualifiedname>
+        <param>
+          <type>const char * const</type>
+        </param>
+        <param>
+          <type>const char * const</type>
+        </param>
+        <param>
+          <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="150" column="3" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="150" bodyend="150"/>
+        <referencedby refid="class_log_domain_3_01false_01_4_1_1_timer_a18d38de46a7ff30825d8f43db8842359_1a18d38de46a7ff30825d8f43db8842359" compoundref="_log_domain_8hpp" startline="157" endline="157">LogDomain&lt; false &gt;::Timer::Timer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01false_01_4_ad38923531d8ece9ad61cb6d9da020dc1_1ad38923531d8ece9ad61cb6d9da020dc1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool LogDomain&lt; false &gt;::enabled</definition>
+        <argsstring>() const</argsstring>
+        <name>enabled</name>
+        <qualifiedname>LogDomain&lt; false &gt;::enabled</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="152" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="152" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01false_01_4_ac776b4348807800731cddbbbe05d362c_1ac776b4348807800731cddbbbe05d362c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool LogDomain&lt; false &gt;::streamEnabled</definition>
+        <argsstring>() const</argsstring>
+        <name>streamEnabled</name>
+        <qualifiedname>LogDomain&lt; false &gt;::streamEnabled</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="153" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="153" bodyend="153"/>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01false_01_4_ad2b83004ea37b685bc464c3f79521593_1ad2b83004ea37b685bc464c3f79521593" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_log_domain_3_01false_01_4_1_1_timer" kindref="compound">Timer</ref></type>
+        <definition>Timer LogDomain&lt; false &gt;::timer</definition>
+        <argsstring>()</argsstring>
+        <name>timer</name>
+        <qualifiedname>LogDomain&lt; false &gt;::timer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="162" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="162" bodyend="165"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01false_01_4_aedc641d76519456c31d6e6543180ecf0_1aedc641d76519456c31d6e6543180ecf0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; LogDomain&lt; false &gt;::stream</definition>
+        <argsstring>()</argsstring>
+        <name>stream</name>
+        <qualifiedname>LogDomain&lt; false &gt;::stream</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="167" column="16" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="167" bodyend="171"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01false_01_4_ae32460c870ea4d2ba4f14865514ff6ca_1ae32460c870ea4d2ba4f14865514ff6ca" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_log_domain_3_01false_01_4_af056b9f148ed007da0e03bce7d9b2d04_1af056b9f148ed007da0e03bce7d9b2d04" kindref="member">Counter</ref></type>
+        <definition>Counter LogDomain&lt; false &gt;::count</definition>
+        <argsstring>() const</argsstring>
+        <name>count</name>
+        <qualifiedname>LogDomain&lt; false &gt;::count</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="174" column="11" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="174" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01false_01_4_a0e1a7e318ccfc9221fd2d3d0f45465db_1a0e1a7e318ccfc9221fd2d3d0f45465db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void LogDomain&lt; false &gt;::setCount</definition>
+        <argsstring>(const Counter counter)</argsstring>
+        <name>setCount</name>
+        <qualifiedname>LogDomain&lt; false &gt;::setCount</qualifiedname>
+        <param>
+          <type>const <ref refid="class_log_domain_3_01false_01_4_af056b9f148ed007da0e03bce7d9b2d04_1af056b9f148ed007da0e03bce7d9b2d04" kindref="member">Counter</ref></type>
+          <declname>counter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="175" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="175" bodyend="179"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01false_01_4_af88b1f5636f5d569ff7da6454d465585_1af88b1f5636f5d569ff7da6454d465585" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool LogDomain&lt; false &gt;::hasCount</definition>
+        <argsstring>() const</argsstring>
+        <name>hasCount</name>
+        <qualifiedname>LogDomain&lt; false &gt;::hasCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="180" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="180" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01false_01_4_acc61a3d3348e7ed42069d95c92382157_1acc61a3d3348e7ed42069d95c92382157" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void LogDomain&lt; false &gt;::reset</definition>
+        <argsstring>()</argsstring>
+        <name>reset</name>
+        <qualifiedname>LogDomain&lt; false &gt;::reset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="181" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="181" bodyend="181"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This is a compile-time disabled logger. You are not supposed to dynamically call any non-const methods on it other than the constructor. Code that calls other code will compile but it is an error if any of those methods get called at runtime. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>LogDomain&lt; CompileTimeEnabled &gt;</label>
+        <link refid="class_log_domain"/>
+      </node>
+      <node id="1">
+        <label>LogDomain&lt; false &gt;</label>
+        <link refid="class_log_domain_3_01false_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; false &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>LogDomain&lt; CompileTimeEnabled &gt;</label>
+        <link refid="class_log_domain"/>
+      </node>
+      <node id="1">
+        <label>LogDomain&lt; false &gt;</label>
+        <link refid="class_log_domain_3_01false_01_4"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>compileTimeEnabled</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; false &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="146" column="1" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="146" bodyend="182"/>
+    <listofallmembers>
+      <member refid="class_log_domain_3_01false_01_4_ab0b0d42037a5c927e4456e4cc8f713e0_1ab0b0d42037a5c927e4456e4cc8f713e0" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>compileTimeEnabled</name></member>
+      <member refid="class_log_domain_3_01false_01_4_ae32460c870ea4d2ba4f14865514ff6ca_1ae32460c870ea4d2ba4f14865514ff6ca" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>count</name></member>
+      <member refid="class_log_domain_3_01false_01_4_af056b9f148ed007da0e03bce7d9b2d04_1af056b9f148ed007da0e03bce7d9b2d04" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>Counter</name></member>
+      <member refid="class_log_domain_3_01false_01_4_ad38923531d8ece9ad61cb6d9da020dc1_1ad38923531d8ece9ad61cb6d9da020dc1" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>enabled</name></member>
+      <member refid="class_log_domain_3_01false_01_4_af88b1f5636f5d569ff7da6454d465585_1af88b1f5636f5d569ff7da6454d465585" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>hasCount</name></member>
+      <member refid="class_log_domain_3_01false_01_4_a176c3271be84c52b7b3bbc03ed3dae0c_1a176c3271be84c52b7b3bbc03ed3dae0c" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>LogDomain</name></member>
+      <member refid="class_log_domain_3_01false_01_4_acc61a3d3348e7ed42069d95c92382157_1acc61a3d3348e7ed42069d95c92382157" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>reset</name></member>
+      <member refid="class_log_domain_3_01false_01_4_a0e1a7e318ccfc9221fd2d3d0f45465db_1a0e1a7e318ccfc9221fd2d3d0f45465db" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>setCount</name></member>
+      <member refid="class_log_domain_3_01false_01_4_aedc641d76519456c31d6e6543180ecf0_1aedc641d76519456c31d6e6543180ecf0" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>stream</name></member>
+      <member refid="class_log_domain_3_01false_01_4_ac776b4348807800731cddbbbe05d362c_1ac776b4348807800731cddbbbe05d362c" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>streamEnabled</name></member>
+      <member refid="class_log_domain_3_01false_01_4_ad2b83004ea37b685bc464c3f79521593_1ad2b83004ea37b685bc464c3f79521593" prot="public" virt="non-virtual"><scope>LogDomain&lt; false &gt;</scope><name>timer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

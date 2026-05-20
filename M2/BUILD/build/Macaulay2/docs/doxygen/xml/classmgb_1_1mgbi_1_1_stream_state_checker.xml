@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmgb_1_1mgbi_1_1_stream_state_checker" kind="class" language="C++" prot="public">
+    <compoundname>mgb::mgbi::StreamStateChecker</compoundname>
+    <includes refid="mathicgb_8h" local="no">mathicgb.h</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmgb_1_1mgbi_1_1_stream_state_checker_ac09211ded033c6af4f02985a53a71306_1ac09211ded033c6af4f02985a53a71306" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a6d2bed91ab97c0431180883c32fcbe84_1a6d2bed91ab97c0431180883c32fcbe84" kindref="member">GroebnerConfiguration::Coefficient</ref></type>
+        <definition>typedef GroebnerConfiguration::Coefficient mgb::mgbi::StreamStateChecker::Coefficient</definition>
+        <argsstring></argsstring>
+        <name>Coefficient</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::Coefficient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="498" column="50" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="498" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmgb_1_1mgbi_1_1_stream_state_checker_ac134c0b20741230410e751c21b0308b8_1ac134c0b20741230410e751c21b0308b8" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_af1054f5d7d178da47ae7dc2c3de8a5ba_1af1054f5d7d178da47ae7dc2c3de8a5ba" kindref="member">GroebnerConfiguration::VarIndex</ref></type>
+        <definition>typedef GroebnerConfiguration::VarIndex mgb::mgbi::StreamStateChecker::VarIndex</definition>
+        <argsstring></argsstring>
+        <name>VarIndex</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::VarIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="499" column="47" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="499" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmgb_1_1mgbi_1_1_stream_state_checker_acf3c15637b6438b310601a99d0e011b7_1acf3c15637b6438b310601a99d0e011b7" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a689abdbe85ca79cdeee87350036d4c10_1a689abdbe85ca79cdeee87350036d4c10" kindref="member">GroebnerConfiguration::Exponent</ref></type>
+        <definition>typedef GroebnerConfiguration::Exponent mgb::mgbi::StreamStateChecker::Exponent</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="500" column="47" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="500" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmgb_1_1mgbi_1_1_stream_state_checker_a6dd4ffbeaf4a9fe66b348886d39b26cf_1a6dd4ffbeaf4a9fe66b348886d39b26cf" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a4f5b7158eb39c62706456d28cfb65d73_1a4f5b7158eb39c62706456d28cfb65d73" kindref="member">GroebnerConfiguration::Component</ref></type>
+        <definition>typedef GroebnerConfiguration::Component mgb::mgbi::StreamStateChecker::Component</definition>
+        <argsstring></argsstring>
+        <name>Component</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::Component</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="501" column="48" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="501" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmgb_1_1mgbi_1_1_stream_state_checker_affda632bda1c034000a34f4dd170e038_1affda632bda1c034000a34f4dd170e038" prot="private" static="no" mutable="no">
+        <type>Pimpl *const</type>
+        <definition>Pimpl* const mgb::mgbi::StreamStateChecker::mPimpl</definition>
+        <argsstring></argsstring>
+        <name>mPimpl</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::mPimpl</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="524" column="19" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="524" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_af3956f6843d0a1e0990d240560549247_1af3956f6843d0a1e0990d240560549247" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mgb::mgbi::StreamStateChecker::StreamStateChecker</definition>
+        <argsstring>(const Coefficient modulus, const VarIndex varCount, const Component comCount)</argsstring>
+        <name>StreamStateChecker</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::StreamStateChecker</qualifiedname>
+        <param>
+          <type>const <ref refid="classmgb_1_1mgbi_1_1_stream_state_checker_ac09211ded033c6af4f02985a53a71306_1ac09211ded033c6af4f02985a53a71306" kindref="member">Coefficient</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmgb_1_1mgbi_1_1_stream_state_checker_ac134c0b20741230410e751c21b0308b8_1ac134c0b20741230410e751c21b0308b8" kindref="member">VarIndex</ref></type>
+          <declname>varCount</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmgb_1_1mgbi_1_1_stream_state_checker_a6dd4ffbeaf4a9fe66b348886d39b26cf_1a6dd4ffbeaf4a9fe66b348886d39b26cf" kindref="member">Component</ref></type>
+          <declname>comCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="503" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_a47060c0c7513374b61e563fa597ff0f2_1a47060c0c7513374b61e563fa597ff0f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mgb::mgbi::StreamStateChecker::~StreamStateChecker</definition>
+        <argsstring>()</argsstring>
+        <name>~StreamStateChecker</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::~StreamStateChecker</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="508" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_a72dac15615365d809cf901627bbf9d99_1a72dac15615365d809cf901627bbf9d99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::mgbi::StreamStateChecker::idealBegin</definition>
+        <argsstring>()</argsstring>
+        <name>idealBegin</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::idealBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="510" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_a089ae273c62c95527d828219ba40350e_1a089ae273c62c95527d828219ba40350e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::mgbi::StreamStateChecker::idealBegin</definition>
+        <argsstring>(size_t polyCount)</argsstring>
+        <name>idealBegin</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::idealBegin</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>polyCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="511" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_a3a82e789e034379eb3e2dbbdd818062a_1a3a82e789e034379eb3e2dbbdd818062a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::mgbi::StreamStateChecker::appendPolynomialBegin</definition>
+        <argsstring>()</argsstring>
+        <name>appendPolynomialBegin</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::appendPolynomialBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="512" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_ad4daacdde5da110cc1bfe140edafb7eb_1ad4daacdde5da110cc1bfe140edafb7eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::mgbi::StreamStateChecker::appendPolynomialBegin</definition>
+        <argsstring>(size_t termCount)</argsstring>
+        <name>appendPolynomialBegin</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::appendPolynomialBegin</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>termCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="513" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_ab5f716cd14e21312c071cf71231863cf_1ab5f716cd14e21312c071cf71231863cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::mgbi::StreamStateChecker::appendTermBegin</definition>
+        <argsstring>(Component com)</argsstring>
+        <name>appendTermBegin</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::appendTermBegin</qualifiedname>
+        <param>
+          <type><ref refid="classmgb_1_1mgbi_1_1_stream_state_checker_a6dd4ffbeaf4a9fe66b348886d39b26cf_1a6dd4ffbeaf4a9fe66b348886d39b26cf" kindref="member">Component</ref></type>
+          <declname>com</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="514" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_ad0c5b926bd0e149ffdc6509978721c79_1ad0c5b926bd0e149ffdc6509978721c79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::mgbi::StreamStateChecker::appendExponent</definition>
+        <argsstring>(VarIndex index, Exponent exponent)</argsstring>
+        <name>appendExponent</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::appendExponent</qualifiedname>
+        <param>
+          <type><ref refid="classmgb_1_1mgbi_1_1_stream_state_checker_ac134c0b20741230410e751c21b0308b8_1ac134c0b20741230410e751c21b0308b8" kindref="member">VarIndex</ref></type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type><ref refid="classmgb_1_1mgbi_1_1_stream_state_checker_acf3c15637b6438b310601a99d0e011b7_1acf3c15637b6438b310601a99d0e011b7" kindref="member">Exponent</ref></type>
+          <declname>exponent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="515" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_ae1e610bc4fe924f1026a4b71eb051637_1ae1e610bc4fe924f1026a4b71eb051637" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::mgbi::StreamStateChecker::appendTermDone</definition>
+        <argsstring>(Coefficient coefficient)</argsstring>
+        <name>appendTermDone</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::appendTermDone</qualifiedname>
+        <param>
+          <type><ref refid="classmgb_1_1mgbi_1_1_stream_state_checker_ac09211ded033c6af4f02985a53a71306_1ac09211ded033c6af4f02985a53a71306" kindref="member">Coefficient</ref></type>
+          <declname>coefficient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="516" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_ad43d87496c12f181429f60c32a8efe27_1ad43d87496c12f181429f60c32a8efe27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::mgbi::StreamStateChecker::appendPolynomialDone</definition>
+        <argsstring>()</argsstring>
+        <name>appendPolynomialDone</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::appendPolynomialDone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="517" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_ac257e5cfd1ade739a357569175428780_1ac257e5cfd1ade739a357569175428780" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::mgbi::StreamStateChecker::idealDone</definition>
+        <argsstring>()</argsstring>
+        <name>idealDone</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::idealDone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="518" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1mgbi_1_1_stream_state_checker_a0a32c9c1f4447ff6fb83644f503248f5_1a0a32c9c1f4447ff6fb83644f503248f5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mgb::mgbi::StreamStateChecker::hasIdeal</definition>
+        <argsstring>() const</argsstring>
+        <name>hasIdeal</name>
+        <qualifiedname>mgb::mgbi::StreamStateChecker::hasIdeal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="520" column="12"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Class that checks to see if the protocol for an ideal stream is followed. A method will return false if that is not the case. This class is not itself an ideal stream - it is intended to be used with ideal streams for debugging. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Pimpl *const</label>
+      </node>
+      <node id="1">
+        <label>mgb::mgbi::StreamStateChecker</label>
+        <link refid="classmgb_1_1mgbi_1_1_stream_state_checker"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mPimpl</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb.h" line="496" column="5" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="496" bodyend="525"/>
+    <listofallmembers>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_ad0c5b926bd0e149ffdc6509978721c79_1ad0c5b926bd0e149ffdc6509978721c79" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>appendExponent</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_a3a82e789e034379eb3e2dbbdd818062a_1a3a82e789e034379eb3e2dbbdd818062a" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>appendPolynomialBegin</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_ad4daacdde5da110cc1bfe140edafb7eb_1ad4daacdde5da110cc1bfe140edafb7eb" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>appendPolynomialBegin</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_ad43d87496c12f181429f60c32a8efe27_1ad43d87496c12f181429f60c32a8efe27" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>appendPolynomialDone</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_ab5f716cd14e21312c071cf71231863cf_1ab5f716cd14e21312c071cf71231863cf" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>appendTermBegin</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_ae1e610bc4fe924f1026a4b71eb051637_1ae1e610bc4fe924f1026a4b71eb051637" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>appendTermDone</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_ac09211ded033c6af4f02985a53a71306_1ac09211ded033c6af4f02985a53a71306" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>Coefficient</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_a6dd4ffbeaf4a9fe66b348886d39b26cf_1a6dd4ffbeaf4a9fe66b348886d39b26cf" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>Component</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_acf3c15637b6438b310601a99d0e011b7_1acf3c15637b6438b310601a99d0e011b7" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>Exponent</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_a0a32c9c1f4447ff6fb83644f503248f5_1a0a32c9c1f4447ff6fb83644f503248f5" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>hasIdeal</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_a72dac15615365d809cf901627bbf9d99_1a72dac15615365d809cf901627bbf9d99" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>idealBegin</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_a089ae273c62c95527d828219ba40350e_1a089ae273c62c95527d828219ba40350e" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>idealBegin</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_ac257e5cfd1ade739a357569175428780_1ac257e5cfd1ade739a357569175428780" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>idealDone</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_affda632bda1c034000a34f4dd170e038_1affda632bda1c034000a34f4dd170e038" prot="private" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>mPimpl</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_af3956f6843d0a1e0990d240560549247_1af3956f6843d0a1e0990d240560549247" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>StreamStateChecker</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_ac134c0b20741230410e751c21b0308b8_1ac134c0b20741230410e751c21b0308b8" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>VarIndex</name></member>
+      <member refid="classmgb_1_1mgbi_1_1_stream_state_checker_a47060c0c7513374b61e563fa597ff0f2_1a47060c0c7513374b61e563fa597ff0f2" prot="public" virt="non-virtual"><scope>mgb::mgbi::StreamStateChecker</scope><name>~StreamStateChecker</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

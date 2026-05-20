@@ -1,0 +1,27 @@
+var classnewf4_1_1_polynomial_list_stream_collector =
+[
+    [ "Coefficient", "classnewf4_1_1_polynomial_list_stream_collector_acc96c05705083d99c61a5b01d236adb2.html#acc96c05705083d99c61a5b01d236adb2", null ],
+    [ "Component", "classnewf4_1_1_polynomial_list_stream_collector_ab11e37ac3a6f8e964388f8f15e40ba1e.html#ab11e37ac3a6f8e964388f8f15e40ba1e", null ],
+    [ "Exponent", "classnewf4_1_1_polynomial_list_stream_collector_adbe80e255596d6c6242bea2da2cc22b0.html#adbe80e255596d6c6242bea2da2cc22b0", null ],
+    [ "VarIndex", "classnewf4_1_1_polynomial_list_stream_collector_aa33aeed5d8a6adf6dbf9ae6b66f9b03e.html#aa33aeed5d8a6adf6dbf9ae6b66f9b03e", null ],
+    [ "PolynomialListStreamCollector", "classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f.html#a72007e08f9f8d4425044ebe5f887f66f", null ],
+    [ "appendExponent", "classnewf4_1_1_polynomial_list_stream_collector_a8f21c4209705f547c3b570a162fe593c.html#a8f21c4209705f547c3b570a162fe593c", null ],
+    [ "appendPolynomialBegin", "classnewf4_1_1_polynomial_list_stream_collector_a8464114f8a26382b9292e0c6cd930b84.html#a8464114f8a26382b9292e0c6cd930b84", null ],
+    [ "appendPolynomialDone", "classnewf4_1_1_polynomial_list_stream_collector_a3e925c23a8d04111b1a5cb10202e57a1.html#a3e925c23a8d04111b1a5cb10202e57a1", null ],
+    [ "appendTermBegin", "classnewf4_1_1_polynomial_list_stream_collector_ada019b535f3d8d873f5d5ffd4f785fcd.html#ada019b535f3d8d873f5d5ffd4f785fcd", null ],
+    [ "appendTermDone", "classnewf4_1_1_polynomial_list_stream_collector_ae9f4424826704574e9440e6448b44908.html#ae9f4424826704574e9440e6448b44908", null ],
+    [ "comCount", "classnewf4_1_1_polynomial_list_stream_collector_a3624a12d5ec05ccffc11c8009235e3f0.html#a3624a12d5ec05ccffc11c8009235e3f0", null ],
+    [ "idealBegin", "classnewf4_1_1_polynomial_list_stream_collector_a886f1fc4e98c91820455591d50cc0c5b.html#a886f1fc4e98c91820455591d50cc0c5b", null ],
+    [ "idealDone", "classnewf4_1_1_polynomial_list_stream_collector_ab6b327c8deb72647968a2e0ffd02b6c3.html#ab6b327c8deb72647968a2e0ffd02b6c3", null ],
+    [ "modulus", "classnewf4_1_1_polynomial_list_stream_collector_a04a7e9a8eb3b1ffa2e312d9acf0c030e.html#a04a7e9a8eb3b1ffa2e312d9acf0c030e", null ],
+    [ "value", "classnewf4_1_1_polynomial_list_stream_collector_a60b4f0e929fa1b266406dfe95e0bc331.html#a60b4f0e929fa1b266406dfe95e0bc331", null ],
+    [ "varCount", "classnewf4_1_1_polynomial_list_stream_collector_a878933c4e21bf55cc55644819dbbaace.html#a878933c4e21bf55cc55644819dbbaace", null ],
+    [ "mCoefficients", "classnewf4_1_1_polynomial_list_stream_collector_a0bfa7c6c8684dab240742bacb8263f62.html#a0bfa7c6c8684dab240742bacb8263f62", null ],
+    [ "mComCount", "classnewf4_1_1_polynomial_list_stream_collector_a161f228257af8c276e044644196d5e1e.html#a161f228257af8c276e044644196d5e1e", null ],
+    [ "mCurrentPoly", "classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2.html#a4fdc8e72a9120da87b748f139f0040a2", null ],
+    [ "mCurrentTerm", "classnewf4_1_1_polynomial_list_stream_collector_ac483d5e0fcd83e35448485bf7d813190.html#ac483d5e0fcd83e35448485bf7d813190", null ],
+    [ "mModulus", "classnewf4_1_1_polynomial_list_stream_collector_a708bfd7dddc27f22dcf38191f6db1d60.html#a708bfd7dddc27f22dcf38191f6db1d60", null ],
+    [ "mSparseMonomial", "classnewf4_1_1_polynomial_list_stream_collector_a1b1c300220b31bd3bf3535163da2d226.html#a1b1c300220b31bd3bf3535163da2d226", null ],
+    [ "mValue", "classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651.html#a68731c216ba04272b1f1795073636651", null ],
+    [ "mVarCount", "classnewf4_1_1_polynomial_list_stream_collector_a080326aa4ce3e55743791ef01fe50c3e.html#a080326aa4ce3e55743791ef01fe50c3e", null ]
+];

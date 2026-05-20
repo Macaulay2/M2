@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_3db6df54476be2fef14ac162f319017b" kind="dir">
+    <compoundname>submodules/mathic/src/pqsim</compoundname>
+    <innerfile refid="_geobucket_model_8h">GeobucketModel.h</innerfile>
+    <innerfile refid="_heap_model_8h">HeapModel.h</innerfile>
+    <innerfile refid="_item_8cpp">Item.cpp</innerfile>
+    <innerfile refid="_item_8h">Item.h</innerfile>
+    <innerfile refid="_model_8cpp">Model.cpp</innerfile>
+    <innerfile refid="_model_8h">Model.h</innerfile>
+    <innerfile refid="pq_main_8cpp">pqMain.cpp</innerfile>
+    <innerfile refid="pq_main_8h">pqMain.h</innerfile>
+    <innerfile refid="_simulator_8cpp">Simulator.cpp</innerfile>
+    <innerfile refid="_simulator_8h">Simulator.h</innerfile>
+    <innerfile refid="mathic_2src_2pqsim_2stdinc_8h">stdinc.h</innerfile>
+    <innerfile refid="_stl_set_model_8h">StlSetModel.h</innerfile>
+    <innerfile refid="_tour_tree_model_8h">TourTreeModel.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/pqsim/"/>
+  </compounddef>
+</doxygen>

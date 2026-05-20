@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_div_mask_1_1_extender" kind="class" language="C++" prot="public">
+    <compoundname>mathic::DivMask::Extender</compoundname>
+    <templateparamlist>
+      <param>
+        <type>class <ref refid="struct_t" kindref="compound">T</ref></type>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>UseDivMask</declname>
+        <defname>UseDivMask</defname>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="classmathic_1_1_div_mask_1_1_extender" kindref="compound">Extender</ref> extends <ref refid="struct_t" kindref="compound">T</ref> with a div mask if UseDivMask is true. It is allowed for <ref refid="struct_t" kindref="compound">T</ref> to be a reference type or const. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>mathic::DivMask::Extender&lt; Entry, C::UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; Entry, C::UseDivMask &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::DivMask::Extender&lt; T, UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender"/>
+      </node>
+      <node id="4">
+        <label>mathic::DivMask::Extender&lt; T, false &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; T, false &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>mathic::DivMask::Extender&lt; T, true &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01true_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; T, true &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mathic::DivMask::Extender&lt; const Monomial &amp;, C::UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; const Monomial &amp;, C::UseDivMask &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="submodules/mathic/src/mathic/DivMask.h" line="124" column="5" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="124" bodyend="-1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

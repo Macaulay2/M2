@@ -1,0 +1,285 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_f4to_m2_interface" kind="class" language="C++" prot="public">
+    <compoundname>F4toM2Interface</compoundname>
+    <includes refid="f4-m2-interface_8hpp" local="no">f4-m2-interface.hpp</includes>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_f4to_m2_interface_a92e198196bd612dc6c436f336c124d36_1a92e198196bd612dc6c436f336c124d36" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void F4toM2Interface::poly_set_degrees</definition>
+        <argsstring>(const VectorArithmetic *VA, const MonomialInfo *MI, const M2_arrayint wts, const GBF4Polynomial &amp;f, int &amp;deg, int &amp;alpha)</argsstring>
+        <name>poly_set_degrees</name>
+        <qualifiedname>F4toM2Interface::poly_set_degrees</qualifiedname>
+        <param>
+          <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> *</type>
+          <declname>VA</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref> *</type>
+          <declname>MI</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>wts</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_g_b_f4_polynomial" kindref="compound">GBF4Polynomial</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>deg</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>alpha</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-m2-interface.hpp" line="61" column="15"/>
+        <references refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" compoundref="franzi-gb_8cpp" startline="430" endline="471">gb</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4to_m2_interface_a033aaf936047f35de1074ebf222882b4_1a033aaf936047f35de1074ebf222882b4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4toM2Interface::from_M2_vec</definition>
+        <argsstring>(const VectorArithmetic *VA, const MonomialInfo *MI, const FreeModule *F, vec v, GBF4Polynomial &amp;result)</argsstring>
+        <name>from_M2_vec</name>
+        <qualifiedname>F4toM2Interface::from_M2_vec</qualifiedname>
+        <param>
+          <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> *</type>
+          <declname>VA</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref> *</type>
+          <declname>MI</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <param>
+          <type>vec</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_g_b_f4_polynomial" kindref="compound">GBF4Polynomial</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-m2-interface.hpp" line="68" column="15" bodyfile="Macaulay2/e/f4/f4-m2-interface.cpp" bodystart="19" bodyend="56"/>
+        <references refid="class_ring_a73bec90f6a8598b3c5cdc201b068589a_1a73bec90f6a8598b3c5cdc201b068589a" compoundref="ring_8hpp" startline="241" endline="241">Ring::cast_to_PolynomialRing</references>
+        <references refid="class_vector_arithmetic_a3e29ef8f28583c401f6534588e2ec2c0_1a3e29ef8f28583c401f6534588e2ec2c0" compoundref="_vector_arithmetic_8hpp" startline="838" endline="840">VectorArithmetic::elementArrayFromContainer</references>
+        <references refid="class_monomial_info_adc4e661c5cb08700fd89d3686471b61d_1adc4e661c5cb08700fd89d3686471b61d" compoundref="moninfo_8hpp" startline="187" endline="215">MonomialInfo::from_expvector</references>
+        <references refid="class_g_b_ring_af357213b35a416911ff7deb0429e9e19_1af357213b35a416911ff7deb0429e9e19" compoundref="gbring_8cpp" startline="392" endline="397">GBRing::gbvector_n_terms</references>
+        <references refid="class_polynomial_ring_a40ed84790faee0b23715e2e6240f485c_1a40ed84790faee0b23715e2e6240f485c" compoundref="_macaulay2_2e_2polyring_8hpp" startline="272" endline="272">PolynomialRing::get_gb_ring</references>
+        <references refid="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" compoundref="freemod_8hpp" startline="98" endline="98">FreeModule::get_ring</references>
+        <references refid="class_polynomial_ring_a6cf397b11498a6d0cd65d20898bd697c_1a6cf397b11498a6d0cd65d20898bd697c" compoundref="_macaulay2_2e_2polyring_8hpp" startline="278" endline="278">PolynomialRing::getMonoid</references>
+        <references refid="class_monomial_info_a7111e3ac9f9bd85c0555d3d177006054_1a7111e3ac9f9bd85c0555d3d177006054" compoundref="moninfo_8hpp" startline="155" endline="155">MonomialInfo::max_monomial_size</references>
+        <references refid="class_monomial_info_ad9323d9d84e9eebf78eaaed6da703a73_1ad9323d9d84e9eebf78eaaed6da703a73" compoundref="moninfo_8hpp" startline="156" endline="160">MonomialInfo::monomial_size</references>
+        <references refid="class_monoid_a686ece7cc294cc80866870573c1e625b_1a686ece7cc294cc80866870573c1e625b" compoundref="monoid_8hpp" startline="203" endline="203">Monoid::n_vars</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="structgbvector_a3cc2bd9a347521ac3e6d6d89de1a3a26_1a3cc2bd9a347521ac3e6d6d89de1a3a26" compoundref="gbring_8hpp" startline="78">gbvector::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_monoid_a134514e900a32c809126bf4dd6c891c4_1a134514e900a32c809126bf4dd6c891c4" compoundref="monoid_8cpp" startline="747" endline="750">Monoid::to_expvector</references>
+        <references refid="class_polynomial_ring_abaa07ef51536a0c0c5ceb133756814d9_1abaa07ef51536a0c0c5ceb133756814d9">PolynomialRing::translate_gbvector_from_vec</references>
+        <referencedby refid="class_f4to_m2_interface_ae0554d8051387c4c81a5b5cfffb68b47_1ae0554d8051387c4c81a5b5cfffb68b47" compoundref="f4-m2-interface_8cpp" startline="58" endline="70">from_M2_matrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>vec</type>
+        <definition>vec F4toM2Interface::to_M2_vec</definition>
+        <argsstring>(const VectorArithmetic *VA, const MonomialInfo *MI, const GBF4Polynomial &amp;f, const FreeModule *F)</argsstring>
+        <name>to_M2_vec</name>
+        <qualifiedname>F4toM2Interface::to_M2_vec</qualifiedname>
+        <param>
+          <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> *</type>
+          <declname>VA</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref> *</type>
+          <declname>MI</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_g_b_f4_polynomial" kindref="compound">GBF4Polynomial</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-m2-interface.hpp" line="74" column="14" bodyfile="Macaulay2/e/f4/f4-m2-interface.cpp" bodystart="72" bodyend="128"/>
+        <references refid="class_ring_ac3bf5e7ce2fc181cc6944e8614ca86c1_1ac3bf5e7ce2fc181cc6944e8614ca86c1" compoundref="ring-vecs_8cpp" startline="546" endline="614">Ring::add_vec_to</references>
+        <references refid="class_ring_a73bec90f6a8598b3c5cdc201b068589a_1a73bec90f6a8598b3c5cdc201b068589a" compoundref="ring_8hpp" startline="241" endline="241">Ring::cast_to_PolynomialRing</references>
+        <references refid="struct_g_b_f4_polynomial_aa62506d76c6ea762f99c6646508e3d74_1aa62506d76c6ea762f99c6646508e3d74" compoundref="f4-types_8hpp" startline="105">GBF4Polynomial::coeffs</references>
+        <references refid="class_monoid_af796c73504cb5e1cdb2737b73468eb04_1af796c73504cb5e1cdb2737b73468eb04" compoundref="monoid_8cpp" startline="742" endline="745">Monoid::from_expvector</references>
+        <references refid="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" compoundref="freemod_8hpp" startline="98" endline="98">FreeModule::get_ring</references>
+        <references refid="class_polynomial_ring_a6cf397b11498a6d0cd65d20898bd697c_1a6cf397b11498a6d0cd65d20898bd697c" compoundref="_macaulay2_2e_2polyring_8hpp" startline="278" endline="278">PolynomialRing::getMonoid</references>
+        <references refid="struct_g_b_f4_polynomial_ac67d4476404b77290ff7a27aa0ef8197_1ac67d4476404b77290ff7a27aa0ef8197" compoundref="f4-types_8hpp" startline="104">GBF4Polynomial::len</references>
+        <references refid="class_polynomial_ring_a98b2e44941716f33a2f2f2d9e2344983_1a98b2e44941716f33a2f2f2d9e2344983">PolynomialRing::make_flat_term</references>
+        <references refid="class_monoid_a6f3936578edf5076153f30833bc552fe_1a6f3936578edf5076153f30833bc552fe" compoundref="monoid_8cpp" startline="455" endline="461">Monoid::make_one</references>
+        <references refid="class_ring_a2ab579eb49ebe28eed42e2a083c96c03_1a2ab579eb49ebe28eed42e2a083c96c03" compoundref="ring-vecs_8cpp" startline="56" endline="64">Ring::make_vec</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_monomial_info_ad9323d9d84e9eebf78eaaed6da703a73_1ad9323d9d84e9eebf78eaaed6da703a73" compoundref="moninfo_8hpp" startline="156" endline="160">MonomialInfo::monomial_size</references>
+        <references refid="struct_g_b_f4_polynomial_a537e11618ac75bee33331c962074c2b0_1a537e11618ac75bee33331c962074c2b0" compoundref="f4-types_8hpp" startline="106">GBF4Polynomial::monoms</references>
+        <references refid="class_monoid_a686ece7cc294cc80866870573c1e625b_1a686ece7cc294cc80866870573c1e625b" compoundref="monoid_8hpp" startline="203" endline="203">Monoid::n_vars</references>
+        <references refid="newdelete_8hpp_a8e45ca33f2628740d647f3bdf832b96d_1a8e45ca33f2628740d647f3bdf832b96d" compoundref="newdelete_8hpp" startline="80">newarray</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="struct_nterm_a395044af0f071742b5d1fdeb74a9efa2_1a395044af0f071742b5d1fdeb74a9efa2" compoundref="ringelem_8hpp" startline="153">Nterm::next</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">FreeModule::rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_vector_arithmetic_a5145023c42d98ae2eccf452d481eff06_1a5145023c42d98ae2eccf452d481eff06" compoundref="_vector_arithmetic_8hpp" startline="852" endline="855">VectorArithmetic::ringElemFromElementArray</references>
+        <references refid="class_monomial_info_a6292fa0b1de47b16c2f0f64394f47e30_1a6292fa0b1de47b16c2f0f64394f47e30" compoundref="moninfo_8hpp" startline="242" endline="252">MonomialInfo::to_expvector</references>
+        <referencedby refid="class_f4_computation_a7a3299f8e1592a0e9d63293a3cc3252e_1a7a3299f8e1592a0e9d63293a3cc3252e" compoundref="f4-computation_8cpp" startline="141" endline="164">F4Computation::get_gb</referencedby>
+        <referencedby refid="class_f4_g_b_a2a125eb5b91e9fd168e2a1e689972e1e_1a2a125eb5b91e9fd168e2a1e689972e1e" compoundref="f4_8cpp" startline="1253" endline="1268">F4GB::show_gb_array</referencedby>
+        <referencedby refid="class_f4to_m2_interface_a9a70c8897a9abbec20b0284d27d320e2_1a9a70c8897a9abbec20b0284d27d320e2" compoundref="f4-m2-interface_8cpp" startline="130" endline="139">to_M2_matrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4to_m2_interface_ae0554d8051387c4c81a5b5cfffb68b47_1ae0554d8051387c4c81a5b5cfffb68b47" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4toM2Interface::from_M2_matrix</definition>
+        <argsstring>(const VectorArithmetic *VA, const MonomialInfo *MI, const Matrix *m, gb_array &amp;result_polys)</argsstring>
+        <name>from_M2_matrix</name>
+        <qualifiedname>F4toM2Interface::from_M2_matrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> *</type>
+          <declname>VA</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref> *</type>
+          <declname>MI</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="f4-types_8hpp_a2e9f3698c99ce95a0e99361e755bce3c_1a2e9f3698c99ce95a0e99361e755bce3c" kindref="member">gb_array</ref> &amp;</type>
+          <declname>result_polys</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-m2-interface.hpp" line="79" column="15" bodyfile="Macaulay2/e/f4/f4-m2-interface.cpp" bodystart="58" bodyend="70"/>
+        <references refid="class_matrix_a0dd3516d8526ad736fe69848aacd1406_1a0dd3516d8526ad736fe69848aacd1406" compoundref="matrix_8cpp" startline="307" endline="310">Matrix::elem</references>
+        <references refid="structgbelem_a1e82e2ea3d0a30a26fdf7786818a54b3_1a1e82e2ea3d0a30a26fdf7786818a54b3" compoundref="f4-types_8hpp" startline="135">gbelem::f</references>
+        <references refid="class_f4to_m2_interface_a033aaf936047f35de1074ebf222882b4_1a033aaf936047f35de1074ebf222882b4" compoundref="f4-m2-interface_8cpp" startline="19" endline="56">from_M2_vec</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+        <references refid="class_matrix_a9837ac28e81ff230cd72f72573854272_1a9837ac28e81ff230cd72f72573854272" compoundref="matrix_8hpp" startline="140" endline="140">Matrix::rows</references>
+        <referencedby refid="class_f4_computation_ac9f51954ed4ee7a62e413598bbe75d23_1ac9f51954ed4ee7a62e413598bbe75d23" compoundref="f4-computation_8cpp" startline="76" endline="125">F4Computation::F4Computation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4to_m2_interface_a9a70c8897a9abbec20b0284d27d320e2_1a9a70c8897a9abbec20b0284d27d320e2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>Matrix * F4toM2Interface::to_M2_matrix</definition>
+        <argsstring>(const VectorArithmetic *VA, const MonomialInfo *MI, gb_array &amp;polys, const FreeModule *F)</argsstring>
+        <name>to_M2_matrix</name>
+        <qualifiedname>F4toM2Interface::to_M2_matrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> *</type>
+          <declname>VA</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref> *</type>
+          <declname>MI</declname>
+        </param>
+        <param>
+          <type><ref refid="f4-types_8hpp_a2e9f3698c99ce95a0e99361e755bce3c_1a2e9f3698c99ce95a0e99361e755bce3c" kindref="member">gb_array</ref> &amp;</type>
+          <declname>polys</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-m2-interface.hpp" line="84" column="17" bodyfile="Macaulay2/e/f4/f4-m2-interface.cpp" bodystart="130" bodyend="139"/>
+        <references refid="style_8hpp_ae9befcbff10f3a4ff986f206da609a90_1ae9befcbff10f3a4ff986f206da609a90" compoundref="style_8hpp" startline="35">INTSIZE</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" compoundref="f4-m2-interface_8cpp" startline="72" endline="128">to_M2_vec</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4to_m2_interface_a1c5497ca412e3a4b7f745443ad3bfbd7_1a1c5497ca412e3a4b7f745443ad3bfbd7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+        <definition>MutableMatrix * F4toM2Interface::to_M2_MutableMatrix</definition>
+        <argsstring>(const VectorArithmetic *VA, coefficient_matrix *mat, gb_array &amp;gens, gb_array &amp;gb)</argsstring>
+        <name>to_M2_MutableMatrix</name>
+        <qualifiedname>F4toM2Interface::to_M2_MutableMatrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> *</type>
+          <declname>VA</declname>
+        </param>
+        <param>
+          <type><ref refid="structcoefficient__matrix" kindref="compound">coefficient_matrix</ref> *</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="f4-types_8hpp_a2e9f3698c99ce95a0e99361e755bce3c_1a2e9f3698c99ce95a0e99361e755bce3c" kindref="member">gb_array</ref> &amp;</type>
+          <declname>gens</declname>
+        </param>
+        <param>
+          <type><ref refid="f4-types_8hpp_a2e9f3698c99ce95a0e99361e755bce3c_1a2e9f3698c99ce95a0e99361e755bce3c" kindref="member">gb_array</ref> &amp;</type>
+          <declname>gb</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-m2-interface.hpp" line="89" column="24" bodyfile="Macaulay2/e/f4/f4-m2-interface.cpp" bodystart="141" bodyend="173"/>
+        <references refid="structrow__elem_ae5514cb7665850f5d08042eb15fe3530_1ae5514cb7665850f5d08042eb15fe3530" compoundref="f4-types_8hpp" startline="158">row_elem::coeffs</references>
+        <references refid="structcoefficient__matrix_a9f500cbee963d19463afecc856945945_1a9f500cbee963d19463afecc856945945" compoundref="f4-types_8hpp" startline="175">coefficient_matrix::columns</references>
+        <references refid="structrow__elem_a7c465bf81ecb52a1f67cb7878e90b340_1a7c465bf81ecb52a1f67cb7878e90b340" compoundref="f4-types_8hpp" startline="159">row_elem::comps</references>
+        <references refid="structrow__elem_ace99c2f70e80922c30dba50f0d1c91ca_1ace99c2f70e80922c30dba50f0d1c91ca" compoundref="f4-types_8hpp" startline="154">row_elem::elem</references>
+        <references refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" compoundref="franzi-gb_8cpp" startline="430" endline="471">gb</references>
+        <references refid="mutable-matrix_8cpp_ab3226557af75db5c8ddda28285e158fb_1ab3226557af75db5c8ddda28285e158fb" compoundref="mutable-matrix_8cpp" startline="38" endline="52">IM2_MutableMatrix_make</references>
+        <references refid="style_8hpp_ae9befcbff10f3a4ff986f206da609a90_1ae9befcbff10f3a4ff986f206da609a90" compoundref="style_8hpp" startline="35">INTSIZE</references>
+        <references refid="class_element_array_a91116d3992a591200a88f36993d8e280_1a91116d3992a591200a88f36993d8e280" compoundref="_vector_arithmetic_8hpp" startline="99" endline="99">ElementArray::isNull</references>
+        <references refid="structrow__elem_a08550122c80deea057b24808496c4e57_1a08550122c80deea057b24808496c4e57" compoundref="f4-types_8hpp" startline="157">row_elem::len</references>
+        <references refid="structrow__elem_a6dc2ee8628397e49bd792a0511988230_1a6dc2ee8628397e49bd792a0511988230" compoundref="f4-types_8hpp" startline="153">row_elem::monom</references>
+        <references refid="class_vector_arithmetic_adf6ae8bc6f3a28908864c2076c65706d_1adf6ae8bc6f3a28908864c2076c65706d" compoundref="_vector_arithmetic_8hpp" startline="731" endline="733">VectorArithmetic::ring</references>
+        <references refid="class_vector_arithmetic_a5145023c42d98ae2eccf452d481eff06_1a5145023c42d98ae2eccf452d481eff06" compoundref="_vector_arithmetic_8hpp" startline="852" endline="855">VectorArithmetic::ringElemFromElementArray</references>
+        <references refid="structcoefficient__matrix_af5bf4578e96603663cbf257509a9067d_1af5bf4578e96603663cbf257509a9067d" compoundref="f4-types_8hpp" startline="174">coefficient_matrix::rows</references>
+        <references refid="class_mutable_matrix_af0175fcb3d11970c4de37c3e769f27f6_1af0175fcb3d11970c4de37c3e769f27f6">MutableMatrix::set_entry</references>
+        <referencedby refid="class_f4_g_b_adf39d766d20b4b9bcf472d873c03c357_1adf39d766d20b4b9bcf472d873c03c357" compoundref="f4_8cpp" startline="1296" endline="1304">F4GB::show_matrix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Static-method namespace for translating between engine <computeroutput><ref refid="class_matrix" kindref="compound">Matrix</ref></computeroutput> / <computeroutput>vec</computeroutput> polynomials and the F4-internal <computeroutput><ref refid="struct_g_b_f4_polynomial" kindref="compound">GBF4Polynomial</ref></computeroutput> form. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Every method is <computeroutput>static</computeroutput> <mdash/> the class holds no state. It bundles the conversion glue (<computeroutput><ref refid="class_f4to_m2_interface_a92e198196bd612dc6c436f336c124d36_1a92e198196bd612dc6c436f336c124d36" kindref="member">poly_set_degrees</ref></computeroutput>, <computeroutput><ref refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" kindref="member">to_M2_vec</ref></computeroutput>, <computeroutput><ref refid="class_f4to_m2_interface_a033aaf936047f35de1074ebf222882b4_1a033aaf936047f35de1074ebf222882b4" kindref="member">from_M2_vec</ref></computeroutput>, matrix-wide variants) that <computeroutput><ref refid="class_f4_computation" kindref="compound">F4Computation</ref></computeroutput> uses when handing input to <computeroutput><ref refid="class_f4_g_b" kindref="compound">F4GB</ref></computeroutput> and reading its output back into the engine&apos;s <computeroutput><ref refid="class_matrix" kindref="compound">Matrix</ref></computeroutput> / <computeroutput><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref></computeroutput> types. </para>
+    </detaileddescription>
+    <location file="Macaulay2/e/f4/f4-m2-interface.hpp" line="58" column="1" bodyfile="Macaulay2/e/f4/f4-m2-interface.hpp" bodystart="59" bodyend="93"/>
+    <listofallmembers>
+      <member refid="class_f4to_m2_interface_ae0554d8051387c4c81a5b5cfffb68b47_1ae0554d8051387c4c81a5b5cfffb68b47" prot="public" virt="non-virtual"><scope>F4toM2Interface</scope><name>from_M2_matrix</name></member>
+      <member refid="class_f4to_m2_interface_a033aaf936047f35de1074ebf222882b4_1a033aaf936047f35de1074ebf222882b4" prot="public" virt="non-virtual"><scope>F4toM2Interface</scope><name>from_M2_vec</name></member>
+      <member refid="class_f4to_m2_interface_a92e198196bd612dc6c436f336c124d36_1a92e198196bd612dc6c436f336c124d36" prot="public" virt="non-virtual"><scope>F4toM2Interface</scope><name>poly_set_degrees</name></member>
+      <member refid="class_f4to_m2_interface_a9a70c8897a9abbec20b0284d27d320e2_1a9a70c8897a9abbec20b0284d27d320e2" prot="public" virt="non-virtual"><scope>F4toM2Interface</scope><name>to_M2_matrix</name></member>
+      <member refid="class_f4to_m2_interface_a1c5497ca412e3a4b7f745443ad3bfbd7_1a1c5497ca412e3a4b7f745443ad3bfbd7" prot="public" virt="non-virtual"><scope>F4toM2Interface</scope><name>to_M2_MutableMatrix</name></member>
+      <member refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" prot="public" virt="non-virtual"><scope>F4toM2Interface</scope><name>to_M2_vec</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

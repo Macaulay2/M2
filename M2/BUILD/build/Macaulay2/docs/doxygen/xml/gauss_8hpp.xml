@@ -1,0 +1,570 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="gauss_8hpp" kind="file" language="C++">
+    <compoundname>gauss.hpp</compoundname>
+    <includes refid="relem_8hpp" local="yes">relem.hpp</includes>
+    <includes refid="matrix_8hpp" local="yes">matrix.hpp</includes>
+    <includes refid="_macaulay2_2e_2polyring_8hpp" local="yes">polyring.hpp</includes>
+    <includes refid="comp-gb_8hpp" local="yes">comp-gb.hpp</includes>
+    <includedby refid="comp-gb_8cpp" local="yes">Macaulay2/e/comp-gb.cpp</includedby>
+    <includedby refid="gauss_8cpp" local="yes">Macaulay2/e/gauss.cpp</includedby>
+    <includedby refid="res-f4-m2-interface_8cpp" local="yes">Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</includedby>
+    <incdepgraph>
+      <node id="53">
+        <label>../system/mutex.h</label>
+      </node>
+      <node id="14">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>comp-gb.hpp</label>
+        <link refid="comp-gb_8hpp"/>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>comp.hpp</label>
+        <link refid="comp_8hpp"/>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="26">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>freemod.hpp</label>
+        <link refid="freemod_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/gauss.hpp</label>
+        <link refid="gauss_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>int-bag.hpp</label>
+        <link refid="int-bag_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>interface/computation.h</label>
+        <link refid="computation_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>matrix.hpp</label>
+        <link refid="matrix_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>mem.hpp</label>
+        <link refid="mem_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>monideal.hpp</label>
+        <link refid="monideal_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>qring.hpp</label>
+        <link refid="qring_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>relem.hpp</label>
+        <link refid="relem_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>schorder.hpp</label>
+        <link refid="schorder_8hpp"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="28">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>M2/config.h</label>
+      </node>
+      <node id="20">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="9">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="22">
+        <label>assert.h</label>
+      </node>
+      <node id="6">
+        <label>cassert</label>
+      </node>
+      <node id="42">
+        <label>cstddef</label>
+      </node>
+      <node id="15">
+        <label>cstdio</label>
+      </node>
+      <node id="33">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="36">
+        <label>iostream</label>
+      </node>
+      <node id="7">
+        <label>memory</label>
+      </node>
+      <node id="11">
+        <label>stddef.h</label>
+      </node>
+      <node id="27">
+        <label>stdexcept</label>
+      </node>
+      <node id="19">
+        <label>stdint.h</label>
+      </node>
+      <node id="31">
+        <label>stdlib.h</label>
+      </node>
+      <node id="12">
+        <label>string</label>
+      </node>
+      <node id="23">
+        <label>string.h</label>
+      </node>
+      <node id="24">
+        <label>type_traits</label>
+      </node>
+      <node id="4">
+        <label>utility</label>
+      </node>
+      <node id="32">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="13">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/comp-gb.cpp</label>
+        <link refid="comp-gb_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/gauss.cpp</label>
+        <link refid="gauss_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/gauss.hpp</label>
+        <link refid="gauss_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</label>
+        <link refid="res-f4-m2-interface_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structgm__elem" prot="public">gm_elem</innerclass>
+    <innerclass refid="class_gauss_elim_computation" prot="public">GaussElimComputation</innerclass>
+    <briefdescription>
+<para><computeroutput><ref refid="class_gauss_elim_computation" kindref="compound">GaussElimComputation</ref></computeroutput> <mdash/> Gaussian elimination GB / submodule strategy over a field. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares <computeroutput><ref refid="class_gauss_elim_computation" kindref="compound">GaussElimComputation</ref></computeroutput>, a <computeroutput><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref></computeroutput> subclass that row-reduces a sparse matrix of generators to echelon form directly, plus the row-element struct <computeroutput><ref refid="structgm__elem" kindref="compound">gm_elem</ref></computeroutput> <mdash/> a <computeroutput>(f, fsyz)</computeroutput> value/syzygy pair plus a cached <computeroutput>nterms</computeroutput> count and a <computeroutput>next</computeroutput> pointer. Rows are bucketed by lead component in parallel arrays <computeroutput>gb_list[i]</computeroutput> (the chosen pivot for component <computeroutput>i</computeroutput>) and <computeroutput>reduce_list[i]</computeroutput> (a linked list of pending rows with lead component <computeroutput>i</computeroutput>); on insert, the sparsest row (fewest nonzero terms) is promoted to <computeroutput>gb_list[i]</computeroutput> and any displaced pivot is pushed onto <computeroutput>reduce_list[i]</computeroutput>. After every generator is processed, the <computeroutput>gb_list</computeroutput> rows are a Groebner basis and the accumulated <computeroutput>fsyz</computeroutput> components form the matching syzygy module.</para>
+<para>The strategy is the right call when the input is genuinely a linear-algebra problem in disguise <mdash/> field-coefficient module presentations where Buchberger would just be performing the same row reductions with more overhead. The dispatcher in <computeroutput><ref refid="comp-gb_8cpp" kindref="compound">comp-gb.cpp</ref></computeroutput> selects this path automatically whenever the base ring of the input is a (non-polynomial) field; <computeroutput><ref refid="hermite_8hpp" kindref="compound">hermite.hpp</ref></computeroutput> is the analogous <computeroutput><ref refid="ringelem_8hpp_afea72c39052b53d15e7acad8d36847c1_1afea72c39052b53d15e7acad8d36847c1" kindref="member">ZZ</ref></computeroutput>-coefficient algorithm.</para>
+<para><simplesect kind="see"><para><ref refid="comp-gb_8hpp" kindref="compound">comp-gb.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="hermite_8hpp" kindref="compound">hermite.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>1996-2005<sp/><sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_gauss_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_gauss_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="relem_8hpp" kindref="compound">relem.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix_8hpp" kindref="compound">matrix.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_macaulay2_2e_2polyring_8hpp" kindref="compound">polyring.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="comp-gb_8hpp" kindref="compound">comp-gb.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structgm__elem" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structgm__elem" kindref="compound">gm_elem</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structour__new__delete" kindref="compound">our_new_delete</ref></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41" refid="structgm__elem_ac0a2653f3c6762c6af97b4526573e8d0_1ac0a2653f3c6762c6af97b4526573e8d0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structgm__elem" kindref="compound">gm_elem</ref><sp/>*<ref refid="structgm__elem_ac0a2653f3c6762c6af97b4526573e8d0_1ac0a2653f3c6762c6af97b4526573e8d0" kindref="member">next</ref>;</highlight></codeline>
+<codeline lineno="42" refid="structgm__elem_a3bea8838fd347ffaff4d37d559eac356_1a3bea8838fd347ffaff4d37d559eac356" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structgm__elem_a3bea8838fd347ffaff4d37d559eac356_1a3bea8838fd347ffaff4d37d559eac356" kindref="member">nterms</ref>;</highlight></codeline>
+<codeline lineno="43" refid="structgm__elem_a7073248ec3da3d5eb9312cec1ee7dfd7_1a7073248ec3da3d5eb9312cec1ee7dfd7" refkind="member"><highlight class="normal"><sp/><sp/>vec<sp/><ref refid="structgm__elem_a7073248ec3da3d5eb9312cec1ee7dfd7_1a7073248ec3da3d5eb9312cec1ee7dfd7" kindref="member">f</ref>;</highlight></codeline>
+<codeline lineno="44" refid="structgm__elem_a549b7851176dc9ff1fe196d4c38f510f_1a549b7851176dc9ff1fe196d4c38f510f" refkind="member"><highlight class="normal"><sp/><sp/>vec<sp/><ref refid="structgm__elem_a549b7851176dc9ff1fe196d4c38f510f_1a549b7851176dc9ff1fe196d4c38f510f" kindref="member">fsyz</ref>;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="class_gauss_elim_computation" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_gauss_elim_computation_ab92358de6dfd12c613245238bffba901_1ab92358de6dfd12c613245238bffba901" kindref="member">GaussElimComputation</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_g_b_computation_a79fd4b4b3d036051a3b6b08ab15c6e5f_1a79fd4b4b3d036051a3b6b08ab15c6e5f" kindref="member">GBComputation</ref></highlight></codeline>
+<codeline lineno="57"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="59" refid="class_gauss_elim_computation_ade2dc330016614ce2c5ac19e827f1def_1ade2dc330016614ce2c5ac19e827f1def" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_ade2dc330016614ce2c5ac19e827f1def_1ade2dc330016614ce2c5ac19e827f1def" kindref="member">row</ref>;</highlight></codeline>
+<codeline lineno="60" refid="class_gauss_elim_computation_a8bae230119a91e0378fea0ca6e53e5cd_1a8bae230119a91e0378fea0ca6e53e5cd" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structgm__elem" kindref="compound">gm_elem</ref><sp/>**<ref refid="class_gauss_elim_computation_a8bae230119a91e0378fea0ca6e53e5cd_1a8bae230119a91e0378fea0ca6e53e5cd" kindref="member">reduce_list</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>One<sp/>list<sp/>for<sp/>each<sp/>row</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="class_gauss_elim_computation_a953424d4627a5e8bf81ae5e2333605e3_1a953424d4627a5e8bf81ae5e2333605e3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structgm__elem" kindref="compound">gm_elem</ref><sp/>**<ref refid="class_gauss_elim_computation_a953424d4627a5e8bf81ae5e2333605e3_1a953424d4627a5e8bf81ae5e2333605e3" kindref="member">gb_list</ref>;<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>GB<sp/>elem<sp/>(if<sp/>any)<sp/>with<sp/>the<sp/>given<sp/>row<sp/>index</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>as<sp/>lead<sp/>term.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="class_gauss_elim_computation_ad754dada3214923c91cab07229b9ca41_1ad754dada3214923c91cab07229b9ca41" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*<ref refid="class_gauss_elim_computation_ad754dada3214923c91cab07229b9ca41_1ad754dada3214923c91cab07229b9ca41" kindref="member">R</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Ring<sp/>of<sp/>&apos;gens&apos;.<sp/><sp/>Should<sp/>be<sp/>a<sp/>field.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="class_gauss_elim_computation_aaab3532c79629f340dca673751a2794d_1aaab3532c79629f340dca673751a2794d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="class_gauss_elim_computation_aaab3532c79629f340dca673751a2794d_1aaab3532c79629f340dca673751a2794d" kindref="member">gens</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>the<sp/>input</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="class_gauss_elim_computation_ae57fb809102382d36adfb56e2bc72032_1ae57fb809102382d36adfb56e2bc72032" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*<ref refid="class_gauss_elim_computation_ae57fb809102382d36adfb56e2bc72032_1ae57fb809102382d36adfb56e2bc72032" kindref="member">Fsyz</ref>;</highlight></codeline>
+<codeline lineno="67" refid="class_gauss_elim_computation_a53727a358a7193f8990fa66a999fd9e3_1a53727a358a7193f8990fa66a999fd9e3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_gauss_elim_computation_a53727a358a7193f8990fa66a999fd9e3_1a53727a358a7193f8990fa66a999fd9e3" kindref="member">VECTOR</ref>(vec)<sp/>syz_list;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="class_gauss_elim_computation_a9723890db067acc370ebede96d90da81_1a9723890db067acc370ebede96d90da81" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_a9723890db067acc370ebede96d90da81_1a9723890db067acc370ebede96d90da81" kindref="member">n_gb</ref>;</highlight></codeline>
+<codeline lineno="70" refid="class_gauss_elim_computation_a2df49168db6f611eab9c15f8542e662e_1a2df49168db6f611eab9c15f8542e662e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_a2df49168db6f611eab9c15f8542e662e_1a2df49168db6f611eab9c15f8542e662e" kindref="member">n_pairs</ref>,<sp/><ref refid="class_gauss_elim_computation_a4e30bfd17b6af64a88e4314edf2cdec6_1a4e30bfd17b6af64a88e4314edf2cdec6" kindref="member">n_syz</ref>;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="class_gauss_elim_computation_a63d6a2c5ea83892786bc49b9ffcc9de1_1a63d6a2c5ea83892786bc49b9ffcc9de1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_a63d6a2c5ea83892786bc49b9ffcc9de1_1a63d6a2c5ea83892786bc49b9ffcc9de1" kindref="member">collect_syz</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>0<sp/>or<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="class_gauss_elim_computation_a483ba7f3c3e7b0f9b4713e7452faf411_1a483ba7f3c3e7b0f9b4713e7452faf411" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_a483ba7f3c3e7b0f9b4713e7452faf411_1a483ba7f3c3e7b0f9b4713e7452faf411" kindref="member">n_comps_per_syz</ref>;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><ref refid="structgm__elem" kindref="compound">gm_elem</ref><sp/>*<ref refid="class_gauss_elim_computation_a7131afd362e4d2f8b7cb8ef046fcd6e8_1a7131afd362e4d2f8b7cb8ef046fcd6e8" kindref="member">new_gen</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_a2b05e631cb90ff71386cd2774c522b3e_1a2b05e631cb90ff71386cd2774c522b3e" kindref="member">remove_gm_elem</ref>(<ref refid="structgm__elem" kindref="compound">gm_elem</ref><sp/>*&amp;<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_adc4dfa981933918b2debf84177c47ff3_1adc4dfa981933918b2debf84177c47ff3" kindref="member">insert</ref>(<ref refid="structgm__elem" kindref="compound">gm_elem</ref><sp/>*<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_ace8837a7803cdd7d404e225e40c63ea0_1ace8837a7803cdd7d404e225e40c63ea0" kindref="member">reduce</ref>(<ref refid="structgm__elem" kindref="compound">gm_elem</ref><sp/>*&amp;<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>,<sp/><ref refid="structgm__elem" kindref="compound">gm_elem</ref><sp/>*q);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_ace8837a7803cdd7d404e225e40c63ea0_1ace8837a7803cdd7d404e225e40c63ea0" kindref="member">reduce</ref>(vec<sp/>&amp;f,<sp/>vec<sp/>&amp;fsyz,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>tail_only<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_ace8837a7803cdd7d404e225e40c63ea0_1ace8837a7803cdd7d404e225e40c63ea0" kindref="member">reduce</ref>(vec<sp/>&amp;f);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="85" refid="class_gauss_elim_computation_aed6651f281d0cb4a1b968478a6beda47_1aed6651f281d0cb4a1b968478a6beda47" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_aed6651f281d0cb4a1b968478a6beda47_1aed6651f281d0cb4a1b968478a6beda47" kindref="member">stop_conditions_ok</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>An<sp/>honest<sp/>GB<sp/>computation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><ref refid="class_gauss_elim_computation_ab92358de6dfd12c613245238bffba901_1ab92358de6dfd12c613245238bffba901" kindref="member">GaussElimComputation</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_a63d6a2c5ea83892786bc49b9ffcc9de1_1a63d6a2c5ea83892786bc49b9ffcc9de1" kindref="member">collect_syz</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_a4e30bfd17b6af64a88e4314edf2cdec6_1a4e30bfd17b6af64a88e4314edf2cdec6" kindref="member">n_syz</ref>);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><ref refid="class_gauss_elim_computation_ab9e84877cc1ca8687a144e0d00f9c05e_1ab9e84877cc1ca8687a144e0d00f9c05e" kindref="member">~GaussElimComputation</ref>();</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="class_gauss_elim_computation_aa7a8377575e8987ff325e4ae32d87202_1aa7a8377575e8987ff325e4ae32d87202" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_aa7a8377575e8987ff325e4ae32d87202_1aa7a8377575e8987ff325e4ae32d87202" kindref="member">remove_gb</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_ad04e59468cc16a96bbb4ca40ad8355cc_1ad04e59468cc16a96bbb4ca40ad8355cc" kindref="member">start_computation</ref>();</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_a60697b6577d2e94e0761482d8662be5d_1a60697b6577d2e94e0761482d8662be5d" kindref="member">complete_thru_degree</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>computation<sp/>is<sp/>complete<sp/>up<sp/>through<sp/>this<sp/>degree.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="class_gauss_elim_computation_af62a884a8b513ba1adf9b0db9e5667b3_1af62a884a8b513ba1adf9b0db9e5667b3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*<ref refid="class_gauss_elim_computation_af62a884a8b513ba1adf9b0db9e5667b3_1af62a884a8b513ba1adf9b0db9e5667b3" kindref="member">get_ring</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_ad754dada3214923c91cab07229b9ca41_1ad754dada3214923c91cab07229b9ca41" kindref="member">R</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Results<sp/>of<sp/>the<sp/>computation<sp/>//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_gauss_elim_computation_ac3682cb587a9c551a5f9607056103c26_1ac3682cb587a9c551a5f9607056103c26" kindref="member">get_gb</ref>();</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_gauss_elim_computation_a02a358f9bc971ea6913b55c58cec7eea_1a02a358f9bc971ea6913b55c58cec7eea" kindref="member">get_mingens</ref>();</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_gauss_elim_computation_a88564e2bd9100783dc4e15a9320794df_1a88564e2bd9100783dc4e15a9320794df" kindref="member">get_change</ref>();</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_gauss_elim_computation_a984e7757029e34a5559675df584dc462_1a984e7757029e34a5559675df584dc462" kindref="member">get_syzygies</ref>();</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_gauss_elim_computation_ae6962bc96b80b071d134a3aaf783091f_1ae6962bc96b80b071d134a3aaf783091f" kindref="member">get_initial</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nparts);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Normal<sp/>forms<sp/>and<sp/>lifting<sp/>////</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_gauss_elim_computation_ad550750eacdae103341af31fef7d8542_1ad550750eacdae103341af31fef7d8542" kindref="member">matrix_remainder</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref><sp/><ref refid="class_gauss_elim_computation_a77022a9ae429a64efb81037ec5d9ab11_1a77022a9ae429a64efb81037ec5d9ab11" kindref="member">matrix_lift</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m,</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>**result_remainder,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>**result_quotient);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_aec58aa8f5686aa423216c93a05913128_1aec58aa8f5686aa423216c93a05913128" kindref="member">contains</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Statistics<sp/>and<sp/>spair<sp/>information<sp/>//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_gauss_elim_computation_ae08293d4d0c21012884d0226f87868ad_1ae08293d4d0c21012884d0226f87868ad" kindref="member">text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>displays<sp/>statistical<sp/>information,<sp/>and<sp/>depends<sp/>on<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>M2_gbTrace<sp/>value.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/gauss.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,805 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_s_l_evaluator_concrete" kind="class" language="C++" prot="public">
+    <compoundname>SLEvaluatorConcrete</compoundname>
+    <basecompoundref refid="class_s_l_evaluator" prot="public" virt="non-virtual">SLEvaluator</basecompoundref>
+    <includes refid="_s_l_p-defs_8hpp" local="no">SLP-defs.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename RT</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_s_l_evaluator_concrete_afbf3aa227a800a7ecb197df174783d7d_1afbf3aa227a800a7ecb197df174783d7d" prot="private" static="no">
+        <type>typename RT::ElementType</type>
+        <definition>using SLEvaluatorConcrete&lt; RT &gt;::ElementType =  typename RT::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>SLEvaluatorConcrete::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="304" column="3" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="304" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_s_l_evaluator_concrete_a401d0aaf5a94560385be5911c4203522_1a401d0aaf5a94560385be5911c4203522" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_evaluator_concrete_afbf3aa227a800a7ecb197df174783d7d_1afbf3aa227a800a7ecb197df174783d7d" kindref="member">ElementType</ref> &gt;::iterator</type>
+        <definition>std::vector&lt;ElementType&gt;::iterator SLEvaluatorConcrete&lt; RT &gt;::vIt</definition>
+        <argsstring></argsstring>
+        <name>vIt</name>
+        <qualifiedname>SLEvaluatorConcrete::vIt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="305" column="35" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="305" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a279bad4657d188da2f4e1233cff35223_1a279bad4657d188da2f4e1233cff35223" compoundref="_s_l_p-imp_8hpp" startline="187" endline="222">SLEvaluatorConcrete&lt; RT &gt;::computeNextNode</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_concrete_a6797eb46e7459a12918192fcbc50bd1e_1a6797eb46e7459a12918192fcbc50bd1e" prot="private" static="no" mutable="no">
+        <type>const RT &amp;</type>
+        <definition>const RT&amp; SLEvaluatorConcrete&lt; RT &gt;::mRing</definition>
+        <argsstring></argsstring>
+        <name>mRing</name>
+        <qualifiedname>SLEvaluatorConcrete::mRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="308" column="12" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="308" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" compoundref="_s_l_p-imp_8hpp" startline="77" endline="97">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ab3a641cbc48932abc91a86b53811b5b8_1ab3a641cbc48932abc91a86b53811b5b8" compoundref="_s_l_p-imp_8hpp" startline="61" endline="73">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a3aead52dbd3a934bb2c7dada8824b4f0_1a3aead52dbd3a934bb2c7dada8824b4f0" compoundref="_s_l_p-imp_8hpp" startline="46" endline="58">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_concrete_a1536f8d375a182441ed58201cec7f26b_1a1536f8d375a182441ed58201cec7f26b" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SLEvaluatorConcrete&lt; RT &gt;::isCompiled</definition>
+        <argsstring></argsstring>
+        <name>isCompiled</name>
+        <qualifiedname>SLEvaluatorConcrete::isCompiled</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="309" column="8" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="309" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" compoundref="_s_l_p-imp_8hpp" startline="77" endline="97">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" compoundref="_s_l_p-imp_8hpp" startline="160" endline="184">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_aef6f48f4af3c1333f6fe8fa0edc49326_1aef6f48f4af3c1333f6fe8fa0edc49326" compoundref="_s_l_p-imp_8hpp" startline="302" endline="318">SLEvaluatorConcrete&lt; RT &gt;::text_out</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a205d06069170837c3cc4c891473e41d6_1a205d06069170837c3cc4c891473e41d6" compoundref="_s_l_p-imp_8hpp" startline="117" endline="123">SLEvaluatorConcrete&lt; RT &gt;::~SLEvaluatorConcrete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_concrete_aad33214104c207ffeb0f03937a1c615b_1aad33214104c207ffeb0f03937a1c615b" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SLEvaluatorConcrete&lt; RT &gt;::nInputs</definition>
+        <argsstring></argsstring>
+        <name>nInputs</name>
+        <qualifiedname>SLEvaluatorConcrete::nInputs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="310" column="7" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="310" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" compoundref="_s_l_p-imp_8hpp" startline="77" endline="97">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ab3a641cbc48932abc91a86b53811b5b8_1ab3a641cbc48932abc91a86b53811b5b8" compoundref="_s_l_p-imp_8hpp" startline="61" endline="73">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" compoundref="_s_l_p-imp_8hpp" startline="160" endline="184">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_aef6f48f4af3c1333f6fe8fa0edc49326_1aef6f48f4af3c1333f6fe8fa0edc49326" compoundref="_s_l_p-imp_8hpp" startline="302" endline="318">SLEvaluatorConcrete&lt; RT &gt;::text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_concrete_a5a61fc77ba942074d6b38479bfef7e9c_1a5a61fc77ba942074d6b38479bfef7e9c" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SLEvaluatorConcrete&lt; RT &gt;::nOutputs</definition>
+        <argsstring></argsstring>
+        <name>nOutputs</name>
+        <qualifiedname>SLEvaluatorConcrete::nOutputs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="310" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="310" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" compoundref="_s_l_p-imp_8hpp" startline="77" endline="97">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ab3a641cbc48932abc91a86b53811b5b8_1ab3a641cbc48932abc91a86b53811b5b8" compoundref="_s_l_p-imp_8hpp" startline="61" endline="73">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_aef6f48f4af3c1333f6fe8fa0edc49326_1aef6f48f4af3c1333f6fe8fa0edc49326" compoundref="_s_l_p-imp_8hpp" startline="302" endline="318">SLEvaluatorConcrete&lt; RT &gt;::text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_concrete_a1f9b6f5ac4da98a622fe7579500ae354_1a1f9b6f5ac4da98a622fe7579500ae354" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_evaluator_concrete_afbf3aa227a800a7ecb197df174783d7d_1afbf3aa227a800a7ecb197df174783d7d" kindref="member">ElementType</ref> &gt;</type>
+        <definition>std::vector&lt;ElementType&gt; SLEvaluatorConcrete&lt; RT &gt;::values</definition>
+        <argsstring></argsstring>
+        <name>values</name>
+        <qualifiedname>SLEvaluatorConcrete::values</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="313" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="313" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" compoundref="_s_l_p-imp_8hpp" startline="160" endline="184">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a205d06069170837c3cc4c891473e41d6_1a205d06069170837c3cc4c891473e41d6" compoundref="_s_l_p-imp_8hpp" startline="117" endline="123">SLEvaluatorConcrete&lt; RT &gt;::~SLEvaluatorConcrete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_concrete_a5d694a35aa4e012a6d78e931e9a240d0_1a5d694a35aa4e012a6d78e931e9a240d0" prot="private" static="no" mutable="no">
+        <type>void(*</type>
+        <definition>void(* SLEvaluatorConcrete&lt; RT &gt;::compiled_fn) (ElementType const  *, ElementType *)</definition>
+        <argsstring>)(ElementType const *, ElementType *)</argsstring>
+        <name>compiled_fn</name>
+        <qualifiedname>SLEvaluatorConcrete::compiled_fn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="318" column="3" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="318" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" compoundref="_s_l_p-imp_8hpp" startline="77" endline="97">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_concrete_a5e0ba19ec44faf6fd9c1c37e1525b65c_1a5e0ba19ec44faf6fd9c1c37e1525b65c" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SLEvaluatorConcrete&lt; RT &gt;::nParams</definition>
+        <argsstring></argsstring>
+        <name>nParams</name>
+        <qualifiedname>SLEvaluatorConcrete::nParams</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="319" column="7" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="319" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" compoundref="_s_l_p-imp_8hpp" startline="77" endline="97">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" compoundref="_s_l_p-imp_8hpp" startline="160" endline="184">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_aef6f48f4af3c1333f6fe8fa0edc49326_1aef6f48f4af3c1333f6fe8fa0edc49326" compoundref="_s_l_p-imp_8hpp" startline="302" endline="318">SLEvaluatorConcrete&lt; RT &gt;::text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_concrete_a625220afcceae5fa34c210e564a38cdd_1a625220afcceae5fa34c210e564a38cdd" prot="private" static="no" mutable="no">
+        <type><ref refid="class_s_l_evaluator_concrete_afbf3aa227a800a7ecb197df174783d7d_1afbf3aa227a800a7ecb197df174783d7d" kindref="member">ElementType</ref> *</type>
+        <definition>ElementType* SLEvaluatorConcrete&lt; RT &gt;::parametersAndInputs</definition>
+        <argsstring></argsstring>
+        <name>parametersAndInputs</name>
+        <qualifiedname>SLEvaluatorConcrete::parametersAndInputs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="320" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="320" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" compoundref="_s_l_p-imp_8hpp" startline="77" endline="97">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" compoundref="_s_l_p-imp_8hpp" startline="160" endline="184">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a205d06069170837c3cc4c891473e41d6_1a205d06069170837c3cc4c891473e41d6" compoundref="_s_l_p-imp_8hpp" startline="117" endline="123">SLEvaluatorConcrete&lt; RT &gt;::~SLEvaluatorConcrete</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</definition>
+        <argsstring>(const SLEvaluatorConcrete&lt; RT &gt; &amp;)</argsstring>
+        <name>SLEvaluatorConcrete</name>
+        <qualifiedname>SLEvaluatorConcrete::SLEvaluatorConcrete</qualifiedname>
+        <param>
+          <type>const <ref refid="class_s_l_evaluator_concrete" kindref="compound">SLEvaluatorConcrete</ref>&lt; RT &gt; &amp;</type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="269" column="3" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="101" bodyend="114"/>
+        <references refid="class_s_l_evaluator_concrete_a5d694a35aa4e012a6d78e931e9a240d0_1a5d694a35aa4e012a6d78e931e9a240d0" compoundref="_s_l_p-defs_8hpp" startline="318">SLEvaluatorConcrete&lt; RT &gt;::compiled_fn</references>
+        <references refid="class_s_l_evaluator_concrete_a1536f8d375a182441ed58201cec7f26b_1a1536f8d375a182441ed58201cec7f26b" compoundref="_s_l_p-defs_8hpp" startline="309">SLEvaluatorConcrete&lt; RT &gt;::isCompiled</references>
+        <references refid="class_s_l_evaluator_concrete_a6797eb46e7459a12918192fcbc50bd1e_1a6797eb46e7459a12918192fcbc50bd1e" compoundref="_s_l_p-defs_8hpp" startline="308">SLEvaluatorConcrete&lt; RT &gt;::mRing</references>
+        <references refid="class_s_l_evaluator_concrete_aad33214104c207ffeb0f03937a1c615b_1aad33214104c207ffeb0f03937a1c615b" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5a61fc77ba942074d6b38479bfef7e9c_1a5a61fc77ba942074d6b38479bfef7e9c" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nOutputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5e0ba19ec44faf6fd9c1c37e1525b65c_1a5e0ba19ec44faf6fd9c1c37e1525b65c" compoundref="_s_l_p-defs_8hpp" startline="319">SLEvaluatorConcrete&lt; RT &gt;::nParams</references>
+        <references refid="class_s_l_evaluator_concrete_a625220afcceae5fa34c210e564a38cdd_1a625220afcceae5fa34c210e564a38cdd" compoundref="_s_l_p-defs_8hpp" startline="320">SLEvaluatorConcrete&lt; RT &gt;::parametersAndInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+        <references refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</references>
+        <references refid="class_s_l_evaluator_a2db03270b3afde60ea30c1469aa8a797_1a2db03270b3afde60ea30c1469aa8a797" compoundref="_s_l_p-defs_8hpp" startline="258">SLEvaluator::slp</references>
+        <references refid="class_s_l_evaluator_concrete_a1f9b6f5ac4da98a622fe7579500ae354_1a1f9b6f5ac4da98a622fe7579500ae354" compoundref="_s_l_p-defs_8hpp" startline="313">SLEvaluatorConcrete&lt; RT &gt;::values</references>
+        <references refid="class_s_l_evaluator_a27ad7f6eb7660ada294ce7dd561776a7_1a27ad7f6eb7660ada294ce7dd561776a7" compoundref="_s_l_p-defs_8hpp" startline="259">SLEvaluator::varsPos</references>
+        <referencedby refid="class_s_l_evaluator_concrete_a06a7a6b549bf69f5c9e4164f0a9bde84_1a06a7a6b549bf69f5c9e4164f0a9bde84" compoundref="_s_l_p-imp_8hpp" startline="321" endline="333">SLEvaluatorConcrete&lt; RT &gt;::createHomotopy</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" compoundref="_s_l_p-imp_8hpp" startline="160" endline="184">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</definition>
+        <argsstring>(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMat&lt; DMat&lt; RT &gt; &gt; *consts)</argsstring>
+        <name>SLEvaluatorConcrete</name>
+        <qualifiedname>SLEvaluatorConcrete::SLEvaluatorConcrete</qualifiedname>
+        <param>
+          <type><ref refid="class_s_l_program" kindref="compound">SLProgram</ref> *</type>
+          <declname>SLP</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>constsPos</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>varsPos</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mutable_mat" kindref="compound">MutableMat</ref>&lt; <ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; RT &gt; &gt; *</type>
+          <declname>consts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="270" column="3" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="127" bodyend="146"/>
+        <references refid="class_s_l_evaluator_concrete_a5d694a35aa4e012a6d78e931e9a240d0_1a5d694a35aa4e012a6d78e931e9a240d0" compoundref="_s_l_p-defs_8hpp" startline="318">SLEvaluatorConcrete&lt; RT &gt;::compiled_fn</references>
+        <references refid="class_s_l_evaluator_concrete_a1536f8d375a182441ed58201cec7f26b_1a1536f8d375a182441ed58201cec7f26b" compoundref="_s_l_p-defs_8hpp" startline="309">SLEvaluatorConcrete&lt; RT &gt;::isCompiled</references>
+        <references refid="class_s_l_evaluator_concrete_a6797eb46e7459a12918192fcbc50bd1e_1a6797eb46e7459a12918192fcbc50bd1e" compoundref="_s_l_p-defs_8hpp" startline="308">SLEvaluatorConcrete&lt; RT &gt;::mRing</references>
+        <references refid="class_s_l_evaluator_concrete_aad33214104c207ffeb0f03937a1c615b_1aad33214104c207ffeb0f03937a1c615b" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5a61fc77ba942074d6b38479bfef7e9c_1a5a61fc77ba942074d6b38479bfef7e9c" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nOutputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5e0ba19ec44faf6fd9c1c37e1525b65c_1a5e0ba19ec44faf6fd9c1c37e1525b65c" compoundref="_s_l_p-defs_8hpp" startline="319">SLEvaluatorConcrete&lt; RT &gt;::nParams</references>
+        <references refid="class_s_l_evaluator_concrete_a625220afcceae5fa34c210e564a38cdd_1a625220afcceae5fa34c210e564a38cdd" compoundref="_s_l_p-defs_8hpp" startline="320">SLEvaluatorConcrete&lt; RT &gt;::parametersAndInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+        <references refid="class_s_l_evaluator_a2db03270b3afde60ea30c1469aa8a797_1a2db03270b3afde60ea30c1469aa8a797" compoundref="_s_l_p-defs_8hpp" startline="258">SLEvaluator::slp</references>
+        <references refid="class_s_l_evaluator_concrete_a1f9b6f5ac4da98a622fe7579500ae354_1a1f9b6f5ac4da98a622fe7579500ae354" compoundref="_s_l_p-defs_8hpp" startline="313">SLEvaluatorConcrete&lt; RT &gt;::values</references>
+        <references refid="class_s_l_evaluator_a27ad7f6eb7660ada294ce7dd561776a7_1a27ad7f6eb7660ada294ce7dd561776a7" compoundref="_s_l_p-defs_8hpp" startline="259">SLEvaluator::varsPos</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_a3aead52dbd3a934bb2c7dada8824b4f0_1a3aead52dbd3a934bb2c7dada8824b4f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</definition>
+        <argsstring>(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMat&lt; SMat&lt; RT &gt; &gt; *consts)</argsstring>
+        <name>SLEvaluatorConcrete</name>
+        <qualifiedname>SLEvaluatorConcrete::SLEvaluatorConcrete</qualifiedname>
+        <param>
+          <type><ref refid="class_s_l_program" kindref="compound">SLProgram</ref> *</type>
+          <declname>SLP</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>constsPos</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>varsPos</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mutable_mat" kindref="compound">MutableMat</ref>&lt; <ref refid="class_s_mat" kindref="compound">SMat</ref>&lt; RT &gt; &gt; *</type>
+          <declname>consts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="275" column="3" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="46" bodyend="58"/>
+        <references refid="class_s_l_evaluator_concrete_a6797eb46e7459a12918192fcbc50bd1e_1a6797eb46e7459a12918192fcbc50bd1e" compoundref="_s_l_p-defs_8hpp" startline="308">SLEvaluatorConcrete&lt; RT &gt;::mRing</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</definition>
+        <argsstring>(M2_string libName, int nInputs, int nOutputs, const MutableMat&lt; DMat&lt; RT &gt; &gt; *empty)</argsstring>
+        <name>SLEvaluatorConcrete</name>
+        <qualifiedname>SLEvaluatorConcrete::SLEvaluatorConcrete</qualifiedname>
+        <param>
+          <type>M2_string</type>
+          <declname>libName</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nInputs</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nOutputs</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mutable_mat" kindref="compound">MutableMat</ref>&lt; <ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; RT &gt; &gt; *</type>
+          <declname>empty</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="280" column="3" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="77" bodyend="97"/>
+        <references refid="class_s_l_evaluator_concrete_a5d694a35aa4e012a6d78e931e9a240d0_1a5d694a35aa4e012a6d78e931e9a240d0" compoundref="_s_l_p-defs_8hpp" startline="318">SLEvaluatorConcrete&lt; RT &gt;::compiled_fn</references>
+        <references refid="_n_a_g_8cpp_afccc2afd057fb05d6dcb782a1c16dd9e_1afccc2afd057fb05d6dcb782a1c16dd9e" compoundref="_n_a_g_8cpp" startline="14">dlopen</references>
+        <references refid="_n_a_g_8cpp_ae3e09b0dcd48b00bef04d6f1544e404a_1ae3e09b0dcd48b00bef04d6f1544e404a" compoundref="_n_a_g_8cpp" startline="15">dlsym</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_s_l_evaluator_concrete_a1536f8d375a182441ed58201cec7f26b_1a1536f8d375a182441ed58201cec7f26b" compoundref="_s_l_p-defs_8hpp" startline="309">SLEvaluatorConcrete&lt; RT &gt;::isCompiled</references>
+        <references refid="class_s_l_evaluator_concrete_a6797eb46e7459a12918192fcbc50bd1e_1a6797eb46e7459a12918192fcbc50bd1e" compoundref="_s_l_p-defs_8hpp" startline="308">SLEvaluatorConcrete&lt; RT &gt;::mRing</references>
+        <references refid="class_s_l_evaluator_concrete_aad33214104c207ffeb0f03937a1c615b_1aad33214104c207ffeb0f03937a1c615b" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5a61fc77ba942074d6b38479bfef7e9c_1a5a61fc77ba942074d6b38479bfef7e9c" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nOutputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5e0ba19ec44faf6fd9c1c37e1525b65c_1a5e0ba19ec44faf6fd9c1c37e1525b65c" compoundref="_s_l_p-defs_8hpp" startline="319">SLEvaluatorConcrete&lt; RT &gt;::nParams</references>
+        <references refid="class_s_l_evaluator_concrete_a625220afcceae5fa34c210e564a38cdd_1a625220afcceae5fa34c210e564a38cdd" compoundref="_s_l_p-defs_8hpp" startline="320">SLEvaluatorConcrete&lt; RT &gt;::parametersAndInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+        <references refid="class_s_l_evaluator_a2db03270b3afde60ea30c1469aa8a797_1a2db03270b3afde60ea30c1469aa8a797" compoundref="_s_l_p-defs_8hpp" startline="258">SLEvaluator::slp</references>
+        <references refid="util_8hpp_a97f075769dcf9387e58f431595297615_1a97f075769dcf9387e58f431595297615" compoundref="util_8hpp" startline="45" endline="48">string_M2_to_std</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_ab3a641cbc48932abc91a86b53811b5b8_1ab3a641cbc48932abc91a86b53811b5b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</definition>
+        <argsstring>(M2_string libName, int nInputs, int nOutputs, const MutableMat&lt; SMat&lt; RT &gt; &gt; *empty)</argsstring>
+        <name>SLEvaluatorConcrete</name>
+        <qualifiedname>SLEvaluatorConcrete::SLEvaluatorConcrete</qualifiedname>
+        <param>
+          <type>M2_string</type>
+          <declname>libName</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nInputs</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nOutputs</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mutable_mat" kindref="compound">MutableMat</ref>&lt; <ref refid="class_s_mat" kindref="compound">SMat</ref>&lt; RT &gt; &gt; *</type>
+          <declname>empty</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="286" column="3" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="61" bodyend="73"/>
+        <references refid="class_s_l_evaluator_concrete_a6797eb46e7459a12918192fcbc50bd1e_1a6797eb46e7459a12918192fcbc50bd1e" compoundref="_s_l_p-defs_8hpp" startline="308">SLEvaluatorConcrete&lt; RT &gt;::mRing</references>
+        <references refid="class_s_l_evaluator_concrete_aad33214104c207ffeb0f03937a1c615b_1aad33214104c207ffeb0f03937a1c615b" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5a61fc77ba942074d6b38479bfef7e9c_1a5a61fc77ba942074d6b38479bfef7e9c" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nOutputs</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_a205d06069170837c3cc4c891473e41d6_1a205d06069170837c3cc4c891473e41d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SLEvaluatorConcrete&lt; RT &gt;::~SLEvaluatorConcrete</definition>
+        <argsstring>()</argsstring>
+        <name>~SLEvaluatorConcrete</name>
+        <qualifiedname>SLEvaluatorConcrete::~SLEvaluatorConcrete</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="292" column="3" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="117" bodyend="123"/>
+        <references refid="class_s_l_evaluator_concrete_a1536f8d375a182441ed58201cec7f26b_1a1536f8d375a182441ed58201cec7f26b" compoundref="_s_l_p-defs_8hpp" startline="309">SLEvaluatorConcrete&lt; RT &gt;::isCompiled</references>
+        <references refid="class_s_l_evaluator_concrete_a625220afcceae5fa34c210e564a38cdd_1a625220afcceae5fa34c210e564a38cdd" compoundref="_s_l_p-defs_8hpp" startline="320">SLEvaluatorConcrete&lt; RT &gt;::parametersAndInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+        <references refid="class_s_l_evaluator_concrete_a1f9b6f5ac4da98a622fe7579500ae354_1a1f9b6f5ac4da98a622fe7579500ae354" compoundref="_s_l_p-defs_8hpp" startline="313">SLEvaluatorConcrete&lt; RT &gt;::values</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_a2b49f6a5d39e6c104f4a9e810d328c2f_1a2b49f6a5d39e6c104f4a9e810d328c2f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> *</type>
+        <definition>SLEvaluator * SLEvaluatorConcrete&lt; RT &gt;::specialize</definition>
+        <argsstring>(const MutableMatrix *parameters) const</argsstring>
+        <name>specialize</name>
+        <qualifiedname>SLEvaluatorConcrete::specialize</qualifiedname>
+        <reimplements refid="class_s_l_evaluator_a4841809208f36e3a4c50bb09b869e6a7_1a4841809208f36e3a4c50bb09b869e6a7">specialize</reimplements>
+        <param>
+          <type>const <ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="293" column="15" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="149" bodyend="157"/>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_s_l_evaluator_concrete_a2b49f6a5d39e6c104f4a9e810d328c2f_1a2b49f6a5d39e6c104f4a9e810d328c2f" compoundref="_s_l_p-imp_8hpp" startline="149" endline="157">SLEvaluatorConcrete&lt; RT &gt;::specialize</references>
+        <referencedby refid="class_s_l_evaluator_concrete_a2b49f6a5d39e6c104f4a9e810d328c2f_1a2b49f6a5d39e6c104f4a9e810d328c2f" compoundref="_s_l_p-imp_8hpp" startline="149" endline="157">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> *</type>
+        <definition>SLEvaluator * SLEvaluatorConcrete&lt; RT &gt;::specialize</definition>
+        <argsstring>(const MutableMat&lt; DMat&lt; RT &gt; &gt; *parameters) const</argsstring>
+        <name>specialize</name>
+        <qualifiedname>SLEvaluatorConcrete::specialize</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mutable_mat" kindref="compound">MutableMat</ref>&lt; <ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; RT &gt; &gt; *</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="294" column="15" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="160" bodyend="184"/>
+        <references refid="class_s_l_evaluator_concrete_a1536f8d375a182441ed58201cec7f26b_1a1536f8d375a182441ed58201cec7f26b" compoundref="_s_l_p-defs_8hpp" startline="309">SLEvaluatorConcrete&lt; RT &gt;::isCompiled</references>
+        <references refid="class_s_l_evaluator_concrete_aad33214104c207ffeb0f03937a1c615b_1aad33214104c207ffeb0f03937a1c615b" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5e0ba19ec44faf6fd9c1c37e1525b65c_1a5e0ba19ec44faf6fd9c1c37e1525b65c" compoundref="_s_l_p-defs_8hpp" startline="319">SLEvaluatorConcrete&lt; RT &gt;::nParams</references>
+        <references refid="class_s_l_evaluator_concrete_a625220afcceae5fa34c210e564a38cdd_1a625220afcceae5fa34c210e564a38cdd" compoundref="_s_l_p-defs_8hpp" startline="320">SLEvaluatorConcrete&lt; RT &gt;::parametersAndInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+        <references refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</references>
+        <references refid="class_s_l_evaluator_concrete_a1f9b6f5ac4da98a622fe7579500ae354_1a1f9b6f5ac4da98a622fe7579500ae354" compoundref="_s_l_p-defs_8hpp" startline="313">SLEvaluatorConcrete&lt; RT &gt;::values</references>
+        <references refid="class_s_l_evaluator_a27ad7f6eb7660ada294ce7dd561776a7_1a27ad7f6eb7660ada294ce7dd561776a7" compoundref="_s_l_p-defs_8hpp" startline="259">SLEvaluator::varsPos</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const RT &amp;</type>
+        <definition>const RT &amp; SLEvaluatorConcrete&lt; RT &gt;::ring</definition>
+        <argsstring>() const</argsstring>
+        <name>ring</name>
+        <qualifiedname>SLEvaluatorConcrete::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="295" column="12" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="295" bodyend="295"/>
+        <references refid="class_s_l_evaluator_concrete_a6797eb46e7459a12918192fcbc50bd1e_1a6797eb46e7459a12918192fcbc50bd1e" compoundref="_s_l_p-defs_8hpp" startline="308">SLEvaluatorConcrete&lt; RT &gt;::mRing</references>
+        <referencedby refid="class_s_l_evaluator_concrete_a279bad4657d188da2f4e1233cff35223_1a279bad4657d188da2f4e1233cff35223" compoundref="_s_l_p-imp_8hpp" startline="187" endline="222">SLEvaluatorConcrete&lt; RT &gt;::computeNextNode</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a170c1b3f1ebbf9bec27cb1c180b50129_1a170c1b3f1ebbf9bec27cb1c180b50129" compoundref="_s_l_p-imp_8hpp" startline="225" endline="251">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" compoundref="_s_l_p-imp_8hpp" startline="77" endline="97">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ab3a641cbc48932abc91a86b53811b5b8_1ab3a641cbc48932abc91a86b53811b5b8" compoundref="_s_l_p-imp_8hpp" startline="61" endline="73">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a3aead52dbd3a934bb2c7dada8824b4f0_1a3aead52dbd3a934bb2c7dada8824b4f0" compoundref="_s_l_p-imp_8hpp" startline="46" endline="58">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" compoundref="_s_l_p-imp_8hpp" startline="160" endline="184">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_aef6f48f4af3c1333f6fe8fa0edc49326_1aef6f48f4af3c1333f6fe8fa0edc49326" compoundref="_s_l_p-imp_8hpp" startline="302" endline="318">SLEvaluatorConcrete&lt; RT &gt;::text_out</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a205d06069170837c3cc4c891473e41d6_1a205d06069170837c3cc4c891473e41d6" compoundref="_s_l_p-imp_8hpp" startline="117" endline="123">SLEvaluatorConcrete&lt; RT &gt;::~SLEvaluatorConcrete</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_a170c1b3f1ebbf9bec27cb1c180b50129_1a170c1b3f1ebbf9bec27cb1c180b50129" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SLEvaluatorConcrete&lt; RT &gt;::evaluate</definition>
+        <argsstring>(const MutableMatrix *inputs, MutableMatrix *outputs)</argsstring>
+        <name>evaluate</name>
+        <qualifiedname>SLEvaluatorConcrete::evaluate</qualifiedname>
+        <reimplements refid="class_s_l_evaluator_a1ba1b2c62ac765657c09e9bab3cc38c2_1a1ba1b2c62ac765657c09e9bab3cc38c2">evaluate</reimplements>
+        <param>
+          <type>const <ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>inputs</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>outputs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="296" column="8" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="225" bodyend="251"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_s_l_evaluator_concrete_a170c1b3f1ebbf9bec27cb1c180b50129_1a170c1b3f1ebbf9bec27cb1c180b50129" compoundref="_s_l_p-imp_8hpp" startline="225" endline="251">SLEvaluatorConcrete&lt; RT &gt;::evaluate</references>
+        <references refid="class_mutable_mat_a2d83fecb0d5b500f2ce90c0994862bfd_1a2d83fecb0d5b500f2ce90c0994862bfd" compoundref="mutablemat-defs_8hpp" startline="273" endline="273">MutableMat&lt; Mat &gt;::getMat</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+        <referencedby refid="class_s_l_evaluator_concrete_a170c1b3f1ebbf9bec27cb1c180b50129_1a170c1b3f1ebbf9bec27cb1c180b50129" compoundref="_s_l_p-imp_8hpp" startline="225" endline="251">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SLEvaluatorConcrete&lt; RT &gt;::evaluate</definition>
+        <argsstring>(const DMat&lt; RT &gt; &amp;inputs, DMat&lt; RT &gt; &amp;outputs)</argsstring>
+        <name>evaluate</name>
+        <qualifiedname>SLEvaluatorConcrete::evaluate</qualifiedname>
+        <param>
+          <type>const <ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; RT &gt; &amp;</type>
+          <declname>inputs</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; RT &gt; &amp;</type>
+          <declname>outputs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="297" column="8" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="254" bodyend="299"/>
+        <references refid="class_s_l_evaluator_a1dd293ca455aa1e890e82c2bacb19709_1a1dd293ca455aa1e890e82c2bacb19709" compoundref="_s_l_p-defs_8hpp" startline="256" endline="256">SLEvaluator::ap</references>
+        <references refid="class_s_l_evaluator_concrete_a279bad4657d188da2f4e1233cff35223_1a279bad4657d188da2f4e1233cff35223" compoundref="_s_l_p-imp_8hpp" startline="187" endline="222">SLEvaluatorConcrete&lt; RT &gt;::computeNextNode</references>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_s_l_evaluator_a2138e487dccf06404b11ca7ad63eb89f_1a2138e487dccf06404b11ca7ad63eb89f" compoundref="_s_l_p-defs_8hpp" startline="262">SLEvaluator::inputPositionsIt</references>
+        <references refid="class_s_l_evaluator_concrete_a1536f8d375a182441ed58201cec7f26b_1a1536f8d375a182441ed58201cec7f26b" compoundref="_s_l_p-defs_8hpp" startline="309">SLEvaluatorConcrete&lt; RT &gt;::isCompiled</references>
+        <references refid="class_s_l_evaluator_concrete_aad33214104c207ffeb0f03937a1c615b_1aad33214104c207ffeb0f03937a1c615b" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nInputs</references>
+        <references refid="class_s_l_evaluator_a03dff7bfa95136aebb6120c7ba3b2e58_1a03dff7bfa95136aebb6120c7ba3b2e58" compoundref="_s_l_p-defs_8hpp" startline="260">SLEvaluator::nIt</references>
+        <references refid="class_s_l_evaluator_concrete_a5a61fc77ba942074d6b38479bfef7e9c_1a5a61fc77ba942074d6b38479bfef7e9c" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nOutputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5e0ba19ec44faf6fd9c1c37e1525b65c_1a5e0ba19ec44faf6fd9c1c37e1525b65c" compoundref="_s_l_p-defs_8hpp" startline="319">SLEvaluatorConcrete&lt; RT &gt;::nParams</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_s_l_evaluator_a09b9292cdc9d4bee41493073089a661e_1a09b9292cdc9d4bee41493073089a661e" compoundref="_s_l_p-defs_8hpp" startline="261">SLEvaluator::numInputsIt</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_s_l_evaluator_concrete_a625220afcceae5fa34c210e564a38cdd_1a625220afcceae5fa34c210e564a38cdd" compoundref="_s_l_p-defs_8hpp" startline="320">SLEvaluatorConcrete&lt; RT &gt;::parametersAndInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+        <references refid="class_s_l_evaluator_a2db03270b3afde60ea30c1469aa8a797_1a2db03270b3afde60ea30c1469aa8a797" compoundref="_s_l_p-defs_8hpp" startline="258">SLEvaluator::slp</references>
+        <references refid="class_d_mat_ad0bf74d59141f090291e13948c00a3f0_1ad0bf74d59141f090291e13948c00a3f0" compoundref="dmat_8hpp" startline="168" endline="168">DMat&lt; ACoeffRing &gt;::unsafeArray</references>
+        <references refid="class_s_l_evaluator_concrete_a1f9b6f5ac4da98a622fe7579500ae354_1a1f9b6f5ac4da98a622fe7579500ae354" compoundref="_s_l_p-defs_8hpp" startline="313">SLEvaluatorConcrete&lt; RT &gt;::values</references>
+        <references refid="class_s_l_evaluator_a27ad7f6eb7660ada294ce7dd561776a7_1a27ad7f6eb7660ada294ce7dd561776a7" compoundref="_s_l_p-defs_8hpp" startline="259">SLEvaluator::varsPos</references>
+        <references refid="class_s_l_evaluator_concrete_a401d0aaf5a94560385be5911c4203522_1a401d0aaf5a94560385be5911c4203522" compoundref="_s_l_p-defs_8hpp" startline="305">SLEvaluatorConcrete&lt; RT &gt;::vIt</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_aef6f48f4af3c1333f6fe8fa0edc49326_1aef6f48f4af3c1333f6fe8fa0edc49326" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SLEvaluatorConcrete&lt; RT &gt;::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>SLEvaluatorConcrete::text_out</qualifiedname>
+        <reimplements refid="class_s_l_evaluator_aaa10a6eb4df0c5cbaec90f50aa30396e_1aaa10a6eb4df0c5cbaec90f50aa30396e">text_out</reimplements>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="299" column="8" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="302" bodyend="318"/>
+        <references refid="class_s_l_evaluator_concrete_a1536f8d375a182441ed58201cec7f26b_1a1536f8d375a182441ed58201cec7f26b" compoundref="_s_l_p-defs_8hpp" startline="309">SLEvaluatorConcrete&lt; RT &gt;::isCompiled</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <references refid="class_s_l_evaluator_concrete_aad33214104c207ffeb0f03937a1c615b_1aad33214104c207ffeb0f03937a1c615b" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nInputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5a61fc77ba942074d6b38479bfef7e9c_1a5a61fc77ba942074d6b38479bfef7e9c" compoundref="_s_l_p-defs_8hpp" startline="310">SLEvaluatorConcrete&lt; RT &gt;::nOutputs</references>
+        <references refid="class_s_l_evaluator_concrete_a5e0ba19ec44faf6fd9c1c37e1525b65c_1a5e0ba19ec44faf6fd9c1c37e1525b65c" compoundref="_s_l_p-defs_8hpp" startline="319">SLEvaluatorConcrete&lt; RT &gt;::nParams</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+        <references refid="class_s_l_evaluator_a2db03270b3afde60ea30c1469aa8a797_1a2db03270b3afde60ea30c1469aa8a797" compoundref="_s_l_p-defs_8hpp" startline="258">SLEvaluator::slp</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_a06a7a6b549bf69f5c9e4164f0a9bde84_1a06a7a6b549bf69f5c9e4164f0a9bde84" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="class_homotopy" kindref="compound">Homotopy</ref> *</type>
+        <definition>Homotopy * SLEvaluatorConcrete&lt; RT &gt;::createHomotopy</definition>
+        <argsstring>(SLEvaluator *Hxt, SLEvaluator *HxH)</argsstring>
+        <name>createHomotopy</name>
+        <qualifiedname>SLEvaluatorConcrete::createHomotopy</qualifiedname>
+        <reimplements refid="class_s_l_evaluator_a0dff6157c449c84f695e269341997d60_1a0dff6157c449c84f695e269341997d60">createHomotopy</reimplements>
+        <param>
+          <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> *</type>
+          <declname>Hxt</declname>
+        </param>
+        <param>
+          <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> *</type>
+          <declname>HxH</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="300" column="12" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="321" bodyend="333"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_s_l_evaluator_concrete_a279bad4657d188da2f4e1233cff35223_1a279bad4657d188da2f4e1233cff35223" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLEvaluatorConcrete&lt; RT &gt;::computeNextNode</definition>
+        <argsstring>()</argsstring>
+        <name>computeNextNode</name>
+        <qualifiedname>SLEvaluatorConcrete::computeNextNode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="303" column="8" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="187" bodyend="222"/>
+        <references refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a0d7341b76b5220274772eb205007cad8" compoundref="_s_l_p-defs_8hpp" startline="85">SLProgram::Det</references>
+        <references refid="class_d_mat_lin_alg_a696db9a766487cd2cfb6ceeadbe362cd_1a696db9a766487cd2cfb6ceeadbe362cd" compoundref="dmat-lu_8hpp" startline="306" endline="319">DMatLinAlg&lt; RingType &gt;::determinant</references>
+        <references refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a23ec87349f2295689ec33936c91668a4" compoundref="_s_l_p-defs_8hpp" startline="85">SLProgram::Divide</references>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_s_l_evaluator_a2138e487dccf06404b11ca7ad63eb89f_1a2138e487dccf06404b11ca7ad63eb89f" compoundref="_s_l_p-defs_8hpp" startline="262">SLEvaluator::inputPositionsIt</references>
+        <references refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8aa0162540f713973e1be19d2e104694b3" compoundref="_s_l_p-defs_8hpp" startline="85">SLProgram::MProduct</references>
+        <references refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a619783621d7ebb55c46f3b46b3bf1a09" compoundref="_s_l_p-defs_8hpp" startline="85">SLProgram::MSum</references>
+        <references refid="class_s_l_evaluator_a03dff7bfa95136aebb6120c7ba3b2e58_1a03dff7bfa95136aebb6120c7ba3b2e58" compoundref="_s_l_p-defs_8hpp" startline="260">SLEvaluator::nIt</references>
+        <references refid="class_s_l_evaluator_a09b9292cdc9d4bee41493073089a661e_1a09b9292cdc9d4bee41493073089a661e" compoundref="_s_l_p-defs_8hpp" startline="261">SLEvaluator::numInputsIt</references>
+        <references refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" compoundref="_s_l_p-defs_8hpp" startline="295" endline="295">SLEvaluatorConcrete&lt; RT &gt;::ring</references>
+        <references refid="class_s_l_evaluator_concrete_a401d0aaf5a94560385be5911c4203522_1a401d0aaf5a94560385be5911c4203522" compoundref="_s_l_p-defs_8hpp" startline="305">SLEvaluatorConcrete&lt; RT &gt;::vIt</references>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLEvaluator</label>
+        <link refid="class_s_l_evaluator"/>
+      </node>
+      <node id="1">
+        <label>SLEvaluatorConcrete&lt; RT &gt;</label>
+        <link refid="class_s_l_evaluator_concrete"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="12">
+        <label>ElementType</label>
+      </node>
+      <node id="16">
+        <label>ElementType *</label>
+      </node>
+      <node id="2">
+        <label>SLEvaluator</label>
+        <link refid="class_s_l_evaluator"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>slp</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>inputPositionsIt</edgelabel>
+          <edgelabel>numInputsIt</edgelabel>
+          <edgelabel>varsPos</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>nIt</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>SLEvaluatorConcrete&lt; RT &gt;</label>
+        <link refid="class_s_l_evaluator_concrete"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>vIt</edgelabel>
+          <edgelabel>values</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>isCompiled</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>nInputs</edgelabel>
+          <edgelabel>nOutputs</edgelabel>
+          <edgelabel>nParams</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>compiled_fn</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>parametersAndInputs</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>SLProgram</label>
+        <link refid="class_s_l_program"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mNodes</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mInputPositions</edgelabel>
+          <edgelabel>mNumInputs</edgelabel>
+          <edgelabel>mOutputPositions</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>inputCounter</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>GATE_TYPE</label>
+      </node>
+      <node id="7">
+        <label>T</label>
+      </node>
+      <node id="14">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="13">
+        <label>const RT &amp;</label>
+      </node>
+      <node id="9">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>std::vector&lt; ElementType &gt;</label>
+        <childnode refid="12" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; ElementType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::vector&lt; GATE_TYPE &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; SLProgram::GATE_TYPE &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; SLProgram::GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>void(*)(ElementType const *, ElementType *)</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/SLP-defs.hpp" line="266" column="1" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="267" bodyend="321"/>
+    <listofallmembers>
+      <member refid="class_s_l_evaluator_a1dd293ca455aa1e890e82c2bacb19709_1a1dd293ca455aa1e890e82c2bacb19709" prot="protected" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>ap</name></member>
+      <member refid="class_s_l_evaluator_concrete_a5d694a35aa4e012a6d78e931e9a240d0_1a5d694a35aa4e012a6d78e931e9a240d0" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>compiled_fn</name></member>
+      <member refid="class_s_l_evaluator_concrete_a279bad4657d188da2f4e1233cff35223_1a279bad4657d188da2f4e1233cff35223" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>computeNextNode</name></member>
+      <member refid="class_s_l_evaluator_concrete_a06a7a6b549bf69f5c9e4164f0a9bde84_1a06a7a6b549bf69f5c9e4164f0a9bde84" prot="public" virt="virtual"><scope>SLEvaluatorConcrete</scope><name>createHomotopy</name></member>
+      <member refid="class_s_l_evaluator_concrete_afbf3aa227a800a7ecb197df174783d7d_1afbf3aa227a800a7ecb197df174783d7d" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>ElementType</name></member>
+      <member refid="class_s_l_evaluator_concrete_a170c1b3f1ebbf9bec27cb1c180b50129_1a170c1b3f1ebbf9bec27cb1c180b50129" prot="public" virt="virtual"><scope>SLEvaluatorConcrete</scope><name>evaluate</name></member>
+      <member refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" prot="public" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>evaluate</name></member>
+      <member refid="class_s_l_evaluator_a2138e487dccf06404b11ca7ad63eb89f_1a2138e487dccf06404b11ca7ad63eb89f" prot="protected" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>inputPositionsIt</name></member>
+      <member refid="class_s_l_evaluator_concrete_a1536f8d375a182441ed58201cec7f26b_1a1536f8d375a182441ed58201cec7f26b" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>isCompiled</name></member>
+      <member refid="class_s_l_evaluator_concrete_a6797eb46e7459a12918192fcbc50bd1e_1a6797eb46e7459a12918192fcbc50bd1e" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>mRing</name></member>
+      <member refid="class_s_l_evaluator_concrete_aad33214104c207ffeb0f03937a1c615b_1aad33214104c207ffeb0f03937a1c615b" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>nInputs</name></member>
+      <member refid="class_s_l_evaluator_a03dff7bfa95136aebb6120c7ba3b2e58_1a03dff7bfa95136aebb6120c7ba3b2e58" prot="protected" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>nIt</name></member>
+      <member refid="class_s_l_evaluator_concrete_a5a61fc77ba942074d6b38479bfef7e9c_1a5a61fc77ba942074d6b38479bfef7e9c" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>nOutputs</name></member>
+      <member refid="class_s_l_evaluator_concrete_a5e0ba19ec44faf6fd9c1c37e1525b65c_1a5e0ba19ec44faf6fd9c1c37e1525b65c" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>nParams</name></member>
+      <member refid="class_s_l_evaluator_a09b9292cdc9d4bee41493073089a661e_1a09b9292cdc9d4bee41493073089a661e" prot="protected" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>numInputsIt</name></member>
+      <member refid="class_s_l_evaluator_concrete_a625220afcceae5fa34c210e564a38cdd_1a625220afcceae5fa34c210e564a38cdd" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>parametersAndInputs</name></member>
+      <member refid="class_s_l_evaluator_concrete_a0773932b4a38d032e3c1f1ded59213de_1a0773932b4a38d032e3c1f1ded59213de" prot="public" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>ring</name></member>
+      <member refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" prot="public" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>SLEvaluatorConcrete</name></member>
+      <member refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" prot="public" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>SLEvaluatorConcrete</name></member>
+      <member refid="class_s_l_evaluator_concrete_a3aead52dbd3a934bb2c7dada8824b4f0_1a3aead52dbd3a934bb2c7dada8824b4f0" prot="public" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>SLEvaluatorConcrete</name></member>
+      <member refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" prot="public" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>SLEvaluatorConcrete</name></member>
+      <member refid="class_s_l_evaluator_concrete_ab3a641cbc48932abc91a86b53811b5b8_1ab3a641cbc48932abc91a86b53811b5b8" prot="public" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>SLEvaluatorConcrete</name></member>
+      <member refid="class_s_l_evaluator_a2db03270b3afde60ea30c1469aa8a797_1a2db03270b3afde60ea30c1469aa8a797" prot="protected" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>slp</name></member>
+      <member refid="class_s_l_evaluator_concrete_a2b49f6a5d39e6c104f4a9e810d328c2f_1a2b49f6a5d39e6c104f4a9e810d328c2f" prot="public" virt="virtual"><scope>SLEvaluatorConcrete</scope><name>specialize</name></member>
+      <member refid="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" prot="public" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>specialize</name></member>
+      <member refid="class_s_l_evaluator_concrete_aef6f48f4af3c1333f6fe8fa0edc49326_1aef6f48f4af3c1333f6fe8fa0edc49326" prot="public" virt="virtual"><scope>SLEvaluatorConcrete</scope><name>text_out</name></member>
+      <member refid="class_s_l_evaluator_concrete_a1f9b6f5ac4da98a622fe7579500ae354_1a1f9b6f5ac4da98a622fe7579500ae354" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>values</name></member>
+      <member refid="class_s_l_evaluator_a27ad7f6eb7660ada294ce7dd561776a7_1a27ad7f6eb7660ada294ce7dd561776a7" prot="protected" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>varsPos</name></member>
+      <member refid="class_s_l_evaluator_concrete_a401d0aaf5a94560385be5911c4203522_1a401d0aaf5a94560385be5911c4203522" prot="private" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>vIt</name></member>
+      <member refid="class_s_l_evaluator_a8c445f4e0588d2b865dca9ce9d5ae962_1a8c445f4e0588d2b865dca9ce9d5ae962" prot="public" virt="virtual"><scope>SLEvaluatorConcrete</scope><name>~SLEvaluator</name></member>
+      <member refid="class_s_l_evaluator_concrete_a205d06069170837c3cc4c891473e41d6_1a205d06069170837c3cc4c891473e41d6" prot="public" virt="non-virtual"><scope>SLEvaluatorConcrete</scope><name>~SLEvaluatorConcrete</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_simulator_1_1_event" kind="struct" language="C++" prot="public">
+    <compoundname>Simulator::Event</compoundname>
+    <includes refid="_simulator_8h" local="no">Simulator.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_simulator_1_1_event_adcc2e2fed058d7fffad84a40bd3f44d1_1adcc2e2fed058d7fffad84a40bd3f44d1" prot="public" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t Simulator::Event::begin</definition>
+        <argsstring></argsstring>
+        <name>begin</name>
+        <qualifiedname>Simulator::Event::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Simulator.h" line="31" column="12" bodyfile="submodules/mathic/src/pqsim/Simulator.h" bodystart="31" bodyend="-1"/>
+        <referencedby refid="class_simulator_a6e6ff45b952ac84ee3c3c9cf0bb49a38_1a6e6ff45b952ac84ee3c3c9cf0bb49a38" compoundref="_simulator_8cpp" startline="262" endline="273">Simulator::print</referencedby>
+        <referencedby refid="class_simulator_ad16df28339f9b3f91c087a1f4598957f_1ad16df28339f9b3f91c087a1f4598957f" compoundref="_simulator_8h" startline="61" endline="101">Simulator::run</referencedby>
+        <referencedby refid="class_simulator_a1bce3c5af053666392a80c01c809eb68_1a1bce3c5af053666392a80c01c809eb68" compoundref="_simulator_8cpp" startline="294" endline="314">Simulator::setupEvents</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" prot="public" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t Simulator::Event::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <qualifiedname>Simulator::Event::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Simulator.h" line="32" column="12" bodyfile="submodules/mathic/src/pqsim/Simulator.h" bodystart="32" bodyend="-1"/>
+        <referencedby refid="struct_simulator_1_1_event_a0bd715370a55c3f0907348846c130e49_1a0bd715370a55c3f0907348846c130e49" compoundref="_simulator_8h" startline="30" endline="30">Event</referencedby>
+        <referencedby refid="class_simulator_a6e6ff45b952ac84ee3c3c9cf0bb49a38_1a6e6ff45b952ac84ee3c3c9cf0bb49a38" compoundref="_simulator_8cpp" startline="262" endline="273">Simulator::print</referencedby>
+        <referencedby refid="class_simulator_ad16df28339f9b3f91c087a1f4598957f_1ad16df28339f9b3f91c087a1f4598957f" compoundref="_simulator_8h" startline="61" endline="101">Simulator::run</referencedby>
+        <referencedby refid="class_simulator_a1bce3c5af053666392a80c01c809eb68_1a1bce3c5af053666392a80c01c809eb68" compoundref="_simulator_8cpp" startline="294" endline="314">Simulator::setupEvents</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_simulator_1_1_event_a84003c09884f2e9a8043c20622cff1d4_1a84003c09884f2e9a8043c20622cff1d4" prot="public" static="no" mutable="no">
+        <type><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref></type>
+        <definition>Value Simulator::Event::popValue</definition>
+        <argsstring></argsstring>
+        <name>popValue</name>
+        <qualifiedname>Simulator::Event::popValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Simulator.h" line="33" column="7" bodyfile="submodules/mathic/src/pqsim/Simulator.h" bodystart="33" bodyend="-1"/>
+        <referencedby refid="class_simulator_a6e6ff45b952ac84ee3c3c9cf0bb49a38_1a6e6ff45b952ac84ee3c3c9cf0bb49a38" compoundref="_simulator_8cpp" startline="262" endline="273">Simulator::print</referencedby>
+        <referencedby refid="class_simulator_ad16df28339f9b3f91c087a1f4598957f_1ad16df28339f9b3f91c087a1f4598957f" compoundref="_simulator_8h" startline="61" endline="101">Simulator::run</referencedby>
+        <referencedby refid="class_simulator_a1bce3c5af053666392a80c01c809eb68_1a1bce3c5af053666392a80c01c809eb68" compoundref="_simulator_8cpp" startline="294" endline="314">Simulator::setupEvents</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_simulator_1_1_event_a0bd715370a55c3f0907348846c130e49_1a0bd715370a55c3f0907348846c130e49" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Simulator::Event::Event</definition>
+        <argsstring>()</argsstring>
+        <name>Event</name>
+        <qualifiedname>Simulator::Event::Event</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Simulator.h" line="30" column="5" bodyfile="submodules/mathic/src/pqsim/Simulator.h" bodystart="30" bodyend="30"/>
+        <references refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" compoundref="_simulator_8h" startline="32">size</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Simulator::Event</label>
+        <link refid="struct_simulator_1_1_event"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>begin</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>popValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>long</label>
+      </node>
+      <node id="2">
+        <label>size_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/pqsim/Simulator.h" line="29" column="3" bodyfile="submodules/mathic/src/pqsim/Simulator.h" bodystart="29" bodyend="34"/>
+    <listofallmembers>
+      <member refid="struct_simulator_1_1_event_adcc2e2fed058d7fffad84a40bd3f44d1_1adcc2e2fed058d7fffad84a40bd3f44d1" prot="public" virt="non-virtual"><scope>Simulator::Event</scope><name>begin</name></member>
+      <member refid="struct_simulator_1_1_event_a0bd715370a55c3f0907348846c130e49_1a0bd715370a55c3f0907348846c130e49" prot="public" virt="non-virtual"><scope>Simulator::Event</scope><name>Event</name></member>
+      <member refid="struct_simulator_1_1_event_a84003c09884f2e9a8043c20622cff1d4_1a84003c09884f2e9a8043c20622cff1d4" prot="public" virt="non-virtual"><scope>Simulator::Event</scope><name>popValue</name></member>
+      <member refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" prot="public" virt="non-virtual"><scope>Simulator::Event</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

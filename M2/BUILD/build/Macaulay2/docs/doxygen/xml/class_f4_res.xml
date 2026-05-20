@@ -1,0 +1,2270 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_f4_res" kind="class" language="C++" prot="public">
+    <compoundname>F4Res</compoundname>
+    <includes refid="res-f4_8hpp" local="no">res-f4.hpp</includes>
+    <innerclass refid="struct_f4_res_1_1_row" prot="private">F4Res::Row</innerclass>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_f4_res_a675e98de80eeeebd70bf2b10cc440a8b_1a675e98de80eeeebd70bf2b10cc440a8b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class ResColumnsSorter</definition>
+        <argsstring></argsstring>
+        <name>ResColumnsSorter</name>
+        <qualifiedname>F4Res::ResColumnsSorter</qualifiedname>
+        <param>
+          <type>ResColumnsSorter</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="81" column="16" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="81" bodyend="-1"/>
+        <references refid="class_f4_res_a675e98de80eeeebd70bf2b10cc440a8b_1a675e98de80eeeebd70bf2b10cc440a8b" compoundref="res-f4_8hpp" startline="81">ResColumnsSorter</references>
+        <referencedby refid="class_f4_res_a675e98de80eeeebd70bf2b10cc440a8b_1a675e98de80eeeebd70bf2b10cc440a8b" compoundref="res-f4_8hpp" startline="81">ResColumnsSorter</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" prot="private" static="no" mutable="no">
+        <type><ref refid="class_schreyer_frame" kindref="compound">SchreyerFrame</ref> &amp;</type>
+        <definition>SchreyerFrame&amp; F4Res::mFrame</definition>
+        <argsstring></argsstring>
+        <name>mFrame</name>
+        <qualifiedname>F4Res::mFrame</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="153" column="17" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="153" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+        <referencedby refid="class_f4_res_a1eb4caf121c485b69d3b9808f0e85db1_1a1eb4caf121c485b69d3b9808f0e85db1" compoundref="res-f4_8cpp" startline="50" endline="62">F4Res</referencedby>
+        <referencedby refid="class_f4_res_aa1f3ca1306577e2e012bda42d4af974c_1aa1f3ca1306577e2e012bda42d4af974c" compoundref="res-f4_8cpp" startline="109" endline="130">findDivisor</referencedby>
+        <referencedby refid="class_f4_res_ae3b2c753a8940757145e5403acfe241a_1ae3b2c753a8940757145e5403acfe241a" compoundref="res-f4_8hpp" startline="88" endline="88">frame</referencedby>
+        <referencedby refid="class_f4_res_a7a48c66503e8427ab8f58f5ffa2c24d5_1a7a48c66503e8427ab8f58f5ffa2c24d5" compoundref="res-f4_8hpp" startline="89" endline="89">frame</referencedby>
+        <referencedby refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" compoundref="res-f4_8cpp" startline="579" endline="638">gaussReduce</referencedby>
+        <referencedby refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" compoundref="res-f4_8cpp" startline="465" endline="577">gaussReduceRow</referencedby>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">loadRow</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+        <referencedby refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" compoundref="res-f4_8cpp" startline="154" endline="178">processMonomialProduct</referencedby>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_res_poly_ring" kindref="compound">ResPolyRing</ref> &amp;</type>
+        <definition>const ResPolyRing&amp; F4Res::mRing</definition>
+        <argsstring></argsstring>
+        <name>mRing</name>
+        <qualifiedname>F4Res::mRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="155" column="21" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="155" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_ab816fbb38486a7fccee55d64deca48fd_1ab816fbb38486a7fccee55d64deca48fd" compoundref="res-f4_8cpp" startline="739" endline="748">debugOutputMatrix</referencedby>
+        <referencedby refid="class_f4_res_a89fd6776a84aa550f112453e229b00ba_1a89fd6776a84aa550f112453e229b00ba" compoundref="res-f4_8cpp" startline="726" endline="737">debugOutputMatrixSparse</referencedby>
+        <referencedby refid="class_f4_res_a1eb4caf121c485b69d3b9808f0e85db1_1a1eb4caf121c485b69d3b9808f0e85db1" compoundref="res-f4_8cpp" startline="50" endline="62">F4Res</referencedby>
+        <referencedby refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" compoundref="res-f4_8cpp" startline="579" endline="638">gaussReduce</referencedby>
+        <referencedby refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" compoundref="res-f4_8cpp" startline="465" endline="577">gaussReduceRow</referencedby>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">loadRow</referencedby>
+        <referencedby refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</referencedby>
+        <referencedby refid="class_f4_res_a42bd16229c7449db7a5a63f208048ef9_1a42bd16229c7449db7a5a63f208048ef9" compoundref="res-f4_8hpp" startline="100" endline="100">ring</referencedby>
+        <referencedby refid="class_f4_res_a2fa2523a1408329f79cb075fdbfbc9ac_1a2fa2523a1408329f79cb075fdbfbc9ac" compoundref="res-f4_8hpp" startline="98" endline="98">vectorArithmetic</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int F4Res::mThisLevel</definition>
+        <argsstring></argsstring>
+        <name>mThisLevel</name>
+        <qualifiedname>F4Res::mThisLevel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="158" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="158" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_aa1f3ca1306577e2e012bda42d4af974c_1aa1f3ca1306577e2e012bda42d4af974c" compoundref="res-f4_8cpp" startline="109" endline="130">findDivisor</referencedby>
+        <referencedby refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" compoundref="res-f4_8cpp" startline="579" endline="638">gaussReduce</referencedby>
+        <referencedby refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" compoundref="res-f4_8cpp" startline="465" endline="577">gaussReduceRow</referencedby>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">loadRow</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+        <referencedby refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" compoundref="res-f4_8cpp" startline="154" endline="178">processMonomialProduct</referencedby>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+        <referencedby refid="class_f4_res_a1319814892df4b384ff8cc5f95d9550c_1a1319814892df4b384ff8cc5f95d9550c" compoundref="res-f4_8cpp" startline="69" endline="74">resetMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_a2e46014571c3d024b5a484bbfa48ca94_1a2e46014571c3d024b5a484bbfa48ca94" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int F4Res::mThisDegree</definition>
+        <argsstring></argsstring>
+        <name>mThisDegree</name>
+        <qualifiedname>F4Res::mThisDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="159" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="159" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">loadRow</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+        <referencedby refid="class_f4_res_a1319814892df4b384ff8cc5f95d9550c_1a1319814892df4b384ff8cc5f95d9550c" compoundref="res-f4_8cpp" startline="69" endline="74">resetMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_aeece4fffc412a18f57fd97b1f4de49e7_1aeece4fffc412a18f57fd97b1f4de49e7" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4Res::mNextReducerToProcess</definition>
+        <argsstring></argsstring>
+        <name>mNextReducerToProcess</name>
+        <qualifiedname>F4Res::mNextReducerToProcess</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="160" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="160" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+        <referencedby refid="class_f4_res_a1319814892df4b384ff8cc5f95d9550c_1a1319814892df4b384ff8cc5f95d9550c" compoundref="res-f4_8cpp" startline="69" endline="74">resetMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_a72bdeefbb60a318ec9e4d38090dfe106_1a72bdeefbb60a318ec9e4d38090dfe106" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; const <ref refid="class_res_monomials_with_component" kindref="compound">ResMonomialsWithComponent</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;const ResMonomialsWithComponent&gt; F4Res::mSchreyerRes</definition>
+        <argsstring></argsstring>
+        <name>mSchreyerRes</name>
+        <qualifiedname>F4Res::mSchreyerRes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="164" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="164" bodyend="-1"/>
+        <referencedby refid="class_f4_res_a1eb4caf121c485b69d3b9808f0e85db1_1a1eb4caf121c485b69d3b9808f0e85db1" compoundref="res-f4_8cpp" startline="50" endline="62">F4Res</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_a166b08e2de8722df8829f5bf0b24cefd_1a166b08e2de8722df8829f5bf0b24cefd" prot="private" static="no" mutable="no">
+        <type><ref refid="class_monomial_hash_table" kindref="compound">MonomialHashTable</ref>&lt; <ref refid="class_res_monomials_with_component" kindref="compound">ResMonomialsWithComponent</ref> &gt;</type>
+        <definition>MonomialHashTable&lt;ResMonomialsWithComponent&gt; F4Res::mHashTable</definition>
+        <argsstring></argsstring>
+        <name>mHashTable</name>
+        <qualifiedname>F4Res::mHashTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="167" column="21" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="167" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_a1eb4caf121c485b69d3b9808f0e85db1_1a1eb4caf121c485b69d3b9808f0e85db1" compoundref="res-f4_8cpp" startline="50" endline="62">F4Res</referencedby>
+        <referencedby refid="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" compoundref="res-f4_8cpp" startline="192" endline="225">processCurrentMonomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_f4_res_1_1_row" kindref="compound">Row</ref> &gt;</type>
+        <definition>std::vector&lt;Row&gt; F4Res::mReducers</definition>
+        <argsstring></argsstring>
+        <name>mReducers</name>
+        <qualifiedname>F4Res::mReducers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="173" column="15" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="173" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+        <referencedby refid="class_f4_res_ada3eda04e4ecb59277567e5606bee2c6_1ada3eda04e4ecb59277567e5606bee2c6" compoundref="res-f4_8cpp" startline="749" endline="749">debugOutputReducerMatrix</referencedby>
+        <referencedby refid="class_f4_res_a0bd25e67eb358bd543dd282a886d797a_1a0bd25e67eb358bd543dd282a886d797a" compoundref="res-f4_8cpp" startline="705" endline="714">debugOutputReducers</referencedby>
+        <referencedby refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" compoundref="res-f4_8cpp" startline="579" endline="638">gaussReduce</referencedby>
+        <referencedby refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" compoundref="res-f4_8cpp" startline="465" endline="577">gaussReduceRow</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+        <referencedby refid="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" compoundref="res-f4_8cpp" startline="192" endline="225">processCurrentMonomial</referencedby>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_afd0bf2533c641401c0f787904cee3cf3_1afd0bf2533c641401c0f787904cee3cf3" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_f4_res_1_1_row" kindref="compound">Row</ref> &gt;</type>
+        <definition>std::vector&lt;Row&gt; F4Res::mSPairs</definition>
+        <argsstring></argsstring>
+        <name>mSPairs</name>
+        <qualifiedname>F4Res::mSPairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="175" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="175" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+        <referencedby refid="class_f4_res_ad5cb8f2702b9f4287d4580be134c98cb_1ad5cb8f2702b9f4287d4580be134c98cb" compoundref="res-f4_8cpp" startline="750" endline="750">debugOutputSPairMatrix</referencedby>
+        <referencedby refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" compoundref="res-f4_8cpp" startline="579" endline="638">gaussReduce</referencedby>
+        <referencedby refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" compoundref="res-f4_8cpp" startline="465" endline="577">gaussReduceRow</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_abb034d7b454c134b3d74fef0178d2574_1abb034d7b454c134b3d74fef0178d2574" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; long &gt;</type>
+        <definition>std::vector&lt;long&gt; F4Res::mSPairComponents</definition>
+        <argsstring></argsstring>
+        <name>mSPairComponents</name>
+        <qualifiedname>F4Res::mSPairComponents</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="176" column="15" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="176" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" compoundref="res-f4_8cpp" startline="465" endline="577">gaussReduceRow</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref> &gt;</type>
+        <definition>std::vector&lt;res_packed_monomial&gt; F4Res::mColumns</definition>
+        <argsstring></argsstring>
+        <name>mColumns</name>
+        <qualifiedname>F4Res::mColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="178" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="178" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_a5afb2e2b278f1d3e4f7c0ff0dfb21249_1a5afb2e2b278f1d3e4f7c0ff0dfb21249" compoundref="res-f4_8cpp" startline="715" endline="724">debugOutputColumns</referencedby>
+        <referencedby refid="class_f4_res_ab816fbb38486a7fccee55d64deca48fd_1ab816fbb38486a7fccee55d64deca48fd" compoundref="res-f4_8cpp" startline="739" endline="748">debugOutputMatrix</referencedby>
+        <referencedby refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" compoundref="res-f4_8cpp" startline="579" endline="638">gaussReduce</referencedby>
+        <referencedby refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" compoundref="res-f4_8cpp" startline="465" endline="577">gaussReduceRow</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+        <referencedby refid="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" compoundref="res-f4_8cpp" startline="192" endline="225">processCurrentMonomial</referencedby>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_res_a97eaf904b9f10390302e59dff7831038_1a97eaf904b9f10390302e59dff7831038" prot="private" static="no" mutable="no">
+        <type><ref refid="class_monomial_memory_space" kindref="compound">MonomialMemorySpace</ref></type>
+        <definition>MonomialMemorySpace F4Res::mMonomSpace2</definition>
+        <argsstring></argsstring>
+        <name>mMonomSpace2</name>
+        <qualifiedname>F4Res::mMonomSpace2</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="182" column="23" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="182" bodyend="-1"/>
+        <referencedby refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</referencedby>
+        <referencedby refid="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" compoundref="res-f4_8cpp" startline="192" endline="225">processCurrentMonomial</referencedby>
+        <referencedby refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" compoundref="res-f4_8cpp" startline="154" endline="178">processMonomialProduct</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_f4_res_a1eb4caf121c485b69d3b9808f0e85db1_1a1eb4caf121c485b69d3b9808f0e85db1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>F4Res::F4Res</definition>
+        <argsstring>(SchreyerFrame &amp;res)</argsstring>
+        <name>F4Res</name>
+        <qualifiedname>F4Res::F4Res</qualifiedname>
+        <param>
+          <type><ref refid="class_schreyer_frame" kindref="compound">SchreyerFrame</ref> &amp;</type>
+          <declname>res</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="84" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="50" bodyend="62"/>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="class_f4_res_a166b08e2de8722df8829f5bf0b24cefd_1a166b08e2de8722df8829f5bf0b24cefd" compoundref="res-f4_8hpp" startline="167">mHashTable</references>
+        <references refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</references>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <references refid="class_f4_res_a72bdeefbb60a318ec9e4d38090dfe106_1a72bdeefbb60a318ec9e4d38090dfe106" compoundref="res-f4_8hpp" startline="164">mSchreyerRes</references>
+        <references refid="class_f4_res_a42bd16229c7449db7a5a63f208048ef9_1a42bd16229c7449db7a5a63f208048ef9" compoundref="res-f4_8hpp" startline="100" endline="100">ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a5238da10f7665f86bcef8fb03beeff41_1a5238da10f7665f86bcef8fb03beeff41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>F4Res::~F4Res</definition>
+        <argsstring>()</argsstring>
+        <name>~F4Res</name>
+        <qualifiedname>F4Res::~F4Res</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="86" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="64" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_ae3b2c753a8940757145e5403acfe241a_1ae3b2c753a8940757145e5403acfe241a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_schreyer_frame" kindref="compound">SchreyerFrame</ref> &amp;</type>
+        <definition>SchreyerFrame &amp; F4Res::frame</definition>
+        <argsstring>()</argsstring>
+        <name>frame</name>
+        <qualifiedname>F4Res::frame</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="88" column="17" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="88" bodyend="88"/>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a7a48c66503e8427ab8f58f5ffa2c24d5_1a7a48c66503e8427ab8f58f5ffa2c24d5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_schreyer_frame" kindref="compound">SchreyerFrame</ref> &amp;</type>
+        <definition>const SchreyerFrame &amp; F4Res::frame</definition>
+        <argsstring>() const</argsstring>
+        <name>frame</name>
+        <qualifiedname>F4Res::frame</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="89" column="23" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="89" bodyend="89"/>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::construct</definition>
+        <argsstring>(int lev, int degree)</argsstring>
+        <name>construct</name>
+        <qualifiedname>F4Res::construct</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>lev</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>degree</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="96" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="640" bodyend="703"/>
+        <references refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" compoundref="res-f4_8cpp" startline="76" endline="103">clearMatrix</references>
+        <references refid="class_f4_res_a5afb2e2b278f1d3e4f7c0ff0dfb21249_1a5afb2e2b278f1d3e4f7c0ff0dfb21249" compoundref="res-f4_8cpp" startline="715" endline="724">debugOutputColumns</references>
+        <references refid="class_f4_res_ab816fbb38486a7fccee55d64deca48fd_1ab816fbb38486a7fccee55d64deca48fd" compoundref="res-f4_8cpp" startline="739" endline="748">debugOutputMatrix</references>
+        <references refid="class_f4_res_a89fd6776a84aa550f112453e229b00ba_1a89fd6776a84aa550f112453e229b00ba" compoundref="res-f4_8cpp" startline="726" endline="737">debugOutputMatrixSparse</references>
+        <references refid="class_f4_res_a0bd25e67eb358bd543dd282a886d797a_1a0bd25e67eb358bd543dd282a886d797a" compoundref="res-f4_8cpp" startline="705" endline="714">debugOutputReducers</references>
+        <references refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" compoundref="res-f4_8cpp" startline="579" endline="638">gaussReduce</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</references>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" compoundref="res-f4_8hpp" startline="173">mReducers</references>
+        <references refid="class_f4_res_afd0bf2533c641401c0f787904cee3cf3_1afd0bf2533c641401c0f787904cee3cf3" compoundref="res-f4_8hpp" startline="175">mSPairs</references>
+        <references refid="class_f4_res_a1319814892df4b384ff8cc5f95d9550c_1a1319814892df4b384ff8cc5f95d9550c" compoundref="res-f4_8cpp" startline="69" endline="74">resetMatrix</references>
+        <references refid="timing_8hpp_add027aa52d21445f5476ec1376730c32_1add027aa52d21445f5476ec1376730c32" compoundref="timing_8hpp" startline="57" endline="63">seconds</references>
+        <references refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" compoundref="timing_8hpp" startline="33" endline="36">timer</references>
+        <referencedby refid="class_schreyer_frame_af442fec511a0c2e1b4f7073bd801401e_1af442fec511a0c2e1b4f7073bd801401e" compoundref="res-schreyer-frame_8cpp" startline="930" endline="963">SchreyerFrame::fillinSyzygies</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a2fa2523a1408329f79cb075fdbfbc9ac_1a2fa2523a1408329f79cb075fdbfbc9ac" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> &amp;</type>
+        <definition>const VectorArithmetic &amp; F4Res::vectorArithmetic</definition>
+        <argsstring>() const</argsstring>
+        <name>vectorArithmetic</name>
+        <qualifiedname>F4Res::vectorArithmetic</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="98" column="26" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="98" bodyend="98"/>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">loadRow</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="res-moninfo_8hpp_a7bc93e1c6a618d8b5a83f61057c445dd_1a7bc93e1c6a618d8b5a83f61057c445dd" kindref="member">ResMonoid</ref> &amp;</type>
+        <definition>const ResMonoid &amp; F4Res::monoid</definition>
+        <argsstring>() const</argsstring>
+        <name>monoid</name>
+        <qualifiedname>F4Res::monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="99" column="19" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="99" bodyend="99"/>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <referencedby refid="class_f4_res_a5afb2e2b278f1d3e4f7c0ff0dfb21249_1a5afb2e2b278f1d3e4f7c0ff0dfb21249" compoundref="res-f4_8cpp" startline="715" endline="724">debugOutputColumns</referencedby>
+        <referencedby refid="class_f4_res_a0bd25e67eb358bd543dd282a886d797a_1a0bd25e67eb358bd543dd282a886d797a" compoundref="res-f4_8cpp" startline="705" endline="714">debugOutputReducers</referencedby>
+        <referencedby refid="class_f4_res_a1eb4caf121c485b69d3b9808f0e85db1_1a1eb4caf121c485b69d3b9808f0e85db1" compoundref="res-f4_8cpp" startline="50" endline="62">F4Res</referencedby>
+        <referencedby refid="class_f4_res_aa1f3ca1306577e2e012bda42d4af974c_1aa1f3ca1306577e2e012bda42d4af974c" compoundref="res-f4_8cpp" startline="109" endline="130">findDivisor</referencedby>
+        <referencedby refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" compoundref="res-f4_8cpp" startline="579" endline="638">gaussReduce</referencedby>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">loadRow</referencedby>
+        <referencedby refid="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" compoundref="res-f4_8cpp" startline="192" endline="225">processCurrentMonomial</referencedby>
+        <referencedby refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" compoundref="res-f4_8cpp" startline="154" endline="178">processMonomialProduct</referencedby>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a42bd16229c7449db7a5a63f208048ef9_1a42bd16229c7449db7a5a63f208048ef9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_res_poly_ring" kindref="compound">ResPolyRing</ref> &amp;</type>
+        <definition>const ResPolyRing &amp; F4Res::ring</definition>
+        <argsstring>() const</argsstring>
+        <name>ring</name>
+        <qualifiedname>F4Res::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="100" column="21" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="100" bodyend="100"/>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <referencedby refid="class_f4_res_a1eb4caf121c485b69d3b9808f0e85db1_1a1eb4caf121c485b69d3b9808f0e85db1" compoundref="res-f4_8cpp" startline="50" endline="62">F4Res</referencedby>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">loadRow</referencedby>
+        <referencedby refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" compoundref="res-f4_8cpp" startline="154" endline="178">processMonomialProduct</referencedby>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_f4_res_a1319814892df4b384ff8cc5f95d9550c_1a1319814892df4b384ff8cc5f95d9550c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::resetMatrix</definition>
+        <argsstring>(int lev, int degree)</argsstring>
+        <name>resetMatrix</name>
+        <qualifiedname>F4Res::resetMatrix</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>lev</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>degree</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="125" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="69" bodyend="74"/>
+        <references refid="class_f4_res_aeece4fffc412a18f57fd97b1f4de49e7_1aeece4fffc412a18f57fd97b1f4de49e7" compoundref="res-f4_8hpp" startline="160">mNextReducerToProcess</references>
+        <references refid="class_f4_res_a2e46014571c3d024b5a484bbfa48ca94_1a2e46014571c3d024b5a484bbfa48ca94" compoundref="res-f4_8hpp" startline="159">mThisDegree</references>
+        <references refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" compoundref="res-f4_8hpp" startline="158">mThisLevel</references>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::clearMatrix</definition>
+        <argsstring>()</argsstring>
+        <name>clearMatrix</name>
+        <qualifiedname>F4Res::clearMatrix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="127" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="76" bodyend="103"/>
+        <references refid="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" compoundref="res-f4_8hpp" startline="178">mColumns</references>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="class_f4_res_a166b08e2de8722df8829f5bf0b24cefd_1a166b08e2de8722df8829f5bf0b24cefd" compoundref="res-f4_8hpp" startline="167">mHashTable</references>
+        <references refid="class_f4_res_a97eaf904b9f10390302e59dff7831038_1a97eaf904b9f10390302e59dff7831038" compoundref="res-f4_8hpp" startline="182">mMonomSpace2</references>
+        <references refid="class_f4_res_aeece4fffc412a18f57fd97b1f4de49e7_1aeece4fffc412a18f57fd97b1f4de49e7" compoundref="res-f4_8hpp" startline="160">mNextReducerToProcess</references>
+        <references refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" compoundref="res-f4_8hpp" startline="173">mReducers</references>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <references refid="class_f4_res_abb034d7b454c134b3d74fef0178d2574_1abb034d7b454c134b3d74fef0178d2574" compoundref="res-f4_8hpp" startline="176">mSPairComponents</references>
+        <references refid="class_f4_res_afd0bf2533c641401c0f787904cee3cf3_1afd0bf2533c641401c0f787904cee3cf3" compoundref="res-f4_8hpp" startline="175">mSPairs</references>
+        <references refid="class_f4_res_a2e46014571c3d024b5a484bbfa48ca94_1a2e46014571c3d024b5a484bbfa48ca94" compoundref="res-f4_8hpp" startline="159">mThisDegree</references>
+        <references refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" compoundref="res-f4_8hpp" startline="158">mThisLevel</references>
+        <references refid="timing_8hpp_add027aa52d21445f5476ec1376730c32_1add027aa52d21445f5476ec1376730c32" compoundref="timing_8hpp" startline="57" endline="63">seconds</references>
+        <references refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" compoundref="timing_8hpp" startline="33" endline="36">timer</references>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_aa1f3ca1306577e2e012bda42d4af974c_1aa1f3ca1306577e2e012bda42d4af974c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool F4Res::findDivisor</definition>
+        <argsstring>(res_const_packed_monomial m, res_packed_monomial result)</argsstring>
+        <name>findDivisor</name>
+        <qualifiedname>F4Res::findDivisor</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>findDivisor </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="128" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="109" bodyend="130"/>
+        <references refid="class_res_monoid_dense_a0ca67cdf25e35c98720ca9153e4bfb76_1a0ca67cdf25e35c98720ca9153e4bfb76" compoundref="res-moninfo-dense_8hpp" startline="149" endline="153">ResMonoidDense::get_component</references>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</references>
+        <references refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" compoundref="res-f4_8hpp" startline="158">mThisLevel</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_res_monoid_dense_a754142b23e477e8e3f73870cc479033a_1a754142b23e477e8e3f73870cc479033a" compoundref="res-moninfo-dense_8hpp" startline="144" endline="147">ResMonoidDense::set_component</references>
+        <referencedby refid="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" compoundref="res-f4_8cpp" startline="192" endline="225">processCurrentMonomial</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="res-schreyer-frame_8hpp_a46aff60fe9e7b02cb075b491f6e3af7b_1a46aff60fe9e7b02cb075b491f6e3af7b" kindref="member">ComponentIndex</ref></type>
+        <definition>ComponentIndex F4Res::processCurrentMonomial</definition>
+        <argsstring>(res_packed_monomial thisMonom)</argsstring>
+        <name>processCurrentMonomial</name>
+        <qualifiedname>F4Res::processCurrentMonomial</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>thisMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="129" column="18" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="192" bodyend="225"/>
+        <references refid="class_f4_res_aa1f3ca1306577e2e012bda42d4af974c_1aa1f3ca1306577e2e012bda42d4af974c" compoundref="res-f4_8cpp" startline="109" endline="130">findDivisor</references>
+        <references refid="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" compoundref="res-f4_8hpp" startline="178">mColumns</references>
+        <references refid="class_f4_res_a166b08e2de8722df8829f5bf0b24cefd_1a166b08e2de8722df8829f5bf0b24cefd" compoundref="res-f4_8hpp" startline="167">mHashTable</references>
+        <references refid="struct_f4_res_1_1_row_a87b1982ae23f691466396053e4359208_1a87b1982ae23f691466396053e4359208" compoundref="res-f4_8hpp" startline="115">F4Res::Row::mLeadTerm</references>
+        <references refid="class_f4_res_a97eaf904b9f10390302e59dff7831038_1a97eaf904b9f10390302e59dff7831038" compoundref="res-f4_8hpp" startline="182">mMonomSpace2</references>
+        <references refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</references>
+        <references refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" compoundref="res-f4_8hpp" startline="173">mReducers</references>
+        <referencedby refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" compoundref="res-f4_8cpp" startline="154" endline="178">processMonomialProduct</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="res-schreyer-frame_8hpp_a46aff60fe9e7b02cb075b491f6e3af7b_1a46aff60fe9e7b02cb075b491f6e3af7b" kindref="member">ComponentIndex</ref></type>
+        <definition>ComponentIndex F4Res::processMonomialProduct</definition>
+        <argsstring>(res_const_packed_monomial m, res_const_packed_monomial n, int &amp;result_sign_if_skew)</argsstring>
+        <name>processMonomialProduct</name>
+        <qualifiedname>F4Res::processMonomialProduct</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>result_sign_if_skew</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="130" column="18" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="154" bodyend="178"/>
+        <references refid="class_res_monoid_dense_a0ca67cdf25e35c98720ca9153e4bfb76_1a0ca67cdf25e35c98720ca9153e4bfb76" compoundref="res-moninfo-dense_8hpp" startline="149" endline="153">ResMonoidDense::get_component</references>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="class_f4_res_a97eaf904b9f10390302e59dff7831038_1a97eaf904b9f10390302e59dff7831038" compoundref="res-f4_8hpp" startline="182">mMonomSpace2</references>
+        <references refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</references>
+        <references refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" compoundref="res-f4_8hpp" startline="158">mThisLevel</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" compoundref="res-f4_8cpp" startline="192" endline="225">processCurrentMonomial</references>
+        <references refid="class_f4_res_a42bd16229c7449db7a5a63f208048ef9_1a42bd16229c7449db7a5a63f208048ef9" compoundref="res-f4_8hpp" startline="100" endline="100">ring</references>
+        <references refid="class_res_monoid_dense_a754142b23e477e8e3f73870cc479033a_1a754142b23e477e8e3f73870cc479033a" compoundref="res-moninfo-dense_8hpp" startline="144" endline="147">ResMonoidDense::set_component</references>
+        <references refid="class_res_monoid_dense_adb8a85427e09b6a9e6e6248257c0f8ee_1adb8a85427e09b6a9e6e6248257c0f8ee" compoundref="res-moninfo-dense_8hpp" startline="192" endline="197">ResMonoidDense::skew_mult_sign</references>
+        <references refid="class_res_monoid_dense_abae40d354fa93a9a7852f841b458380c_1abae40d354fa93a9a7852f841b458380c" compoundref="res-moninfo-dense_8hpp" startline="325" endline="331">ResMonoidDense::unchecked_mult</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">loadRow</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::loadRow</definition>
+        <argsstring>(Row &amp;r)</argsstring>
+        <name>loadRow</name>
+        <qualifiedname>F4Res::loadRow</qualifiedname>
+        <param>
+          <type><ref refid="struct_f4_res_1_1_row" kindref="compound">Row</ref> &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="134" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="226" bodyend="279"/>
+        <references refid="class_vector_arithmetic_a16cb58568102b328cbe3e02e3a023fbf_1a16cb58568102b328cbe3e02e3a023fbf" compoundref="_vector_arithmetic_8hpp" startline="744" endline="746">VectorArithmetic::allocateElementArray</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_res_monoid_dense_a0ca67cdf25e35c98720ca9153e4bfb76_1a0ca67cdf25e35c98720ca9153e4bfb76" compoundref="res-moninfo-dense_8hpp" startline="149" endline="153">ResMonoidDense::get_component</references>
+        <references refid="struct_f4_res_1_1_row_a5572f26a426f3a864bf3de3b96ebb1bc_1a5572f26a426f3a864bf3de3b96ebb1bc" compoundref="res-f4_8hpp" startline="118">F4Res::Row::mCoeffs</references>
+        <references refid="struct_f4_res_1_1_row_a054426e8e80a463e98e2ad3095dd5f6a_1a054426e8e80a463e98e2ad3095dd5f6a" compoundref="res-f4_8hpp" startline="117">F4Res::Row::mComponents</references>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="struct_f4_res_1_1_row_a87b1982ae23f691466396053e4359208_1a87b1982ae23f691466396053e4359208" compoundref="res-f4_8hpp" startline="115">F4Res::Row::mLeadTerm</references>
+        <references refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</references>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <references refid="class_f4_res_a2e46014571c3d024b5a484bbfa48ca94_1a2e46014571c3d024b5a484bbfa48ca94" compoundref="res-f4_8hpp" startline="159">mThisDegree</references>
+        <references refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" compoundref="res-f4_8hpp" startline="158">mThisLevel</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" compoundref="res-f4_8cpp" startline="154" endline="178">processMonomialProduct</references>
+        <references refid="class_vector_arithmetic_aa8e8f056933dc07789941ac2f4a65739_1aa8e8f056933dc07789941ac2f4a65739" compoundref="_vector_arithmetic_8hpp" startline="899" endline="902">VectorArithmetic::pushBackMinusOne</references>
+        <references refid="class_f4_res_a42bd16229c7449db7a5a63f208048ef9_1a42bd16229c7449db7a5a63f208048ef9" compoundref="res-f4_8hpp" startline="100" endline="100">ring</references>
+        <references refid="class_f4_res_a2fa2523a1408329f79cb075fdbfbc9ac_1a2fa2523a1408329f79cb075fdbfbc9ac" compoundref="res-f4_8hpp" startline="98" endline="98">vectorArithmetic</references>
+        <references refid="class_res_poly_ring_ac7126e53714ce43a58ef42ccfa164c13_1ac7126e53714ce43a58ef42ccfa164c13" compoundref="res-poly-ring_8hpp" startline="132" endline="132">ResPolyRing::vectorArithmetic</references>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::reorderColumns</definition>
+        <argsstring>()</argsstring>
+        <name>reorderColumns</name>
+        <qualifiedname>F4Res::reorderColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="135" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="300" bodyend="406"/>
+        <references refid="res-f4_8cpp_a1284aecf4343d22e4031fcbb102af5db_1a1284aecf4343d22e4031fcbb102af5db" compoundref="res-f4_8cpp" startline="281" endline="298">applyPermutation</references>
+        <references refid="class_f4_res_a5afb2e2b278f1d3e4f7c0ff0dfb21249_1a5afb2e2b278f1d3e4f7c0ff0dfb21249" compoundref="res-f4_8cpp" startline="715" endline="724">debugOutputColumns</references>
+        <references refid="class_f4_res_a0bd25e67eb358bd543dd282a886d797a_1a0bd25e67eb358bd543dd282a886d797a" compoundref="res-f4_8cpp" startline="705" endline="714">debugOutputReducers</references>
+        <references refid="class_f4_res_ae3b2c753a8940757145e5403acfe241a_1ae3b2c753a8940757145e5403acfe241a" compoundref="res-f4_8hpp" startline="88" endline="88">frame</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" compoundref="res-f4_8hpp" startline="178">mColumns</references>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</references>
+        <references refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" compoundref="res-f4_8hpp" startline="173">mReducers</references>
+        <references refid="class_f4_res_afd0bf2533c641401c0f787904cee3cf3_1afd0bf2533c641401c0f787904cee3cf3" compoundref="res-f4_8hpp" startline="175">mSPairs</references>
+        <references refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" compoundref="res-f4_8hpp" startline="158">mThisLevel</references>
+        <references refid="class_f4_res_a42bd16229c7449db7a5a63f208048ef9_1a42bd16229c7449db7a5a63f208048ef9" compoundref="res-f4_8hpp" startline="100" endline="100">ring</references>
+        <references refid="timing_8hpp_add027aa52d21445f5476ec1376730c32_1add027aa52d21445f5476ec1376730c32" compoundref="timing_8hpp" startline="57" endline="63">seconds</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+        <references refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" compoundref="timing_8hpp" startline="33" endline="36">timer</references>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::makeMatrix</definition>
+        <argsstring>()</argsstring>
+        <name>makeMatrix</name>
+        <qualifiedname>F4Res::makeMatrix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="136" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="408" bodyend="461"/>
+        <references refid="class_f4_res_a5afb2e2b278f1d3e4f7c0ff0dfb21249_1a5afb2e2b278f1d3e4f7c0ff0dfb21249" compoundref="res-f4_8cpp" startline="715" endline="724">debugOutputColumns</references>
+        <references refid="class_f4_res_ab816fbb38486a7fccee55d64deca48fd_1ab816fbb38486a7fccee55d64deca48fd" compoundref="res-f4_8cpp" startline="739" endline="748">debugOutputMatrix</references>
+        <references refid="class_f4_res_a89fd6776a84aa550f112453e229b00ba_1a89fd6776a84aa550f112453e229b00ba" compoundref="res-f4_8cpp" startline="726" endline="737">debugOutputMatrixSparse</references>
+        <references refid="class_f4_res_a0bd25e67eb358bd543dd282a886d797a_1a0bd25e67eb358bd543dd282a886d797a" compoundref="res-f4_8cpp" startline="705" endline="714">debugOutputReducers</references>
+        <references refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">loadRow</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" compoundref="res-f4_8hpp" startline="178">mColumns</references>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="struct_f4_res_1_1_row_a87b1982ae23f691466396053e4359208_1a87b1982ae23f691466396053e4359208" compoundref="res-f4_8hpp" startline="115">F4Res::Row::mLeadTerm</references>
+        <references refid="class_f4_res_aeece4fffc412a18f57fd97b1f4de49e7_1aeece4fffc412a18f57fd97b1f4de49e7" compoundref="res-f4_8hpp" startline="160">mNextReducerToProcess</references>
+        <references refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" compoundref="res-f4_8hpp" startline="173">mReducers</references>
+        <references refid="class_f4_res_abb034d7b454c134b3d74fef0178d2574_1abb034d7b454c134b3d74fef0178d2574" compoundref="res-f4_8hpp" startline="176">mSPairComponents</references>
+        <references refid="class_f4_res_afd0bf2533c641401c0f787904cee3cf3_1afd0bf2533c641401c0f787904cee3cf3" compoundref="res-f4_8hpp" startline="175">mSPairs</references>
+        <references refid="class_f4_res_a2e46014571c3d024b5a484bbfa48ca94_1a2e46014571c3d024b5a484bbfa48ca94" compoundref="res-f4_8hpp" startline="159">mThisDegree</references>
+        <references refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" compoundref="res-f4_8hpp" startline="158">mThisLevel</references>
+        <references refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::gaussReduce</definition>
+        <argsstring>()</argsstring>
+        <name>gaussReduce</name>
+        <qualifiedname>F4Res::gaussReduce</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="137" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="579" bodyend="638"/>
+        <references refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" compoundref="res-f4_8cpp" startline="465" endline="577">gaussReduceRow</references>
+        <references refid="class_res_monoid_dense_a7b35ff4ee34e81b57d6e528c1205af5f_1a7b35ff4ee34e81b57d6e528c1205af5f" compoundref="res-moninfo-dense_8hpp" startline="305" endline="314">ResMonoidDense::is_divisible_by_var_in_range</references>
+        <references refid="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" compoundref="res-f4_8hpp" startline="178">mColumns</references>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</references>
+        <references refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" compoundref="res-f4_8hpp" startline="173">mReducers</references>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <references refid="class_f4_res_afd0bf2533c641401c0f787904cee3cf3_1afd0bf2533c641401c0f787904cee3cf3" compoundref="res-f4_8hpp" startline="175">mSPairs</references>
+        <references refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" compoundref="res-f4_8hpp" startline="158">mThisLevel</references>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::gaussReduceRow</definition>
+        <argsstring>(int index, ElementArray &amp;dense, bool onlyConstantMaps, const std::vector&lt; bool &gt; &amp;track)</argsstring>
+        <name>gaussReduceRow</name>
+        <qualifiedname>F4Res::gaussReduceRow</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type><ref refid="class_element_array" kindref="compound">ElementArray</ref> &amp;</type>
+          <declname>dense</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>onlyConstantMaps</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classbool" kindref="compound">bool</ref> &gt; &amp;</type>
+          <declname>track</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="138" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="465" bodyend="577"/>
+        <references refid="class_element_array_a91116d3992a591200a88f36993d8e280_1a91116d3992a591200a88f36993d8e280" compoundref="_vector_arithmetic_8hpp" startline="99" endline="99">ElementArray::isNull</references>
+        <references refid="struct_f4_res_1_1_row_a5572f26a426f3a864bf3de3b96ebb1bc_1a5572f26a426f3a864bf3de3b96ebb1bc" compoundref="res-f4_8hpp" startline="118">F4Res::Row::mCoeffs</references>
+        <references refid="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" compoundref="res-f4_8hpp" startline="178">mColumns</references>
+        <references refid="struct_f4_res_1_1_row_a054426e8e80a463e98e2ad3095dd5f6a_1a054426e8e80a463e98e2ad3095dd5f6a" compoundref="res-f4_8hpp" startline="117">F4Res::Row::mComponents</references>
+        <references refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" compoundref="res-f4_8hpp" startline="153">mFrame</references>
+        <references refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" compoundref="res-f4_8hpp" startline="173">mReducers</references>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <references refid="class_f4_res_abb034d7b454c134b3d74fef0178d2574_1abb034d7b454c134b3d74fef0178d2574" compoundref="res-f4_8hpp" startline="176">mSPairComponents</references>
+        <references refid="class_f4_res_afd0bf2533c641401c0f787904cee3cf3_1afd0bf2533c641401c0f787904cee3cf3" compoundref="res-f4_8hpp" startline="175">mSPairs</references>
+        <references refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" compoundref="res-f4_8hpp" startline="158">mThisLevel</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" compoundref="res-f4_8cpp" startline="579" endline="638">gaussReduce</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a0bd25e67eb358bd543dd282a886d797a_1a0bd25e67eb358bd543dd282a886d797a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::debugOutputReducers</definition>
+        <argsstring>()</argsstring>
+        <name>debugOutputReducers</name>
+        <qualifiedname>F4Res::debugOutputReducers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="143" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="705" bodyend="714"/>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</references>
+        <references refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" compoundref="res-f4_8hpp" startline="173">mReducers</references>
+        <references refid="class_res_monoid_dense_a3843b2c4680583ca5fb7d1d1c495be6d_1a3843b2c4680583ca5fb7d1d1c495be6d" compoundref="res-moninfo-dense_8cpp" startline="108" endline="121">ResMonoidDense::showAlpha</references>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a5afb2e2b278f1d3e4f7c0ff0dfb21249_1a5afb2e2b278f1d3e4f7c0ff0dfb21249" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::debugOutputColumns</definition>
+        <argsstring>()</argsstring>
+        <name>debugOutputColumns</name>
+        <qualifiedname>F4Res::debugOutputColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="144" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="715" bodyend="724"/>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" compoundref="res-f4_8hpp" startline="178">mColumns</references>
+        <references refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" compoundref="res-f4_8hpp" startline="99" endline="99">monoid</references>
+        <references refid="class_res_monoid_dense_a3843b2c4680583ca5fb7d1d1c495be6d_1a3843b2c4680583ca5fb7d1d1c495be6d" compoundref="res-moninfo-dense_8cpp" startline="108" endline="121">ResMonoidDense::showAlpha</references>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+        <referencedby refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" compoundref="res-f4_8cpp" startline="300" endline="406">reorderColumns</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_ab816fbb38486a7fccee55d64deca48fd_1ab816fbb38486a7fccee55d64deca48fd" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::debugOutputMatrix</definition>
+        <argsstring>(std::vector&lt; Row &gt; &amp;)</argsstring>
+        <name>debugOutputMatrix</name>
+        <qualifiedname>F4Res::debugOutputMatrix</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="struct_f4_res_1_1_row" kindref="compound">Row</ref> &gt; &amp;</type>
+          <defname>rows</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="145" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="739" bodyend="748"/>
+        <references refid="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" compoundref="res-f4_8hpp" startline="178">mColumns</references>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+        <referencedby refid="class_f4_res_ada3eda04e4ecb59277567e5606bee2c6_1ada3eda04e4ecb59277567e5606bee2c6" compoundref="res-f4_8cpp" startline="749" endline="749">debugOutputReducerMatrix</referencedby>
+        <referencedby refid="class_f4_res_ad5cb8f2702b9f4287d4580be134c98cb_1ad5cb8f2702b9f4287d4580be134c98cb" compoundref="res-f4_8cpp" startline="750" endline="750">debugOutputSPairMatrix</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_a89fd6776a84aa550f112453e229b00ba_1a89fd6776a84aa550f112453e229b00ba" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::debugOutputMatrixSparse</definition>
+        <argsstring>(std::vector&lt; Row &gt; &amp;)</argsstring>
+        <name>debugOutputMatrixSparse</name>
+        <qualifiedname>F4Res::debugOutputMatrixSparse</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="struct_f4_res_1_1_row" kindref="compound">Row</ref> &gt; &amp;</type>
+          <defname>rows</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="146" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="726" bodyend="737"/>
+        <references refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" compoundref="res-f4_8hpp" startline="155">mRing</references>
+        <referencedby refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" compoundref="res-f4_8cpp" startline="640" endline="703">construct</referencedby>
+        <referencedby refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" compoundref="res-f4_8cpp" startline="408" endline="461">makeMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_ada3eda04e4ecb59277567e5606bee2c6_1ada3eda04e4ecb59277567e5606bee2c6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::debugOutputReducerMatrix</definition>
+        <argsstring>()</argsstring>
+        <name>debugOutputReducerMatrix</name>
+        <qualifiedname>F4Res::debugOutputReducerMatrix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="147" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="749" bodyend="749"/>
+        <references refid="class_f4_res_ab816fbb38486a7fccee55d64deca48fd_1ab816fbb38486a7fccee55d64deca48fd" compoundref="res-f4_8cpp" startline="739" endline="748">debugOutputMatrix</references>
+        <references refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" compoundref="res-f4_8hpp" startline="173">mReducers</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_res_ad5cb8f2702b9f4287d4580be134c98cb_1ad5cb8f2702b9f4287d4580be134c98cb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4Res::debugOutputSPairMatrix</definition>
+        <argsstring>()</argsstring>
+        <name>debugOutputSPairMatrix</name>
+        <qualifiedname>F4Res::debugOutputSPairMatrix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="148" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.cpp" bodystart="750" bodyend="750"/>
+        <references refid="class_f4_res_ab816fbb38486a7fccee55d64deca48fd_1ab816fbb38486a7fccee55d64deca48fd" compoundref="res-f4_8cpp" startline="739" endline="748">debugOutputMatrix</references>
+        <references refid="class_f4_res_afd0bf2533c641401c0f787904cee3cf3_1afd0bf2533c641401c0f787904cee3cf3" compoundref="res-f4_8hpp" startline="175">mSPairs</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>F4-style engine that computes one <computeroutput>(level, degree)</computeroutput> slice of a free resolution into the host <computeroutput><ref refid="class_schreyer_frame" kindref="compound">SchreyerFrame</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput>construct(lev, degree)</computeroutput> builds the Macaulay matrix whose rows are the symbolic reducers for each frame element of that <computeroutput>(level, degree)</computeroutput> cell, runs <computeroutput><ref refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" kindref="member">gaussReduce</ref></computeroutput>, and writes the resulting syzygy polynomials back into the matching <computeroutput>FrameElement::mSyzygy</computeroutput> slots. The matrix construction (<computeroutput><ref refid="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" kindref="member">processCurrentMonomial</ref></computeroutput> / <computeroutput><ref refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" kindref="member">processMonomialProduct</ref></computeroutput> / <computeroutput><ref refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" kindref="member">loadRow</ref></computeroutput>) and column-sorting passes (<computeroutput><ref refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" kindref="member">reorderColumns</ref></computeroutput>, <computeroutput><ref refid="class_f4_res_a675e98de80eeeebd70bf2b10cc440a8b_1a675e98de80eeeebd70bf2b10cc440a8b" kindref="member">ResColumnsSorter</ref></computeroutput> friend) live inside this class; the <computeroutput>debugOutput*</computeroutput> helpers exist for printing the partial state of the F4 matrix when investigating reduction bugs. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="101">
+        <label>BettiDisplay</label>
+        <link refid="class_betti_display"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mHiDegree</edgelabel>
+          <edgelabel>mHiLength</edgelabel>
+          <edgelabel>mLoDegree</edgelabel>
+          <edgelabel>mNLevels</edgelabel>
+          <edgelabel>mValues</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="63" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="93">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>F4Res</label>
+        <link refid="class_f4_res"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mFrame</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mThisDegree</edgelabel>
+          <edgelabel>mThisLevel</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mNextReducerToProcess</edgelabel>
+        </childnode>
+        <childnode refid="113" relation="usage">
+          <edgelabel>mSchreyerRes</edgelabel>
+        </childnode>
+        <childnode refid="115" relation="usage">
+          <edgelabel>mHashTable</edgelabel>
+        </childnode>
+        <childnode refid="120" relation="usage">
+          <edgelabel>mReducers</edgelabel>
+          <edgelabel>mSPairs</edgelabel>
+        </childnode>
+        <childnode refid="122" relation="usage">
+          <edgelabel>mSPairComponents</edgelabel>
+        </childnode>
+        <childnode refid="96" relation="usage">
+          <edgelabel>mColumns</edgelabel>
+        </childnode>
+        <childnode refid="123" relation="usage">
+          <edgelabel>mMonomSpace2</edgelabel>
+        </childnode>
+      </node>
+      <node id="121">
+        <label>F4Res::Row</label>
+        <link refid="struct_f4_res_1_1_row"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mLeadTerm</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mComponents</edgelabel>
+        </childnode>
+        <childnode refid="93" relation="usage">
+          <edgelabel>mCoeffs</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="73" relation="public-inheritance">
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="65" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="73" relation="public-inheritance">
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="52" relation="private-inheritance">
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="54" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="48" relation="private-inheritance">
+        </childnode>
+        <childnode refid="51" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="85" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="86" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="118">
+        <label>MonomialHashTable&lt; ValueType &gt;</label>
+        <link refid="class_monomial_hash_table"/>
+        <childnode refid="119" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="116" relation="usage">
+          <edgelabel>hashtab</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>count</edgelabel>
+          <edgelabel>hashmask</edgelabel>
+          <edgelabel>max_run_length</edgelabel>
+          <edgelabel>monequal_count</edgelabel>
+          <edgelabel>monequal_fails</edgelabel>
+          <edgelabel>nclashes</edgelabel>
+          <edgelabel>nfind_or_insert</edgelabel>
+          <edgelabel>size</edgelabel>
+          <edgelabel>threshold</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>logsize</edgelabel>
+        </childnode>
+      </node>
+      <node id="115">
+        <label>MonomialHashTable&lt; ResMonomialsWithComponent &gt;</label>
+        <link refid="class_monomial_hash_table"/>
+        <childnode refid="114" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="116" relation="usage">
+          <edgelabel>hashtab</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>count</edgelabel>
+          <edgelabel>hashmask</edgelabel>
+          <edgelabel>max_run_length</edgelabel>
+          <edgelabel>monequal_count</edgelabel>
+          <edgelabel>monequal_fails</edgelabel>
+          <edgelabel>nclashes</edgelabel>
+          <edgelabel>nfind_or_insert</edgelabel>
+          <edgelabel>size</edgelabel>
+          <edgelabel>threshold</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>logsize</edgelabel>
+        </childnode>
+        <childnode refid="118" relation="template-instance">
+          <edgelabel>&lt; ResMonomialsWithComponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="123">
+        <label>MonomialMemorySpace</label>
+        <link refid="class_monomial_memory_space"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mCount</edgelabel>
+        </childnode>
+        <childnode refid="124" relation="usage">
+          <edgelabel>mArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="78">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="19" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="54">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="55" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="44" relation="public-inheritance">
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="21" relation="public-inheritance">
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="46" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="100">
+        <label>ResMemoryBlock&lt; T, NSLAB &gt;</label>
+        <link refid="class_res_memory_block"/>
+        <childnode refid="99" relation="usage">
+          <edgelabel>current_slab</edgelabel>
+          <edgelabel>first_slab</edgelabel>
+          <edgelabel>last_slab</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>next_free</edgelabel>
+        </childnode>
+      </node>
+      <node id="99">
+        <label>ResMemoryBlock&lt; T, NSLAB &gt;::slab</label>
+        <link refid="struct_res_memory_block_1_1slab"/>
+        <childnode refid="99" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>block</edgelabel>
+        </childnode>
+      </node>
+      <node id="108">
+        <label>ResMemoryBlock&lt; SchreyerFrameTypes::PreElement &gt;</label>
+        <link refid="class_res_memory_block"/>
+        <childnode refid="99" relation="usage">
+          <edgelabel>current_slab</edgelabel>
+          <edgelabel>first_slab</edgelabel>
+          <edgelabel>last_slab</edgelabel>
+        </childnode>
+        <childnode refid="109" relation="usage">
+          <edgelabel>next_free</edgelabel>
+        </childnode>
+        <childnode refid="100" relation="template-instance">
+          <edgelabel>&lt; SchreyerFrameTypes::PreElement &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="98">
+        <label>ResMemoryBlock&lt; res_monomial_word &gt;</label>
+        <link refid="class_res_memory_block"/>
+        <childnode refid="99" relation="usage">
+          <edgelabel>current_slab</edgelabel>
+          <edgelabel>first_slab</edgelabel>
+          <edgelabel>last_slab</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>next_free</edgelabel>
+        </childnode>
+        <childnode refid="100" relation="template-instance">
+          <edgelabel>&lt; res_monomial_word &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="111">
+        <label>ResMemoryBlock&lt; res_varpower_word &gt;</label>
+        <link refid="class_res_memory_block"/>
+        <childnode refid="99" relation="usage">
+          <edgelabel>current_slab</edgelabel>
+          <edgelabel>first_slab</edgelabel>
+          <edgelabel>last_slab</edgelabel>
+        </childnode>
+        <childnode refid="110" relation="usage">
+          <edgelabel>next_free</edgelabel>
+        </childnode>
+        <childnode refid="100" relation="template-instance">
+          <edgelabel>&lt; res_varpower_word &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ResMonoidDense</label>
+        <link refid="class_res_monoid_dense"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>firstvar</edgelabel>
+          <edgelabel>nslots</edgelabel>
+          <edgelabel>nvars</edgelabel>
+          <edgelabel>nweights</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>hashfcn</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mask</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mVarDegrees</edgelabel>
+          <edgelabel>weight_vectors</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>ncalls_compare</edgelabel>
+          <edgelabel>ncalls_divide</edgelabel>
+          <edgelabel>ncalls_from_expvector</edgelabel>
+          <edgelabel>ncalls_from_varpower</edgelabel>
+          <edgelabel>ncalls_get_component</edgelabel>
+          <edgelabel>ncalls_hash_value</edgelabel>
+          <edgelabel>ncalls_is_equal</edgelabel>
+          <edgelabel>ncalls_is_equal_true</edgelabel>
+          <edgelabel>ncalls_mult</edgelabel>
+          <edgelabel>ncalls_quotient_as_vp</edgelabel>
+          <edgelabel>  ...</edgelabel>
+        </childnode>
+      </node>
+      <node id="114">
+        <label>ResMonomialsWithComponent</label>
+        <link refid="class_res_monomials_with_component"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ResPolyRing</label>
+        <link refid="class_res_poly_ring"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mVectorArithmetic</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mOriginalMonoid</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mSkew</edgelabel>
+        </childnode>
+      </node>
+      <node id="92">
+        <label>ResPolynomial</label>
+        <link refid="class_res_polynomial"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>npoly_destructor</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="93" relation="usage">
+          <edgelabel>coeffs</edgelabel>
+        </childnode>
+        <childnode refid="94" relation="usage">
+          <edgelabel>monoms</edgelabel>
+        </childnode>
+      </node>
+      <node id="95">
+        <label>ResSchreyerOrder</label>
+        <link refid="struct_res_schreyer_order"/>
+        <childnode refid="96" relation="usage">
+          <edgelabel>mTotalMonom</edgelabel>
+        </childnode>
+        <childnode refid="97" relation="usage">
+          <edgelabel>mTieBreaker</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>CoefficientType</label>
+      </node>
+      <node id="2">
+        <label>SchreyerFrame</label>
+        <link refid="class_schreyer_frame"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="87" relation="usage">
+          <edgelabel>mFrame</edgelabel>
+        </childnode>
+        <childnode refid="98" relation="usage">
+          <edgelabel>mMonomialSpace</edgelabel>
+        </childnode>
+        <childnode refid="101" relation="usage">
+          <edgelabel>mBettiMinimal</edgelabel>
+          <edgelabel>mBettiNonminimal</edgelabel>
+          <edgelabel>mComputationStatus</edgelabel>
+        </childnode>
+        <childnode refid="102" relation="usage">
+          <edgelabel>mMinimalizeTODO</edgelabel>
+        </childnode>
+        <childnode refid="107" relation="usage">
+          <edgelabel>mState</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mCurrentLevel</edgelabel>
+          <edgelabel>mHiSlantedDegree</edgelabel>
+          <edgelabel>mLoSlantedDegree</edgelabel>
+          <edgelabel>mMaxLength</edgelabel>
+          <edgelabel>mMaxVPSize</edgelabel>
+          <edgelabel>mNumThreads</edgelabel>
+          <edgelabel>mSlantedDegree</edgelabel>
+        </childnode>
+        <childnode refid="108" relation="usage">
+          <edgelabel>mPreElements</edgelabel>
+        </childnode>
+        <childnode refid="111" relation="usage">
+          <edgelabel>mVarpowers</edgelabel>
+        </childnode>
+        <childnode refid="112" relation="usage">
+          <edgelabel>mComputer</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mParallelizeByDegree</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>timeClearMatrix</edgelabel>
+          <edgelabel>timeComputeRanks</edgelabel>
+          <edgelabel>timeComputeSparseRanks</edgelabel>
+          <edgelabel>timeGaussMatrix</edgelabel>
+          <edgelabel>timeMakeMatrix</edgelabel>
+          <edgelabel>timeReorderMatrix</edgelabel>
+          <edgelabel>timeResetHashTable</edgelabel>
+          <edgelabel>timeSortMatrix</edgelabel>
+        </childnode>
+      </node>
+      <node id="87">
+        <label>SchreyerFrame::Frame</label>
+        <link refid="struct_schreyer_frame_1_1_frame"/>
+        <childnode refid="88" relation="usage">
+          <edgelabel>mLevels</edgelabel>
+        </childnode>
+      </node>
+      <node id="89">
+        <label>SchreyerFrame::Level</label>
+        <link refid="struct_schreyer_frame_1_1_level"/>
+        <childnode refid="90" relation="usage">
+          <edgelabel>mElements</edgelabel>
+        </childnode>
+        <childnode refid="95" relation="usage">
+          <edgelabel>mSchreyerOrder</edgelabel>
+        </childnode>
+      </node>
+      <node id="91">
+        <label>SchreyerFrameTypes::FrameElement</label>
+        <link refid="struct_schreyer_frame_types_1_1_frame_element"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+          <edgelabel>mMonom</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mDegree</edgelabel>
+        </childnode>
+        <childnode refid="92" relation="usage">
+          <edgelabel>mSyzygy</edgelabel>
+        </childnode>
+      </node>
+      <node id="109">
+        <label>SchreyerFrameTypes::PreElement</label>
+        <link refid="struct_schreyer_frame_types_1_1_pre_element"/>
+        <childnode refid="110" relation="usage">
+          <edgelabel>vp</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>degree</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>T</label>
+      </node>
+      <node id="105">
+        <label>T1</label>
+      </node>
+      <node id="106">
+        <label>T2</label>
+      </node>
+      <node id="5">
+        <label>VectorArithmetic</label>
+        <link refid="class_vector_arithmetic"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mConcreteVector</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="35">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="107">
+        <label>anonymous:mState</label>
+      </node>
+      <node id="39">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="33">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="28" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>char</label>
+      </node>
+      <node id="22">
+        <label>const ARing *</label>
+      </node>
+      <node id="119">
+        <label>const ValueType *</label>
+      </node>
+      <node id="38">
+        <label>const void *</label>
+      </node>
+      <node id="28">
+        <label>double</label>
+      </node>
+      <node id="86">
+        <label>overflow_type *</label>
+      </node>
+      <node id="84">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="75">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="77">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="9">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="11">
+        <label>int32_t</label>
+      </node>
+      <node id="27">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="24" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>long</label>
+      </node>
+      <node id="124">
+        <label>memt::Arena</label>
+        <link refid="classmemt_1_1_arena"/>
+        <childnode refid="58" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+        <childnode refid="124" relation="usage">
+          <edgelabel>_scratchArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="57" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="59" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="60" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>mon_part</label>
+      </node>
+      <node id="32">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="31">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="29">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="30">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="19">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="110">
+        <label>res_varpower_word *</label>
+      </node>
+      <node id="24">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>size_t</label>
+      </node>
+      <node id="67">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>spinLock</label>
+      </node>
+      <node id="66">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="83">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="104">
+        <label>std::pair&lt; T1, T2 &gt;</label>
+        <childnode refid="105" relation="usage">
+          <edgelabel>first_type</edgelabel>
+        </childnode>
+        <childnode refid="106" relation="usage">
+          <edgelabel>second_type</edgelabel>
+        </childnode>
+      </node>
+      <node id="103">
+        <label>std::pair&lt; int, int &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>first_type</edgelabel>
+          <edgelabel>second_type</edgelabel>
+        </childnode>
+        <childnode refid="104" relation="template-instance">
+          <edgelabel>&lt; int, int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="82">
+        <label>std::string</label>
+        <childnode refid="83" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="112">
+        <label>std::unique_ptr&lt; F4Res &gt;</label>
+        <childnode refid="1" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; F4Res &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::unique_ptr&lt; const ResMonoidDense &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; const ResMonoidDense &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="113">
+        <label>std::unique_ptr&lt; const ResMonomialsWithComponent &gt;</label>
+        <childnode refid="114" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; const ResMonomialsWithComponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::unique_ptr&lt; res_monomial_word[]&gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; res_monomial_word[]&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="116">
+        <label>std::unique_ptr&lt; value[]&gt;</label>
+        <childnode refid="117" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; value[]&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>variant&lt; ConcreteVectorArithmetic&lt; M2::ARingZZpFlint &gt; *, ConcreteVectorArithmetic&lt; M2::ARingGFFlintBig &gt; *, ConcreteVectorArithmetic&lt; M2::ARingGFFlint &gt; *, ConcreteVectorArithmetic&lt; M2::ARingQQGMP &gt; *, ConcreteVectorArithmetic&lt; M2::ARingZZpFFPACK &gt; *, ConcreteVectorArithmetic&lt; M2::ARingZZp &gt; *, ConcreteVectorArithmetic&lt; M2::ARingGFM2 &gt; *, ConcreteVectorArithmetic&lt; CoefficientRingR &gt; *, ConcreteVectorArithmetic&lt; CoefficientRingZZp &gt; *, ConcreteVectorArithmetic&lt; M2::DummyRing &gt; * &gt;</label>
+      </node>
+      <node id="15">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="120">
+        <label>std::vector&lt; F4Res::Row &gt;</label>
+        <childnode refid="121" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; F4Res::Row &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="88">
+        <label>std::vector&lt; SchreyerFrame::Level &gt;</label>
+        <childnode refid="89" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; SchreyerFrame::Level &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="90">
+        <label>std::vector&lt; SchreyerFrameTypes::FrameElement &gt;</label>
+        <childnode refid="91" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; SchreyerFrameTypes::FrameElement &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="85">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="39" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="97">
+        <label>std::vector&lt; component_index &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; component_index &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="122">
+        <label>std::vector&lt; long &gt;</label>
+        <childnode refid="16" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; long &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="94">
+        <label>std::vector&lt; res_monomial_word &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; res_monomial_word &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="96">
+        <label>std::vector&lt; res_packed_monomial &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; res_packed_monomial &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="102">
+        <label>std::vector&lt; std::pair&lt; int, int &gt; &gt;</label>
+        <childnode refid="103" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; std::pair&lt; int, int &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="82" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="117">
+        <label>value</label>
+      </node>
+      <node id="68">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/schreyer-resolution/res-f4.hpp" line="79" column="1" bodyfile="Macaulay2/e/schreyer-resolution/res-f4.hpp" bodystart="80" bodyend="183"/>
+    <listofallmembers>
+      <member refid="class_f4_res_aba1024f2db70e2478f4f9b39c2b8e688_1aba1024f2db70e2478f4f9b39c2b8e688" prot="private" virt="non-virtual"><scope>F4Res</scope><name>clearMatrix</name></member>
+      <member refid="class_f4_res_a2a5b6f1dd2e4251e29ea3fae9b2e7979_1a2a5b6f1dd2e4251e29ea3fae9b2e7979" prot="public" virt="non-virtual"><scope>F4Res</scope><name>construct</name></member>
+      <member refid="class_f4_res_a5afb2e2b278f1d3e4f7c0ff0dfb21249_1a5afb2e2b278f1d3e4f7c0ff0dfb21249" prot="private" virt="non-virtual"><scope>F4Res</scope><name>debugOutputColumns</name></member>
+      <member refid="class_f4_res_ab816fbb38486a7fccee55d64deca48fd_1ab816fbb38486a7fccee55d64deca48fd" prot="private" virt="non-virtual"><scope>F4Res</scope><name>debugOutputMatrix</name></member>
+      <member refid="class_f4_res_a89fd6776a84aa550f112453e229b00ba_1a89fd6776a84aa550f112453e229b00ba" prot="private" virt="non-virtual"><scope>F4Res</scope><name>debugOutputMatrixSparse</name></member>
+      <member refid="class_f4_res_ada3eda04e4ecb59277567e5606bee2c6_1ada3eda04e4ecb59277567e5606bee2c6" prot="private" virt="non-virtual"><scope>F4Res</scope><name>debugOutputReducerMatrix</name></member>
+      <member refid="class_f4_res_a0bd25e67eb358bd543dd282a886d797a_1a0bd25e67eb358bd543dd282a886d797a" prot="private" virt="non-virtual"><scope>F4Res</scope><name>debugOutputReducers</name></member>
+      <member refid="class_f4_res_ad5cb8f2702b9f4287d4580be134c98cb_1ad5cb8f2702b9f4287d4580be134c98cb" prot="private" virt="non-virtual"><scope>F4Res</scope><name>debugOutputSPairMatrix</name></member>
+      <member refid="class_f4_res_a1eb4caf121c485b69d3b9808f0e85db1_1a1eb4caf121c485b69d3b9808f0e85db1" prot="public" virt="non-virtual"><scope>F4Res</scope><name>F4Res</name></member>
+      <member refid="class_f4_res_aa1f3ca1306577e2e012bda42d4af974c_1aa1f3ca1306577e2e012bda42d4af974c" prot="private" virt="non-virtual"><scope>F4Res</scope><name>findDivisor</name></member>
+      <member refid="class_f4_res_ae3b2c753a8940757145e5403acfe241a_1ae3b2c753a8940757145e5403acfe241a" prot="public" virt="non-virtual"><scope>F4Res</scope><name>frame</name></member>
+      <member refid="class_f4_res_a7a48c66503e8427ab8f58f5ffa2c24d5_1a7a48c66503e8427ab8f58f5ffa2c24d5" prot="public" virt="non-virtual"><scope>F4Res</scope><name>frame</name></member>
+      <member refid="class_f4_res_a1a4dc35be828da0a98fd9ab40a48408a_1a1a4dc35be828da0a98fd9ab40a48408a" prot="private" virt="non-virtual"><scope>F4Res</scope><name>gaussReduce</name></member>
+      <member refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" prot="private" virt="non-virtual"><scope>F4Res</scope><name>gaussReduceRow</name></member>
+      <member refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" prot="private" virt="non-virtual"><scope>F4Res</scope><name>loadRow</name></member>
+      <member refid="class_f4_res_a982c296a780812b61e959db60ab65878_1a982c296a780812b61e959db60ab65878" prot="private" virt="non-virtual"><scope>F4Res</scope><name>makeMatrix</name></member>
+      <member refid="class_f4_res_a87f1bddef6821ae976d35b3740bf3e48_1a87f1bddef6821ae976d35b3740bf3e48" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mColumns</name></member>
+      <member refid="class_f4_res_aad15445f574045f056ddacff5d0e3826_1aad15445f574045f056ddacff5d0e3826" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mFrame</name></member>
+      <member refid="class_f4_res_a166b08e2de8722df8829f5bf0b24cefd_1a166b08e2de8722df8829f5bf0b24cefd" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mHashTable</name></member>
+      <member refid="class_f4_res_a97eaf904b9f10390302e59dff7831038_1a97eaf904b9f10390302e59dff7831038" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mMonomSpace2</name></member>
+      <member refid="class_f4_res_aeece4fffc412a18f57fd97b1f4de49e7_1aeece4fffc412a18f57fd97b1f4de49e7" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mNextReducerToProcess</name></member>
+      <member refid="class_f4_res_a822befc030efc7d7e1e781fc881baff2_1a822befc030efc7d7e1e781fc881baff2" prot="public" virt="non-virtual"><scope>F4Res</scope><name>monoid</name></member>
+      <member refid="class_f4_res_a9d050ea0ca02a97cab9113832198b50c_1a9d050ea0ca02a97cab9113832198b50c" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mReducers</name></member>
+      <member refid="class_f4_res_ab4a508953ea27c7ee724228dd6099c43_1ab4a508953ea27c7ee724228dd6099c43" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mRing</name></member>
+      <member refid="class_f4_res_a72bdeefbb60a318ec9e4d38090dfe106_1a72bdeefbb60a318ec9e4d38090dfe106" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mSchreyerRes</name></member>
+      <member refid="class_f4_res_abb034d7b454c134b3d74fef0178d2574_1abb034d7b454c134b3d74fef0178d2574" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mSPairComponents</name></member>
+      <member refid="class_f4_res_afd0bf2533c641401c0f787904cee3cf3_1afd0bf2533c641401c0f787904cee3cf3" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mSPairs</name></member>
+      <member refid="class_f4_res_a2e46014571c3d024b5a484bbfa48ca94_1a2e46014571c3d024b5a484bbfa48ca94" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mThisDegree</name></member>
+      <member refid="class_f4_res_a6c24fbee1341d0f705f68c11cb1dd7c6_1a6c24fbee1341d0f705f68c11cb1dd7c6" prot="private" virt="non-virtual"><scope>F4Res</scope><name>mThisLevel</name></member>
+      <member refid="class_f4_res_ad7c8abfe88f173fa72c78aeed4f9dfca_1ad7c8abfe88f173fa72c78aeed4f9dfca" prot="private" virt="non-virtual"><scope>F4Res</scope><name>processCurrentMonomial</name></member>
+      <member refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" prot="private" virt="non-virtual"><scope>F4Res</scope><name>processMonomialProduct</name></member>
+      <member refid="class_f4_res_a1d6c6ee5f0156d2795a4d417827adb2d_1a1d6c6ee5f0156d2795a4d417827adb2d" prot="private" virt="non-virtual"><scope>F4Res</scope><name>reorderColumns</name></member>
+      <member refid="class_f4_res_a675e98de80eeeebd70bf2b10cc440a8b_1a675e98de80eeeebd70bf2b10cc440a8b" prot="private" virt="non-virtual"><scope>F4Res</scope><name>ResColumnsSorter</name></member>
+      <member refid="class_f4_res_a1319814892df4b384ff8cc5f95d9550c_1a1319814892df4b384ff8cc5f95d9550c" prot="private" virt="non-virtual"><scope>F4Res</scope><name>resetMatrix</name></member>
+      <member refid="class_f4_res_a42bd16229c7449db7a5a63f208048ef9_1a42bd16229c7449db7a5a63f208048ef9" prot="public" virt="non-virtual"><scope>F4Res</scope><name>ring</name></member>
+      <member refid="class_f4_res_a2fa2523a1408329f79cb075fdbfbc9ac_1a2fa2523a1408329f79cb075fdbfbc9ac" prot="public" virt="non-virtual"><scope>F4Res</scope><name>vectorArithmetic</name></member>
+      <member refid="class_f4_res_a5238da10f7665f86bcef8fb03beeff41_1a5238da10f7665f86bcef8fb03beeff41" prot="public" virt="non-virtual"><scope>F4Res</scope><name>~F4Res</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

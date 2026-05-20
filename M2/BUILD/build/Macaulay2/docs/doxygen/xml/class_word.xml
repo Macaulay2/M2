@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_word" kind="class" language="C++" prot="public">
+    <compoundname>Word</compoundname>
+    <includes refid="_word_8hpp" local="no">Word.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>const int* Word::mBegin</definition>
+        <argsstring></argsstring>
+        <name>mBegin</name>
+        <qualifiedname>Word::mBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="86" column="13" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="86" bodyend="-1"/>
+        <referencedby refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">begin</referencedby>
+        <referencedby refid="class_word_a2800554dbde8a6b143b9cf40b71fdb30_1a2800554dbde8a6b143b9cf40b71fdb30" compoundref="_word_8hpp" startline="64" endline="64">init</referencedby>
+        <referencedby refid="class_word_a0ea95bf15f1c0e2e09cc5d98e8ede30a_1a0ea95bf15f1c0e2e09cc5d98e8ede30a" compoundref="_word_8hpp" startline="72" endline="79">operator==</referencedby>
+        <referencedby refid="class_word_aaaf279f5bb81e516fc679d1b0eb67bbc_1aaaf279f5bb81e516fc679d1b0eb67bbc" compoundref="_word_8hpp" startline="81" endline="81">operator[]</referencedby>
+        <referencedby refid="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" compoundref="_word_8hpp" startline="55" endline="55">Word</referencedby>
+        <referencedby refid="class_word_a0e4d3b7bd337ea9d87cfddfa0cea9733_1a0e4d3b7bd337ea9d87cfddfa0cea9733" compoundref="_word_8hpp" startline="57" endline="57">Word</referencedby>
+        <referencedby refid="class_word_a60168628b547268284ae1ca08901c722_1a60168628b547268284ae1ca08901c722" compoundref="_word_8hpp" startline="62" endline="62">Word</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>const int* Word::mEnd</definition>
+        <argsstring></argsstring>
+        <name>mEnd</name>
+        <qualifiedname>Word::mEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="87" column="13" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="87" bodyend="-1"/>
+        <referencedby refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" compoundref="_word_8hpp" startline="69" endline="69">end</referencedby>
+        <referencedby refid="class_word_a2800554dbde8a6b143b9cf40b71fdb30_1a2800554dbde8a6b143b9cf40b71fdb30" compoundref="_word_8hpp" startline="64" endline="64">init</referencedby>
+        <referencedby refid="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" compoundref="_word_8hpp" startline="55" endline="55">Word</referencedby>
+        <referencedby refid="class_word_a0e4d3b7bd337ea9d87cfddfa0cea9733_1a0e4d3b7bd337ea9d87cfddfa0cea9733" compoundref="_word_8hpp" startline="57" endline="57">Word</referencedby>
+        <referencedby refid="class_word_a60168628b547268284ae1ca08901c722_1a60168628b547268284ae1ca08901c722" compoundref="_word_8hpp" startline="62" endline="62">Word</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int Word::mSize</definition>
+        <argsstring></argsstring>
+        <name>mSize</name>
+        <qualifiedname>Word::mSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="88" column="7" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="88" bodyend="-1"/>
+        <referencedby refid="class_word_a2800554dbde8a6b143b9cf40b71fdb30_1a2800554dbde8a6b143b9cf40b71fdb30" compoundref="_word_8hpp" startline="64" endline="64">init</referencedby>
+        <referencedby refid="class_word_a0ea95bf15f1c0e2e09cc5d98e8ede30a_1a0ea95bf15f1c0e2e09cc5d98e8ede30a" compoundref="_word_8hpp" startline="72" endline="79">operator==</referencedby>
+        <referencedby refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">size</referencedby>
+        <referencedby refid="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" compoundref="_word_8hpp" startline="55" endline="55">Word</referencedby>
+        <referencedby refid="class_word_a0e4d3b7bd337ea9d87cfddfa0cea9733_1a0e4d3b7bd337ea9d87cfddfa0cea9733" compoundref="_word_8hpp" startline="57" endline="57">Word</referencedby>
+        <referencedby refid="class_word_a60168628b547268284ae1ca08901c722_1a60168628b547268284ae1ca08901c722" compoundref="_word_8hpp" startline="62" endline="62">Word</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Word::Word</definition>
+        <argsstring>()</argsstring>
+        <name>Word</name>
+        <qualifiedname>Word::Word</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="55" column="3" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="55" bodyend="55"/>
+        <references refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" compoundref="_word_8hpp" startline="86">mBegin</references>
+        <references refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" compoundref="_word_8hpp" startline="87">mEnd</references>
+        <references refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" compoundref="_word_8hpp" startline="88">mSize</references>
+        <referencedby refid="class_word_a0ea95bf15f1c0e2e09cc5d98e8ede30a_1a0ea95bf15f1c0e2e09cc5d98e8ede30a" compoundref="_word_8hpp" startline="72" endline="79">operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_a0e4d3b7bd337ea9d87cfddfa0cea9733_1a0e4d3b7bd337ea9d87cfddfa0cea9733" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Word::Word</definition>
+        <argsstring>(const int *begin, const int *end)</argsstring>
+        <name>Word</name>
+        <qualifiedname>Word::Word</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="57" column="3" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="57" bodyend="57"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">begin</references>
+        <references refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" compoundref="_word_8hpp" startline="69" endline="69">end</references>
+        <references refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" compoundref="_word_8hpp" startline="86">mBegin</references>
+        <references refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" compoundref="_word_8hpp" startline="87">mEnd</references>
+        <references refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" compoundref="_word_8hpp" startline="88">mSize</references>
+      </memberdef>
+      <memberdef kind="function" id="class_word_a60168628b547268284ae1ca08901c722_1a60168628b547268284ae1ca08901c722" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Word::Word</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;val)</argsstring>
+        <name>Word</name>
+        <qualifiedname>Word::Word</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="62" column="12" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="62" bodyend="62"/>
+        <references refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" compoundref="_word_8hpp" startline="86">mBegin</references>
+        <references refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" compoundref="_word_8hpp" startline="87">mEnd</references>
+        <references refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" compoundref="_word_8hpp" startline="88">mSize</references>
+        <references refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_word_a2800554dbde8a6b143b9cf40b71fdb30_1a2800554dbde8a6b143b9cf40b71fdb30" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Word::init</definition>
+        <argsstring>(const int *begin, const int *end)</argsstring>
+        <name>init</name>
+        <qualifiedname>Word::init</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="64" column="8" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="64" bodyend="64"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">begin</references>
+        <references refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" compoundref="_word_8hpp" startline="69" endline="69">end</references>
+        <references refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" compoundref="_word_8hpp" startline="86">mBegin</references>
+        <references refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" compoundref="_word_8hpp" startline="87">mEnd</references>
+        <references refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" compoundref="_word_8hpp" startline="88">mSize</references>
+        <referencedby refid="class_n_c_f4_a9a311d2c09d1f8db52fdd873bbcc02e5_1a9a311d2c09d1f8db52fdd873bbcc02e5" compoundref="_n_c_f4_8cpp" startline="710" endline="767">NCF4::findDivisor</referencedby>
+        <referencedby refid="class_free_algebra_a23f51c640b7ec7cf78ac597b3ab8c760_1a23f51c640b7ec7cf78ac597b3ab8c760" compoundref="_free_algebra_8cpp" startline="227" endline="232">FreeAlgebra::from_word</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>const int * Word::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>Word::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="68" column="13" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="68" bodyend="68"/>
+        <references refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" compoundref="_word_8hpp" startline="86">mBegin</references>
+        <referencedby refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" compoundref="_word_8hpp" startline="134" endline="134">WordWithData::begin</referencedby>
+        <referencedby refid="_suffix_tree_8cpp_aa3918ea0069a3c7434d892096616f30a_1aa3918ea0069a3c7434d892096616f30a" compoundref="_suffix_tree_8cpp" startline="92" endline="98">concatenatesTo</referencedby>
+        <referencedby refid="class_n_c_f4_a9db64da88a2d4f32a9a1a6a2849148fa_1a9db64da88a2d4f32a9a1a6a2849148fa" compoundref="_n_c_f4_8cpp" startline="301" endline="313">NCF4::createOverlapLeadWord</referencedby>
+        <referencedby refid="class_n_c_f4_ad7659ffc3745ebe70bb63803927c67e5_1ad7659ffc3745ebe70bb63803927c67e5" compoundref="_n_c_f4_8cpp" startline="769" endline="805">NCF4::findPreviousReducerPrefix</referencedby>
+        <referencedby refid="class_n_c_f4_a8fef0bf98f0f3ce72199e23b9da2c7d8_1a8fef0bf98f0f3ce72199e23b9da2c7d8" compoundref="_n_c_f4_8cpp" startline="808" endline="833">NCF4::findPreviousReducerSuffix</referencedby>
+        <referencedby refid="class_word_a2800554dbde8a6b143b9cf40b71fdb30_1a2800554dbde8a6b143b9cf40b71fdb30" compoundref="_word_8hpp" startline="64" endline="64">init</referencedby>
+        <referencedby refid="class_word_table_adb6e3da530bf9ae6ef66bd6b7645cb59_1adb6e3da530bf9ae6ef66bd6b7645cb59" compoundref="_word_table_8cpp" startline="17" endline="25">WordTable::insert</referencedby>
+        <referencedby refid="class_word_table_ac5e7942b001b718ddbdd07886d225ae3_1ac5e7942b001b718ddbdd07886d225ae3" compoundref="_word_table_8cpp" startline="27" endline="36">WordTable::insert</referencedby>
+        <referencedby refid="_suffix_tree_8cpp_a28e11b39b8d879fc1739611fa2efade0_1a28e11b39b8d879fc1739611fa2efade0" compoundref="_suffix_tree_8cpp" startline="100" endline="110">isPatternPrefix</referencedby>
+        <referencedby refid="class_word_table_ae805ab20cf473e5698c89ba7d8d11c3c_1ae805ab20cf473e5698c89ba7d8d11c3c" compoundref="_word_table_8cpp" startline="100" endline="116">WordTable::isSuffixOf</referencedby>
+        <referencedby refid="class_monom_hash_a1f1f45998af4b10a7f11c7139ddaa48e_1a1f1f45998af4b10a7f11c7139ddaa48e" compoundref="_free_monoid_8hpp" startline="274" endline="280">MonomHash::operator()</referencedby>
+        <referencedby refid="class_monom_hash_equal_a2cdb8380292218d2b7149887e05b74ef_1a2cdb8380292218d2b7149887e05b74ef" compoundref="_free_monoid_8hpp" startline="308" endline="311">MonomHashEqual::operator()</referencedby>
+        <referencedby refid="_word_8cpp_a2fdcf5230f1369a3c523f74f1b5138d4_1a2fdcf5230f1369a3c523f74f1b5138d4" compoundref="_word_8cpp" startline="4" endline="18">operator&lt;&lt;</referencedby>
+        <referencedby refid="_word_table_8hpp_aa5b7bfc82a47346c6f23797f6726c253_1aa5b7bfc82a47346c6f23797f6726c253" compoundref="_word_table_8cpp" startline="4" endline="15">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_word_table_a96cc81810bed8bd2709e4f345a5d214c_1a96cc81810bed8bd2709e4f345a5d214c" compoundref="_word_table_8cpp" startline="213" endline="225">WordTable::overlaps</referencedby>
+        <referencedby refid="class_n_c_f4_a864e47e738658fb6aa140e135b9ceed6_1a864e47e738658fb6aa140e135b9ceed6" compoundref="_n_c_f4_8cpp" startline="393" endline="466">NCF4::preRowsFromOverlap</referencedby>
+        <referencedby refid="class_word_table_abb81e2ab3b2481e286d959ed0993d2a8_1abb81e2ab3b2481e286d959ed0993d2a8" compoundref="_word_table_8cpp" startline="59" endline="84">WordTable::subwordPosition</referencedby>
+        <referencedby refid="class_word_table_a35265a6b2f65427ce3ea4a4c4da071b8_1a35265a6b2f65427ce3ea4a4c4da071b8" compoundref="_word_table_8cpp" startline="38" endline="57">WordTable::subwordPositions</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_af8b1cfcfb6b9672c45c41b1e4e2bbf0a_1af8b1cfcfb6b9672c45c41b1e4e2bbf0a" compoundref="_n_c_groebner_test_8cpp" startline="428" endline="454">TEST</referencedby>
+        <referencedby refid="class_word_a0e4d3b7bd337ea9d87cfddfa0cea9733_1a0e4d3b7bd337ea9d87cfddfa0cea9733" compoundref="_word_8hpp" startline="57" endline="57">Word</referencedby>
+        <referencedby refid="class_free_monoid_aaadaed618ba521c118506865b37ecf5b_1aaadaed618ba521c118506865b37ecf5b" compoundref="_free_monoid_8cpp" startline="397" endline="412">FreeMonoid::wordProductAsMonom</referencedby>
+        <referencedby refid="class_free_monoid_a352dfe1680f6b79d33e5899a70d24763_1a352dfe1680f6b79d33e5899a70d24763" compoundref="_free_monoid_8cpp" startline="369" endline="381">FreeMonoid::wordProductAsMonom</referencedby>
+        <referencedby refid="class_free_monoid_a5ed75f695390f5133d4ea7193044f783_1a5ed75f695390f5133d4ea7193044f783" compoundref="_free_monoid_8cpp" startline="346" endline="357">FreeMonoid::wordProductAsMonom</referencedby>
+        <referencedby refid="class_free_monoid_ac616b8c0b22c77f4afc66c7f2a09c5d2_1ac616b8c0b22c77f4afc66c7f2a09c5d2" compoundref="_free_monoid_8cpp" startline="383" endline="395">FreeMonoid::wordProductAsWord</referencedby>
+        <referencedby refid="class_free_monoid_a206ea54d605ad31aa0229ad43d3fcf4a_1a206ea54d605ad31aa0229ad43d3fcf4a" compoundref="_free_monoid_8cpp" startline="359" endline="367">FreeMonoid::wordProductAsWord</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>const int * Word::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>Word::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="69" column="13" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="69" bodyend="69"/>
+        <references refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" compoundref="_word_8hpp" startline="87">mEnd</references>
+        <referencedby refid="_suffix_tree_8cpp_aa3918ea0069a3c7434d892096616f30a_1aa3918ea0069a3c7434d892096616f30a" compoundref="_suffix_tree_8cpp" startline="92" endline="98">concatenatesTo</referencedby>
+        <referencedby refid="class_n_c_f4_a9db64da88a2d4f32a9a1a6a2849148fa_1a9db64da88a2d4f32a9a1a6a2849148fa" compoundref="_n_c_f4_8cpp" startline="301" endline="313">NCF4::createOverlapLeadWord</referencedby>
+        <referencedby refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" compoundref="_word_8hpp" startline="135" endline="135">WordWithData::end</referencedby>
+        <referencedby refid="class_n_c_f4_ad7659ffc3745ebe70bb63803927c67e5_1ad7659ffc3745ebe70bb63803927c67e5" compoundref="_n_c_f4_8cpp" startline="769" endline="805">NCF4::findPreviousReducerPrefix</referencedby>
+        <referencedby refid="class_n_c_f4_a8fef0bf98f0f3ce72199e23b9da2c7d8_1a8fef0bf98f0f3ce72199e23b9da2c7d8" compoundref="_n_c_f4_8cpp" startline="808" endline="833">NCF4::findPreviousReducerSuffix</referencedby>
+        <referencedby refid="class_word_a2800554dbde8a6b143b9cf40b71fdb30_1a2800554dbde8a6b143b9cf40b71fdb30" compoundref="_word_8hpp" startline="64" endline="64">init</referencedby>
+        <referencedby refid="class_word_table_adb6e3da530bf9ae6ef66bd6b7645cb59_1adb6e3da530bf9ae6ef66bd6b7645cb59" compoundref="_word_table_8cpp" startline="17" endline="25">WordTable::insert</referencedby>
+        <referencedby refid="class_word_table_ac5e7942b001b718ddbdd07886d225ae3_1ac5e7942b001b718ddbdd07886d225ae3" compoundref="_word_table_8cpp" startline="27" endline="36">WordTable::insert</referencedby>
+        <referencedby refid="_suffix_tree_8cpp_a28e11b39b8d879fc1739611fa2efade0_1a28e11b39b8d879fc1739611fa2efade0" compoundref="_suffix_tree_8cpp" startline="100" endline="110">isPatternPrefix</referencedby>
+        <referencedby refid="class_monom_hash_equal_a2cdb8380292218d2b7149887e05b74ef_1a2cdb8380292218d2b7149887e05b74ef" compoundref="_free_monoid_8hpp" startline="308" endline="311">MonomHashEqual::operator()</referencedby>
+        <referencedby refid="class_word_table_a96cc81810bed8bd2709e4f345a5d214c_1a96cc81810bed8bd2709e4f345a5d214c" compoundref="_word_table_8cpp" startline="213" endline="225">WordTable::overlaps</referencedby>
+        <referencedby refid="class_n_c_f4_a864e47e738658fb6aa140e135b9ceed6_1a864e47e738658fb6aa140e135b9ceed6" compoundref="_n_c_f4_8cpp" startline="393" endline="466">NCF4::preRowsFromOverlap</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_af8b1cfcfb6b9672c45c41b1e4e2bbf0a_1af8b1cfcfb6b9672c45c41b1e4e2bbf0a" compoundref="_n_c_groebner_test_8cpp" startline="428" endline="454">TEST</referencedby>
+        <referencedby refid="class_word_a0e4d3b7bd337ea9d87cfddfa0cea9733_1a0e4d3b7bd337ea9d87cfddfa0cea9733" compoundref="_word_8hpp" startline="57" endline="57">Word</referencedby>
+        <referencedby refid="class_free_monoid_aaadaed618ba521c118506865b37ecf5b_1aaadaed618ba521c118506865b37ecf5b" compoundref="_free_monoid_8cpp" startline="397" endline="412">FreeMonoid::wordProductAsMonom</referencedby>
+        <referencedby refid="class_free_monoid_a352dfe1680f6b79d33e5899a70d24763_1a352dfe1680f6b79d33e5899a70d24763" compoundref="_free_monoid_8cpp" startline="369" endline="381">FreeMonoid::wordProductAsMonom</referencedby>
+        <referencedby refid="class_free_monoid_a5ed75f695390f5133d4ea7193044f783_1a5ed75f695390f5133d4ea7193044f783" compoundref="_free_monoid_8cpp" startline="346" endline="357">FreeMonoid::wordProductAsMonom</referencedby>
+        <referencedby refid="class_free_monoid_ac616b8c0b22c77f4afc66c7f2a09c5d2_1ac616b8c0b22c77f4afc66c7f2a09c5d2" compoundref="_free_monoid_8cpp" startline="383" endline="395">FreeMonoid::wordProductAsWord</referencedby>
+        <referencedby refid="class_free_monoid_a206ea54d605ad31aa0229ad43d3fcf4a_1a206ea54d605ad31aa0229ad43d3fcf4a" compoundref="_free_monoid_8cpp" startline="359" endline="367">FreeMonoid::wordProductAsWord</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int Word::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>Word::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="70" column="7" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="70" bodyend="70"/>
+        <references refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" compoundref="_word_8hpp" startline="88">mSize</references>
+        <referencedby refid="class_free_monoid_a138e7f9b7d9e50a908a0d32c337dda5d_1a138e7f9b7d9e50a908a0d32c337dda5d" compoundref="_free_monoid_8cpp" startline="132" endline="160">FreeMonoid::compare</referencedby>
+        <referencedby refid="_suffix_tree_8cpp_aa3918ea0069a3c7434d892096616f30a_1aa3918ea0069a3c7434d892096616f30a" compoundref="_suffix_tree_8cpp" startline="92" endline="98">concatenatesTo</referencedby>
+        <referencedby refid="class_n_c_f4_a9db64da88a2d4f32a9a1a6a2849148fa_1a9db64da88a2d4f32a9a1a6a2849148fa" compoundref="_n_c_f4_8cpp" startline="301" endline="313">NCF4::createOverlapLeadWord</referencedby>
+        <referencedby refid="class_n_c_f4_a9a311d2c09d1f8db52fdd873bbcc02e5_1a9a311d2c09d1f8db52fdd873bbcc02e5" compoundref="_n_c_f4_8cpp" startline="710" endline="767">NCF4::findDivisor</referencedby>
+        <referencedby refid="class_n_c_f4_ad7659ffc3745ebe70bb63803927c67e5_1ad7659ffc3745ebe70bb63803927c67e5" compoundref="_n_c_f4_8cpp" startline="769" endline="805">NCF4::findPreviousReducerPrefix</referencedby>
+        <referencedby refid="class_n_c_f4_a8fef0bf98f0f3ce72199e23b9da2c7d8_1a8fef0bf98f0f3ce72199e23b9da2c7d8" compoundref="_n_c_f4_8cpp" startline="808" endline="833">NCF4::findPreviousReducerSuffix</referencedby>
+        <referencedby refid="class_word_table_adb6e3da530bf9ae6ef66bd6b7645cb59_1adb6e3da530bf9ae6ef66bd6b7645cb59" compoundref="_word_table_8cpp" startline="17" endline="25">WordTable::insert</referencedby>
+        <referencedby refid="class_word_table_ac5e7942b001b718ddbdd07886d225ae3_1ac5e7942b001b718ddbdd07886d225ae3" compoundref="_word_table_8cpp" startline="27" endline="36">WordTable::insert</referencedby>
+        <referencedby refid="_suffix_tree_8cpp_a28e11b39b8d879fc1739611fa2efade0_1a28e11b39b8d879fc1739611fa2efade0" compoundref="_suffix_tree_8cpp" startline="100" endline="110">isPatternPrefix</referencedby>
+        <referencedby refid="class_word_table_ae805ab20cf473e5698c89ba7d8d11c3c_1ae805ab20cf473e5698c89ba7d8d11c3c" compoundref="_word_table_8cpp" startline="100" endline="116">WordTable::isSuffixOf</referencedby>
+        <referencedby refid="_word_8cpp_a2fdcf5230f1369a3c523f74f1b5138d4_1a2fdcf5230f1369a3c523f74f1b5138d4" compoundref="_word_8cpp" startline="4" endline="18">operator&lt;&lt;</referencedby>
+        <referencedby refid="_word_table_8hpp_aa5b7bfc82a47346c6f23797f6726c253_1aa5b7bfc82a47346c6f23797f6726c253" compoundref="_word_table_8cpp" startline="4" endline="15">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_n_c_f4_a09f10302b708b09323cbd3fa5c4ef9d7_1a09f10302b708b09323cbd3fa5c4ef9d7" compoundref="_n_c_f4_8cpp" startline="222" endline="233">NCF4::overlapHeft</referencedby>
+        <referencedby refid="class_n_c_groebner_a6b7fc6b0e55486f6815157dd8d0b501b_1a6b7fc6b0e55486f6815157dd8d0b501b" compoundref="_n_c_groebner_8cpp" startline="404" endline="415">NCGroebner::overlapHeft</referencedby>
+        <referencedby refid="class_word_table_a96cc81810bed8bd2709e4f345a5d214c_1a96cc81810bed8bd2709e4f345a5d214c" compoundref="_word_table_8cpp" startline="213" endline="225">WordTable::overlaps</referencedby>
+        <referencedby refid="class_n_c_groebner_a0a35fd26c11e4e1d50f6a9e3841d829c_1a0a35fd26c11e4e1d50f6a9e3841d829c" compoundref="_n_c_groebner_8cpp" startline="398" endline="402">NCGroebner::overlapWordLength</referencedby>
+        <referencedby refid="class_n_c_f4_a864e47e738658fb6aa140e135b9ceed6_1a864e47e738658fb6aa140e135b9ceed6" compoundref="_n_c_f4_8cpp" startline="393" endline="466">NCF4::preRowsFromOverlap</referencedby>
+        <referencedby refid="class_word_with_data_aef228c8a14e8d252ec8fa6a6a3e29ae0_1aef228c8a14e8d252ec8fa6a6a3e29ae0" compoundref="_word_8hpp" startline="142" endline="142">WordWithData::size</referencedby>
+        <referencedby refid="class_word_table_abb81e2ab3b2481e286d959ed0993d2a8_1abb81e2ab3b2481e286d959ed0993d2a8" compoundref="_word_table_8cpp" startline="59" endline="84">WordTable::subwordPosition</referencedby>
+        <referencedby refid="class_word_table_a35265a6b2f65427ce3ea4a4c4da071b8_1a35265a6b2f65427ce3ea4a4c4da071b8" compoundref="_word_table_8cpp" startline="38" endline="57">WordTable::subwordPositions</referencedby>
+        <referencedby refid="class_suffix_tree_a8270f211f1644f0b7cfd7945b84cc762_1a8270f211f1644f0b7cfd7945b84cc762" compoundref="_suffix_tree_8cpp" startline="477" endline="517">SuffixTree::subwords</referencedby>
+        <referencedby refid="class_word_a60168628b547268284ae1ca08901c722_1a60168628b547268284ae1ca08901c722" compoundref="_word_8hpp" startline="62" endline="62">Word</referencedby>
+        <referencedby refid="class_free_monoid_aaadaed618ba521c118506865b37ecf5b_1aaadaed618ba521c118506865b37ecf5b" compoundref="_free_monoid_8cpp" startline="397" endline="412">FreeMonoid::wordProductAsMonom</referencedby>
+        <referencedby refid="class_free_monoid_a352dfe1680f6b79d33e5899a70d24763_1a352dfe1680f6b79d33e5899a70d24763" compoundref="_free_monoid_8cpp" startline="369" endline="381">FreeMonoid::wordProductAsMonom</referencedby>
+        <referencedby refid="class_free_monoid_a5ed75f695390f5133d4ea7193044f783_1a5ed75f695390f5133d4ea7193044f783" compoundref="_free_monoid_8cpp" startline="346" endline="357">FreeMonoid::wordProductAsMonom</referencedby>
+        <referencedby refid="class_free_monoid_ac616b8c0b22c77f4afc66c7f2a09c5d2_1ac616b8c0b22c77f4afc66c7f2a09c5d2" compoundref="_free_monoid_8cpp" startline="383" endline="395">FreeMonoid::wordProductAsWord</referencedby>
+        <referencedby refid="class_free_monoid_a206ea54d605ad31aa0229ad43d3fcf4a_1a206ea54d605ad31aa0229ad43d3fcf4a" compoundref="_free_monoid_8cpp" startline="359" endline="367">FreeMonoid::wordProductAsWord</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_a0ea95bf15f1c0e2e09cc5d98e8ede30a_1a0ea95bf15f1c0e2e09cc5d98e8ede30a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Word::operator==</definition>
+        <argsstring>(Word rhs) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Word::operator==</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="72" column="8" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="72" bodyend="79"/>
+        <references refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" compoundref="_word_8hpp" startline="86">mBegin</references>
+        <references refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" compoundref="_word_8hpp" startline="88">mSize</references>
+        <references refid="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" compoundref="_word_8hpp" startline="55" endline="55">Word</references>
+      </memberdef>
+      <memberdef kind="function" id="class_word_aaaf279f5bb81e516fc679d1b0eb67bbc_1aaaf279f5bb81e516fc679d1b0eb67bbc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int Word::operator[]</definition>
+        <argsstring>(int i) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>Word::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="81" column="7" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="81" bodyend="81"/>
+        <references refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" compoundref="_word_8hpp" startline="86">mBegin</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Non-owning view of a non-commutative word: <computeroutput>[<ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin</ref>, <ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end</ref>)</computeroutput> of <computeroutput><ref refid="classint" kindref="compound">int</ref></computeroutput> variable indices. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Stores three pointers / lengths (<computeroutput><ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref></computeroutput>, <computeroutput><ref refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" kindref="member">mEnd</ref></computeroutput>, <computeroutput><ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref></computeroutput>) into an externally owned buffer (typically a <computeroutput><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref></computeroutput> arena in <computeroutput><ref refid="class_n_c_f4" kindref="compound">NCF4</ref></computeroutput>). The view is cheap to copy and pass around but the caller must keep the backing buffer alive for the <computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput>&apos;s lifetime. Equality is elementwise; iteration goes through <computeroutput><ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin()</ref></computeroutput> / <computeroutput><ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end()</ref></computeroutput> / <computeroutput>operator[]</computeroutput>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Word</label>
+        <link refid="class_word"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+          <edgelabel>mSize</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="51" column="1" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="52" bodyend="89"/>
+    <listofallmembers>
+      <member refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" prot="public" virt="non-virtual"><scope>Word</scope><name>begin</name></member>
+      <member refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" prot="public" virt="non-virtual"><scope>Word</scope><name>end</name></member>
+      <member refid="class_word_a2800554dbde8a6b143b9cf40b71fdb30_1a2800554dbde8a6b143b9cf40b71fdb30" prot="public" virt="non-virtual"><scope>Word</scope><name>init</name></member>
+      <member refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" prot="private" virt="non-virtual"><scope>Word</scope><name>mBegin</name></member>
+      <member refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" prot="private" virt="non-virtual"><scope>Word</scope><name>mEnd</name></member>
+      <member refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" prot="private" virt="non-virtual"><scope>Word</scope><name>mSize</name></member>
+      <member refid="class_word_a0ea95bf15f1c0e2e09cc5d98e8ede30a_1a0ea95bf15f1c0e2e09cc5d98e8ede30a" prot="public" virt="non-virtual"><scope>Word</scope><name>operator==</name></member>
+      <member refid="class_word_aaaf279f5bb81e516fc679d1b0eb67bbc_1aaaf279f5bb81e516fc679d1b0eb67bbc" prot="public" virt="non-virtual"><scope>Word</scope><name>operator[]</name></member>
+      <member refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" prot="public" virt="non-virtual"><scope>Word</scope><name>size</name></member>
+      <member refid="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" prot="public" virt="non-virtual"><scope>Word</scope><name>Word</name></member>
+      <member refid="class_word_a0e4d3b7bd337ea9d87cfddfa0cea9733_1a0e4d3b7bd337ea9d87cfddfa0cea9733" prot="public" virt="non-virtual"><scope>Word</scope><name>Word</name></member>
+      <member refid="class_word_a60168628b547268284ae1ca08901c722_1a60168628b547268284ae1ca08901c722" prot="public" virt="non-virtual"><scope>Word</scope><name>Word</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

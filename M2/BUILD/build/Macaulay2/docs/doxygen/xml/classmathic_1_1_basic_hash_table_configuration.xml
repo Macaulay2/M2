@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_basic_hash_table_configuration" kind="class" language="C++" prot="public">
+    <compoundname>mathic::BasicHashTableConfiguration</compoundname>
+    <includes refid="_hash_table_8h" local="no">HashTable.h</includes>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmathic_1_1_basic_hash_table_configuration_a715d489cf9617a26fb831a183b01c70c_1a715d489cf9617a26fb831a183b01c70c" prot="private" static="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>typedef int mathic::BasicHashTableConfiguration::Key</definition>
+        <argsstring></argsstring>
+        <name>Key</name>
+        <qualifiedname>mathic::BasicHashTableConfiguration::Key</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="30" column="17" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_basic_hash_table_configuration_a38dd5f2f3acb6d0680894479acfb9e3b_1a38dd5f2f3acb6d0680894479acfb9e3b" prot="private" static="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>typedef int mathic::BasicHashTableConfiguration::Value</definition>
+        <argsstring></argsstring>
+        <name>Value</name>
+        <qualifiedname>mathic::BasicHashTableConfiguration::Value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="31" column="17" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmathic_1_1_basic_hash_table_configuration_a837d0c91ef168d0ecca4c589f7931854_1a837d0c91ef168d0ecca4c589f7931854" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::BasicHashTableConfiguration::hash</definition>
+        <argsstring>(Key k)</argsstring>
+        <name>hash</name>
+        <qualifiedname>mathic::BasicHashTableConfiguration::hash</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_basic_hash_table_configuration_a715d489cf9617a26fb831a183b01c70c_1a715d489cf9617a26fb831a183b01c70c" kindref="member">Key</ref></type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="33" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_basic_hash_table_configuration_acc360086efa77741f5b6d7a501532fe8_1acc360086efa77741f5b6d7a501532fe8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::BasicHashTableConfiguration::keysEqual</definition>
+        <argsstring>(Key k1, Key k2)</argsstring>
+        <name>keysEqual</name>
+        <qualifiedname>mathic::BasicHashTableConfiguration::keysEqual</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_basic_hash_table_configuration_a715d489cf9617a26fb831a183b01c70c_1a715d489cf9617a26fb831a183b01c70c" kindref="member">Key</ref></type>
+          <declname>k1</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_basic_hash_table_configuration_a715d489cf9617a26fb831a183b01c70c_1a715d489cf9617a26fb831a183b01c70c" kindref="member">Key</ref></type>
+          <declname>k2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="34" column="10"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/mathic/HashTable.h" line="29" column="3" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="29" bodyend="35"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_basic_hash_table_configuration_a837d0c91ef168d0ecca4c589f7931854_1a837d0c91ef168d0ecca4c589f7931854" prot="private" virt="non-virtual"><scope>mathic::BasicHashTableConfiguration</scope><name>hash</name></member>
+      <member refid="classmathic_1_1_basic_hash_table_configuration_a715d489cf9617a26fb831a183b01c70c_1a715d489cf9617a26fb831a183b01c70c" prot="private" virt="non-virtual"><scope>mathic::BasicHashTableConfiguration</scope><name>Key</name></member>
+      <member refid="classmathic_1_1_basic_hash_table_configuration_acc360086efa77741f5b6d7a501532fe8_1acc360086efa77741f5b6d7a501532fe8" prot="private" virt="non-virtual"><scope>mathic::BasicHashTableConfiguration</scope><name>keysEqual</name></member>
+      <member refid="classmathic_1_1_basic_hash_table_configuration_a38dd5f2f3acb6d0680894479acfb9e3b_1a38dd5f2f3acb6d0680894479acfb9e3b" prot="private" virt="non-virtual"><scope>mathic::BasicHashTableConfiguration</scope><name>Value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

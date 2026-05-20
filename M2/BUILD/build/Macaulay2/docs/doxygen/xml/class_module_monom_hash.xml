@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_module_monom_hash" kind="class" language="C++" prot="public">
+    <compoundname>ModuleMonomHash</compoundname>
+    <includes refid="monomial-collection_8hpp" local="no">monomial-collection.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_module_monom_hash_ae77386710df7302901cf22c0e1fc9091_1ae77386710df7302901cf22c0e1fc9091" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t ModuleMonomHash::operator()</definition>
+        <argsstring>(const ModuleMonom &amp;m) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>ModuleMonomHash::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="class_module_monom" kindref="compound">ModuleMonom</ref> &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-collection.hpp" line="165" column="15" bodyfile="Macaulay2/e/monomial-collection.hpp" bodystart="165" bodyend="168"/>
+        <references refid="class_module_monom_a8c6293b379a49d62b12ae89b00891d00_1a8c6293b379a49d62b12ae89b00891d00" compoundref="_polynomial_8hpp" startline="137" endline="141">ModuleMonom::hash</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Hash functor on <computeroutput><ref refid="class_module_monom" kindref="compound">ModuleMonom</ref></computeroutput>, forwarding to <computeroutput><ref refid="class_module_monom_a8c6293b379a49d62b12ae89b00891d00_1a8c6293b379a49d62b12ae89b00891d00" kindref="member">ModuleMonom::hash</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Plugged into the <computeroutput>std::unordered_set&lt;<ref refid="class_module_monom" kindref="compound">ModuleMonom</ref>, ...&gt;</computeroutput> inside <computeroutput><ref refid="class_ints_set" kindref="compound">IntsSet</ref></computeroutput> as the <computeroutput>Hash</computeroutput> policy. </para>
+    </detaileddescription>
+    <location file="Macaulay2/e/monomial-collection.hpp" line="162" column="1" bodyfile="Macaulay2/e/monomial-collection.hpp" bodystart="163" bodyend="169"/>
+    <listofallmembers>
+      <member refid="class_module_monom_hash_ae77386710df7302901cf22c0e1fc9091_1ae77386710df7302901cf22c0e1fc9091" prot="public" virt="non-virtual"><scope>ModuleMonomHash</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

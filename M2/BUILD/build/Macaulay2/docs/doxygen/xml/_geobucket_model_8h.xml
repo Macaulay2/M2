@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_geobucket_model_8h" kind="file" language="C++">
+    <compoundname>GeobucketModel.h</compoundname>
+    <includes refid="_model_8h" local="yes">Model.h</includes>
+    <includes refid="_geobucket_8h" local="yes">mathic/Geobucket.h</includes>
+    <includedby refid="pq_main_8cpp" local="yes">submodules/mathic/src/pqsim/pqMain.cpp</includedby>
+    <incdepgraph>
+      <node id="11">
+        <label>GeoFront.h</label>
+        <link refid="_geo_front_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>mathic/Geobucket.h</label>
+        <link refid="_geobucket_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2mathic_2stdinc_8h"/>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/pqsim/GeobucketModel.h</label>
+        <link refid="_geobucket_model_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Item.h</label>
+        <link refid="_item_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Model.h</label>
+        <link refid="_model_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>algorithm</label>
+      </node>
+      <node id="4">
+        <label>ostream</label>
+      </node>
+      <node id="9">
+        <label>sstream</label>
+      </node>
+      <node id="8">
+        <label>string</label>
+      </node>
+      <node id="12">
+        <label>utility</label>
+      </node>
+      <node id="5">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>submodules/mathic/src/pqsim/GeobucketModel.h</label>
+        <link refid="_geobucket_model_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>submodules/mathic/src/pqsim/pqMain.cpp</label>
+        <link refid="pq_main_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_geobucket_model_base" prot="public">GeobucketModelBase</innerclass>
+    <innerclass refid="class_geobucket_model" prot="public">GeobucketModel</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>GEOBUCKET_MODEL_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GEOBUCKET_MODEL_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_model_8h" kindref="compound">Model.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_geobucket_8h" kindref="compound">mathic/Geobucket.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>TrackFront,</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>MinBucketBinarySearch,</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Premerge,</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CollectMax,</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>BucketStorage,</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>InsertFactor&gt;</highlight></codeline>
+<codeline lineno="14" refid="class_geobucket_model_base" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_geobucket_model_base_ad68dc53a154fca6195cbae1273786933_1ad68dc53a154fca6195cbae1273786933" kindref="member">GeobucketModelBase</ref><sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="16" refid="class_geobucket_model_base_ad68dc53a154fca6195cbae1273786933_1ad68dc53a154fca6195cbae1273786933" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_geobucket_model_base_ad68dc53a154fca6195cbae1273786933_1ad68dc53a154fca6195cbae1273786933" kindref="member">GeobucketModelBase</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_geobucket_model_base_a0ad3b0ad13b338c1a2971d2e3456d78b_1a0ad3b0ad13b338c1a2971d2e3456d78b" kindref="member">geoBase</ref>,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_geobucket_model_base_a4aec01159539498ba04047420e669a8e_1a4aec01159539498ba04047420e669a8e" kindref="member">minBucketSize</ref>):</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_geobucket_model_base_a0ad3b0ad13b338c1a2971d2e3456d78b_1a0ad3b0ad13b338c1a2971d2e3456d78b" kindref="member">geoBase</ref>(<ref refid="class_geobucket_model_base_a0ad3b0ad13b338c1a2971d2e3456d78b_1a0ad3b0ad13b338c1a2971d2e3456d78b" kindref="member">geoBase</ref>),<sp/><ref refid="class_geobucket_model_base_a4aec01159539498ba04047420e669a8e_1a4aec01159539498ba04047420e669a8e" kindref="member">minBucketSize</ref>(<ref refid="class_geobucket_model_base_a4aec01159539498ba04047420e669a8e_1a4aec01159539498ba04047420e669a8e" kindref="member">minBucketSize</ref>)<sp/>{}</highlight></codeline>
+<codeline lineno="18" refid="class_geobucket_model_base_a0ad3b0ad13b338c1a2971d2e3456d78b_1a0ad3b0ad13b338c1a2971d2e3456d78b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_geobucket_model_base_a0ad3b0ad13b338c1a2971d2e3456d78b_1a0ad3b0ad13b338c1a2971d2e3456d78b" kindref="member">geoBase</ref>;</highlight></codeline>
+<codeline lineno="19" refid="class_geobucket_model_base_a4aec01159539498ba04047420e669a8e_1a4aec01159539498ba04047420e669a8e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_geobucket_model_base_a4aec01159539498ba04047420e669a8e_1a4aec01159539498ba04047420e669a8e" kindref="member">minBucketSize</ref>;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="class_geobucket_model_base_ab299c1b3941165df01406f1fb39fec53_1ab299c1b3941165df01406f1fb39fec53" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_geobucket_model_base_ab299c1b3941165df01406f1fb39fec53_1ab299c1b3941165df01406f1fb39fec53" kindref="member">trackFront</ref><sp/>=<sp/>TrackFront;</highlight></codeline>
+<codeline lineno="22" refid="class_geobucket_model_base_a0c4f42a1e8521ec381eba9ab6fc48ef3_1a0c4f42a1e8521ec381eba9ab6fc48ef3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_geobucket_model_base_a0c4f42a1e8521ec381eba9ab6fc48ef3_1a0c4f42a1e8521ec381eba9ab6fc48ef3" kindref="member">minBucketBinarySearch</ref><sp/>=<sp/>MinBucketBinarySearch;</highlight></codeline>
+<codeline lineno="23" refid="class_geobucket_model_base_a12e678ce1c5d06576450e247269e520c_1a12e678ce1c5d06576450e247269e520c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_geobucket_model_base_a12e678ce1c5d06576450e247269e520c_1a12e678ce1c5d06576450e247269e520c" kindref="member">premerge</ref><sp/>=<sp/>Premerge;</highlight></codeline>
+<codeline lineno="24" refid="class_geobucket_model_base_a639c7ee78d911e812649b54da825b1a9_1a639c7ee78d911e812649b54da825b1a9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_geobucket_model_base_a639c7ee78d911e812649b54da825b1a9_1a639c7ee78d911e812649b54da825b1a9" kindref="member">collectMax</ref><sp/>=<sp/>CollectMax;</highlight></codeline>
+<codeline lineno="25" refid="class_geobucket_model_base_a9b3b09f98863483258ef9cf55bbe2832_1a9b3b09f98863483258ef9cf55bbe2832" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacemathic_ad2658f70702519d6e2fa504591e4d884_1ad2658f70702519d6e2fa504591e4d884" kindref="member">mathic::GeobucketBucketStorage</ref><sp/><ref refid="class_geobucket_model_base_a9b3b09f98863483258ef9cf55bbe2832_1a9b3b09f98863483258ef9cf55bbe2832" kindref="member">bucketStorage</ref><sp/>=</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>(<ref refid="namespacemathic_ad2658f70702519d6e2fa504591e4d884_1ad2658f70702519d6e2fa504591e4d884" kindref="member">mathic::GeobucketBucketStorage</ref>)BucketStorage;</highlight></codeline>
+<codeline lineno="27" refid="class_geobucket_model_base_a4fe3035a5670b9371cfc4d6e6fd11139_1a4fe3035a5670b9371cfc4d6e6fd11139" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_geobucket_model_base_a4fe3035a5670b9371cfc4d6e6fd11139_1a4fe3035a5670b9371cfc4d6e6fd11139" kindref="member">insertFactor</ref><sp/>=<sp/>InsertFactor;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>OnSpans,</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>TrackFront,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>MinBucketBinarySearch,</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Deduplicate,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Premerge,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CollectMax,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>BucketStorage,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>InsertFactor<sp/>=<sp/>1&gt;</highlight></codeline>
+<codeline lineno="39" refid="class_geobucket_model" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_geobucket_model_a595ee3b9d1c1ab0fe6c537baf0b0d6db_1a595ee3b9d1c1ab0fe6c537baf0b0d6db" kindref="member">GeobucketModel</ref><sp/>:</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_model_a697344cf9875b241b32b97ab67fdc58a_1a697344cf9875b241b32b97ab67fdc58a" kindref="member">Model</ref>&lt;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>OnSpans,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>Deduplicate,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>false,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>mathic::Geobucket,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>GeobucketModelBase&lt;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>TrackFront,</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>MinBucketBinarySearch,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Premerge,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>CollectMax,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BucketStorage,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>InsertFactor&gt;<sp/>&gt;<sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="53" refid="class_geobucket_model_a595ee3b9d1c1ab0fe6c537baf0b0d6db_1a595ee3b9d1c1ab0fe6c537baf0b0d6db" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_geobucket_model_a595ee3b9d1c1ab0fe6c537baf0b0d6db_1a595ee3b9d1c1ab0fe6c537baf0b0d6db" kindref="member">GeobucketModel</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>geoBase,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minBucketSize):</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_model_a697344cf9875b241b32b97ab67fdc58a_1a697344cf9875b241b32b97ab67fdc58a" kindref="member">Model</ref>&lt;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>OnSpans,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>Deduplicate,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>false,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacemathic" kindref="compound">mathic</ref>::Geobucket,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_geobucket_model_base" kindref="compound">GeobucketModelBase</ref>&lt;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>TrackFront,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>MinBucketBinarySearch,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Premerge,</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>CollectMax,</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BucketStorage,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>InsertFactor&gt;<sp/>&gt;(geoBase,<sp/>minBucketSize)<sp/>{}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/pqsim/GeobucketModel.h"/>
+  </compounddef>
+</doxygen>

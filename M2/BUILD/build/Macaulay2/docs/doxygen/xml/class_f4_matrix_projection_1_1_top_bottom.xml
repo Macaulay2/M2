@@ -1,0 +1,305 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_f4_matrix_projection_1_1_top_bottom" kind="class" language="C++" prot="public">
+    <compoundname>F4MatrixProjection::TopBottom</compoundname>
+    <templateparamlist>
+      <param>
+        <type>class Row</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_f4_matrix_projection_1_1_top_bottom_a7a04536a8e11c2681604dd9421c22c2d_1a7a04536a8e11c2681604dd9421c22c2d" prot="public" static="no">
+        <type>std::pair&lt; Row, <ref refid="class_f4_matrix_projection_a477118140673342453c565a822925cef_1a477118140673342453c565a822925cef" kindref="member">Scalar</ref> &gt;</type>
+        <definition>typedef std::pair&lt;Row, Scalar&gt; F4MatrixProjection::TopBottom&lt; Row &gt;::RowMultiple</definition>
+        <argsstring></argsstring>
+        <name>RowMultiple</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::RowMultiple</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="54" column="21" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_projection_1_1_top_bottom_a24995dff8d16e610b9b912933f943fbf_1a24995dff8d16e610b9b912933f943fbf" prot="public" static="no">
+        <type>std::vector&lt; <ref refid="class_f4_matrix_projection_1_1_top_bottom_a7a04536a8e11c2681604dd9421c22c2d_1a7a04536a8e11c2681604dd9421c22c2d" kindref="member">RowMultiple</ref> &gt;</type>
+        <definition>typedef std::vector&lt;RowMultiple&gt; F4MatrixProjection::TopBottom&lt; Row &gt;::RowVector</definition>
+        <argsstring></argsstring>
+        <name>RowVector</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::RowVector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="55" column="23" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_f4_matrix_projection_1_1_top_bottom_af714663d24e9e11f344d89bd2e4d31bb_1af714663d24e9e11f344d89bd2e4d31bb" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_f4_matrix_projection_a477118140673342453c565a822925cef_1a477118140673342453c565a822925cef" kindref="member">Scalar</ref></type>
+        <definition>const Scalar F4MatrixProjection::TopBottom&lt; Row &gt;::mModulus</definition>
+        <argsstring></argsstring>
+        <name>mModulus</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::mModulus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="110" column="16" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="110" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_a5ea555764d5243ed99cb1eda07cbae41_1a5ea555764d5243ed99cb1eda07cbae41" compoundref="_f4_matrix_projection_8cpp" startline="65" endline="88">F4MatrixProjection::TopBottom&lt; Row &gt;::addRow</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_a1be1a127680339a61b321787442aa921_1a1be1a127680339a61b321787442aa921" compoundref="_f4_matrix_projection_8cpp" startline="102" endline="102">F4MatrixProjection::TopBottom&lt; Row &gt;::modulus</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_acaf841c3978d51fd679a357002cbe34b_1acaf841c3978d51fd679a357002cbe34b" compoundref="_f4_matrix_projection_8cpp" startline="57" endline="63">F4MatrixProjection::TopBottom&lt; Row &gt;::TopBottom</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_projection_1_1_top_bottom_a4c3166d7f4e0783447b8941397af1502_1a4c3166d7f4e0783447b8941397af1502" prot="private" static="no" mutable="no">
+        <type><ref refid="class_f4_matrix_projection_1_1_top_bottom_a24995dff8d16e610b9b912933f943fbf_1a24995dff8d16e610b9b912933f943fbf" kindref="member">RowVector</ref></type>
+        <definition>RowVector F4MatrixProjection::TopBottom&lt; Row &gt;::mTopRows</definition>
+        <argsstring></argsstring>
+        <name>mTopRows</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::mTopRows</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="111" column="13" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="111" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_a5ea555764d5243ed99cb1eda07cbae41_1a5ea555764d5243ed99cb1eda07cbae41" compoundref="_f4_matrix_projection_8cpp" startline="65" endline="88">F4MatrixProjection::TopBottom&lt; Row &gt;::addRow</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_aa0df7bcb052bbbdeb476639db1ab6cc5_1aa0df7bcb052bbbdeb476639db1ab6cc5" compoundref="_f4_matrix_projection_8cpp" startline="90" endline="100">F4MatrixProjection::TopBottom&lt; Row &gt;::debugAssertValid</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_a5471c7975e4ac0aa145f483713e94950_1a5471c7975e4ac0aa145f483713e94950" compoundref="_f4_matrix_projection_8cpp" startline="106" endline="106">F4MatrixProjection::TopBottom&lt; Row &gt;::moveTop</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_a70f972e1264423afec27cef9cd15d7d9_1a70f972e1264423afec27cef9cd15d7d9" compoundref="_f4_matrix_projection_8cpp" startline="103" endline="103">F4MatrixProjection::TopBottom&lt; Row &gt;::top</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_acaf841c3978d51fd679a357002cbe34b_1acaf841c3978d51fd679a357002cbe34b" compoundref="_f4_matrix_projection_8cpp" startline="57" endline="63">F4MatrixProjection::TopBottom&lt; Row &gt;::TopBottom</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_projection_1_1_top_bottom_aa8f2ac1ad06aaabeb187be5381cb5588_1aa8f2ac1ad06aaabeb187be5381cb5588" prot="private" static="no" mutable="no">
+        <type><ref refid="class_f4_matrix_projection_1_1_top_bottom_a24995dff8d16e610b9b912933f943fbf_1a24995dff8d16e610b9b912933f943fbf" kindref="member">RowVector</ref></type>
+        <definition>RowVector F4MatrixProjection::TopBottom&lt; Row &gt;::mBottomRows</definition>
+        <argsstring></argsstring>
+        <name>mBottomRows</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::mBottomRows</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="112" column="13" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="112" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_a5ea555764d5243ed99cb1eda07cbae41_1a5ea555764d5243ed99cb1eda07cbae41" compoundref="_f4_matrix_projection_8cpp" startline="65" endline="88">F4MatrixProjection::TopBottom&lt; Row &gt;::addRow</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_a558d7fa20b957b7e77cd9926b15d124c_1a558d7fa20b957b7e77cd9926b15d124c" compoundref="_f4_matrix_projection_8cpp" startline="104" endline="104">F4MatrixProjection::TopBottom&lt; Row &gt;::bottom</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_aa0df7bcb052bbbdeb476639db1ab6cc5_1aa0df7bcb052bbbdeb476639db1ab6cc5" compoundref="_f4_matrix_projection_8cpp" startline="90" endline="100">F4MatrixProjection::TopBottom&lt; Row &gt;::debugAssertValid</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_aa4eea0346e0df179c241e3467f27cdb0_1aa4eea0346e0df179c241e3467f27cdb0" compoundref="_f4_matrix_projection_8cpp" startline="107" endline="107">F4MatrixProjection::TopBottom&lt; Row &gt;::moveBottom</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_f4_matrix_projection_1_1_top_bottom_acaf841c3978d51fd679a357002cbe34b_1acaf841c3978d51fd679a357002cbe34b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>F4MatrixProjection::TopBottom&lt; Row &gt;::TopBottom</definition>
+        <argsstring>(const size_t leftColCount, const PolyRing &amp;ring)</argsstring>
+        <name>TopBottom</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::TopBottom</qualifiedname>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>leftColCount</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="57" column="3" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="57" bodyend="63"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_af714663d24e9e11f344d89bd2e4d31bb_1af714663d24e9e11f344d89bd2e4d31bb" compoundref="_f4_matrix_projection_8cpp" startline="110">F4MatrixProjection::TopBottom&lt; Row &gt;::mModulus</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_a4c3166d7f4e0783447b8941397af1502_1a4c3166d7f4e0783447b8941397af1502" compoundref="_f4_matrix_projection_8cpp" startline="111">F4MatrixProjection::TopBottom&lt; Row &gt;::mTopRows</references>
+        <references refid="class_f4_matrix_projection_a050397b81dbf29dde8f42f94f298a293_1a050397b81dbf29dde8f42f94f298a293" compoundref="_f4_matrix_projection_8hpp" startline="37" endline="37">F4MatrixProjection::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_1_1_top_bottom_a5ea555764d5243ed99cb1eda07cbae41_1a5ea555764d5243ed99cb1eda07cbae41" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixProjection::TopBottom&lt; Row &gt;::addRow</definition>
+        <argsstring>(const Row &amp;row, ColIndex leadIndex, Scalar leadScalar)</argsstring>
+        <name>addRow</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::addRow</qualifiedname>
+        <param>
+          <type>const Row &amp;</type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_projection_a8983d34fd4bb612efe578103ea733831_1a8983d34fd4bb612efe578103ea733831" kindref="member">ColIndex</ref></type>
+          <declname>leadIndex</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_projection_a477118140673342453c565a822925cef_1a477118140673342453c565a822925cef" kindref="member">Scalar</ref></type>
+          <declname>leadScalar</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="65" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="65" bodyend="88"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_aa8f2ac1ad06aaabeb187be5381cb5588_1aa8f2ac1ad06aaabeb187be5381cb5588" compoundref="_f4_matrix_projection_8cpp" startline="112">F4MatrixProjection::TopBottom&lt; Row &gt;::mBottomRows</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_af714663d24e9e11f344d89bd2e4d31bb_1af714663d24e9e11f344d89bd2e4d31bb" compoundref="_f4_matrix_projection_8cpp" startline="110">F4MatrixProjection::TopBottom&lt; Row &gt;::mModulus</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a28d9918e2284f4342cafe28e8cb3103e_1a28d9918e2284f4342cafe28e8cb3103e" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="34" endline="39">modularInverse</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_a4c3166d7f4e0783447b8941397af1502_1a4c3166d7f4e0783447b8941397af1502" compoundref="_f4_matrix_projection_8cpp" startline="111">F4MatrixProjection::TopBottom&lt; Row &gt;::mTopRows</references>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">F4MatrixProjection::makeAndClearTwoStep</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_1_1_top_bottom_aa0df7bcb052bbbdeb476639db1ab6cc5_1aa0df7bcb052bbbdeb476639db1ab6cc5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool F4MatrixProjection::TopBottom&lt; Row &gt;::debugAssertValid</definition>
+        <argsstring>()</argsstring>
+        <name>debugAssertValid</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::debugAssertValid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="90" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="90" bodyend="100"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_aa8f2ac1ad06aaabeb187be5381cb5588_1aa8f2ac1ad06aaabeb187be5381cb5588" compoundref="_f4_matrix_projection_8cpp" startline="112">F4MatrixProjection::TopBottom&lt; Row &gt;::mBottomRows</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_a4c3166d7f4e0783447b8941397af1502_1a4c3166d7f4e0783447b8941397af1502" compoundref="_f4_matrix_projection_8cpp" startline="111">F4MatrixProjection::TopBottom&lt; Row &gt;::mTopRows</references>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">F4MatrixProjection::makeAndClearTwoStep</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_1_1_top_bottom_a1be1a127680339a61b321787442aa921_1a1be1a127680339a61b321787442aa921" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_f4_matrix_projection_a477118140673342453c565a822925cef_1a477118140673342453c565a822925cef" kindref="member">Scalar</ref></type>
+        <definition>Scalar F4MatrixProjection::TopBottom&lt; Row &gt;::modulus</definition>
+        <argsstring>() const</argsstring>
+        <name>modulus</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::modulus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="102" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="102" bodyend="102"/>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_af714663d24e9e11f344d89bd2e4d31bb_1af714663d24e9e11f344d89bd2e4d31bb" compoundref="_f4_matrix_projection_8cpp" startline="110">F4MatrixProjection::TopBottom&lt; Row &gt;::mModulus</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_1_1_top_bottom_a70f972e1264423afec27cef9cd15d7d9_1a70f972e1264423afec27cef9cd15d7d9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_f4_matrix_projection_1_1_top_bottom_a24995dff8d16e610b9b912933f943fbf_1a24995dff8d16e610b9b912933f943fbf" kindref="member">RowVector</ref> &amp;</type>
+        <definition>const RowVector &amp; F4MatrixProjection::TopBottom&lt; Row &gt;::top</definition>
+        <argsstring>() const</argsstring>
+        <name>top</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::top</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="103" column="19" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="103" bodyend="103"/>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_a4c3166d7f4e0783447b8941397af1502_1a4c3166d7f4e0783447b8941397af1502" compoundref="_f4_matrix_projection_8cpp" startline="111">F4MatrixProjection::TopBottom&lt; Row &gt;::mTopRows</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_1_1_top_bottom_a558d7fa20b957b7e77cd9926b15d124c_1a558d7fa20b957b7e77cd9926b15d124c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_f4_matrix_projection_1_1_top_bottom_a24995dff8d16e610b9b912933f943fbf_1a24995dff8d16e610b9b912933f943fbf" kindref="member">RowVector</ref> &amp;</type>
+        <definition>const RowVector &amp; F4MatrixProjection::TopBottom&lt; Row &gt;::bottom</definition>
+        <argsstring>() const</argsstring>
+        <name>bottom</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::bottom</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="104" column="19" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="104" bodyend="104"/>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_aa8f2ac1ad06aaabeb187be5381cb5588_1aa8f2ac1ad06aaabeb187be5381cb5588" compoundref="_f4_matrix_projection_8cpp" startline="112">F4MatrixProjection::TopBottom&lt; Row &gt;::mBottomRows</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_1_1_top_bottom_a5471c7975e4ac0aa145f483713e94950_1a5471c7975e4ac0aa145f483713e94950" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_f4_matrix_projection_1_1_top_bottom_a24995dff8d16e610b9b912933f943fbf_1a24995dff8d16e610b9b912933f943fbf" kindref="member">RowVector</ref></type>
+        <definition>RowVector F4MatrixProjection::TopBottom&lt; Row &gt;::moveTop</definition>
+        <argsstring>()</argsstring>
+        <name>moveTop</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::moveTop</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="106" column="13" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="106" bodyend="106"/>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_a4c3166d7f4e0783447b8941397af1502_1a4c3166d7f4e0783447b8941397af1502" compoundref="_f4_matrix_projection_8cpp" startline="111">F4MatrixProjection::TopBottom&lt; Row &gt;::mTopRows</references>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_1_1_top_bottom_aa4eea0346e0df179c241e3467f27cdb0_1aa4eea0346e0df179c241e3467f27cdb0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_f4_matrix_projection_1_1_top_bottom_a24995dff8d16e610b9b912933f943fbf_1a24995dff8d16e610b9b912933f943fbf" kindref="member">RowVector</ref></type>
+        <definition>RowVector F4MatrixProjection::TopBottom&lt; Row &gt;::moveBottom</definition>
+        <argsstring>()</argsstring>
+        <name>moveBottom</name>
+        <qualifiedname>F4MatrixProjection::TopBottom::moveBottom</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="107" column="13" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="107" bodyend="107"/>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_aa8f2ac1ad06aaabeb187be5381cb5588_1aa8f2ac1ad06aaabeb187be5381cb5588" compoundref="_f4_matrix_projection_8cpp" startline="112">F4MatrixProjection::TopBottom&lt; Row &gt;::mBottomRows</references>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>F4MatrixProjection::TopBottom&lt; Row &gt;</label>
+        <link refid="class_f4_matrix_projection_1_1_top_bottom"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mModulus</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mBottomRows</edgelabel>
+          <edgelabel>mTopRows</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>const Scalar</label>
+      </node>
+      <node id="4">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::vector&lt; RowMultiple &gt;</label>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; RowMultiple &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" line="52" column="1" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="52" bodyend="113"/>
+    <listofallmembers>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_a5ea555764d5243ed99cb1eda07cbae41_1a5ea555764d5243ed99cb1eda07cbae41" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>addRow</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_a558d7fa20b957b7e77cd9926b15d124c_1a558d7fa20b957b7e77cd9926b15d124c" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>bottom</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_aa0df7bcb052bbbdeb476639db1ab6cc5_1aa0df7bcb052bbbdeb476639db1ab6cc5" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>debugAssertValid</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_aa8f2ac1ad06aaabeb187be5381cb5588_1aa8f2ac1ad06aaabeb187be5381cb5588" prot="private" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>mBottomRows</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_af714663d24e9e11f344d89bd2e4d31bb_1af714663d24e9e11f344d89bd2e4d31bb" prot="private" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>mModulus</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_a1be1a127680339a61b321787442aa921_1a1be1a127680339a61b321787442aa921" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>modulus</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_aa4eea0346e0df179c241e3467f27cdb0_1aa4eea0346e0df179c241e3467f27cdb0" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>moveBottom</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_a5471c7975e4ac0aa145f483713e94950_1a5471c7975e4ac0aa145f483713e94950" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>moveTop</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_a4c3166d7f4e0783447b8941397af1502_1a4c3166d7f4e0783447b8941397af1502" prot="private" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>mTopRows</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_a7a04536a8e11c2681604dd9421c22c2d_1a7a04536a8e11c2681604dd9421c22c2d" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>RowMultiple</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_a24995dff8d16e610b9b912933f943fbf_1a24995dff8d16e610b9b912933f943fbf" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>RowVector</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_a70f972e1264423afec27cef9cd15d7d9_1a70f972e1264423afec27cef9cd15d7d9" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>top</name></member>
+      <member refid="class_f4_matrix_projection_1_1_top_bottom_acaf841c3978d51fd679a357002cbe34b_1acaf841c3978d51fd679a357002cbe34b" prot="public" virt="non-virtual"><scope>F4MatrixProjection::TopBottom</scope><name>TopBottom</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

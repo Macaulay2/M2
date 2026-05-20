@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_bool_parameter" kind="class" language="C++" prot="public">
+    <compoundname>mathic::BoolParameter</compoundname>
+    <basecompoundref refid="classmathic_1_1_cli_parameter" prot="public" virt="non-virtual">mathic::CliParameter</basecompoundref>
+    <includes refid="_bool_parameter_8h" local="no">BoolParameter.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_bool_parameter_a7933108ee9bfe6fd99b8e68b882b4534_1a7933108ee9bfe6fd99b8e68b882b4534" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::BoolParameter::_value</definition>
+        <argsstring></argsstring>
+        <name>_value</name>
+        <qualifiedname>mathic::BoolParameter::_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BoolParameter.h" line="27" column="10" bodyfile="submodules/mathic/src/mathic/BoolParameter.h" bodystart="27" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_bool_parameter_a4f9a5db61d7df7439c39a9a776447a90_1a4f9a5db61d7df7439c39a9a776447a90" compoundref="_bool_parameter_8cpp" startline="6" endline="11">BoolParameter</referencedby>
+        <referencedby refid="classmathic_1_1_bool_parameter_a8f16164ff253d1a7799371ff848e223f_1a8f16164ff253d1a7799371ff848e223f" compoundref="_bool_parameter_8cpp" startline="21" endline="30">processArgument</referencedby>
+        <referencedby refid="classmathic_1_1_bool_parameter_a72eef5f1d5c2dc44f00b24c2771fa2e3_1a72eef5f1d5c2dc44f00b24c2771fa2e3" compoundref="_bool_parameter_8h" startline="17" endline="17">setValue</referencedby>
+        <referencedby refid="classmathic_1_1_bool_parameter_a670c7303072ba0c2740d05c0748608c5_1a670c7303072ba0c2740d05c0748608c5" compoundref="_bool_parameter_8h" startline="16" endline="16">value</referencedby>
+        <referencedby refid="classmathic_1_1_bool_parameter_a8972fe63ceb74929959d249656811bdd_1a8972fe63ceb74929959d249656811bdd" compoundref="_bool_parameter_8cpp" startline="17" endline="19">valueAsString</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_bool_parameter_a4f9a5db61d7df7439c39a9a776447a90_1a4f9a5db61d7df7439c39a9a776447a90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mathic::BoolParameter::BoolParameter</definition>
+        <argsstring>(const std::string &amp;name, const std::string &amp;description, bool defaultValue)</argsstring>
+        <name>BoolParameter</name>
+        <qualifiedname>mathic::BoolParameter::BoolParameter</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>description</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>defaultValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BoolParameter.h" line="12" column="5" bodyfile="submodules/mathic/src/mathic/BoolParameter.cpp" bodystart="6" bodyend="11"/>
+        <references refid="classmathic_1_1_bool_parameter_a7933108ee9bfe6fd99b8e68b882b4534_1a7933108ee9bfe6fd99b8e68b882b4534" compoundref="_bool_parameter_8h" startline="27">_value</references>
+        <references refid="classmathic_1_1_cli_parameter_ab9a72dc27af0562cb89d2cd98fd7e03e_1ab9a72dc27af0562cb89d2cd98fd7e03e" compoundref="_cli_parameter_8cpp" startline="5" endline="11">mathic::CliParameter::CliParameter</references>
+        <references refid="classmathic_1_1_cli_parameter_aeade79559d7d88d8820a15a0b2cea6a9_1aeade79559d7d88d8820a15a0b2cea6a9" compoundref="_cli_parameter_8h" startline="13" endline="13">mathic::CliParameter::description</references>
+        <references refid="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" compoundref="_cli_parameter_8h" startline="12" endline="12">mathic::CliParameter::name</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bool_parameter_a670c7303072ba0c2740d05c0748608c5_1a670c7303072ba0c2740d05c0748608c5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::BoolParameter::value</definition>
+        <argsstring>() const</argsstring>
+        <name>value</name>
+        <qualifiedname>mathic::BoolParameter::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BoolParameter.h" line="16" column="10" bodyfile="submodules/mathic/src/mathic/BoolParameter.h" bodystart="16" bodyend="16"/>
+        <references refid="classmathic_1_1_bool_parameter_a7933108ee9bfe6fd99b8e68b882b4534_1a7933108ee9bfe6fd99b8e68b882b4534" compoundref="_bool_parameter_8h" startline="27">_value</references>
+        <referencedby refid="classmathic_1_1_bool_parameter_a6d288ac267515a0bcbf2552b12d10c5d_1a6d288ac267515a0bcbf2552b12d10c5d" compoundref="_bool_parameter_8h" startline="19" endline="19">operator bool</referencedby>
+        <referencedby refid="classmathic_1_1_bool_parameter_ad00c7f89220449b167968001f964c549_1ad00c7f89220449b167968001f964c549" compoundref="_bool_parameter_8h" startline="20" endline="20">operator=</referencedby>
+        <referencedby refid="classmathic_1_1_bool_parameter_a72eef5f1d5c2dc44f00b24c2771fa2e3_1a72eef5f1d5c2dc44f00b24c2771fa2e3" compoundref="_bool_parameter_8h" startline="17" endline="17">setValue</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bool_parameter_a72eef5f1d5c2dc44f00b24c2771fa2e3_1a72eef5f1d5c2dc44f00b24c2771fa2e3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::BoolParameter::setValue</definition>
+        <argsstring>(bool value)</argsstring>
+        <name>setValue</name>
+        <qualifiedname>mathic::BoolParameter::setValue</qualifiedname>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BoolParameter.h" line="17" column="10" bodyfile="submodules/mathic/src/mathic/BoolParameter.h" bodystart="17" bodyend="17"/>
+        <references refid="classmathic_1_1_bool_parameter_a7933108ee9bfe6fd99b8e68b882b4534_1a7933108ee9bfe6fd99b8e68b882b4534" compoundref="_bool_parameter_8h" startline="27">_value</references>
+        <references refid="classmathic_1_1_bool_parameter_a670c7303072ba0c2740d05c0748608c5_1a670c7303072ba0c2740d05c0748608c5" compoundref="_bool_parameter_8h" startline="16" endline="16">value</references>
+        <referencedby refid="classmathic_1_1_bool_parameter_ad00c7f89220449b167968001f964c549_1ad00c7f89220449b167968001f964c549" compoundref="_bool_parameter_8h" startline="20" endline="20">operator=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bool_parameter_a6d288ac267515a0bcbf2552b12d10c5d_1a6d288ac267515a0bcbf2552b12d10c5d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::BoolParameter::operator bool</definition>
+        <argsstring>() const</argsstring>
+        <name>operator bool</name>
+        <qualifiedname>mathic::BoolParameter::operator bool</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BoolParameter.h" line="19" column="5" bodyfile="submodules/mathic/src/mathic/BoolParameter.h" bodystart="19" bodyend="19"/>
+        <references refid="classmathic_1_1_bool_parameter_a670c7303072ba0c2740d05c0748608c5_1a670c7303072ba0c2740d05c0748608c5" compoundref="_bool_parameter_8h" startline="16" endline="16">value</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bool_parameter_ad00c7f89220449b167968001f964c549_1ad00c7f89220449b167968001f964c549" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::BoolParameter::operator=</definition>
+        <argsstring>(bool value)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>mathic::BoolParameter::operator=</qualifiedname>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BoolParameter.h" line="20" column="10" bodyfile="submodules/mathic/src/mathic/BoolParameter.h" bodystart="20" bodyend="20"/>
+        <references refid="classmathic_1_1_bool_parameter_a72eef5f1d5c2dc44f00b24c2771fa2e3_1a72eef5f1d5c2dc44f00b24c2771fa2e3" compoundref="_bool_parameter_8h" startline="17" endline="17">setValue</references>
+        <references refid="classmathic_1_1_bool_parameter_a670c7303072ba0c2740d05c0748608c5_1a670c7303072ba0c2740d05c0748608c5" compoundref="_bool_parameter_8h" startline="16" endline="16">value</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bool_parameter_ae7963642833c2efafcfebc6f01ded1ba_1ae7963642833c2efafcfebc6f01ded1ba" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::string</type>
+        <definition>std::string mathic::BoolParameter::argumentType</definition>
+        <argsstring>() const</argsstring>
+        <name>argumentType</name>
+        <qualifiedname>mathic::BoolParameter::argumentType</qualifiedname>
+        <reimplements refid="classmathic_1_1_cli_parameter_aaa9e493c0d1bd6806586dcc66c496dfc_1aaa9e493c0d1bd6806586dcc66c496dfc">argumentType</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BoolParameter.h" line="22" column="25" bodyfile="submodules/mathic/src/mathic/BoolParameter.cpp" bodystart="13" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bool_parameter_a8972fe63ceb74929959d249656811bdd_1a8972fe63ceb74929959d249656811bdd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::string</type>
+        <definition>std::string mathic::BoolParameter::valueAsString</definition>
+        <argsstring>() const</argsstring>
+        <name>valueAsString</name>
+        <qualifiedname>mathic::BoolParameter::valueAsString</qualifiedname>
+        <reimplements refid="classmathic_1_1_cli_parameter_ab6d7a77511b34c6012f282ae631bc736_1ab6d7a77511b34c6012f282ae631bc736">valueAsString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BoolParameter.h" line="23" column="25" bodyfile="submodules/mathic/src/mathic/BoolParameter.cpp" bodystart="17" bodyend="19"/>
+        <references refid="classmathic_1_1_bool_parameter_a7933108ee9bfe6fd99b8e68b882b4534_1a7933108ee9bfe6fd99b8e68b882b4534" compoundref="_bool_parameter_8h" startline="27">_value</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bool_parameter_a8f16164ff253d1a7799371ff848e223f_1a8f16164ff253d1a7799371ff848e223f" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void mathic::BoolParameter::processArgument</definition>
+        <argsstring>(const std::string &amp;argument)</argsstring>
+        <name>processArgument</name>
+        <qualifiedname>mathic::BoolParameter::processArgument</qualifiedname>
+        <reimplements refid="classmathic_1_1_cli_parameter_a42c78d3c65ef9015576eaeeade7b1a9d_1a42c78d3c65ef9015576eaeeade7b1a9d">processArgument</reimplements>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>argument</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BoolParameter.h" line="24" column="18" bodyfile="submodules/mathic/src/mathic/BoolParameter.cpp" bodystart="21" bodyend="30"/>
+        <references refid="classmathic_1_1_bool_parameter_a7933108ee9bfe6fd99b8e68b882b4534_1a7933108ee9bfe6fd99b8e68b882b4534" compoundref="_bool_parameter_8h" startline="27">_value</references>
+        <references refid="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" compoundref="_cli_parameter_8h" startline="12" endline="12">mathic::CliParameter::name</references>
+        <references refid="namespacemathic_aba2df5396ea54101a096481c819534dc_1aba2df5396ea54101a096481c819534dc" compoundref="error_8cpp" startline="5" endline="7">mathic::reportError</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>mathic::BoolParameter</label>
+        <link refid="classmathic_1_1_bool_parameter"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mathic::CliParameter</label>
+        <link refid="classmathic_1_1_cli_parameter"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="5">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="1">
+        <label>mathic::BoolParameter</label>
+        <link refid="classmathic_1_1_bool_parameter"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_value</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mathic::CliParameter</label>
+        <link refid="classmathic_1_1_cli_parameter"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_description</edgelabel>
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="3">
+        <label>std::string</label>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/BoolParameter.h" line="10" column="3" bodyfile="submodules/mathic/src/mathic/BoolParameter.h" bodystart="10" bodyend="28"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_cli_parameter_ada746b890510312b812dca07d2586d12_1ada746b890510312b812dca07d2586d12" prot="private" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>_description</name></member>
+      <member refid="classmathic_1_1_cli_parameter_a3809c08c9235f077d11ac0f492217fd5_1a3809c08c9235f077d11ac0f492217fd5" prot="private" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>_name</name></member>
+      <member refid="classmathic_1_1_bool_parameter_a7933108ee9bfe6fd99b8e68b882b4534_1a7933108ee9bfe6fd99b8e68b882b4534" prot="private" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>_value</name></member>
+      <member refid="classmathic_1_1_cli_parameter_a0bd972d637aa610401539cf2b2aed635_1a0bd972d637aa610401539cf2b2aed635" prot="public" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>appendToDescription</name></member>
+      <member refid="classmathic_1_1_bool_parameter_ae7963642833c2efafcfebc6f01ded1ba_1ae7963642833c2efafcfebc6f01ded1ba" prot="public" virt="virtual"><scope>mathic::BoolParameter</scope><name>argumentType</name></member>
+      <member refid="classmathic_1_1_bool_parameter_a4f9a5db61d7df7439c39a9a776447a90_1a4f9a5db61d7df7439c39a9a776447a90" prot="public" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>BoolParameter</name></member>
+      <member refid="classmathic_1_1_cli_parameter_ab9a72dc27af0562cb89d2cd98fd7e03e_1ab9a72dc27af0562cb89d2cd98fd7e03e" prot="protected" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>CliParameter</name></member>
+      <member refid="classmathic_1_1_cli_parameter_aeade79559d7d88d8820a15a0b2cea6a9_1aeade79559d7d88d8820a15a0b2cea6a9" prot="public" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>description</name></member>
+      <member refid="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" prot="public" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>name</name></member>
+      <member refid="classmathic_1_1_bool_parameter_a6d288ac267515a0bcbf2552b12d10c5d_1a6d288ac267515a0bcbf2552b12d10c5d" prot="public" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>operator bool</name></member>
+      <member refid="classmathic_1_1_bool_parameter_ad00c7f89220449b167968001f964c549_1ad00c7f89220449b167968001f964c549" prot="public" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>operator=</name></member>
+      <member refid="classmathic_1_1_bool_parameter_a8f16164ff253d1a7799371ff848e223f_1a8f16164ff253d1a7799371ff848e223f" prot="public" virt="virtual"><scope>mathic::BoolParameter</scope><name>processArgument</name></member>
+      <member refid="classmathic_1_1_bool_parameter_a72eef5f1d5c2dc44f00b24c2771fa2e3_1a72eef5f1d5c2dc44f00b24c2771fa2e3" prot="public" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>setValue</name></member>
+      <member refid="classmathic_1_1_bool_parameter_a670c7303072ba0c2740d05c0748608c5_1a670c7303072ba0c2740d05c0748608c5" prot="public" virt="non-virtual"><scope>mathic::BoolParameter</scope><name>value</name></member>
+      <member refid="classmathic_1_1_bool_parameter_a8972fe63ceb74929959d249656811bdd_1a8972fe63ceb74929959d249656811bdd" prot="public" virt="virtual"><scope>mathic::BoolParameter</scope><name>valueAsString</name></member>
+      <member refid="classmathic_1_1_cli_parameter_a1991428fd3fcc221a1a4469ec9b47412_1a1991428fd3fcc221a1a4469ec9b47412" prot="public" virt="virtual"><scope>mathic::BoolParameter</scope><name>~CliParameter</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

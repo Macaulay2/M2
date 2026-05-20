@@ -1,0 +1,531 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="schur_8hpp" kind="file" language="C++">
+    <compoundname>schur.hpp</compoundname>
+    <includes local="no">vector</includes>
+    <includes refid="_macaulay2_2e_2poly_8hpp" local="yes">poly.hpp</includes>
+    <includedby refid="interface_2ring_8cpp" local="yes">Macaulay2/e/interface/ring.cpp</includedby>
+    <includedby refid="ringelement_8cpp" local="yes">Macaulay2/e/interface/ringelement.cpp</includedby>
+    <includedby refid="schur_8cpp" local="yes">Macaulay2/e/schur.cpp</includedby>
+    <incdepgraph>
+      <node id="14">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="26">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>interface/computation.h</label>
+        <link refid="computation_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>poly.hpp</label>
+        <link refid="_macaulay2_2e_2poly_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>qring.hpp</label>
+        <link refid="qring_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/schur.hpp</label>
+        <link refid="schur_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="28">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>M2/config.h</label>
+      </node>
+      <node id="20">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="10">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="22">
+        <label>assert.h</label>
+      </node>
+      <node id="7">
+        <label>cassert</label>
+      </node>
+      <node id="42">
+        <label>cstddef</label>
+      </node>
+      <node id="15">
+        <label>cstdio</label>
+      </node>
+      <node id="33">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="36">
+        <label>iostream</label>
+      </node>
+      <node id="8">
+        <label>memory</label>
+      </node>
+      <node id="12">
+        <label>stddef.h</label>
+      </node>
+      <node id="27">
+        <label>stdexcept</label>
+      </node>
+      <node id="19">
+        <label>stdint.h</label>
+      </node>
+      <node id="31">
+        <label>stdlib.h</label>
+      </node>
+      <node id="13">
+        <label>string</label>
+      </node>
+      <node id="23">
+        <label>string.h</label>
+      </node>
+      <node id="24">
+        <label>type_traits</label>
+      </node>
+      <node id="5">
+        <label>utility</label>
+      </node>
+      <node id="32">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="2">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/interface/ringelement.cpp</label>
+        <link refid="ringelement_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/schur.cpp</label>
+        <link refid="schur_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/schur.hpp</label>
+        <link refid="schur_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classtableau" prot="public">tableau</innerclass>
+    <innerclass refid="class_schur_ring" prot="public">SchurRing</innerclass>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="schur_8hpp_a06d8c6285a003f55bbe9e9c3fd17a7b0_1a06d8c6285a003f55bbe9e9c3fd17a7b0" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>const int SCHUR_MAX_WT</definition>
+        <argsstring></argsstring>
+        <name>SCHUR_MAX_WT</name>
+        <initializer>= 100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur.hpp" line="38" column="11" bodyfile="Macaulay2/e/schur.hpp" bodystart="38" bodyend="-1"/>
+        <referencedby refid="classtableau2_a6bce3582822b1f7d222818967065be97_1a6bce3582822b1f7d222818967065be97" compoundref="schur2_8cpp" startline="16" endline="26">tableau2::initialize</referencedby>
+        <referencedby refid="classtableau_a98eb1e789ae0d5ba40a5692492b59680_1a98eb1e789ae0d5ba40a5692492b59680" compoundref="schur_8cpp" startline="9" endline="18">tableau::initialize</referencedby>
+        <referencedby refid="classtableau2_a9ab56b9e5b833203ce64328f008f9b5f_1a9ab56b9e5b833203ce64328f008f9b5f" compoundref="schur2_8cpp" startline="28" endline="37">tableau2::resize</referencedby>
+        <referencedby refid="classtableau_a57a92638e7b8bf6115776f3eb45ccc9f_1a57a92638e7b8bf6115776f3eb45ccc9f" compoundref="schur_8cpp" startline="20" endline="29">tableau::resize</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="schur_8hpp_a2453cd5cb3cd98b1f8d9e6d7d0cfbc42_1a2453cd5cb3cd98b1f8d9e6d7d0cfbc42" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>const int LARGE_NUMBER</definition>
+        <argsstring></argsstring>
+        <name>LARGE_NUMBER</name>
+        <initializer>= 32000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur.hpp" line="39" column="11" bodyfile="Macaulay2/e/schur.hpp" bodystart="39" bodyend="-1"/>
+        <referencedby refid="class_schur_ring2_aa17a068539e000c734b0cdac5b600307_1aa17a068539e000c734b0cdac5b600307" compoundref="schur2_8cpp" startline="795" endline="826">SchurRing2::SM</referencedby>
+        <referencedby refid="class_schur_ring_a306c994e12d979e68ef8c4641cc49b5c_1a306c994e12d979e68ef8c4641cc49b5c" compoundref="schur_8cpp" startline="176" endline="213">SchurRing::SM</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_schur_ring" kindref="compound">SchurRing</ref></computeroutput> <mdash/> symmetric-function ring with Schur-basis multiplication via Littlewood-Richardson. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares <computeroutput><ref refid="class_schur_ring" kindref="compound">SchurRing</ref></computeroutput>, a <computeroutput><ref refid="class_poly_ring" kindref="compound">PolyRing</ref></computeroutput> subclass whose elements are Z-linear combinations of Schur functions <computeroutput>s_lambda</computeroutput> indexed by partitions, plus the supporting <computeroutput><ref refid="classtableau" kindref="compound">tableau</ref></computeroutput> class (partition vector <computeroutput><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref></computeroutput>, partition vector <computeroutput>lambda</computeroutput>, and <computeroutput>(xloc, yloc)</computeroutput> coordinate arrays giving the horizontal / vertical positions of each cell in the skew shape). Multiplication computes the structure constants <computeroutput>s_lambda * s_mu = sum_nu c_{lambda mu}^nu s_nu</computeroutput> <mdash/> the Littlewood-Richardson coefficients <mdash/> via the private <computeroutput>skew_schur(lambda, p)</computeroutput> and <computeroutput>SM()</computeroutput> recursion, with reusable <computeroutput>_SMtab</computeroutput> / <computeroutput>_SMfilled</computeroutput> scratch tableaux kept on the ring so <computeroutput>mult_monomials</computeroutput> does not re-allocate on every product.</para>
+<para><computeroutput><ref refid="schur_8hpp_a06d8c6285a003f55bbe9e9c3fd17a7b0_1a06d8c6285a003f55bbe9e9c3fd17a7b0" kindref="member">SCHUR_MAX_WT</ref> = 100</computeroutput> caps the partition weight the engine will multiply; <computeroutput><ref refid="schur_8hpp_a2453cd5cb3cd98b1f8d9e6d7d0cfbc42_1a2453cd5cb3cd98b1f8d9e6d7d0cfbc42" kindref="member">LARGE_NUMBER</ref> = 32000</computeroutput> is the sentinel marking empty slots in the tableau scratch space. <computeroutput><ref refid="schur2_8hpp" kindref="compound">schur2.hpp</ref></computeroutput> is a parallel symmetric-function ring built on a different basis, and <computeroutput><ref refid="schur-poly-heap_8hpp" kindref="compound">schur-poly-heap.hpp</ref></computeroutput> is the bucketed-collector helper for assembling large sums of Schur monomials.</para>
+<para><simplesect kind="see"><para>poly.hpp </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="schur2_8hpp" kindref="compound">schur2.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="schur-poly-heap_8hpp" kindref="compound">schur-poly-heap.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>1996-2011<sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_Schurring_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_Schurring_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_macaulay2_2e_2poly_8hpp" kindref="compound">poly.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="schur_8hpp_a06d8c6285a003f55bbe9e9c3fd17a7b0_1a06d8c6285a003f55bbe9e9c3fd17a7b0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="schur_8hpp_a06d8c6285a003f55bbe9e9c3fd17a7b0_1a06d8c6285a003f55bbe9e9c3fd17a7b0" kindref="member">SCHUR_MAX_WT</ref><sp/>=<sp/>100;</highlight></codeline>
+<codeline lineno="39" refid="schur_8hpp_a2453cd5cb3cd98b1f8d9e6d7d0cfbc42_1a2453cd5cb3cd98b1f8d9e6d7d0cfbc42" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="schur_8hpp_a2453cd5cb3cd98b1f8d9e6d7d0cfbc42_1a2453cd5cb3cd98b1f8d9e6d7d0cfbc42" kindref="member">LARGE_NUMBER</ref><sp/>=<sp/>32000;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="classtableau" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtableau_a949ecb357b8e054d3bcc77ddfd5bf05f_1a949ecb357b8e054d3bcc77ddfd5bf05f" kindref="member">tableau</ref></highlight></codeline>
+<codeline lineno="42"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="43" refid="classtableau_afd8a7000fa2ae714189607240999bb9c_1afd8a7000fa2ae714189607240999bb9c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtableau_afd8a7000fa2ae714189607240999bb9c_1afd8a7000fa2ae714189607240999bb9c" kindref="member">SchurRing</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="classtableau_a0b91288959cd8dd08c8e2aded960fa74_1a0b91288959cd8dd08c8e2aded960fa74" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classtableau_a0b91288959cd8dd08c8e2aded960fa74_1a0b91288959cd8dd08c8e2aded960fa74" kindref="member">dim</ref>;</highlight></codeline>
+<codeline lineno="46" refid="classtableau_a5330b8b8280c4b58b5096fe8478027a1_1a5330b8b8280c4b58b5096fe8478027a1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classtableau_a5330b8b8280c4b58b5096fe8478027a1_1a5330b8b8280c4b58b5096fe8478027a1" kindref="member">maxwt</ref>;</highlight></codeline>
+<codeline lineno="47" refid="classtableau_a45a115942513c130ec56f0bff991da2d_1a45a115942513c130ec56f0bff991da2d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classtableau_a45a115942513c130ec56f0bff991da2d_1a45a115942513c130ec56f0bff991da2d" kindref="member">wt</ref>;</highlight></codeline>
+<codeline lineno="48" refid="classtableau_a9e6d6c5d682abb216673af2c3d263476_1a9e6d6c5d682abb216673af2c3d263476" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="classtableau_a9e6d6c5d682abb216673af2c3d263476_1a9e6d6c5d682abb216673af2c3d263476" kindref="member">lambda</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>A<sp/>partition<sp/>vector<sp/>0..nvars-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="classtableau_af185f5c45bf6e2cc825854c76e759d9a_1af185f5c45bf6e2cc825854c76e759d9a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="classtableau_af185f5c45bf6e2cc825854c76e759d9a_1af185f5c45bf6e2cc825854c76e759d9a" kindref="member">p</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>A<sp/>partition<sp/>vector<sp/>0..nvars-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="classtableau_a5493ad7cf09844e6be26b3d68d5376bb_1a5493ad7cf09844e6be26b3d68d5376bb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="classtableau_a5493ad7cf09844e6be26b3d68d5376bb_1a5493ad7cf09844e6be26b3d68d5376bb" kindref="member">xloc</ref>;<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>array<sp/>1..|p|-|lambda|<sp/>of<sp/>the<sp/>horizontal<sp/>location</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>of<sp/>this<sp/>number<sp/>in<sp/>the<sp/>skew<sp/>table</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="classtableau_a469c1bcfa87916c1c1fb52e5075a1067_1a469c1bcfa87916c1c1fb52e5075a1067" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="classtableau_a469c1bcfa87916c1c1fb52e5075a1067_1a469c1bcfa87916c1c1fb52e5075a1067" kindref="member">yloc</ref>;<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>array<sp/>1..|p|-|lambda|<sp/>of<sp/>the<sp/>vertical<sp/>location</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>of<sp/>this<sp/>number<sp/>in<sp/>the<sp/>skew<sp/>table</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtableau_a98eb1e789ae0d5ba40a5692492b59680_1a98eb1e789ae0d5ba40a5692492b59680" kindref="member">initialize</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nvars);</highlight></codeline>
+<codeline lineno="56" refid="classtableau_a949ecb357b8e054d3bcc77ddfd5bf05f_1a949ecb357b8e054d3bcc77ddfd5bf05f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classtableau_a949ecb357b8e054d3bcc77ddfd5bf05f_1a949ecb357b8e054d3bcc77ddfd5bf05f" kindref="member">tableau</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="57" refid="classtableau_ad55f8b67689214cc4c2d12fefd4b3f32_1ad55f8b67689214cc4c2d12fefd4b3f32" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classtableau_ad55f8b67689214cc4c2d12fefd4b3f32_1ad55f8b67689214cc4c2d12fefd4b3f32" kindref="member">~tableau</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtableau_a57a92638e7b8bf6115776f3eb45ccc9f_1a57a92638e7b8bf6115776f3eb45ccc9f" kindref="member">resize</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>max_wt);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classtableau_a6d43ce96406d9dca5bdcb1f6b515d998_1a6d43ce96406d9dca5bdcb1f6b515d998" kindref="member">elem</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>y)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtableau_ada1f963656154cbde5a0cd43c923ffe1_1ada1f963656154cbde5a0cd43c923ffe1" kindref="member">fill</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*lamb,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*pp);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtableau_a8e96260022c29cf5868a08ac32531127_1a8e96260022c29cf5868a08ac32531127" kindref="member">display</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="class_schur_ring" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_schur_ring_a52f31252474feaa4d977b9c45a99690f_1a52f31252474feaa4d977b9c45a99690f" kindref="member">SchurRing</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_poly_ring_ad383a16a8832d8669bf3c564f6b833d9_1ad383a16a8832d8669bf3c564f6b833d9" kindref="member">PolyRing</ref></highlight></codeline>
+<codeline lineno="78"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>These<sp/>are<sp/>variables<sp/>that<sp/>are<sp/>used<sp/>in<sp/>the<sp/>recursive<sp/>routine</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>SM(),<sp/>which<sp/>is<sp/>called<sp/>from<sp/>skew_schur().</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="class_schur_ring_a1842c11614e0148736fc1acf75f7e873_1a1842c11614e0148736fc1acf75f7e873" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classtableau" kindref="compound">tableau</ref><sp/><ref refid="class_schur_ring_a1842c11614e0148736fc1acf75f7e873_1a1842c11614e0148736fc1acf75f7e873" kindref="member">_SMtab</ref>;</highlight></codeline>
+<codeline lineno="83" refid="class_schur_ring_a2dc67f387dbccdb3ddf7a76544f5a65d_1a2dc67f387dbccdb3ddf7a76544f5a65d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classtableau" kindref="compound">tableau</ref><sp/><ref refid="class_schur_ring_a2dc67f387dbccdb3ddf7a76544f5a65d_1a2dc67f387dbccdb3ddf7a76544f5a65d" kindref="member">_SMfilled</ref>;</highlight></codeline>
+<codeline lineno="84" refid="class_schur_ring_a0b7c3c003c28bda5810b0d6d1dd16c23_1a0b7c3c003c28bda5810b0d6d1dd16c23" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a0b7c3c003c28bda5810b0d6d1dd16c23_1a0b7c3c003c28bda5810b0d6d1dd16c23" kindref="member">_SMcurrent</ref>;</highlight></codeline>
+<codeline lineno="85" refid="class_schur_ring_af423b37e06866652d66c8162f7119704_1af423b37e06866652d66c8162f7119704" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_af423b37e06866652d66c8162f7119704_1af423b37e06866652d66c8162f7119704" kindref="member">_SMfinalwt</ref>;</highlight></codeline>
+<codeline lineno="86" refid="class_schur_ring_abb0a89a38f71cc0e13852c6387b13a5f_1abb0a89a38f71cc0e13852c6387b13a5f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="struct_nterm" kindref="compound">Nterm</ref><sp/>*<ref refid="class_schur_ring_abb0a89a38f71cc0e13852c6387b13a5f_1abb0a89a38f71cc0e13852c6387b13a5f" kindref="member">_SMresult</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a2f192f781740813ef4642f40f1dce197_1a2f192f781740813ef4642f40f1dce197" kindref="member">to_partition</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*m,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>exp[1]..exp[nvars]<sp/>are<sp/>set</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a5277acb0b00e633eb968e2a3bd628bae_1a5277acb0b00e633eb968e2a3bd628bae" kindref="member">from_partition</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*m)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a3247b9b78cbcfa72ec9eaa9a72f673e7_1a3247b9b78cbcfa72ec9eaa9a72f673e7" kindref="member">bounds</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>&amp;lo,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>&amp;hi);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a306c994e12d979e68ef8c4641cc49b5c_1a306c994e12d979e68ef8c4641cc49b5c" kindref="member">SM</ref>();</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><ref refid="struct_nterm" kindref="compound">Nterm</ref><sp/>*<ref refid="class_schur_ring_a092088b989910a3d074a5f1c46052d31_1a092088b989910a3d074a5f1c46052d31" kindref="member">skew_schur</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*lambda,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_schur_ring_a14aaaa57fda192667c8207851034729d_1a14aaaa57fda192667c8207851034729d" kindref="member">mult_monomials</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*m,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*n);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a9f644cd75709a81c48303f71020761d1_1a9f644cd75709a81c48303f71020761d1" kindref="member">initialize_schur</ref>();</highlight></codeline>
+<codeline lineno="99" refid="class_schur_ring_a52f31252474feaa4d977b9c45a99690f_1a52f31252474feaa4d977b9c45a99690f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_schur_ring_a52f31252474feaa4d977b9c45a99690f_1a52f31252474feaa4d977b9c45a99690f" kindref="member">SchurRing</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="100" refid="class_schur_ring_a40291782afa1d8e18405f25065c37195_1a40291782afa1d8e18405f25065c37195" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a40291782afa1d8e18405f25065c37195_1a40291782afa1d8e18405f25065c37195" kindref="member">~SchurRing</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring" kindref="compound">SchurRing</ref><sp/>*<ref refid="class_schur_ring_a1715ca804738993597604df68b50bfd2_1a1715ca804738993597604df68b50bfd2" kindref="member">create</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref><sp/>*R);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring" kindref="compound">SchurRing</ref><sp/>*<ref refid="class_schur_ring_a1715ca804738993597604df68b50bfd2_1a1715ca804738993597604df68b50bfd2" kindref="member">create</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*A,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring" kindref="compound">SchurRing</ref><sp/>*<ref refid="class_schur_ring_a6d62c908a9aaf124695140119c03f098_1a6d62c908a9aaf124695140119c03f098" kindref="member">createInfinite</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*A);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="class_schur_ring_a7f81cf1d23aec3099a1abf75dedfca9e_1a7f81cf1d23aec3099a1abf75dedfca9e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a52f31252474feaa4d977b9c45a99690f_1a52f31252474feaa4d977b9c45a99690f" kindref="member">SchurRing</ref><sp/>*<ref refid="class_schur_ring_a7f81cf1d23aec3099a1abf75dedfca9e_1a7f81cf1d23aec3099a1abf75dedfca9e" kindref="member">cast_to_SchurRing</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="109" refid="class_schur_ring_a8278fa604f74b4c4d2d03511bd19fbd2_1a8278fa604f74b4c4d2d03511bd19fbd2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a52f31252474feaa4d977b9c45a99690f_1a52f31252474feaa4d977b9c45a99690f" kindref="member">SchurRing</ref><sp/>*<ref refid="class_schur_ring_a8278fa604f74b4c4d2d03511bd19fbd2_1a8278fa604f74b4c4d2d03511bd19fbd2" kindref="member">cast_to_SchurRing</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a483b0b8fb8b36a3a20610712c0b2f57d_1a483b0b8fb8b36a3a20610712c0b2f57d" kindref="member">text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_ad88b6f3c911eb397a2e93052405bfd85_1ad88b6f3c911eb397a2e93052405bfd85" kindref="member">elem_text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_one<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_plus<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_parens<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schur_ring_a57da9e4ccd84c6a637318e00156fc7f4_1a57da9e4ccd84c6a637318e00156fc7f4" kindref="member">dimension</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp,<sp/>mpz_t<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_schur_ring_a57da9e4ccd84c6a637318e00156fc7f4_1a57da9e4ccd84c6a637318e00156fc7f4" kindref="member">dimension</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_schur_ring_a55c61ea7bbcbb106375f2c5e156932eb_1a55c61ea7bbcbb106375f2c5e156932eb" kindref="member">mult_by_term</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>c,</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*m)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_schur_ring_a6fb3ec0abe820d17fee9da3172a89afd_1a6fb3ec0abe820d17fee9da3172a89afd" kindref="member">power</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/>mpz_srcptr<sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_schur_ring_a6fb3ec0abe820d17fee9da3172a89afd_1a6fb3ec0abe820d17fee9da3172a89afd" kindref="member">power</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/schur.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,463 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_div_list_model_configuration" kind="class" language="C++" prot="public">
+    <compoundname>DivListModelConfiguration</compoundname>
+    <includes refid="_div_list_model_8h" local="no">DivListModel.h</includes>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>ULL</declname>
+        <defname>ULL</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>UDM</declname>
+        <defname>UDM</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_div_list_model_configuration_a164395a5b0e909e5bd0325d40baa13ae_1a164395a5b0e909e5bd0325d40baa13ae" prot="public" static="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>typedef int DivListModelConfiguration&lt; ULL, UDM &gt;::Exponent</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>DivListModelConfiguration::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="16" column="15" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_div_list_model_configuration_ae4a21d76d3d9f2774a6d07db18f9c41a_1ae4a21d76d3d9f2774a6d07db18f9c41a" prot="public" static="no">
+        <type>::Monomial</type>
+        <definition>typedef ::Monomial DivListModelConfiguration&lt; ULL, UDM &gt;::Monomial</definition>
+        <argsstring></argsstring>
+        <name>Monomial</name>
+        <qualifiedname>DivListModelConfiguration::Monomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="17" column="22" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_div_list_model_configuration_ad8efc3d9179557e638275d3bdedcd700_1ad8efc3d9179557e638275d3bdedcd700" prot="public" static="no">
+        <type><ref refid="class_div_list_model_configuration_ae4a21d76d3d9f2774a6d07db18f9c41a_1ae4a21d76d3d9f2774a6d07db18f9c41a" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref></type>
+        <definition>typedef Monomial DivListModelConfiguration&lt; ULL, UDM &gt;::Entry</definition>
+        <argsstring></argsstring>
+        <name>Entry</name>
+        <qualifiedname>DivListModelConfiguration::Entry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="18" column="20" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_div_list_model_configuration_ac43512d7fbe738f39b7dba8bacd5df5e_1ac43512d7fbe738f39b7dba8bacd5df5e" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool DivListModelConfiguration&lt; ULL, UDM &gt;::UseLinkedList</definition>
+        <argsstring></argsstring>
+        <name>UseLinkedList</name>
+        <qualifiedname>DivListModelConfiguration::UseLinkedList</qualifiedname>
+        <initializer>= ULL</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="32" column="21" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_div_list_model_configuration_a2e49c4a0b1e530afd4f4dedeb9c536c6_1a2e49c4a0b1e530afd4f4dedeb9c536c6" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool DivListModelConfiguration&lt; ULL, UDM &gt;::UseDivMask</definition>
+        <argsstring></argsstring>
+        <name>UseDivMask</name>
+        <qualifiedname>DivListModelConfiguration::UseDivMask</qualifiedname>
+        <initializer>= UDM</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="33" column="21" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_div_list_model_configuration_ac48ff26fe88bf8acb10cce0f9a2d3563_1ac48ff26fe88bf8acb10cce0f9a2d3563" prot="private" static="no" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t DivListModelConfiguration&lt; ULL, UDM &gt;::_varCount</definition>
+        <argsstring></argsstring>
+        <name>_varCount</name>
+        <qualifiedname>DivListModelConfiguration::_varCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="69" column="16" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="69" bodyend="-1"/>
+        <referencedby refid="class_div_list_model_configuration_ae4d2ee472a7d1c956b1daeda7187221c_1ae4d2ee472a7d1c956b1daeda7187221c" compoundref="_div_list_model_8h" startline="21" endline="30">DivListModelConfiguration&lt; ULL, UDM &gt;::DivListModelConfiguration</referencedby>
+        <referencedby refid="class_div_list_model_configuration_a5274ef6ee63c44322c3c6d8ce1869692_1a5274ef6ee63c44322c3c6d8ce1869692" compoundref="_div_list_model_8h" startline="41" endline="41">DivListModelConfiguration&lt; ULL, UDM &gt;::getVarCount</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_div_list_model_configuration_afa350baf9f5413feabbb50a03fce0a39_1afa350baf9f5413feabbb50a03fce0a39" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool DivListModelConfiguration&lt; ULL, UDM &gt;::_sortOnInsert</definition>
+        <argsstring></argsstring>
+        <name>_sortOnInsert</name>
+        <qualifiedname>DivListModelConfiguration::_sortOnInsert</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="70" column="14" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="70" bodyend="-1"/>
+        <referencedby refid="class_div_list_model_configuration_ae4d2ee472a7d1c956b1daeda7187221c_1ae4d2ee472a7d1c956b1daeda7187221c" compoundref="_div_list_model_8h" startline="21" endline="30">DivListModelConfiguration&lt; ULL, UDM &gt;::DivListModelConfiguration</referencedby>
+        <referencedby refid="class_div_list_model_configuration_a7503df8f74e85ab758279a8f5dcc21d0_1a7503df8f74e85ab758279a8f5dcc21d0" compoundref="_div_list_model_8h" startline="38" endline="38">DivListModelConfiguration&lt; ULL, UDM &gt;::getSortOnInsert</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_div_list_model_configuration_aadff0fb8516f29c00c76abacd16ad9fa_1aadff0fb8516f29c00c76abacd16ad9fa" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool DivListModelConfiguration&lt; ULL, UDM &gt;::_useAutomaticRebuild</definition>
+        <argsstring></argsstring>
+        <name>_useAutomaticRebuild</name>
+        <qualifiedname>DivListModelConfiguration::_useAutomaticRebuild</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="71" column="14" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="71" bodyend="-1"/>
+        <referencedby refid="class_div_list_model_configuration_ae4d2ee472a7d1c956b1daeda7187221c_1ae4d2ee472a7d1c956b1daeda7187221c" compoundref="_div_list_model_8h" startline="21" endline="30">DivListModelConfiguration&lt; ULL, UDM &gt;::DivListModelConfiguration</referencedby>
+        <referencedby refid="class_div_list_model_configuration_a98c0a41b9eb91e8c031a2cc37129e6f8_1a98c0a41b9eb91e8c031a2cc37129e6f8" compoundref="_div_list_model_8h" startline="35" endline="35">DivListModelConfiguration&lt; ULL, UDM &gt;::getDoAutomaticRebuilds</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_div_list_model_configuration_a005e8c984a6fec2e5b49fb98e96353a4_1a005e8c984a6fec2e5b49fb98e96353a4" prot="private" static="no" mutable="no">
+        <type>const double</type>
+        <definition>const double DivListModelConfiguration&lt; ULL, UDM &gt;::_rebuildRatio</definition>
+        <argsstring></argsstring>
+        <name>_rebuildRatio</name>
+        <qualifiedname>DivListModelConfiguration::_rebuildRatio</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="72" column="16" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="72" bodyend="-1"/>
+        <referencedby refid="class_div_list_model_configuration_ae4d2ee472a7d1c956b1daeda7187221c_1ae4d2ee472a7d1c956b1daeda7187221c" compoundref="_div_list_model_8h" startline="21" endline="30">DivListModelConfiguration&lt; ULL, UDM &gt;::DivListModelConfiguration</referencedby>
+        <referencedby refid="class_div_list_model_configuration_a13d48abbd658d5f872140bac8b794286_1a13d48abbd658d5f872140bac8b794286" compoundref="_div_list_model_8h" startline="36" endline="36">DivListModelConfiguration&lt; ULL, UDM &gt;::getRebuildRatio</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_div_list_model_configuration_a9ee07ddd0cadd7055c032bfadecfe677_1a9ee07ddd0cadd7055c032bfadecfe677" prot="private" static="no" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t DivListModelConfiguration&lt; ULL, UDM &gt;::_minRebuild</definition>
+        <argsstring></argsstring>
+        <name>_minRebuild</name>
+        <qualifiedname>DivListModelConfiguration::_minRebuild</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="73" column="16" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="73" bodyend="-1"/>
+        <referencedby refid="class_div_list_model_configuration_ae4d2ee472a7d1c956b1daeda7187221c_1ae4d2ee472a7d1c956b1daeda7187221c" compoundref="_div_list_model_8h" startline="21" endline="30">DivListModelConfiguration&lt; ULL, UDM &gt;::DivListModelConfiguration</referencedby>
+        <referencedby refid="class_div_list_model_configuration_a364659b762728f39543d1d8c9fbb5cae_1a364659b762728f39543d1d8c9fbb5cae" compoundref="_div_list_model_8h" startline="37" endline="37">DivListModelConfiguration&lt; ULL, UDM &gt;::getRebuildMin</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_div_list_model_configuration_a7a135ed0c3224c91fde8d12c8cd100bd_1a7a135ed0c3224c91fde8d12c8cd100bd" prot="private" static="no" mutable="yes">
+        <type>unsigned long long</type>
+        <definition>unsigned long long DivListModelConfiguration&lt; ULL, UDM &gt;::_expQueryCount</definition>
+        <argsstring></argsstring>
+        <name>_expQueryCount</name>
+        <qualifiedname>DivListModelConfiguration::_expQueryCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="74" column="30" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="74" bodyend="-1"/>
+        <referencedby refid="class_div_list_model_configuration_ae4d2ee472a7d1c956b1daeda7187221c_1ae4d2ee472a7d1c956b1daeda7187221c" compoundref="_div_list_model_8h" startline="21" endline="30">DivListModelConfiguration&lt; ULL, UDM &gt;::DivListModelConfiguration</referencedby>
+        <referencedby refid="class_div_list_model_configuration_a65a4b1695bfb9bedda8e6b2dfe8a8255_1a65a4b1695bfb9bedda8e6b2dfe8a8255" compoundref="_div_list_model_8h" startline="43" endline="47">DivListModelConfiguration&lt; ULL, UDM &gt;::getExponent</referencedby>
+        <referencedby refid="class_div_list_model_configuration_ab56fbcc22d297733b6f397e181321007_1ab56fbcc22d297733b6f397e181321007" compoundref="_div_list_model_8h" startline="66" endline="66">DivListModelConfiguration&lt; ULL, UDM &gt;::getExpQueryCount</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_div_list_model_configuration_ae4d2ee472a7d1c956b1daeda7187221c_1ae4d2ee472a7d1c956b1daeda7187221c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DivListModelConfiguration&lt; ULL, UDM &gt;::DivListModelConfiguration</definition>
+        <argsstring>(size_t varCount, bool sortOnInsert, double rebuildRatio, size_t minRebuild)</argsstring>
+        <name>DivListModelConfiguration</name>
+        <qualifiedname>DivListModelConfiguration::DivListModelConfiguration</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>varCount</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>sortOnInsert</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>rebuildRatio</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>minRebuild</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="20" column="3" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="21" bodyend="30"/>
+        <references refid="class_div_list_model_configuration_a7a135ed0c3224c91fde8d12c8cd100bd_1a7a135ed0c3224c91fde8d12c8cd100bd" compoundref="_div_list_model_8h" startline="74">DivListModelConfiguration&lt; ULL, UDM &gt;::_expQueryCount</references>
+        <references refid="class_div_list_model_configuration_a9ee07ddd0cadd7055c032bfadecfe677_1a9ee07ddd0cadd7055c032bfadecfe677" compoundref="_div_list_model_8h" startline="73">DivListModelConfiguration&lt; ULL, UDM &gt;::_minRebuild</references>
+        <references refid="class_div_list_model_configuration_a005e8c984a6fec2e5b49fb98e96353a4_1a005e8c984a6fec2e5b49fb98e96353a4" compoundref="_div_list_model_8h" startline="72">DivListModelConfiguration&lt; ULL, UDM &gt;::_rebuildRatio</references>
+        <references refid="class_div_list_model_configuration_afa350baf9f5413feabbb50a03fce0a39_1afa350baf9f5413feabbb50a03fce0a39" compoundref="_div_list_model_8h" startline="70">DivListModelConfiguration&lt; ULL, UDM &gt;::_sortOnInsert</references>
+        <references refid="class_div_list_model_configuration_aadff0fb8516f29c00c76abacd16ad9fa_1aadff0fb8516f29c00c76abacd16ad9fa" compoundref="_div_list_model_8h" startline="71">DivListModelConfiguration&lt; ULL, UDM &gt;::_useAutomaticRebuild</references>
+        <references refid="class_div_list_model_configuration_ac48ff26fe88bf8acb10cce0f9a2d3563_1ac48ff26fe88bf8acb10cce0f9a2d3563" compoundref="_div_list_model_8h" startline="69">DivListModelConfiguration&lt; ULL, UDM &gt;::_varCount</references>
+      </memberdef>
+      <memberdef kind="function" id="class_div_list_model_configuration_a98c0a41b9eb91e8c031a2cc37129e6f8_1a98c0a41b9eb91e8c031a2cc37129e6f8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DivListModelConfiguration&lt; ULL, UDM &gt;::getDoAutomaticRebuilds</definition>
+        <argsstring>() const</argsstring>
+        <name>getDoAutomaticRebuilds</name>
+        <qualifiedname>DivListModelConfiguration::getDoAutomaticRebuilds</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="35" column="8" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="35" bodyend="35"/>
+        <references refid="class_div_list_model_configuration_aadff0fb8516f29c00c76abacd16ad9fa_1aadff0fb8516f29c00c76abacd16ad9fa" compoundref="_div_list_model_8h" startline="71">DivListModelConfiguration&lt; ULL, UDM &gt;::_useAutomaticRebuild</references>
+      </memberdef>
+      <memberdef kind="function" id="class_div_list_model_configuration_a13d48abbd658d5f872140bac8b794286_1a13d48abbd658d5f872140bac8b794286" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double DivListModelConfiguration&lt; ULL, UDM &gt;::getRebuildRatio</definition>
+        <argsstring>() const</argsstring>
+        <name>getRebuildRatio</name>
+        <qualifiedname>DivListModelConfiguration::getRebuildRatio</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="36" column="10" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="36" bodyend="36"/>
+        <references refid="class_div_list_model_configuration_a005e8c984a6fec2e5b49fb98e96353a4_1a005e8c984a6fec2e5b49fb98e96353a4" compoundref="_div_list_model_8h" startline="72">DivListModelConfiguration&lt; ULL, UDM &gt;::_rebuildRatio</references>
+      </memberdef>
+      <memberdef kind="function" id="class_div_list_model_configuration_a364659b762728f39543d1d8c9fbb5cae_1a364659b762728f39543d1d8c9fbb5cae" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DivListModelConfiguration&lt; ULL, UDM &gt;::getRebuildMin</definition>
+        <argsstring>() const</argsstring>
+        <name>getRebuildMin</name>
+        <qualifiedname>DivListModelConfiguration::getRebuildMin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="37" column="10" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="37" bodyend="37"/>
+        <references refid="class_div_list_model_configuration_a9ee07ddd0cadd7055c032bfadecfe677_1a9ee07ddd0cadd7055c032bfadecfe677" compoundref="_div_list_model_8h" startline="73">DivListModelConfiguration&lt; ULL, UDM &gt;::_minRebuild</references>
+      </memberdef>
+      <memberdef kind="function" id="class_div_list_model_configuration_a7503df8f74e85ab758279a8f5dcc21d0_1a7503df8f74e85ab758279a8f5dcc21d0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DivListModelConfiguration&lt; ULL, UDM &gt;::getSortOnInsert</definition>
+        <argsstring>() const</argsstring>
+        <name>getSortOnInsert</name>
+        <qualifiedname>DivListModelConfiguration::getSortOnInsert</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="38" column="8" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="38" bodyend="38"/>
+        <references refid="class_div_list_model_configuration_afa350baf9f5413feabbb50a03fce0a39_1afa350baf9f5413feabbb50a03fce0a39" compoundref="_div_list_model_8h" startline="70">DivListModelConfiguration&lt; ULL, UDM &gt;::_sortOnInsert</references>
+      </memberdef>
+      <memberdef kind="function" id="class_div_list_model_configuration_a5274ef6ee63c44322c3c6d8ce1869692_1a5274ef6ee63c44322c3c6d8ce1869692" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DivListModelConfiguration&lt; ULL, UDM &gt;::getVarCount</definition>
+        <argsstring>() const</argsstring>
+        <name>getVarCount</name>
+        <qualifiedname>DivListModelConfiguration::getVarCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="41" column="10" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="41" bodyend="41"/>
+        <references refid="class_div_list_model_configuration_ac48ff26fe88bf8acb10cce0f9a2d3563_1ac48ff26fe88bf8acb10cce0f9a2d3563" compoundref="_div_list_model_8h" startline="69">DivListModelConfiguration&lt; ULL, UDM &gt;::_varCount</references>
+        <referencedby refid="class_div_list_model_configuration_a781f538c5163f83ccd53d89cd51b251e_1a781f538c5163f83ccd53d89cd51b251e" compoundref="_div_list_model_8h" startline="49" endline="54">DivListModelConfiguration&lt; ULL, UDM &gt;::divides</referencedby>
+        <referencedby refid="class_div_list_model_configuration_a28ab1c35a8a718947954352c7f3337ed_1a28ab1c35a8a718947954352c7f3337ed" compoundref="_div_list_model_8h" startline="56" endline="64">DivListModelConfiguration&lt; ULL, UDM &gt;::isLessThan</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_div_list_model_configuration_a65a4b1695bfb9bedda8e6b2dfe8a8255_1a65a4b1695bfb9bedda8e6b2dfe8a8255" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_div_list_model_configuration_a164395a5b0e909e5bd0325d40baa13ae_1a164395a5b0e909e5bd0325d40baa13ae" kindref="member">Exponent</ref></type>
+        <definition>Exponent DivListModelConfiguration&lt; ULL, UDM &gt;::getExponent</definition>
+        <argsstring>(const Monomial &amp;monomial, size_t var) const</argsstring>
+        <name>getExponent</name>
+        <qualifiedname>DivListModelConfiguration::getExponent</qualifiedname>
+        <param>
+          <type>const <ref refid="class_div_list_model_configuration_ae4a21d76d3d9f2774a6d07db18f9c41a_1ae4a21d76d3d9f2774a6d07db18f9c41a" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>monomial</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>var</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="43" column="12" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="43" bodyend="47"/>
+        <references refid="class_div_list_model_configuration_a7a135ed0c3224c91fde8d12c8cd100bd_1a7a135ed0c3224c91fde8d12c8cd100bd" compoundref="_div_list_model_8h" startline="74">DivListModelConfiguration&lt; ULL, UDM &gt;::_expQueryCount</references>
+        <references refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" compoundref="mathic_2src_2divsim_2stdinc_8h" startline="53">ASSERT</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <referencedby refid="class_div_list_model_configuration_a781f538c5163f83ccd53d89cd51b251e_1a781f538c5163f83ccd53d89cd51b251e" compoundref="_div_list_model_8h" startline="49" endline="54">DivListModelConfiguration&lt; ULL, UDM &gt;::divides</referencedby>
+        <referencedby refid="class_div_list_model_configuration_a28ab1c35a8a718947954352c7f3337ed_1a28ab1c35a8a718947954352c7f3337ed" compoundref="_div_list_model_8h" startline="56" endline="64">DivListModelConfiguration&lt; ULL, UDM &gt;::isLessThan</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_div_list_model_configuration_a781f538c5163f83ccd53d89cd51b251e_1a781f538c5163f83ccd53d89cd51b251e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DivListModelConfiguration&lt; ULL, UDM &gt;::divides</definition>
+        <argsstring>(const Monomial &amp;a, const Monomial &amp;b) const</argsstring>
+        <name>divides</name>
+        <qualifiedname>DivListModelConfiguration::divides</qualifiedname>
+        <param>
+          <type>const <ref refid="class_div_list_model_configuration_ae4a21d76d3d9f2774a6d07db18f9c41a_1ae4a21d76d3d9f2774a6d07db18f9c41a" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_div_list_model_configuration_ae4a21d76d3d9f2774a6d07db18f9c41a_1ae4a21d76d3d9f2774a6d07db18f9c41a" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="49" column="8" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="49" bodyend="54"/>
+        <references refid="class_div_list_model_configuration_a65a4b1695bfb9bedda8e6b2dfe8a8255_1a65a4b1695bfb9bedda8e6b2dfe8a8255" compoundref="_div_list_model_8h" startline="43" endline="47">DivListModelConfiguration&lt; ULL, UDM &gt;::getExponent</references>
+        <references refid="class_div_list_model_configuration_a5274ef6ee63c44322c3c6d8ce1869692_1a5274ef6ee63c44322c3c6d8ce1869692" compoundref="_div_list_model_8h" startline="41" endline="41">DivListModelConfiguration&lt; ULL, UDM &gt;::getVarCount</references>
+      </memberdef>
+      <memberdef kind="function" id="class_div_list_model_configuration_a28ab1c35a8a718947954352c7f3337ed_1a28ab1c35a8a718947954352c7f3337ed" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DivListModelConfiguration&lt; ULL, UDM &gt;::isLessThan</definition>
+        <argsstring>(const Monomial &amp;a, const Monomial &amp;b) const</argsstring>
+        <name>isLessThan</name>
+        <qualifiedname>DivListModelConfiguration::isLessThan</qualifiedname>
+        <param>
+          <type>const <ref refid="class_div_list_model_configuration_ae4a21d76d3d9f2774a6d07db18f9c41a_1ae4a21d76d3d9f2774a6d07db18f9c41a" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_div_list_model_configuration_ae4a21d76d3d9f2774a6d07db18f9c41a_1ae4a21d76d3d9f2774a6d07db18f9c41a" kindref="member">Monomial</ref><ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="56" column="8" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="56" bodyend="64"/>
+        <references refid="class_div_list_model_configuration_a65a4b1695bfb9bedda8e6b2dfe8a8255_1a65a4b1695bfb9bedda8e6b2dfe8a8255" compoundref="_div_list_model_8h" startline="43" endline="47">DivListModelConfiguration&lt; ULL, UDM &gt;::getExponent</references>
+        <references refid="class_div_list_model_configuration_a5274ef6ee63c44322c3c6d8ce1869692_1a5274ef6ee63c44322c3c6d8ce1869692" compoundref="_div_list_model_8h" startline="41" endline="41">DivListModelConfiguration&lt; ULL, UDM &gt;::getVarCount</references>
+      </memberdef>
+      <memberdef kind="function" id="class_div_list_model_configuration_ab56fbcc22d297733b6f397e181321007_1ab56fbcc22d297733b6f397e181321007" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long DivListModelConfiguration&lt; ULL, UDM &gt;::getExpQueryCount</definition>
+        <argsstring>() const</argsstring>
+        <name>getExpQueryCount</name>
+        <qualifiedname>DivListModelConfiguration::getExpQueryCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/DivListModel.h" line="66" column="22" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="66" bodyend="66"/>
+        <references refid="class_div_list_model_configuration_a7a135ed0c3224c91fde8d12c8cd100bd_1a7a135ed0c3224c91fde8d12c8cd100bd" compoundref="_div_list_model_8h" startline="74">DivListModelConfiguration&lt; ULL, UDM &gt;::_expQueryCount</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Helper class for <ref refid="class_div_list_model" kindref="compound">DivListModel</ref>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>DivListModelConfiguration&lt; ULL, UDM &gt;</label>
+        <link refid="class_div_list_model_configuration"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>UseDivMask</edgelabel>
+          <edgelabel>UseLinkedList</edgelabel>
+          <edgelabel>_sortOnInsert</edgelabel>
+          <edgelabel>_useAutomaticRebuild</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_minRebuild</edgelabel>
+          <edgelabel>_varCount</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_rebuildRatio</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_expQueryCount</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="4">
+        <label>const double</label>
+      </node>
+      <node id="5">
+        <label>long</label>
+      </node>
+      <node id="3">
+        <label>size_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/divsim/DivListModel.h" line="14" column="1" bodyfile="submodules/mathic/src/divsim/DivListModel.h" bodystart="14" bodyend="75"/>
+    <listofallmembers>
+      <member refid="class_div_list_model_configuration_a7a135ed0c3224c91fde8d12c8cd100bd_1a7a135ed0c3224c91fde8d12c8cd100bd" prot="private" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>_expQueryCount</name></member>
+      <member refid="class_div_list_model_configuration_a9ee07ddd0cadd7055c032bfadecfe677_1a9ee07ddd0cadd7055c032bfadecfe677" prot="private" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>_minRebuild</name></member>
+      <member refid="class_div_list_model_configuration_a005e8c984a6fec2e5b49fb98e96353a4_1a005e8c984a6fec2e5b49fb98e96353a4" prot="private" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>_rebuildRatio</name></member>
+      <member refid="class_div_list_model_configuration_afa350baf9f5413feabbb50a03fce0a39_1afa350baf9f5413feabbb50a03fce0a39" prot="private" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>_sortOnInsert</name></member>
+      <member refid="class_div_list_model_configuration_aadff0fb8516f29c00c76abacd16ad9fa_1aadff0fb8516f29c00c76abacd16ad9fa" prot="private" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>_useAutomaticRebuild</name></member>
+      <member refid="class_div_list_model_configuration_ac48ff26fe88bf8acb10cce0f9a2d3563_1ac48ff26fe88bf8acb10cce0f9a2d3563" prot="private" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>_varCount</name></member>
+      <member refid="class_div_list_model_configuration_a781f538c5163f83ccd53d89cd51b251e_1a781f538c5163f83ccd53d89cd51b251e" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>divides</name></member>
+      <member refid="class_div_list_model_configuration_ae4d2ee472a7d1c956b1daeda7187221c_1ae4d2ee472a7d1c956b1daeda7187221c" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>DivListModelConfiguration</name></member>
+      <member refid="class_div_list_model_configuration_ad8efc3d9179557e638275d3bdedcd700_1ad8efc3d9179557e638275d3bdedcd700" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>Entry</name></member>
+      <member refid="class_div_list_model_configuration_a164395a5b0e909e5bd0325d40baa13ae_1a164395a5b0e909e5bd0325d40baa13ae" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>Exponent</name></member>
+      <member refid="class_div_list_model_configuration_a98c0a41b9eb91e8c031a2cc37129e6f8_1a98c0a41b9eb91e8c031a2cc37129e6f8" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>getDoAutomaticRebuilds</name></member>
+      <member refid="class_div_list_model_configuration_a65a4b1695bfb9bedda8e6b2dfe8a8255_1a65a4b1695bfb9bedda8e6b2dfe8a8255" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>getExponent</name></member>
+      <member refid="class_div_list_model_configuration_ab56fbcc22d297733b6f397e181321007_1ab56fbcc22d297733b6f397e181321007" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>getExpQueryCount</name></member>
+      <member refid="class_div_list_model_configuration_a364659b762728f39543d1d8c9fbb5cae_1a364659b762728f39543d1d8c9fbb5cae" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>getRebuildMin</name></member>
+      <member refid="class_div_list_model_configuration_a13d48abbd658d5f872140bac8b794286_1a13d48abbd658d5f872140bac8b794286" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>getRebuildRatio</name></member>
+      <member refid="class_div_list_model_configuration_a7503df8f74e85ab758279a8f5dcc21d0_1a7503df8f74e85ab758279a8f5dcc21d0" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>getSortOnInsert</name></member>
+      <member refid="class_div_list_model_configuration_a5274ef6ee63c44322c3c6d8ce1869692_1a5274ef6ee63c44322c3c6d8ce1869692" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>getVarCount</name></member>
+      <member refid="class_div_list_model_configuration_a28ab1c35a8a718947954352c7f3337ed_1a28ab1c35a8a718947954352c7f3337ed" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>isLessThan</name></member>
+      <member refid="class_div_list_model_configuration_ae4a21d76d3d9f2774a6d07db18f9c41a_1ae4a21d76d3d9f2774a6d07db18f9c41a" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>Monomial</name></member>
+      <member refid="class_div_list_model_configuration_a2e49c4a0b1e530afd4f4dedeb9c536c6_1a2e49c4a0b1e530afd4f4dedeb9c536c6" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>UseDivMask</name></member>
+      <member refid="class_div_list_model_configuration_ac43512d7fbe738f39b7dba8bacd5df5e_1ac43512d7fbe738f39b7dba8bacd5df5e" prot="public" virt="non-virtual"><scope>DivListModelConfiguration</scope><name>UseLinkedList</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

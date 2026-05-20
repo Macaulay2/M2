@@ -1,0 +1,748 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classnewf4_1_1_polynomial_list_stream_collector" kind="class" language="C++" prot="public">
+    <compoundname>newf4::PolynomialListStreamCollector</compoundname>
+    <includes refid="_polynomial_list_8hpp" local="no">PolynomialList.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classnewf4_1_1_polynomial_list_stream_collector_acc96c05705083d99c61a5b01d236adb2_1acc96c05705083d99c61a5b01d236adb2" prot="public" static="no">
+        <type><ref refid="class_basic_poly_list_stream_collector_a622b26371d21fe9631dc7ad103ee9cda_1a622b26371d21fe9631dc7ad103ee9cda" kindref="member">BasicPolyListStreamCollector::Coefficient</ref></type>
+        <definition>using newf4::PolynomialListStreamCollector::Coefficient =  BasicPolyListStreamCollector::Coefficient</definition>
+        <argsstring></argsstring>
+        <name>Coefficient</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::Coefficient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="239" column="3" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classnewf4_1_1_polynomial_list_stream_collector_aa33aeed5d8a6adf6dbf9ae6b66f9b03e_1aa33aeed5d8a6adf6dbf9ae6b66f9b03e" prot="public" static="no">
+        <type><ref refid="class_basic_poly_list_stream_collector_ad19eb74ecea4edec284f8a9503884208_1ad19eb74ecea4edec284f8a9503884208" kindref="member">BasicPolyListStreamCollector::VarIndex</ref></type>
+        <definition>using newf4::PolynomialListStreamCollector::VarIndex =  BasicPolyListStreamCollector::VarIndex</definition>
+        <argsstring></argsstring>
+        <name>VarIndex</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::VarIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="240" column="3" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classnewf4_1_1_polynomial_list_stream_collector_adbe80e255596d6c6242bea2da2cc22b0_1adbe80e255596d6c6242bea2da2cc22b0" prot="public" static="no">
+        <type><ref refid="class_basic_poly_list_stream_collector_a6f7464e27a520ff4c60ab13e657d2db8_1a6f7464e27a520ff4c60ab13e657d2db8" kindref="member">BasicPolyListStreamCollector::Exponent</ref></type>
+        <definition>using newf4::PolynomialListStreamCollector::Exponent =  BasicPolyListStreamCollector::Exponent</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="241" column="3" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classnewf4_1_1_polynomial_list_stream_collector_ab11e37ac3a6f8e964388f8f15e40ba1e_1ab11e37ac3a6f8e964388f8f15e40ba1e" prot="public" static="no">
+        <type><ref refid="class_basic_poly_list_stream_collector_ac7a5a06e60975c41065cea7b1d2c826a_1ac7a5a06e60975c41065cea7b1d2c826a" kindref="member">BasicPolyListStreamCollector::Component</ref></type>
+        <definition>using newf4::PolynomialListStreamCollector::Component =  BasicPolyListStreamCollector::Component</definition>
+        <argsstring></argsstring>
+        <name>Component</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::Component</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="242" column="3" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="242" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_stream_collector_a708bfd7dddc27f22dcf38191f6db1d60_1a708bfd7dddc27f22dcf38191f6db1d60" prot="private" static="no" mutable="no">
+        <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_acc96c05705083d99c61a5b01d236adb2_1acc96c05705083d99c61a5b01d236adb2" kindref="member">Coefficient</ref></type>
+        <definition>Coefficient newf4::PolynomialListStreamCollector::mModulus</definition>
+        <argsstring></argsstring>
+        <name>mModulus</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::mModulus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="247" column="15" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="247" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a04a7e9a8eb3b1ffa2e312d9acf0c030e_1a04a7e9a8eb3b1ffa2e312d9acf0c030e" compoundref="_polynomial_list_8hpp" startline="279" endline="279">modulus</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_stream_collector_a080326aa4ce3e55743791ef01fe50c3e_1a080326aa4ce3e55743791ef01fe50c3e" prot="private" static="no" mutable="no">
+        <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_aa33aeed5d8a6adf6dbf9ae6b66f9b03e_1aa33aeed5d8a6adf6dbf9ae6b66f9b03e" kindref="member">VarIndex</ref></type>
+        <definition>VarIndex newf4::PolynomialListStreamCollector::mVarCount</definition>
+        <argsstring></argsstring>
+        <name>mVarCount</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::mVarCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="248" column="12" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="248" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a878933c4e21bf55cc55644819dbbaace_1a878933c4e21bf55cc55644819dbbaace" compoundref="_polynomial_list_8hpp" startline="280" endline="280">varCount</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_stream_collector_a161f228257af8c276e044644196d5e1e_1a161f228257af8c276e044644196d5e1e" prot="private" static="no" mutable="no">
+        <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_ab11e37ac3a6f8e964388f8f15e40ba1e_1ab11e37ac3a6f8e964388f8f15e40ba1e" kindref="member">Component</ref></type>
+        <definition>Component newf4::PolynomialListStreamCollector::mComCount</definition>
+        <argsstring></argsstring>
+        <name>mComCount</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::mComCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="249" column="13" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="249" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a3624a12d5ec05ccffc11c8009235e3f0_1a3624a12d5ec05ccffc11c8009235e3f0" compoundref="_polynomial_list_8hpp" startline="281" endline="281">comCount</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_stream_collector_a0bfa7c6c8684dab240742bacb8263f62_1a0bfa7c6c8684dab240742bacb8263f62" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnewf4_1_1_polynomial_list_stream_collector_acc96c05705083d99c61a5b01d236adb2_1acc96c05705083d99c61a5b01d236adb2" kindref="member">Coefficient</ref> &gt;</type>
+        <definition>std::vector&lt;Coefficient&gt; newf4::PolynomialListStreamCollector::mCoefficients</definition>
+        <argsstring></argsstring>
+        <name>mCoefficients</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::mCoefficients</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="252" column="15" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="252" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a8464114f8a26382b9292e0c6cd930b84_1a8464114f8a26382b9292e0c6cd930b84" compoundref="_polynomial_list_8cpp" startline="13" endline="22">appendPolynomialBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a3e925c23a8d04111b1a5cb10202e57a1_1a3e925c23a8d04111b1a5cb10202e57a1" compoundref="_polynomial_list_8cpp" startline="46" endline="51">appendPolynomialDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ae9f4424826704574e9440e6448b44908_1ae9f4424826704574e9440e6448b44908" compoundref="_polynomial_list_8cpp" startline="38" endline="44">appendTermDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_stream_collector_a1b1c300220b31bd3bf3535163da2d226_1a1b1c300220b31bd3bf3535163da2d226" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnewf4_1_1_polynomial_list_stream_collector_adbe80e255596d6c6242bea2da2cc22b0_1adbe80e255596d6c6242bea2da2cc22b0" kindref="member">Exponent</ref> &gt;</type>
+        <definition>std::vector&lt;Exponent&gt; newf4::PolynomialListStreamCollector::mSparseMonomial</definition>
+        <argsstring></argsstring>
+        <name>mSparseMonomial</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::mSparseMonomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="253" column="15" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="253" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a8f21c4209705f547c3b570a162fe593c_1a8f21c4209705f547c3b570a162fe593c" compoundref="_polynomial_list_8cpp" startline="32" endline="36">appendExponent</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ada019b535f3d8d873f5d5ffd4f785fcd_1ada019b535f3d8d873f5d5ffd4f785fcd" compoundref="_polynomial_list_8cpp" startline="24" endline="30">appendTermBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ae9f4424826704574e9440e6448b44908_1ae9f4424826704574e9440e6448b44908" compoundref="_polynomial_list_8cpp" startline="38" endline="44">appendTermDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2_1a4fdc8e72a9120da87b748f139f0040a2" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long newf4::PolynomialListStreamCollector::mCurrentPoly</definition>
+        <argsstring></argsstring>
+        <name>mCurrentPoly</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::mCurrentPoly</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="254" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="254" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a8464114f8a26382b9292e0c6cd930b84_1a8464114f8a26382b9292e0c6cd930b84" compoundref="_polynomial_list_8cpp" startline="13" endline="22">appendPolynomialBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a3e925c23a8d04111b1a5cb10202e57a1_1a3e925c23a8d04111b1a5cb10202e57a1" compoundref="_polynomial_list_8cpp" startline="46" endline="51">appendPolynomialDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ada019b535f3d8d873f5d5ffd4f785fcd_1ada019b535f3d8d873f5d5ffd4f785fcd" compoundref="_polynomial_list_8cpp" startline="24" endline="30">appendTermBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ae9f4424826704574e9440e6448b44908_1ae9f4424826704574e9440e6448b44908" compoundref="_polynomial_list_8cpp" startline="38" endline="44">appendTermDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a886f1fc4e98c91820455591d50cc0c5b_1a886f1fc4e98c91820455591d50cc0c5b" compoundref="_polynomial_list_8cpp" startline="7" endline="11">idealBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ab6b327c8deb72647968a2e0ffd02b6c3_1ab6b327c8deb72647968a2e0ffd02b6c3" compoundref="_polynomial_list_8cpp" startline="53" endline="57">idealDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_stream_collector_ac483d5e0fcd83e35448485bf7d813190_1ac483d5e0fcd83e35448485bf7d813190" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long newf4::PolynomialListStreamCollector::mCurrentTerm</definition>
+        <argsstring></argsstring>
+        <name>mCurrentTerm</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::mCurrentTerm</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="255" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="255" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a8464114f8a26382b9292e0c6cd930b84_1a8464114f8a26382b9292e0c6cd930b84" compoundref="_polynomial_list_8cpp" startline="13" endline="22">appendPolynomialBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a3e925c23a8d04111b1a5cb10202e57a1_1a3e925c23a8d04111b1a5cb10202e57a1" compoundref="_polynomial_list_8cpp" startline="46" endline="51">appendPolynomialDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ada019b535f3d8d873f5d5ffd4f785fcd_1ada019b535f3d8d873f5d5ffd4f785fcd" compoundref="_polynomial_list_8cpp" startline="24" endline="30">appendTermBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ae9f4424826704574e9440e6448b44908_1ae9f4424826704574e9440e6448b44908" compoundref="_polynomial_list_8cpp" startline="38" endline="44">appendTermDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651_1a68731c216ba04272b1f1795073636651" prot="private" static="no" mutable="no">
+        <type><ref refid="classnewf4_1_1_polynomial_list" kindref="compound">PolynomialList</ref> &amp;</type>
+        <definition>PolynomialList&amp; newf4::PolynomialListStreamCollector::mValue</definition>
+        <argsstring></argsstring>
+        <name>mValue</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::mValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="257" column="18" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="257" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a8464114f8a26382b9292e0c6cd930b84_1a8464114f8a26382b9292e0c6cd930b84" compoundref="_polynomial_list_8cpp" startline="13" endline="22">appendPolynomialBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a3e925c23a8d04111b1a5cb10202e57a1_1a3e925c23a8d04111b1a5cb10202e57a1" compoundref="_polynomial_list_8cpp" startline="46" endline="51">appendPolynomialDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ada019b535f3d8d873f5d5ffd4f785fcd_1ada019b535f3d8d873f5d5ffd4f785fcd" compoundref="_polynomial_list_8cpp" startline="24" endline="30">appendTermBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ae9f4424826704574e9440e6448b44908_1ae9f4424826704574e9440e6448b44908" compoundref="_polynomial_list_8cpp" startline="38" endline="44">appendTermDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_ab6b327c8deb72647968a2e0ffd02b6c3_1ab6b327c8deb72647968a2e0ffd02b6c3" compoundref="_polynomial_list_8cpp" startline="53" endline="57">idealDone</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a60b4f0e929fa1b266406dfe95e0bc331_1a60b4f0e929fa1b266406dfe95e0bc331" compoundref="_polynomial_list_8hpp" startline="272" endline="275">value</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>newf4::PolynomialListStreamCollector::PolynomialListStreamCollector</definition>
+        <argsstring>(int modulus, int varCount, int comCount, PolynomialList &amp;result)</argsstring>
+        <name>PolynomialListStreamCollector</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::PolynomialListStreamCollector</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>varCount</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>comCount</declname>
+        </param>
+        <param>
+          <type><ref refid="classnewf4_1_1_polynomial_list" kindref="compound">PolynomialList</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="259" column="3" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="259" bodyend="269"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a3624a12d5ec05ccffc11c8009235e3f0_1a3624a12d5ec05ccffc11c8009235e3f0" compoundref="_polynomial_list_8hpp" startline="281" endline="281">comCount</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a0bfa7c6c8684dab240742bacb8263f62_1a0bfa7c6c8684dab240742bacb8263f62" compoundref="_polynomial_list_8hpp" startline="252">mCoefficients</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a161f228257af8c276e044644196d5e1e_1a161f228257af8c276e044644196d5e1e" compoundref="_polynomial_list_8hpp" startline="249">mComCount</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2_1a4fdc8e72a9120da87b748f139f0040a2" compoundref="_polynomial_list_8hpp" startline="254">mCurrentPoly</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_ac483d5e0fcd83e35448485bf7d813190_1ac483d5e0fcd83e35448485bf7d813190" compoundref="_polynomial_list_8hpp" startline="255">mCurrentTerm</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a708bfd7dddc27f22dcf38191f6db1d60_1a708bfd7dddc27f22dcf38191f6db1d60" compoundref="_polynomial_list_8hpp" startline="247">mModulus</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a04a7e9a8eb3b1ffa2e312d9acf0c030e_1a04a7e9a8eb3b1ffa2e312d9acf0c030e" compoundref="_polynomial_list_8hpp" startline="279" endline="279">modulus</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a1b1c300220b31bd3bf3535163da2d226_1a1b1c300220b31bd3bf3535163da2d226" compoundref="_polynomial_list_8hpp" startline="253">mSparseMonomial</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651_1a68731c216ba04272b1f1795073636651" compoundref="_polynomial_list_8hpp" startline="257">mValue</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a080326aa4ce3e55743791ef01fe50c3e_1a080326aa4ce3e55743791ef01fe50c3e" compoundref="_polynomial_list_8hpp" startline="248">mVarCount</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a878933c4e21bf55cc55644819dbbaace_1a878933c4e21bf55cc55644819dbbaace" compoundref="_polynomial_list_8hpp" startline="280" endline="280">varCount</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_a60b4f0e929fa1b266406dfe95e0bc331_1a60b4f0e929fa1b266406dfe95e0bc331" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_polynomial_list" kindref="compound">PolynomialList</ref> &amp;</type>
+        <definition>PolynomialList &amp; newf4::PolynomialListStreamCollector::value</definition>
+        <argsstring>() const</argsstring>
+        <name>value</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="272" column="18" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="272" bodyend="275"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651_1a68731c216ba04272b1f1795073636651" compoundref="_polynomial_list_8hpp" startline="257">mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_a04a7e9a8eb3b1ffa2e312d9acf0c030e_1a04a7e9a8eb3b1ffa2e312d9acf0c030e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_acc96c05705083d99c61a5b01d236adb2_1acc96c05705083d99c61a5b01d236adb2" kindref="member">Coefficient</ref></type>
+        <definition>Coefficient newf4::PolynomialListStreamCollector::modulus</definition>
+        <argsstring>() const</argsstring>
+        <name>modulus</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::modulus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="279" column="15" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="279" bodyend="279"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a708bfd7dddc27f22dcf38191f6db1d60_1a708bfd7dddc27f22dcf38191f6db1d60" compoundref="_polynomial_list_8hpp" startline="247">mModulus</references>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_a878933c4e21bf55cc55644819dbbaace_1a878933c4e21bf55cc55644819dbbaace" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_aa33aeed5d8a6adf6dbf9ae6b66f9b03e_1aa33aeed5d8a6adf6dbf9ae6b66f9b03e" kindref="member">VarIndex</ref></type>
+        <definition>VarIndex newf4::PolynomialListStreamCollector::varCount</definition>
+        <argsstring>() const</argsstring>
+        <name>varCount</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::varCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="280" column="12" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="280" bodyend="280"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a080326aa4ce3e55743791ef01fe50c3e_1a080326aa4ce3e55743791ef01fe50c3e" compoundref="_polynomial_list_8hpp" startline="248">mVarCount</references>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_a3624a12d5ec05ccffc11c8009235e3f0_1a3624a12d5ec05ccffc11c8009235e3f0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_ab11e37ac3a6f8e964388f8f15e40ba1e_1ab11e37ac3a6f8e964388f8f15e40ba1e" kindref="member">Component</ref></type>
+        <definition>Component newf4::PolynomialListStreamCollector::comCount</definition>
+        <argsstring>() const</argsstring>
+        <name>comCount</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::comCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="281" column="13" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="281" bodyend="281"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a161f228257af8c276e044644196d5e1e_1a161f228257af8c276e044644196d5e1e" compoundref="_polynomial_list_8hpp" startline="249">mComCount</references>
+        <referencedby refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" compoundref="_polynomial_list_8hpp" startline="259" endline="269">PolynomialListStreamCollector</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_a886f1fc4e98c91820455591d50cc0c5b_1a886f1fc4e98c91820455591d50cc0c5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::PolynomialListStreamCollector::idealBegin</definition>
+        <argsstring>(size_t polyCount)</argsstring>
+        <name>idealBegin</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::idealBegin</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>polyCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="283" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.cpp" bodystart="7" bodyend="11"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2_1a4fdc8e72a9120da87b748f139f0040a2" compoundref="_polynomial_list_8hpp" startline="254">mCurrentPoly</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_a8464114f8a26382b9292e0c6cd930b84_1a8464114f8a26382b9292e0c6cd930b84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::PolynomialListStreamCollector::appendPolynomialBegin</definition>
+        <argsstring>(size_t termCount)</argsstring>
+        <name>appendPolynomialBegin</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::appendPolynomialBegin</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>termCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="284" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.cpp" bodystart="13" bodyend="22"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a0bfa7c6c8684dab240742bacb8263f62_1a0bfa7c6c8684dab240742bacb8263f62" compoundref="_polynomial_list_8hpp" startline="252">mCoefficients</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2_1a4fdc8e72a9120da87b748f139f0040a2" compoundref="_polynomial_list_8hpp" startline="254">mCurrentPoly</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_ac483d5e0fcd83e35448485bf7d813190_1ac483d5e0fcd83e35448485bf7d813190" compoundref="_polynomial_list_8hpp" startline="255">mCurrentTerm</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651_1a68731c216ba04272b1f1795073636651" compoundref="_polynomial_list_8hpp" startline="257">mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_ada019b535f3d8d873f5d5ffd4f785fcd_1ada019b535f3d8d873f5d5ffd4f785fcd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::PolynomialListStreamCollector::appendTermBegin</definition>
+        <argsstring>(Component com)</argsstring>
+        <name>appendTermBegin</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::appendTermBegin</qualifiedname>
+        <param>
+          <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_ab11e37ac3a6f8e964388f8f15e40ba1e_1ab11e37ac3a6f8e964388f8f15e40ba1e" kindref="member">Component</ref></type>
+          <declname>com</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="285" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.cpp" bodystart="24" bodyend="30"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2_1a4fdc8e72a9120da87b748f139f0040a2" compoundref="_polynomial_list_8hpp" startline="254">mCurrentPoly</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_ac483d5e0fcd83e35448485bf7d813190_1ac483d5e0fcd83e35448485bf7d813190" compoundref="_polynomial_list_8hpp" startline="255">mCurrentTerm</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a1b1c300220b31bd3bf3535163da2d226_1a1b1c300220b31bd3bf3535163da2d226" compoundref="_polynomial_list_8hpp" startline="253">mSparseMonomial</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651_1a68731c216ba04272b1f1795073636651" compoundref="_polynomial_list_8hpp" startline="257">mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_a8f21c4209705f547c3b570a162fe593c_1a8f21c4209705f547c3b570a162fe593c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::PolynomialListStreamCollector::appendExponent</definition>
+        <argsstring>(VarIndex index, Exponent exponent)</argsstring>
+        <name>appendExponent</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::appendExponent</qualifiedname>
+        <param>
+          <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_aa33aeed5d8a6adf6dbf9ae6b66f9b03e_1aa33aeed5d8a6adf6dbf9ae6b66f9b03e" kindref="member">VarIndex</ref></type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_adbe80e255596d6c6242bea2da2cc22b0_1adbe80e255596d6c6242bea2da2cc22b0" kindref="member">Exponent</ref></type>
+          <declname>exponent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="286" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.cpp" bodystart="32" bodyend="36"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a1b1c300220b31bd3bf3535163da2d226_1a1b1c300220b31bd3bf3535163da2d226" compoundref="_polynomial_list_8hpp" startline="253">mSparseMonomial</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_ae9f4424826704574e9440e6448b44908_1ae9f4424826704574e9440e6448b44908" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::PolynomialListStreamCollector::appendTermDone</definition>
+        <argsstring>(Coefficient coefficient)</argsstring>
+        <name>appendTermDone</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::appendTermDone</qualifiedname>
+        <param>
+          <type><ref refid="classnewf4_1_1_polynomial_list_stream_collector_acc96c05705083d99c61a5b01d236adb2_1acc96c05705083d99c61a5b01d236adb2" kindref="member">Coefficient</ref></type>
+          <declname>coefficient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="287" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.cpp" bodystart="38" bodyend="44"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a0bfa7c6c8684dab240742bacb8263f62_1a0bfa7c6c8684dab240742bacb8263f62" compoundref="_polynomial_list_8hpp" startline="252">mCoefficients</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2_1a4fdc8e72a9120da87b748f139f0040a2" compoundref="_polynomial_list_8hpp" startline="254">mCurrentPoly</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_ac483d5e0fcd83e35448485bf7d813190_1ac483d5e0fcd83e35448485bf7d813190" compoundref="_polynomial_list_8hpp" startline="255">mCurrentTerm</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a1b1c300220b31bd3bf3535163da2d226_1a1b1c300220b31bd3bf3535163da2d226" compoundref="_polynomial_list_8hpp" startline="253">mSparseMonomial</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651_1a68731c216ba04272b1f1795073636651" compoundref="_polynomial_list_8hpp" startline="257">mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_a3e925c23a8d04111b1a5cb10202e57a1_1a3e925c23a8d04111b1a5cb10202e57a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::PolynomialListStreamCollector::appendPolynomialDone</definition>
+        <argsstring>()</argsstring>
+        <name>appendPolynomialDone</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::appendPolynomialDone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="288" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.cpp" bodystart="46" bodyend="51"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a0bfa7c6c8684dab240742bacb8263f62_1a0bfa7c6c8684dab240742bacb8263f62" compoundref="_polynomial_list_8hpp" startline="252">mCoefficients</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2_1a4fdc8e72a9120da87b748f139f0040a2" compoundref="_polynomial_list_8hpp" startline="254">mCurrentPoly</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_ac483d5e0fcd83e35448485bf7d813190_1ac483d5e0fcd83e35448485bf7d813190" compoundref="_polynomial_list_8hpp" startline="255">mCurrentTerm</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651_1a68731c216ba04272b1f1795073636651" compoundref="_polynomial_list_8hpp" startline="257">mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_stream_collector_ab6b327c8deb72647968a2e0ffd02b6c3_1ab6b327c8deb72647968a2e0ffd02b6c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::PolynomialListStreamCollector::idealDone</definition>
+        <argsstring>()</argsstring>
+        <name>idealDone</name>
+        <qualifiedname>newf4::PolynomialListStreamCollector::idealDone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="289" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.cpp" bodystart="53" bodyend="57"/>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2_1a4fdc8e72a9120da87b748f139f0040a2" compoundref="_polynomial_list_8hpp" startline="254">mCurrentPoly</references>
+        <references refid="classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651_1a68731c216ba04272b1f1795073636651" compoundref="_polynomial_list_8hpp" startline="257">mValue</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>implements the stream functions for creating a <ref refid="classnewf4_1_1_polynomial_list" kindref="compound">PolynomialList</ref> from a stream </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="28">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="29" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>HashInt</label>
+      </node>
+      <node id="13">
+        <label>MemoryBlock</label>
+        <link refid="class_memory_block"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>T</label>
+      </node>
+      <node id="10">
+        <label>VectorArithmetic</label>
+        <link refid="class_vector_arithmetic"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mConcreteVector</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>char</label>
+      </node>
+      <node id="31">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="3">
+        <label>int32_t</label>
+      </node>
+      <node id="8">
+        <label>long</label>
+      </node>
+      <node id="14">
+        <label>memt::Arena</label>
+        <link refid="classmemt_1_1_arena"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_scratchArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mpz_class</label>
+      </node>
+      <node id="25">
+        <label>newf4::HashTableStats</label>
+        <link refid="structnewf4_1_1_hash_table_stats"/>
+        <childnode refid="23" relation="usage">
+          <edgelabel>max_run_length</edgelabel>
+          <edgelabel>monequal_count</edgelabel>
+          <edgelabel>monequal_fails</edgelabel>
+          <edgelabel>n_calls_find</edgelabel>
+          <edgelabel>n_clashes</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>newf4::MonomialHashFunction</label>
+        <link refid="classnewf4_1_1_monomial_hash_function"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mHashValues</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>newf4::MonomialHashTable</label>
+        <link refid="classnewf4_1_1_monomial_hash_table"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mMonomialSpace</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mMonomialPointers</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mHashValues</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mHashFunction</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mHashMask</edgelabel>
+          <edgelabel>mLog2Size</edgelabel>
+          <edgelabel>mThreshold</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mBuckets</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mStats</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>newf4::MonomialView</label>
+        <link refid="classnewf4_1_1_monomial_view"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mData</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>newf4::Polynomial</label>
+        <link refid="classnewf4_1_1_polynomial"/>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mCoefficients</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mMonomials</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mComponents</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mPolynomialList</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>newf4::PolynomialList</label>
+        <link refid="classnewf4_1_1_polynomial_list"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mVectorArithmetic</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mHashTable</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mPolynomials</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>newf4::PolynomialListStreamCollector</label>
+        <link refid="classnewf4_1_1_polynomial_list_stream_collector"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mModulus</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mComCount</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mCoefficients</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mSparseMonomial</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mCurrentPoly</edgelabel>
+          <edgelabel>mCurrentTerm</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>variant&lt; ConcreteVectorArithmetic&lt; M2::ARingZZpFlint &gt; *, ConcreteVectorArithmetic&lt; M2::ARingGFFlintBig &gt; *, ConcreteVectorArithmetic&lt; M2::ARingGFFlint &gt; *, ConcreteVectorArithmetic&lt; M2::ARingQQGMP &gt; *, ConcreteVectorArithmetic&lt; M2::ARingZZpFFPACK &gt; *, ConcreteVectorArithmetic&lt; M2::ARingZZp &gt; *, ConcreteVectorArithmetic&lt; M2::ARingGFM2 &gt; *, ConcreteVectorArithmetic&lt; CoefficientRingR &gt; *, ConcreteVectorArithmetic&lt; CoefficientRingZZp &gt; *, ConcreteVectorArithmetic&lt; M2::DummyRing &gt; * &gt;</label>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::vector&lt; Coefficient &gt;</label>
+        <childnode refid="2" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; Coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>std::vector&lt; ComponentIndex &gt;</label>
+        <childnode refid="31" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; ComponentIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>std::vector&lt; HashInt &gt;</label>
+        <childnode refid="21" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; HashInt &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>std::vector&lt; MonomialIndex &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; MonomialIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>std::vector&lt; newf4::MonomialView &gt;</label>
+        <childnode refid="19" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; newf4::MonomialView &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>std::vector&lt; newf4::Polynomial &gt;</label>
+        <childnode refid="27" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; newf4::Polynomial &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>unsigned</label>
+      </node>
+      <node id="29">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="236" column="1" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="237" bodyend="290"/>
+    <listofallmembers>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a8f21c4209705f547c3b570a162fe593c_1a8f21c4209705f547c3b570a162fe593c" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>appendExponent</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a8464114f8a26382b9292e0c6cd930b84_1a8464114f8a26382b9292e0c6cd930b84" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>appendPolynomialBegin</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a3e925c23a8d04111b1a5cb10202e57a1_1a3e925c23a8d04111b1a5cb10202e57a1" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>appendPolynomialDone</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_ada019b535f3d8d873f5d5ffd4f785fcd_1ada019b535f3d8d873f5d5ffd4f785fcd" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>appendTermBegin</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_ae9f4424826704574e9440e6448b44908_1ae9f4424826704574e9440e6448b44908" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>appendTermDone</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_acc96c05705083d99c61a5b01d236adb2_1acc96c05705083d99c61a5b01d236adb2" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>Coefficient</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a3624a12d5ec05ccffc11c8009235e3f0_1a3624a12d5ec05ccffc11c8009235e3f0" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>comCount</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_ab11e37ac3a6f8e964388f8f15e40ba1e_1ab11e37ac3a6f8e964388f8f15e40ba1e" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>Component</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_adbe80e255596d6c6242bea2da2cc22b0_1adbe80e255596d6c6242bea2da2cc22b0" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>Exponent</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a886f1fc4e98c91820455591d50cc0c5b_1a886f1fc4e98c91820455591d50cc0c5b" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>idealBegin</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_ab6b327c8deb72647968a2e0ffd02b6c3_1ab6b327c8deb72647968a2e0ffd02b6c3" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>idealDone</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a0bfa7c6c8684dab240742bacb8263f62_1a0bfa7c6c8684dab240742bacb8263f62" prot="private" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>mCoefficients</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a161f228257af8c276e044644196d5e1e_1a161f228257af8c276e044644196d5e1e" prot="private" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>mComCount</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a4fdc8e72a9120da87b748f139f0040a2_1a4fdc8e72a9120da87b748f139f0040a2" prot="private" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>mCurrentPoly</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_ac483d5e0fcd83e35448485bf7d813190_1ac483d5e0fcd83e35448485bf7d813190" prot="private" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>mCurrentTerm</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a708bfd7dddc27f22dcf38191f6db1d60_1a708bfd7dddc27f22dcf38191f6db1d60" prot="private" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>mModulus</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a04a7e9a8eb3b1ffa2e312d9acf0c030e_1a04a7e9a8eb3b1ffa2e312d9acf0c030e" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>modulus</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a1b1c300220b31bd3bf3535163da2d226_1a1b1c300220b31bd3bf3535163da2d226" prot="private" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>mSparseMonomial</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a68731c216ba04272b1f1795073636651_1a68731c216ba04272b1f1795073636651" prot="private" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>mValue</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a080326aa4ce3e55743791ef01fe50c3e_1a080326aa4ce3e55743791ef01fe50c3e" prot="private" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>mVarCount</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a72007e08f9f8d4425044ebe5f887f66f_1a72007e08f9f8d4425044ebe5f887f66f" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>PolynomialListStreamCollector</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a60b4f0e929fa1b266406dfe95e0bc331_1a60b4f0e929fa1b266406dfe95e0bc331" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>value</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_a878933c4e21bf55cc55644819dbbaace_1a878933c4e21bf55cc55644819dbbaace" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>varCount</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_stream_collector_aa33aeed5d8a6adf6dbf9ae6b66f9b03e_1aa33aeed5d8a6adf6dbf9ae6b66f9b03e" prot="public" virt="non-virtual"><scope>newf4::PolynomialListStreamCollector</scope><name>VarIndex</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

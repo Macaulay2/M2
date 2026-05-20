@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structmgb_1_1mgbi_1_1_ideal_adapter_1_1_const_term" kind="struct" language="C++" prot="public">
+    <compoundname>mgb::mgbi::IdealAdapter::ConstTerm</compoundname>
+    <includes refid="mathicgb_8h" local="no">mathicgb.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmgb_1_1mgbi_1_1_ideal_adapter_1_1_const_term_aea012177d8c62eb9fa1b00b3680e66c6_1aea012177d8c62eb9fa1b00b3680e66c6" prot="public" static="no" mutable="no">
+        <type><ref refid="classmgb_1_1mgbi_1_1_ideal_adapter_a0f352dde2fe39710d3814bc738f58ffc_1a0f352dde2fe39710d3814bc738f58ffc" kindref="member">Coefficient</ref></type>
+        <definition>Coefficient mgb::mgbi::IdealAdapter::ConstTerm::coef</definition>
+        <argsstring></argsstring>
+        <name>coef</name>
+        <qualifiedname>mgb::mgbi::IdealAdapter::ConstTerm::coef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="877" column="21" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="877" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmgb_1_1mgbi_1_1_ideal_adapter_1_1_const_term_ab2b322754c0e753aee59b1abfa0d435b_1ab2b322754c0e753aee59b1abfa0d435b" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classmgb_1_1mgbi_1_1_ideal_adapter_a7e030fcf868b90cda358924045e90b63_1a7e030fcf868b90cda358924045e90b63" kindref="member">Exponent</ref> *</type>
+        <definition>const Exponent* mgb::mgbi::IdealAdapter::ConstTerm::exponents</definition>
+        <argsstring></argsstring>
+        <name>exponents</name>
+        <qualifiedname>mgb::mgbi::IdealAdapter::ConstTerm::exponents</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="878" column="24" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="878" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmgb_1_1mgbi_1_1_ideal_adapter_1_1_const_term_ae48bb6b0068168a0c96c25039e026faf_1ae48bb6b0068168a0c96c25039e026faf" prot="public" static="no" mutable="no">
+        <type><ref refid="classmgb_1_1mgbi_1_1_ideal_adapter_ab40ea06da097b98a83aebfd8dbdc68fa_1ab40ea06da097b98a83aebfd8dbdc68fa" kindref="member">Component</ref></type>
+        <definition>Component mgb::mgbi::IdealAdapter::ConstTerm::com</definition>
+        <argsstring></argsstring>
+        <name>com</name>
+        <qualifiedname>mgb::mgbi::IdealAdapter::ConstTerm::com</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="879" column="19" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="879" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Coefficient</label>
+      </node>
+      <node id="4">
+        <label>Component</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="1">
+        <label>mgb::mgbi::IdealAdapter::ConstTerm</label>
+        <link refid="structmgb_1_1mgbi_1_1_ideal_adapter_1_1_const_term"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>coef</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>exponents</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>com</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb.h" line="876" column="7" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="876" bodyend="880"/>
+    <listofallmembers>
+      <member refid="structmgb_1_1mgbi_1_1_ideal_adapter_1_1_const_term_aea012177d8c62eb9fa1b00b3680e66c6_1aea012177d8c62eb9fa1b00b3680e66c6" prot="public" virt="non-virtual"><scope>mgb::mgbi::IdealAdapter::ConstTerm</scope><name>coef</name></member>
+      <member refid="structmgb_1_1mgbi_1_1_ideal_adapter_1_1_const_term_ae48bb6b0068168a0c96c25039e026faf_1ae48bb6b0068168a0c96c25039e026faf" prot="public" virt="non-virtual"><scope>mgb::mgbi::IdealAdapter::ConstTerm</scope><name>com</name></member>
+      <member refid="structmgb_1_1mgbi_1_1_ideal_adapter_1_1_const_term_ab2b322754c0e753aee59b1abfa0d435b_1ab2b322754c0e753aee59b1abfa0d435b" prot="public" virt="non-virtual"><scope>mgb::mgbi::IdealAdapter::ConstTerm</scope><name>exponents</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

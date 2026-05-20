@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_c_file" kind="class" language="C++" prot="public">
+    <compoundname>CFile</compoundname>
+    <includes refid="_c_file_8hpp" local="no">CFile.hpp</includes>
+    <innerclass refid="struct_c_file_1_1_no_throw_tag" prot="public">CFile::NoThrowTag</innerclass>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_c_file_a29490686c7196c195d0b75c78469acde_1a29490686c7196c195d0b75c78469acde" prot="private" static="no" mutable="no">
+        <type>FILE *</type>
+        <definition>FILE* CFile::mFile</definition>
+        <argsstring></argsstring>
+        <name>mFile</name>
+        <qualifiedname>CFile::mFile</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/CFile.hpp" line="38" column="8" bodyfile="submodules/mathicgb/src/mathicgb/CFile.hpp" bodystart="38" bodyend="-1"/>
+        <referencedby refid="class_c_file_a100e438b305482a0ad6004f043abad2c_1a100e438b305482a0ad6004f043abad2c" compoundref="_c_file_8cpp" startline="15" endline="23">CFile</referencedby>
+        <referencedby refid="class_c_file_a5973ce222caa33d10b1c7a4542c16a05_1a5973ce222caa33d10b1c7a4542c16a05" compoundref="_c_file_8cpp" startline="11" endline="13">CFile</referencedby>
+        <referencedby refid="class_c_file_a3a155ac94b6346edcbfa8b61f8b3c48f_1a3a155ac94b6346edcbfa8b61f8b3c48f" compoundref="_c_file_8cpp" startline="29" endline="32">close</referencedby>
+        <referencedby refid="class_c_file_a5a59eca83e7cc8d635e7afbe7493dee8_1a5a59eca83e7cc8d635e7afbe7493dee8" compoundref="_c_file_8hpp" startline="34" endline="34">handle</referencedby>
+        <referencedby refid="class_c_file_a3653fcdff9706f3faa473f6bab31cfdb_1a3653fcdff9706f3faa473f6bab31cfdb" compoundref="_c_file_8hpp" startline="32" endline="32">hasFile</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_c_file_a5973ce222caa33d10b1c7a4542c16a05_1a5973ce222caa33d10b1c7a4542c16a05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MATHICGB_NAMESPACE_BEGIN CFile::CFile</definition>
+        <argsstring>(const std::string &amp;fileName, const char *mode, NoThrowTag)</argsstring>
+        <name>CFile</name>
+        <qualifiedname>CFile::CFile</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>fileName</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_c_file_1_1_no_throw_tag" kindref="compound">NoThrowTag</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the handle to null if the file cannot be opened - does not throw an exception. The purpose of the NoTrowTag parameter is only to indicate that no exception should be thrown on error. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/CFile.hpp" line="25" column="3" bodyfile="submodules/mathicgb/src/mathicgb/CFile.cpp" bodystart="11" bodyend="13"/>
+        <references refid="class_c_file_a29490686c7196c195d0b75c78469acde_1a29490686c7196c195d0b75c78469acde" compoundref="_c_file_8hpp" startline="38">mFile</references>
+      </memberdef>
+      <memberdef kind="function" id="class_c_file_a100e438b305482a0ad6004f043abad2c_1a100e438b305482a0ad6004f043abad2c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>CFile::CFile</definition>
+        <argsstring>(const std::string &amp;fileName, const char *mode)</argsstring>
+        <name>CFile</name>
+        <qualifiedname>CFile::CFile</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>fileName</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>mode</declname>
+        </param>
+        <briefdescription>
+<para>Opens the file and throws an exception if the file cannot be opened. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/CFile.hpp" line="28" column="3" bodyfile="submodules/mathicgb/src/mathicgb/CFile.cpp" bodystart="15" bodyend="23"/>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_c_file_a29490686c7196c195d0b75c78469acde_1a29490686c7196c195d0b75c78469acde" compoundref="_c_file_8hpp" startline="38">mFile</references>
+        <references refid="namespacemathic_aba2df5396ea54101a096481c819534dc_1aba2df5396ea54101a096481c819534dc" compoundref="error_8cpp" startline="5" endline="7">mathic::reportError</references>
+      </memberdef>
+      <memberdef kind="function" id="class_c_file_a146d61b38c752741357820a5f7e3f3b5_1a146d61b38c752741357820a5f7e3f3b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>CFile::~CFile</definition>
+        <argsstring>()</argsstring>
+        <name>~CFile</name>
+        <qualifiedname>CFile::~CFile</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/CFile.hpp" line="30" column="3" bodyfile="submodules/mathicgb/src/mathicgb/CFile.cpp" bodystart="25" bodyend="27"/>
+        <references refid="class_c_file_a3a155ac94b6346edcbfa8b61f8b3c48f_1a3a155ac94b6346edcbfa8b61f8b3c48f" compoundref="_c_file_8cpp" startline="29" endline="32">close</references>
+      </memberdef>
+      <memberdef kind="function" id="class_c_file_a3653fcdff9706f3faa473f6bab31cfdb_1a3653fcdff9706f3faa473f6bab31cfdb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool CFile::hasFile</definition>
+        <argsstring>() const</argsstring>
+        <name>hasFile</name>
+        <qualifiedname>CFile::hasFile</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/CFile.hpp" line="32" column="8" bodyfile="submodules/mathicgb/src/mathicgb/CFile.hpp" bodystart="32" bodyend="32"/>
+        <references refid="class_c_file_a29490686c7196c195d0b75c78469acde_1a29490686c7196c195d0b75c78469acde" compoundref="_c_file_8hpp" startline="38">mFile</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a3d9ae301dc68d3a026a6803d7251058a_1a3d9ae301dc68d3a026a6803d7251058a" compoundref="_matrix_action_8cpp" startline="31" endline="33">MATHICGB_NAMESPACE_BEGIN::fileExists</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_c_file_a5a59eca83e7cc8d635e7afbe7493dee8_1a5a59eca83e7cc8d635e7afbe7493dee8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>FILE *</type>
+        <definition>FILE * CFile::handle</definition>
+        <argsstring>()</argsstring>
+        <name>handle</name>
+        <qualifiedname>CFile::handle</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/CFile.hpp" line="34" column="8" bodyfile="submodules/mathicgb/src/mathicgb/CFile.hpp" bodystart="34" bodyend="34"/>
+        <references refid="class_c_file_a29490686c7196c195d0b75c78469acde_1a29490686c7196c195d0b75c78469acde" compoundref="_c_file_8hpp" startline="38">mFile</references>
+        <referencedby refid="class_matrix_action_a4fb6a72dcadf0971eddb2df7bb7e5b11_1a4fb6a72dcadf0971eddb2df7bb7e5b11" compoundref="_matrix_action_8cpp" startline="51" endline="123">MatrixAction::performAction</referencedby>
+        <referencedby refid="class_f4_reducer_abbfcaa4c6e3d95fd670ff14d81f2671d_1abbfcaa4c6e3d95fd670ff14d81f2671d" compoundref="_f4_reducer_8cpp" startline="315" endline="330">F4Reducer::saveMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_c_file_a3a155ac94b6346edcbfa8b61f8b3c48f_1a3a155ac94b6346edcbfa8b61f8b3c48f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CFile::close</definition>
+        <argsstring>()</argsstring>
+        <name>close</name>
+        <qualifiedname>CFile::close</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/CFile.hpp" line="35" column="8" bodyfile="submodules/mathicgb/src/mathicgb/CFile.cpp" bodystart="29" bodyend="32"/>
+        <references refid="class_c_file_a29490686c7196c195d0b75c78469acde_1a29490686c7196c195d0b75c78469acde" compoundref="_c_file_8hpp" startline="38">mFile</references>
+        <referencedby refid="class_matrix_action_a4fb6a72dcadf0971eddb2df7bb7e5b11_1a4fb6a72dcadf0971eddb2df7bb7e5b11" compoundref="_matrix_action_8cpp" startline="51" endline="123">MatrixAction::performAction</referencedby>
+        <referencedby refid="class_c_file_a146d61b38c752741357820a5f7e3f3b5_1a146d61b38c752741357820a5f7e3f3b5" compoundref="_c_file_8cpp" startline="25" endline="27">~CFile</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>RAII handle for a C FILE*.</para>
+<para>The purpose of using the C IO interface instead of iostreams is that the former is faster to a ridiculous degree. This class wraps the C IO interface to be more useful in a C++ context. For example the file is automatically closed in the destructor and if the file cannot be opened then an exception is thrown instead of returning a null pointer. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>CFile</label>
+        <link refid="class_c_file"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mFile</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>FILE *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/CFile.hpp" line="18" column="1" bodyfile="submodules/mathicgb/src/mathicgb/CFile.hpp" bodystart="18" bodyend="39"/>
+    <listofallmembers>
+      <member refid="class_c_file_a5973ce222caa33d10b1c7a4542c16a05_1a5973ce222caa33d10b1c7a4542c16a05" prot="public" virt="non-virtual"><scope>CFile</scope><name>CFile</name></member>
+      <member refid="class_c_file_a100e438b305482a0ad6004f043abad2c_1a100e438b305482a0ad6004f043abad2c" prot="public" virt="non-virtual"><scope>CFile</scope><name>CFile</name></member>
+      <member refid="class_c_file_a3a155ac94b6346edcbfa8b61f8b3c48f_1a3a155ac94b6346edcbfa8b61f8b3c48f" prot="public" virt="non-virtual"><scope>CFile</scope><name>close</name></member>
+      <member refid="class_c_file_a5a59eca83e7cc8d635e7afbe7493dee8_1a5a59eca83e7cc8d635e7afbe7493dee8" prot="public" virt="non-virtual"><scope>CFile</scope><name>handle</name></member>
+      <member refid="class_c_file_a3653fcdff9706f3faa473f6bab31cfdb_1a3653fcdff9706f3faa473f6bab31cfdb" prot="public" virt="non-virtual"><scope>CFile</scope><name>hasFile</name></member>
+      <member refid="class_c_file_a29490686c7196c195d0b75c78469acde_1a29490686c7196c195d0b75c78469acde" prot="private" virt="non-virtual"><scope>CFile</scope><name>mFile</name></member>
+      <member refid="class_c_file_a146d61b38c752741357820a5f7e3f3b5_1a146d61b38c752741357820a5f7e3f3b5" prot="public" virt="non-virtual"><scope>CFile</scope><name>~CFile</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

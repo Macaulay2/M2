@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_k_d_tree_1_1_const_entry_output" kind="class" language="C++" prot="private">
+    <compoundname>mathic::KDTree::ConstEntryOutput</compoundname>
+    <templateparamlist>
+      <param>
+        <type>class EntryOutput</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_k_d_tree_1_1_const_entry_output_a603e85420391ac5391055257cc63cdef_1a603e85420391ac5391055257cc63cdef" prot="private" static="no" mutable="no">
+        <type>EntryOutput &amp;</type>
+        <definition>EntryOutput&amp; mathic::KDTree&lt; C &gt;::ConstEntryOutput&lt; EntryOutput &gt;::_out</definition>
+        <argsstring></argsstring>
+        <name>_out</name>
+        <qualifiedname>mathic::KDTree::ConstEntryOutput::_out</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDTree.h" line="288" column="19" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="288" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_k_d_tree_1_1_const_entry_output_a0ddc5d2aae130746bee44e9eb6abefbb_1a0ddc5d2aae130746bee44e9eb6abefbb" compoundref="_k_d_tree_8h" startline="285" endline="285">mathic::KDTree&lt; C &gt;::ConstEntryOutput&lt; EntryOutput &gt;::ConstEntryOutput</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_1_1_const_entry_output_ad669ae4f642dd639da1b4e3a3ef56503_1ad669ae4f642dd639da1b4e3a3ef56503" compoundref="_k_d_tree_8h" startline="286" endline="286">mathic::KDTree&lt; C &gt;::ConstEntryOutput&lt; EntryOutput &gt;::proceed</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_k_d_tree_1_1_const_entry_output_a0ddc5d2aae130746bee44e9eb6abefbb_1a0ddc5d2aae130746bee44e9eb6abefbb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::KDTree&lt; C &gt;::ConstEntryOutput&lt; EntryOutput &gt;::ConstEntryOutput</definition>
+        <argsstring>(EntryOutput &amp;out)</argsstring>
+        <name>ConstEntryOutput</name>
+        <qualifiedname>mathic::KDTree::ConstEntryOutput::ConstEntryOutput</qualifiedname>
+        <param>
+          <type>EntryOutput &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDTree.h" line="285" column="5" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="285" bodyend="285"/>
+        <references refid="classmathic_1_1_k_d_tree_1_1_const_entry_output_a603e85420391ac5391055257cc63cdef_1a603e85420391ac5391055257cc63cdef" compoundref="_k_d_tree_8h" startline="288">mathic::KDTree&lt; C &gt;::ConstEntryOutput&lt; EntryOutput &gt;::_out</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_tree_1_1_const_entry_output_ad669ae4f642dd639da1b4e3a3ef56503_1ad669ae4f642dd639da1b4e3a3ef56503" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDTree&lt; C &gt;::ConstEntryOutput&lt; EntryOutput &gt;::proceed</definition>
+        <argsstring>(const Entry &amp;entry)</argsstring>
+        <name>proceed</name>
+        <qualifiedname>mathic::KDTree::ConstEntryOutput::proceed</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_k_d_tree_a95ffb11a0a7bbbd785e402cdf7bccef0_1a95ffb11a0a7bbbd785e402cdf7bccef0" kindref="member">Entry</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDTree.h" line="286" column="12" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="286" bodyend="286"/>
+        <references refid="classmathic_1_1_k_d_tree_1_1_const_entry_output_a603e85420391ac5391055257cc63cdef_1a603e85420391ac5391055257cc63cdef" compoundref="_k_d_tree_8h" startline="288">mathic::KDTree&lt; C &gt;::ConstEntryOutput&lt; EntryOutput &gt;::_out</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>makes the parameter given to proceed be const. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>EntryOutput &amp;</label>
+      </node>
+      <node id="1">
+        <label>mathic::KDTree&lt; C &gt;::ConstEntryOutput&lt; EntryOutput &gt;</label>
+        <link refid="classmathic_1_1_k_d_tree_1_1_const_entry_output"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_out</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/KDTree.h" line="283" column="5" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="283" bodyend="289"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_k_d_tree_1_1_const_entry_output_a603e85420391ac5391055257cc63cdef_1a603e85420391ac5391055257cc63cdef" prot="private" virt="non-virtual"><scope>mathic::KDTree::ConstEntryOutput</scope><name>_out</name></member>
+      <member refid="classmathic_1_1_k_d_tree_1_1_const_entry_output_a0ddc5d2aae130746bee44e9eb6abefbb_1a0ddc5d2aae130746bee44e9eb6abefbb" prot="public" virt="non-virtual"><scope>mathic::KDTree::ConstEntryOutput</scope><name>ConstEntryOutput</name></member>
+      <member refid="classmathic_1_1_k_d_tree_1_1_const_entry_output_ad669ae4f642dd639da1b4e3a3ef56503_1ad669ae4f642dd639da1b4e3a3ef56503" prot="public" virt="non-virtual"><scope>mathic::KDTree::ConstEntryOutput</scope><name>proceed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

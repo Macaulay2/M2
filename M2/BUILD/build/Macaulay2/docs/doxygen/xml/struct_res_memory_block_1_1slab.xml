@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_res_memory_block_1_1slab" kind="struct" language="C++" prot="private">
+    <compoundname>ResMemoryBlock::slab</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_res_memory_block_1_1slab_aae7338667727bc95f63989235fdca084_1aae7338667727bc95f63989235fdca084" prot="public" static="no" mutable="no">
+        <type><ref refid="classslab" kindref="compound">slab</ref> *</type>
+        <definition>slab* ResMemoryBlock&lt; T, NSLAB &gt;::slab::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>ResMemoryBlock::slab::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="40" column="10" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_res_memory_block_1_1slab_ab4de5c1f658df287f6b6af208496995c_1ab4de5c1f658df287f6b6af208496995c" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref></type>
+        <definition>T ResMemoryBlock&lt; T, NSLAB &gt;::slab::block[NSLAB]</definition>
+        <argsstring>[NSLAB]</argsstring>
+        <name>block</name>
+        <qualifiedname>ResMemoryBlock::slab::block</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="41" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>ResMemoryBlock&lt; T, NSLAB &gt;::slab</label>
+        <link refid="struct_res_memory_block_1_1slab"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>block</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ResMemoryBlock&lt; T, NSLAB &gt;::slab</label>
+        <link refid="struct_res_memory_block_1_1slab"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>block</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>const void *</label>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="6">
+        <label>unsigned</label>
+      </node>
+      <node id="5">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="9">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="38" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="39" bodyend="42"/>
+    <listofallmembers>
+      <member refid="struct_res_memory_block_1_1slab_ab4de5c1f658df287f6b6af208496995c_1ab4de5c1f658df287f6b6af208496995c" prot="public" virt="non-virtual"><scope>ResMemoryBlock::slab</scope><name>block</name></member>
+      <member refid="struct_res_memory_block_1_1slab_aae7338667727bc95f63989235fdca084_1aae7338667727bc95f63989235fdca084" prot="public" virt="non-virtual"><scope>ResMemoryBlock::slab</scope><name>next</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

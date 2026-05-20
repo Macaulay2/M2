@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_505819b7d1dc5f59d8865d25b1f3c74d" kind="dir">
+    <compoundname>submodules/mathic/src/divsim</compoundname>
+    <innerfile refid="_div_list_model_8h">DivListModel.h</innerfile>
+    <innerfile refid="div_main_8cpp">divMain.cpp</innerfile>
+    <innerfile refid="div_main_8h">divMain.h</innerfile>
+    <innerfile refid="_k_d_tree_model_8h">KDTreeModel.h</innerfile>
+    <innerfile refid="_monomial_8h">Monomial.h</innerfile>
+    <innerfile refid="_simulation_8cpp">Simulation.cpp</innerfile>
+    <innerfile refid="_simulation_8h">Simulation.h</innerfile>
+    <innerfile refid="mathic_2src_2divsim_2stdinc_8h">stdinc.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/divsim/"/>
+  </compounddef>
+</doxygen>

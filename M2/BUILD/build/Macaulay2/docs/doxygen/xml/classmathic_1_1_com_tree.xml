@@ -1,0 +1,639 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_com_tree" kind="class" language="C++" prot="public">
+    <compoundname>mathic::ComTree</compoundname>
+    <includes refid="_com_tree_8h" local="no">ComTree.h</includes>
+    <innerclass refid="classmathic_1_1_com_tree_1_1_node" prot="public">mathic::ComTree::Node</innerclass>
+    <templateparamlist>
+      <param>
+        <type>class <ref refid="struct_item_or_value" kindref="compound">Entry</ref></type>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>FastIndex</declname>
+        <defname>FastIndex</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_com_tree_ac32096d4408cf8e485ab6158623d557e_1ac32096d4408cf8e485ab6158623d557e" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_item_or_value" kindref="compound">Entry</ref> *</type>
+        <definition>Entry* mathic::ComTree&lt; Entry, FastIndex &gt;::_array</definition>
+        <argsstring></argsstring>
+        <name>_array</name>
+        <qualifiedname>mathic::ComTree::_array</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="113" column="11" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="113" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_com_tree_a89f0975acf13490ade55b96cee93ebf3_1a89f0975acf13490ade55b96cee93ebf3" compoundref="_com_tree_8h" startline="178" endline="188">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" compoundref="_com_tree_8h" startline="158" endline="175">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a8c29437bc8f83fe95ee5d4c1949f4f77_1a8c29437bc8f83fe95ee5d4c1949f4f77" compoundref="_com_tree_8h" startline="191" endline="199">mathic::ComTree&lt; Entry, FastIndex &gt;::operator[]</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a2570538f22249b1a87d7c2dcefde3bed_1a2570538f22249b1a87d7c2dcefde3bed" compoundref="_com_tree_8h" startline="228" endline="239">mathic::ComTree&lt; Entry, FastIndex &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_com_tree_a5ff668aa03c7f48d176f72afac5c5dc3_1a5ff668aa03c7f48d176f72afac5c5dc3" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_item_or_value" kindref="compound">Entry</ref> *</type>
+        <definition>Entry* mathic::ComTree&lt; Entry, FastIndex &gt;::_arrayKeepAlive</definition>
+        <argsstring></argsstring>
+        <name>_arrayKeepAlive</name>
+        <qualifiedname>mathic::ComTree::_arrayKeepAlive</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Macaulay 2 uses Mathic and Macaulay 2 also uses the Boehm garbage collector. Since _array points to a place before the array we are using, that array will be garbage collected if we do not keep around a second pointer that does point into the array. That is the purpose of _arrayKeepAlive. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="120" column="11" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="120" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_com_tree_a89f0975acf13490ade55b96cee93ebf3_1a89f0975acf13490ade55b96cee93ebf3" compoundref="_com_tree_8h" startline="178" endline="188">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" compoundref="_com_tree_8h" startline="158" endline="175">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a8c29437bc8f83fe95ee5d4c1949f4f77_1a8c29437bc8f83fe95ee5d4c1949f4f77" compoundref="_com_tree_8h" startline="191" endline="199">mathic::ComTree&lt; Entry, FastIndex &gt;::operator[]</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a2570538f22249b1a87d7c2dcefde3bed_1a2570538f22249b1a87d7c2dcefde3bed" compoundref="_com_tree_8h" startline="228" endline="239">mathic::ComTree&lt; Entry, FastIndex &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_com_tree_1_1_node" kindref="compound">Node</ref></type>
+        <definition>Node mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</definition>
+        <argsstring></argsstring>
+        <name>_lastLeaf</name>
+        <qualifiedname>mathic::ComTree::_lastLeaf</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="122" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="122" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_com_tree_a1f9dc2649764a26ee4edba7c9b57d5dd_1a1f9dc2649764a26ee4edba7c9b57d5dd" compoundref="_com_tree_8h" startline="127" endline="129">mathic::ComTree&lt; Entry, FastIndex &gt;::clear</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a89f0975acf13490ade55b96cee93ebf3_1a89f0975acf13490ade55b96cee93ebf3" compoundref="_com_tree_8h" startline="178" endline="188">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" compoundref="_com_tree_8h" startline="158" endline="175">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_aa868bf9b44088cd6d2fd467bceeeef4b_1aa868bf9b44088cd6d2fd467bceeeef4b" compoundref="_com_tree_8h" startline="315" endline="318">mathic::ComTree&lt; Entry, FastIndex &gt;::hasFreeCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a5c11bf8c79e76df99b3a62413a2d7a27_1a5c11bf8c79e76df99b3a62413a2d7a27" compoundref="_com_tree_8h" startline="222" endline="225">mathic::ComTree&lt; Entry, FastIndex &gt;::popBack</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_aa01d1de034a417c78c51c99e22cb3fa1_1aa01d1de034a417c78c51c99e22cb3fa1" compoundref="_com_tree_8h" startline="207" endline="212">mathic::ComTree&lt; Entry, FastIndex &gt;::pushBack</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a611a07554af867e8cfaa6a7ef0eb6e8a_1a611a07554af867e8cfaa6a7ef0eb6e8a" compoundref="_com_tree_8h" startline="215" endline="219">mathic::ComTree&lt; Entry, FastIndex &gt;::pushBackWithCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a2570538f22249b1a87d7c2dcefde3bed_1a2570538f22249b1a87d7c2dcefde3bed" compoundref="_com_tree_8h" startline="228" endline="239">mathic::ComTree&lt; Entry, FastIndex &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_com_tree_1_1_node" kindref="compound">Node</ref></type>
+        <definition>Node mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</definition>
+        <argsstring></argsstring>
+        <name>_capacityEnd</name>
+        <qualifiedname>mathic::ComTree::_capacityEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="123" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="123" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_com_tree_a89f0975acf13490ade55b96cee93ebf3_1a89f0975acf13490ade55b96cee93ebf3" compoundref="_com_tree_8h" startline="178" endline="188">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" compoundref="_com_tree_8h" startline="158" endline="175">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_aa868bf9b44088cd6d2fd467bceeeef4b_1aa868bf9b44088cd6d2fd467bceeeef4b" compoundref="_com_tree_8h" startline="315" endline="318">mathic::ComTree&lt; Entry, FastIndex &gt;::hasFreeCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_aa01d1de034a417c78c51c99e22cb3fa1_1aa01d1de034a417c78c51c99e22cb3fa1" compoundref="_com_tree_8h" startline="207" endline="212">mathic::ComTree&lt; Entry, FastIndex &gt;::pushBack</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a611a07554af867e8cfaa6a7ef0eb6e8a_1a611a07554af867e8cfaa6a7ef0eb6e8a" compoundref="_com_tree_8h" startline="215" endline="219">mathic::ComTree&lt; Entry, FastIndex &gt;::pushBackWithCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a2570538f22249b1a87d7c2dcefde3bed_1a2570538f22249b1a87d7c2dcefde3bed" compoundref="_com_tree_8h" startline="228" endline="239">mathic::ComTree&lt; Entry, FastIndex &gt;::swap</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mathic::ComTree&lt; E, FI &gt;::ComTree</definition>
+        <argsstring>(size_t initialCapacity=0)</argsstring>
+        <name>ComTree</name>
+        <qualifiedname>mathic::ComTree::ComTree</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>initialCapacity</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="33" column="5" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="143" bodyend="155"/>
+        <references refid="classmathic_1_1_com_tree_ac32096d4408cf8e485ab6158623d557e_1ac32096d4408cf8e485ab6158623d557e" compoundref="_com_tree_8h" startline="113">mathic::ComTree&lt; Entry, FastIndex &gt;::_array</references>
+        <references refid="classmathic_1_1_com_tree_a5ff668aa03c7f48d176f72afac5c5dc3_1a5ff668aa03c7f48d176f72afac5c5dc3" compoundref="_com_tree_8h" startline="120">mathic::ComTree&lt; Entry, FastIndex &gt;::_arrayKeepAlive</references>
+        <references refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" compoundref="_com_tree_8h" startline="123">mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</references>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+        <references refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="classmathic_1_1_com_tree_a89f0975acf13490ade55b96cee93ebf3_1a89f0975acf13490ade55b96cee93ebf3" compoundref="_com_tree_8h" startline="178" endline="188">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" compoundref="_com_tree_8h" startline="158" endline="175">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_1_1_node_a7c7c9b4918b9a639488eaa0f40d82e04_1a7c7c9b4918b9a639488eaa0f40d82e04" compoundref="_com_tree_8h" startline="247" endline="249">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::left</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_1_1_node_a684e0f6e039610a6824b9e35f855762f_1a684e0f6e039610a6824b9e35f855762f" compoundref="_com_tree_8h" startline="262" endline="264">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::leftSibling</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_1_1_node_a373b361a8d3d8c3e12677cc5b493d399_1a373b361a8d3d8c3e12677cc5b493d399" compoundref="_com_tree_8h" startline="267" endline="269">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::next</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_1_1_node_a71812c6a4743367987f681cb57a8561e_1a71812c6a4743367987f681cb57a8561e" compoundref="_com_tree_8h" startline="272" endline="274">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::next</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a9dbda4cb97f3840102f6b978a66eb6b7_1a9dbda4cb97f3840102f6b978a66eb6b7" compoundref="_com_tree_8h" startline="202" endline="204">mathic::ComTree&lt; Entry, FastIndex &gt;::operator[]</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_1_1_node_a85d749b954314b08c553969b72fab35e_1a85d749b954314b08c553969b72fab35e" compoundref="_com_tree_8h" startline="242" endline="244">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::parent</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_1_1_node_aee29e80780d45758a661f6d91f273055_1aee29e80780d45758a661f6d91f273055" compoundref="_com_tree_8h" startline="277" endline="279">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::prev</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_1_1_node_a91c7ff2e0b2db75b9d8242fe528e54de_1a91c7ff2e0b2db75b9d8242fe528e54de" compoundref="_com_tree_8h" startline="252" endline="254">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::right</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_1_1_node_a5d83330276fafb09d87466cd5c8963a2_1a5d83330276fafb09d87466cd5c8963a2" compoundref="_com_tree_8h" startline="257" endline="259">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::sibling</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a2570538f22249b1a87d7c2dcefde3bed_1a2570538f22249b1a87d7c2dcefde3bed" compoundref="_com_tree_8h" startline="228" endline="239">mathic::ComTree&lt; Entry, FastIndex &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mathic::ComTree&lt; E, FI &gt;::ComTree</definition>
+        <argsstring>(const ComTree &amp;tree, size_t minCapacity=0)</argsstring>
+        <name>ComTree</name>
+        <qualifiedname>mathic::ComTree::ComTree</qualifiedname>
+        <param>
+          <type>const ComTree &amp;</type>
+          <declname>tree</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>minCapacity</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="34" column="5" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="158" bodyend="175"/>
+        <references refid="classmathic_1_1_com_tree_ac32096d4408cf8e485ab6158623d557e_1ac32096d4408cf8e485ab6158623d557e" compoundref="_com_tree_8h" startline="113">mathic::ComTree&lt; Entry, FastIndex &gt;::_array</references>
+        <references refid="classmathic_1_1_com_tree_a5ff668aa03c7f48d176f72afac5c5dc3_1a5ff668aa03c7f48d176f72afac5c5dc3" compoundref="_com_tree_8h" startline="120">mathic::ComTree&lt; Entry, FastIndex &gt;::_arrayKeepAlive</references>
+        <references refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" compoundref="_com_tree_8h" startline="123">mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</references>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+        <references refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</references>
+        <references refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</references>
+        <references refid="classmathic_1_1_com_tree_ac86817a2fb48f9e79a205237790dee7b_1ac86817a2fb48f9e79a205237790dee7b" compoundref="_com_tree_8h" startline="48" endline="48">mathic::ComTree&lt; Entry, FastIndex &gt;::lastLeaf</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_com_tree_a250fbc81d190d22cf2849b265af40da2_1a250fbc81d190d22cf2849b265af40da2" compoundref="_com_tree_8h" startline="46" endline="46">mathic::ComTree&lt; Entry, FastIndex &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a89f0975acf13490ade55b96cee93ebf3_1a89f0975acf13490ade55b96cee93ebf3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mathic::ComTree&lt; E, FI &gt;::ComTree</definition>
+        <argsstring>(ComTree &amp;&amp;tree)</argsstring>
+        <name>ComTree</name>
+        <qualifiedname>mathic::ComTree::ComTree</qualifiedname>
+        <param>
+          <type>ComTree &amp;&amp;</type>
+          <declname>tree</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="35" column="5" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="178" bodyend="188"/>
+        <references refid="classmathic_1_1_com_tree_ac32096d4408cf8e485ab6158623d557e_1ac32096d4408cf8e485ab6158623d557e" compoundref="_com_tree_8h" startline="113">mathic::ComTree&lt; Entry, FastIndex &gt;::_array</references>
+        <references refid="classmathic_1_1_com_tree_a5ff668aa03c7f48d176f72afac5c5dc3_1a5ff668aa03c7f48d176f72afac5c5dc3" compoundref="_com_tree_8h" startline="120">mathic::ComTree&lt; Entry, FastIndex &gt;::_arrayKeepAlive</references>
+        <references refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" compoundref="_com_tree_8h" startline="123">mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</references>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+        <references refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_acceb69e04d1de047c90a9c38827c6bc8_1acceb69e04d1de047c90a9c38827c6bc8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::ComTree&lt; Entry, FastIndex &gt;::~ComTree</definition>
+        <argsstring>()</argsstring>
+        <name>~ComTree</name>
+        <qualifiedname>mathic::ComTree::~ComTree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="37" column="5" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="37" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a8c29437bc8f83fe95ee5d4c1949f4f77_1a8c29437bc8f83fe95ee5d4c1949f4f77" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="struct_item_or_value" kindref="compound">Entry</ref> &amp;</type>
+        <definition>E &amp; mathic::ComTree&lt; E, FI &gt;::operator[]</definition>
+        <argsstring>(Node n)</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>mathic::ComTree::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_com_tree_1_1_node" kindref="compound">Node</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="42" column="11" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="191" bodyend="199"/>
+        <references refid="classmathic_1_1_com_tree_ac32096d4408cf8e485ab6158623d557e_1ac32096d4408cf8e485ab6158623d557e" compoundref="_com_tree_8h" startline="113">mathic::ComTree&lt; Entry, FastIndex &gt;::_array</references>
+        <references refid="classmathic_1_1_com_tree_a5ff668aa03c7f48d176f72afac5c5dc3_1a5ff668aa03c7f48d176f72afac5c5dc3" compoundref="_com_tree_8h" startline="120">mathic::ComTree&lt; Entry, FastIndex &gt;::_arrayKeepAlive</references>
+        <references refid="classmathic_1_1_com_tree_1_1_node_a9a7825b50486b86eb5f6a6ba8a3060b6_1a9a7825b50486b86eb5f6a6ba8a3060b6" compoundref="_com_tree_8h" startline="95">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::_index</references>
+        <references refid="factory_8cpp_a4f4813fca034f6aee039295c5e1f4d48_1a4f4813fca034f6aee039295c5e1f4d48" compoundref="factory_8cpp" startline="289">base</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a9dbda4cb97f3840102f6b978a66eb6b7_1a9dbda4cb97f3840102f6b978a66eb6b7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="struct_item_or_value" kindref="compound">Entry</ref> &amp;</type>
+        <definition>const E &amp; mathic::ComTree&lt; E, FI &gt;::operator[]</definition>
+        <argsstring>(Node n) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>mathic::ComTree::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_com_tree_1_1_node" kindref="compound">Node</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="43" column="17" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="202" bodyend="204"/>
+        <references refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a679dbdcfac375206c97eace36d0cb7c1_1a679dbdcfac375206c97eace36d0cb7c1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::ComTree&lt; Entry, FastIndex &gt;::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>mathic::ComTree::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="45" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="45" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a250fbc81d190d22cf2849b265af40da2_1a250fbc81d190d22cf2849b265af40da2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::ComTree&lt; Entry, FastIndex &gt;::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>mathic::ComTree::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="46" column="12" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="46" bodyend="46"/>
+        <referencedby refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" compoundref="_com_tree_8h" startline="158" endline="175">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a970517d91222da54b0f6a6a845be5d99_1a970517d91222da54b0f6a6a845be5d99" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::ComTree&lt; Entry, FastIndex &gt;::capacity</definition>
+        <argsstring>() const</argsstring>
+        <name>capacity</name>
+        <qualifiedname>mathic::ComTree::capacity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="47" column="12" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="47" bodyend="47"/>
+        <referencedby refid="classmathic_1_1_com_tree_a8e3e42910a72ab9d7dbce556ea6353df_1a8e3e42910a72ab9d7dbce556ea6353df" compoundref="_com_tree_8h" startline="132" endline="134">mathic::ComTree&lt; Entry, FastIndex &gt;::getMemoryUse</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_ac86817a2fb48f9e79a205237790dee7b_1ac86817a2fb48f9e79a205237790dee7b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_com_tree_1_1_node" kindref="compound">Node</ref></type>
+        <definition>Node mathic::ComTree&lt; Entry, FastIndex &gt;::lastLeaf</definition>
+        <argsstring>() const</argsstring>
+        <name>lastLeaf</name>
+        <qualifiedname>mathic::ComTree::lastLeaf</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="48" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="48" bodyend="48"/>
+        <referencedby refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" compoundref="_com_tree_8h" startline="158" endline="175">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_adb2ece3393c62492ebd85ff008807016_1adb2ece3393c62492ebd85ff008807016" compoundref="_com_tree_8h" startline="282" endline="290">mathic::ComTree&lt; Entry, FastIndex &gt;::print</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_aa01d1de034a417c78c51c99e22cb3fa1_1aa01d1de034a417c78c51c99e22cb3fa1" compoundref="_com_tree_8h" startline="207" endline="212">mathic::ComTree&lt; Entry, FastIndex &gt;::pushBack</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a611a07554af867e8cfaa6a7ef0eb6e8a_1a611a07554af867e8cfaa6a7ef0eb6e8a" compoundref="_com_tree_8h" startline="215" endline="219">mathic::ComTree&lt; Entry, FastIndex &gt;::pushBackWithCapacity</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_aa01d1de034a417c78c51c99e22cb3fa1_1aa01d1de034a417c78c51c99e22cb3fa1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::ComTree&lt; E, FI &gt;::pushBack</definition>
+        <argsstring>(const Entry &amp;value)</argsstring>
+        <name>pushBack</name>
+        <qualifiedname>mathic::ComTree::pushBack</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_item_or_value" kindref="compound">Entry</ref> &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="50" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="207" bodyend="212"/>
+        <references refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" compoundref="_com_tree_8h" startline="123">mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</references>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+        <references refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</references>
+        <references refid="classmathic_1_1_com_tree_ac86817a2fb48f9e79a205237790dee7b_1ac86817a2fb48f9e79a205237790dee7b" compoundref="_com_tree_8h" startline="48" endline="48">mathic::ComTree&lt; Entry, FastIndex &gt;::lastLeaf</references>
+        <referencedby refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a611a07554af867e8cfaa6a7ef0eb6e8a_1a611a07554af867e8cfaa6a7ef0eb6e8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::ComTree&lt; E, FI &gt;::pushBackWithCapacity</definition>
+        <argsstring>(const Entry &amp;value)</argsstring>
+        <name>pushBackWithCapacity</name>
+        <qualifiedname>mathic::ComTree::pushBackWithCapacity</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_item_or_value" kindref="compound">Entry</ref> &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="51" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="215" bodyend="219"/>
+        <references refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" compoundref="_com_tree_8h" startline="123">mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</references>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+        <references refid="classmathic_1_1_com_tree_ac86817a2fb48f9e79a205237790dee7b_1ac86817a2fb48f9e79a205237790dee7b" compoundref="_com_tree_8h" startline="48" endline="48">mathic::ComTree&lt; Entry, FastIndex &gt;::lastLeaf</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a5c11bf8c79e76df99b3a62413a2d7a27_1a5c11bf8c79e76df99b3a62413a2d7a27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::ComTree&lt; E, FI &gt;::popBack</definition>
+        <argsstring>()</argsstring>
+        <name>popBack</name>
+        <qualifiedname>mathic::ComTree::popBack</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="52" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="222" bodyend="225"/>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_aa868bf9b44088cd6d2fd467bceeeef4b_1aa868bf9b44088cd6d2fd467bceeeef4b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::ComTree&lt; E, FI &gt;::hasFreeCapacity</definition>
+        <argsstring>(size_t extraCapacity) const</argsstring>
+        <name>hasFreeCapacity</name>
+        <qualifiedname>mathic::ComTree::hasFreeCapacity</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>extraCapacity</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="54" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="315" bodyend="318"/>
+        <references refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" compoundref="_com_tree_8h" startline="123">mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</references>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::ComTree&lt; E, FI &gt;::increaseCapacity</definition>
+        <argsstring>()</argsstring>
+        <name>increaseCapacity</name>
+        <qualifiedname>mathic::ComTree::increaseCapacity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="55" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="321" bodyend="331"/>
+        <references refid="classmathic_1_1_com_tree_ac32096d4408cf8e485ab6158623d557e_1ac32096d4408cf8e485ab6158623d557e" compoundref="_com_tree_8h" startline="113">mathic::ComTree&lt; Entry, FastIndex &gt;::_array</references>
+        <references refid="classmathic_1_1_com_tree_a5ff668aa03c7f48d176f72afac5c5dc3_1a5ff668aa03c7f48d176f72afac5c5dc3" compoundref="_com_tree_8h" startline="120">mathic::ComTree&lt; Entry, FastIndex &gt;::_arrayKeepAlive</references>
+        <references refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" compoundref="_com_tree_8h" startline="123">mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</references>
+        <references refid="classmathic_1_1_com_tree_a970517d91222da54b0f6a6a845be5d99_1a970517d91222da54b0f6a6a845be5d99" compoundref="_com_tree_8h" startline="47" endline="47">mathic::ComTree&lt; Entry, FastIndex &gt;::capacity</references>
+        <references refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</references>
+        <references refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</references>
+        <references refid="classmathic_1_1_com_tree_ac86817a2fb48f9e79a205237790dee7b_1ac86817a2fb48f9e79a205237790dee7b" compoundref="_com_tree_8h" startline="48" endline="48">mathic::ComTree&lt; Entry, FastIndex &gt;::lastLeaf</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_com_tree_aa01d1de034a417c78c51c99e22cb3fa1_1aa01d1de034a417c78c51c99e22cb3fa1" compoundref="_com_tree_8h" startline="207" endline="212">mathic::ComTree&lt; Entry, FastIndex &gt;::pushBack</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+        <referencedby refid="classmathic_1_1_com_tree_aa01d1de034a417c78c51c99e22cb3fa1_1aa01d1de034a417c78c51c99e22cb3fa1" compoundref="_com_tree_8h" startline="207" endline="212">mathic::ComTree&lt; Entry, FastIndex &gt;::pushBack</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a2570538f22249b1a87d7c2dcefde3bed_1a2570538f22249b1a87d7c2dcefde3bed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::ComTree&lt; E, FI &gt;::swap</definition>
+        <argsstring>(ComTree &amp;tree)</argsstring>
+        <name>swap</name>
+        <qualifiedname>mathic::ComTree::swap</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" kindref="member">ComTree</ref> &amp;</type>
+          <declname>tree</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="56" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="228" bodyend="239"/>
+        <references refid="classmathic_1_1_com_tree_ac32096d4408cf8e485ab6158623d557e_1ac32096d4408cf8e485ab6158623d557e" compoundref="_com_tree_8h" startline="113">mathic::ComTree&lt; Entry, FastIndex &gt;::_array</references>
+        <references refid="classmathic_1_1_com_tree_a5ff668aa03c7f48d176f72afac5c5dc3_1a5ff668aa03c7f48d176f72afac5c5dc3" compoundref="_com_tree_8h" startline="120">mathic::ComTree&lt; Entry, FastIndex &gt;::_arrayKeepAlive</references>
+        <references refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" compoundref="_com_tree_8h" startline="123">mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</references>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+        <references refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</references>
+        <references refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_adb2ece3393c62492ebd85ff008807016_1adb2ece3393c62492ebd85ff008807016" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::ComTree&lt; E, FI &gt;::print</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>print</name>
+        <qualifiedname>mathic::ComTree::print</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="98" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="282" bodyend="290"/>
+        <references refid="classmathic_1_1_com_tree_ac86817a2fb48f9e79a205237790dee7b_1ac86817a2fb48f9e79a205237790dee7b" compoundref="_com_tree_8h" startline="48" endline="48">mathic::ComTree&lt; Entry, FastIndex &gt;::lastLeaf</references>
+        <references refid="classmathic_1_1_com_tree_1_1_node_a373b361a8d3d8c3e12677cc5b493d399_1a373b361a8d3d8c3e12677cc5b493d399" compoundref="_com_tree_8h" startline="267" endline="269">mathic::ComTree&lt; Entry, FastIndex &gt;::Node::next</references>
+        <referencedby refid="namespacemathic_a891a79d7561910628a5ea731697ce5a6_1a891a79d7561910628a5ea731697ce5a6" compoundref="_com_tree_8h" startline="137" endline="140">mathic::operator&lt;&lt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a1f9dc2649764a26ee4edba7c9b57d5dd_1a1f9dc2649764a26ee4edba7c9b57d5dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::ComTree&lt; E, FI &gt;::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>mathic::ComTree::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="100" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="127" bodyend="129"/>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a8e3e42910a72ab9d7dbce556ea6353df_1a8e3e42910a72ab9d7dbce556ea6353df" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::ComTree&lt; E, FI &gt;::getMemoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>getMemoryUse</name>
+        <qualifiedname>mathic::ComTree::getMemoryUse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="102" column="12" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="132" bodyend="134"/>
+        <references refid="classmathic_1_1_com_tree_a970517d91222da54b0f6a6a845be5d99_1a970517d91222da54b0f6a6a845be5d99" compoundref="_com_tree_8h" startline="47" endline="47">mathic::ComTree&lt; Entry, FastIndex &gt;::capacity</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::ComTree&lt; E, FI &gt;::isValid</definition>
+        <argsstring>() const</argsstring>
+        <name>isValid</name>
+        <qualifiedname>mathic::ComTree::isValid</qualifiedname>
+        <briefdescription>
+<para>Asserts internal invariants if asserts are turned on. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="105" column="10" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="293" bodyend="312"/>
+        <references refid="classmathic_1_1_com_tree_ac32096d4408cf8e485ab6158623d557e_1ac32096d4408cf8e485ab6158623d557e" compoundref="_com_tree_8h" startline="113">mathic::ComTree&lt; Entry, FastIndex &gt;::_array</references>
+        <references refid="classmathic_1_1_com_tree_a5ff668aa03c7f48d176f72afac5c5dc3_1a5ff668aa03c7f48d176f72afac5c5dc3" compoundref="_com_tree_8h" startline="120">mathic::ComTree&lt; Entry, FastIndex &gt;::_arrayKeepAlive</references>
+        <references refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" compoundref="_com_tree_8h" startline="123">mathic::ComTree&lt; Entry, FastIndex &gt;::_capacityEnd</references>
+        <references refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" compoundref="_com_tree_8h" startline="122">mathic::ComTree&lt; Entry, FastIndex &gt;::_lastLeaf</references>
+        <references refid="classmathic_1_1_com_tree_a970517d91222da54b0f6a6a845be5d99_1a970517d91222da54b0f6a6a845be5d99" compoundref="_com_tree_8h" startline="47" endline="47">mathic::ComTree&lt; Entry, FastIndex &gt;::capacity</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" compoundref="_com_tree_8h" startline="158" endline="175">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a2570538f22249b1a87d7c2dcefde3bed_1a2570538f22249b1a87d7c2dcefde3bed" compoundref="_com_tree_8h" startline="228" endline="239">mathic::ComTree&lt; Entry, FastIndex &gt;::swap</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_acceb69e04d1de047c90a9c38827c6bc8_1acceb69e04d1de047c90a9c38827c6bc8" compoundref="_com_tree_8h" startline="37" endline="40">mathic::ComTree&lt; Entry, Configuration::fastIndex &gt;::~ComTree</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmathic_1_1_com_tree_a6f5cda2e0d6a225d5054318db33ebfc0_1a6f5cda2e0d6a225d5054318db33ebfc0" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" kindref="member">ComTree</ref> &amp;</type>
+        <definition>ComTree &amp; mathic::ComTree&lt; Entry, FastIndex &gt;::operator=</definition>
+        <argsstring>(const ComTree &amp;tree) const</argsstring>
+        <name>operator=</name>
+        <qualifiedname>mathic::ComTree::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" kindref="member">ComTree</ref> &amp;</type>
+          <declname>tree</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/ComTree.h" line="108" column="13"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This class packs a complete binary tree in a vector.</para>
+<para>The idea is to have the root at index 1, and then the left child of node n will be at index 2n and the right child will be at index 2n + 1. The corresponding formulas when indexes start at 0 take more computation, so we need a 1-based array so we can&apos;t use std::vector.</para>
+<para>Also, when sizeof(Entry) is a power of 2 it is faster to keep track of i * sizeof(Entry) than directly keeping track of an index i. This doesn&apos;t work well when sizeof(Entry) is not a power of two. So we need both possibilities. That is why this class never exposes indexes. Instead you interact with <ref refid="classmathic_1_1_com_tree_1_1_node" kindref="compound">Node</ref> objects that serve the role of an index, but the precise value it stores is encapsulated. This way you can&apos;t do something like _array[i * sizeof(Entry)] by accident. Client code also does not need to (indeed, can&apos;t) be aware of how indexes are calculated, stored and looked up.</para>
+<para>If FastIndex is false, then Nodes contain an index i. If FastIndex is true, then Nodes contain the byte offset i * sizeof(Entry). FastIndex must be false if sizeof(Entry) is not a power of two. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>mathic::ComTree&lt; Entry, Configuration::fastIndex &gt;</label>
+        <link refid="classmathic_1_1_com_tree"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; Entry, Configuration::fastIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::ComTree&lt; Entry, FastIndex &gt;</label>
+        <link refid="classmathic_1_1_com_tree"/>
+      </node>
+      <node id="3">
+        <label>mathic::ComTree&lt; Player *, false &gt;</label>
+        <link refid="classmathic_1_1_com_tree"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; Player *, false &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>ItemOrValue&lt; bool &gt;</label>
+        <link refid="struct_item_or_value"/>
+      </node>
+      <node id="2">
+        <label>Entry&lt; OnSpans &gt;</label>
+        <link refid="struct_item_or_value"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; OnSpans &gt;::Entry</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::ComTree&lt; Entry, FastIndex &gt;</label>
+        <link refid="classmathic_1_1_com_tree"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_array</edgelabel>
+          <edgelabel>_arrayKeepAlive</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_capacityEnd</edgelabel>
+          <edgelabel>_lastLeaf</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>continue_node&lt; tbb::flow::continue_msg &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/ComTree.h" line="30" column="3" bodyfile="submodules/mathic/src/mathic/ComTree.h" bodystart="30" bodyend="124"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_com_tree_ac32096d4408cf8e485ab6158623d557e_1ac32096d4408cf8e485ab6158623d557e" prot="private" virt="non-virtual"><scope>mathic::ComTree</scope><name>_array</name></member>
+      <member refid="classmathic_1_1_com_tree_a5ff668aa03c7f48d176f72afac5c5dc3_1a5ff668aa03c7f48d176f72afac5c5dc3" prot="private" virt="non-virtual"><scope>mathic::ComTree</scope><name>_arrayKeepAlive</name></member>
+      <member refid="classmathic_1_1_com_tree_a535b2767e7233373717ab08cbdb7f480_1a535b2767e7233373717ab08cbdb7f480" prot="private" virt="non-virtual"><scope>mathic::ComTree</scope><name>_capacityEnd</name></member>
+      <member refid="classmathic_1_1_com_tree_a07196a190de1992743ec4f649bacefb7_1a07196a190de1992743ec4f649bacefb7" prot="private" virt="non-virtual"><scope>mathic::ComTree</scope><name>_lastLeaf</name></member>
+      <member refid="classmathic_1_1_com_tree_a970517d91222da54b0f6a6a845be5d99_1a970517d91222da54b0f6a6a845be5d99" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>capacity</name></member>
+      <member refid="classmathic_1_1_com_tree_a1f9dc2649764a26ee4edba7c9b57d5dd_1a1f9dc2649764a26ee4edba7c9b57d5dd" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>clear</name></member>
+      <member refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>ComTree</name></member>
+      <member refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>ComTree</name></member>
+      <member refid="classmathic_1_1_com_tree_a89f0975acf13490ade55b96cee93ebf3_1a89f0975acf13490ade55b96cee93ebf3" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>ComTree</name></member>
+      <member refid="classmathic_1_1_com_tree_a679dbdcfac375206c97eace36d0cb7c1_1a679dbdcfac375206c97eace36d0cb7c1" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>empty</name></member>
+      <member refid="classmathic_1_1_com_tree_a8e3e42910a72ab9d7dbce556ea6353df_1a8e3e42910a72ab9d7dbce556ea6353df" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>getMemoryUse</name></member>
+      <member refid="classmathic_1_1_com_tree_aa868bf9b44088cd6d2fd467bceeeef4b_1aa868bf9b44088cd6d2fd467bceeeef4b" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>hasFreeCapacity</name></member>
+      <member refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>increaseCapacity</name></member>
+      <member refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>isValid</name></member>
+      <member refid="classmathic_1_1_com_tree_ac86817a2fb48f9e79a205237790dee7b_1ac86817a2fb48f9e79a205237790dee7b" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>lastLeaf</name></member>
+      <member refid="classmathic_1_1_com_tree_a6f5cda2e0d6a225d5054318db33ebfc0_1a6f5cda2e0d6a225d5054318db33ebfc0" prot="private" virt="non-virtual"><scope>mathic::ComTree</scope><name>operator=</name></member>
+      <member refid="classmathic_1_1_com_tree_a8c29437bc8f83fe95ee5d4c1949f4f77_1a8c29437bc8f83fe95ee5d4c1949f4f77" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>operator[]</name></member>
+      <member refid="classmathic_1_1_com_tree_a9dbda4cb97f3840102f6b978a66eb6b7_1a9dbda4cb97f3840102f6b978a66eb6b7" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>operator[]</name></member>
+      <member refid="classmathic_1_1_com_tree_a5c11bf8c79e76df99b3a62413a2d7a27_1a5c11bf8c79e76df99b3a62413a2d7a27" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>popBack</name></member>
+      <member refid="classmathic_1_1_com_tree_adb2ece3393c62492ebd85ff008807016_1adb2ece3393c62492ebd85ff008807016" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>print</name></member>
+      <member refid="classmathic_1_1_com_tree_aa01d1de034a417c78c51c99e22cb3fa1_1aa01d1de034a417c78c51c99e22cb3fa1" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>pushBack</name></member>
+      <member refid="classmathic_1_1_com_tree_a611a07554af867e8cfaa6a7ef0eb6e8a_1a611a07554af867e8cfaa6a7ef0eb6e8a" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>pushBackWithCapacity</name></member>
+      <member refid="classmathic_1_1_com_tree_a250fbc81d190d22cf2849b265af40da2_1a250fbc81d190d22cf2849b265af40da2" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>size</name></member>
+      <member refid="classmathic_1_1_com_tree_a2570538f22249b1a87d7c2dcefde3bed_1a2570538f22249b1a87d7c2dcefde3bed" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>swap</name></member>
+      <member refid="classmathic_1_1_com_tree_acceb69e04d1de047c90a9c38827c6bc8_1acceb69e04d1de047c90a9c38827c6bc8" prot="public" virt="non-virtual"><scope>mathic::ComTree</scope><name>~ComTree</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

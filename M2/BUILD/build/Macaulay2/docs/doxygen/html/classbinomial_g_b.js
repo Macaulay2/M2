@@ -1,0 +1,25 @@
+var classbinomial_g_b =
+[
+    [ "gbmin_elem", "structbinomial_g_b_1_1gbmin__elem.html", "structbinomial_g_b_1_1gbmin__elem" ],
+    [ "monomial_list", "structbinomial_g_b_1_1monomial__list.html", "structbinomial_g_b_1_1monomial__list" ],
+    [ "iterator", "classbinomial_g_b_1_1iterator.html", "classbinomial_g_b_1_1iterator" ],
+    [ "binomialGB", "classbinomial_g_b_a0890f9edefe9b6e02968aae45ac42944.html#a0890f9edefe9b6e02968aae45ac42944", null ],
+    [ "~binomialGB", "classbinomial_g_b_ac280f0a76dc9e79b1a0f429c2953959d.html#ac280f0a76dc9e79b1a0f429c2953959d", null ],
+    [ "begin", "classbinomial_g_b_a12eca205a36b0c007dc4cb6756d67e01.html#a12eca205a36b0c007dc4cb6756d67e01", null ],
+    [ "debug_display", "classbinomial_g_b_a05724c57849f424dfdf54c8296c4801c.html#a05724c57849f424dfdf54c8296c4801c", null ],
+    [ "end", "classbinomial_g_b_afc740f3bbbb25e1f2ac2bfae4c3eda0f.html#afc740f3bbbb25e1f2ac2bfae4c3eda0f", null ],
+    [ "enlarge", "classbinomial_g_b_ac0cffa3ca1889a87c829662e92c2bbb1.html#ac0cffa3ca1889a87c829662e92c2bbb1", null ],
+    [ "find_divisor", "classbinomial_g_b_a3f7ac6dda22bf9c2e3f6fc2e8724b834.html#a3f7ac6dda22bf9c2e3f6fc2e8724b834", null ],
+    [ "find_divisor", "classbinomial_g_b_a7e8511a213d39fe49b6cc83061bacfce.html#a7e8511a213d39fe49b6cc83061bacfce", null ],
+    [ "ideal_quotient", "classbinomial_g_b_aaafd0bb2e5e73f7ca55c31a8e8bcfb81.html#aaafd0bb2e5e73f7ca55c31a8e8bcfb81", null ],
+    [ "make_new_pairs", "classbinomial_g_b_af9eef7673c48c15fab53b12f53daad49.html#af9eef7673c48c15fab53b12f53daad49", null ],
+    [ "minimalize_and_insert", "classbinomial_g_b_ab4dc57aeae47627ac34f39f84c45c5f1.html#ab4dc57aeae47627ac34f39f84c45c5f1", null ],
+    [ "n_masks", "classbinomial_g_b_a85efd8fa26f37a2299f35843f4103297.html#a85efd8fa26f37a2299f35843f4103297", null ],
+    [ "reduce", "classbinomial_g_b_a5004e8d4974fa97fb5eb1201c7a52863.html#a5004e8d4974fa97fb5eb1201c7a52863", null ],
+    [ "reduce_monomial", "classbinomial_g_b_a66b63999d6f49ab0e0d7f973c1dac240.html#a66b63999d6f49ab0e0d7f973c1dac240", null ],
+    [ "remove_monomial_list", "classbinomial_g_b_a2db434f5e423cdcd816f36c69026ec34.html#a2db434f5e423cdcd816f36c69026ec34", null ],
+    [ "_max_degree", "classbinomial_g_b_ad65f14278524f1b91e52e04d7c293391.html#ad65f14278524f1b91e52e04d7c293391", null ],
+    [ "first", "classbinomial_g_b_ae1885eed854eccb80bc7fb5efc3adf9a.html#ae1885eed854eccb80bc7fb5efc3adf9a", null ],
+    [ "is_homogeneous_prime", "classbinomial_g_b_a976881134a7d32c5adae962feda7aca0.html#a976881134a7d32c5adae962feda7aca0", null ],
+    [ "R", "classbinomial_g_b_ad2e317194e45de767911f5a7a7a1d66d.html#ad2e317194e45de767911f5a7a7a1d66d", null ]
+];

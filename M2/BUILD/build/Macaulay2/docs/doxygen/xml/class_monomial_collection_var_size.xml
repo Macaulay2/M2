@@ -1,0 +1,260 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monomial_collection_var_size" kind="class" language="C++" prot="public">
+    <compoundname>MonomialCollectionVarSize</compoundname>
+    <includes refid="monomial-sets_8hpp" local="no">monomial-sets.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_monomial_collection_var_size_ac75dd2be5a7e914c387d31674eab42bc_1ac75dd2be5a7e914c387d31674eab42bc" prot="private" static="no" mutable="no">
+        <type><ref refid="class_monomial_set_var_size" kindref="compound">MonomialSetVarSize</ref></type>
+        <definition>MonomialSetVarSize MonomialCollectionVarSize::mSet</definition>
+        <argsstring></argsstring>
+        <name>mSet</name>
+        <qualifiedname>MonomialCollectionVarSize::mSet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="396" column="22" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="396" bodyend="-1"/>
+        <referencedby refid="class_monomial_collection_var_size_a8016f69f5c28bc0e2dd1829d29ac249c_1a8016f69f5c28bc0e2dd1829d29ac249c" compoundref="monomial-sets_8hpp" startline="386" endline="389">find</referencedby>
+        <referencedby refid="class_monomial_collection_var_size_afc4d0d8b0767d19d9f0bb1756a1e3bfb_1afc4d0d8b0767d19d9f0bb1756a1e3bfb" compoundref="monomial-sets_8hpp" startline="376" endline="383">findOrInsertTopInternedMonomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_collection_var_size_ae17dbea2ff0677073d1ddd9f24f454f3_1ae17dbea2ff0677073d1ddd9f24f454f3" prot="private" static="no" mutable="no">
+        <type><ref refid="class_monomial_memory_space" kindref="compound">MonomialMemorySpace</ref></type>
+        <definition>MonomialMemorySpace MonomialCollectionVarSize::mMonomialMemory</definition>
+        <argsstring></argsstring>
+        <name>mMonomialMemory</name>
+        <qualifiedname>MonomialCollectionVarSize::mMonomialMemory</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="397" column="23" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="397" bodyend="-1"/>
+        <referencedby refid="class_monomial_collection_var_size_a60a81c45bd34efd93e8c38ea074c40df_1a60a81c45bd34efd93e8c38ea074c40df" compoundref="monomial-sets_8hpp" startline="366" endline="372">findOrInsert</referencedby>
+        <referencedby refid="class_monomial_collection_var_size_afc4d0d8b0767d19d9f0bb1756a1e3bfb_1afc4d0d8b0767d19d9f0bb1756a1e3bfb" compoundref="monomial-sets_8hpp" startline="376" endline="383">findOrInsertTopInternedMonomial</referencedby>
+        <referencedby refid="class_monomial_collection_var_size_ac2ba3ffe7cbfcab031f831088fb30746_1ac2ba3ffe7cbfcab031f831088fb30746" compoundref="monomial-sets_8hpp" startline="356" endline="356">monomialMemorySpace</referencedby>
+        <referencedby refid="class_monomial_collection_var_size_a68c293e94d155abf645f830ed2d15135_1a68c293e94d155abf645f830ed2d15135" compoundref="monomial-sets_8hpp" startline="359" endline="359">size</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_monomial_collection_var_size_ad0041d29215d8bde92c39eb66fba363f_1ad0041d29215d8bde92c39eb66fba363f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonomialCollectionVarSize::MonomialCollectionVarSize</definition>
+        <argsstring>()</argsstring>
+        <name>MonomialCollectionVarSize</name>
+        <qualifiedname>MonomialCollectionVarSize::MonomialCollectionVarSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="347" column="3" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="347" bodyend="347"/>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_collection_var_size_ac2ba3ffe7cbfcab031f831088fb30746_1ac2ba3ffe7cbfcab031f831088fb30746" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_monomial_memory_space" kindref="compound">MonomialMemorySpace</ref> &amp;</type>
+        <definition>MonomialMemorySpace &amp; MonomialCollectionVarSize::monomialMemorySpace</definition>
+        <argsstring>()</argsstring>
+        <name>monomialMemorySpace</name>
+        <qualifiedname>MonomialCollectionVarSize::monomialMemorySpace</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="356" column="23" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="356" bodyend="356"/>
+        <references refid="class_monomial_collection_var_size_ae17dbea2ff0677073d1ddd9f24f454f3_1ae17dbea2ff0677073d1ddd9f24f454f3" compoundref="monomial-sets_8hpp" startline="397">mMonomialMemory</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_collection_var_size_a68c293e94d155abf645f830ed2d15135_1a68c293e94d155abf645f830ed2d15135" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t MonomialCollectionVarSize::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>MonomialCollectionVarSize::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="359" column="15" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="359" bodyend="359"/>
+        <references refid="class_monomial_collection_var_size_ae17dbea2ff0677073d1ddd9f24f454f3_1ae17dbea2ff0677073d1ddd9f24f454f3" compoundref="monomial-sets_8hpp" startline="397">mMonomialMemory</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_collection_var_size_a60a81c45bd34efd93e8c38ea074c40df_1a60a81c45bd34efd93e8c38ea074c40df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::pair&lt; const <ref refid="classint" kindref="compound">int</ref> *, <ref refid="classbool" kindref="compound">bool</ref> &gt;</type>
+        <definition>std::pair&lt; const int *, bool &gt; MonomialCollectionVarSize::findOrInsert</definition>
+        <argsstring>(const int *monom)</argsstring>
+        <name>findOrInsert</name>
+        <qualifiedname>MonomialCollectionVarSize::findOrInsert</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>monom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="366" column="13" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="366" bodyend="372"/>
+        <references refid="class_monomial_collection_var_size_afc4d0d8b0767d19d9f0bb1756a1e3bfb_1afc4d0d8b0767d19d9f0bb1756a1e3bfb" compoundref="monomial-sets_8hpp" startline="376" endline="383">findOrInsertTopInternedMonomial</references>
+        <references refid="class_monomial_collection_var_size_ae17dbea2ff0677073d1ddd9f24f454f3_1ae17dbea2ff0677073d1ddd9f24f454f3" compoundref="monomial-sets_8hpp" startline="397">mMonomialMemory</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_collection_var_size_afc4d0d8b0767d19d9f0bb1756a1e3bfb_1afc4d0d8b0767d19d9f0bb1756a1e3bfb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::pair&lt; const <ref refid="classint" kindref="compound">int</ref> *, <ref refid="classbool" kindref="compound">bool</ref> &gt;</type>
+        <definition>std::pair&lt; const int *, bool &gt; MonomialCollectionVarSize::findOrInsertTopInternedMonomial</definition>
+        <argsstring>(int *&amp;monom)</argsstring>
+        <name>findOrInsertTopInternedMonomial</name>
+        <qualifiedname>MonomialCollectionVarSize::findOrInsertTopInternedMonomial</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *&amp;</type>
+          <declname>monom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="376" column="13" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="376" bodyend="383"/>
+        <references refid="class_monomial_collection_var_size_ae17dbea2ff0677073d1ddd9f24f454f3_1ae17dbea2ff0677073d1ddd9f24f454f3" compoundref="monomial-sets_8hpp" startline="397">mMonomialMemory</references>
+        <references refid="class_monomial_collection_var_size_ac75dd2be5a7e914c387d31674eab42bc_1ac75dd2be5a7e914c387d31674eab42bc" compoundref="monomial-sets_8hpp" startline="396">mSet</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_monomial_collection_var_size_a60a81c45bd34efd93e8c38ea074c40df_1a60a81c45bd34efd93e8c38ea074c40df" compoundref="monomial-sets_8hpp" startline="366" endline="372">findOrInsert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_collection_var_size_a8016f69f5c28bc0e2dd1829d29ac249c_1a8016f69f5c28bc0e2dd1829d29ac249c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>const int * MonomialCollectionVarSize::find</definition>
+        <argsstring>(const int *monom) const</argsstring>
+        <name>find</name>
+        <qualifiedname>MonomialCollectionVarSize::find</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>monom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="386" column="13" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="386" bodyend="389"/>
+        <references refid="class_monomial_collection_var_size_ac75dd2be5a7e914c387d31674eab42bc_1ac75dd2be5a7e914c387d31674eab42bc" compoundref="monomial-sets_8hpp" startline="396">mSet</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Variable-size counterpart of <computeroutput><ref refid="class_monomial_collection_fixed_size" kindref="compound">MonomialCollectionFixedSize</ref></computeroutput>: pairs a <computeroutput><ref refid="class_monomial_set_var_size" kindref="compound">MonomialSetVarSize</ref></computeroutput> with its own <computeroutput><ref refid="class_monomial_memory_space" kindref="compound">MonomialMemorySpace</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput>findOrInsert(monom)</computeroutput> allocates <computeroutput>*monom</computeroutput> ints in the arena, copies the monomial in, attempts to intern the pointer, and pops on duplicate. Same intern-or-pop pattern as the fixed-size variant with the length read from the monomial&apos;s first int. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="7">
+        <label>K</label>
+      </node>
+      <node id="1">
+        <label>MonomialCollectionVarSize</label>
+        <link refid="class_monomial_collection_var_size"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mSet</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mMonomialMemory</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MonomialHashAndEqVarSize</label>
+        <link refid="class_monomial_hash_and_eq_var_size"/>
+      </node>
+      <node id="8">
+        <label>MonomialMemorySpace</label>
+        <link refid="class_monomial_memory_space"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mCount</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MonomialSetVarSize</label>
+        <link refid="class_monomial_set_var_size"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mMonomialHashAndEq</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mHash</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>char</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="10">
+        <label>memt::Arena</label>
+        <link refid="classmemt_1_1_arena"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_scratchArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>size_t</label>
+      </node>
+      <node id="6">
+        <label>std::unordered_set&lt; K &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>keys</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::unordered_set&lt; const int *, MonomialHashAndEqVarSize, MonomialHashAndEqVarSize &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>keys</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; const int *, MonomialHashAndEqVarSize, MonomialHashAndEqVarSize &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/monomial-sets.hpp" line="344" column="1" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="345" bodyend="398"/>
+    <listofallmembers>
+      <member refid="class_monomial_collection_var_size_a8016f69f5c28bc0e2dd1829d29ac249c_1a8016f69f5c28bc0e2dd1829d29ac249c" prot="public" virt="non-virtual"><scope>MonomialCollectionVarSize</scope><name>find</name></member>
+      <member refid="class_monomial_collection_var_size_a60a81c45bd34efd93e8c38ea074c40df_1a60a81c45bd34efd93e8c38ea074c40df" prot="public" virt="non-virtual"><scope>MonomialCollectionVarSize</scope><name>findOrInsert</name></member>
+      <member refid="class_monomial_collection_var_size_afc4d0d8b0767d19d9f0bb1756a1e3bfb_1afc4d0d8b0767d19d9f0bb1756a1e3bfb" prot="public" virt="non-virtual"><scope>MonomialCollectionVarSize</scope><name>findOrInsertTopInternedMonomial</name></member>
+      <member refid="class_monomial_collection_var_size_ae17dbea2ff0677073d1ddd9f24f454f3_1ae17dbea2ff0677073d1ddd9f24f454f3" prot="private" virt="non-virtual"><scope>MonomialCollectionVarSize</scope><name>mMonomialMemory</name></member>
+      <member refid="class_monomial_collection_var_size_ad0041d29215d8bde92c39eb66fba363f_1ad0041d29215d8bde92c39eb66fba363f" prot="public" virt="non-virtual"><scope>MonomialCollectionVarSize</scope><name>MonomialCollectionVarSize</name></member>
+      <member refid="class_monomial_collection_var_size_ac2ba3ffe7cbfcab031f831088fb30746_1ac2ba3ffe7cbfcab031f831088fb30746" prot="public" virt="non-virtual"><scope>MonomialCollectionVarSize</scope><name>monomialMemorySpace</name></member>
+      <member refid="class_monomial_collection_var_size_ac75dd2be5a7e914c387d31674eab42bc_1ac75dd2be5a7e914c387d31674eab42bc" prot="private" virt="non-virtual"><scope>MonomialCollectionVarSize</scope><name>mSet</name></member>
+      <member refid="class_monomial_collection_var_size_a68c293e94d155abf645f830ed2d15135_1a68c293e94d155abf645f830ed2d15135" prot="public" virt="non-virtual"><scope>MonomialCollectionVarSize</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

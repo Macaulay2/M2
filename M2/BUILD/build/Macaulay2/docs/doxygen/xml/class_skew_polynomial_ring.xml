@@ -1,0 +1,1616 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_skew_polynomial_ring" kind="class" language="C++" prot="public">
+    <compoundname>SkewPolynomialRing</compoundname>
+    <basecompoundref refid="class_poly_ring" prot="public" virt="non-virtual">PolyRing</basecompoundref>
+    <includes refid="skewpoly_8hpp" local="no">skewpoly.hpp</includes>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_skew_polynomial_ring_a59a1eaf2c5cbd40fceb3f71d72994479_1a59a1eaf2c5cbd40fceb3f71d72994479" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SkewPolynomialRing::initialize_skew</definition>
+        <argsstring>(M2_arrayint skewvars)</argsstring>
+        <name>initialize_skew</name>
+        <qualifiedname>SkewPolynomialRing::initialize_skew</qualifiedname>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>skewvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="58" column="8" bodyfile="Macaulay2/e/skewpoly.cpp" bodystart="8" bodyend="13"/>
+        <references refid="class_polynomial_ring_ade8a4a2ccd361d0958bc6a22aa95530b_1ade8a4a2ccd361d0958bc6a22aa95530b" compoundref="_macaulay2_2e_2polyring_8hpp" startline="99">PolynomialRing::is_skew_</references>
+        <references refid="class_polynomial_ring_af9a783b0abb261d18ab01dc189dcb833_1af9a783b0abb261d18ab01dc189dcb833" compoundref="_macaulay2_2e_2polyring_8hpp" startline="116">PolynomialRing::nvars_</references>
+        <references refid="class_polynomial_ring_a46236cd31fb7cb00825673ac4b691675_1a46236cd31fb7cb00825673ac4b691675" compoundref="_macaulay2_2e_2polyring_8hpp" startline="100">PolynomialRing::skew_</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_a0adde18cb1db286d31db3868157bb632_1a0adde18cb1db286d31db3868157bb632" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SkewPolynomialRing::SkewPolynomialRing</definition>
+        <argsstring>()</argsstring>
+        <name>SkewPolynomialRing</name>
+        <qualifiedname>SkewPolynomialRing::SkewPolynomialRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="60" column="3" bodyfile="Macaulay2/e/skewpoly.hpp" bodystart="60" bodyend="60"/>
+        <referencedby refid="class_skew_polynomial_ring_a458a48c52e6ca878d6b414e32526e700_1a458a48c52e6ca878d6b414e32526e700" compoundref="skewpoly_8hpp" startline="77" endline="77">cast_to_SkewPolynomialRing</referencedby>
+        <referencedby refid="class_skew_polynomial_ring_a8982d7c20fdac41618d205cb77848607_1a8982d7c20fdac41618d205cb77848607" compoundref="skewpoly_8hpp" startline="73" endline="76">cast_to_SkewPolynomialRing</referencedby>
+        <referencedby refid="class_skew_polynomial_ring_ac59fb8cfb8c0f8265352943eb2afe27e_1ac59fb8cfb8c0f8265352943eb2afe27e" compoundref="skewpoly_8cpp" startline="15" endline="25">create</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_aa04cf3464fb3b142956ad06175f3ed14_1aa04cf3464fb3b142956ad06175f3ed14" prot="private" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>SkewPolynomialRing::~SkewPolynomialRing</definition>
+        <argsstring>()</argsstring>
+        <name>~SkewPolynomialRing</name>
+        <qualifiedname>SkewPolynomialRing::~SkewPolynomialRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="61" column="11" bodyfile="Macaulay2/e/skewpoly.cpp" bodystart="7" bodyend="7"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_skew_polynomial_ring_ac59fb8cfb8c0f8265352943eb2afe27e_1ac59fb8cfb8c0f8265352943eb2afe27e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_skew_polynomial_ring" kindref="compound">SkewPolynomialRing</ref> *</type>
+        <definition>SkewPolynomialRing * SkewPolynomialRing::create</definition>
+        <argsstring>(const Ring *K, const Monoid *M, M2_arrayint skewvars)</argsstring>
+        <name>create</name>
+        <qualifiedname>SkewPolynomialRing::create</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>K</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>skewvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="64" column="29" bodyfile="Macaulay2/e/skewpoly.cpp" bodystart="15" bodyend="25"/>
+        <references refid="class_g_b_ring_a10f2695991307adabbeb34846253fb99_1a10f2695991307adabbeb34846253fb99" compoundref="gbring_8cpp" startline="147" endline="152">GBRing::create_SkewPolynomialRing</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_skew_polynomial_ring_a0adde18cb1db286d31db3868157bb632_1a0adde18cb1db286d31db3868157bb632" compoundref="skewpoly_8hpp" startline="60" endline="60">SkewPolynomialRing</references>
+        <referencedby refid="interface_2ring_8cpp_a8f9ead911fec921750c05450ff0ede4c_1a8f9ead911fec921750c05450ff0ede4c" compoundref="interface_2ring_8cpp" startline="153" endline="173">IM2_Ring_skew_polyring</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_skew_polynomial_ring_a8e9777e23b0a684472d7c617ab3ed677_1a8e9777e23b0a684472d7c617ab3ed677" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SkewPolynomialRing::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>SkewPolynomialRing::text_out</qualifiedname>
+        <reimplements refid="class_poly_ring_a09838eafcd91b9d38db5bf3569166ad5_1a09838eafcd91b9d38db5bf3569166ad5">text_out</reimplements>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="68" column="8" bodyfile="Macaulay2/e/skewpoly.cpp" bodystart="27" bodyend="33"/>
+        <references refid="class_polynomial_ring_a54aee749a7364fd81e2460f691480fdc_1a54aee749a7364fd81e2460f691480fdc" compoundref="_macaulay2_2e_2polyring_8hpp" startline="119">PolynomialRing::K_</references>
+        <references refid="class_polynomial_ring_a7ea73f5905aee6f71bb8a4f1ce54c494_1a7ea73f5905aee6f71bb8a4f1ce54c494" compoundref="_macaulay2_2e_2polyring_8hpp" startline="120">PolynomialRing::M_</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_a54c3c67d14b01ed5c4506be59ee80237_1a54c3c67d14b01ed5c4506be59ee80237" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool SkewPolynomialRing::has_gcd</definition>
+        <argsstring>() const</argsstring>
+        <name>has_gcd</name>
+        <qualifiedname>SkewPolynomialRing::has_gcd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="70" column="16" bodyfile="Macaulay2/e/skewpoly.hpp" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_a49e6b8f32ae4fdd35ec3d4661c843e27_1a49e6b8f32ae4fdd35ec3d4661c843e27" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool SkewPolynomialRing::is_skew_commutative_ring</definition>
+        <argsstring>() const</argsstring>
+        <name>is_skew_commutative_ring</name>
+        <qualifiedname>SkewPolynomialRing::is_skew_commutative_ring</qualifiedname>
+        <reimplements refid="class_polynomial_ring_ad6b017344266edbc2cf1ef9dc1c056d5_1ad6b017344266edbc2cf1ef9dc1c056d5">is_skew_commutative_ring</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="71" column="16" bodyfile="Macaulay2/e/skewpoly.hpp" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_aa20f99765f2d3ff595bb2e43af1784c3_1aa20f99765f2d3ff595bb2e43af1784c3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool SkewPolynomialRing::is_commutative_ring</definition>
+        <argsstring>() const</argsstring>
+        <name>is_commutative_ring</name>
+        <qualifiedname>SkewPolynomialRing::is_commutative_ring</qualifiedname>
+        <reimplements refid="class_polynomial_ring_a3972b19382ce81873a264f8b5fb63c3a_1a3972b19382ce81873a264f8b5fb63c3a">is_commutative_ring</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="72" column="16" bodyfile="Macaulay2/e/skewpoly.hpp" bodystart="72" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_a8982d7c20fdac41618d205cb77848607_1a8982d7c20fdac41618d205cb77848607" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>const <ref refid="class_skew_polynomial_ring" kindref="compound">SkewPolynomialRing</ref> *</type>
+        <definition>virtual const SkewPolynomialRing * SkewPolynomialRing::cast_to_SkewPolynomialRing</definition>
+        <argsstring>() const</argsstring>
+        <name>cast_to_SkewPolynomialRing</name>
+        <qualifiedname>SkewPolynomialRing::cast_to_SkewPolynomialRing</qualifiedname>
+        <reimplements refid="class_ring_a529f658255bd3bea346554af199d016f_1a529f658255bd3bea346554af199d016f">cast_to_SkewPolynomialRing</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="73" column="36" bodyfile="Macaulay2/e/skewpoly.hpp" bodystart="73" bodyend="76"/>
+        <references refid="class_skew_polynomial_ring_a0adde18cb1db286d31db3868157bb632_1a0adde18cb1db286d31db3868157bb632" compoundref="skewpoly_8hpp" startline="60" endline="60">SkewPolynomialRing</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_a458a48c52e6ca878d6b414e32526e700_1a458a48c52e6ca878d6b414e32526e700" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_skew_polynomial_ring" kindref="compound">SkewPolynomialRing</ref> *</type>
+        <definition>virtual SkewPolynomialRing * SkewPolynomialRing::cast_to_SkewPolynomialRing</definition>
+        <argsstring>()</argsstring>
+        <name>cast_to_SkewPolynomialRing</name>
+        <qualifiedname>SkewPolynomialRing::cast_to_SkewPolynomialRing</qualifiedname>
+        <reimplements refid="class_ring_a628d0257ad367b9e87ae6706e531b95e_1a628d0257ad367b9e87ae6706e531b95e">cast_to_SkewPolynomialRing</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="77" column="30" bodyfile="Macaulay2/e/skewpoly.hpp" bodystart="77" bodyend="77"/>
+        <references refid="class_skew_polynomial_ring_a0adde18cb1db286d31db3868157bb632_1a0adde18cb1db286d31db3868157bb632" compoundref="skewpoly_8hpp" startline="60" endline="60">SkewPolynomialRing</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_a1197d0130679824af7a6e6fe2a9ad586_1a1197d0130679824af7a6e6fe2a9ad586" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem SkewPolynomialRing::power</definition>
+        <argsstring>(const ring_elem f, mpz_srcptr n) const</argsstring>
+        <name>power</name>
+        <qualifiedname>SkewPolynomialRing::power</qualifiedname>
+        <reimplements refid="class_poly_ring_a2c8d855ee69bda82b43000325ced0863_1a2c8d855ee69bda82b43000325ced0863">power</reimplements>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Exponentiation. This is the default function, if a class doesn&apos;t define this. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="78" column="21" bodyfile="Macaulay2/e/skewpoly.cpp" bodystart="98" bodyend="105"/>
+        <references refid="class_ring_z_z_a93f60c7348caad7f332820b455fb3735_1a93f60c7348caad7f332820b455fb3735" compoundref="_z_z_8cpp" startline="46" endline="53">RingZZ::get_si</references>
+        <references refid="class_skew_polynomial_ring_a1197d0130679824af7a6e6fe2a9ad586_1a1197d0130679824af7a6e6fe2a9ad586" compoundref="skewpoly_8cpp" startline="98" endline="105">power</references>
+        <referencedby refid="class_skew_polynomial_ring_a1197d0130679824af7a6e6fe2a9ad586_1a1197d0130679824af7a6e6fe2a9ad586" compoundref="skewpoly_8cpp" startline="98" endline="105">power</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_a9cf7ff7ffea44ab6a035b4ae7bdf7833_1a9cf7ff7ffea44ab6a035b4ae7bdf7833" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem SkewPolynomialRing::power</definition>
+        <argsstring>(const ring_elem f, int n) const</argsstring>
+        <name>power</name>
+        <qualifiedname>SkewPolynomialRing::power</qualifiedname>
+        <reimplements refid="class_poly_ring_aecc703dee7b68aae6eb62f9a8cb83515_1aecc703dee7b68aae6eb62f9a8cb83515">power</reimplements>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="79" column="21" bodyfile="Macaulay2/e/skewpoly.cpp" bodystart="107" bodyend="110"/>
+        <references refid="class_ring_ad53bd105b7dcfb35f91908bbec8f460f_1ad53bd105b7dcfb35f91908bbec8f460f" compoundref="ring_8cpp" startline="109" endline="164">Ring::power</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_polynomial_ring_ae641d2cb29c7a8ece2560aee13d47704_1ae641d2cb29c7a8ece2560aee13d47704" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem SkewPolynomialRing::antipode</definition>
+        <argsstring>(const ring_elem f) const</argsstring>
+        <name>antipode</name>
+        <qualifiedname>SkewPolynomialRing::antipode</qualifiedname>
+        <reimplements refid="class_ring_a91c9c1b47e0968110b4858c3681473e5_1a91c9c1b47e0968110b4858c3681473e5">antipode</reimplements>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="84" column="13" bodyfile="Macaulay2/e/skewpoly.cpp" bodystart="37" bodyend="65"/>
+        <references refid="monoid_8hpp_a337de43f0792d2f0364a64ba9905116d_1a337de43f0792d2f0364a64ba9905116d" compoundref="monoid_8hpp" startline="60">ALLOCATE_EXPONENTS</references>
+        <references refid="struct_nterm_a3eb9c9daff3bb4f2a8052be2bfea895a_1a3eb9c9daff3bb4f2a8052be2bfea895a" compoundref="ringelem_8hpp" startline="154">Nterm::coeff</references>
+        <references refid="class_polynomial_ring_a4b4649185542c0e0755752d880a56cb3_1a4b4649185542c0e0755752d880a56cb3" compoundref="_macaulay2_2e_2polyring_8hpp" startline="117">PolynomialRing::exp_size</references>
+        <references refid="class_polynomial_ring_a54aee749a7364fd81e2460f691480fdc_1a54aee749a7364fd81e2460f691480fdc" compoundref="_macaulay2_2e_2polyring_8hpp" startline="119">PolynomialRing::K_</references>
+        <references refid="class_polynomial_ring_a7ea73f5905aee6f71bb8a4f1ce54c494_1a7ea73f5905aee6f71bb8a4f1ce54c494" compoundref="_macaulay2_2e_2polyring_8hpp" startline="120">PolynomialRing::M_</references>
+        <references refid="struct_nterm_a7d8ae0809fcf1cf7cdb9aa339538e6e7_1a7d8ae0809fcf1cf7cdb9aa339538e6e7" compoundref="ringelem_8hpp" startline="156">Nterm::monom</references>
+        <references refid="class_poly_ring_acdd279664ded1684b9098f7a8b8b0f1e_1acdd279664ded1684b9098f7a8b8b0f1e" compoundref="poly_8cpp" startline="146" endline="159">PolyRing::new_term</references>
+        <references refid="struct_nterm_a395044af0f071742b5d1fdeb74a9efa2_1a395044af0f071742b5d1fdeb74a9efa2" compoundref="ringelem_8hpp" startline="153">Nterm::next</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="skewpoly_8cpp_a380b5b0640f413f8ceace3dbeea4f22a_1a380b5b0640f413f8ceace3dbeea4f22a" compoundref="skewpoly_8cpp" startline="35" endline="35">sign4</references>
+        <references refid="class_polynomial_ring_a46236cd31fb7cb00825673ac4b691675_1a46236cd31fb7cb00825673ac4b691675" compoundref="_macaulay2_2e_2polyring_8hpp" startline="100">PolynomialRing::skew_</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_skew_polynomial_ring_af9e35a18f56deb892f276aadfffda776_1af9e35a18f56deb892f276aadfffda776" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem SkewPolynomialRing::mult_by_term</definition>
+        <argsstring>(const ring_elem f, const ring_elem c, const int *m) const</argsstring>
+        <name>mult_by_term</name>
+        <qualifiedname>SkewPolynomialRing::mult_by_term</qualifiedname>
+        <reimplements refid="class_polynomial_ring_a0d48d6b7f4d7cbde42b2619185f5a55a_1a0d48d6b7f4d7cbde42b2619185f5a55a">mult_by_term</reimplements>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skewpoly.hpp" line="87" column="21" bodyfile="Macaulay2/e/skewpoly.cpp" bodystart="67" bodyend="96"/>
+        <references refid="monoid_8hpp_a337de43f0792d2f0364a64ba9905116d_1a337de43f0792d2f0364a64ba9905116d" compoundref="monoid_8hpp" startline="60">ALLOCATE_EXPONENTS</references>
+        <references refid="struct_nterm_a3eb9c9daff3bb4f2a8052be2bfea895a_1a3eb9c9daff3bb4f2a8052be2bfea895a" compoundref="ringelem_8hpp" startline="154">Nterm::coeff</references>
+        <references refid="class_polynomial_ring_a4b4649185542c0e0755752d880a56cb3_1a4b4649185542c0e0755752d880a56cb3" compoundref="_macaulay2_2e_2polyring_8hpp" startline="117">PolynomialRing::exp_size</references>
+        <references refid="class_polynomial_ring_a54aee749a7364fd81e2460f691480fdc_1a54aee749a7364fd81e2460f691480fdc" compoundref="_macaulay2_2e_2polyring_8hpp" startline="119">PolynomialRing::K_</references>
+        <references refid="class_polynomial_ring_a7ea73f5905aee6f71bb8a4f1ce54c494_1a7ea73f5905aee6f71bb8a4f1ce54c494" compoundref="_macaulay2_2e_2polyring_8hpp" startline="120">PolynomialRing::M_</references>
+        <references refid="struct_nterm_a7d8ae0809fcf1cf7cdb9aa339538e6e7_1a7d8ae0809fcf1cf7cdb9aa339538e6e7" compoundref="ringelem_8hpp" startline="156">Nterm::monom</references>
+        <references refid="class_poly_ring_acdd279664ded1684b9098f7a8b8b0f1e_1acdd279664ded1684b9098f7a8b8b0f1e" compoundref="poly_8cpp" startline="146" endline="159">PolyRing::new_term</references>
+        <references refid="struct_nterm_a395044af0f071742b5d1fdeb74a9efa2_1a395044af0f071742b5d1fdeb74a9efa2" compoundref="ringelem_8hpp" startline="153">Nterm::next</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="class_polynomial_ring_a46236cd31fb7cb00825673ac4b691675_1a46236cd31fb7cb00825673ac4b691675" compoundref="_macaulay2_2e_2polyring_8hpp" startline="100">PolynomialRing::skew_</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_poly_ring" kindref="compound">PolyRing</ref></computeroutput> subclass for skew-commutative (exterior-style) polynomial rings: the listed <computeroutput>skewvars</computeroutput> anticommute among themselves and square to zero. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Constructed via <computeroutput>create(K, M, skewvars)</computeroutput> <mdash/> <computeroutput>skewvars</computeroutput> is the array of variable indices that participate in the anti-commutation. The data needed to apply the sign changes lives in a <computeroutput><ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref></computeroutput> instance attached to the underlying ring; the <computeroutput><ref refid="class_poly_ring" kindref="compound">PolyRing</ref></computeroutput> virtuals are overridden to consult it during monomial multiplication. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="6">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>SkewPolynomialRing</label>
+        <link refid="class_skew_polynomial_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="15">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="60" relation="public-inheritance">
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="50" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="50" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="60" relation="public-inheritance">
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="70" relation="private-inheritance">
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="72" relation="public-inheritance">
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="66">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="67" relation="private-inheritance">
+        </childnode>
+        <childnode refid="69" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="37">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="72">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="73" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="65" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>CoefficientType</label>
+      </node>
+      <node id="62">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>SkewPolynomialRing</label>
+        <link refid="class_skew_polynomial_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>T</label>
+      </node>
+      <node id="57">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="27">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="31">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="25">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="27" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="29" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>char</label>
+      </node>
+      <node id="14">
+        <label>const ARing *</label>
+      </node>
+      <node id="30">
+        <label>const void *</label>
+      </node>
+      <node id="20">
+        <label>double</label>
+      </node>
+      <node id="46">
+        <label>overflow_type *</label>
+      </node>
+      <node id="43">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="45">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="63">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="9">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="19">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>long</label>
+      </node>
+      <node id="74">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="75" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="77" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="77">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="53" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>mon_part</label>
+      </node>
+      <node id="24">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="23">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="21">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="22">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="7">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="16">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>size_t</label>
+      </node>
+      <node id="54">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>spinLock</label>
+      </node>
+      <node id="52">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="41">
+        <label>std::string</label>
+        <childnode refid="42" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="68">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="31" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="41" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/skewpoly.hpp" line="56" column="1" bodyfile="Macaulay2/e/skewpoly.hpp" bodystart="57" bodyend="90"/>
+    <listofallmembers>
+      <member refid="class_ring_ac5e9bd3e5bd7e2415c1fb3d9833270c6_1ac5e9bd3e5bd7e2415c1fb3d9833270c6" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>_isfield</name></member>
+      <member refid="class_ring_ac8ec4b4da9a18f60fca0c1caccc271df_1ac8ec4b4da9a18f60fca0c1caccc271df" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>_non_unit</name></member>
+      <member refid="class_poly_ring_a8e1d9a5b827b15c4c862bfc12df7a26f_1a8e1d9a5b827b15c4c862bfc12df7a26f" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>add</name></member>
+      <member refid="class_ring_acf98d2d1f7fd61fd52af3c0a17d9d225_1acf98d2d1f7fd61fd52af3c0a17d9d225" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>add_to</name></member>
+      <member refid="class_ring_a2d0064f7d1877548f72015358f32b9ad_1a2d0064f7d1877548f72015358f32b9ad" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>add_vec</name></member>
+      <member refid="class_ring_ac3bf5e7ce2fc181cc6944e8614ca86c1_1ac3bf5e7ce2fc181cc6944e8614ca86c1" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>add_vec_to</name></member>
+      <member refid="class_poly_ring_ad7e94cc68fd8803a5f00c6ebfccb1916_1ad7e94cc68fd8803a5f00c6ebfccb1916" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>allocMonomial</name></member>
+      <member refid="class_poly_ring_a7792b85564be0039384c45133cf361e6_1a7792b85564be0039384c45133cf361e6" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>allocMonomial</name></member>
+      <member refid="class_poly_ring_af432904fa4525e19dfd1cda7fdc126fa_1af432904fa4525e19dfd1cda7fdc126fa" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>allocMonomial</name></member>
+      <member refid="class_polynomial_ring_a670919f1e5b4637a8206f1f90d15c797_1a670919f1e5b4637a8206f1f90d15c797" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>ambientR_</name></member>
+      <member refid="class_skew_polynomial_ring_ae641d2cb29c7a8ece2560aee13d47704_1ae641d2cb29c7a8ece2560aee13d47704" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>antipode</name></member>
+      <member refid="class_ring_ac9e36e18256f782da9a718d44166205d_1ac9e36e18256f782da9a718d44166205d" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>AR</name></member>
+      <member refid="class_ring_aaba7c2b2888d68da40f607b8cd080c83_1aaba7c2b2888d68da40f607b8cd080c83" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_CCC</name></member>
+      <member refid="class_ring_ae52cabc7a69b37fdd83e19536500d2b6_1ae52cabc7a69b37fdd83e19536500d2b6" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_CCC</name></member>
+      <member refid="class_ring_abac24f11adbfb7546d7ee6a4828ed437_1abac24f11adbfb7546d7ee6a4828ed437" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_FractionField</name></member>
+      <member refid="class_ring_a1fb11fa6353e5e36561a9b01cc9f2d20_1a1fb11fa6353e5e36561a9b01cc9f2d20" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_FractionField</name></member>
+      <member refid="class_ring_a818bdd402400742b8311518be00eef0e_1a818bdd402400742b8311518be00eef0e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_GF</name></member>
+      <member refid="class_ring_aee847ac326cb77cce0d985a7e77a77aa_1aee847ac326cb77cce0d985a7e77a77aa" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_GF</name></member>
+      <member refid="class_ring_a80f38d20ffdbd9761dde59eb667b0f88_1a80f38d20ffdbd9761dde59eb667b0f88" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_LocalRing</name></member>
+      <member refid="class_ring_a49da97e00d54309c23fc16c355263f28_1a49da97e00d54309c23fc16c355263f28" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_LocalRing</name></member>
+      <member refid="class_ring_ab2a7cce4d1d8e95b41ad1e671464cae4_1ab2a7cce4d1d8e95b41ad1e671464cae4" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_M2FreeAlgebra</name></member>
+      <member refid="class_ring_a379f9d040522a242df6542269f10ceb7_1a379f9d040522a242df6542269f10ceb7" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_M2FreeAlgebra</name></member>
+      <member refid="class_ring_a286aabec438ab60130a28d32e97f45e8_1a286aabec438ab60130a28d32e97f45e8" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_M2FreeAlgebraOrQuotient</name></member>
+      <member refid="class_ring_aa9f624cb89535780c20845a29c4501aa_1aa9f624cb89535780c20845a29c4501aa" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_M2FreeAlgebraOrQuotient</name></member>
+      <member refid="class_ring_ae36769cd80a4d5dde599decb42148258_1ae36769cd80a4d5dde599decb42148258" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_M2FreeAlgebraQuotient</name></member>
+      <member refid="class_ring_ae025d54cb685db5b0654accddfaa3867_1ae025d54cb685db5b0654accddfaa3867" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_M2FreeAlgebraQuotient</name></member>
+      <member refid="class_polynomial_ring_a9556719b870ca5bc7f1f8dbbadc3278e_1a9556719b870ca5bc7f1f8dbbadc3278e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_PolynomialRing</name></member>
+      <member refid="class_polynomial_ring_a7ac3f8e2776d76f19e513b568890eb8b_1a7ac3f8e2776d76f19e513b568890eb8b" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_PolynomialRing</name></member>
+      <member refid="class_ring_a633e1853e941b3db3efdcfa957f5a9dd_1a633e1853e941b3db3efdcfa957f5a9dd" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_PolyQQ</name></member>
+      <member refid="class_ring_a2423c0028c9f59eafabd699c10f8502e_1a2423c0028c9f59eafabd699c10f8502e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_PolyQQ</name></member>
+      <member refid="class_poly_ring_a366f89993febbf80c1e327163abfd2bc_1a366f89993febbf80c1e327163abfd2bc" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_PolyRing</name></member>
+      <member refid="class_poly_ring_a9776d20b30c84a6fda7a275a904eadf1_1a9776d20b30c84a6fda7a275a904eadf1" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_PolyRing</name></member>
+      <member refid="class_poly_ring_flat_a960fedd31b9169153ed63e0a6da4b768_1a960fedd31b9169153ed63e0a6da4b768" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_PolyRingFlat</name></member>
+      <member refid="class_poly_ring_flat_a0072ea273b7de0660004c3698bcd10af_1a0072ea273b7de0660004c3698bcd10af" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_PolyRingFlat</name></member>
+      <member refid="class_ring_a936e5db9bd5557091bf58a4eb85dea7a_1a936e5db9bd5557091bf58a4eb85dea7a" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_RingZZ</name></member>
+      <member refid="class_ring_a2e0756c7ebf0c7f78f005237cb2210ee_1a2e0756c7ebf0c7f78f005237cb2210ee" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_RingZZ</name></member>
+      <member refid="class_ring_ac2e8a112b1ac67b09e5e9b85bc6f5e62_1ac2e8a112b1ac67b09e5e9b85bc6f5e62" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_RRi</name></member>
+      <member refid="class_ring_a2a18b1414f13b5a35ee57670c173bec4_1a2a18b1414f13b5a35ee57670c173bec4" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_RRi</name></member>
+      <member refid="class_ring_af7efcd50a2c19dfce6f1fdb580ad98e2_1af7efcd50a2c19dfce6f1fdb580ad98e2" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_RRR</name></member>
+      <member refid="class_ring_a80deb359a178d16c5659001278b58f1d_1a80deb359a178d16c5659001278b58f1d" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_RRR</name></member>
+      <member refid="class_ring_af38b874a5a235b2cd03816471371908f_1af38b874a5a235b2cd03816471371908f" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SchurRing</name></member>
+      <member refid="class_ring_a6e433c64e41386e300ab97d562108f8c_1a6e433c64e41386e300ab97d562108f8c" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SchurRing</name></member>
+      <member refid="class_ring_a2acc0205bd15c6529c1c92319e274b8e_1a2acc0205bd15c6529c1c92319e274b8e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SchurRing2</name></member>
+      <member refid="class_ring_a1b42c2eb2d8930bac31c85842731ee0e_1a1b42c2eb2d8930bac31c85842731ee0e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SchurRing2</name></member>
+      <member refid="class_ring_a1f73d5a15475904a20bcb69e503682a0_1a1f73d5a15475904a20bcb69e503682a0" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SchurSnRing</name></member>
+      <member refid="class_ring_ad4200b4ab038508ab52f379fb390c358_1ad4200b4ab038508ab52f379fb390c358" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SchurSnRing</name></member>
+      <member refid="class_skew_polynomial_ring_a8982d7c20fdac41618d205cb77848607_1a8982d7c20fdac41618d205cb77848607" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SkewPolynomialRing</name></member>
+      <member refid="class_skew_polynomial_ring_a458a48c52e6ca878d6b414e32526e700_1a458a48c52e6ca878d6b414e32526e700" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SkewPolynomialRing</name></member>
+      <member refid="class_ring_a648505f7067ef8840614df6824a8e2db_1a648505f7067ef8840614df6824a8e2db" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SolvableAlgebra</name></member>
+      <member refid="class_ring_a646e4db68d5b10caab4320b9a2fd1713_1a646e4db68d5b10caab4320b9a2fd1713" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_SolvableAlgebra</name></member>
+      <member refid="class_ring_afc5332a0192792c7f5bcb93e50c2fdb6_1afc5332a0192792c7f5bcb93e50c2fdb6" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_Tower</name></member>
+      <member refid="class_ring_a82654370d6323a1745382d59962e52f6_1a82654370d6323a1745382d59962e52f6" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_Tower</name></member>
+      <member refid="class_ring_aadf9260e1d99f0b08e3ed003f5308892_1aadf9260e1d99f0b08e3ed003f5308892" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_WeylAlgebra</name></member>
+      <member refid="class_ring_afb361d60c3594b4119c75ef3c9fc39b9_1afb361d60c3594b4119c75ef3c9fc39b9" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_Z_mod</name></member>
+      <member refid="class_ring_ae8e586b1344424c11ffed9d3061dc4ff_1ae8e586b1344424c11ffed9d3061dc4ff" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>cast_to_Z_mod</name></member>
+      <member refid="class_poly_ring_a83641651d9d927ff33e7e550df7e8905_1a83641651d9d927ff33e7e550df7e8905" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>charac</name></member>
+      <member refid="class_ring_a7cd0d24169c1a88e6b93f3d7dbcd3387_1a7cd0d24169c1a88e6b93f3d7dbcd3387" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>characteristic</name></member>
+      <member refid="class_poly_ring_a34c3961c89f7691ed6cf37e3480178d5_1a34c3961c89f7691ed6cf37e3480178d5" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>clear</name></member>
+      <member refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532dab05d5f638a953b716e0701ba454ddf13" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>COEFF_BASIC</name></member>
+      <member refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532da2271da0c782d50ac47467d67b7fc64ce" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>COEFF_QQ</name></member>
+      <member refid="class_polynomial_ring_a19601f01ada00b3c487c7873fbdb6bd9_1a19601f01ada00b3c487c7873fbdb6bd9" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coeff_type_</name></member>
+      <member refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532da76f8086b75bdd0581c27856e8881671a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>COEFF_ZZ</name></member>
+      <member refid="class_polynomial_ring_ada86039e807138f961c4f51e0bf8777c_1ada86039e807138f961c4f51e0bf8777c" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>coefficient_type</name></member>
+      <member refid="class_poly_ring_a36b1ad6326673d6eacc0e2fba37e791d_1a36b1ad6326673d6eacc0e2fba37e791d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientAddOneTo</name></member>
+      <member refid="class_poly_ring_a22d7423304cf99cbce9386de9625b077_1a22d7423304cf99cbce9386de9625b077" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientAddTo</name></member>
+      <member refid="class_poly_ring_a0c55538153a77e336ef43b74affd3626_1a0c55538153a77e336ef43b74affd3626" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientAddTo</name></member>
+      <member refid="class_poly_ring_a3bec9246820743bf1bddaaec3f8b4787_1a3bec9246820743bf1bddaaec3f8b4787" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientDivide</name></member>
+      <member refid="class_poly_ring_adfbfa5ff50c4d5efcfa22f5f839a89f6_1adfbfa5ff50c4d5efcfa22f5f839a89f6" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientEQ</name></member>
+      <member refid="class_poly_ring_a9295d6eaaf14780026ded638fbaf27c0_1a9295d6eaaf14780026ded638fbaf27c0" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientFromInt</name></member>
+      <member refid="class_poly_ring_a34b87e4f87261e6c5f85c507b2ce47c7_1a34b87e4f87261e6c5f85c507b2ce47c7" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientIsOne</name></member>
+      <member refid="class_poly_ring_aee44ae2c4da0f4c2ee24dd22e3c43921_1aee44ae2c4da0f4c2ee24dd22e3c43921" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientIsZero</name></member>
+      <member refid="class_poly_ring_ae8cc9a7c03cd7529e0056fc6b2528679_1ae8cc9a7c03cd7529e0056fc6b2528679" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientMult</name></member>
+      <member refid="class_poly_ring_a96af4c259fe5e4c472b8f1466543f878_1a96af4c259fe5e4c472b8f1466543f878" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientMultTo</name></member>
+      <member refid="class_poly_ring_ac78ff12e5ea7029b1934fb0d10620e48_1ac78ff12e5ea7029b1934fb0d10620e48" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientNegate</name></member>
+      <member refid="class_poly_ring_a6ae0c8811f64d33eb224c8c620b7baff_1a6ae0c8811f64d33eb224c8c620b7baff" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientNegateNonZero</name></member>
+      <member refid="class_poly_ring_aed20b53cf2be5ffdb14fc06bcb472780_1aed20b53cf2be5ffdb14fc06bcb472780" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientNegateTo</name></member>
+      <member refid="class_poly_ring_a53d6486e7b08d2832abd31401ffbd582_1a53d6486e7b08d2832abd31401ffbd582" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientReciprocalTo</name></member>
+      <member refid="class_poly_ring_a001a31099bc59c43487784647570c10c_1a001a31099bc59c43487784647570c10c" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientSet</name></member>
+      <member refid="class_poly_ring_ac5607a0dc0c1ff3681aef6d703e44701_1ac5607a0dc0c1ff3681aef6d703e44701" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientSetOne</name></member>
+      <member refid="class_poly_ring_a5fe0ecb7c437a6cb5a098dfac4a64aa0_1a5fe0ecb7c437a6cb5a098dfac4a64aa0" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>coefficientSubtract</name></member>
+      <member refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>CoefficientType</name></member>
+      <member refid="class_ring_a3d64baae17fd73c1e9b0ed62898e558f_1a3d64baae17fd73c1e9b0ed62898e558f" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>coerceToLongInteger</name></member>
+      <member refid="class_poly_ring_aa2d77e741e2054ac43bd4c1185468a79_1aa2d77e741e2054ac43bd4c1185468a79" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>compare_elems</name></member>
+      <member refid="class_ring_ac7b396105799bf0b67780b8d8b772e5d_1ac7b396105799bf0b67780b8d8b772e5d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>compare_vecs</name></member>
+      <member refid="class_ring_a03119f391a83b5d4aa09b61c2153c6ab_1a03119f391a83b5d4aa09b61c2153c6ab" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>component_shift</name></member>
+      <member refid="class_polynomial_ring_ac197ed71022ead1aa87f7d3f8864282b_1ac197ed71022ead1aa87f7d3f8864282b" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>computeHashValue</name></member>
+      <member refid="class_poly_ring_a425828e3a6617c81298da18dc6cf85cd_1a425828e3a6617c81298da18dc6cf85cd" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>content</name></member>
+      <member refid="class_poly_ring_a88eb219cc43fb820b67f051c2324f7c0_1a88eb219cc43fb820b67f051c2324f7c0" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>content</name></member>
+      <member refid="class_poly_ring_a78b3daea3a56785f90a583e3c9423bf4_1a78b3daea3a56785f90a583e3c9423bf4" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>copy</name></member>
+      <member refid="class_poly_ring_a246ef1ae5779d3bd5fa8f27b0425d76e_1a246ef1ae5779d3bd5fa8f27b0425d76e" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>copy_term</name></member>
+      <member refid="class_ring_aef0dd726d2923b97198ae701dc3406a6_1aef0dd726d2923b97198ae701dc3406a6" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>copy_vec</name></member>
+      <member refid="class_ring_acc300658ceae4094ac946e8b5cfce1bc_1acc300658ceae4094ac946e8b5cfce1bc" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>cR</name></member>
+      <member refid="class_skew_polynomial_ring_ac59fb8cfb8c0f8265352943eb2afe27e_1ac59fb8cfb8c0f8265352943eb2afe27e" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>create</name></member>
+      <member refid="class_poly_ring_a218143d3bc8b7eab9f73e37d4e3b9890_1a218143d3bc8b7eab9f73e37d4e3b9890" prot="public" virt="non-virtual" ambiguityscope="PolyRing::"><scope>SkewPolynomialRing</scope><name>create</name></member>
+      <member refid="class_polynomial_ring_a6a1ba18bebe7385d4393c012c1d71183_1a6a1ba18bebe7385d4393c012c1d71183" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>create_quotient</name></member>
+      <member refid="class_polynomial_ring_a3ea9243821250f45eed989ee225e52d6_1a3ea9243821250f45eed989ee225e52d6" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>create_quotient</name></member>
+      <member refid="class_polynomial_ring_a4d56986fe519b58e474c3317f1e8e0c5_1a4d56986fe519b58e474c3317f1e8e0c5" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>create_quotient</name></member>
+      <member refid="class_polynomial_ring_a83af71a7a85b7b8c5f864eb0a8b6fc5a_1a83af71a7a85b7b8c5f864eb0a8b6fc5a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>create_quotient_ring</name></member>
+      <member refid="class_ring_a98ef2f8ada27c36827d94e335621c70d_1a98ef2f8ada27c36827d94e335621c70d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>declare_field</name></member>
+      <member refid="class_ring_a6d663532d7b3b017e4cbe2a0e5ba28f7_1a6d663532d7b3b017e4cbe2a0e5ba28f7" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>degree</name></member>
+      <member refid="class_ring_af6404c989f5555bba318266e64effbb0_1af6404c989f5555bba318266e64effbb0" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>degree_monoid</name></member>
+      <member refid="class_poly_ring_aca3156e7b5adf29168490954872ddd9b_1aca3156e7b5adf29168490954872ddd9b" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>degree_of_var</name></member>
+      <member refid="class_ring_ad78d8ea1a78b3ad976f028ac76c8d7c2_1ad78d8ea1a78b3ad976f028ac76c8d7c2" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>degree_ring</name></member>
+      <member refid="class_poly_ring_a268ffbd716206c7e8925633171d8cea2_1a268ffbd716206c7e8925633171d8cea2" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>degree_weights</name></member>
+      <member refid="class_polynomial_ring_a5bc36d0e114a986bf0f06fd4bfc3165c_1a5bc36d0e114a986bf0f06fd4bfc3165c" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>denomR_</name></member>
+      <member refid="class_poly_ring_aea24367a1270068cfe81760eae0e296a_1aea24367a1270068cfe81760eae0e296a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>determine_common_denominator_QQ</name></member>
+      <member refid="class_poly_ring_a62709d83e3912d105505c9119157d8b5_1a62709d83e3912d105505c9119157d8b5" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>diff</name></member>
+      <member refid="class_poly_ring_a0745c0fee349f8a32ff111c484ba3f74_1a0745c0fee349f8a32ff111c484ba3f74" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>diff_term</name></member>
+      <member refid="class_ring_aae34ad2fae6aaadf8895d3c6abe81d6b_1aae34ad2fae6aaadf8895d3c6abe81d6b" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>discreteLog</name></member>
+      <member refid="class_poly_ring_ad825fc42391b0ca2c2b1c6bb10013c75_1ad825fc42391b0ca2c2b1c6bb10013c75" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>divide</name></member>
+      <member refid="class_ring_a5d4ec37ff9c9cfe80a643f210730cb32_1a5d4ec37ff9c9cfe80a643f210730cb32" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>divide_by_content</name></member>
+      <member refid="class_poly_ring_a5456e8cdad8870d2f5b436ade715c5cf_1a5456e8cdad8870d2f5b436ade715c5cf" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>divide_by_expvector</name></member>
+      <member refid="class_polynomial_ring_a0ebf1dbeb537873180ffc76a013802e0_1a0ebf1dbeb537873180ffc76a013802e0" prot="public" virt="pure-virtual" ambiguityscope="PolyRingFlat::"><scope>SkewPolynomialRing</scope><name>divide_by_expvector</name></member>
+      <member refid="class_poly_ring_a67c91e222fc891d8b0a1df289a398120_1a67c91e222fc891d8b0a1df289a398120" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>divide_by_given_content</name></member>
+      <member refid="class_poly_ring_afed6c1e241853e824710c8462177d8c8_1afed6c1e241853e824710c8462177d8c8" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>divide_by_var</name></member>
+      <member refid="class_poly_ring_a3356a0cbe9440c7bbcf0ed4c6dffa65c_1a3356a0cbe9440c7bbcf0ed4c6dffa65c" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>divide_coeff_to</name></member>
+      <member refid="class_ring_a52f9b58452ad1b821cb2d0bb0a5761c5_1a52f9b58452ad1b821cb2d0bb0a5761c5" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>divide_row</name></member>
+      <member refid="class_ring_a7a57a30263273b99105c15817749aa02_1a7a57a30263273b99105c15817749aa02" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>divide_vec_to</name></member>
+      <member refid="class_poly_ring_a7aec2e0a4779d47ef3dc50bbe1b60473_1a7aec2e0a4779d47ef3dc50bbe1b60473" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>division_algorithm</name></member>
+      <member refid="class_poly_ring_a2449bc6b89fc48477699bf6a2cd4fd58_1a2449bc6b89fc48477699bf6a2cd4fd58" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>division_algorithm</name></member>
+      <member refid="class_poly_ring_a67e35a054dfa330c9d336e235e8a5d6e_1a67e35a054dfa330c9d336e235e8a5d6e" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>division_algorithm_with_laurent_variables</name></member>
+      <member refid="class_ring_ae46d51a29fe69f2e0931a2a34c31a8ed_1ae46d51a29fe69f2e0931a2a34c31a8ed" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>dot_product</name></member>
+      <member refid="class_ring_af4273c605af5eb38c425447035801330_1af4273c605af5eb38c425447035801330" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>e_sub_i</name></member>
+      <member refid="class_poly_ring_a2cea0331b1a41f24dea78ac5e530777a_1a2cea0331b1a41f24dea78ac5e530777a" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>elem_text_out</name></member>
+      <member refid="class_poly_ring_a62d2ed20aa3e354a639db5ce8461975a_1a62d2ed20aa3e354a639db5ce8461975a" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>eval</name></member>
+      <member refid="class_polynomial_ring_a4b4649185542c0e0755752d880a56cb3_1a4b4649185542c0e0755752d880a56cb3" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>exp_size</name></member>
+      <member refid="class_poly_ring_a80311c6f90e7cfd893932e41f5e20c07_1a80311c6f90e7cfd893932e41f5e20c07" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>Field</name></member>
+      <member refid="class_poly_ring_a1eca7e83311171f540e046f237f31907_1a1eca7e83311171f540e046f237f31907" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>field</name></member>
+      <member refid="class_poly_ring_a5254518a01f5bb6c316bb01b10141c68_1a5254518a01f5bb6c316bb01b10141c68" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>freeMonomial</name></member>
+      <member refid="class_poly_ring_a8931b8fab8ade45b62b070b9d580373e_1a8931b8fab8ade45b62b070b9d580373e" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>freeMonomial</name></member>
+      <member refid="class_poly_ring_a812a6c9a4a2490ade926644386bf48d1_1a812a6c9a4a2490ade926644386bf48d1" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>freeTopMonomial</name></member>
+      <member refid="class_poly_ring_a41189ace19c9cfc07c0781c4e97e1046_1a41189ace19c9cfc07c0781c4e97e1046" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>from_BigComplex</name></member>
+      <member refid="class_poly_ring_ab736af85c3266c5d7e71adeeebe0ba3c_1ab736af85c3266c5d7e71adeeebe0ba3c" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>from_BigReal</name></member>
+      <member refid="class_poly_ring_a5a4f3901b8f035c6260bb253f0557e39_1a5a4f3901b8f035c6260bb253f0557e39" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>from_complex_double</name></member>
+      <member refid="class_poly_ring_a01b10169c4a0ae4c084f331ee7cf7681_1a01b10169c4a0ae4c084f331ee7cf7681" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>from_ComplexInterval</name></member>
+      <member refid="class_poly_ring_a904f16ced1ba64f70848450c1bbf64ce_1a904f16ced1ba64f70848450c1bbf64ce" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>from_double</name></member>
+      <member refid="class_poly_ring_a7210a4a0516edec58a77acf78f3fa497_1a7210a4a0516edec58a77acf78f3fa497" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>from_int</name></member>
+      <member refid="class_poly_ring_ada7e6bbd6a9e35ff745f7963683dc681_1ada7e6bbd6a9e35ff745f7963683dc681" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>from_Interval</name></member>
+      <member refid="class_poly_ring_a329ec18778d29d75eeba6efd4b94aca1_1a329ec18778d29d75eeba6efd4b94aca1" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>from_long</name></member>
+      <member refid="class_poly_ring_ad075681908791457eefddadde1a74019_1ad075681908791457eefddadde1a74019" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>from_rational</name></member>
+      <member refid="class_poly_ring_a3851f70c3ca9577c8fcc74daaaa52748_1a3851f70c3ca9577c8fcc74daaaa52748" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>fromCoefficient</name></member>
+      <member refid="class_poly_ring_a4ce7cb60fe7f92dca3b114498757eb9c_1a4ce7cb60fe7f92dca3b114498757eb9c" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>fromPool</name></member>
+      <member refid="class_poly_ring_ad1a97a9d5a754a5dad10848c4e0d7db8_1ad1a97a9d5a754a5dad10848c4e0d7db8" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>fromSmallIntegerCoefficients</name></member>
+      <member refid="class_polynomial_ring_ae00cf1588bf0dce374a8660d8ab5190e_1ae00cf1588bf0dce374a8660d8ab5190e" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>gb_ring_</name></member>
+      <member refid="class_poly_ring_ab9e243de39f801f99a39f62e69d54729_1ab9e243de39f801f99a39f62e69d54729" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>gcd</name></member>
+      <member refid="class_poly_ring_a9118eba568abe71f52b0ec9a3ca571ed_1a9118eba568abe71f52b0ec9a3ca571ed" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>gcd_extended</name></member>
+      <member refid="class_poly_ring_ae7054efa9a0232ec3ad7b22c1e47cccb_1ae7054efa9a0232ec3ad7b22c1e47cccb" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>get_coeff</name></member>
+      <member refid="class_polynomial_ring_a022fa3ad6c939e59a8d17da93392d521_1a022fa3ad6c939e59a8d17da93392d521" prot="public" virt="pure-virtual" ambiguityscope="PolyRingFlat::"><scope>SkewPolynomialRing</scope><name>get_coeff</name></member>
+      <member refid="class_ring_aaef445fe5a6fd99cd99a9d0df7634259_1aaef445fe5a6fd99cd99a9d0df7634259" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_degree_ring</name></member>
+      <member refid="class_poly_ring_a517a3aec2f3e971be366f2e5d0888678_1a517a3aec2f3e971be366f2e5d0888678" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_denominator_QQ</name></member>
+      <member refid="class_ring_a4c02ff76c48c1de195f9cb548226b014_1a4c02ff76c48c1de195f9cb548226b014" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_entry</name></member>
+      <member refid="class_ring_a76dd5f26bf190ef2fa425105f90e684a_1a76dd5f26bf190ef2fa425105f90e684a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_entry</name></member>
+      <member refid="class_polynomial_ring_a40ed84790faee0b23715e2e6240f485c_1a40ed84790faee0b23715e2e6240f485c" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>get_gb_ring</name></member>
+      <member refid="class_ring_af900248dad41d314fd08f9b1aed8ef8e_1af900248dad41d314fd08f9b1aed8ef8e" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_heft_vector</name></member>
+      <member refid="class_poly_ring_a9b0cced87864112a64ff43ac71c6376f_1a9b0cced87864112a64ff43ac71c6376f" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_logical_coeff</name></member>
+      <member refid="class_ring_a8478e119cbd0dacb879407882ec4e130_1a8478e119cbd0dacb879407882ec4e130" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_non_unit</name></member>
+      <member refid="class_poly_ring_a8c633121e183dfbdd5e27196b36d3065_1a8c633121e183dfbdd5e27196b36d3065" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>get_part</name></member>
+      <member refid="class_poly_ring_a97a0477a81ee9d90560a2a6b07ad8d44_1a97a0477a81ee9d90560a2a6b07ad8d44" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>get_parts</name></member>
+      <member refid="class_polynomial_ring_af86db7dd9e8d1573b182364281acb7fd_1af86db7dd9e8d1573b182364281acb7fd" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>get_precision</name></member>
+      <member refid="class_polynomial_ring_a2afe1d784927b533f9274050df8eaefc_1a2afe1d784927b533f9274050df8eaefc" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_quotient_info</name></member>
+      <member refid="class_polynomial_ring_a832a12b1d3602d079433a3bb5ab1c909_1a832a12b1d3602d079433a3bb5ab1c909" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_quotient_monomials</name></member>
+      <member refid="class_polynomial_ring_ab4af66474f8c8d8abffc8c27bfa0d951_1ab4af66474f8c8d8abffc8c27bfa0d951" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_quotient_MonomialTable</name></member>
+      <member refid="class_polynomial_ring_a93f1fac307b25b2f6dfb9becc5ba7857_1a93f1fac307b25b2f6dfb9becc5ba7857" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_quotient_MonomialTableZZ</name></member>
+      <member refid="class_poly_ring_ab4b464ee8b0755651089953a3afc0166_1ab4b464ee8b0755651089953a3afc0166" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>get_terms</name></member>
+      <member refid="class_poly_ring_a12a6e9a39377bc3c4538c95ea94f46c3_1a12a6e9a39377bc3c4538c95ea94f46c3" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>get_trivial_poly_ring</name></member>
+      <member refid="class_polynomial_ring_a4f2cbb8863c3dce597f1aefbc1fd82c2_1a4f2cbb8863c3dce597f1aefbc1fd82c2" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>getAmbientRing</name></member>
+      <member refid="class_ring_a1074a67d5581c83ccc0a3399123d14a2_1a1074a67d5581c83ccc0a3399123d14a2" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>getARing</name></member>
+      <member refid="class_polynomial_ring_a2df3a41ac565c2c2e2662b903dfd29c4_1a2df3a41ac565c2c2e2662b903dfd29c4" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>getCoefficientRing</name></member>
+      <member refid="class_ring_ad006397e7bbe3de8a1cc9feb5d042613_1ad006397e7bbe3de8a1cc9feb5d042613" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>getCoefficientRingR</name></member>
+      <member refid="class_polynomial_ring_ab1df58ad0edec3c434ad9bdd193a1d9e_1ab1df58ad0edec3c434ad9bdd193a1d9e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>getCoefficients</name></member>
+      <member refid="class_polynomial_ring_ae025ab63a3fa2657e29350011e9ed46a_1ae025ab63a3fa2657e29350011e9ed46a" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>getDenominatorRing</name></member>
+      <member refid="class_ring_a7cd92ebc63203e96c746333270ada5d8_1a7cd92ebc63203e96c746333270ada5d8" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>getGenerator</name></member>
+      <member refid="class_poly_ring_a0b3ff7243e39a1c9225aac0829c4366f_1a0b3ff7243e39a1c9225aac0829c4366f" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>getMemoryUse</name></member>
+      <member refid="class_ring_a37e8d2a9cb5f10eb944df5a81e9540a8_1a37e8d2a9cb5f10eb944df5a81e9540a8" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>getMinimalPolynomial</name></member>
+      <member refid="class_polynomial_ring_a6cf397b11498a6d0cd65d20898bd697c_1a6cf397b11498a6d0cd65d20898bd697c" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>getMonoid</name></member>
+      <member refid="class_polynomial_ring_ac19069c96d5d73fd89f3e436310a329c_1ac19069c96d5d73fd89f3e436310a329c" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>getNumeratorRing</name></member>
+      <member refid="class_poly_ring_a37158147b3853cf0e781b02d98f1d56c_1a37158147b3853cf0e781b02d98f1d56c" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>getNumVars</name></member>
+      <member refid="class_polynomial_ring_a88cdd00da9bd29e40933fbcd533e232c_1a88cdd00da9bd29e40933fbcd533e232c" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>getPresentation</name></member>
+      <member refid="class_ring_aacb3c9f8ff2b79282d9e24b2625b57f3_1aacb3c9f8ff2b79282d9e24b2625b57f3" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>getRepresentation</name></member>
+      <member refid="class_polynomial_ring_ae8adf8e3524be12565a5b240394ee9e2_1ae8adf8e3524be12565a5b240394ee9e2" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>getSkewInfo</name></member>
+      <member refid="class_ring_a49295daf51d50cfb48bb55bab23c636d_1a49295daf51d50cfb48bb55bab23c636d" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>has_associate_divisors</name></member>
+      <member refid="class_skew_polynomial_ring_a54c3c67d14b01ed5c4506be59ee80237_1a54c3c67d14b01ed5c4506be59ee80237" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>has_gcd</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>hash</name></member>
+      <member refid="class_poly_ring_a45458c49e0fa73eeba2ef24437bc5552_1a45458c49e0fa73eeba2ef24437bc5552" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>homogenize</name></member>
+      <member refid="class_poly_ring_a0a846f13824ad20ff5281c75ad85b292_1a0a846f13824ad20ff5281c75ad85b292" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>homogenize</name></member>
+      <member refid="class_poly_ring_ab865e7645d472cd33b2c7c2c75e9296b_1ab865e7645d472cd33b2c7c2c75e9296b" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>imp_attempt_to_cancel_lead_term</name></member>
+      <member refid="class_poly_ring_a9d413ec0b4eb1b2afd4b1ef6515f09df_1a9d413ec0b4eb1b2afd4b1ef6515f09df" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>imp_skew_mult_by_term</name></member>
+      <member refid="class_poly_ring_a55399239ed990ab3e277ca6443d82f7b_1a55399239ed990ab3e277ca6443d82f7b" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>imp_subtract_multiple_to</name></member>
+      <member refid="class_poly_ring_ac8104e209da22d6a6eee8adf51cfb692_1ac8104e209da22d6a6eee8adf51cfb692" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>in_subring</name></member>
+      <member refid="class_poly_ring_a12e9df402c70c4255d8fc0af9504d5e7_1a12e9df402c70c4255d8fc0af9504d5e7" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>increase_maxnorm</name></member>
+      <member refid="class_poly_ring_a758ad844bcc512203b786342f19681c7_1a758ad844bcc512203b786342f19681c7" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>index_of_var</name></member>
+      <member refid="class_poly_ring_a32787d2bc0bbbe50db56d43f36f7af05_1a32787d2bc0bbbe50db56d43f36f7af05" prot="private" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>initialize_poly_ring</name></member>
+      <member refid="class_poly_ring_a7d659b6094681a3e7dee8ad0efddc0ee_1a7d659b6094681a3e7dee8ad0efddc0ee" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>initialize_poly_ring</name></member>
+      <member refid="class_polynomial_ring_a4b4b36b316f26f1d04428aad34c38e21_1a4b4b36b316f26f1d04428aad34c38e21" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>initialize_PolynomialRing</name></member>
+      <member refid="class_ring_a57db5364300d12a9e778ef9794f61962_1a57db5364300d12a9e778ef9794f61962" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>initialize_ring</name></member>
+      <member refid="class_skew_polynomial_ring_a59a1eaf2c5cbd40fceb3f71d72994479_1a59a1eaf2c5cbd40fceb3f71d72994479" prot="private" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>initialize_skew</name></member>
+      <member refid="class_poly_ring_a0fe8f347a4921d731f00af1ea0e275c1_1a0fe8f347a4921d731f00af1ea0e275c1" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>internal_add_to</name></member>
+      <member refid="class_poly_ring_a02b089f9858aaddcaf6cdd834d17b7b6_1a02b089f9858aaddcaf6cdd834d17b7b6" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>internal_negate_to</name></member>
+      <member refid="class_poly_ring_afd1c02f2c75f784348fbf73ec2910888_1afd1c02f2c75f784348fbf73ec2910888" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>internal_subtract_to</name></member>
+      <member refid="class_poly_ring_a602f1924255032635de072826f68a4aa_1a602f1924255032635de072826f68a4aa" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>invert</name></member>
+      <member refid="class_polynomial_ring_a934f096dec4dc99cff940c71b1341aff_1a934f096dec4dc99cff940c71b1341aff" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_basic_ring</name></member>
+      <member refid="class_ring_aa6d007e7619fa67da71dd28c0f1ac918_1aa6d007e7619fa67da71dd28c0f1ac918" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_CCC</name></member>
+      <member refid="class_skew_polynomial_ring_aa20f99765f2d3ff595bb2e43af1784c3_1aa20f99765f2d3ff595bb2e43af1784c3" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_commutative_ring</name></member>
+      <member refid="class_poly_ring_a0665e5c3d9c1c20de83163a1b206e0da_1a0665e5c3d9c1c20de83163a1b206e0da" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_equal</name></member>
+      <member refid="class_ring_a097aacc5f17010b3a43ac07234285bb8_1a097aacc5f17010b3a43ac07234285bb8" prot="public" virt="non-virtual" ambiguityscope="PolyRingFlat::"><scope>SkewPolynomialRing</scope><name>is_equal</name></member>
+      <member refid="class_ring_a4bd5368c6048e976c2f5c36d833fc316_1a4bd5368c6048e976c2f5c36d833fc316" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>is_field</name></member>
+      <member refid="class_ring_a708546eeda3fed8df48f5db0c68929dc_1a708546eeda3fed8df48f5db0c68929dc" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_fraction_field</name></member>
+      <member refid="class_polynomial_ring_a9def20e1c3d5c8be2ceeb2dc7f3cd0b0_1a9def20e1c3d5c8be2ceeb2dc7f3cd0b0" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_fraction_poly_ring</name></member>
+      <member refid="class_polynomial_ring_a8af70386f994ef65d8320b551306b618_1a8af70386f994ef65d8320b551306b618" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_graded</name></member>
+      <member refid="class_polynomial_ring_a926a676c409a2c038364cb0d1f21fbbf_1a926a676c409a2c038364cb0d1f21fbbf" prot="private" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>is_graded_</name></member>
+      <member refid="class_poly_ring_a6b409cb315cde0f4f0b3551249c2523f_1a6b409cb315cde0f4f0b3551249c2523f" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_homogeneous</name></member>
+      <member refid="class_polynomial_ring_a67e01cba7700ab28bf5dff919b1a3c33_1a67e01cba7700ab28bf5dff919b1a3c33" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_poly_ring</name></member>
+      <member refid="class_ring_ab17d633d9abc0ddad22e829d3e3955fd_1ab17d633d9abc0ddad22e829d3e3955fd" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_QQ</name></member>
+      <member refid="class_polynomial_ring_aa6c09a8bd4018c529cb3824ebeb09877_1aa6c09a8bd4018c529cb3824ebeb09877" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_quotient_ring</name></member>
+      <member refid="class_ring_ac99b7a1eae74fdf90f3968e0bde7354e_1ac99b7a1eae74fdf90f3968e0bde7354e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_RRi</name></member>
+      <member refid="class_ring_ada23d8e47b734faf0e1c9ebc07f5f610_1ada23d8e47b734faf0e1c9ebc07f5f610" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_RRR</name></member>
+      <member refid="class_polynomial_ring_ade8a4a2ccd361d0958bc6a22aa95530b_1ade8a4a2ccd361d0958bc6a22aa95530b" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>is_skew_</name></member>
+      <member refid="class_polynomial_ring_af0e4dae8e81e5c46c622fa7c1e815cd3_1af0e4dae8e81e5c46c622fa7c1e815cd3" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>is_skew_commutative</name></member>
+      <member refid="class_skew_polynomial_ring_a49e6b8f32ae4fdd35ec3d4661c843e27_1a49e6b8f32ae4fdd35ec3d4661c843e27" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_skew_commutative_ring</name></member>
+      <member refid="class_polynomial_ring_aab724ff3df52040001fb0cb5dc7a43a2_1aab724ff3df52040001fb0cb5dc7a43a2" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>is_skew_var</name></member>
+      <member refid="class_polynomial_ring_af6cf25330e4738c5ed8d7ed0948781e5_1af6cf25330e4738c5ed8d7ed0948781e5" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>is_solvable_</name></member>
+      <member refid="class_polynomial_ring_a092c5e45e29001c47e6d8504bf32a50a_1a092c5e45e29001c47e6d8504bf32a50a" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_solvable_algebra</name></member>
+      <member refid="class_poly_ring_a607a97a1b04b467928a45a9eda66bf8d_1a607a97a1b04b467928a45a9eda66bf8d" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_unit</name></member>
+      <member refid="class_polynomial_ring_a0637d0a526fc445ffcb6d02b408d8b57_1a0637d0a526fc445ffcb6d02b408d8b57" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>is_weyl_</name></member>
+      <member refid="class_polynomial_ring_abfc590df559aa8ab962d8fcfe2f71cbe_1abfc590df559aa8ab962d8fcfe2f71cbe" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_weyl_algebra</name></member>
+      <member refid="class_poly_ring_aea193679a60641f2620e327a5d428a5f_1aea193679a60641f2620e327a5d428a5f" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_zero</name></member>
+      <member refid="class_ring_a0029ed30ca6f682c9d0fe4748a32d32e_1a0029ed30ca6f682c9d0fe4748a32d32e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>is_ZZ</name></member>
+      <member refid="class_polynomial_ring_a955cbcb05b222ff16d331e0fc21a9c4f_1a955cbcb05b222ff16d331e0fc21a9c4f" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>is_ZZ_quotient_</name></member>
+      <member refid="class_ring_add1e694a2f0b834c4708476ec237644e_1add1e694a2f0b834c4708476ec237644e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>isFinitePrimeField</name></member>
+      <member refid="class_ring_a3d16bc30b0b00f7bd2988de9b012a253_1a3d16bc30b0b00f7bd2988de9b012a253" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>isGaloisField</name></member>
+      <member refid="class_polynomial_ring_a54aee749a7364fd81e2460f691480fdc_1a54aee749a7364fd81e2460f691480fdc" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>K_</name></member>
+      <member refid="class_poly_ring_af9e82a8f50ffc2e63f58f321ae4af614_1af9e82a8f50ffc2e63f58f321ae4af614" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>lead_flat_coeff</name></member>
+      <member refid="class_poly_ring_af61bbba28f3197b5aafd7f1097116798_1af61bbba28f3197b5aafd7f1097116798" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>lead_flat_monomial</name></member>
+      <member refid="class_poly_ring_af4e6b254f182c9a646b32abca89df9a8_1af4e6b254f182c9a646b32abca89df9a8" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>lead_logical_coeff</name></member>
+      <member refid="class_poly_ring_ac27edf6bc77a06196d5f178ae7459991_1ac27edf6bc77a06196d5f178ae7459991" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>lead_logical_exponents</name></member>
+      <member refid="class_polynomial_ring_a586ca7f1b4b25a2b5153c38f41acc457_1a586ca7f1b4b25a2b5153c38f41acc457" prot="public" virt="pure-virtual" ambiguityscope="PolyRingFlat::"><scope>SkewPolynomialRing</scope><name>lead_logical_exponents</name></member>
+      <member refid="class_poly_ring_add71ce0c91474b72608cec4753deaa93_1add71ce0c91474b72608cec4753deaa93" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>lead_term</name></member>
+      <member refid="class_poly_ring_a5c8f6f4ca0bafb9281aaba5fe758c609_1a5c8f6f4ca0bafb9281aaba5fe758c609" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>lead_term</name></member>
+      <member refid="class_poly_ring_ad8f541867bf4f1f2c194db1c58e9488d_1ad8f541867bf4f1f2c194db1c58e9488d" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>lift</name></member>
+      <member refid="class_poly_ring_ae9b8ecaaaf7173addac81adeff948c88_1ae9b8ecaaaf7173addac81adeff948c88" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>list_form</name></member>
+      <member refid="class_ring_ad71b29f2be9c4982f10a4df88e53367c_1ad71b29f2be9c4982f10a4df88e53367c" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>lower_associate_divisor</name></member>
+      <member refid="class_poly_ring_acb670375ea16f28ce4a2367152fdddb8_1acb670375ea16f28ce4a2367152fdddb8" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>lower_content</name></member>
+      <member refid="class_polynomial_ring_a7ea73f5905aee6f71bb8a4f1ce54c494_1a7ea73f5905aee6f71bb8a4f1ce54c494" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>M_</name></member>
+      <member refid="class_polynomial_ring_a95cd30c1359079ff80847c8e9452fb22_1a95cd30c1359079ff80847c8e9452fb22" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>make_basis_MonomialIdeal</name></member>
+      <member refid="class_poly_ring_a75a4d77a328f96da40c199df944d4bc7_1a75a4d77a328f96da40c199df944d4bc7" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>make_flat_term</name></member>
+      <member refid="class_polynomial_ring_a98b2e44941716f33a2f2f2d9e2344983_1a98b2e44941716f33a2f2f2d9e2344983" prot="public" virt="pure-virtual" ambiguityscope="PolyRingFlat::"><scope>SkewPolynomialRing</scope><name>make_flat_term</name></member>
+      <member refid="class_ring_a246965acb6f313f82aa3059a7c43091a_1a246965acb6f313f82aa3059a7c43091a" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>make_FreeModule</name></member>
+      <member refid="class_ring_a9215276b28d8885bf1d3f8c1bb441e36_1a9215276b28d8885bf1d3f8c1bb441e36" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>make_FreeModule</name></member>
+      <member refid="class_poly_ring_aa82e0cbc985f27112c7feccc38545ad0_1aa82e0cbc985f27112c7feccc38545ad0" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>make_logical_term</name></member>
+      <member refid="class_polynomial_ring_ac40d52c55b96aec2d85a317977d69156_1ac40d52c55b96aec2d85a317977d69156" prot="public" virt="pure-virtual" ambiguityscope="PolyRingFlat::"><scope>SkewPolynomialRing</scope><name>make_logical_term</name></member>
+      <member refid="class_ring_aa87774c0e44911bd5096df29377f1f58_1aa87774c0e44911bd5096df29377f1f58" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>make_Schreyer_FreeModule</name></member>
+      <member refid="class_polynomial_ring_a92d6c96e465c8f0268e7b6b51ced9e63_1a92d6c96e465c8f0268e7b6b51ced9e63" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>make_SumCollector</name></member>
+      <member refid="class_poly_ring_acc6bb5c36b5a782e8fdb2c179500c057_1acc6bb5c36b5a782e8fdb2c179500c057" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>make_trivial_ZZ_poly_ring</name></member>
+      <member refid="class_ring_a2ab579eb49ebe28eed42e2a083c96c03_1a2ab579eb49ebe28eed42e2a083c96c03" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>make_vec</name></member>
+      <member refid="class_ring_a79476d2e8273d0eeaa27dba624bede72_1a79476d2e8273d0eeaa27dba624bede72" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>make_vec_from_array</name></member>
+      <member refid="class_ring_a38e23eb4c2c328b8f0ba677496f78877_1a38e23eb4c2c328b8f0ba677496f78877" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>makeMutableMatrix</name></member>
+      <member refid="class_poly_ring_a9fe0c4664bec6bb980acff045fe14ec0_1a9fe0c4664bec6bb980acff045fe14ec0" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>maxMonomialByteSize</name></member>
+      <member refid="class_poly_ring_a3da03acf330e4a51afe453af1f65227a_1a3da03acf330e4a51afe453af1f65227a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>maxMonomialSize</name></member>
+      <member refid="class_ring_a2e972f2fc43cb10295c8b8b3e3e35ab9_1a2e972f2fc43cb10295c8b8b3e3e35ab9" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mCharacteristic</name></member>
+      <member refid="class_poly_ring_a6daee79a28e2462175d593568b31b81c_1a6daee79a28e2462175d593568b31b81c" prot="private" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mField</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mHashValue</name></member>
+      <member refid="class_ring_ab6c42f432e2ca2766eb5a13285b7448a_1ab6c42f432e2ca2766eb5a13285b7448a" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mHeftVector</name></member>
+      <member refid="class_poly_ring_ac1577c758816ad8a74abf4c1351f9788_1ac1577c758816ad8a74abf4c1351f9788" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>minimal_monomial</name></member>
+      <member refid="class_ring_a7355d1c74a399f6ef8f23a46c5193ed2_1a7355d1c74a399f6ef8f23a46c5193ed2" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>minus_one</name></member>
+      <member refid="class_ring_a565bd372dea4814e6d775012e45de005_1a565bd372dea4814e6d775012e45de005" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>minus_oneV</name></member>
+      <member refid="class_poly_ring_aec24f86817976255611946f85fe9f6e8_1aec24f86817976255611946f85fe9f6e8" prot="private" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mMonoid</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>Monoid</name></member>
+      <member refid="class_poly_ring_af2410633daff4cfc0687d62433fcaf3e_1af2410633daff4cfc0687d62433fcaf3e" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monoid</name></member>
+      <member refid="class_poly_ring_a82b4df7b33523fa5c962ee06f5e1b48d_1a82b4df7b33523fa5c962ee06f5e1b48d" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>monomial_divisor</name></member>
+      <member refid="class_polynomial_ring_af3bb210b72596db4fed7ff77889725c7_1af3bb210b72596db4fed7ff77889725c7" prot="public" virt="pure-virtual" ambiguityscope="PolyRingFlat::"><scope>SkewPolynomialRing</scope><name>monomial_divisor</name></member>
+      <member refid="class_poly_ring_a75f740d7eed55f96efb1a23146f27e27_1a75f740d7eed55f96efb1a23146f27e27" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialChangeComponent</name></member>
+      <member refid="class_poly_ring_abde6dabe472f3b57ca9acb5fdb04f098_1abde6dabe472f3b57ca9acb5fdb04f098" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialColons</name></member>
+      <member refid="class_poly_ring_a110058a1bd5d68a65435f6409b9fff82_1a110058a1bd5d68a65435f6409b9fff82" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialCompare</name></member>
+      <member refid="class_poly_ring_a48f571476f7a794f9b6b15000a7bc209_1a48f571476f7a794f9b6b15000a7bc209" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialCompare</name></member>
+      <member refid="class_poly_ring_a385843f48af450fc78c4fa3950806fe6_1a385843f48af450fc78c4fa3950806fe6" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialCopy</name></member>
+      <member refid="class_poly_ring_a11c316f46c18d74cdbc1d728bdf3c813_1a11c316f46c18d74cdbc1d728bdf3c813" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialDisplay</name></member>
+      <member refid="class_poly_ring_a0006822c62a71f821bdc5af190dbe4b2_1a0006822c62a71f821bdc5af190dbe4b2" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialDisplay</name></member>
+      <member refid="class_poly_ring_ad73960b306752e4ce455f126a60a35d3_1ad73960b306752e4ce455f126a60a35d3" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialDivide</name></member>
+      <member refid="class_poly_ring_ac3ea576f0ea6ecb0226a6c30d3f4a307_1ac3ea576f0ea6ecb0226a6c30d3f4a307" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialDivideToNegative</name></member>
+      <member refid="class_poly_ring_ad66673da02d4ff9c23789ff483e3ec4b_1ad66673da02d4ff9c23789ff483e3ec4b" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialEi</name></member>
+      <member refid="class_poly_ring_a19bf2671bf44c853732ceafa625b72b9_1a19bf2671bf44c853732ceafa625b72b9" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialEQ</name></member>
+      <member refid="class_poly_ring_a8f2806766903374f3485166e627aae3a_1a8f2806766903374f3485166e627aae3a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialEqualHintTrue</name></member>
+      <member refid="class_poly_ring_aec10f0049c128d90aa92a2e753919810_1aec10f0049c128d90aa92a2e753919810" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialExponent</name></member>
+      <member refid="class_poly_ring_af2e9d0e133d412209a0b2087dcedf7d6_1af2e9d0e133d412209a0b2087dcedf7d6" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialFindSignature</name></member>
+      <member refid="class_poly_ring_ae2ff763bd010e0df15db9f534afd950f_1ae2ff763bd010e0df15db9f534afd950f" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialGetComponent</name></member>
+      <member refid="class_poly_ring_af3036e0cb0b90b3dd37d45909096d2a1_1af3036e0cb0b90b3dd37d45909096d2a1" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialHasAmpleCapacity</name></member>
+      <member refid="class_poly_ring_adfbf29f0d2c206e2b4329991c04b77b8_1adfbf29f0d2c206e2b4329991c04b77b8" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialHashOfProduct</name></member>
+      <member refid="class_poly_ring_ab5de9e500b35c50baac2f7815a605cdc_1ab5de9e500b35c50baac2f7815a605cdc" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialHashValue</name></member>
+      <member refid="class_poly_ring_acf68a4e5e0055c4af06f05d242e69e62_1acf68a4e5e0055c4af06f05d242e69e62" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialHasStrictlyLargerExponent</name></member>
+      <member refid="class_poly_ring_a837174014576e228187e24dc9cc913d1_1a837174014576e228187e24dc9cc913d1" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialIsDivisibleBy</name></member>
+      <member refid="class_poly_ring_a427cf4c4255a7642b1977ccc3b5a07cc_1a427cf4c4255a7642b1977ccc3b5a07cc" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialIsLeastCommonMultiple</name></member>
+      <member refid="class_poly_ring_aa5dcef4c841a1bc066656c485354439b_1aa5dcef4c841a1bc066656c485354439b" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialIsProductOf</name></member>
+      <member refid="class_poly_ring_a29cc97f5ff18ce6ec12858a3c79b4be4_1a29cc97f5ff18ce6ec12858a3c79b4be4" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialIsProductOfHintTrue</name></member>
+      <member refid="class_poly_ring_af29e7ebb8cc8923a21c7650066802eea_1af29e7ebb8cc8923a21c7650066802eea" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialIsTwoProductsOfHintTrue</name></member>
+      <member refid="class_poly_ring_aca4933c42c3f7762c7a9fb777e15b670_1aca4933c42c3f7762c7a9fb777e15b670" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialLeastCommonMultiple</name></member>
+      <member refid="class_poly_ring_a8a00a9730ae4670599f2ff6767587c60_1a8a00a9730ae4670599f2ff6767587c60" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialLT</name></member>
+      <member refid="class_poly_ring_a240a46a10264d48fcdf6e892afff9d7b_1a240a46a10264d48fcdf6e892afff9d7b" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialMult</name></member>
+      <member refid="class_poly_ring_a2d63ec4de0971422fa9d74066daffaf1_1a2d63ec4de0971422fa9d74066daffaf1" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialMultTo</name></member>
+      <member refid="class_poly_ring_ac0f1b83c76608b29474c0c03993daf1a_1ac0f1b83c76608b29474c0c03993daf1a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialParse</name></member>
+      <member refid="class_poly_ring_a9eaf419b44302f12c084e598258c149e_1a9eaf419b44302f12c084e598258c149e" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialQuotientAndMult</name></member>
+      <member refid="class_poly_ring_a0074df4d6371d351ec718c32360fc605_1a0074df4d6371d351ec718c32360fc605" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialRelativelyPrime</name></member>
+      <member refid="class_poly_ring_a593b86132fb94b6729fe777c7b28a1ea_1a593b86132fb94b6729fe777c7b28a1ea" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialSetExponent</name></member>
+      <member refid="class_poly_ring_adf02c26db1332583f838812fab565ec7_1adf02c26db1332583f838812fab565ec7" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialSetExternalExponents</name></member>
+      <member refid="class_poly_ring_ae6bb4aeae7cedb8f065faf7860387cc7_1ae6bb4aeae7cedb8f065faf7860387cc7" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialSetIdentity</name></member>
+      <member refid="class_poly_ring_ad2aa08b28de9f27936b5d14ec754bd1a_1ad2aa08b28de9f27936b5d14ec754bd1a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>monomialSizeOfSupport</name></member>
+      <member refid="class_poly_ring_a3bde643fe127b39b30870cb1536d6162_1a3bde643fe127b39b30870cb1536d6162" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>mult</name></member>
+      <member refid="class_skew_polynomial_ring_af9e35a18f56deb892f276aadfffda776_1af9e35a18f56deb892f276aadfffda776" prot="protected" virt="virtual"><scope>SkewPolynomialRing</scope><name>mult_by_term</name></member>
+      <member refid="class_poly_ring_a72af4c57bf0f132ad5d1bffe5f237cfe_1a72af4c57bf0f132ad5d1bffe5f237cfe" prot="public" virt="virtual" ambiguityscope="PolyRing::"><scope>SkewPolynomialRing</scope><name>mult_by_term</name></member>
+      <member refid="class_poly_ring_a3ce819c3081630c1ee3db976229a3dc6_1a3ce819c3081630c1ee3db976229a3dc6" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>mult_coeff_to</name></member>
+      <member refid="class_ring_ad1ec0e0f648e9f070aef7afd6dc271db_1ad1ec0e0f648e9f070aef7afd6dc271db" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mult_row</name></member>
+      <member refid="class_ring_ad03d14925b01de133086ac7c61fb53dd_1ad03d14925b01de133086ac7c61fb53dd" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mult_to</name></member>
+      <member refid="class_ring_a01a93e6c7a54792a0f15125e8ce6534e_1a01a93e6c7a54792a0f15125e8ce6534e" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mult_vec</name></member>
+      <member refid="class_ring_a0fdac951bc6883230d2a1f87fd9c7ef8_1a0fdac951bc6883230d2a1f87fd9c7ef8" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mult_vec</name></member>
+      <member refid="class_ring_a510e9873649c738eab6e9af531fd4624_1a510e9873649c738eab6e9af531fd4624" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mult_vec_matrix</name></member>
+      <member refid="class_ring_a7e69dd9e350769debce345a1467001fe_1a7e69dd9e350769debce345a1467001fe" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mult_vec_to</name></member>
+      <member refid="class_poly_ring_acb856967218704f37951aa35db9fc990_1acb856967218704f37951aa35db9fc990" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>multi_degree</name></member>
+      <member refid="class_polynomial_ring_ab6f4496b5491439e32f54e8e2bec23ab_1ab6f4496b5491439e32f54e8e2bec23ab" prot="public" virt="pure-virtual" ambiguityscope="PolyRingFlat::"><scope>SkewPolynomialRing</scope><name>multi_degree</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>MutableEngineObject</name></member>
+      <member refid="class_poly_ring_a33b5878cf92afac55ca4c60fd6f35d1e_1a33b5878cf92afac55ca4c60fd6f35d1e" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>mysteriousSPairMonomialRoutine</name></member>
+      <member refid="class_poly_ring_a363be5b5a18c7af7b1e06266b96e3e96_1a363be5b5a18c7af7b1e06266b96e3e96" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>n_flat_terms</name></member>
+      <member refid="class_polynomial_ring_a3635d7d65277f138e46fe7190528d9cd_1a3635d7d65277f138e46fe7190528d9cd" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>n_fraction_vars</name></member>
+      <member refid="class_poly_ring_ad0ee8466f8a4b4a656ec8d7fefc6e2bf_1ad0ee8466f8a4b4a656ec8d7fefc6e2bf" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>n_logical_terms</name></member>
+      <member refid="class_ring_a40a55300b502aa41989314e7a5c9c705_1a40a55300b502aa41989314e7a5c9c705" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>n_nonzero_terms</name></member>
+      <member refid="class_polynomial_ring_a18ad6d75a9dbc204061d2779758db1d8_1a18ad6d75a9dbc204061d2779758db1d8" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>n_quotients</name></member>
+      <member refid="class_polynomial_ring_a21a60d79952d664feaed5c0a96c609f3_1a21a60d79952d664feaed5c0a96c609f3" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>n_skew_commutative_vars</name></member>
+      <member refid="class_polynomial_ring_a13af1f4dae71abcc5152a0e567f0f658_1a13af1f4dae71abcc5152a0e567f0f658" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>n_terms</name></member>
+      <member refid="class_polynomial_ring_aece123c61c00a4f07a6008badec14362_1aece123c61c00a4f07a6008badec14362" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>n_vars</name></member>
+      <member refid="class_poly_ring_a98b8dd0e347e9da5a154efb4eb2f0582_1a98b8dd0e347e9da5a154efb4eb2f0582" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>negate</name></member>
+      <member refid="class_ring_a25329b83562f816d1935003d78971a8d_1a25329b83562f816d1935003d78971a8d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>negate_to</name></member>
+      <member refid="class_ring_a68ff3df4e232e272c2629cb3e88181c3_1a68ff3df4e232e272c2629cb3e88181c3" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>negate_vec</name></member>
+      <member refid="class_ring_aa1a3bff97b8dae10e2616a3db6a83ac2_1aa1a3bff97b8dae10e2616a3db6a83ac2" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>negate_vec_to</name></member>
+      <member refid="class_poly_ring_acdd279664ded1684b9098f7a8b8b0f1e_1acdd279664ded1684b9098f7a8b8b0f1e" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>new_term</name></member>
+      <member refid="class_ring_afe8591877ff12e2221b8774625fe79f2_1afe8591877ff12e2221b8774625fe79f2" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>new_vec</name></member>
+      <member refid="class_poly_ring_flat_a1b37aa83af73c13c178aa3f706ff7609_1a1b37aa83af73c13c178aa3f706ff7609" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>numerator</name></member>
+      <member refid="class_polynomial_ring_a8d5b461f5834c9d0d07ea5f208e693f6_1a8d5b461f5834c9d0d07ea5f208e693f6" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>numerR_</name></member>
+      <member refid="class_polynomial_ring_af9a783b0abb261d18ab01dc189dcb833_1af9a783b0abb261d18ab01dc189dcb833" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>nvars_</name></member>
+      <member refid="class_ring_a480f948242b890421b63365d1ef8d7b8_1a480f948242b890421b63365d1ef8d7b8" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>one</name></member>
+      <member refid="class_ring_a8f7daf1d07ca87b567292d44b6bc5b72_1a8f7daf1d07ca87b567292d44b6bc5b72" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>oneV</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_polynomial_ring_a02106ab2d0644fb33593c2ca1bc28331_1a02106ab2d0644fb33593c2ca1bc28331" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>overZZ_</name></member>
+      <member refid="class_polynomial_ring_a71d3460f4f804bcbd9905d25241afc8a_1a71d3460f4f804bcbd9905d25241afc8a" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>poly_size_</name></member>
+      <member refid="class_polynomial_ring_a0c0fa3f357dc72f2a30d237b32d6e46e_1a0c0fa3f357dc72f2a30d237b32d6e46e" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>PolynomialRing</name></member>
+      <member refid="class_poly_ring_ad383a16a8832d8669bf3c564f6b833d9_1ad383a16a8832d8669bf3c564f6b833d9" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>PolyRing</name></member>
+      <member refid="class_poly_ring_a2152073a6c38db31d9cd4fa773f1db21_1a2152073a6c38db31d9cd4fa773f1db21" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>PolyRing</name></member>
+      <member refid="class_poly_ring_ac3b2bfeb0057d68317afd13a1d923bd3_1ac3b2bfeb0057d68317afd13a1d923bd3" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>PolyRing</name></member>
+      <member refid="class_skew_polynomial_ring_a1197d0130679824af7a6e6fe2a9ad586_1a1197d0130679824af7a6e6fe2a9ad586" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>power</name></member>
+      <member refid="class_skew_polynomial_ring_a9cf7ff7ffea44ab6a035b4ae7bdf7833_1a9cf7ff7ffea44ab6a035b4ae7bdf7833" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>power</name></member>
+      <member refid="class_poly_ring_a04abdb354b3ed208700a4064f107e17f_1a04abdb354b3ed208700a4064f107e17f" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>power_direct</name></member>
+      <member refid="class_poly_ring_ab586992b2526e0ab8cb025af79c6f3dc_1ab586992b2526e0ab8cb025af79c6f3dc" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>powerseries_division_algorithm</name></member>
+      <member refid="class_poly_ring_ab994d701beffe6d522683086ee20c997_1ab994d701beffe6d522683086ee20c997" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>preferred_associate</name></member>
+      <member refid="class_poly_ring_a37af4c3e87b25a748893ae38078af778_1a37af4c3e87b25a748893ae38078af778" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>preferred_associate_divisor</name></member>
+      <member refid="class_poly_ring_a10c889b23fe186fa1d39527aeb1b1354_1a10c889b23fe186fa1d39527aeb1b1354" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>printMonomialFrobbyM2Format</name></member>
+      <member refid="class_poly_ring_a6aef113a09b9a214da22f638415177df_1a6aef113a09b9a214da22f638415177df" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>promote</name></member>
+      <member refid="class_polynomial_ring_a383cd8766ad4406a58be585965ae307f_1a383cd8766ad4406a58be585965ae307f" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>qinfo_</name></member>
+      <member refid="class_poly_ring_af6d45dae8ef3e5acd4858c60660fea5a_1af6d45dae8ef3e5acd4858c60660fea5a" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>quotient</name></member>
+      <member refid="class_polynomial_ring_aa4697707d446883f745d6a9f5a841080_1aa4697707d446883f745d6a9f5a841080" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>quotient_element</name></member>
+      <member refid="class_polynomial_ring_ad7f29e1e79e73ef35d0f9367d6cef5cb_1ad7f29e1e79e73ef35d0f9367d6cef5cb" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>quotient_gbvector</name></member>
+      <member refid="class_poly_ring_ab5b78c4188b6affe6ed4234b11f05156_1ab5b78c4188b6affe6ed4234b11f05156" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>random</name></member>
+      <member refid="class_poly_ring_a45e73d27eeb288be123d0596a3029c91_1a45e73d27eeb288be123d0596a3029c91" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>remainder</name></member>
+      <member refid="class_poly_ring_a8a472fb94b938c6f035afec1bda21fa2_1a8a472fb94b938c6f035afec1bda21fa2" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>remainderAndQuotient</name></member>
+      <member refid="class_poly_ring_a9f66c27f289c689d8ee24b4a3cbe447a_1a9f66c27f289c689d8ee24b4a3cbe447a" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>remove</name></member>
+      <member refid="class_ring_a54898084da41b2130f8a8f844043ca6d_1a54898084da41b2130f8a8f844043ca6d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>remove_vec</name></member>
+      <member refid="class_ring_a310e247bc4db676e4641f02cf2177474_1a310e247bc4db676e4641f02cf2177474" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>remove_vec_node</name></member>
+      <member refid="class_ring_a805c7ac6e925771891752bc32b9eeb1d_1a805c7ac6e925771891752bc32b9eeb1d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>rightmult_vec</name></member>
+      <member refid="class_ring_afc47f40ab072db783126111b70693e49_1afc47f40ab072db783126111b70693e49" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>Ring</name></member>
+      <member refid="class_ring_a277ca4bbc15f78b3f640ecce7e88a272_1a277ca4bbc15f78b3f640ecce7e88a272" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>ringID</name></member>
+      <member refid="class_ring_a58afa47f15c732860a8cec8e9fffe089_1a58afa47f15c732860a8cec8e9fffe089" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>set_entry</name></member>
+      <member refid="class_ring_a03304d6eb2cf49691f19f28a8b20aed9_1a03304d6eb2cf49691f19f28a8b20aed9" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>set_non_unit</name></member>
+      <member refid="class_poly_ring_a853368c57ec199f98aded2a83215c771_1a853368c57ec199f98aded2a83215c771" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>setHashOnly</name></member>
+      <member refid="class_polynomial_ring_a4de07829ff79ce194c71297b27a10006_1a4de07829ff79ce194c71297b27a10006" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>setIsGraded</name></member>
+      <member refid="class_poly_ring_a3a3598ca27cbfb7fbbd6a798341cb9cd_1a3a3598ca27cbfb7fbbd6a798341cb9cd" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>setNegativeExponentMonomial</name></member>
+      <member refid="class_polynomial_ring_a3a0017c1507639387f51c037ea4d5e58_1a3a0017c1507639387f51c037ea4d5e58" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>setQuotientInfo</name></member>
+      <member refid="class_poly_ring_ace084f3d4ce2e42b2fbf0de3516c9ccf_1ace084f3d4ce2e42b2fbf0de3516c9ccf" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>setWeightsAndHash</name></member>
+      <member refid="class_poly_ring_aa374a5f426caa113728fc416daa5840d_1aa374a5f426caa113728fc416daa5840d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>setWeightsOnly</name></member>
+      <member refid="class_polynomial_ring_a46236cd31fb7cb00825673ac4b691675_1a46236cd31fb7cb00825673ac4b691675" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>skew_</name></member>
+      <member refid="class_polynomial_ring_aadbbe8d0090e3452ba1f945d40aa3d45_1aadbbe8d0090e3452ba1f945d40aa3d45" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>skew_variable</name></member>
+      <member refid="class_skew_polynomial_ring_a0adde18cb1db286d31db3868157bb632_1a0adde18cb1db286d31db3868157bb632" prot="private" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>SkewPolynomialRing</name></member>
+      <member refid="class_poly_ring_af59e2f977ac6baaae50dca401b72d3ed_1af59e2f977ac6baaae50dca401b72d3ed" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>sort</name></member>
+      <member refid="class_ring_adfda77eb5a7123ec96fa7f1a4259eac8_1adfda77eb5a7123ec96fa7f1a4259eac8" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>split_off_content</name></member>
+      <member refid="class_ring_a22f25be687e5c5476b1977f617d56ab8_1a22f25be687e5c5476b1977f617d56ab8" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>sub_vector</name></member>
+      <member refid="class_poly_ring_abfcf4bed167158bb4e93688233add4d9_1abfcf4bed167158bb4e93688233add4d9" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>subtract</name></member>
+      <member refid="class_ring_a21f43ee1828608e451512238255f8514_1a21f43ee1828608e451512238255f8514" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>subtract_to</name></member>
+      <member refid="class_ring_a85825ce323f1faa59db2ed82280d3baf_1a85825ce323f1faa59db2ed82280d3baf" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>subtract_vec</name></member>
+      <member refid="class_ring_a7cc9dae3e74c326607674bd2f083e1ae_1a7cc9dae3e74c326607674bd2f083e1ae" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>subtract_vec_to</name></member>
+      <member refid="class_poly_ring_aec05b8918e907b0ceaa66abc99b39d61_1aec05b8918e907b0ceaa66abc99b39d61" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>support</name></member>
+      <member refid="class_poly_ring_a1830bc916fac740c72eeba711b67517e_1a1830bc916fac740c72eeba711b67517e" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>syzygy</name></member>
+      <member refid="class_ring_a3066e897194274a63a1b58a66935b6d8_1a3066e897194274a63a1b58a66935b6d8" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>tensor</name></member>
+      <member refid="class_ring_a554cc18fe3706c83c142fab92f7039d2_1a554cc18fe3706c83c142fab92f7039d2" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>tensor_shift</name></member>
+      <member refid="class_poly_ring_a7c371e6baacea200cdb26418012b483c_1a7c371e6baacea200cdb26418012b483c" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>Term</name></member>
+      <member refid="class_skew_polynomial_ring_a8e9777e23b0a684472d7c617ab3ed677_1a8e9777e23b0a684472d7c617ab3ed677" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>text_out</name></member>
+      <member refid="class_poly_ring_ab2d3ce468c747350abe0db8b259f36f0_1ab2d3ce468c747350abe0db8b259f36f0" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>toCoefficient</name></member>
+      <member refid="class_poly_ring_aa152399de8c10cfb81e7bf3f92bb73ee_1aa152399de8c10cfb81e7bf3f92bb73ee" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>translate_gbvector_from_ringelem</name></member>
+      <member refid="class_poly_ring_a54b4b6faede85f8241a135956299c85c_1a54b4b6faede85f8241a135956299c85c" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>translate_gbvector_from_ringelem_QQ</name></member>
+      <member refid="class_poly_ring_afb088e5e8100daa2cac0f55f7c279d70_1afb088e5e8100daa2cac0f55f7c279d70" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>translate_gbvector_from_vec</name></member>
+      <member refid="class_poly_ring_ab326720537af6abb0940193263bc8b2d_1ab326720537af6abb0940193263bc8b2d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>translate_gbvector_from_vec_QQ</name></member>
+      <member refid="class_poly_ring_a7d7613dc63cf5ce56d0fc3206040c4c7_1a7d7613dc63cf5ce56d0fc3206040c4c7" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>translate_gbvector_to_vec</name></member>
+      <member refid="class_poly_ring_a2b8b96488da44baa16b34b313082a533_1a2b8b96488da44baa16b34b313082a533" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>translate_gbvector_to_vec_denom</name></member>
+      <member refid="class_poly_ring_ae932376785fd6c09b9a634ae0857c35c_1ae932376785fd6c09b9a634ae0857c35c" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>translate_gbvector_to_vec_QQ</name></member>
+      <member refid="class_poly_ring_afbab9c9478e0282305e36122324e5613_1afbab9c9478e0282305e36122324e5613" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>trivial_poly_ring</name></member>
+      <member refid="class_poly_ring_a4f2b40d80126bb364d4e32254ea23480_1a4f2b40d80126bb364d4e32254ea23480" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>var</name></member>
+      <member refid="class_poly_ring_a0532270b93c657dc6a0153f964f424ba_1a0532270b93c657dc6a0153f964f424ba" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>varCount</name></member>
+      <member refid="class_poly_ring_ac93bd78f4132a8bebbf4065d45223cd6_1ac93bd78f4132a8bebbf4065d45223cd6" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_coefficient_of_var</name></member>
+      <member refid="class_ring_ac1f72c90ba0f65dcd2ed238809a4436b_1ac1f72c90ba0f65dcd2ed238809a4436b" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_content</name></member>
+      <member refid="class_ring_aa5474e4319c97c0bc7e0514e17511de8_1aa5474e4319c97c0bc7e0514e17511de8" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_degree_of_var</name></member>
+      <member refid="class_ring_ab87f80ce23664fb2f9ceff5e0cf2b413_1ab87f80ce23664fb2f9ceff5e0cf2b413" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_degree_weights</name></member>
+      <member refid="class_ring_ace4e99008221eece447482a913b91d6e_1ace4e99008221eece447482a913b91d6e" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_diff</name></member>
+      <member refid="class_ring_a4e9099443139ab3fe157a9b887e8d25d_1a4e9099443139ab3fe157a9b887e8d25d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_divide_by_content</name></member>
+      <member refid="class_ring_ae2e64ec33c0311633bda2ef736a9283c_1ae2e64ec33c0311633bda2ef736a9283c" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_divide_by_expvector</name></member>
+      <member refid="class_ring_a90262b2802488987e553fb60b262ef73_1a90262b2802488987e553fb60b262ef73" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_divide_by_given_content</name></member>
+      <member refid="class_ring_a99764aad7596e897826901072a5819d2_1a99764aad7596e897826901072a5819d2" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_divide_by_var</name></member>
+      <member refid="class_ring_a9c70b217dab9985bc1f222cc05b7fbef_1a9c70b217dab9985bc1f222cc05b7fbef" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_eval</name></member>
+      <member refid="class_poly_ring_a55839c904c7b4715ddf8daa49dceaf5d_1a55839c904c7b4715ddf8daa49dceaf5d" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_get_denominator_QQ</name></member>
+      <member refid="class_ring_a1d2957844a21a06dde77176572ff5eac_1a1d2957844a21a06dde77176572ff5eac" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_homogenize</name></member>
+      <member refid="class_ring_a0e4efa6a0cb1d80b6f594dd970550d81_1a0e4efa6a0cb1d80b6f594dd970550d81" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_homogenize</name></member>
+      <member refid="class_ring_a61d4bfd2af05a757e3e23b584db70704_1a61d4bfd2af05a757e3e23b584db70704" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_in_subring</name></member>
+      <member refid="class_ring_a9badb9c8d993b0e1cc82d7af9f24b0dc_1a9badb9c8d993b0e1cc82d7af9f24b0dc" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_increase_maxnorm</name></member>
+      <member refid="class_ring_a9636ecda53db3a0e2be48df5db565a12_1a9636ecda53db3a0e2be48df5db565a12" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_is_homogeneous</name></member>
+      <member refid="class_ring_abc3a4dad081c84e3f09edc8077d579f9_1abc3a4dad081c84e3f09edc8077d579f9" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_is_scalar_multiple</name></member>
+      <member refid="class_poly_ring_a090d6a04e7311162763d9ed84547df22_1a090d6a04e7311162763d9ed84547df22" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>vec_lead_term</name></member>
+      <member refid="class_poly_ring_a9b5fbd8da276738829a40ff27218f316_1a9b5fbd8da276738829a40ff27218f316" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>vec_locate_lead_term</name></member>
+      <member refid="class_ring_a12273ebca945689a1984578745f228b6_1a12273ebca945689a1984578745f228b6" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_multi_degree</name></member>
+      <member refid="class_ring_a629f09fa842540aca946bcec51719ca4_1a629f09fa842540aca946bcec51719ca4" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_remove_monomial_factors</name></member>
+      <member refid="class_ring_a5c7f6a3a5258e114dae1e8010598739e_1a5c7f6a3a5258e114dae1e8010598739e" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_sort</name></member>
+      <member refid="class_ring_ad2ff5984ae0a757dcd52b02f2a869fc4_1ad2ff5984ae0a757dcd52b02f2a869fc4" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_split_off_content</name></member>
+      <member refid="class_ring_a4174e8d94768d8afe82820b6e43269bb_1a4174e8d94768d8afe82820b6e43269bb" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_text_out</name></member>
+      <member refid="class_poly_ring_a279bb489b4fccf07b8c46575a9c3ad4b_1a279bb489b4fccf07b8c46575a9c3ad4b" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>vec_top_coefficient</name></member>
+      <member refid="class_ring_a4ee9e3796bd24d3ccb662cd45a8d0a16_1a4ee9e3796bd24d3ccb662cd45a8d0a16" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>vec_zeroize_tiny</name></member>
+      <member refid="class_poly_ring_a70854ca6d2dc38dd151737a8269f5d3a_1a70854ca6d2dc38dd151737a8269f5d3a" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>weight</name></member>
+      <member refid="class_ring_a56c4dbffcc7bba98da2103f70a0e8602_1a56c4dbffcc7bba98da2103f70a0e8602" prot="public" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>zero</name></member>
+      <member refid="class_poly_ring_a67d3c963db826c39b0562bf1d98ddd7f_1a67d3c963db826c39b0562bf1d98ddd7f" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>zeroize_tiny</name></member>
+      <member refid="class_ring_afa3a12a60383e4ca91e1e3bf39c74404_1afa3a12a60383e4ca91e1e3bf39c74404" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>zeroV</name></member>
+      <member refid="class_polynomial_ring_a5b90b290f515022e5e34dc0611fa9a90_1a5b90b290f515022e5e34dc0611fa9a90" prot="protected" virt="non-virtual"><scope>SkewPolynomialRing</scope><name>ZZ_quotient_value_</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>~our_gc_cleanup</name></member>
+      <member refid="class_polynomial_ring_a63ce7b382868adc019b5293e35c7233e_1a63ce7b382868adc019b5293e35c7233e" prot="protected" virt="virtual"><scope>SkewPolynomialRing</scope><name>~PolynomialRing</name></member>
+      <member refid="class_poly_ring_a781c9a7cdbdeb41ac9adf2c655fc5380_1a781c9a7cdbdeb41ac9adf2c655fc5380" prot="protected" virt="virtual"><scope>SkewPolynomialRing</scope><name>~PolyRing</name></member>
+      <member refid="class_ring_a515a41c0803bcdd921712d6f5047e101_1a515a41c0803bcdd921712d6f5047e101" prot="public" virt="virtual"><scope>SkewPolynomialRing</scope><name>~Ring</name></member>
+      <member refid="class_skew_polynomial_ring_aa04cf3464fb3b142956ad06175f3ed14_1aa04cf3464fb3b142956ad06175f3ed14" prot="private" virt="virtual"><scope>SkewPolynomialRing</scope><name>~SkewPolynomialRing</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

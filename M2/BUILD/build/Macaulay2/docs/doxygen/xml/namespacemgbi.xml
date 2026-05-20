@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespacemgbi" kind="namespace" language="C++">
+    <compoundname>mgbi</compoundname>
+    <innerclass refid="classmgbi_1_1_pimpl_of" prot="public">mgbi::PimplOf</innerclass>
+    <innernamespace refid="namespacemgbi_1_1_stream_state_checker">mgbi::StreamStateChecker</innernamespace>
+    <innernamespace refid="namespacemgbi_1_1_ideal_adapter">mgbi::IdealAdapter</innernamespace>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemgbi_af970d110dada095ad24cff59b827553c_1af970d110dada095ad24cff59b827553c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mgbi::internalComputeGroebnerBasis</definition>
+        <argsstring>(GroebnerInputIdealStream &amp;inputWhichWillBeCleared, IdealAdapter &amp;output)</argsstring>
+        <name>internalComputeGroebnerBasis</name>
+        <qualifiedname>mgbi::internalComputeGroebnerBasis</qualifiedname>
+        <param>
+          <type>GroebnerInputIdealStream &amp;</type>
+          <declname>inputWhichWillBeCleared</declname>
+        </param>
+        <param>
+          <type>IdealAdapter &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para><xrefsect id="todo_1_todo000007"><xreftitle>Todo</xreftitle><xrefdescription><para>: make a scheme where the output Groebner basis is freed polynomial-by-polynomial as data is transferred to out. Also make it so that ideal is not copied. </para>
+</xrefdescription></xrefsect></para>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.cpp" line="913" column="8" bodyfile="submodules/mathicgb/src/mathicgb.cpp" bodystart="913" bodyend="986"/>
+        <references refid="struct_classic_g_b_alg_params_a354d8561107868fce42fe457a1dfcbc4_1a354d8561107868fce42fe457a1dfcbc4" compoundref="_classic_g_b_alg_8hpp" startline="19">ClassicGBAlgParams::breakAfter</references>
+        <references refid="struct_classic_g_b_alg_params_a89fab524a0f21c3d4224c5b57956e05a_1a89fab524a0f21c3d4224c5b57956e05a" compoundref="_classic_g_b_alg_8hpp" startline="25">ClassicGBAlgParams::callback</references>
+        <references refid="_classic_g_b_alg_8cpp_a281ee5b2d9420a0704b785bd4d5b2814_1a281ee5b2d9420a0704b785bd4d5b2814" compoundref="_classic_g_b_alg_8cpp" startline="661" endline="682">computeGBClassicAlg</references>
+        <references refid="_classic_g_b_alg_8cpp_a8d6913cc30de8a7417c3b2409d31d0c0_1a8d6913cc30de8a7417c3b2409d31d0c0" compoundref="_classic_g_b_alg_8cpp" startline="684" endline="689">computeModuleGBClassicAlg</references>
+        <references refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" compoundref="franzi-gb_8cpp" startline="430" endline="471">gb</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af8b703a7a8a0f8ebbdd534ea12ab2ec0_1af8b703a7a8a0f8ebbdd534ea12ab2ec0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="206" endline="208">make_unique</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_a4e196b723a02a0de5003bb1a8ba5fd71_1a4e196b723a02a0de5003bb1a8ba5fd71" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="290" endline="292">make_unique_array</references>
+        <references refid="class_reducer_a61bec00e6d6deb21a1a1290426a6dc07_1a61bec00e6d6deb21a1a1290426a6dc07" compoundref="_reducer_8cpp" startline="61" endline="73">Reducer::makeReducer</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="struct_classic_g_b_alg_params_ada319fbddc969397928eb997dd7fb314_1ada319fbddc969397928eb997dd7fb314" compoundref="_classic_g_b_alg_8hpp" startline="15">ClassicGBAlgParams::monoLookupType</references>
+        <references refid="io-util_8cpp_a6b55c5c1639e11a6292c2f26b3fc5480_1a6b55c5c1639e11a6292c2f26b3fc5480" compoundref="io-util_8cpp" startline="122" endline="132">output</references>
+        <references refid="class_log_domain_set_ac3719aa1e3aeb24ed94d706263f58d15_1ac3719aa1e3aeb24ed94d706263f58d15" compoundref="_log_domain_set_8hpp" startline="57" endline="58">LogDomainSet::performLogCommands</references>
+        <references refid="struct_classic_g_b_alg_params_ab7c5ae05b1e45d9470ab78e4facf355c_1ab7c5ae05b1e45d9470ab78e4facf355c" compoundref="_classic_g_b_alg_8hpp" startline="16">ClassicGBAlgParams::preferSparseReducers</references>
+        <references refid="struct_classic_g_b_alg_params_a3c1e00a1115306a14b396e97bb9ebac9_1a3c1e00a1115306a14b396e97bb9ebac9" compoundref="_classic_g_b_alg_8hpp" startline="20">ClassicGBAlgParams::printInterval</references>
+        <references refid="struct_classic_g_b_alg_params_a4460df62af4fe349fe9fd20073b4dc3e_1a4460df62af4fe349fe9fd20073b4dc3e" compoundref="_classic_g_b_alg_8hpp" startline="14">ClassicGBAlgParams::reducer</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869af4f9131361385ef38bc1f4d0df01773b" compoundref="_reducer_8hpp" startline="118">Reducer::Reducer_F4_New</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a77884f1d22e55001ad5ed0be4664c9d7" compoundref="_reducer_8hpp" startline="112">Reducer::Reducer_Geobucket_Hashed</references>
+        <references refid="struct_classic_g_b_alg_params_a2aff26b478e81306dff606d6d0e0a9ac_1a2aff26b478e81306dff606d6d0e0a9ac" compoundref="_classic_g_b_alg_8hpp" startline="22">ClassicGBAlgParams::reducerMemoryQuantum</references>
+        <references refid="class_log_domain_set_a350a2834831112e5dd9429ab7dc4b9ba_1a350a2834831112e5dd9429ab7dc4b9ba" compoundref="_log_domain_set_8cpp" startline="202" endline="209">LogDomainSet::reset</references>
+        <references refid="class_log_domain_set_acfc9e89f4e07efeec159424bc10931f1_1acfc9e89f4e07efeec159424bc10931f1" compoundref="_log_domain_set_8cpp" startline="211" endline="214">LogDomainSet::singleton</references>
+        <references refid="struct_classic_g_b_alg_params_a387ac5bd5edbff601a530b959d271a61_1a387ac5bd5edbff601a530b959d271a61" compoundref="_classic_g_b_alg_8hpp" startline="21">ClassicGBAlgParams::sPairGroupSize</references>
+        <references refid="struct_classic_g_b_alg_params_ad6ea68189b8a10aa73dc902ed07b31ca_1ad6ea68189b8a10aa73dc902ed07b31ca" compoundref="_classic_g_b_alg_8hpp" startline="17">ClassicGBAlgParams::sPairQueueType</references>
+        <references refid="struct_classic_g_b_alg_params_a4e41ff0dcd3524e14331cfc851034273_1a4e41ff0dcd3524e14331cfc851034273" compoundref="_classic_g_b_alg_8hpp" startline="24">ClassicGBAlgParams::useAutoTailReduction</references>
+        <references refid="struct_classic_g_b_alg_params_a92c1058da9912cee5bc260e9dda1db6c_1a92c1058da9912cee5bc260e9dda1db6c" compoundref="_classic_g_b_alg_8hpp" startline="23">ClassicGBAlgParams::useAutoTopReduction</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb.cpp" line="74" column="1"/>
+  </compounddef>
+</doxygen>

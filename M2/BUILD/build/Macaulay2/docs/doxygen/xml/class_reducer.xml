@@ -1,0 +1,756 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_reducer" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Reducer</compoundname>
+    <derivedcompoundref refid="class_f4_reducer" prot="public" virt="non-virtual">F4Reducer</derivedcompoundref>
+    <derivedcompoundref refid="class_typical_reducer" prot="public" virt="non-virtual">TypicalReducer</derivedcompoundref>
+    <includes refid="_reducer_8hpp" local="no">Reducer.hpp</includes>
+    <innerclass refid="class_reducer_1_1_registration" prot="public">Reducer::Registration</innerclass>
+    <sectiondef kind="public-type">
+      <memberdef kind="enum" id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ReducerType</name>
+        <qualifiedname>Reducer::ReducerType</qualifiedname>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a072001e43763a9512bca5f5c8621fccb" prot="public">
+          <name>Reducer_TourTree_NoDedup</name>
+          <initializer>= 7</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a784d89c36bc516b144358ee816ba95a4" prot="public">
+          <name>Reducer_TourTree_Dedup</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869afcb3cd9aa6e5a467af997a217f63fe3d" prot="public">
+          <name>Reducer_TourTree_Hashed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a61d6c0c75c18aa826d2eef850661ad6d" prot="public">
+          <name>Reducer_TourTree_NoDedup_Packed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a11d9db57bda4ef7c6563f76b95e55054" prot="public">
+          <name>Reducer_TourTree_Dedup_Packed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869aa530db3a6eb8531f17843e6f7c2b212a" prot="public">
+          <name>Reducer_TourTree_Hashed_Packed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a960bccba65ae8dc23140e73f139577fb" prot="public">
+          <name>Reducer_Heap_NoDedup</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a45243ca4aea7b920b49998469738a52d" prot="public">
+          <name>Reducer_Heap_Dedup</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a49998176f836a97f9718db93fa587751" prot="public">
+          <name>Reducer_Heap_Hashed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a7328c9fd981901f14f3bcb4846987cdd" prot="public">
+          <name>Reducer_Heap_NoDedup_Packed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ab0b5673bdd7efb906471f7552fc3f639" prot="public">
+          <name>Reducer_Heap_Dedup_Packed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a93f5a3c96ef12bff305588fcd0b780a1" prot="public">
+          <name>Reducer_Heap_Hashed_Packed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a30db2b0421b6c8a5730f46405ca17065" prot="public">
+          <name>Reducer_Geobucket_NoDedup</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ae7742c595a5233713f40e1db5bb435a4" prot="public">
+          <name>Reducer_Geobucket_Dedup</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a77884f1d22e55001ad5ed0be4664c9d7" prot="public">
+          <name>Reducer_Geobucket_Hashed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a06e8ec34bef32dd4428c3cac9906f0a9" prot="public">
+          <name>Reducer_Geobucket_NoDedup_Packed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a357885fdb3976fa95bca83763e1ae2ab" prot="public">
+          <name>Reducer_Geobucket_Dedup_Packed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ae670ea7bd9c34577e78543f71f07a147" prot="public">
+          <name>Reducer_Geobucket_Hashed_Packed</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869adc9a908ee0902d5312f3b29100e85a32" prot="public">
+          <name>Reducer_F4_Old</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869af4f9131361385ef38bc1f4d0df01773b" prot="public">
+          <name>Reducer_F4_New</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="95" column="3" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="95" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_reducer_a5c10b7a1270ec7664a074d0cd600da96_1a5c10b7a1270ec7664a074d0cd600da96" prot="public" static="no">
+        <type><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref></type>
+        <definition>typedef PolyRing::Monoid Reducer::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>Reducer::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="21" column="28" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_reducer_a7fb1423f261e33daf498b13824f81bf2_1a7fb1423f261e33daf498b13824f81bf2" prot="public" static="no">
+        <type>Monoid::Mono</type>
+        <definition>typedef Monoid::Mono Reducer::Mono</definition>
+        <argsstring></argsstring>
+        <name>Mono</name>
+        <qualifiedname>Reducer::Mono</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="22" column="24" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_reducer_a2c65f1fee05e82e3ee723b357316f986_1a2c65f1fee05e82e3ee723b357316f986" prot="public" static="no">
+        <type>Monoid::MonoRef</type>
+        <definition>typedef Monoid::MonoRef Reducer::MonoRef</definition>
+        <argsstring></argsstring>
+        <name>MonoRef</name>
+        <qualifiedname>Reducer::MonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="23" column="27" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_reducer_aa8add736f4d0f0608407ad65e11ea845_1aa8add736f4d0f0608407ad65e11ea845" prot="public" static="no">
+        <type>Monoid::ConstMonoRef</type>
+        <definition>typedef Monoid::ConstMonoRef Reducer::ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>Reducer::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="24" column="32" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_reducer_a8a65536926c08addcacb1a319653862c_1a8a65536926c08addcacb1a319653862c" prot="public" static="no">
+        <type>Monoid::MonoPtr</type>
+        <definition>typedef Monoid::MonoPtr Reducer::MonoPtr</definition>
+        <argsstring></argsstring>
+        <name>MonoPtr</name>
+        <qualifiedname>Reducer::MonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="25" column="27" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_reducer_ada28b95ebc01cf9a6f36b16d71accb55_1ada28b95ebc01cf9a6f36b16d71accb55" prot="public" static="no">
+        <type>Monoid::ConstMonoPtr</type>
+        <definition>typedef Monoid::ConstMonoPtr Reducer::ConstMonoPtr</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoPtr</name>
+        <qualifiedname>Reducer::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="26" column="32" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_reducer_ac7f53434acae4ea9766d325798f1c6fa_1ac7f53434acae4ea9766d325798f1c6fa" prot="public" static="no">
+        <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a80cb6ead37274d3269811733b43fca9b_1a80cb6ead37274d3269811733b43fca9b" kindref="member">coefficient</ref></type>
+        <definition>typedef coefficient Reducer::Coefficient</definition>
+        <argsstring></argsstring>
+        <name>Coefficient</name>
+        <qualifiedname>Reducer::Coefficient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="28" column="23" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_reducer_a43c7b4366592b0993b6c39f11dd3cda7_1a43c7b4366592b0993b6c39f11dd3cda7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>Reducer::~Reducer</definition>
+        <argsstring>()</argsstring>
+        <name>~Reducer</name>
+        <qualifiedname>Reducer::~Reducer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="30" column="11" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.cpp" bodystart="36" bodyend="39"/>
+        <references refid="_reducer_8cpp_a30e39450db95717fa0a753e1785607b1_1a30e39450db95717fa0a753e1785607b1" compoundref="_reducer_8cpp" startline="26" endline="34">dummyLinkerFix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_ad92afa8ad7f5e3f4be3c20e153530e1c_1ad92afa8ad7f5e3f4be3c20e153530e1c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>virtual unsigned int Reducer::preferredSetSize</definition>
+        <argsstring>() const =0</argsstring>
+        <name>preferredSetSize</name>
+        <qualifiedname>Reducer::preferredSetSize</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_a8a96110f57e6658a0785c37efab29214_1a8a96110f57e6658a0785c37efab29214">preferredSetSize</reimplementedby>
+        <reimplementedby refid="class_typical_reducer_a64ff52a95475d4857a01cfec31ded5eb_1a64ff52a95475d4857a01cfec31ded5eb">preferredSetSize</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the preferred number of reductions to do at a time. A classic serial reducer will have no particular benefit from doing more than one reduction at a time, so it should say that. A matrix-based or parallel reducer will have benefit from being presented with larger sets of reductions at a time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="37" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_a4b2a61380e2d2a5a8644cc25aea3389b_1a4b2a61380e2d2a5a8644cc25aea3389b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::string</type>
+        <definition>virtual std::string Reducer::description</definition>
+        <argsstring>() const =0</argsstring>
+        <name>description</name>
+        <qualifiedname>Reducer::description</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_a9d5491cd574667171d1dc200f5479d6f_1a9d5491cd574667171d1dc200f5479d6f">description</reimplementedby>
+        <reimplementedby refid="class_reducer_dedup_a485d8bb7a3a20d903e152ed99feca762_1a485d8bb7a3a20d903e152ed99feca762">description</reimplementedby>
+        <reimplementedby refid="class_reducer_hash_a81e2d800b2bdb26586dd4496e6e318d9_1a81e2d800b2bdb26586dd4496e6e318d9">description</reimplementedby>
+        <reimplementedby refid="class_reducer_hash_pack_acb9c9e082e4d060d958f56b752015adc_1acb9c9e082e4d060d958f56b752015adc">description</reimplementedby>
+        <reimplementedby refid="class_reducer_no_dedup_aa34ffb4f8e85e4719727649ccee5ce68_1aa34ffb4f8e85e4719727649ccee5ce68">description</reimplementedby>
+        <reimplementedby refid="class_reducer_pack_af3b351c0474d40570d9c0f136291ed17_1af3b351c0474d40570d9c0f136291ed17">description</reimplementedby>
+        <reimplementedby refid="class_reducer_pack_dedup_a92da3793f14577a807193a3141b69d0a_1a92da3793f14577a807193a3141b69d0a">description</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="39" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_abe3b13f225db9b517964975dd9a43b07_1abe3b13f225db9b517964975dd9a43b07" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t Reducer::getMemoryUse</definition>
+        <argsstring>() const =0</argsstring>
+        <name>getMemoryUse</name>
+        <qualifiedname>Reducer::getMemoryUse</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_a561a98e1581f36bd49f875b514c43c05_1a561a98e1581f36bd49f875b514c43c05">getMemoryUse</reimplementedby>
+        <reimplementedby refid="class_reducer_dedup_a23d30d33930907d9cd1784e6ae5e2446_1a23d30d33930907d9cd1784e6ae5e2446">getMemoryUse</reimplementedby>
+        <reimplementedby refid="class_reducer_hash_afb2dcf2f5dfa6bf6931674a40be79a42_1afb2dcf2f5dfa6bf6931674a40be79a42">getMemoryUse</reimplementedby>
+        <reimplementedby refid="class_reducer_hash_pack_ab845f8f19d6696dd1ca88293369ec0f3_1ab845f8f19d6696dd1ca88293369ec0f3">getMemoryUse</reimplementedby>
+        <reimplementedby refid="class_reducer_no_dedup_afae66ef3921bf5ad02b29a1a712b4862_1afae66ef3921bf5ad02b29a1a712b4862">getMemoryUse</reimplementedby>
+        <reimplementedby refid="class_reducer_pack_aa3b6d6b153e14b20d78d43c09e5b2087_1aa3b6d6b153e14b20d78d43c09e5b2087">getMemoryUse</reimplementedby>
+        <reimplementedby refid="class_reducer_pack_dedup_a52f65c6a0706fee12377e9d67e3ed597_1a52f65c6a0706fee12377e9d67e3ed597">getMemoryUse</reimplementedby>
+        <reimplementedby refid="class_typical_reducer_a397ee474c850e09ed2343a00880af9b8_1a397ee474c850e09ed2343a00880af9b8">getMemoryUse</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="40" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_a6c5f94efc68a123d1ad5d5441960d080_1a6c5f94efc68a123d1ad5d5441960d080" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_poly" kindref="compound">Poly</ref> &gt;</type>
+        <definition>virtual std::unique_ptr&lt; Poly &gt; Reducer::classicReduce</definition>
+        <argsstring>(const Poly &amp;poly, const PolyBasis &amp;basis)=0</argsstring>
+        <name>classicReduce</name>
+        <qualifiedname>Reducer::classicReduce</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_a20e7004b0b19bb8b9b32c0a6a08197a2_1a20e7004b0b19bb8b9b32c0a6a08197a2">classicReduce</reimplementedby>
+        <reimplementedby refid="class_typical_reducer_a74d0118561358a107182c564c613e753_1a74d0118561358a107182c564c613e753">classicReduce</reimplementedby>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_basis" kindref="compound">PolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Clasically reduces poly by the basis elements of basis. The reduction is classic in that no signatures are taken into account. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="46" column="27"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_a02b888521ea9ac131a31339f0fba535a_1a02b888521ea9ac131a31339f0fba535a" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_poly" kindref="compound">Poly</ref> &gt;</type>
+        <definition>virtual std::unique_ptr&lt; Poly &gt; Reducer::classicTailReduce</definition>
+        <argsstring>(const Poly &amp;poly, const PolyBasis &amp;basis)=0</argsstring>
+        <name>classicTailReduce</name>
+        <qualifiedname>Reducer::classicTailReduce</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_a3be53ea9fb96ac8da1dddd33a09e92ab_1a3be53ea9fb96ac8da1dddd33a09e92ab">classicTailReduce</reimplementedby>
+        <reimplementedby refid="class_typical_reducer_ad687cf45ba52dc3ba51ec6cf03eb4b49_1ad687cf45ba52dc3ba51ec6cf03eb4b49">classicTailReduce</reimplementedby>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_basis" kindref="compound">PolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Clasically reduces poly by the basis elements of basis, except that the lead term is not reduced. The reduction is classic in that no signatures are taken into account. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="52" column="27"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_a8a896bf643ed23548cde2ec7ebb288ef_1a8a896bf643ed23548cde2ec7ebb288ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_poly" kindref="compound">Poly</ref> &gt;</type>
+        <definition>virtual std::unique_ptr&lt; Poly &gt; Reducer::classicReduceSPoly</definition>
+        <argsstring>(const Poly &amp;a, const Poly &amp;b, const PolyBasis &amp;basis)=0</argsstring>
+        <name>classicReduceSPoly</name>
+        <qualifiedname>Reducer::classicReduceSPoly</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_a69c7fa180f926dffe13e969243c45074_1a69c7fa180f926dffe13e969243c45074">classicReduceSPoly</reimplementedby>
+        <reimplementedby refid="class_typical_reducer_af51049f1cb2fe0f24bc726b67f24f325_1af51049f1cb2fe0f24bc726b67f24f325">classicReduceSPoly</reimplementedby>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_basis" kindref="compound">PolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <briefdescription>
+<para>Clasically reduces the S-polynomial between a and b. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="56" column="27"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_a8fecf4c737ee4483b80fb8745c1c0704_1a8fecf4c737ee4483b80fb8745c1c0704" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Reducer::classicReduceSPolySet</definition>
+        <argsstring>(std::vector&lt; std::pair&lt; size_t, size_t &gt; &gt; &amp;spairs, const PolyBasis &amp;basis, std::vector&lt; std::unique_ptr&lt; Poly &gt; &gt; &amp;reducedOut)=0</argsstring>
+        <name>classicReduceSPolySet</name>
+        <qualifiedname>Reducer::classicReduceSPolySet</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f">classicReduceSPolySet</reimplementedby>
+        <reimplementedby refid="class_typical_reducer_a04a285a3f2b93d2aa7548dcb8bab1925_1a04a285a3f2b93d2aa7548dcb8bab1925">classicReduceSPolySet</reimplementedby>
+        <param>
+          <type>std::vector&lt; std::pair&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref>, <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &gt; &amp;</type>
+          <declname>spairs</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_basis" kindref="compound">PolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::unique_ptr&lt; <ref refid="class_poly" kindref="compound">Poly</ref> &gt; &gt; &amp;</type>
+          <declname>reducedOut</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Clasically reduces the S-polynomial of these pairs. May or may not also interreduce these to some extent. Polynomials that are reduced to zero are not put into reducedOut. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="62" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_afc38ed1910bf01e56eab97e16cd8f401_1afc38ed1910bf01e56eab97e16cd8f401" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Reducer::classicReducePolySet</definition>
+        <argsstring>(const std::vector&lt; std::unique_ptr&lt; Poly &gt; &gt; &amp;polys, const PolyBasis &amp;basis, std::vector&lt; std::unique_ptr&lt; Poly &gt; &gt; &amp;reducedOut)=0</argsstring>
+        <name>classicReducePolySet</name>
+        <qualifiedname>Reducer::classicReducePolySet</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979">classicReducePolySet</reimplementedby>
+        <reimplementedby refid="class_typical_reducer_a966c14d00391aaae03aa024f17f2f298_1a966c14d00391aaae03aa024f17f2f298">classicReducePolySet</reimplementedby>
+        <param>
+          <type>const std::vector&lt; std::unique_ptr&lt; <ref refid="class_poly" kindref="compound">Poly</ref> &gt; &gt; &amp;</type>
+          <declname>polys</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_basis" kindref="compound">PolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::unique_ptr&lt; <ref refid="class_poly" kindref="compound">Poly</ref> &gt; &gt; &amp;</type>
+          <declname>reducedOut</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Clasically reduces the passed-in polynomials of these pairs. May or may not also interreduce these to some extent. Polynomials that are reduced to zero are not put into reducedOut. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="71" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_a66a4c5081ffc86195aab52cd1b05f1cc_1a66a4c5081ffc86195aab52cd1b05f1cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_poly" kindref="compound">Poly</ref> &gt;</type>
+        <definition>virtual std::unique_ptr&lt; Poly &gt; Reducer::regularReduce</definition>
+        <argsstring>(ConstMonoRef sig, ConstMonoRef multiple, size_t basisElement, const SigPolyBasis &amp;basis)=0</argsstring>
+        <name>regularReduce</name>
+        <qualifiedname>Reducer::regularReduce</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_aa98e12cb6c100ea7ae1220fb90348138_1aa98e12cb6c100ea7ae1220fb90348138">regularReduce</reimplementedby>
+        <reimplementedby refid="class_typical_reducer_a680c08e3ed43f222625c0b8dd668e4a4_1a680c08e3ed43f222625c0b8dd668e4a4">regularReduce</reimplementedby>
+        <param>
+          <type><ref refid="class_reducer_aa8add736f4d0f0608407ad65e11ea845_1aa8add736f4d0f0608407ad65e11ea845" kindref="member">ConstMonoRef</ref></type>
+          <declname>sig</declname>
+        </param>
+        <param>
+          <type><ref refid="class_reducer_aa8add736f4d0f0608407ad65e11ea845_1aa8add736f4d0f0608407ad65e11ea845" kindref="member">ConstMonoRef</ref></type>
+          <declname>multiple</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>basisElement</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sig_poly_basis" kindref="compound">SigPolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Regular reduce multiple*basisElement in signature sig by the basis elements in basis. Returns null (0) if multiple*basisElement is not regular top reducible <ndash/> this indicates a singular reduction. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="81" column="27"/>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_a3793824d61a0f78a507fc4efc1dcd220_1a3793824d61a0f78a507fc4efc1dcd220" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Reducer::setMemoryQuantum</definition>
+        <argsstring>(size_t quantum)=0</argsstring>
+        <name>setMemoryQuantum</name>
+        <qualifiedname>Reducer::setMemoryQuantum</qualifiedname>
+        <reimplementedby refid="class_f4_reducer_ad22ecff4cdd9b9ba90c84f147952e872_1ad22ecff4cdd9b9ba90c84f147952e872">setMemoryQuantum</reimplementedby>
+        <reimplementedby refid="class_typical_reducer_a0fa3fe2ae0c44aa9bb7b9faf2a3db220_1a0fa3fe2ae0c44aa9bb7b9faf2a3db220">setMemoryQuantum</reimplementedby>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>quantum</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets how many bytes of memory to increase the memory use by at a time - if such a thing is appropriate for the reducer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="90" column="16"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_reducer_a61bec00e6d6deb21a1a1290426a6dc07_1a61bec00e6d6deb21a1a1290426a6dc07" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_reducer" kindref="compound">Reducer</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; Reducer &gt; Reducer::makeReducer</definition>
+        <argsstring>(ReducerType t, const PolyRing &amp;ring)</argsstring>
+        <name>makeReducer</name>
+        <qualifiedname>Reducer::makeReducer</qualifiedname>
+        <param>
+          <type><ref refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869" kindref="member">ReducerType</ref></type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="121" column="26" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.cpp" bodystart="61" bodyend="73"/>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_reducer_ab7b3f01e9ba470ae02b51fda06eb22fd_1ab7b3f01e9ba470ae02b51fda06eb22fd" compoundref="_reducer_8cpp" startline="75" endline="84">makeReducerNullOnUnknown</references>
+        <referencedby refid="class_f4_reducer_a8189305281f394d97281b304605525ee_1a8189305281f394d97281b304605525ee" compoundref="_f4_reducer_8cpp" startline="120" endline="128">F4Reducer::F4Reducer</referencedby>
+        <referencedby refid="namespacemgbi_af970d110dada095ad24cff59b827553c_1af970d110dada095ad24cff59b827553c" compoundref="mathicgb_8cpp" startline="913" endline="986">mgbi::internalComputeGroebnerBasis</referencedby>
+        <referencedby refid="class_g_b_action_a69a4ac798f6958ee05121ae226f71681_1a69a4ac798f6958ee05121ae226f71681" compoundref="_g_b_action_8cpp" startline="65" endline="122">GBAction::performAction</referencedby>
+        <referencedby refid="gb-test_8cpp_a64267ccca287756fc198b82a780a6b92_1a64267ccca287756fc198b82a780a6b92" compoundref="gb-test_8cpp" startline="39" endline="327">testGB</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_ab7b3f01e9ba470ae02b51fda06eb22fd_1ab7b3f01e9ba470ae02b51fda06eb22fd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_reducer" kindref="compound">Reducer</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; Reducer &gt; Reducer::makeReducerNullOnUnknown</definition>
+        <argsstring>(ReducerType t, const PolyRing &amp;ring)</argsstring>
+        <name>makeReducerNullOnUnknown</name>
+        <qualifiedname>Reducer::makeReducerNullOnUnknown</qualifiedname>
+        <param>
+          <type><ref refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869" kindref="member">ReducerType</ref></type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="124" column="26" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.cpp" bodystart="75" bodyend="84"/>
+        <references refid="_reducer_8cpp_a18a909f2505b41204a22069b5e3f7240_1a18a909f2505b41204a22069b5e3f7240" compoundref="_reducer_8cpp" startline="44" endline="47">reducerTypes</references>
+        <referencedby refid="class_reducer_a61bec00e6d6deb21a1a1290426a6dc07_1a61bec00e6d6deb21a1a1290426a6dc07" compoundref="_reducer_8cpp" startline="61" endline="73">makeReducer</referencedby>
+        <referencedby refid="gb-test_8cpp_a64267ccca287756fc198b82a780a6b92_1a64267ccca287756fc198b82a780a6b92" compoundref="gb-test_8cpp" startline="39" endline="327">testGB</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_a632489ed23eab4664bc8f3484bfba9b3_1a632489ed23eab4664bc8f3484bfba9b3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869" kindref="member">ReducerType</ref></type>
+        <definition>Reducer::ReducerType Reducer::reducerType</definition>
+        <argsstring>(int typ)</argsstring>
+        <name>reducerType</name>
+        <qualifiedname>Reducer::reducerType</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>typ</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="127" column="22" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.cpp" bodystart="86" bodyend="115"/>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869af4f9131361385ef38bc1f4d0df01773b" compoundref="_reducer_8hpp" startline="118">Reducer_F4_New</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869adc9a908ee0902d5312f3b29100e85a32" compoundref="_reducer_8hpp" startline="117">Reducer_F4_Old</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ae7742c595a5233713f40e1db5bb435a4" compoundref="_reducer_8hpp" startline="111">Reducer_Geobucket_Dedup</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a357885fdb3976fa95bca83763e1ae2ab" compoundref="_reducer_8hpp" startline="114">Reducer_Geobucket_Dedup_Packed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a77884f1d22e55001ad5ed0be4664c9d7" compoundref="_reducer_8hpp" startline="112">Reducer_Geobucket_Hashed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ae670ea7bd9c34577e78543f71f07a147" compoundref="_reducer_8hpp" startline="115">Reducer_Geobucket_Hashed_Packed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a30db2b0421b6c8a5730f46405ca17065" compoundref="_reducer_8hpp" startline="110">Reducer_Geobucket_NoDedup</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a06e8ec34bef32dd4428c3cac9906f0a9" compoundref="_reducer_8hpp" startline="113">Reducer_Geobucket_NoDedup_Packed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a45243ca4aea7b920b49998469738a52d" compoundref="_reducer_8hpp" startline="104">Reducer_Heap_Dedup</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ab0b5673bdd7efb906471f7552fc3f639" compoundref="_reducer_8hpp" startline="107">Reducer_Heap_Dedup_Packed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a49998176f836a97f9718db93fa587751" compoundref="_reducer_8hpp" startline="105">Reducer_Heap_Hashed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a93f5a3c96ef12bff305588fcd0b780a1" compoundref="_reducer_8hpp" startline="108">Reducer_Heap_Hashed_Packed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a960bccba65ae8dc23140e73f139577fb" compoundref="_reducer_8hpp" startline="103">Reducer_Heap_NoDedup</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a7328c9fd981901f14f3bcb4846987cdd" compoundref="_reducer_8hpp" startline="106">Reducer_Heap_NoDedup_Packed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a784d89c36bc516b144358ee816ba95a4" compoundref="_reducer_8hpp" startline="97">Reducer_TourTree_Dedup</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a11d9db57bda4ef7c6563f76b95e55054" compoundref="_reducer_8hpp" startline="100">Reducer_TourTree_Dedup_Packed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869afcb3cd9aa6e5a467af997a217f63fe3d" compoundref="_reducer_8hpp" startline="98">Reducer_TourTree_Hashed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869aa530db3a6eb8531f17843e6f7c2b212a" compoundref="_reducer_8hpp" startline="101">Reducer_TourTree_Hashed_Packed</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a072001e43763a9512bca5f5c8621fccb" compoundref="_reducer_8hpp" startline="96">Reducer_TourTree_NoDedup</references>
+        <references refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a61d6c0c75c18aa826d2eef850661ad6d" compoundref="_reducer_8hpp" startline="99">Reducer_TourTree_NoDedup_Packed</references>
+        <referencedby refid="class_g_b_action_a69a4ac798f6958ee05121ae226f71681_1a69a4ac798f6958ee05121ae226f71681" compoundref="_g_b_action_8cpp" startline="65" endline="122">GBAction::performAction</referencedby>
+        <referencedby refid="class_sig_g_b_action_a324f66f8e0a6aa1a281683182db193fe_1a324f66f8e0a6aa1a281683182db193fe" compoundref="_sig_g_b_action_8cpp" startline="46" endline="105">SigGBAction::performAction</referencedby>
+        <referencedby refid="gb-test_8cpp_a64267ccca287756fc198b82a780a6b92_1a64267ccca287756fc198b82a780a6b92" compoundref="gb-test_8cpp" startline="39" endline="327">testGB</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_a90b7b1542ab900eea1972381fca6114d_1a90b7b1542ab900eea1972381fca6114d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Reducer::displayReducerTypes</definition>
+        <argsstring>(std::ostream &amp;out)</argsstring>
+        <name>displayReducerTypes</name>
+        <qualifiedname>Reducer::displayReducerTypes</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="128" column="15" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.cpp" bodystart="117" bodyend="132"/>
+        <references refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" compoundref="_column_printer_8cpp" startline="32" endline="43">mathic::ColumnPrinter::addColumn</references>
+        <references refid="class_reducer_1_1_registration_a10dc9010ab819e3b31c04c92582f8cc9_1a10dc9010ab819e3b31c04c92582f8cc9" compoundref="_reducer_8hpp" startline="142">Reducer::Registration::mId</references>
+        <references refid="_reducer_8cpp_a18a909f2505b41204a22069b5e3f7240_1a18a909f2505b41204a22069b5e3f7240" compoundref="_reducer_8cpp" startline="44" endline="47">reducerTypes</references>
+        <referencedby refid="class_g_b_common_params_ade5d11ae8690fd164769f7f175cffead_1ade5d11ae8690fd164769f7f175cffead" compoundref="_g_b_common_params_8cpp" startline="12" endline="95">GBCommonParams::GBCommonParams</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Abstract base class for classes that allow reduction of polynomials.</para>
+<para><xrefsect id="todo_1_todo000031"><xreftitle>Todo</xreftitle><xrefdescription><para>: consider changing name of findLeadTerm to leadTerm. </para>
+</xrefdescription></xrefsect></para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>F4Reducer</label>
+        <link refid="class_f4_reducer"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Reducer</label>
+        <link refid="class_reducer"/>
+      </node>
+      <node id="4">
+        <label>ReducerDedup&lt; Queue &gt;</label>
+        <link refid="class_reducer_dedup"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ReducerHash&lt; Queue &gt;</label>
+        <link refid="class_reducer_hash"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ReducerHashPack&lt; Queue &gt;</label>
+        <link refid="class_reducer_hash_pack"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ReducerNoDedup&lt; Queue &gt;</label>
+        <link refid="class_reducer_no_dedup"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ReducerPack&lt; Queue &gt;</label>
+        <link refid="class_reducer_pack"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ReducerPackDedup&lt; Queue &gt;</label>
+        <link refid="class_reducer_pack_dedup"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TypicalReducer</label>
+        <link refid="class_typical_reducer"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="19" column="1" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="19" bodyend="145"/>
+    <listofallmembers>
+      <member refid="class_reducer_a6c5f94efc68a123d1ad5d5441960d080_1a6c5f94efc68a123d1ad5d5441960d080" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>classicReduce</name></member>
+      <member refid="class_reducer_afc38ed1910bf01e56eab97e16cd8f401_1afc38ed1910bf01e56eab97e16cd8f401" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>classicReducePolySet</name></member>
+      <member refid="class_reducer_a8a896bf643ed23548cde2ec7ebb288ef_1a8a896bf643ed23548cde2ec7ebb288ef" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>classicReduceSPoly</name></member>
+      <member refid="class_reducer_a8fecf4c737ee4483b80fb8745c1c0704_1a8fecf4c737ee4483b80fb8745c1c0704" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>classicReduceSPolySet</name></member>
+      <member refid="class_reducer_a02b888521ea9ac131a31339f0fba535a_1a02b888521ea9ac131a31339f0fba535a" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>classicTailReduce</name></member>
+      <member refid="class_reducer_ac7f53434acae4ea9766d325798f1c6fa_1ac7f53434acae4ea9766d325798f1c6fa" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Coefficient</name></member>
+      <member refid="class_reducer_ada28b95ebc01cf9a6f36b16d71accb55_1ada28b95ebc01cf9a6f36b16d71accb55" prot="public" virt="non-virtual"><scope>Reducer</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_reducer_aa8add736f4d0f0608407ad65e11ea845_1aa8add736f4d0f0608407ad65e11ea845" prot="public" virt="non-virtual"><scope>Reducer</scope><name>ConstMonoRef</name></member>
+      <member refid="class_reducer_a4b2a61380e2d2a5a8644cc25aea3389b_1a4b2a61380e2d2a5a8644cc25aea3389b" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>description</name></member>
+      <member refid="class_reducer_a90b7b1542ab900eea1972381fca6114d_1a90b7b1542ab900eea1972381fca6114d" prot="public" virt="non-virtual"><scope>Reducer</scope><name>displayReducerTypes</name></member>
+      <member refid="class_reducer_abe3b13f225db9b517964975dd9a43b07_1abe3b13f225db9b517964975dd9a43b07" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>getMemoryUse</name></member>
+      <member refid="class_reducer_a61bec00e6d6deb21a1a1290426a6dc07_1a61bec00e6d6deb21a1a1290426a6dc07" prot="public" virt="non-virtual"><scope>Reducer</scope><name>makeReducer</name></member>
+      <member refid="class_reducer_ab7b3f01e9ba470ae02b51fda06eb22fd_1ab7b3f01e9ba470ae02b51fda06eb22fd" prot="public" virt="non-virtual"><scope>Reducer</scope><name>makeReducerNullOnUnknown</name></member>
+      <member refid="class_reducer_a7fb1423f261e33daf498b13824f81bf2_1a7fb1423f261e33daf498b13824f81bf2" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Mono</name></member>
+      <member refid="class_reducer_a5c10b7a1270ec7664a074d0cd600da96_1a5c10b7a1270ec7664a074d0cd600da96" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Monoid</name></member>
+      <member refid="class_reducer_a8a65536926c08addcacb1a319653862c_1a8a65536926c08addcacb1a319653862c" prot="public" virt="non-virtual"><scope>Reducer</scope><name>MonoPtr</name></member>
+      <member refid="class_reducer_a2c65f1fee05e82e3ee723b357316f986_1a2c65f1fee05e82e3ee723b357316f986" prot="public" virt="non-virtual"><scope>Reducer</scope><name>MonoRef</name></member>
+      <member refid="class_reducer_ad92afa8ad7f5e3f4be3c20e153530e1c_1ad92afa8ad7f5e3f4be3c20e153530e1c" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>preferredSetSize</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869af4f9131361385ef38bc1f4d0df01773b" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_F4_New</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869adc9a908ee0902d5312f3b29100e85a32" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_F4_Old</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ae7742c595a5233713f40e1db5bb435a4" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Geobucket_Dedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a357885fdb3976fa95bca83763e1ae2ab" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Geobucket_Dedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a77884f1d22e55001ad5ed0be4664c9d7" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Geobucket_Hashed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ae670ea7bd9c34577e78543f71f07a147" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Geobucket_Hashed_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a30db2b0421b6c8a5730f46405ca17065" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Geobucket_NoDedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a06e8ec34bef32dd4428c3cac9906f0a9" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Geobucket_NoDedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a45243ca4aea7b920b49998469738a52d" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Heap_Dedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ab0b5673bdd7efb906471f7552fc3f639" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Heap_Dedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a49998176f836a97f9718db93fa587751" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Heap_Hashed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a93f5a3c96ef12bff305588fcd0b780a1" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Heap_Hashed_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a960bccba65ae8dc23140e73f139577fb" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Heap_NoDedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a7328c9fd981901f14f3bcb4846987cdd" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_Heap_NoDedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a784d89c36bc516b144358ee816ba95a4" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_TourTree_Dedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a11d9db57bda4ef7c6563f76b95e55054" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_TourTree_Dedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869afcb3cd9aa6e5a467af997a217f63fe3d" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_TourTree_Hashed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869aa530db3a6eb8531f17843e6f7c2b212a" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_TourTree_Hashed_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a072001e43763a9512bca5f5c8621fccb" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_TourTree_NoDedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a61d6c0c75c18aa826d2eef850661ad6d" prot="public" virt="non-virtual"><scope>Reducer</scope><name>Reducer_TourTree_NoDedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869" prot="public" virt="non-virtual"><scope>Reducer</scope><name>ReducerType</name></member>
+      <member refid="class_reducer_a632489ed23eab4664bc8f3484bfba9b3_1a632489ed23eab4664bc8f3484bfba9b3" prot="public" virt="non-virtual"><scope>Reducer</scope><name>reducerType</name></member>
+      <member refid="class_reducer_a66a4c5081ffc86195aab52cd1b05f1cc_1a66a4c5081ffc86195aab52cd1b05f1cc" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>regularReduce</name></member>
+      <member refid="class_reducer_a3793824d61a0f78a507fc4efc1dcd220_1a3793824d61a0f78a507fc4efc1dcd220" prot="public" virt="pure-virtual"><scope>Reducer</scope><name>setMemoryQuantum</name></member>
+      <member refid="class_reducer_a43c7b4366592b0993b6c39f11dd3cda7_1a43c7b4366592b0993b6c39f11dd3cda7" prot="public" virt="virtual"><scope>Reducer</scope><name>~Reducer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

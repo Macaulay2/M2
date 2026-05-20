@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_model_helper_1_1_use_decrease_top" kind="struct" language="C++" prot="public">
+    <compoundname>ModelHelper::UseDecreaseTop</compoundname>
+    <includes refid="_model_8h" local="no">Model.h</includes>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/pqsim/Model.h" line="10" column="12" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="10" bodyend="10"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

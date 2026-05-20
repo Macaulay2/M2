@@ -1,0 +1,335 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_our_queue_configuration" kind="class" language="C++" prot="public">
+    <compoundname>OurQueueConfiguration</compoundname>
+    <sectiondef kind="public-type">
+      <memberdef kind="enum" id="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>CompareResult</name>
+        <qualifiedname>OurQueueConfiguration::CompareResult</qualifiedname>
+        <enumvalue id="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4ac562607189d77eb9dfb707464c1e7b0b" prot="public">
+          <name>LT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4a2dcbad7477fd40561e8b8198f173bd47" prot="public">
+          <name>EQ</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4acd6a9bd2a175104eed40f0d33a8b4020" prot="public">
+          <name>GT</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="65" column="3" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="65" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_our_queue_configuration_adb3a2a214470b346bec580e5674a7ddd_1adb3a2a214470b346bec580e5674a7ddd" prot="public" static="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>using OurQueueConfiguration::Entry =  int</definition>
+        <argsstring></argsstring>
+        <name>Entry</name>
+        <qualifiedname>OurQueueConfiguration::Entry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="64" column="3" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_our_queue_configuration_a3be19537089df38d50afaa8259dc23ee_1a3be19537089df38d50afaa8259dc23ee" prot="public" static="no" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t OurQueueConfiguration::minBucketSize</definition>
+        <argsstring></argsstring>
+        <name>minBucketSize</name>
+        <qualifiedname>OurQueueConfiguration::minBucketSize</qualifiedname>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="75" column="16" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_our_queue_configuration_a7fa3140ffa9b21cf6bea783ab7e35cd5_1a7fa3140ffa9b21cf6bea783ab7e35cd5" prot="public" static="no" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t OurQueueConfiguration::geoBase</definition>
+        <argsstring></argsstring>
+        <name>geoBase</name>
+        <qualifiedname>OurQueueConfiguration::geoBase</qualifiedname>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="76" column="16" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="76" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_our_queue_configuration_a5965c1f66704230c386ef220ac052c54_1a5965c1f66704230c386ef220ac052c54" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t OurQueueConfiguration::insertFactor</definition>
+        <argsstring></argsstring>
+        <name>insertFactor</name>
+        <qualifiedname>OurQueueConfiguration::insertFactor</qualifiedname>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="77" column="23" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_our_queue_configuration_ab233f38b43598bf798ceb81670339d29_1ab233f38b43598bf798ceb81670339d29" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool OurQueueConfiguration::supportDeduplication</definition>
+        <argsstring></argsstring>
+        <name>supportDeduplication</name>
+        <qualifiedname>OurQueueConfiguration::supportDeduplication</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="79" column="21" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_our_queue_configuration_ac62141c69d4e2bc390a89ccc1a1e5ad4_1ac62141c69d4e2bc390a89ccc1a1e5ad4" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool OurQueueConfiguration::minBucketBinarySearch</definition>
+        <argsstring></argsstring>
+        <name>minBucketBinarySearch</name>
+        <qualifiedname>OurQueueConfiguration::minBucketBinarySearch</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="83" column="21" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_our_queue_configuration_af271049b99e95b401b5f145fb9f93b9d_1af271049b99e95b401b5f145fb9f93b9d" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool OurQueueConfiguration::trackFront</definition>
+        <argsstring></argsstring>
+        <name>trackFront</name>
+        <qualifiedname>OurQueueConfiguration::trackFront</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="84" column="21" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_our_queue_configuration_a38db0931cc2efffb4d391531a11dd4ac_1a38db0931cc2efffb4d391531a11dd4ac" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool OurQueueConfiguration::premerge</definition>
+        <argsstring></argsstring>
+        <name>premerge</name>
+        <qualifiedname>OurQueueConfiguration::premerge</qualifiedname>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="85" column="21" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_our_queue_configuration_aa20f4e0870eba16ef6704cdd5fa38f9f_1aa20f4e0870eba16ef6704cdd5fa38f9f" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool OurQueueConfiguration::collectMax</definition>
+        <argsstring></argsstring>
+        <name>collectMax</name>
+        <qualifiedname>OurQueueConfiguration::collectMax</qualifiedname>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="86" column="21" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_our_queue_configuration_ab360e2e16e7c2c845ea1dca08c472bc2_1ab360e2e16e7c2c845ea1dca08c472bc2" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="namespacemathic_ad2658f70702519d6e2fa504591e4d884_1ad2658f70702519d6e2fa504591e4d884" kindref="member">mathic::GeobucketBucketStorage</ref></type>
+        <definition>const mathic::GeobucketBucketStorage OurQueueConfiguration::bucketStorage</definition>
+        <argsstring></argsstring>
+        <name>bucketStorage</name>
+        <qualifiedname>OurQueueConfiguration::bucketStorage</qualifiedname>
+        <initializer>= <ref refid="namespacemathic_ad2658f70702519d6e2fa504591e4d884_1ad2658f70702519d6e2fa504591e4d884a05732aa13efe3eb07f204bd85c85117a" kindref="member">mathic::GeoStoreSameSizeBuffer</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="88" column="47" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="88" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_our_queue_configuration_aba23a81f3ccfc13e0de57c32eaee56a6_1aba23a81f3ccfc13e0de57c32eaee56a6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4" kindref="member">CompareResult</ref></type>
+        <definition>CompareResult OurQueueConfiguration::compare</definition>
+        <argsstring>(const Entry &amp;a, const Entry &amp;b) const</argsstring>
+        <name>compare</name>
+        <qualifiedname>OurQueueConfiguration::compare</qualifiedname>
+        <param>
+          <type>const <ref refid="class_our_queue_configuration_adb3a2a214470b346bec580e5674a7ddd_1adb3a2a214470b346bec580e5674a7ddd" kindref="member">Entry</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_our_queue_configuration_adb3a2a214470b346bec580e5674a7ddd_1adb3a2a214470b346bec580e5674a7ddd" kindref="member">Entry</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="66" column="17" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="66" bodyend="71"/>
+        <references refid="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4a2dcbad7477fd40561e8b8198f173bd47" compoundref="_n_c_reduction_8cpp" startline="65">EQ</references>
+        <references refid="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4acd6a9bd2a175104eed40f0d33a8b4020" compoundref="_n_c_reduction_8cpp" startline="65">GT</references>
+        <references refid="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4ac562607189d77eb9dfb707464c1e7b0b" compoundref="_n_c_reduction_8cpp" startline="65">LT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_our_queue_configuration_a1e11e9efb4828dc68c5020905661b8cb_1a1e11e9efb4828dc68c5020905661b8cb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool OurQueueConfiguration::cmpLessThan</definition>
+        <argsstring>(CompareResult a) const</argsstring>
+        <name>cmpLessThan</name>
+        <qualifiedname>OurQueueConfiguration::cmpLessThan</qualifiedname>
+        <param>
+          <type><ref refid="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4" kindref="member">CompareResult</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="72" column="8" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="72" bodyend="72"/>
+        <references refid="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4ac562607189d77eb9dfb707464c1e7b0b" compoundref="_n_c_reduction_8cpp" startline="65">LT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_our_queue_configuration_a90df578468f89d52feb8dee0b3742eb4_1a90df578468f89d52feb8dee0b3742eb4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool OurQueueConfiguration::cmpEqual</definition>
+        <argsstring>(CompareResult a) const</argsstring>
+        <name>cmpEqual</name>
+        <qualifiedname>OurQueueConfiguration::cmpEqual</qualifiedname>
+        <param>
+          <type><ref refid="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4" kindref="member">CompareResult</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="80" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="class_our_queue_configuration_a4e73222eafd01da83142b14efb02c920_1a4e73222eafd01da83142b14efb02c920" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_our_queue_configuration_adb3a2a214470b346bec580e5674a7ddd_1adb3a2a214470b346bec580e5674a7ddd" kindref="member">Entry</ref></type>
+        <definition>Entry OurQueueConfiguration::deduplicate</definition>
+        <argsstring>(Entry a, Entry b) const</argsstring>
+        <name>deduplicate</name>
+        <qualifiedname>OurQueueConfiguration::deduplicate</qualifiedname>
+        <param>
+          <type><ref refid="class_our_queue_configuration_adb3a2a214470b346bec580e5674a7ddd_1adb3a2a214470b346bec580e5674a7ddd" kindref="member">Entry</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_our_queue_configuration_adb3a2a214470b346bec580e5674a7ddd_1adb3a2a214470b346bec580e5674a7ddd" kindref="member">Entry</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="81" column="9"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Experimental <computeroutput><ref refid="classmathic_1_1_geobucket" kindref="compound">mathic::Geobucket</ref></computeroutput> configuration whose <computeroutput><ref refid="class_our_queue_configuration_adb3a2a214470b346bec580e5674a7ddd_1adb3a2a214470b346bec580e5674a7ddd" kindref="member">Entry</ref></computeroutput> is an <computeroutput><ref refid="classint" kindref="compound">int</ref></computeroutput> <mdash/> a placeholder used by <computeroutput><ref refid="_n_c_reduction_8cpp_a7e1541e136a7eb6d67513c4a420027ba_1a7e1541e136a7eb6d67513c4a420027ba" kindref="member">makeQueue()</ref></computeroutput> to exercise the geobucket machinery without involving real monomials. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Compare is integer ordering, deduplication is disabled. Useful as a scaffolding/sanity-check configuration when wiring the noncommutative reduction code against the mathic queue templates. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>OurQueueConfiguration</label>
+        <link refid="class_our_queue_configuration"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>geoBase</edgelabel>
+          <edgelabel>insertFactor</edgelabel>
+          <edgelabel>minBucketSize</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>collectMax</edgelabel>
+          <edgelabel>minBucketBinarySearch</edgelabel>
+          <edgelabel>premerge</edgelabel>
+          <edgelabel>supportDeduplication</edgelabel>
+          <edgelabel>trackFront</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>bucketStorage</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="2">
+        <label>size_t</label>
+      </node>
+      <node id="4">
+        <label>GeobucketBucketStorage</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/NCAlgebras/NCReduction.cpp" line="61" column="1" bodyfile="Macaulay2/e/NCAlgebras/NCReduction.cpp" bodystart="62" bodyend="89"/>
+    <listofallmembers>
+      <member refid="class_our_queue_configuration_ab360e2e16e7c2c845ea1dca08c472bc2_1ab360e2e16e7c2c845ea1dca08c472bc2" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>bucketStorage</name></member>
+      <member refid="class_our_queue_configuration_a90df578468f89d52feb8dee0b3742eb4_1a90df578468f89d52feb8dee0b3742eb4" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>cmpEqual</name></member>
+      <member refid="class_our_queue_configuration_a1e11e9efb4828dc68c5020905661b8cb_1a1e11e9efb4828dc68c5020905661b8cb" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>cmpLessThan</name></member>
+      <member refid="class_our_queue_configuration_aa20f4e0870eba16ef6704cdd5fa38f9f_1aa20f4e0870eba16ef6704cdd5fa38f9f" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>collectMax</name></member>
+      <member refid="class_our_queue_configuration_aba23a81f3ccfc13e0de57c32eaee56a6_1aba23a81f3ccfc13e0de57c32eaee56a6" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>compare</name></member>
+      <member refid="class_our_queue_configuration_a3536569e708e89a2d1c52e0cab9dc7e4_1a3536569e708e89a2d1c52e0cab9dc7e4" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>CompareResult</name></member>
+      <member refid="class_our_queue_configuration_a4e73222eafd01da83142b14efb02c920_1a4e73222eafd01da83142b14efb02c920" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>deduplicate</name></member>
+      <member refid="class_our_queue_configuration_adb3a2a214470b346bec580e5674a7ddd_1adb3a2a214470b346bec580e5674a7ddd" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>Entry</name></member>
+      <member refid="class_our_queue_configuration_a7fa3140ffa9b21cf6bea783ab7e35cd5_1a7fa3140ffa9b21cf6bea783ab7e35cd5" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>geoBase</name></member>
+      <member refid="class_our_queue_configuration_a5965c1f66704230c386ef220ac052c54_1a5965c1f66704230c386ef220ac052c54" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>insertFactor</name></member>
+      <member refid="class_our_queue_configuration_ac62141c69d4e2bc390a89ccc1a1e5ad4_1ac62141c69d4e2bc390a89ccc1a1e5ad4" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>minBucketBinarySearch</name></member>
+      <member refid="class_our_queue_configuration_a3be19537089df38d50afaa8259dc23ee_1a3be19537089df38d50afaa8259dc23ee" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>minBucketSize</name></member>
+      <member refid="class_our_queue_configuration_a38db0931cc2efffb4d391531a11dd4ac_1a38db0931cc2efffb4d391531a11dd4ac" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>premerge</name></member>
+      <member refid="class_our_queue_configuration_ab233f38b43598bf798ceb81670339d29_1ab233f38b43598bf798ceb81670339d29" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>supportDeduplication</name></member>
+      <member refid="class_our_queue_configuration_af271049b99e95b401b5f145fb9f93b9d_1af271049b99e95b401b5f145fb9f93b9d" prot="public" virt="non-virtual"><scope>OurQueueConfiguration</scope><name>trackFront</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

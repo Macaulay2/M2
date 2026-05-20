@@ -1,0 +1,410 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classpartition__table" kind="class" language="C++" prot="public">
+    <compoundname>partition_table</compoundname>
+    <includes refid="hilb_8hpp" local="no">hilb.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classpartition__table_a60a803f80c3403acda21222b652f4ecc_1a60a803f80c3403acda21222b652f4ecc" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int partition_table::n_vars</definition>
+        <argsstring></argsstring>
+        <name>n_vars</name>
+        <qualifiedname>partition_table::n_vars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="54" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="54" bodyend="-1"/>
+        <referencedby refid="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" compoundref="hilb_8cpp" startline="121" endline="169">partition</referencedby>
+        <referencedby refid="classpartition__table_a32d7be280ca7ec781736036a75c11341_1a32d7be280ca7ec781736036a75c11341" compoundref="hilb_8cpp" startline="95" endline="109">partition_table</referencedby>
+        <referencedby refid="classpartition__table_ae76155b8061e00feafb5369cd842f937_1ae76155b8061e00feafb5369cd842f937" compoundref="hilb_8cpp" startline="111" endline="120">reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classpartition__table_a9b131f169f095e15655e7141cc8f4cec_1a9b131f169f095e15655e7141cc8f4cec" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int partition_table::n_sets</definition>
+        <argsstring></argsstring>
+        <name>n_sets</name>
+        <qualifiedname>partition_table::n_sets</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="55" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="55" bodyend="-1"/>
+        <referencedby refid="classpartition__table_ad1a8234e725bda1204bff71ccd59bbec_1ad1a8234e725bda1204bff71ccd59bbec" compoundref="hilb_8cpp" startline="43" endline="79">merge_in</referencedby>
+        <referencedby refid="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" compoundref="hilb_8cpp" startline="121" endline="169">partition</referencedby>
+        <referencedby refid="classpartition__table_a32d7be280ca7ec781736036a75c11341_1a32d7be280ca7ec781736036a75c11341" compoundref="hilb_8cpp" startline="95" endline="109">partition_table</referencedby>
+        <referencedby refid="classpartition__table_ae76155b8061e00feafb5369cd842f937_1ae76155b8061e00feafb5369cd842f937" compoundref="hilb_8cpp" startline="111" endline="120">reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classpartition__table_aab506be512c0220b3dc8e0ad2185f014_1aab506be512c0220b3dc8e0ad2185f014" prot="private" static="no" mutable="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>gc_vector&lt;int&gt; partition_table::adad</definition>
+        <argsstring></argsstring>
+        <name>adad</name>
+        <qualifiedname>partition_table::adad</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="56" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="classpartition__table_a32d7be280ca7ec781736036a75c11341_1a32d7be280ca7ec781736036a75c11341" compoundref="hilb_8cpp" startline="95" endline="109">partition_table</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classpartition__table_ad3c049bbce5cb507f583e8e7e2bd9129_1ad3c049bbce5cb507f583e8e7e2bd9129" prot="private" static="no" mutable="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>gc_vector&lt;int&gt; partition_table::aoccurs</definition>
+        <argsstring></argsstring>
+        <name>aoccurs</name>
+        <qualifiedname>partition_table::aoccurs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="57" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="classpartition__table_a32d7be280ca7ec781736036a75c11341_1a32d7be280ca7ec781736036a75c11341" compoundref="hilb_8cpp" startline="95" endline="109">partition_table</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classpartition__table_adcb6148fc8675d0154f00914bc6d9a2b_1adcb6148fc8675d0154f00914bc6d9a2b" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* partition_table::dad</definition>
+        <argsstring></argsstring>
+        <name>dad</name>
+        <qualifiedname>partition_table::dad</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="58" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="classpartition__table_ad1a8234e725bda1204bff71ccd59bbec_1ad1a8234e725bda1204bff71ccd59bbec" compoundref="hilb_8cpp" startline="43" endline="79">merge_in</referencedby>
+        <referencedby refid="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" compoundref="hilb_8cpp" startline="121" endline="169">partition</referencedby>
+        <referencedby refid="classpartition__table_a32d7be280ca7ec781736036a75c11341_1a32d7be280ca7ec781736036a75c11341" compoundref="hilb_8cpp" startline="95" endline="109">partition_table</referencedby>
+        <referencedby refid="classpartition__table_ac4f8348d9cc963b1d2da81326847f788_1ac4f8348d9cc963b1d2da81326847f788" compoundref="hilb_8cpp" startline="29" endline="41">representative</referencedby>
+        <referencedby refid="classpartition__table_ae76155b8061e00feafb5369cd842f937_1ae76155b8061e00feafb5369cd842f937" compoundref="hilb_8cpp" startline="111" endline="120">reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classpartition__table_a62c87433b760378ec3312eee9aa1ab48_1a62c87433b760378ec3312eee9aa1ab48" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* partition_table::occurs</definition>
+        <argsstring></argsstring>
+        <name>occurs</name>
+        <qualifiedname>partition_table::occurs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="59" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="classpartition__table_ac7df63be9c1b85e5673a4764945d94b2_1ac7df63be9c1b85e5673a4764945d94b2" compoundref="hilb_8cpp" startline="81" endline="93">merge_in</referencedby>
+        <referencedby refid="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" compoundref="hilb_8cpp" startline="121" endline="169">partition</referencedby>
+        <referencedby refid="classpartition__table_a32d7be280ca7ec781736036a75c11341_1a32d7be280ca7ec781736036a75c11341" compoundref="hilb_8cpp" startline="95" endline="109">partition_table</referencedby>
+        <referencedby refid="classpartition__table_ae76155b8061e00feafb5369cd842f937_1ae76155b8061e00feafb5369cd842f937" compoundref="hilb_8cpp" startline="111" endline="120">reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classpartition__table_ac2a2817491171e822214f2120d337224_1ac2a2817491171e822214f2120d337224" prot="private" static="no" mutable="no">
+        <type><ref refid="classstash" kindref="compound">stash</ref> *</type>
+        <definition>stash* partition_table::mi_stash</definition>
+        <argsstring></argsstring>
+        <name>mi_stash</name>
+        <qualifiedname>partition_table::mi_stash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="65" column="9" bodyfile="Macaulay2/e/hilb.hpp" bodystart="65" bodyend="-1"/>
+        <referencedby refid="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" compoundref="hilb_8cpp" startline="121" endline="169">partition</referencedby>
+        <referencedby refid="classpartition__table_a32d7be280ca7ec781736036a75c11341_1a32d7be280ca7ec781736036a75c11341" compoundref="hilb_8cpp" startline="95" endline="109">partition_table</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classpartition__table_ad1a8234e725bda1204bff71ccd59bbec_1ad1a8234e725bda1204bff71ccd59bbec" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int partition_table::merge_in</definition>
+        <argsstring>(int x, int y)</argsstring>
+        <name>merge_in</name>
+        <qualifiedname>partition_table::merge_in</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="61" column="7" bodyfile="Macaulay2/e/hilb.cpp" bodystart="43" bodyend="79"/>
+        <references refid="classpartition__table_adcb6148fc8675d0154f00914bc6d9a2b_1adcb6148fc8675d0154f00914bc6d9a2b" compoundref="hilb_8hpp" startline="58">dad</references>
+        <references refid="classpartition__table_a9b131f169f095e15655e7141cc8f4cec_1a9b131f169f095e15655e7141cc8f4cec" compoundref="hilb_8hpp" startline="55">n_sets</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="classpartition__table_ac7df63be9c1b85e5673a4764945d94b2_1ac7df63be9c1b85e5673a4764945d94b2" compoundref="hilb_8cpp" startline="81" endline="93">merge_in</referencedby>
+        <referencedby refid="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" compoundref="hilb_8cpp" startline="121" endline="169">partition</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classpartition__table_ac7df63be9c1b85e5673a4764945d94b2_1ac7df63be9c1b85e5673a4764945d94b2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void partition_table::merge_in</definition>
+        <argsstring>(const_varpower m)</argsstring>
+        <name>merge_in</name>
+        <qualifiedname>partition_table::merge_in</qualifiedname>
+        <param>
+          <type><ref refid="_exponent_list_8hpp_a32c7462759c905470880b0dba58f00ad_1a32c7462759c905470880b0dba58f00ad" kindref="member">const_varpower</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="62" column="8" bodyfile="Macaulay2/e/hilb.cpp" bodystart="81" bodyend="93"/>
+        <references refid="classpartition__table_ad1a8234e725bda1204bff71ccd59bbec_1ad1a8234e725bda1204bff71ccd59bbec" compoundref="hilb_8cpp" startline="43" endline="79">merge_in</references>
+        <references refid="classpartition__table_a62c87433b760378ec3312eee9aa1ab48_1a62c87433b760378ec3312eee9aa1ab48" compoundref="hilb_8hpp" startline="59">occurs</references>
+        <references refid="class_exponent_list_iterator_aa4b917e0ca8f707730b8bc452fd51a42_1aa4b917e0ca8f707730b8bc452fd51a42" compoundref="_exponent_list_8hpp" startline="249" endline="249">ExponentListIterator&lt; E, L &gt;::valid</references>
+        <references refid="class_exponent_list_iterator_a4bfb6dccc85c1fa71842ad1b641fd57d_1a4bfb6dccc85c1fa71842ad1b641fd57d" compoundref="_exponent_list_8hpp" startline="253" endline="253">ExponentListIterator&lt; E, L &gt;::var</references>
+      </memberdef>
+      <memberdef kind="function" id="classpartition__table_ac4f8348d9cc963b1d2da81326847f788_1ac4f8348d9cc963b1d2da81326847f788" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int partition_table::representative</definition>
+        <argsstring>(int x)</argsstring>
+        <name>representative</name>
+        <qualifiedname>partition_table::representative</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="63" column="7" bodyfile="Macaulay2/e/hilb.cpp" bodystart="29" bodyend="41"/>
+        <references refid="classpartition__table_adcb6148fc8675d0154f00914bc6d9a2b_1adcb6148fc8675d0154f00914bc6d9a2b" compoundref="hilb_8hpp" startline="58">dad</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" compoundref="hilb_8cpp" startline="121" endline="169">partition</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpartition__table_a32d7be280ca7ec781736036a75c11341_1a32d7be280ca7ec781736036a75c11341" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>partition_table::partition_table</definition>
+        <argsstring>(int nvars, stash *mi_stash0)</argsstring>
+        <name>partition_table</name>
+        <qualifiedname>partition_table::partition_table</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <param>
+          <type><ref refid="classstash" kindref="compound">stash</ref> *</type>
+          <declname>mi_stash0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="67" column="3" bodyfile="Macaulay2/e/hilb.cpp" bodystart="95" bodyend="109"/>
+        <references refid="classpartition__table_aab506be512c0220b3dc8e0ad2185f014_1aab506be512c0220b3dc8e0ad2185f014" compoundref="hilb_8hpp" startline="56">adad</references>
+        <references refid="classpartition__table_ad3c049bbce5cb507f583e8e7e2bd9129_1ad3c049bbce5cb507f583e8e7e2bd9129" compoundref="hilb_8hpp" startline="57">aoccurs</references>
+        <references refid="classpartition__table_adcb6148fc8675d0154f00914bc6d9a2b_1adcb6148fc8675d0154f00914bc6d9a2b" compoundref="hilb_8hpp" startline="58">dad</references>
+        <references refid="classpartition__table_ac2a2817491171e822214f2120d337224_1ac2a2817491171e822214f2120d337224" compoundref="hilb_8hpp" startline="65">mi_stash</references>
+        <references refid="classpartition__table_a9b131f169f095e15655e7141cc8f4cec_1a9b131f169f095e15655e7141cc8f4cec" compoundref="hilb_8hpp" startline="55">n_sets</references>
+        <references refid="classpartition__table_a60a803f80c3403acda21222b652f4ecc_1a60a803f80c3403acda21222b652f4ecc" compoundref="hilb_8hpp" startline="54">n_vars</references>
+        <references refid="classpartition__table_a62c87433b760378ec3312eee9aa1ab48_1a62c87433b760378ec3312eee9aa1ab48" compoundref="hilb_8hpp" startline="59">occurs</references>
+      </memberdef>
+      <memberdef kind="function" id="classpartition__table_aeed5f6737585753b071dc5b403b1128f_1aeed5f6737585753b071dc5b403b1128f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>partition_table::~partition_table</definition>
+        <argsstring>()</argsstring>
+        <name>~partition_table</name>
+        <qualifiedname>partition_table::~partition_table</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="68" column="3" bodyfile="Macaulay2/e/hilb.hpp" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classpartition__table_ae76155b8061e00feafb5369cd842f937_1ae76155b8061e00feafb5369cd842f937" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void partition_table::reset</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>reset</name>
+        <qualifiedname>partition_table::reset</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="69" column="8" bodyfile="Macaulay2/e/hilb.cpp" bodystart="111" bodyend="120"/>
+        <references refid="classpartition__table_adcb6148fc8675d0154f00914bc6d9a2b_1adcb6148fc8675d0154f00914bc6d9a2b" compoundref="hilb_8hpp" startline="58">dad</references>
+        <references refid="classpartition__table_a9b131f169f095e15655e7141cc8f4cec_1a9b131f169f095e15655e7141cc8f4cec" compoundref="hilb_8hpp" startline="55">n_sets</references>
+        <references refid="classpartition__table_a60a803f80c3403acda21222b652f4ecc_1a60a803f80c3403acda21222b652f4ecc" compoundref="hilb_8hpp" startline="54">n_vars</references>
+        <references refid="classpartition__table_a62c87433b760378ec3312eee9aa1ab48_1a62c87433b760378ec3312eee9aa1ab48" compoundref="hilb_8hpp" startline="59">occurs</references>
+        <referencedby refid="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" compoundref="hilb_8cpp" startline="121" endline="169">partition</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void partition_table::partition</definition>
+        <argsstring>(MonomialIdeal *&amp;I, gc_vector&lt; MonomialIdeal * &gt; &amp;result)</argsstring>
+        <name>partition</name>
+        <qualifiedname>partition_table::partition</qualifiedname>
+        <param>
+          <type><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref> *&amp;</type>
+          <declname>I</declname>
+        </param>
+        <param>
+          <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref> * &gt; &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="70" column="8" bodyfile="Macaulay2/e/hilb.cpp" bodystart="121" bodyend="169"/>
+        <references refid="classpartition__table_adcb6148fc8675d0154f00914bc6d9a2b_1adcb6148fc8675d0154f00914bc6d9a2b" compoundref="hilb_8hpp" startline="58">dad</references>
+        <references refid="class_monomial_ideal_aef478e527af8db4406c3114b63e30c46_1aef478e527af8db4406c3114b63e30c46" compoundref="monideal_8hpp" startline="184" endline="184">MonomialIdeal::get_ring</references>
+        <references refid="classpartition__table_ad1a8234e725bda1204bff71ccd59bbec_1ad1a8234e725bda1204bff71ccd59bbec" compoundref="hilb_8cpp" startline="43" endline="79">merge_in</references>
+        <references refid="classpartition__table_ac2a2817491171e822214f2120d337224_1ac2a2817491171e822214f2120d337224" compoundref="hilb_8hpp" startline="65">mi_stash</references>
+        <references refid="classint__bag_aa3e4dfb5e1b23bd42af0619c0fec4cbc_1aa3e4dfb5e1b23bd42af0619c0fec4cbc" compoundref="int-bag_8hpp" startline="58" endline="58">int_bag::monom</references>
+        <references refid="classpartition__table_a9b131f169f095e15655e7141cc8f4cec_1a9b131f169f095e15655e7141cc8f4cec" compoundref="hilb_8hpp" startline="55">n_sets</references>
+        <references refid="classpartition__table_a60a803f80c3403acda21222b652f4ecc_1a60a803f80c3403acda21222b652f4ecc" compoundref="hilb_8hpp" startline="54">n_vars</references>
+        <references refid="classpartition__table_a62c87433b760378ec3312eee9aa1ab48_1a62c87433b760378ec3312eee9aa1ab48" compoundref="hilb_8hpp" startline="59">occurs</references>
+        <references refid="class_monomial_ideal_a197ba5780c7ea0c2cecab5e59769229b_1a197ba5780c7ea0c2cecab5e59769229b" compoundref="monideal_8cpp" startline="451" endline="458">MonomialIdeal::remove</references>
+        <references refid="classpartition__table_ac4f8348d9cc963b1d2da81326847f788_1ac4f8348d9cc963b1d2da81326847f788" compoundref="hilb_8cpp" startline="29" endline="41">representative</references>
+        <references refid="classpartition__table_ae76155b8061e00feafb5369cd842f937_1ae76155b8061e00feafb5369cd842f937" compoundref="hilb_8cpp" startline="111" endline="120">reset</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_exponent_list_a74cdb54ff6096225d58a6b73b0c0f59d_1a74cdb54ff6096225d58a6b73b0c0f59d" compoundref="_exponent_list_8hpp" startline="124" endline="128">ExponentList&lt; int, true &gt;::topvar</references>
+        <references refid="class_monomial_ideal_ac2fd2b1ce0a2b49250b9a22144007e0e_1ac2fd2b1ce0a2b49250b9a22144007e0e" compoundref="monideal_8hpp" startline="181" endline="181">MonomialIdeal::topvar</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="6">
+        <label>char</label>
+      </node>
+      <node id="3">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="5">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="1">
+        <label>partition_table</label>
+        <link refid="classpartition__table"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>dad</edgelabel>
+          <edgelabel>n_sets</edgelabel>
+          <edgelabel>n_vars</edgelabel>
+          <edgelabel>occurs</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>adad</edgelabel>
+          <edgelabel>aoccurs</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mi_stash</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>size_t</label>
+      </node>
+      <node id="8">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>spinLock</label>
+      </node>
+      <node id="4">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/hilb.hpp" line="49" column="1" bodyfile="Macaulay2/e/hilb.hpp" bodystart="53" bodyend="72"/>
+    <listofallmembers>
+      <member refid="classpartition__table_aab506be512c0220b3dc8e0ad2185f014_1aab506be512c0220b3dc8e0ad2185f014" prot="private" virt="non-virtual"><scope>partition_table</scope><name>adad</name></member>
+      <member refid="classpartition__table_ad3c049bbce5cb507f583e8e7e2bd9129_1ad3c049bbce5cb507f583e8e7e2bd9129" prot="private" virt="non-virtual"><scope>partition_table</scope><name>aoccurs</name></member>
+      <member refid="classpartition__table_adcb6148fc8675d0154f00914bc6d9a2b_1adcb6148fc8675d0154f00914bc6d9a2b" prot="private" virt="non-virtual"><scope>partition_table</scope><name>dad</name></member>
+      <member refid="classpartition__table_ad1a8234e725bda1204bff71ccd59bbec_1ad1a8234e725bda1204bff71ccd59bbec" prot="private" virt="non-virtual"><scope>partition_table</scope><name>merge_in</name></member>
+      <member refid="classpartition__table_ac7df63be9c1b85e5673a4764945d94b2_1ac7df63be9c1b85e5673a4764945d94b2" prot="private" virt="non-virtual"><scope>partition_table</scope><name>merge_in</name></member>
+      <member refid="classpartition__table_ac2a2817491171e822214f2120d337224_1ac2a2817491171e822214f2120d337224" prot="private" virt="non-virtual"><scope>partition_table</scope><name>mi_stash</name></member>
+      <member refid="classpartition__table_a9b131f169f095e15655e7141cc8f4cec_1a9b131f169f095e15655e7141cc8f4cec" prot="private" virt="non-virtual"><scope>partition_table</scope><name>n_sets</name></member>
+      <member refid="classpartition__table_a60a803f80c3403acda21222b652f4ecc_1a60a803f80c3403acda21222b652f4ecc" prot="private" virt="non-virtual"><scope>partition_table</scope><name>n_vars</name></member>
+      <member refid="classpartition__table_a62c87433b760378ec3312eee9aa1ab48_1a62c87433b760378ec3312eee9aa1ab48" prot="private" virt="non-virtual"><scope>partition_table</scope><name>occurs</name></member>
+      <member refid="classpartition__table_a8a134643481d008799010d084747aad5_1a8a134643481d008799010d084747aad5" prot="public" virt="non-virtual"><scope>partition_table</scope><name>partition</name></member>
+      <member refid="classpartition__table_a32d7be280ca7ec781736036a75c11341_1a32d7be280ca7ec781736036a75c11341" prot="public" virt="non-virtual"><scope>partition_table</scope><name>partition_table</name></member>
+      <member refid="classpartition__table_ac4f8348d9cc963b1d2da81326847f788_1ac4f8348d9cc963b1d2da81326847f788" prot="private" virt="non-virtual"><scope>partition_table</scope><name>representative</name></member>
+      <member refid="classpartition__table_ae76155b8061e00feafb5369cd842f937_1ae76155b8061e00feafb5369cd842f937" prot="public" virt="non-virtual"><scope>partition_table</scope><name>reset</name></member>
+      <member refid="classpartition__table_aeed5f6737585753b071dc5b403b1128f_1aeed5f6737585753b071dc5b403b1128f" prot="public" virt="non-virtual"><scope>partition_table</scope><name>~partition_table</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_m2-cpp-replacement_8cpp" kind="file" language="C++">
+    <compoundname>M2-cpp-replacement.cpp</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_m2-cpp-replacement_8cpp_a5035d07c37876dc3b866e1d4457ff390_1a5035d07c37876dc3b866e1d4457ff390" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool system_interrupted</definition>
+        <argsstring>()</argsstring>
+        <name>system_interrupted</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/M2-cpp-replacement.cpp" line="28" column="6" bodyfile="Macaulay2/e/unit-tests/M2-cpp-replacement.cpp" bodystart="28" bodyend="28"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Single-symbol stub for <computeroutput><ref refid="_m2-cpp-replacement_8cpp_a5035d07c37876dc3b866e1d4457ff390_1a5035d07c37876dc3b866e1d4457ff390" kindref="member">system_interrupted()</ref></computeroutput> so the gtest binary links without the <ref refid="namespace_m2" kindref="compound">M2</ref> interpreter. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Hosts one line: <computeroutput><ref refid="classbool" kindref="compound">bool</ref> <ref refid="_m2-cpp-replacement_8cpp_a5035d07c37876dc3b866e1d4457ff390_1a5035d07c37876dc3b866e1d4457ff390" kindref="member">system_interrupted()</ref> { <ref refid="m2-mem_8cpp_acc4ce1649a2cfffb5cbc82ee8231a249_1acc4ce1649a2cfffb5cbc82ee8231a249" kindref="member">return</ref> false; }</computeroutput>. The engine calls this hook from inner loops to honour Ctrl+C arriving through the interpreter&apos;s <computeroutput>interrupts.d</computeroutput>; the <computeroutput>M2-unit-tests</computeroutput> binary does not link the interpreter, so the symbol would otherwise be undefined. The stub always reports &quot;not interrupted,&quot; which is the correct answer for an automated test run: tests should never time out from a fake Ctrl+C.</para>
+<para>The fact that a single one-line replacement is enough to build the engine for testing demonstrates how cleanly the engine / interpreter boundary is drawn <mdash/> everything else the test binary needs is satisfied by the regular engine libraries. Companion to <computeroutput>testMain.cpp</computeroutput>, <computeroutput><ref refid="from_stream_8cpp" kindref="compound">fromStream.cpp</ref></computeroutput>, and <computeroutput>util-polyring-creation.{cpp,hpp}</computeroutput> in the <computeroutput>file-test-harness</computeroutput> family.</para>
+<para><simplesect kind="see"><para>testMain.cpp </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="from_stream_8cpp" kindref="compound">fromStream.cpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="util-polyring-creation_8hpp" kindref="compound">util-polyring-creation.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="interrupted_8hpp" kindref="compound">interrupted.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="_m2-cpp-replacement_8cpp_a5035d07c37876dc3b866e1d4457ff390_1a5035d07c37876dc3b866e1d4457ff390" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="_m2-cpp-replacement_8cpp_a5035d07c37876dc3b866e1d4457ff390_1a5035d07c37876dc3b866e1d4457ff390" kindref="member">system_interrupted</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e/unit-tests<sp/>check<sp/><sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/unit-tests/M2-cpp-replacement.cpp"/>
+  </compounddef>
+</doxygen>

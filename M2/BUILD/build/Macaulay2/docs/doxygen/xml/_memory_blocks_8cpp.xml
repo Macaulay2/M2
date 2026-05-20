@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_memory_blocks_8cpp" kind="file" language="C++">
+    <compoundname>MemoryBlocks.cpp</compoundname>
+    <includes refid="_memory_blocks_8h" local="yes">MemoryBlocks.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/memtailor/src/memtailor/MemoryBlocks.cpp</label>
+        <link refid="_memory_blocks_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MemoryBlocks.h</label>
+        <link refid="_memory_blocks_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>stdinc.h</label>
+        <link refid="memtailor_2src_2memtailor_2stdinc_8h"/>
+      </node>
+      <node id="4">
+        <label>cstddef</label>
+      </node>
+      <node id="5">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacememt">memt</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*<sp/>Copyright<sp/>(C)<sp/>2011<sp/>Bjarke<sp/>Hammersholt<sp/>Roune<sp/>(www.broune.com)</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/><sp/><sp/>MemTailor<sp/>is<sp/>distributed<sp/>under<sp/>the<sp/>Modified<sp/>BSD<sp/>License.<sp/>See<sp/>license.txt.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_memory_blocks_8h" kindref="compound">MemoryBlocks.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacememt" kindref="compound">memt</ref><sp/>{</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7" refid="classmemt_1_1_memory_blocks_a182e16db00d44e762ce8cb667d6d4474_1a182e16db00d44e762ce8cb667d6d4474" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_memory_blocks_a182e16db00d44e762ce8cb667d6d4474_1a182e16db00d44e762ce8cb667d6d4474" kindref="member">MemoryBlocks::freeAllPreviousBlocks</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<ref refid="classmemt_1_1_memory_blocks_a5085c1567f1f082ad7564dad94e7e557_1a5085c1567f1f082ad7564dad94e7e557" kindref="member">_block</ref>.hasPreviousBlock())</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_ab81ac8775b77baf4182fbbd28b4da00d_1ab81ac8775b77baf4182fbbd28b4da00d" kindref="member">freePreviousBlock</ref>();</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="classmemt_1_1_memory_blocks_a1c54bd7d807b57825fcdbd25822a7873_1a1c54bd7d807b57825fcdbd25822a7873" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_memory_blocks_a1c54bd7d807b57825fcdbd25822a7873_1a1c54bd7d807b57825fcdbd25822a7873" kindref="member">MemoryBlocks::freeAllBlocks</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_a182e16db00d44e762ce8cb667d6d4474_1a182e16db00d44e762ce8cb667d6d4474" kindref="member">freeAllPreviousBlocks</ref>();</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_a5085c1567f1f082ad7564dad94e7e557_1a5085c1567f1f082ad7564dad94e7e557" kindref="member">_block</ref>.free();</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_a5085c1567f1f082ad7564dad94e7e557_1a5085c1567f1f082ad7564dad94e7e557" kindref="member">_block</ref>.makeNull();</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="classmemt_1_1_memory_blocks_1_1_block_a0f284563463ee6a0fb6b469a62e2a6d4_1a0f284563463ee6a0fb6b469a62e2a6d4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a0f284563463ee6a0fb6b469a62e2a6d4_1a0f284563463ee6a0fb6b469a62e2a6d4" kindref="member">MemoryBlocks::Block::newBlock</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>capacityInBytes)<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="classmemt_1_1_memory_blocks_1_1_block_a872c34fe42662373ad49442db82e1cb9_1a872c34fe42662373ad49442db82e1cb9" kindref="member">isNull</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>set<sp/>aside<sp/>space<sp/>for<sp/>a<sp/>block<sp/>at<sp/>the<sp/>end<sp/>of<sp/>the<sp/>memory.<sp/>Use<sp/>that</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>space<sp/>to<sp/>store<sp/>the<sp/>block<sp/>for<sp/>the<sp/>old<sp/>memory.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>blockStructOffset<sp/>=<sp/><ref refid="classmemt_1_1_memory_blocks_a3b07816c8ea4e348c113c26736bcaaca_1a3b07816c8ea4e348c113c26736bcaaca" kindref="member">alignNoOverflow</ref>(<ref refid="classmemt_1_1_memory_blocks_1_1_block_a9cd1da52f91896b566dff981a092405d_1a9cd1da52f91896b566dff981a092405d" kindref="member">getBytesInBlock</ref>());</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_ab369036c04585d9cce1871b589f2be97_1ab369036c04585d9cce1871b589f2be97" kindref="member">Block</ref>*<sp/>block<sp/>=<sp/></highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><ref refid="classmemt_1_1_memory_blocks_1_1_block_ab369036c04585d9cce1871b589f2be97_1ab369036c04585d9cce1871b589f2be97" kindref="member">Block</ref>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<ref refid="classmemt_1_1_memory_blocks_1_1_block_a925b321058dbafba285b60029b520524_1a925b321058dbafba285b60029b520524" kindref="member">begin</ref>()<sp/>+<sp/>blockStructOffset);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_ad0a16dbe26b0f4d8270ed083af66f40d_1ad0a16dbe26b0f4d8270ed083af66f40d" kindref="member">_previous</ref><sp/>=<sp/>this-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_a54c996cb74cdce14f121d15ba05fde35_1a54c996cb74cdce14f121d15ba05fde35" kindref="member">previousBlock</ref>();</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_a86fa60f557f1672248d2971abf00e85a_1a86fa60f557f1672248d2971abf00e85a" kindref="member">_begin</ref><sp/>=<sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a925b321058dbafba285b60029b520524_1a925b321058dbafba285b60029b520524" kindref="member">begin</ref>();</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_acce98e733145b809e5fe5e5360154bdf_1acce98e733145b809e5fe5e5360154bdf" kindref="member">_end</ref><sp/>=<sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_acb3935cc7ffc151ee3a9fdf2d48d7ce7_1acb3935cc7ffc151ee3a9fdf2d48d7ce7" kindref="member">end</ref>();</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_ac442045b0999d33b04ce01f644bb83cc_1ac442045b0999d33b04ce01f644bb83cc" kindref="member">_position</ref><sp/>=<sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a56b81c44a122a3e3c64da196c0553354_1a56b81c44a122a3e3c64da196c0553354" kindref="member">position</ref>();</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_ad0a16dbe26b0f4d8270ed083af66f40d_1ad0a16dbe26b0f4d8270ed083af66f40d" kindref="member">_previous</ref><sp/>=<sp/>block;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>make<sp/>space<sp/>for<sp/>block<sp/>information<sp/>at<sp/>end<sp/>of<sp/>new<sp/>memory,<sp/>but<sp/>do<sp/>not</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>use<sp/>it<sp/>yet.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>aligned<sp/>=<sp/><ref refid="classmemt_1_1_memory_blocks_a7ff3251b8a83e64bb00c2258ea88c818_1a7ff3251b8a83e64bb00c2258ea88c818" kindref="member">alignThrowOnOverflow</ref>(capacityInBytes);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>total<sp/>=<sp/>aligned<sp/>+<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<ref refid="classmemt_1_1_memory_blocks_1_1_block_ab369036c04585d9cce1871b589f2be97_1ab369036c04585d9cce1871b589f2be97" kindref="member">Block</ref>);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(total<sp/>&lt;<sp/>aligned)<sp/></highlight><highlight class="comment">//<sp/>check<sp/>overflow</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::bad_alloc();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a86fa60f557f1672248d2971abf00e85a_1a86fa60f557f1672248d2971abf00e85a" kindref="member">_begin</ref><sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">[total];</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_ac442045b0999d33b04ce01f644bb83cc_1ac442045b0999d33b04ce01f644bb83cc" kindref="member">_position</ref><sp/>=<sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a86fa60f557f1672248d2971abf00e85a_1a86fa60f557f1672248d2971abf00e85a" kindref="member">_begin</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_acce98e733145b809e5fe5e5360154bdf_1acce98e733145b809e5fe5e5360154bdf" kindref="member">_end</ref><sp/>=<sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a86fa60f557f1672248d2971abf00e85a_1a86fa60f557f1672248d2971abf00e85a" kindref="member">_begin</ref><sp/>+<sp/>capacityInBytes;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="memtailor_2src_2memtailor_2stdinc_8h_ad057ce2973a5f2b80fd818c9cb2954e5_1ad057ce2973a5f2b80fd818c9cb2954e5" kindref="member">MEMT_ASSERT</ref>(!<ref refid="classmemt_1_1_memory_blocks_1_1_block_a872c34fe42662373ad49442db82e1cb9_1a872c34fe42662373ad49442db82e1cb9" kindref="member">isNull</ref>());</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="memtailor_2src_2memtailor_2stdinc_8h_ad057ce2973a5f2b80fd818c9cb2954e5_1ad057ce2973a5f2b80fd818c9cb2954e5" kindref="member">MEMT_ASSERT</ref>(<ref refid="classmemt_1_1_memory_blocks_1_1_block_a5fbb607be6e2a73054e11c851763cb21_1a5fbb607be6e2a73054e11c851763cb21" kindref="member">empty</ref>());</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="memtailor_2src_2memtailor_2stdinc_8h_ad057ce2973a5f2b80fd818c9cb2954e5_1ad057ce2973a5f2b80fd818c9cb2954e5" kindref="member">MEMT_ASSERT</ref>(capacityInBytes<sp/>==<sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a9cd1da52f91896b566dff981a092405d_1a9cd1da52f91896b566dff981a092405d" kindref="member">getBytesInBlock</ref>());</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classmemt_1_1_memory_blocks_aa6a30f2d254ba241868fa2916f5d2935_1aa6a30f2d254ba241868fa2916f5d2935" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_memory_blocks_aa6a30f2d254ba241868fa2916f5d2935_1aa6a30f2d254ba241868fa2916f5d2935" kindref="member">MemoryBlocks::getMemoryUse</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>sum<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block" kindref="compound">Block</ref>*<sp/>block<sp/>=<sp/>&amp;<ref refid="classmemt_1_1_memory_blocks_a5085c1567f1f082ad7564dad94e7e557_1a5085c1567f1f082ad7564dad94e7e557" kindref="member">_block</ref>;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sum<sp/>+=<sp/>block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_a9cd1da52f91896b566dff981a092405d_1a9cd1da52f91896b566dff981a092405d" kindref="member">getBytesInBlock</ref>();</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>block<sp/>=<sp/>block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_a54c996cb74cdce14f121d15ba05fde35_1a54c996cb74cdce14f121d15ba05fde35" kindref="member">previousBlock</ref>();</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(block<sp/>!=<sp/>0);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sum;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="classmemt_1_1_memory_blocks_a8b97a449e852e1e69635a621402dc28d_1a8b97a449e852e1e69635a621402dc28d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_memory_blocks_a8b97a449e852e1e69635a621402dc28d_1a8b97a449e852e1e69635a621402dc28d" kindref="member">MemoryBlocks::getMemoryUseToLeft</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>sum<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block" kindref="compound">Block</ref>*<sp/>block<sp/>=<sp/>&amp;<ref refid="classmemt_1_1_memory_blocks_a5085c1567f1f082ad7564dad94e7e557_1a5085c1567f1f082ad7564dad94e7e557" kindref="member">_block</ref>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sum<sp/>+=<sp/>block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_a415a185fc0ea61eab434ec029e1bec3f_1a415a185fc0ea61eab434ec029e1bec3f" kindref="member">getBytesToLeft</ref>();</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>block<sp/>=<sp/>block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_a54c996cb74cdce14f121d15ba05fde35_1a54c996cb74cdce14f121d15ba05fde35" kindref="member">previousBlock</ref>();</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(block<sp/>!=<sp/>0);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sum;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="classmemt_1_1_memory_blocks_1_1_block_a5d8c206dd4eca4adac0d07fe25c5eb3b_1a5d8c206dd4eca4adac0d07fe25c5eb3b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a5d8c206dd4eca4adac0d07fe25c5eb3b_1a5d8c206dd4eca4adac0d07fe25c5eb3b" kindref="member">MemoryBlocks::Block::freePrevious</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="memtailor_2src_2memtailor_2stdinc_8h_ad057ce2973a5f2b80fd818c9cb2954e5_1ad057ce2973a5f2b80fd818c9cb2954e5" kindref="member">MEMT_ASSERT</ref>(<ref refid="classmemt_1_1_memory_blocks_1_1_block_a198167f4d5e887ccbadf9e35c407a84d_1a198167f4d5e887ccbadf9e35c407a84d" kindref="member">hasPreviousBlock</ref>());</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_ab369036c04585d9cce1871b589f2be97_1ab369036c04585d9cce1871b589f2be97" kindref="member">Block</ref>*<sp/>previousPrevious<sp/>=<sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a54c996cb74cdce14f121d15ba05fde35_1a54c996cb74cdce14f121d15ba05fde35" kindref="member">previousBlock</ref>()-&gt;previousBlock();</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_a54c996cb74cdce14f121d15ba05fde35_1a54c996cb74cdce14f121d15ba05fde35" kindref="member">previousBlock</ref>()-&gt;free();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block_ad0a16dbe26b0f4d8270ed083af66f40d_1ad0a16dbe26b0f4d8270ed083af66f40d" kindref="member">_previous</ref><sp/>=<sp/>previousPrevious;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="classmemt_1_1_memory_blocks_a88577600448ea035c65f69fc0de0cba1_1a88577600448ea035c65f69fc0de0cba1" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block" kindref="compound">MemoryBlocks::Block</ref>*<sp/><ref refid="classmemt_1_1_memory_blocks_a88577600448ea035c65f69fc0de0cba1_1a88577600448ea035c65f69fc0de0cba1" kindref="member">MemoryBlocks::blockOf</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr)<sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ptr<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;<sp/></highlight><highlight class="comment">//<sp/>avoid<sp/>saying<sp/>that<sp/>null<sp/>is<sp/>in<sp/>a<sp/>null<sp/>block</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block" kindref="compound">Block</ref>*<sp/>block<sp/>=<sp/>&amp;<ref refid="classmemt_1_1_memory_blocks_a5085c1567f1f082ad7564dad94e7e557_1a5085c1567f1f082ad7564dad94e7e557" kindref="member">_block</ref>;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_af4c4752a03d19a6c03ed6df8a693e2e3_1af4c4752a03d19a6c03ed6df8a693e2e3" kindref="member">isInBlock</ref>(ptr))</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>block;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>block<sp/>=<sp/>block-&gt;<ref refid="classmemt_1_1_memory_blocks_1_1_block_a54c996cb74cdce14f121d15ba05fde35_1a54c996cb74cdce14f121d15ba05fde35" kindref="member">previousBlock</ref>();</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(block<sp/>!=<sp/>0);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/memtailor/src/memtailor/MemoryBlocks.cpp"/>
+  </compounddef>
+</doxygen>

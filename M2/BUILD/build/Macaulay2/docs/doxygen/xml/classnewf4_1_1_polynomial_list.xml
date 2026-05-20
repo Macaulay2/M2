@@ -1,0 +1,433 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classnewf4_1_1_polynomial_list" kind="class" language="C++" prot="public">
+    <compoundname>newf4::PolynomialList</compoundname>
+    <includes refid="_polynomial_list_8hpp" local="no">PolynomialList.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_acde05e02871959e353bf1bd27ffe4a3b_1acde05e02871959e353bf1bd27ffe4a3b" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> &amp;</type>
+        <definition>const VectorArithmetic&amp; newf4::PolynomialList::mVectorArithmetic</definition>
+        <argsstring></argsstring>
+        <name>mVectorArithmetic</name>
+        <qualifiedname>newf4::PolynomialList::mVectorArithmetic</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="51" column="26" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="51" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_a0c622af8872184873bc4fce25bcbfe0c_1a0c622af8872184873bc4fce25bcbfe0c" compoundref="_polynomial_list_8hpp" startline="56" endline="59">PolynomialList</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_a5b30061d07ad0f1ff55d9870d6d7ce05_1a5b30061d07ad0f1ff55d9870d6d7ce05" compoundref="_polynomial_list_8hpp" startline="64" endline="64">vectorArithmetic</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_a843f8c81be4bd2d23ffb5f1c6d53dfaf_1a843f8c81be4bd2d23ffb5f1c6d53dfaf" prot="private" static="no" mutable="no">
+        <type><ref refid="class_monomial_hash_table" kindref="compound">MonomialHashTable</ref> &amp;</type>
+        <definition>MonomialHashTable&amp; newf4::PolynomialList::mHashTable</definition>
+        <argsstring></argsstring>
+        <name>mHashTable</name>
+        <qualifiedname>newf4::PolynomialList::mHashTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="52" column="21" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="52" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_a2625e613806e14d79ff366e0e1d50406_1a2625e613806e14d79ff366e0e1d50406" compoundref="_polynomial_list_8hpp" startline="62" endline="62">monomialHashTable</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_a5dd05ce568ca22a51e7f77f9e2ab9758_1a5dd05ce568ca22a51e7f77f9e2ab9758" compoundref="_polynomial_list_8hpp" startline="61" endline="61">monomialHashTable</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_a0c622af8872184873bc4fce25bcbfe0c_1a0c622af8872184873bc4fce25bcbfe0c" compoundref="_polynomial_list_8hpp" startline="56" endline="59">PolynomialList</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnewf4_1_1_polynomial_list_ae248a093192a4e9220416fe515d75927_1ae248a093192a4e9220416fe515d75927" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_polynomial" kindref="compound">Polynomial</ref> &gt;</type>
+        <definition>std::vector&lt;Polynomial&gt; newf4::PolynomialList::mPolynomials</definition>
+        <argsstring></argsstring>
+        <name>mPolynomials</name>
+        <qualifiedname>newf4::PolynomialList::mPolynomials</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="53" column="15" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="53" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_polynomial_list_a14df00dfefec57d1c5357158dad31eda_1a14df00dfefec57d1c5357158dad31eda" compoundref="_polynomial_list_8hpp" startline="66" endline="66">operator[]</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_a506bd754a0ed31d20bc67b3f08a9fdc5_1a506bd754a0ed31d20bc67b3f08a9fdc5" compoundref="_polynomial_list_8hpp" startline="67" endline="67">operator[]</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_aa17694bc66619e19dd0fb29c9d4348a7_1aa17694bc66619e19dd0fb29c9d4348a7" compoundref="_polynomial_list_8hpp" startline="71" endline="71">push_back</referencedby>
+        <referencedby refid="classnewf4_1_1_polynomial_list_a533f08df3654a36205f9673e055a3100_1a533f08df3654a36205f9673e055a3100" compoundref="_polynomial_list_8hpp" startline="69" endline="69">size</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_a0c622af8872184873bc4fce25bcbfe0c_1a0c622af8872184873bc4fce25bcbfe0c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>newf4::PolynomialList::PolynomialList</definition>
+        <argsstring>(const VectorArithmetic &amp;VA, MonomialHashTable &amp;hashTable)</argsstring>
+        <name>PolynomialList</name>
+        <qualifiedname>newf4::PolynomialList::PolynomialList</qualifiedname>
+        <param>
+          <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> &amp;</type>
+          <declname>VA</declname>
+        </param>
+        <param>
+          <type><ref refid="class_monomial_hash_table" kindref="compound">MonomialHashTable</ref> &amp;</type>
+          <declname>hashTable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="56" column="3" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="56" bodyend="59"/>
+        <references refid="classnewf4_1_1_polynomial_list_a843f8c81be4bd2d23ffb5f1c6d53dfaf_1a843f8c81be4bd2d23ffb5f1c6d53dfaf" compoundref="_polynomial_list_8hpp" startline="52">mHashTable</references>
+        <references refid="classnewf4_1_1_polynomial_list_acde05e02871959e353bf1bd27ffe4a3b_1acde05e02871959e353bf1bd27ffe4a3b" compoundref="_polynomial_list_8hpp" startline="51">mVectorArithmetic</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_a5dd05ce568ca22a51e7f77f9e2ab9758_1a5dd05ce568ca22a51e7f77f9e2ab9758" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_monomial_hash_table" kindref="compound">MonomialHashTable</ref> &amp;</type>
+        <definition>const MonomialHashTable &amp; newf4::PolynomialList::monomialHashTable</definition>
+        <argsstring>() const</argsstring>
+        <name>monomialHashTable</name>
+        <qualifiedname>newf4::PolynomialList::monomialHashTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="61" column="27" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="61" bodyend="61"/>
+        <references refid="classnewf4_1_1_polynomial_list_a843f8c81be4bd2d23ffb5f1c6d53dfaf_1a843f8c81be4bd2d23ffb5f1c6d53dfaf" compoundref="_polynomial_list_8hpp" startline="52">mHashTable</references>
+        <referencedby refid="namespacenewf4_ab0f2bf6487cec9e3f6f82435f2b15246_1ab0f2bf6487cec9e3f6f82435f2b15246" compoundref="_polynomial_list_8hpp" startline="295" endline="321">newf4::toStream</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_a2625e613806e14d79ff366e0e1d50406_1a2625e613806e14d79ff366e0e1d50406" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_monomial_hash_table" kindref="compound">MonomialHashTable</ref> &amp;</type>
+        <definition>MonomialHashTable &amp; newf4::PolynomialList::monomialHashTable</definition>
+        <argsstring>()</argsstring>
+        <name>monomialHashTable</name>
+        <qualifiedname>newf4::PolynomialList::monomialHashTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="62" column="21" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="62" bodyend="62"/>
+        <references refid="classnewf4_1_1_polynomial_list_a843f8c81be4bd2d23ffb5f1c6d53dfaf_1a843f8c81be4bd2d23ffb5f1c6d53dfaf" compoundref="_polynomial_list_8hpp" startline="52">mHashTable</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_a5b30061d07ad0f1ff55d9870d6d7ce05_1a5b30061d07ad0f1ff55d9870d6d7ce05" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref> &amp;</type>
+        <definition>const VectorArithmetic &amp; newf4::PolynomialList::vectorArithmetic</definition>
+        <argsstring>() const</argsstring>
+        <name>vectorArithmetic</name>
+        <qualifiedname>newf4::PolynomialList::vectorArithmetic</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="64" column="26" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="64" bodyend="64"/>
+        <references refid="classnewf4_1_1_polynomial_list_acde05e02871959e353bf1bd27ffe4a3b_1acde05e02871959e353bf1bd27ffe4a3b" compoundref="_polynomial_list_8hpp" startline="51">mVectorArithmetic</references>
+        <referencedby refid="namespacenewf4_ab0f2bf6487cec9e3f6f82435f2b15246_1ab0f2bf6487cec9e3f6f82435f2b15246" compoundref="_polynomial_list_8hpp" startline="295" endline="321">newf4::toStream</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_a14df00dfefec57d1c5357158dad31eda_1a14df00dfefec57d1c5357158dad31eda" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial" kindref="compound">Polynomial</ref> &amp;</type>
+        <definition>Polynomial &amp; newf4::PolynomialList::operator[]</definition>
+        <argsstring>(int index)</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>newf4::PolynomialList::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="66" column="14" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="66" bodyend="66"/>
+        <references refid="classnewf4_1_1_polynomial_list_ae248a093192a4e9220416fe515d75927_1ae248a093192a4e9220416fe515d75927" compoundref="_polynomial_list_8hpp" startline="53">mPolynomials</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_a506bd754a0ed31d20bc67b3f08a9fdc5_1a506bd754a0ed31d20bc67b3f08a9fdc5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_polynomial" kindref="compound">Polynomial</ref> &amp;</type>
+        <definition>const Polynomial &amp; newf4::PolynomialList::operator[]</definition>
+        <argsstring>(int index) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>newf4::PolynomialList::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="67" column="20" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="67" bodyend="67"/>
+        <references refid="classnewf4_1_1_polynomial_list_ae248a093192a4e9220416fe515d75927_1ae248a093192a4e9220416fe515d75927" compoundref="_polynomial_list_8hpp" startline="53">mPolynomials</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_a533f08df3654a36205f9673e055a3100_1a533f08df3654a36205f9673e055a3100" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t newf4::PolynomialList::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>newf4::PolynomialList::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="69" column="10" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="69" bodyend="69"/>
+        <references refid="classnewf4_1_1_polynomial_list_ae248a093192a4e9220416fe515d75927_1ae248a093192a4e9220416fe515d75927" compoundref="_polynomial_list_8hpp" startline="53">mPolynomials</references>
+        <referencedby refid="namespacenewf4_ab0f2bf6487cec9e3f6f82435f2b15246_1ab0f2bf6487cec9e3f6f82435f2b15246" compoundref="_polynomial_list_8hpp" startline="295" endline="321">newf4::toStream</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_polynomial_list_aa17694bc66619e19dd0fb29c9d4348a7_1aa17694bc66619e19dd0fb29c9d4348a7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::PolynomialList::push_back</definition>
+        <argsstring>(const Polynomial &amp;F)</argsstring>
+        <name>push_back</name>
+        <qualifiedname>newf4::PolynomialList::push_back</qualifiedname>
+        <param>
+          <type>const <ref refid="class_polynomial" kindref="compound">Polynomial</ref> &amp;</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="71" column="8" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="71" bodyend="71"/>
+        <references refid="classnewf4_1_1_polynomial_list_ae248a093192a4e9220416fe515d75927_1ae248a093192a4e9220416fe515d75927" compoundref="_polynomial_list_8hpp" startline="53">mPolynomials</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="23">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>HashInt</label>
+      </node>
+      <node id="5">
+        <label>MemoryBlock</label>
+        <link refid="class_memory_block"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>VectorArithmetic</label>
+        <link refid="class_vector_arithmetic"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mConcreteVector</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>char</label>
+      </node>
+      <node id="26">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="12">
+        <label>int32_t</label>
+      </node>
+      <node id="6">
+        <label>memt::Arena</label>
+        <link refid="classmemt_1_1_arena"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_scratchArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>newf4::HashTableStats</label>
+        <link refid="structnewf4_1_1_hash_table_stats"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>max_run_length</edgelabel>
+          <edgelabel>monequal_count</edgelabel>
+          <edgelabel>monequal_fails</edgelabel>
+          <edgelabel>n_calls_find</edgelabel>
+          <edgelabel>n_clashes</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>newf4::MonomialHashFunction</label>
+        <link refid="classnewf4_1_1_monomial_hash_function"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mHashValues</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>newf4::MonomialHashTable</label>
+        <link refid="classnewf4_1_1_monomial_hash_table"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mMonomialSpace</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mMonomialPointers</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mHashValues</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mHashFunction</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mHashMask</edgelabel>
+          <edgelabel>mLog2Size</edgelabel>
+          <edgelabel>mThreshold</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mBuckets</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mStats</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>newf4::MonomialView</label>
+        <link refid="classnewf4_1_1_monomial_view"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mData</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>newf4::Polynomial</label>
+        <link refid="classnewf4_1_1_polynomial"/>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mCoefficients</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mMonomials</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mComponents</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>mPolynomialList</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>newf4::PolynomialList</label>
+        <link refid="classnewf4_1_1_polynomial_list"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mVectorArithmetic</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mHashTable</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mPolynomials</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>variant&lt; ConcreteVectorArithmetic&lt; M2::ARingZZpFlint &gt; *, ConcreteVectorArithmetic&lt; M2::ARingGFFlintBig &gt; *, ConcreteVectorArithmetic&lt; M2::ARingGFFlint &gt; *, ConcreteVectorArithmetic&lt; M2::ARingQQGMP &gt; *, ConcreteVectorArithmetic&lt; M2::ARingZZpFFPACK &gt; *, ConcreteVectorArithmetic&lt; M2::ARingZZp &gt; *, ConcreteVectorArithmetic&lt; M2::ARingGFM2 &gt; *, ConcreteVectorArithmetic&lt; CoefficientRingR &gt; *, ConcreteVectorArithmetic&lt; CoefficientRingZZp &gt; *, ConcreteVectorArithmetic&lt; M2::DummyRing &gt; * &gt;</label>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="14" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>std::vector&lt; ComponentIndex &gt;</label>
+        <childnode refid="26" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; ComponentIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>std::vector&lt; HashInt &gt;</label>
+        <childnode refid="16" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; HashInt &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>std::vector&lt; MonomialIndex &gt;</label>
+        <childnode refid="12" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; MonomialIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; newf4::MonomialView &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; newf4::MonomialView &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>std::vector&lt; newf4::Polynomial &gt;</label>
+        <childnode refid="22" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; newf4::Polynomial &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>unsigned</label>
+      </node>
+      <node id="24">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="48" column="1" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="49" bodyend="72"/>
+    <listofallmembers>
+      <member refid="classnewf4_1_1_polynomial_list_a843f8c81be4bd2d23ffb5f1c6d53dfaf_1a843f8c81be4bd2d23ffb5f1c6d53dfaf" prot="private" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>mHashTable</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_a5dd05ce568ca22a51e7f77f9e2ab9758_1a5dd05ce568ca22a51e7f77f9e2ab9758" prot="public" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>monomialHashTable</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_a2625e613806e14d79ff366e0e1d50406_1a2625e613806e14d79ff366e0e1d50406" prot="public" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>monomialHashTable</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_ae248a093192a4e9220416fe515d75927_1ae248a093192a4e9220416fe515d75927" prot="private" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>mPolynomials</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_acde05e02871959e353bf1bd27ffe4a3b_1acde05e02871959e353bf1bd27ffe4a3b" prot="private" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>mVectorArithmetic</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_a14df00dfefec57d1c5357158dad31eda_1a14df00dfefec57d1c5357158dad31eda" prot="public" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>operator[]</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_a506bd754a0ed31d20bc67b3f08a9fdc5_1a506bd754a0ed31d20bc67b3f08a9fdc5" prot="public" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>operator[]</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_a0c622af8872184873bc4fce25bcbfe0c_1a0c622af8872184873bc4fce25bcbfe0c" prot="public" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>PolynomialList</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_aa17694bc66619e19dd0fb29c9d4348a7_1aa17694bc66619e19dd0fb29c9d4348a7" prot="public" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>push_back</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_a533f08df3654a36205f9673e055a3100_1a533f08df3654a36205f9673e055a3100" prot="public" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>size</name></member>
+      <member refid="classnewf4_1_1_polynomial_list_a5b30061d07ad0f1ff55d9870d6d7ce05_1a5b30061d07ad0f1ff55d9870d6d7ce05" prot="public" virt="non-virtual"><scope>newf4::PolynomialList</scope><name>vectorArithmetic</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

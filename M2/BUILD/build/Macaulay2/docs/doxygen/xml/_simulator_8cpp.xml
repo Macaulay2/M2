@@ -1,0 +1,461 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_simulator_8cpp" kind="file" language="C++">
+    <compoundname>Simulator.cpp</compoundname>
+    <includes refid="mathic_2src_2pqsim_2stdinc_8h" local="yes">stdinc.h</includes>
+    <includes refid="_simulator_8h" local="yes">Simulator.h</includes>
+    <includes refid="_column_printer_8h" local="yes">mathic/ColumnPrinter.h</includes>
+    <includes local="no">queue</includes>
+    <includes local="no">iterator</includes>
+    <includes local="no">algorithm</includes>
+    <includes local="no">set</includes>
+    <incdepgraph>
+      <node id="15">
+        <label>mathic/ColumnPrinter.h</label>
+        <link refid="_column_printer_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2mathic_2stdinc_8h"/>
+      </node>
+      <node id="6">
+        <label>Item.h</label>
+        <link refid="_item_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/pqsim/Simulator.cpp</label>
+        <link refid="_simulator_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Simulator.h</label>
+        <link refid="_simulator_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2pqsim_2stdinc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>algorithm</label>
+      </node>
+      <node id="3">
+        <label>cstddef</label>
+      </node>
+      <node id="17">
+        <label>cstdio</label>
+      </node>
+      <node id="10">
+        <label>ctime</label>
+      </node>
+      <node id="13">
+        <label>iostream</label>
+      </node>
+      <node id="18">
+        <label>iterator</label>
+      </node>
+      <node id="4">
+        <label>memory</label>
+      </node>
+      <node id="7">
+        <label>ostream</label>
+      </node>
+      <node id="9">
+        <label>queue</label>
+      </node>
+      <node id="19">
+        <label>set</label>
+      </node>
+      <node id="12">
+        <label>sstream</label>
+      </node>
+      <node id="14">
+        <label>string</label>
+      </node>
+      <node id="8">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mathic_2src_2pqsim_2stdinc_8h" kindref="compound">stdinc.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_simulator_8h" kindref="compound">Simulator.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_column_printer_8h" kindref="compound">mathic/ColumnPrinter.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;queue&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iterator&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;algorithm&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;set&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>std::string<sp/>commafy(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>l)<sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>out;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>l;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>str;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>out.str().size();<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>str<sp/>+=<sp/>out.str()[i];</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i<sp/>!=<sp/>out.str().size()<sp/>-<sp/>1<sp/>&amp;&amp;<sp/>((out.str().size()<sp/>-<sp/>i)<sp/>%<sp/>3)<sp/>==<sp/>1)</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>str<sp/>+=<sp/></highlight><highlight class="charliteral">&apos;,&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>str;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">SimBuilder<sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>Simulator::Event<sp/>Event;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>SimBuilder(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>popDuplicates,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Value&gt;&amp;<sp/>mem,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Event&gt;&amp;<sp/>events):</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>_popDuplicates(popDuplicates),</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>_mem(mem),</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>_events(events),</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>_pushCount(0),</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>_popCount(0),</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>_liveCountSum(0),</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>_pushSum(0),</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>_duplicateCount(0)<sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_events.clear();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_mem.clear();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>getLiveCount()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_queue.size();}</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>getPushCount()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_pushCount;}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>getPushSum()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_pushSum;}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>getPopCount()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_popCount;}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>getAvgLiveCount()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_events.empty()<sp/>?<sp/>0<sp/>:<sp/>_liveCountSum<sp/>/<sp/>_events.size();</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>getDupliateCount()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_duplicateCount;}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>call<sp/>nothing<sp/>but<sp/>addToPush<sp/>and<sp/>isInPush</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>after<sp/>calling<sp/>beginPush<sp/>until<sp/>you<sp/>call<sp/>endPush.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginPush()<sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" kindref="member">ASSERT</ref>(_push.empty());</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_liveCountSum<sp/>+=<sp/>getLiveCount();</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_events.push_back(Event());</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_events.back().begin<sp/>=<sp/>_mem.size();</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addToPush(<ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>v)<sp/>{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(isLive(v))</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++_duplicateCount;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_push.insert(v);<sp/></highlight><highlight class="comment">//<sp/>for<sp/>faster<sp/>isInPush</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_mem.push_back(v);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_queue.insert(v);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isInPush(<ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>v)<sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_push.find(v)<sp/>!=<sp/>_push.end();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>endPush()<sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Event&amp;<sp/>e<sp/>=<sp/>_events.back();</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>e.size<sp/>=<sp/>_mem.size()<sp/>-<sp/>e.begin;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Value&gt;::iterator<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref><sp/>=<sp/>_mem.begin()<sp/>+<sp/>e.begin;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::sort(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref><sp/>+<sp/>e.size,<sp/>std::greater&lt;Value&gt;());</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>++_pushCount;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_pushSum<sp/>+=<sp/>e.size;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_push.clear();</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>todo:<sp/>move<sp/>clients<sp/>to<sp/>use<sp/>begin...endpush</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>It&gt;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_model_helper_a8ed56c0482156c1167f746f490d377a0_1a8ed56c0482156c1167f746f490d377a0" kindref="member">push</ref>(It<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/>It<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>beginPush();</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(It<sp/>it<sp/>=<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>;<sp/>it<sp/>!=<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>;<sp/>++it)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>addToPush(*it);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>endPush();</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/><ref refid="namespace_model_helper_aa0ab826b2e86bede569d5a0cc0b6d5dd_1aa0ab826b2e86bede569d5a0cc0b6d5dd" kindref="member">pop</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_liveCountSum<sp/>+=<sp/>getLiveCount();</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>++_popCount;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>top<sp/>=<sp/>*_queue.rbegin();</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::multiset&lt;Value&gt;::iterator<sp/>last<sp/>=<sp/>_queue.end();</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>--last;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_queue.erase(last);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(_popDuplicates<sp/>&amp;&amp;<sp/>!_queue.empty()<sp/>&amp;&amp;<sp/>*_queue.rbegin()<sp/>==<sp/>top);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Event<sp/>e;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>e.popValue<sp/>=<sp/>top;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_events.push_back(e);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>top;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>noLive()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_queue.empty();}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>getRandomLive()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" kindref="member">ASSERT</ref>(!noLive());</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>randomIndex<sp/>=<sp/>rand()<sp/>%<sp/>_queue.size();</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::multiset&lt;Value&gt;::const_iterator<sp/>it<sp/>=<sp/>_queue.begin();</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::advance(it,<sp/>randomIndex);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*it;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isLive(<ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>v)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_queue.find(v)<sp/>!=<sp/>_queue.end();</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_popDuplicates;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>std::multiset&lt;Value&gt;<sp/>_queue;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>std::multiset&lt;Value&gt;<sp/>_push;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Value&gt;&amp;<sp/>_mem;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Event&gt;&amp;<sp/>_events;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>_pushCount;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>_popCount;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>_liveCountSum;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>_pushSum;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>_duplicateCount;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>std::string<sp/>makeDescription(SimBuilder&amp;<sp/>sim,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>repeats,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>name)<sp/>{</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>std::ostringstream<sp/>out;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>traffic<sp/>=<sp/>sim.getPushSum();</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;***<sp/>Simulation<sp/>\&quot;&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>name<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\&quot;\n<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>sim.getPushCount()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>spans\n<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>(traffic<sp/>/<sp/>sim.getPushCount())<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>per<sp/>span<sp/>on<sp/>average\n<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>sim.getAvgLiveCount()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>elements<sp/>in<sp/>queue<sp/>on<sp/>average\n<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>traffic<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>entries<sp/>popped<sp/>in<sp/>total.\n<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>(sim.getDupliateCount()<sp/>*<sp/>100<sp/>/<sp/>traffic)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;%<sp/>duplicates\n<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>repeats<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>repeats.\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>out.str();</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="class_simulator_a4ea2373c60a88c480bcfa11e117e0d38_1a4ea2373c60a88c480bcfa11e117e0d38" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a4ea2373c60a88c480bcfa11e117e0d38_1a4ea2373c60a88c480bcfa11e117e0d38" kindref="member">Simulator::dupSpans</ref></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pushSumGoal,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>avgSpan,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>avgLiveGoal,</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dupPercentage)<sp/>{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>SimBuilder<sp/>sim(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/><ref refid="class_simulator_a3f04faec7c4ca3ed4f96004292b62af8_1a3f04faec7c4ca3ed4f96004292b62af8" kindref="member">_mem</ref>,<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//size_t<sp/>liveDeviation<sp/>=<sp/>30;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>spanDeviation<sp/>=<sp/>10;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><ref refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" kindref="member">ASSERT</ref>(avgSpan<sp/>&gt;<sp/>0);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(avgSpan<sp/>&lt;=<sp/>spanDeviation)</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>spanDeviation<sp/>=<sp/>avgSpan<sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(sim.getPushSum()<sp/>&lt;<sp/>pushSumGoal<sp/>||<sp/>!sim.noLive())<sp/>{</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>doPush<sp/>=<sp/>(sim.getAvgLiveCount()<sp/>&lt;<sp/>avgLiveGoal);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(sim.getPushSum()<sp/>==<sp/>pushSumGoal)</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>doPush<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(sim.noLive())</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>doPush<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(doPush)<sp/>{</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size<sp/>=</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>avgSpan<sp/>-<sp/>spanDeviation<sp/>+<sp/>rand()<sp/>%<sp/>(2<sp/>*<sp/>spanDeviation);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sim.beginPush();</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>size;<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!sim.noLive()<sp/>&amp;&amp;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">size_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(rand()<sp/>%<sp/>100)<sp/>&lt;=<sp/>dupPercentage)<sp/>{</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>v;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>tries<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>if<sp/>there<sp/>are<sp/>only<sp/>fewer<sp/>elements<sp/>to<sp/>duplicate<sp/>than<sp/>there</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>are<sp/>elements<sp/>in<sp/>the<sp/>push,<sp/>then<sp/>this<sp/>will<sp/>never<sp/>succeed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>It<sp/>will<sp/>also<sp/>take<sp/>a<sp/>long<sp/>time<sp/>to<sp/>succeed<sp/>even<sp/>in<sp/>some<sp/>situations</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>where<sp/>it<sp/>is<sp/>possible.<sp/>So<sp/>we<sp/>only<sp/>try<sp/>it<sp/>for<sp/>so<sp/>long.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>v<sp/>=<sp/>(tries<sp/>&lt;<sp/>20<sp/>?<sp/>sim.getRandomLive()<sp/>:<sp/>rand());</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++tries;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(sim.isInPush(v));</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.addToPush(v);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>v;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>v<sp/>=<sp/>rand();</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(sim.isInPush(v)<sp/>||<sp/>sim.isLive(v));</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.addToPush(v);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sim.endPush();</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sim.pop();</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><ref refid="class_simulator_a4dfed2944ceff285714f703e9d4c65bb_1a4dfed2944ceff285714f703e9d4c65bb" kindref="member">_description</ref><sp/>=<sp/>makeDescription(sim,<sp/><ref refid="class_simulator_a0b4159e5cd3b2419e079a3cceb2b5b47_1a0b4159e5cd3b2419e079a3cceb2b5b47" kindref="member">_repeats</ref>,<sp/></highlight><highlight class="stringliteral">&quot;dup<sp/>spans&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="class_simulator_ac958360913e47d9f4040b907bf9f15b5_1ac958360913e47d9f4040b907bf9f15b5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_ac958360913e47d9f4040b907bf9f15b5_1ac958360913e47d9f4040b907bf9f15b5" kindref="member">Simulator::orderSpans</ref></highlight></codeline>
+<codeline lineno="194"><highlight class="normal">(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>spanCount,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>spanSize,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>avgSize)<sp/>{</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/>SimBuilder<sp/>sim(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/><ref refid="class_simulator_a3f04faec7c4ca3ed4f96004292b62af8_1a3f04faec7c4ca3ed4f96004292b62af8" kindref="member">_mem</ref>,<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>insNum<sp/>=<sp/>(spanSize<sp/>+<sp/>spanCount<sp/>*<sp/>avgSize)<sp/>*<sp/>3;</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>deviation<sp/>=<sp/>(spanSize)<sp/>/<sp/>2;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(deviation<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>deviation<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(deviation<sp/>&gt;<sp/>avgSize)</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>deviation<sp/>=<sp/>avgSize<sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(sim.getLiveCount()<sp/>&gt;<sp/>0<sp/>||<sp/>sim.getPushCount()<sp/>&lt;<sp/>spanCount)<sp/>{</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>live<sp/>=<sp/>sim.getLiveCount();</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minLive<sp/>=<sp/>avgSize<sp/>-<sp/>deviation;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pushes<sp/>=<sp/>sim.getPushCount();</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(live<sp/>==<sp/>0<sp/>||<sp/>(pushes<sp/>&lt;<sp/>spanCount<sp/>&amp;&amp;<sp/>live<sp/>&lt;<sp/>minLive))<sp/>{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sim.beginPush();</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>spanSize;<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>v;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>v<sp/>=<sp/>insNum<sp/>+<sp/>rand()<sp/>%<sp/>(2*avgSize);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(sim.isInPush(v));</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>--insNum;</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.addToPush(v);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sim.endPush();</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sim.pop();</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><ref refid="class_simulator_a4dfed2944ceff285714f703e9d4c65bb_1a4dfed2944ceff285714f703e9d4c65bb" kindref="member">_description</ref><sp/>=<sp/>makeDescription(sim,<sp/><ref refid="class_simulator_a0b4159e5cd3b2419e079a3cceb2b5b47_1a0b4159e5cd3b2419e079a3cceb2b5b47" kindref="member">_repeats</ref>,<sp/></highlight><highlight class="stringliteral">&quot;ordered<sp/>spans&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225" refid="class_simulator_a56f804781905dd369b8e230713ad8f7e_1a56f804781905dd369b8e230713ad8f7e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a56f804781905dd369b8e230713ad8f7e_1a56f804781905dd369b8e230713ad8f7e" kindref="member">Simulator::randomSpans</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>spanCount,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>spanSize,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>initialSize)<sp/>{</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/>SimBuilder<sp/>sim(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/><ref refid="class_simulator_a3f04faec7c4ca3ed4f96004292b62af8_1a3f04faec7c4ca3ed4f96004292b62af8" kindref="member">_mem</ref>,<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>);</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(sim.getLiveCount()<sp/>||<sp/>sim.getPushCount()<sp/>&lt;<sp/>spanCount)<sp/>{</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>doPop<sp/>=<sp/>rand()<sp/>%<sp/>(spanSize<sp/>+<sp/>1)<sp/>!=<sp/>0;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(sim.getLiveCount()<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>doPop<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(sim.getPushCount()<sp/>==<sp/>spanCount)</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>doPop<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(doPop)</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sim.pop();</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size<sp/>=<sp/>(sim.getPushCount()<sp/>==<sp/>0<sp/>?<sp/>initialSize<sp/>:<sp/>spanSize);</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sim.beginPush();</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>size;<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref><sp/>v;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>v<sp/>=<sp/>rand();</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(sim.isInPush(v));</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.addToPush(v);</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sim.endPush();</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><ref refid="class_simulator_a4dfed2944ceff285714f703e9d4c65bb_1a4dfed2944ceff285714f703e9d4c65bb" kindref="member">_description</ref><sp/>=<sp/>makeDescription(sim,<sp/><ref refid="class_simulator_a0b4159e5cd3b2419e079a3cceb2b5b47_1a0b4159e5cd3b2419e079a3cceb2b5b47" kindref="member">_repeats</ref>,<sp/></highlight><highlight class="stringliteral">&quot;random<sp/>spans&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252" refid="class_simulator_ad42d0c129fc1f8dd4cd72ddd2bc07dbf_1ad42d0c129fc1f8dd4cd72ddd2bc07dbf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_ad42d0c129fc1f8dd4cd72ddd2bc07dbf_1ad42d0c129fc1f8dd4cd72ddd2bc07dbf" kindref="member">Simulator::printEventSummary</ref>(std::ostream&amp;<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/><ref refid="class_simulator_a4dfed2944ceff285714f703e9d4c65bb_1a4dfed2944ceff285714f703e9d4c65bb" kindref="member">_description</ref><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="254"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="class_simulator_a6eb6d1c02bad29995a544773dd5f9f02_1a6eb6d1c02bad29995a544773dd5f9f02" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a6eb6d1c02bad29995a544773dd5f9f02_1a6eb6d1c02bad29995a544773dd5f9f02" kindref="member">Simulator::printEvents</ref>(std::ostream&amp;<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;***<sp/>The<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>.size()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>events<sp/>are\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>.size();<sp/>++i)</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_simulator_a6e6ff45b952ac84ee3c3c9cf0bb49a38_1a6e6ff45b952ac84ee3c3c9cf0bb49a38" kindref="member">print</ref>(<ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>[i],<sp/>out);</highlight></codeline>
+<codeline lineno="260"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight></codeline>
+<codeline lineno="262" refid="class_simulator_a6e6ff45b952ac84ee3c3c9cf0bb49a38_1a6e6ff45b952ac84ee3c3c9cf0bb49a38" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a6e6ff45b952ac84ee3c3c9cf0bb49a38_1a6e6ff45b952ac84ee3c3c9cf0bb49a38" kindref="member">Simulator::print</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_event" kindref="compound">Event</ref>&amp;<sp/>e,<sp/>std::ostream&amp;<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(e.<ref refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" kindref="member">size</ref><sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Pop<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>e.<ref refid="struct_simulator_1_1_event_a84003c09884f2e9a8043c20622cff1d4_1a84003c09884f2e9a8043c20622cff1d4" kindref="member">popValue</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Insert&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Value&gt;::const_iterator<sp/>it<sp/>=<sp/><ref refid="class_simulator_a3f04faec7c4ca3ed4f96004292b62af8_1a3f04faec7c4ca3ed4f96004292b62af8" kindref="member">_mem</ref>.begin()<sp/>+<sp/>e.<ref refid="struct_simulator_1_1_event_adcc2e2fed058d7fffad84a40bd3f44d1_1adcc2e2fed058d7fffad84a40bd3f44d1" kindref="member">begin</ref>;</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Value&gt;::const_iterator<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref><sp/>=<sp/>it<sp/>+<sp/>e.<ref refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(;<sp/>it<sp/>!=<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>;<sp/>++it)</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;<sp/>&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>*it;</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="273"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275" refid="class_simulator_a7bc0f3057aa5118d839d312e50269cb5_1a7bc0f3057aa5118d839d312e50269cb5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a7bc0f3057aa5118d839d312e50269cb5_1a7bc0f3057aa5118d839d312e50269cb5" kindref="member">Simulator::printData</ref>(std::ostream&amp;<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/>std::vector&lt;SimData&gt;<sp/>sorted(<ref refid="class_simulator_a880fc56cf6ab74393ada38788758fe5e_1a880fc56cf6ab74393ada38788758fe5e" kindref="member">_data</ref>);</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/>sort(sorted.begin(),<sp/>sorted.end());</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;***<sp/>Simulation<sp/>outcome<sp/>***&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><ref refid="classmathic_1_1_column_printer" kindref="compound">mic::ColumnPrinter</ref><sp/>pr;</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/>pr.<ref refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" kindref="member">addColumn</ref>(</highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/>pr.<ref refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" kindref="member">addColumn</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;ms&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/>pr.<ref refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" kindref="member">addColumn</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;cmps&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/>pr.<ref refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" kindref="member">addColumn</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;kb&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(std::vector&lt;SimData&gt;::const_iterator<sp/>it<sp/>=<sp/>sorted.begin();</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/>it<sp/>!=<sp/>sorted.end();<sp/>++it)<sp/>{</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/>pr[0]<sp/>&lt;&lt;<sp/>it-&gt;name<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/>pr[1]<sp/>&lt;&lt;<sp/>commafy(it-&gt;mseconds)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/>pr[2]<sp/>&lt;&lt;<sp/>commafy(it-&gt;comparisons)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/>pr[3]<sp/>&lt;&lt;<sp/>commafy(it-&gt;memoryUse<sp/>/<sp/>1024)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/>pr.<ref refid="classmathic_1_1_column_printer_a8274b1a0e3b12ea1a6cf4f16a5c123da_1a8274b1a0e3b12ea1a6cf4f16a5c123da" kindref="member">print</ref>(out);</highlight></codeline>
+<codeline lineno="292"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight></codeline>
+<codeline lineno="294" refid="class_simulator_a1bce3c5af053666392a80c01c809eb68_1a1bce3c5af053666392a80c01c809eb68" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulator_a1bce3c5af053666392a80c01c809eb68_1a1bce3c5af053666392a80c01c809eb68" kindref="member">Simulator::setupEvents</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>activeSum<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/>std::priority_queue&lt;int&gt;<sp/>queue;</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::vector&lt;Event&gt;::iterator<sp/>Iterator;</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/>Iterator<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref><sp/>=<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>.end();</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(Iterator<sp/>it<sp/>=<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>.begin();<sp/>it<sp/>!=<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>;<sp/>++it)<sp/>{</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_simulator_1_1_event" kindref="compound">Event</ref>&amp;<sp/>e<sp/>=<sp/>*it;</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/>activeSum<sp/>+=<sp/>queue.size();</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(e.<ref refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" kindref="member">size</ref><sp/>==<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>e.<ref refid="struct_simulator_1_1_event_a84003c09884f2e9a8043c20622cff1d4_1a84003c09884f2e9a8043c20622cff1d4" kindref="member">popValue</ref><sp/>=<sp/>queue.top();</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>queue.pop();</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref>*<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref><sp/>=<sp/>&amp;(<ref refid="class_simulator_a3f04faec7c4ca3ed4f96004292b62af8_1a3f04faec7c4ca3ed4f96004292b62af8" kindref="member">_mem</ref>[e.<ref refid="struct_simulator_1_1_event_adcc2e2fed058d7fffad84a40bd3f44d1_1adcc2e2fed058d7fffad84a40bd3f44d1" kindref="member">begin</ref>]);</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref>*<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref><sp/>=<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref><sp/>+<sp/>e.<ref refid="struct_simulator_1_1_event_a2b038d98bb3e9ff4aafe779de4d0c540_1a2b038d98bb3e9ff4aafe779de4d0c540" kindref="member">size</ref>;</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sort(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>,<sp/>std::greater&lt;Value&gt;());</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref>*<sp/>v<sp/>=<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>;<sp/>v<sp/>!=<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>;<sp/>++v)</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>queue.push(*v);</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><ref refid="class_simulator_a81af662ff0c0dfb4dfbb65ae7613e516_1a81af662ff0c0dfb4dfbb65ae7613e516" kindref="member">_avgSize</ref><sp/>=<sp/>activeSum<sp/>/<sp/><ref refid="class_simulator_a95b90d046d7ce3987ac02c2715e5a962_1a95b90d046d7ce3987ac02c2715e5a962" kindref="member">_events</ref>.size();</highlight></codeline>
+<codeline lineno="314"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316" refid="struct_simulator_1_1_sim_data_ab596056aa08a3ed0aa16ff23252251f3_1ab596056aa08a3ed0aa16ff23252251f3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data_ab596056aa08a3ed0aa16ff23252251f3_1ab596056aa08a3ed0aa16ff23252251f3" kindref="member">Simulator::SimData::print</ref>(std::ostream&amp;<sp/>out)<sp/>{</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/><ref refid="struct_simulator_1_1_sim_data_a616ea556edcc8c5d9733ccdae1cada07_1a616ea556edcc8c5d9733ccdae1cada07" kindref="member">name</ref></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>commafy(<ref refid="struct_simulator_1_1_sim_data_a82d1e42e796b54ece39ca07064a779c8_1a82d1e42e796b54ece39ca07064a779c8" kindref="member">mseconds</ref>)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>ms&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>commafy(<ref refid="struct_simulator_1_1_sim_data_aaf9d0b7ca0da313fd8b8e7ac3c610b25_1aaf9d0b7ca0da313fd8b8e7ac3c610b25" kindref="member">comparisons</ref>)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>cmps&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>commafy(<ref refid="struct_simulator_1_1_sim_data_a532ce519b62e5882395e086483f8575e_1a532ce519b62e5882395e086483f8575e" kindref="member">memoryUse</ref><sp/>/<sp/>1024)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>kb&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="322"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"></highlight></codeline>
+<codeline lineno="324" refid="struct_simulator_1_1_sim_data_a665670642bf93d7ecfa2a3f8bc9b4f60_1a665670642bf93d7ecfa2a3f8bc9b4f60" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data_a665670642bf93d7ecfa2a3f8bc9b4f60_1a665670642bf93d7ecfa2a3f8bc9b4f60" kindref="member">Simulator::SimData::operator&lt;</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data" kindref="compound">SimData</ref>&amp;<sp/>sd)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_simulator_1_1_sim_data_a82d1e42e796b54ece39ca07064a779c8_1a82d1e42e796b54ece39ca07064a779c8" kindref="member">mseconds</ref><sp/>&lt;<sp/>sd.<ref refid="struct_simulator_1_1_sim_data_a82d1e42e796b54ece39ca07064a779c8_1a82d1e42e796b54ece39ca07064a779c8" kindref="member">mseconds</ref>;</highlight></codeline>
+<codeline lineno="326"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/pqsim/Simulator.cpp"/>
+  </compounddef>
+</doxygen>

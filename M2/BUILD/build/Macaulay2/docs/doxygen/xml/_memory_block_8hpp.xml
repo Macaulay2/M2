@@ -1,0 +1,715 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_memory_block_8hpp" kind="file" language="C++">
+    <compoundname>MemoryBlock.hpp</compoundname>
+    <includes refid="_arena_8h" local="no">memtailor/Arena.h</includes>
+    <includes local="no">iostream</includes>
+    <includes local="no">utility</includes>
+    <includedby refid="_free_monoid_8cpp" local="yes">Macaulay2/e/NCAlgebras/FreeMonoid.cpp</includedby>
+    <includedby refid="_free_monoid_8hpp" local="yes">Macaulay2/e/NCAlgebras/FreeMonoid.hpp</includedby>
+    <includedby refid="_n_c_f4_8hpp" local="yes">Macaulay2/e/NCAlgebras/NCF4.hpp</includedby>
+    <includedby refid="_n_c_reduction_8cpp" local="yes">Macaulay2/e/NCAlgebras/NCReduction.cpp</includedby>
+    <includedby refid="_word_table_8hpp" local="yes">Macaulay2/e/NCAlgebras/WordTable.hpp</includedby>
+    <includedby refid="_vector_arithmetic_8hpp" local="yes">Macaulay2/e/VectorArithmetic.hpp</includedby>
+    <includedby refid="f4-spairs_8hpp" local="yes">Macaulay2/e/f4/f4-spairs.hpp</includedby>
+    <includedby refid="f4_8hpp" local="yes">Macaulay2/e/f4/f4.hpp</includedby>
+    <includedby refid="_monomial_hash_table_8hpp" local="yes">Macaulay2/e/gb-f4/MonomialHashTable.hpp</includedby>
+    <includedby refid="_monomial_view_8hpp" local="yes">Macaulay2/e/gb-f4/MonomialView.hpp</includedby>
+    <includedby refid="_n_c_groebner_test_8cpp" local="yes">Macaulay2/e/unit-tests/NCGroebnerTest.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>Macaulay2/e/MemoryBlock.hpp</label>
+        <link refid="_memory_block_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>memtailor/Arena.h</label>
+        <link refid="_arena_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MemoryBlocks.h</label>
+        <link refid="_memory_blocks_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>stdinc.h</label>
+        <link refid="memtailor_2src_2memtailor_2stdinc_8h"/>
+      </node>
+      <node id="5">
+        <label>cstddef</label>
+      </node>
+      <node id="10">
+        <label>iostream</label>
+      </node>
+      <node id="6">
+        <label>memory</label>
+      </node>
+      <node id="7">
+        <label>new</label>
+      </node>
+      <node id="8">
+        <label>utility</label>
+      </node>
+      <node id="9">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="64">
+        <label>Macaulay2/e/BasicPoly.cpp</label>
+        <link refid="_basic_poly_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/M2FreeAlgebra.cpp</label>
+        <link refid="_m2_free_algebra_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/M2FreeAlgebra.hpp</label>
+        <link refid="_m2_free_algebra_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/M2FreeAlgebraQuotient.cpp</label>
+        <link refid="_m2_free_algebra_quotient_8cpp"/>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/M2FreeAlgebraQuotient.hpp</label>
+        <link refid="_m2_free_algebra_quotient_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/MemoryBlock.hpp</label>
+        <link refid="_memory_block_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebra.cpp</label>
+        <link refid="_free_algebra_8cpp"/>
+      </node>
+      <node id="15">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebra.hpp</label>
+        <link refid="_free_algebra_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebraQuotient.cpp</label>
+        <link refid="_free_algebra_quotient_8cpp"/>
+      </node>
+      <node id="16">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebraQuotient.hpp</label>
+        <link refid="_free_algebra_quotient_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/NCAlgebras/FreeMonoid.cpp</label>
+        <link refid="_free_monoid_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/NCAlgebras/FreeMonoid.hpp</label>
+        <link refid="_free_monoid_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Macaulay2/e/NCAlgebras/NCF4.cpp</label>
+        <link refid="_n_c_f4_8cpp"/>
+      </node>
+      <node id="22">
+        <label>Macaulay2/e/NCAlgebras/NCF4.hpp</label>
+        <link refid="_n_c_f4_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>Macaulay2/e/NCAlgebras/NCGroebner.cpp</label>
+        <link refid="_n_c_groebner_8cpp"/>
+      </node>
+      <node id="27">
+        <label>Macaulay2/e/NCAlgebras/NCGroebner.hpp</label>
+        <link refid="_n_c_groebner_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>Macaulay2/e/NCAlgebras/NCReduction.cpp</label>
+        <link refid="_n_c_reduction_8cpp"/>
+      </node>
+      <node id="28">
+        <label>Macaulay2/e/NCAlgebras/WordTable.cpp</label>
+        <link refid="_word_table_8cpp"/>
+      </node>
+      <node id="26">
+        <label>Macaulay2/e/NCAlgebras/WordTable.hpp</label>
+        <link refid="_word_table_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.cpp</label>
+        <link refid="nc-res-computation_8cpp"/>
+      </node>
+      <node id="18">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.hpp</label>
+        <link refid="nc-res-computation_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>Macaulay2/e/VectorArithmetic.hpp</label>
+        <link refid="_vector_arithmetic_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+      <node id="30">
+        <label>Macaulay2/e/f4/f4-computation.cpp</label>
+        <link refid="f4-computation_8cpp"/>
+      </node>
+      <node id="38">
+        <label>Macaulay2/e/f4/f4-computation.hpp</label>
+        <link refid="f4-computation_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>Macaulay2/e/f4/f4-m2-interface.cpp</label>
+        <link refid="f4-m2-interface_8cpp"/>
+      </node>
+      <node id="33">
+        <label>Macaulay2/e/f4/f4-m2-interface.hpp</label>
+        <link refid="f4-m2-interface_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>Macaulay2/e/f4/f4-spairs.cpp</label>
+        <link refid="f4-spairs_8cpp"/>
+      </node>
+      <node id="35">
+        <label>Macaulay2/e/f4/f4-spairs.hpp</label>
+        <link refid="f4-spairs_8hpp"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>Macaulay2/e/f4/f4-types.hpp</label>
+        <link refid="f4-types_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>Macaulay2/e/f4/f4.cpp</label>
+        <link refid="f4_8cpp"/>
+      </node>
+      <node id="37">
+        <label>Macaulay2/e/f4/f4.hpp</label>
+        <link refid="f4_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>Macaulay2/e/gb-f4/Basis.cpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8cpp"/>
+      </node>
+      <node id="39">
+        <label>Macaulay2/e/gb-f4/Basis.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.cpp</label>
+        <link refid="_g_b_f4_computation_8cpp"/>
+      </node>
+      <node id="41">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.hpp</label>
+        <link refid="_g_b_f4_computation_8hpp"/>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.cpp</label>
+        <link refid="_g_b_f4_interface_8cpp"/>
+      </node>
+      <node id="43">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.hpp</label>
+        <link refid="_g_b_f4_interface_8hpp"/>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>Macaulay2/e/gb-f4/MacaulayMatrix.hpp</label>
+        <link refid="_macaulay_matrix_8hpp"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>Macaulay2/e/gb-f4/MonomialHashTable.cpp</label>
+        <link refid="_monomial_hash_table_8cpp"/>
+      </node>
+      <node id="60">
+        <label>Macaulay2/e/gb-f4/MonomialHashTable.hpp</label>
+        <link refid="_monomial_hash_table_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>Macaulay2/e/gb-f4/MonomialLookupTable.cpp</label>
+        <link refid="_monomial_lookup_table_8cpp"/>
+      </node>
+      <node id="65">
+        <label>Macaulay2/e/gb-f4/MonomialLookupTable.hpp</label>
+        <link refid="_monomial_lookup_table_8hpp"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>Macaulay2/e/gb-f4/MonomialView.cpp</label>
+        <link refid="_monomial_view_8cpp"/>
+      </node>
+      <node id="63">
+        <label>Macaulay2/e/gb-f4/MonomialView.hpp</label>
+        <link refid="_monomial_view_8hpp"/>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>Macaulay2/e/gb-f4/PolynomialList.cpp</label>
+        <link refid="_polynomial_list_8cpp"/>
+      </node>
+      <node id="47">
+        <label>Macaulay2/e/gb-f4/PolynomialList.hpp</label>
+        <link refid="_polynomial_list_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>Macaulay2/e/gb-f4/SPairs.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_s_pairs_8hpp"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Macaulay2/e/interface/groebner.cpp</label>
+        <link refid="groebner_8cpp"/>
+      </node>
+      <node id="9">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="10">
+        <label>Macaulay2/e/interface/ringelement.cpp</label>
+        <link refid="ringelement_8cpp"/>
+      </node>
+      <node id="25">
+        <label>Macaulay2/e/matrix-ncbasis.cpp</label>
+        <link refid="matrix-ncbasis_8cpp"/>
+      </node>
+      <node id="12">
+        <label>Macaulay2/e/matrix.cpp</label>
+        <link refid="matrix_8cpp"/>
+      </node>
+      <node id="13">
+        <label>Macaulay2/e/relem.cpp</label>
+        <link refid="relem_8cpp"/>
+      </node>
+      <node id="51">
+        <label>Macaulay2/e/schreyer-resolution/res-dep-graph.cpp</label>
+        <link refid="res-dep-graph_8cpp"/>
+      </node>
+      <node id="56">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.cpp</label>
+        <link refid="res-f4-computation_8cpp"/>
+      </node>
+      <node id="55">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.hpp</label>
+        <link refid="res-f4-computation_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</label>
+        <link refid="res-f4-m2-interface_8cpp"/>
+      </node>
+      <node id="52">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.cpp</label>
+        <link refid="res-f4_8cpp"/>
+      </node>
+      <node id="50">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.hpp</label>
+        <link refid="res-f4_8hpp"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.cpp</label>
+        <link refid="res-poly-ring_8cpp"/>
+      </node>
+      <node id="54">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.hpp</label>
+        <link refid="res-poly-ring_8hpp"/>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.cpp</label>
+        <link refid="res-schreyer-frame_8cpp"/>
+      </node>
+      <node id="59">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp</label>
+        <link refid="res-schreyer-frame_8hpp"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>Macaulay2/e/unit-tests/MatrixIOTest.cpp</label>
+        <link refid="_matrix_i_o_test_8cpp"/>
+      </node>
+      <node id="20">
+        <label>Macaulay2/e/unit-tests/NCGroebnerTest.cpp</label>
+        <link refid="_n_c_groebner_test_8cpp"/>
+      </node>
+      <node id="49">
+        <label>Macaulay2/e/unit-tests/NewF4Test.cpp</label>
+        <link refid="_new_f4_test_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_memory_block" prot="public">MemoryBlock</innerclass>
+    <briefdescription>
+<para>Bump-pointer arena allocator for transient inner-loop allocations. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref></computeroutput> is a thin wrapper around <computeroutput><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref></computeroutput> from the <computeroutput>memtailor</computeroutput> submodule. <computeroutput>allocateArray&lt;<ref refid="struct_t" kindref="compound">T</ref>&gt;(nelems)</computeroutput> returns the next <computeroutput>nelems * sizeof(T)</computeroutput> bytes as a <computeroutput>(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>, <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)</computeroutput> pair; <computeroutput>safeAllocateArray&lt;<ref refid="struct_t" kindref="compound">T</ref>, MutexType&gt;</computeroutput> does the same under a caller-supplied scoped lock for shared-arena hot paths. Only the top of the stack can be released: <computeroutput>freeTopArray(begin,
+end)</computeroutput> unwinds the most-recent allocation, and <computeroutput>shrinkLastAllocate</computeroutput> composes free-and-re-alloc to resize it. <computeroutput>deallocateAll()</computeroutput> releases everything without destroying the <computeroutput><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref></computeroutput>; the destructor releases the underlying <computeroutput><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref>*</computeroutput>. This matches the &quot;millions of tiny objects
+allocated during one GB step, then all thrown away&quot; shape of the engine&apos;s hot paths in <computeroutput>f4/</computeroutput>, <computeroutput>gb-f4/</computeroutput>, <computeroutput>schreyer-resolution/</computeroutput>, and <computeroutput>NCAlgebras/</computeroutput>.</para>
+<para>Memory comes from the system heap, not bdwgc, so anything stored inside a <computeroutput><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref></computeroutput> must be plain-old-data <mdash/> the garbage collector will not scan these pages. The underlying <computeroutput>allocArrayNoCon</computeroutput> also skips per-element constructor calls; callers either initialise the bytes explicitly or treat them as raw storage (encoded monomials, exponent vectors, S-pair records).</para>
+<para><simplesect kind="see"><para><ref refid="_exponent_list_8hpp" kindref="compound">ExponentList.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_exponent_vector_8hpp" kindref="compound">ExponentVector.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__memory_block_hpp__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__memory_block_hpp__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="_arena_8h" kindref="compound">memtailor/Arena.h</ref>&gt;</highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>Arena</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>operator&lt;&lt;,<sp/>endl,<sp/>basic_ostream,<sp/>cout</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;utility&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>pair</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="class_memory_block" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_memory_block_a734af8678e5b969cfc2b10e3395c101a_1a734af8678e5b969cfc2b10e3395c101a" kindref="member">MemoryBlock</ref></highlight></codeline>
+<codeline lineno="53"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="55" refid="class_memory_block_a734af8678e5b969cfc2b10e3395c101a_1a734af8678e5b969cfc2b10e3395c101a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_memory_block_a734af8678e5b969cfc2b10e3395c101a_1a734af8678e5b969cfc2b10e3395c101a" kindref="member">MemoryBlock</ref>()<sp/>{<sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref><sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="56" refid="class_memory_block_a1af2edbe97a10dcf54f8b8b631d608ef_1a1af2edbe97a10dcf54f8b8b631d608ef" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_memory_block_a1af2edbe97a10dcf54f8b8b631d608ef_1a1af2edbe97a10dcf54f8b8b631d608ef" kindref="member">~MemoryBlock</ref>()<sp/>{<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//MemoryBlock(MemoryBlock&amp;&amp;<sp/>source)<sp/>:<sp/>mArena(std::move(source.mArena))<sp/>{}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//MemoryBlock&amp;<sp/>operator=(MemoryBlock&amp;&amp;<sp/>source)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>mArena<sp/>=<sp/>std::move(source.mArena);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>return<sp/>(*this);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="65" refid="class_memory_block_abfac6dbe4c86a0abd31c1d6db282ff35_1abfac6dbe4c86a0abd31c1d6db282ff35" refkind="member"><highlight class="normal"><sp/><sp/>std::pair&lt;T*,<sp/>T*&gt;<sp/><ref refid="class_memory_block_abfac6dbe4c86a0abd31c1d6db282ff35_1abfac6dbe4c86a0abd31c1d6db282ff35" kindref="member">allocateArray</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nelems)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>-&gt;allocArrayNoCon&lt;<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>&gt;(nelems);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MutexType&gt;</highlight></codeline>
+<codeline lineno="71" refid="class_memory_block_a222fccf66e39db9ba573f0a7ad8db4bb_1a222fccf66e39db9ba573f0a7ad8db4bb" refkind="member"><highlight class="normal"><sp/><sp/>std::pair&lt;T*,<sp/>T*&gt;<sp/><ref refid="class_memory_block_a222fccf66e39db9ba573f0a7ad8db4bb_1a222fccf66e39db9ba573f0a7ad8db4bb" kindref="member">safeAllocateArray</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nelems,<sp/>MutexType&amp;<sp/>mutex)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MutexType::scoped_lock<sp/>myLock(mutex);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>-&gt;allocArrayNoCon&lt;<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>&gt;(nelems);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="78" refid="class_memory_block_a4b88b7a973793352118cf9faa8a6b982_1a4b88b7a973793352118cf9faa8a6b982" refkind="member"><highlight class="normal"><sp/><sp/>std::pair&lt;T*,<sp/>T*&gt;<sp/><ref refid="class_memory_block_a4b88b7a973793352118cf9faa8a6b982_1a4b88b7a973793352118cf9faa8a6b982" kindref="member">shrinkLastAllocate</ref>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>*<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>*<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>,<sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>*<sp/>newtop)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>-&gt;freeTopArray(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>std::pair&lt;T*,<sp/>T*&gt;<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>-&gt;allocArrayNoCon&lt;<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>&gt;(newtop<sp/>-<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>.first<sp/>!=<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>)<sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;ooops:<sp/>location<sp/>changed&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="87" refid="class_memory_block_a18a3ac120f1cf2669df90751df54a613_1a18a3ac120f1cf2669df90751df54a613" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_memory_block_a18a3ac120f1cf2669df90751df54a613_1a18a3ac120f1cf2669df90751df54a613" kindref="member">freeTopArray</ref>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>*<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>*<ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>-&gt;freeTopArray(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="class_memory_block_a8f5505b4505d35f8a6ffec1ee8f44775_1a8f5505b4505d35f8a6ffec1ee8f44775" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_memory_block_a8f5505b4505d35f8a6ffec1ee8f44775_1a8f5505b4505d35f8a6ffec1ee8f44775" kindref="member">deallocateAll</ref>()</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>-&gt;freeAllAllocs();</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="class_memory_block_ab6d5314efc8480c058ac01e446c4a3aa_1ab6d5314efc8480c058ac01e446c4a3aa" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_memory_block_ab6d5314efc8480c058ac01e446c4a3aa_1ab6d5314efc8480c058ac01e446c4a3aa" kindref="member">swap</ref>(<ref refid="class_memory_block_a734af8678e5b969cfc2b10e3395c101a_1a734af8678e5b969cfc2b10e3395c101a" kindref="member">MemoryBlock</ref>&amp;<sp/>source)<sp/>{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref>*<sp/>temp<sp/>=<sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref><sp/>=<sp/>source.<ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>source.<ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref><sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="class_memory_block_a64a4919609ea4206fd3baff5589b8863_1a64a4919609ea4206fd3baff5589b8863" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_memory_block_a64a4919609ea4206fd3baff5589b8863_1a64a4919609ea4206fd3baff5589b8863" kindref="member">getMemoryUsedInBytes</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>-&gt;getMemoryUse();<sp/>}<sp/></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="106" refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref>*<sp/><ref refid="class_memory_block_aabb4a3aebbf9064b0889b67b3ad32794_1aabb4a3aebbf9064b0889b67b3ad32794" kindref="member">mArena</ref>;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/><sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/MemoryBlock.hpp"/>
+  </compounddef>
+</doxygen>

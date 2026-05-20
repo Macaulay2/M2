@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_quad_matrix_builder_1_1_left_right_col_index" kind="class" language="C++" prot="public">
+    <compoundname>QuadMatrixBuilder::LeftRightColIndex</compoundname>
+    <includes refid="_quad_matrix_builder_8hpp" local="no">QuadMatrixBuilder.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_quad_matrix_builder_1_1_left_right_col_index_a44fe2c04eaa621c5e656768bf7b81183_1a44fe2c04eaa621c5e656768bf7b81183" prot="private" static="no" mutable="no">
+        <type><ref refid="class_quad_matrix_builder_acd86bc5fd5d6371cc84c3c15473dc18d_1acd86bc5fd5d6371cc84c3c15473dc18d" kindref="member">ColIndex</ref></type>
+        <definition>ColIndex QuadMatrixBuilder::LeftRightColIndex::mRawIndex</definition>
+        <argsstring></argsstring>
+        <name>mRawIndex</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::mRawIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="90" column="14" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="90" bodyend="-1"/>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a97d46e1baa4b19852dab21227af36891_1a97d46e1baa4b19852dab21227af36891" compoundref="_quad_matrix_builder_8hpp" startline="62" endline="65">index</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_aa9926b948bbeb1971bd353c9c6333af6_1aa9926b948bbeb1971bd353c9c6333af6" compoundref="_quad_matrix_builder_8hpp" startline="43" endline="44">LeftRightColIndex</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a1fdd5ca03886673d2a3b92bc84c57491_1a1fdd5ca03886673d2a3b92bc84c57491" compoundref="_quad_matrix_builder_8hpp" startline="46" endline="48">LeftRightColIndex</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_ad9be3e9db917847af267c507c0f93b91_1ad9be3e9db917847af267c507c0f93b91" compoundref="_quad_matrix_builder_8hpp" startline="81" endline="83">operator==</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a478b87e2a41fa6836fa31d5f7ddea661_1a478b87e2a41fa6836fa31d5f7ddea661" compoundref="_quad_matrix_builder_8hpp" startline="77" endline="79">valid</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_quad_matrix_builder_1_1_left_right_col_index_a2d5839bac19c6f68f2ca997b6d7c04e2_1a2d5839bac19c6f68f2ca997b6d7c04e2" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool QuadMatrixBuilder::LeftRightColIndex::mLeft</definition>
+        <argsstring></argsstring>
+        <name>mLeft</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::mLeft</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="91" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="91" bodyend="-1"/>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a85e7f062647d03f9eb9b28c7bc97c40f_1a85e7f062647d03f9eb9b28c7bc97c40f" compoundref="_quad_matrix_builder_8hpp" startline="67" endline="70">left</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_aa9926b948bbeb1971bd353c9c6333af6_1aa9926b948bbeb1971bd353c9c6333af6" compoundref="_quad_matrix_builder_8hpp" startline="43" endline="44">LeftRightColIndex</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a1fdd5ca03886673d2a3b92bc84c57491_1a1fdd5ca03886673d2a3b92bc84c57491" compoundref="_quad_matrix_builder_8hpp" startline="46" endline="48">LeftRightColIndex</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_ad9be3e9db917847af267c507c0f93b91_1ad9be3e9db917847af267c507c0f93b91" compoundref="_quad_matrix_builder_8hpp" startline="81" endline="83">operator==</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_aa9926b948bbeb1971bd353c9c6333af6_1aa9926b948bbeb1971bd353c9c6333af6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>QuadMatrixBuilder::LeftRightColIndex::LeftRightColIndex</definition>
+        <argsstring>()</argsstring>
+        <name>LeftRightColIndex</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::LeftRightColIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="43" column="5" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="43" bodyend="44"/>
+        <references refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" compoundref="polyroots_8cpp" startline="50">max</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a2d5839bac19c6f68f2ca997b6d7c04e2_1a2d5839bac19c6f68f2ca997b6d7c04e2" compoundref="_quad_matrix_builder_8hpp" startline="91">mLeft</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a44fe2c04eaa621c5e656768bf7b81183_1a44fe2c04eaa621c5e656768bf7b81183" compoundref="_quad_matrix_builder_8hpp" startline="90">mRawIndex</references>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_ad1d34ec3b0fd613395ecfd9a0f6044a0_1ad1d34ec3b0fd613395ecfd9a0f6044a0" compoundref="_quad_matrix_builder_8hpp" startline="85" endline="87">operator!=</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_ad9be3e9db917847af267c507c0f93b91_1ad9be3e9db917847af267c507c0f93b91" compoundref="_quad_matrix_builder_8hpp" startline="81" endline="83">operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_a1fdd5ca03886673d2a3b92bc84c57491_1a1fdd5ca03886673d2a3b92bc84c57491" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>QuadMatrixBuilder::LeftRightColIndex::LeftRightColIndex</definition>
+        <argsstring>(ColIndex index, bool left)</argsstring>
+        <name>LeftRightColIndex</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::LeftRightColIndex</qualifiedname>
+        <param>
+          <type><ref refid="class_quad_matrix_builder_acd86bc5fd5d6371cc84c3c15473dc18d_1acd86bc5fd5d6371cc84c3c15473dc18d" kindref="member">ColIndex</ref></type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>left</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="46" column="5" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="46" bodyend="48"/>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a97d46e1baa4b19852dab21227af36891_1a97d46e1baa4b19852dab21227af36891" compoundref="_quad_matrix_builder_8hpp" startline="62" endline="65">index</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a85e7f062647d03f9eb9b28c7bc97c40f_1a85e7f062647d03f9eb9b28c7bc97c40f" compoundref="_quad_matrix_builder_8hpp" startline="67" endline="70">left</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a2d5839bac19c6f68f2ca997b6d7c04e2_1a2d5839bac19c6f68f2ca997b6d7c04e2" compoundref="_quad_matrix_builder_8hpp" startline="91">mLeft</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a44fe2c04eaa621c5e656768bf7b81183_1a44fe2c04eaa621c5e656768bf7b81183" compoundref="_quad_matrix_builder_8hpp" startline="90">mRawIndex</references>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_ae067ace2f4ae76f4120381a97b8bc56d_1ae067ace2f4ae76f4120381a97b8bc56d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_quad_matrix_builder_acd86bc5fd5d6371cc84c3c15473dc18d_1acd86bc5fd5d6371cc84c3c15473dc18d" kindref="member">ColIndex</ref></type>
+        <definition>ColIndex QuadMatrixBuilder::LeftRightColIndex::leftIndex</definition>
+        <argsstring>() const</argsstring>
+        <name>leftIndex</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::leftIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="50" column="14" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="50" bodyend="53"/>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a97d46e1baa4b19852dab21227af36891_1a97d46e1baa4b19852dab21227af36891" compoundref="_quad_matrix_builder_8hpp" startline="62" endline="65">index</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a85e7f062647d03f9eb9b28c7bc97c40f_1a85e7f062647d03f9eb9b28c7bc97c40f" compoundref="_quad_matrix_builder_8hpp" startline="67" endline="70">left</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <referencedby refid="class_quad_matrix_builder_a460520468190fbc32ea3e78652ec2904_1a460520468190fbc32ea3e78652ec2904" compoundref="_quad_matrix_builder_8hpp" startline="152" endline="158">QuadMatrixBuilder::appendEntryBottom</referencedby>
+        <referencedby refid="class_quad_matrix_builder_ac7772324fb92d6b739b529aaef81f94a_1ac7772324fb92d6b739b529aaef81f94a" compoundref="_quad_matrix_builder_8hpp" startline="127" endline="133">QuadMatrixBuilder::appendEntryTop</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_acf329c960bbd14548864bcbfaeb56751_1acf329c960bbd14548864bcbfaeb56751" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_quad_matrix_builder_acd86bc5fd5d6371cc84c3c15473dc18d_1acd86bc5fd5d6371cc84c3c15473dc18d" kindref="member">ColIndex</ref></type>
+        <definition>ColIndex QuadMatrixBuilder::LeftRightColIndex::rightIndex</definition>
+        <argsstring>() const</argsstring>
+        <name>rightIndex</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::rightIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="55" column="14" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="55" bodyend="58"/>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a97d46e1baa4b19852dab21227af36891_1a97d46e1baa4b19852dab21227af36891" compoundref="_quad_matrix_builder_8hpp" startline="62" endline="65">index</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a4e30b2724b1c3813d6c6a1c517e13b62_1a4e30b2724b1c3813d6c6a1c517e13b62" compoundref="_quad_matrix_builder_8hpp" startline="72" endline="75">right</references>
+        <referencedby refid="class_quad_matrix_builder_a460520468190fbc32ea3e78652ec2904_1a460520468190fbc32ea3e78652ec2904" compoundref="_quad_matrix_builder_8hpp" startline="152" endline="158">QuadMatrixBuilder::appendEntryBottom</referencedby>
+        <referencedby refid="class_quad_matrix_builder_ac7772324fb92d6b739b529aaef81f94a_1ac7772324fb92d6b739b529aaef81f94a" compoundref="_quad_matrix_builder_8hpp" startline="127" endline="133">QuadMatrixBuilder::appendEntryTop</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_a97d46e1baa4b19852dab21227af36891_1a97d46e1baa4b19852dab21227af36891" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_quad_matrix_builder_acd86bc5fd5d6371cc84c3c15473dc18d_1acd86bc5fd5d6371cc84c3c15473dc18d" kindref="member">ColIndex</ref></type>
+        <definition>ColIndex QuadMatrixBuilder::LeftRightColIndex::index</definition>
+        <argsstring>() const</argsstring>
+        <name>index</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::index</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Use <ref refid="class_quad_matrix_builder_1_1_left_right_col_index_ae067ace2f4ae76f4120381a97b8bc56d_1ae067ace2f4ae76f4120381a97b8bc56d" kindref="member">leftIndex()</ref> or <ref refid="class_quad_matrix_builder_1_1_left_right_col_index_acf329c960bbd14548864bcbfaeb56751_1acf329c960bbd14548864bcbfaeb56751" kindref="member">rightIndex()</ref> instead if you know what side you are expecting, as those do an assert on your expectation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="62" column="14" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="62" bodyend="65"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a44fe2c04eaa621c5e656768bf7b81183_1a44fe2c04eaa621c5e656768bf7b81183" compoundref="_quad_matrix_builder_8hpp" startline="90">mRawIndex</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a478b87e2a41fa6836fa31d5f7ddea661_1a478b87e2a41fa6836fa31d5f7ddea661" compoundref="_quad_matrix_builder_8hpp" startline="77" endline="79">valid</references>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_ae067ace2f4ae76f4120381a97b8bc56d_1ae067ace2f4ae76f4120381a97b8bc56d" compoundref="_quad_matrix_builder_8hpp" startline="50" endline="53">leftIndex</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a1fdd5ca03886673d2a3b92bc84c57491_1a1fdd5ca03886673d2a3b92bc84c57491" compoundref="_quad_matrix_builder_8hpp" startline="46" endline="48">LeftRightColIndex</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_ad1d34ec3b0fd613395ecfd9a0f6044a0_1ad1d34ec3b0fd613395ecfd9a0f6044a0" compoundref="_quad_matrix_builder_8hpp" startline="85" endline="87">operator!=</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_ad9be3e9db917847af267c507c0f93b91_1ad9be3e9db917847af267c507c0f93b91" compoundref="_quad_matrix_builder_8hpp" startline="81" endline="83">operator==</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_acf329c960bbd14548864bcbfaeb56751_1acf329c960bbd14548864bcbfaeb56751" compoundref="_quad_matrix_builder_8hpp" startline="55" endline="58">rightIndex</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_a21251c9bc0615886b10d4ce58cc31605_1a21251c9bc0615886b10d4ce58cc31605" compoundref="test_2_quad_matrix_builder_8cpp" startline="133" endline="161">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_a85e7f062647d03f9eb9b28c7bc97c40f_1a85e7f062647d03f9eb9b28c7bc97c40f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool QuadMatrixBuilder::LeftRightColIndex::left</definition>
+        <argsstring>() const</argsstring>
+        <name>left</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::left</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="67" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="67" bodyend="70"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a2d5839bac19c6f68f2ca997b6d7c04e2_1a2d5839bac19c6f68f2ca997b6d7c04e2" compoundref="_quad_matrix_builder_8hpp" startline="91">mLeft</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a478b87e2a41fa6836fa31d5f7ddea661_1a478b87e2a41fa6836fa31d5f7ddea661" compoundref="_quad_matrix_builder_8hpp" startline="77" endline="79">valid</references>
+        <referencedby refid="class_quad_matrix_builder_a460520468190fbc32ea3e78652ec2904_1a460520468190fbc32ea3e78652ec2904" compoundref="_quad_matrix_builder_8hpp" startline="152" endline="158">QuadMatrixBuilder::appendEntryBottom</referencedby>
+        <referencedby refid="class_quad_matrix_builder_ac7772324fb92d6b739b529aaef81f94a_1ac7772324fb92d6b739b529aaef81f94a" compoundref="_quad_matrix_builder_8hpp" startline="127" endline="133">QuadMatrixBuilder::appendEntryTop</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_ae067ace2f4ae76f4120381a97b8bc56d_1ae067ace2f4ae76f4120381a97b8bc56d" compoundref="_quad_matrix_builder_8hpp" startline="50" endline="53">leftIndex</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a1fdd5ca03886673d2a3b92bc84c57491_1a1fdd5ca03886673d2a3b92bc84c57491" compoundref="_quad_matrix_builder_8hpp" startline="46" endline="48">LeftRightColIndex</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a4e30b2724b1c3813d6c6a1c517e13b62_1a4e30b2724b1c3813d6c6a1c517e13b62" compoundref="_quad_matrix_builder_8hpp" startline="72" endline="75">right</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_a21251c9bc0615886b10d4ce58cc31605_1a21251c9bc0615886b10d4ce58cc31605" compoundref="test_2_quad_matrix_builder_8cpp" startline="133" endline="161">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_a4e30b2724b1c3813d6c6a1c517e13b62_1a4e30b2724b1c3813d6c6a1c517e13b62" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool QuadMatrixBuilder::LeftRightColIndex::right</definition>
+        <argsstring>() const</argsstring>
+        <name>right</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::right</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="72" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="72" bodyend="75"/>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a85e7f062647d03f9eb9b28c7bc97c40f_1a85e7f062647d03f9eb9b28c7bc97c40f" compoundref="_quad_matrix_builder_8hpp" startline="67" endline="70">left</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a478b87e2a41fa6836fa31d5f7ddea661_1a478b87e2a41fa6836fa31d5f7ddea661" compoundref="_quad_matrix_builder_8hpp" startline="77" endline="79">valid</references>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_acf329c960bbd14548864bcbfaeb56751_1acf329c960bbd14548864bcbfaeb56751" compoundref="_quad_matrix_builder_8hpp" startline="55" endline="58">rightIndex</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_a21251c9bc0615886b10d4ce58cc31605_1a21251c9bc0615886b10d4ce58cc31605" compoundref="test_2_quad_matrix_builder_8cpp" startline="133" endline="161">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_a478b87e2a41fa6836fa31d5f7ddea661_1a478b87e2a41fa6836fa31d5f7ddea661" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool QuadMatrixBuilder::LeftRightColIndex::valid</definition>
+        <argsstring>() const</argsstring>
+        <name>valid</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::valid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="77" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="77" bodyend="79"/>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a44fe2c04eaa621c5e656768bf7b81183_1a44fe2c04eaa621c5e656768bf7b81183" compoundref="_quad_matrix_builder_8hpp" startline="90">mRawIndex</references>
+        <referencedby refid="class_quad_matrix_builder_a460520468190fbc32ea3e78652ec2904_1a460520468190fbc32ea3e78652ec2904" compoundref="_quad_matrix_builder_8hpp" startline="152" endline="158">QuadMatrixBuilder::appendEntryBottom</referencedby>
+        <referencedby refid="class_quad_matrix_builder_ac7772324fb92d6b739b529aaef81f94a_1ac7772324fb92d6b739b529aaef81f94a" compoundref="_quad_matrix_builder_8hpp" startline="127" endline="133">QuadMatrixBuilder::appendEntryTop</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a97d46e1baa4b19852dab21227af36891_1a97d46e1baa4b19852dab21227af36891" compoundref="_quad_matrix_builder_8hpp" startline="62" endline="65">index</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a85e7f062647d03f9eb9b28c7bc97c40f_1a85e7f062647d03f9eb9b28c7bc97c40f" compoundref="_quad_matrix_builder_8hpp" startline="67" endline="70">left</referencedby>
+        <referencedby refid="class_quad_matrix_builder_1_1_left_right_col_index_a4e30b2724b1c3813d6c6a1c517e13b62_1a4e30b2724b1c3813d6c6a1c517e13b62" compoundref="_quad_matrix_builder_8hpp" startline="72" endline="75">right</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_ad9be3e9db917847af267c507c0f93b91_1ad9be3e9db917847af267c507c0f93b91" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool QuadMatrixBuilder::LeftRightColIndex::operator==</definition>
+        <argsstring>(const LeftRightColIndex &amp;index) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_quad_matrix_builder_1_1_left_right_col_index_aa9926b948bbeb1971bd353c9c6333af6_1aa9926b948bbeb1971bd353c9c6333af6" kindref="member">LeftRightColIndex</ref> &amp;</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="81" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="81" bodyend="83"/>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a97d46e1baa4b19852dab21227af36891_1a97d46e1baa4b19852dab21227af36891" compoundref="_quad_matrix_builder_8hpp" startline="62" endline="65">index</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_aa9926b948bbeb1971bd353c9c6333af6_1aa9926b948bbeb1971bd353c9c6333af6" compoundref="_quad_matrix_builder_8hpp" startline="43" endline="44">LeftRightColIndex</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a2d5839bac19c6f68f2ca997b6d7c04e2_1a2d5839bac19c6f68f2ca997b6d7c04e2" compoundref="_quad_matrix_builder_8hpp" startline="91">mLeft</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a44fe2c04eaa621c5e656768bf7b81183_1a44fe2c04eaa621c5e656768bf7b81183" compoundref="_quad_matrix_builder_8hpp" startline="90">mRawIndex</references>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_builder_1_1_left_right_col_index_ad1d34ec3b0fd613395ecfd9a0f6044a0_1ad1d34ec3b0fd613395ecfd9a0f6044a0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool QuadMatrixBuilder::LeftRightColIndex::operator!=</definition>
+        <argsstring>(const LeftRightColIndex &amp;index) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>QuadMatrixBuilder::LeftRightColIndex::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_quad_matrix_builder_1_1_left_right_col_index_aa9926b948bbeb1971bd353c9c6333af6_1aa9926b948bbeb1971bd353c9c6333af6" kindref="member">LeftRightColIndex</ref> &amp;</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="85" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="85" bodyend="87"/>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_a97d46e1baa4b19852dab21227af36891_1a97d46e1baa4b19852dab21227af36891" compoundref="_quad_matrix_builder_8hpp" startline="62" endline="65">index</references>
+        <references refid="class_quad_matrix_builder_1_1_left_right_col_index_aa9926b948bbeb1971bd353c9c6333af6_1aa9926b948bbeb1971bd353c9c6333af6" compoundref="_quad_matrix_builder_8hpp" startline="43" endline="44">LeftRightColIndex</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>The index of a column that can be either on the left or the right side. The largest representable <ref refid="class_quad_matrix_builder_acd86bc5fd5d6371cc84c3c15473dc18d_1acd86bc5fd5d6371cc84c3c15473dc18d" kindref="member">ColIndex</ref> is an invalid index. This is the default value. The only allowed method to call for an invalid index is <ref refid="class_quad_matrix_builder_1_1_left_right_col_index_a478b87e2a41fa6836fa31d5f7ddea661_1a478b87e2a41fa6836fa31d5f7ddea661" kindref="member">valid()</ref>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>QuadMatrixBuilder::LeftRightColIndex</label>
+        <link refid="class_quad_matrix_builder_1_1_left_right_col_index"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mRawIndex</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mLeft</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ColIndex</label>
+      </node>
+      <node id="3">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" line="41" column="3" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp" bodystart="41" bodyend="92"/>
+    <listofallmembers>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_a97d46e1baa4b19852dab21227af36891_1a97d46e1baa4b19852dab21227af36891" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>index</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_a85e7f062647d03f9eb9b28c7bc97c40f_1a85e7f062647d03f9eb9b28c7bc97c40f" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>left</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_ae067ace2f4ae76f4120381a97b8bc56d_1ae067ace2f4ae76f4120381a97b8bc56d" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>leftIndex</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_aa9926b948bbeb1971bd353c9c6333af6_1aa9926b948bbeb1971bd353c9c6333af6" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>LeftRightColIndex</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_a1fdd5ca03886673d2a3b92bc84c57491_1a1fdd5ca03886673d2a3b92bc84c57491" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>LeftRightColIndex</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_a2d5839bac19c6f68f2ca997b6d7c04e2_1a2d5839bac19c6f68f2ca997b6d7c04e2" prot="private" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>mLeft</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_a44fe2c04eaa621c5e656768bf7b81183_1a44fe2c04eaa621c5e656768bf7b81183" prot="private" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>mRawIndex</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_ad1d34ec3b0fd613395ecfd9a0f6044a0_1ad1d34ec3b0fd613395ecfd9a0f6044a0" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>operator!=</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_ad9be3e9db917847af267c507c0f93b91_1ad9be3e9db917847af267c507c0f93b91" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>operator==</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_a4e30b2724b1c3813d6c6a1c517e13b62_1a4e30b2724b1c3813d6c6a1c517e13b62" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>right</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_acf329c960bbd14548864bcbfaeb56751_1acf329c960bbd14548864bcbfaeb56751" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>rightIndex</name></member>
+      <member refid="class_quad_matrix_builder_1_1_left_right_col_index_a478b87e2a41fa6836fa31d5f7ddea661_1a478b87e2a41fa6836fa31d5f7ddea661" prot="public" virt="non-virtual"><scope>QuadMatrixBuilder::LeftRightColIndex</scope><name>valid</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

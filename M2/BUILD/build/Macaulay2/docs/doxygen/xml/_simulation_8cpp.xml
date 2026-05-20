@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_simulation_8cpp" kind="file" language="C++">
+    <compoundname>Simulation.cpp</compoundname>
+    <includes refid="mathic_2src_2divsim_2stdinc_8h" local="yes">stdinc.h</includes>
+    <includes refid="_simulation_8h" local="yes">Simulation.h</includes>
+    <includes refid="_column_printer_8h" local="yes">mathic/ColumnPrinter.h</includes>
+    <includes local="no">cstdlib</includes>
+    <includes local="no">algorithm</includes>
+    <incdepgraph>
+      <node id="6">
+        <label>Monomial.h</label>
+        <link refid="_monomial_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/divsim/Simulation.cpp</label>
+        <link refid="_simulation_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Simulation.h</label>
+        <link refid="_simulation_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2divsim_2stdinc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>mathic/ColumnPrinter.h</label>
+        <link refid="_column_printer_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>mathic/Timer.h</label>
+        <link refid="_timer_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2mathic_2stdinc_8h"/>
+      </node>
+      <node id="15">
+        <label>algorithm</label>
+      </node>
+      <node id="3">
+        <label>cstddef</label>
+      </node>
+      <node id="12">
+        <label>cstdio</label>
+      </node>
+      <node id="14">
+        <label>cstdlib</label>
+      </node>
+      <node id="11">
+        <label>ctime</label>
+      </node>
+      <node id="13">
+        <label>iostream</label>
+      </node>
+      <node id="4">
+        <label>memory</label>
+      </node>
+      <node id="8">
+        <label>ostream</label>
+      </node>
+      <node id="17">
+        <label>sstream</label>
+      </node>
+      <node id="18">
+        <label>string</label>
+      </node>
+      <node id="7">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mathic_2src_2divsim_2stdinc_8h" kindref="compound">stdinc.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_simulation_8h" kindref="compound">Simulation.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_column_printer_8h" kindref="compound">mathic/ColumnPrinter.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdlib&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;algorithm&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>makeRandom(std::vector&lt;int&gt;&amp;<sp/><ref refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" kindref="member">monomial</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>var<sp/>=<sp/>0;<sp/>var<sp/>&lt;<sp/><ref refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" kindref="member">monomial</ref>.size();<sp/>++var)</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" kindref="member">monomial</ref>[var]<sp/>=<sp/>rand()<sp/>%<sp/>1000;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" kindref="member">Simulation::makeStandard</ref></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>varCount,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>inserts,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queries,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>findAll)<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>srand(0);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><ref refid="class_simulation_a1ba3c595d1410d65dd2d6f7d82d4d94e_1a1ba3c595d1410d65dd2d6f7d82d4d94e" kindref="member">_findAll</ref><sp/>=<sp/>findAll;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><ref refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" kindref="member">_varCount</ref><sp/>=<sp/>varCount;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><ref refid="class_simulation_a18c037fc09ce57c9546186831266bc68_1a18c037fc09ce57c9546186831266bc68" kindref="member">_events</ref>.clear();</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>inserts<sp/>+<sp/>queries;<sp/>++i)<sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*Event<sp/>event2;</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/><sp/><sp/><sp/>event2._type<sp/>=<sp/>StateUnknown;</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/><sp/><sp/><sp/>_events.push_back(event2);*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_simulation_1_1_event" kindref="compound">Event</ref><sp/>event;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">event</highlight><highlight class="normal">.<ref refid="struct_simulation_1_1_event_a24e47745393b348a541645fbe4ae640a_1a24e47745393b348a541645fbe4ae640a" kindref="member">_monomial</ref>.resize(varCount);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>makeRandom(event.<ref refid="struct_simulation_1_1_event_a24e47745393b348a541645fbe4ae640a_1a24e47745393b348a541645fbe4ae640a" kindref="member">_monomial</ref>);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">event</highlight><highlight class="normal">._type<sp/>=<sp/>(i<sp/>&lt;=<sp/>inserts<sp/>?<sp/><ref refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a7e84020e126a43bbac9cee98b33b991b" kindref="member">InsertUnknown</ref><sp/>:<sp/><ref refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aad9d899f46b9af60907cb2526a57ecda" kindref="member">QueryUnknown</ref>);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_simulation_a18c037fc09ce57c9546186831266bc68_1a18c037fc09ce57c9546186831266bc68" kindref="member">_events</ref>.push_back(event);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="class_simulation_a1cf2790d4d7618af81eb1576c320dc55_1a1cf2790d4d7618af81eb1576c320dc55" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_simulation_a1cf2790d4d7618af81eb1576c320dc55_1a1cf2790d4d7618af81eb1576c320dc55" kindref="member">Simulation::printData</ref>(std::ostream&amp;<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>std::vector&lt;SimData&gt;<sp/>sorted(<ref refid="class_simulation_abd8452bba709eac2c13d894ae3c3cf5e_1abd8452bba709eac2c13d894ae3c3cf5e" kindref="member">_data</ref>);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>std::sort(sorted.begin(),<sp/>sorted.end());</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;***<sp/>Simulation<sp/>outcome<sp/>for<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="class_simulation_a17e07617db33bce6b8ebefc7c208815a_1a17e07617db33bce6b8ebefc7c208815a" kindref="member">_repeats</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>repeats<sp/>***&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><ref refid="classmathic_1_1_column_printer" kindref="compound">mic::ColumnPrinter</ref><sp/>pr;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>pr.<ref refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" kindref="member">addColumn</ref>(</highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>pr.<ref refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" kindref="member">addColumn</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;ms&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/>pr.<ref refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" kindref="member">addColumn</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;eqs&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(std::vector&lt;SimData&gt;::const_iterator<sp/>it<sp/>=<sp/>sorted.begin();</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>it<sp/>!=<sp/>sorted.end();<sp/>++it)<sp/>{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>pr[0]<sp/>&lt;&lt;<sp/>it-&gt;_name<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>pr[1]<sp/>&lt;&lt;<sp/>mic::ColumnPrinter::commafy(it-&gt;_mseconds)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>pr[2]<sp/>&lt;&lt;<sp/>mic::ColumnPrinter::commafy(it-&gt;_expQueryCount)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>pr.<ref refid="classmathic_1_1_column_printer_a8274b1a0e3b12ea1a6cf4f16a5c123da_1a8274b1a0e3b12ea1a6cf4f16a5c123da" kindref="member">print</ref>(out);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="struct_simulation_1_1_sim_data_a458c61e55585f180108578a2d659905a_1a458c61e55585f180108578a2d659905a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="struct_simulation_1_1_sim_data_a458c61e55585f180108578a2d659905a_1a458c61e55585f180108578a2d659905a" kindref="member">Simulation::SimData::print</ref>(std::ostream&amp;<sp/>out)<sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/><ref refid="struct_simulation_1_1_sim_data_a2d739ddd4ca7281234429d70f7aef530_1a2d739ddd4ca7281234429d70f7aef530" kindref="member">_name</ref></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>mic::ColumnPrinter::commafy(<ref refid="struct_simulation_1_1_sim_data_ae62adb27565e1e9e726a9a307a05f03d_1ae62adb27565e1e9e726a9a307a05f03d" kindref="member">_mseconds</ref>)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>ms&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>mic::ColumnPrinter::commafy(<ref refid="struct_simulation_1_1_sim_data_aa4defe4553681fdae0ea255fdee46bae_1aa4defe4553681fdae0ea255fdee46bae" kindref="member">_expQueryCount</ref>)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>eqs&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="struct_simulation_1_1_sim_data_a088bb61bbb3da386b95033b5f6d69994_1a088bb61bbb3da386b95033b5f6d69994" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_simulation_1_1_sim_data_a088bb61bbb3da386b95033b5f6d69994_1a088bb61bbb3da386b95033b5f6d69994" kindref="member">Simulation::SimData::operator&lt;</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_simulation_1_1_sim_data" kindref="compound">SimData</ref>&amp;<sp/>sd)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="struct_simulation_1_1_sim_data_ae62adb27565e1e9e726a9a307a05f03d_1ae62adb27565e1e9e726a9a307a05f03d" kindref="member">_mseconds</ref><sp/>&lt;<sp/>sd.<ref refid="struct_simulation_1_1_sim_data_ae62adb27565e1e9e726a9a307a05f03d_1ae62adb27565e1e9e726a9a307a05f03d" kindref="member">_mseconds</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/divsim/Simulation.cpp"/>
+  </compounddef>
+</doxygen>

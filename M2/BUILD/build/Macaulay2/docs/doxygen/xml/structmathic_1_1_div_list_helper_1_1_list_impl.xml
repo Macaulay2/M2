@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structmathic_1_1_div_list_helper_1_1_list_impl" kind="struct" language="C++" prot="public">
+    <compoundname>mathic::DivListHelper::ListImpl</compoundname>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>B</declname>
+        <defname>B</defname>
+      </param>
+      <param>
+        <type>class E</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>mathic::DivListHelper::ListImpl&lt; B, E &gt;</label>
+        <link refid="structmathic_1_1_div_list_helper_1_1_list_impl"/>
+      </node>
+      <node id="3">
+        <label>mathic::DivListHelper::ListImpl&lt; C::UseLinkedList, ExtEntry &gt;</label>
+        <link refid="structmathic_1_1_div_list_helper_1_1_list_impl"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; C::UseLinkedList, ExtEntry &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mathic::DivListHelper::Impl&lt; UseLinkedList, ExtEntry &gt;</label>
+        <link refid="structmathic_1_1_div_list_helper_1_1_list_impl"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; C::UseLinkedList, ExtEntry &gt;::Impl</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mathic::DivListHelper::ListImpl&lt; false, Entry &gt;</label>
+        <link refid="structmathic_1_1_div_list_helper_1_1_list_impl_3_01false_00_01_entry_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; false, Entry &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>mathic::DivListHelper::ListImpl&lt; true, Entry &gt;</label>
+        <link refid="structmathic_1_1_div_list_helper_1_1_list_impl_3_01true_00_01_entry_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; true, Entry &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="submodules/mathic/src/mathic/DivList.h" line="36" column="7" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="36" bodyend="-1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

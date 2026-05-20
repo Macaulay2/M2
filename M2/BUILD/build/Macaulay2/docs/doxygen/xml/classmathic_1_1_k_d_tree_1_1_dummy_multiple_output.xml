@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_k_d_tree_1_1_dummy_multiple_output" kind="class" language="C++" prot="private">
+    <compoundname>mathic::KDTree::DummyMultipleOutput</compoundname>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_k_d_tree_1_1_dummy_multiple_output_ae9f2ea30e1411c92d843a917f7dbf016_1ae9f2ea30e1411c92d843a917f7dbf016" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::KDTree&lt; C &gt;::DummyMultipleOutput::push_back</definition>
+        <argsstring>(Entry &amp;e)</argsstring>
+        <name>push_back</name>
+        <qualifiedname>mathic::KDTree::DummyMultipleOutput::push_back</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_k_d_tree_a95ffb11a0a7bbbd785e402cdf7bccef0_1a95ffb11a0a7bbbd785e402cdf7bccef0" kindref="member">Entry</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDTree.h" line="294" column="12" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="294" bodyend="294"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Ignores everything passed to it. *<zwj/>/. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/mathic/KDTree.h" line="292" column="5" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="292" bodyend="295"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_k_d_tree_1_1_dummy_multiple_output_ae9f2ea30e1411c92d843a917f7dbf016_1ae9f2ea30e1411c92d843a917f7dbf016" prot="public" virt="non-virtual"><scope>mathic::KDTree::DummyMultipleOutput</scope><name>push_back</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

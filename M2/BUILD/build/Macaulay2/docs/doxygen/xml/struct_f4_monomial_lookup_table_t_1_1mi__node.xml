@@ -1,0 +1,319 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_f4_monomial_lookup_table_t_1_1mi__node" kind="struct" language="C++" prot="private">
+    <compoundname>F4MonomialLookupTableT::mi_node</compoundname>
+    <sectiondef kind="public-type">
+      <memberdef kind="enum" id="struct_f4_monomial_lookup_table_t_1_1mi__node_ae33d6e949a7ab95f298b227106d9a76b_1ae33d6e949a7ab95f298b227106d9a76b" prot="public" static="no" strong="no">
+        <type></type>
+        <name></name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node</qualifiedname>
+        <enumvalue id="struct_f4_monomial_lookup_table_t_1_1mi__node_ae33d6e949a7ab95f298b227106d9a76b_1ae33d6e949a7ab95f298b227106d9a76bac9e436674e92ac5fa3583b943d6671cd" prot="public">
+          <name>node</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="struct_f4_monomial_lookup_table_t_1_1mi__node_ae33d6e949a7ab95f298b227106d9a76b_1ae33d6e949a7ab95f298b227106d9a76ba54882bdabd7be01dd7f4ec835f5a02ea" prot="public">
+          <name>leaf</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="62" column="5" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="62" bodyend="62"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_f4_monomial_lookup_table_t_1_1mi__node_acc48bfbd42687e45c28ee57b98289a24_1acc48bfbd42687e45c28ee57b98289a24" prot="public" static="no" mutable="no">
+        <type><ref refid="varpower-monomial_8hpp_ac06516f99c07ceb08dbb3d05a8aed2ec_1ac06516f99c07ceb08dbb3d05a8aed2ec" kindref="member">varpower_word</ref></type>
+        <definition>varpower_word F4MonomialLookupTableT&lt; Key &gt;::mi_node::var</definition>
+        <argsstring></argsstring>
+        <name>var</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::var</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="57" column="19" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a160607e3110ddb8b5401829c18f0a30b_1a160607e3110ddb8b5401829c18f0a30b" compoundref="f4-monlookup_8cpp" startline="450" endline="491">F4MonomialLookupTableT&lt; Key &gt;::debug_check</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a7c3c70c4f7fae51dba9331e13fc274b8_1a7c3c70c4f7fae51dba9331e13fc274b8" compoundref="f4-monlookup_8cpp" startline="280" endline="293">F4MonomialLookupTableT&lt; Key &gt;::find_all_divisors_vp</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_afccf1e6c1e76ee5f4cdc881e27ad423f_1afccf1e6c1e76ee5f4cdc881e27ad423f" compoundref="f4-monlookup_8cpp" startline="264" endline="277">F4MonomialLookupTableT&lt; Key &gt;::find_one_divisor_vp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_monomial_lookup_table_t_1_1mi__node_aacacf9e1032fe9416ce399e207cfe3bd_1aacacf9e1032fe9416ce399e207cfe3bd" prot="public" static="no" mutable="no">
+        <type><ref refid="varpower-monomial_8hpp_ac06516f99c07ceb08dbb3d05a8aed2ec_1ac06516f99c07ceb08dbb3d05a8aed2ec" kindref="member">varpower_word</ref></type>
+        <definition>varpower_word F4MonomialLookupTableT&lt; Key &gt;::mi_node::exp</definition>
+        <argsstring></argsstring>
+        <name>exp</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::exp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="58" column="19" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a160607e3110ddb8b5401829c18f0a30b_1a160607e3110ddb8b5401829c18f0a30b" compoundref="f4-monlookup_8cpp" startline="450" endline="491">F4MonomialLookupTableT&lt; Key &gt;::debug_check</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ae92f905fbe47c87c0de68fd3bcd5cdb4_1ae92f905fbe47c87c0de68fd3bcd5cdb4" compoundref="f4-monlookup_8cpp" startline="77" endline="154">F4MonomialLookupTableT&lt; Key &gt;::insert1</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_monomial_lookup_table_t_1_1mi__node_ab27237a816db25f23a8174edf8b26a59_1ab27237a816db25f23a8174edf8b26a59" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_f4_monomial_lookup_table_t_1_1mi__node" kindref="compound">mi_node</ref> *</type>
+        <definition>mi_node* F4MonomialLookupTableT&lt; Key &gt;::mi_node::left</definition>
+        <argsstring></argsstring>
+        <name>left</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::left</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="59" column="13" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a160607e3110ddb8b5401829c18f0a30b_1a160607e3110ddb8b5401829c18f0a30b" compoundref="f4-monlookup_8cpp" startline="450" endline="491">F4MonomialLookupTableT&lt; Key &gt;::debug_check</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ae92f905fbe47c87c0de68fd3bcd5cdb4_1ae92f905fbe47c87c0de68fd3bcd5cdb4" compoundref="f4-monlookup_8cpp" startline="77" endline="154">F4MonomialLookupTableT&lt; Key &gt;::insert1</referencedby>
+        <referencedby refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a074aabb6fc54c39a7063c5f522305055_1a074aabb6fc54c39a7063c5f522305055" compoundref="f4-monlookup_8hpp" startline="72" endline="78">F4MonomialLookupTableT&lt; Key &gt;::mi_node::insert_to_left</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_monomial_lookup_table_t_1_1mi__node_aa09dccc82e4d2bbb72badc416dfca882_1aa09dccc82e4d2bbb72badc416dfca882" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_f4_monomial_lookup_table_t_1_1mi__node" kindref="compound">mi_node</ref> *</type>
+        <definition>mi_node* F4MonomialLookupTableT&lt; Key &gt;::mi_node::right</definition>
+        <argsstring></argsstring>
+        <name>right</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::right</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="60" column="13" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a160607e3110ddb8b5401829c18f0a30b_1a160607e3110ddb8b5401829c18f0a30b" compoundref="f4-monlookup_8cpp" startline="450" endline="491">F4MonomialLookupTableT&lt; Key &gt;::debug_check</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a2e2144a52f0b21d3680d3fbd5004c390_1a2e2144a52f0b21d3680d3fbd5004c390" compoundref="f4-monlookup_8cpp" startline="414" endline="429">F4MonomialLookupTableT&lt; Key &gt;::do_tree</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ae92f905fbe47c87c0de68fd3bcd5cdb4_1ae92f905fbe47c87c0de68fd3bcd5cdb4" compoundref="f4-monlookup_8cpp" startline="77" endline="154">F4MonomialLookupTableT&lt; Key &gt;::insert1</referencedby>
+        <referencedby refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a074aabb6fc54c39a7063c5f522305055_1a074aabb6fc54c39a7063c5f522305055" compoundref="f4-monlookup_8hpp" startline="72" endline="78">F4MonomialLookupTableT&lt; Key &gt;::mi_node::insert_to_left</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_monomial_lookup_table_t_1_1mi__node_a02aaf919c0635f586acf6a31633c3d92_1a02aaf919c0635f586acf6a31633c3d92" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_f4_monomial_lookup_table_t_1_1mi__node" kindref="compound">mi_node</ref> *</type>
+        <definition>mi_node* F4MonomialLookupTableT&lt; Key &gt;::mi_node::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::header</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="61" column="13" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a160607e3110ddb8b5401829c18f0a30b_1a160607e3110ddb8b5401829c18f0a30b" compoundref="f4-monlookup_8cpp" startline="450" endline="491">F4MonomialLookupTableT&lt; Key &gt;::debug_check</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ae92f905fbe47c87c0de68fd3bcd5cdb4_1ae92f905fbe47c87c0de68fd3bcd5cdb4" compoundref="f4-monlookup_8cpp" startline="77" endline="154">F4MonomialLookupTableT&lt; Key &gt;::insert1</referencedby>
+        <referencedby refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a074aabb6fc54c39a7063c5f522305055_1a074aabb6fc54c39a7063c5f522305055" compoundref="f4-monlookup_8hpp" startline="72" endline="78">F4MonomialLookupTableT&lt; Key &gt;::mi_node::insert_to_left</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_monomial_lookup_table_t_1_1mi__node_a95f7e8365fbf67d116bbfb154c186b39_1a95f7e8365fbf67d116bbfb154c186b39" prot="public" static="no" mutable="no">
+        <type>enum <ref refid="struct_f4_monomial_lookup_table_t_1_1mi__node" kindref="compound">F4MonomialLookupTableT::mi_node</ref></type>
+        <definition>enum F4MonomialLookupTableT::mi_node F4MonomialLookupTableT&lt; Key &gt;::mi_node::tag</definition>
+        <argsstring></argsstring>
+        <name>tag</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::tag</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="62" column="14"/>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a160607e3110ddb8b5401829c18f0a30b_1a160607e3110ddb8b5401829c18f0a30b" compoundref="f4-monlookup_8cpp" startline="450" endline="491">F4MonomialLookupTableT&lt; Key &gt;::debug_check</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a2e2144a52f0b21d3680d3fbd5004c390_1a2e2144a52f0b21d3680d3fbd5004c390" compoundref="f4-monlookup_8cpp" startline="414" endline="429">F4MonomialLookupTableT&lt; Key &gt;::do_tree</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_monomial_lookup_table_t_1_1mi__node_a61a52b243bb68ec213be76a69254a672_1a61a52b243bb68ec213be76a69254a672" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_f4_monomial_lookup_table_t_1_1mi__node" kindref="compound">mi_node</ref> *</type>
+        <definition>mi_node* F4MonomialLookupTableT&lt; Key &gt;::mi_node::down</definition>
+        <argsstring></argsstring>
+        <name>down</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::down</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="65" column="15" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="65" bodyend="-1"/>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a160607e3110ddb8b5401829c18f0a30b_1a160607e3110ddb8b5401829c18f0a30b" compoundref="f4-monlookup_8cpp" startline="450" endline="491">F4MonomialLookupTableT&lt; Key &gt;::debug_check</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a2e2144a52f0b21d3680d3fbd5004c390_1a2e2144a52f0b21d3680d3fbd5004c390" compoundref="f4-monlookup_8cpp" startline="414" endline="429">F4MonomialLookupTableT&lt; Key &gt;::do_tree</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ae92f905fbe47c87c0de68fd3bcd5cdb4_1ae92f905fbe47c87c0de68fd3bcd5cdb4" compoundref="f4-monlookup_8cpp" startline="77" endline="154">F4MonomialLookupTableT&lt; Key &gt;::insert1</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_monomial_lookup_table_t_1_1mi__node_ad4f55b3019ebfb12e2182145b29b4f8b_1ad4f55b3019ebfb12e2182145b29b4f8b" prot="public" static="no" mutable="no">
+        <type>Key</type>
+        <definition>Key F4MonomialLookupTableT&lt; Key &gt;::mi_node::key</definition>
+        <argsstring></argsstring>
+        <name>key</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::key</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="66" column="11" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_monomial_lookup_table_t_1_1mi__node_a5dd2e888673c6e3f87ef460e30309128_1a5dd2e888673c6e3f87ef460e30309128" prot="public" static="no" mutable="no">
+        <type>union <ref refid="struct_f4_monomial_lookup_table_t_1_1mi__node" kindref="compound">F4MonomialLookupTableT::mi_node</ref></type>
+        <definition>union F4MonomialLookupTableT::mi_node F4MonomialLookupTableT&lt; Key &gt;::mi_node::val</definition>
+        <argsstring></argsstring>
+        <name>val</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::val</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="67" column="9"/>
+        <referencedby refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a788e12cbe0cdca8d0366395fc2285bea_1a788e12cbe0cdca8d0366395fc2285bea" compoundref="f4-monlookup_8hpp" startline="70" endline="70">F4MonomialLookupTableT&lt; Key &gt;::mi_node::down</referencedby>
+        <referencedby refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a19ce37a3efb902605e7f28be9d9d39ba_1a19ce37a3efb902605e7f28be9d9d39ba" compoundref="f4-monlookup_8hpp" startline="71" endline="71">F4MonomialLookupTableT&lt; Key &gt;::mi_node::key</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_f4_monomial_lookup_table_t_1_1mi__node_a788e12cbe0cdca8d0366395fc2285bea_1a788e12cbe0cdca8d0366395fc2285bea" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="struct_f4_monomial_lookup_table_t_1_1mi__node" kindref="compound">mi_node</ref> *&amp;</type>
+        <definition>mi_node *&amp; F4MonomialLookupTableT&lt; Key &gt;::mi_node::down</definition>
+        <argsstring>()</argsstring>
+        <name>down</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::down</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="70" column="13" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="70" bodyend="70"/>
+        <references refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a5dd2e888673c6e3f87ef460e30309128_1a5dd2e888673c6e3f87ef460e30309128">F4MonomialLookupTableT&lt; Key &gt;::mi_node::val</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_f4_monomial_lookup_table_t_1_1mi__node_a19ce37a3efb902605e7f28be9d9d39ba_1a19ce37a3efb902605e7f28be9d9d39ba" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>Key &amp;</type>
+        <definition>Key &amp; F4MonomialLookupTableT&lt; Key &gt;::mi_node::key</definition>
+        <argsstring>()</argsstring>
+        <name>key</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::key</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="71" column="9" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="71" bodyend="71"/>
+        <references refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a5dd2e888673c6e3f87ef460e30309128_1a5dd2e888673c6e3f87ef460e30309128">F4MonomialLookupTableT&lt; Key &gt;::mi_node::val</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_f4_monomial_lookup_table_t_1_1mi__node_a074aabb6fc54c39a7063c5f522305055_1a074aabb6fc54c39a7063c5f522305055" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MonomialLookupTableT&lt; Key &gt;::mi_node::insert_to_left</definition>
+        <argsstring>(mi_node *q)</argsstring>
+        <name>insert_to_left</name>
+        <qualifiedname>F4MonomialLookupTableT::mi_node::insert_to_left</qualifiedname>
+        <param>
+          <type><ref refid="struct_f4_monomial_lookup_table_t_1_1mi__node" kindref="compound">mi_node</ref> *</type>
+          <declname>q</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="72" column="10" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="72" bodyend="78"/>
+        <references refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a02aaf919c0635f586acf6a31633c3d92_1a02aaf919c0635f586acf6a31633c3d92" compoundref="f4-monlookup_8hpp" startline="61">F4MonomialLookupTableT&lt; Key &gt;::mi_node::header</references>
+        <references refid="struct_f4_monomial_lookup_table_t_1_1mi__node_ab27237a816db25f23a8174edf8b26a59_1ab27237a816db25f23a8174edf8b26a59" compoundref="f4-monlookup_8hpp" startline="59">F4MonomialLookupTableT&lt; Key &gt;::mi_node::left</references>
+        <references refid="struct_f4_monomial_lookup_table_t_1_1mi__node_aa09dccc82e4d2bbb72badc416dfca882_1aa09dccc82e4d2bbb72badc416dfca882" compoundref="f4-monlookup_8hpp" startline="60">F4MonomialLookupTableT&lt; Key &gt;::mi_node::right</references>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ae92f905fbe47c87c0de68fd3bcd5cdb4_1ae92f905fbe47c87c0de68fd3bcd5cdb4" compoundref="f4-monlookup_8cpp" startline="77" endline="154">F4MonomialLookupTableT&lt; Key &gt;::insert1</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>F4MonomialLookupTableT&lt; Key &gt;::mi_node</label>
+        <link refid="struct_f4_monomial_lookup_table_t_1_1mi__node"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>exp</edgelabel>
+          <edgelabel>var</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>down</edgelabel>
+          <edgelabel>header</edgelabel>
+          <edgelabel>left</edgelabel>
+          <edgelabel>right</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>tag</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>val</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>F4MonomialLookupTableT&lt; Key &gt;::mi_node</label>
+        <link refid="struct_f4_monomial_lookup_table_t_1_1mi__node"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>exp</edgelabel>
+          <edgelabel>var</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>down</edgelabel>
+          <edgelabel>header</edgelabel>
+          <edgelabel>left</edgelabel>
+          <edgelabel>right</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>tag</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>val</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Key</label>
+      </node>
+      <node id="4">
+        <label>anonymous:tag</label>
+      </node>
+      <node id="6">
+        <label>anonymous:val</label>
+      </node>
+      <node id="2">
+        <label>Exponent</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/f4-monlookup.hpp" line="55" column="3" bodyfile="Macaulay2/e/f4/f4-monlookup.hpp" bodystart="56" bodyend="79"/>
+    <listofallmembers>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a61a52b243bb68ec213be76a69254a672_1a61a52b243bb68ec213be76a69254a672" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>down</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a788e12cbe0cdca8d0366395fc2285bea_1a788e12cbe0cdca8d0366395fc2285bea" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>down</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_aacacf9e1032fe9416ce399e207cfe3bd_1aacacf9e1032fe9416ce399e207cfe3bd" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>exp</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a02aaf919c0635f586acf6a31633c3d92_1a02aaf919c0635f586acf6a31633c3d92" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>header</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a074aabb6fc54c39a7063c5f522305055_1a074aabb6fc54c39a7063c5f522305055" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>insert_to_left</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_ad4f55b3019ebfb12e2182145b29b4f8b_1ad4f55b3019ebfb12e2182145b29b4f8b" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>key</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a19ce37a3efb902605e7f28be9d9d39ba_1a19ce37a3efb902605e7f28be9d9d39ba" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>key</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_ae33d6e949a7ab95f298b227106d9a76b_1ae33d6e949a7ab95f298b227106d9a76ba54882bdabd7be01dd7f4ec835f5a02ea" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>leaf</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_ab27237a816db25f23a8174edf8b26a59_1ab27237a816db25f23a8174edf8b26a59" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>left</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_ae33d6e949a7ab95f298b227106d9a76b_1ae33d6e949a7ab95f298b227106d9a76bac9e436674e92ac5fa3583b943d6671cd" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>node</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_aa09dccc82e4d2bbb72badc416dfca882_1aa09dccc82e4d2bbb72badc416dfca882" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>right</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a95f7e8365fbf67d116bbfb154c186b39_1a95f7e8365fbf67d116bbfb154c186b39" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>tag</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_a5dd2e888673c6e3f87ef460e30309128_1a5dd2e888673c6e3f87ef460e30309128" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>val</name></member>
+      <member refid="struct_f4_monomial_lookup_table_t_1_1mi__node_acc48bfbd42687e45c28ee57b98289a24_1acc48bfbd42687e45c28ee57b98289a24" prot="public" virt="non-virtual"><scope>F4MonomialLookupTableT::mi_node</scope><name>var</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

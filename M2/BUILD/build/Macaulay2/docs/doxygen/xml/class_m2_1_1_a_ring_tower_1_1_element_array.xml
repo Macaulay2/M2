@@ -1,0 +1,375 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m2_1_1_a_ring_tower_1_1_element_array" kind="class" language="C++" prot="public">
+    <compoundname>M2::ARingTower::ElementArray</compoundname>
+    <includes refid="aring-tower_8hpp" local="no">aring-tower.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_tower_1_1_element_array_a4284df26c8feefdf905e1a7913937e12_1a4284df26c8feefdf905e1a7913937e12" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_m2_1_1_a_ring_tower_a180d7c34ab0ad7eb15a1cb6836558cfb_1a180d7c34ab0ad7eb15a1cb6836558cfb" kindref="member">ARingTower</ref> &amp;</type>
+        <definition>const ARingTower&amp; M2::ARingTower::ElementArray::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>M2::ARingTower::ElementArray::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="156" column="22" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="156" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_a92f3e943f589ed255fe0cc5173b2dd02_1a92f3e943f589ed255fe0cc5173b2dd02" compoundref="aring-tower_8hpp" startline="161" endline="165">ElementArray</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_a00e7937b6eeff4583d17d96f88ca9b3e_1a00e7937b6eeff4583d17d96f88ca9b3e" compoundref="aring-tower_8hpp" startline="166" endline="169">~ElementArray</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_tower_1_1_element_array_aee74167b97d62ac92f98679c6a48f389_1aee74167b97d62ac92f98679c6a48f389" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>const int M2::ARingTower::ElementArray::mSize</definition>
+        <argsstring></argsstring>
+        <name>mSize</name>
+        <qualifiedname>M2::ARingTower::ElementArray::mSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="157" column="15" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="157" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_a92f3e943f589ed255fe0cc5173b2dd02_1a92f3e943f589ed255fe0cc5173b2dd02" compoundref="aring-tower_8hpp" startline="161" endline="165">ElementArray</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_a00e7937b6eeff4583d17d96f88ca9b3e_1a00e7937b6eeff4583d17d96f88ca9b3e" compoundref="aring-tower_8hpp" startline="166" endline="169">~ElementArray</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_tower_1_1_element_array_a8862d287544e2bb647c82fb52e2b7b98_1a8862d287544e2bb647c82fb52e2b7b98" prot="private" static="no" mutable="no">
+        <type>const std::unique_ptr&lt; <ref refid="class_m2_1_1_a_ring_tower_a0b8fb52a03094a0584d37b7741fc1dc7_1a0b8fb52a03094a0584d37b7741fc1dc7" kindref="member">ElementType</ref>[]&gt;</type>
+        <definition>const std::unique_ptr&lt;ElementType[]&gt; M2::ARingTower::ElementArray::mData</definition>
+        <argsstring></argsstring>
+        <name>mData</name>
+        <qualifiedname>M2::ARingTower::ElementArray::mData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="158" column="27" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="158" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_a398913b1c271c360c78118bae5a9d944_1a398913b1c271c360c78118bae5a9d944" compoundref="aring-tower_8hpp" startline="172" endline="172">data</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_af3a9862bf6f9bb75c83923a823f8ec7f_1af3a9862bf6f9bb75c83923a823f8ec7f" compoundref="aring-tower_8hpp" startline="173" endline="173">data</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_a92f3e943f589ed255fe0cc5173b2dd02_1a92f3e943f589ed255fe0cc5173b2dd02" compoundref="aring-tower_8hpp" startline="161" endline="165">ElementArray</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_a3e919ad20d1fcb1d71dfbadc1cb51f98_1a3e919ad20d1fcb1d71dfbadc1cb51f98" compoundref="aring-tower_8hpp" startline="170" endline="170">operator[]</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_aceabddb88f848ec27122fcba9cbcf21a_1aceabddb88f848ec27122fcba9cbcf21a" compoundref="aring-tower_8hpp" startline="171" endline="171">operator[]</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_1_1_element_array_a00e7937b6eeff4583d17d96f88ca9b3e_1a00e7937b6eeff4583d17d96f88ca9b3e" compoundref="aring-tower_8hpp" startline="166" endline="169">~ElementArray</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_m2_1_1_a_ring_tower_1_1_element_array_a92f3e943f589ed255fe0cc5173b2dd02_1a92f3e943f589ed255fe0cc5173b2dd02" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2::ARingTower::ElementArray::ElementArray</definition>
+        <argsstring>(const ARingTower &amp;_R, size_t size)</argsstring>
+        <name>ElementArray</name>
+        <qualifiedname>M2::ARingTower::ElementArray::ElementArray</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_tower_a180d7c34ab0ad7eb15a1cb6836558cfb_1a180d7c34ab0ad7eb15a1cb6836558cfb" kindref="member">ARingTower</ref> &amp;</type>
+          <declname>_R</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="161" column="5" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="161" bodyend="165"/>
+        <references refid="class_m2_1_1_a_ring_tower_a180d7c34ab0ad7eb15a1cb6836558cfb_1a180d7c34ab0ad7eb15a1cb6836558cfb" compoundref="aring-tower_8cpp" startline="19" endline="39">M2::ARingTower::ARingTower</references>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_a8862d287544e2bb647c82fb52e2b7b98_1a8862d287544e2bb647c82fb52e2b7b98" compoundref="aring-tower_8hpp" startline="158">mData</references>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_aee74167b97d62ac92f98679c6a48f389_1aee74167b97d62ac92f98679c6a48f389" compoundref="aring-tower_8hpp" startline="157">mSize</references>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_a4284df26c8feefdf905e1a7913937e12_1a4284df26c8feefdf905e1a7913937e12" compoundref="aring-tower_8hpp" startline="156">R</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_tower_1_1_element_array_a00e7937b6eeff4583d17d96f88ca9b3e_1a00e7937b6eeff4583d17d96f88ca9b3e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2::ARingTower::ElementArray::~ElementArray</definition>
+        <argsstring>()</argsstring>
+        <name>~ElementArray</name>
+        <qualifiedname>M2::ARingTower::ElementArray::~ElementArray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="166" column="5" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="166" bodyend="169"/>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_a8862d287544e2bb647c82fb52e2b7b98_1a8862d287544e2bb647c82fb52e2b7b98" compoundref="aring-tower_8hpp" startline="158">mData</references>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_aee74167b97d62ac92f98679c6a48f389_1aee74167b97d62ac92f98679c6a48f389" compoundref="aring-tower_8hpp" startline="157">mSize</references>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_a4284df26c8feefdf905e1a7913937e12_1a4284df26c8feefdf905e1a7913937e12" compoundref="aring-tower_8hpp" startline="156">R</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_tower_1_1_element_array_a3e919ad20d1fcb1d71dfbadc1cb51f98_1a3e919ad20d1fcb1d71dfbadc1cb51f98" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m2_1_1_a_ring_tower_a0b8fb52a03094a0584d37b7741fc1dc7_1a0b8fb52a03094a0584d37b7741fc1dc7" kindref="member">ElementType</ref> &amp;</type>
+        <definition>ElementType &amp; M2::ARingTower::ElementArray::operator[]</definition>
+        <argsstring>(size_t idx)</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>M2::ARingTower::ElementArray::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="170" column="17" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="170" bodyend="170"/>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_a8862d287544e2bb647c82fb52e2b7b98_1a8862d287544e2bb647c82fb52e2b7b98" compoundref="aring-tower_8hpp" startline="158">mData</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_tower_1_1_element_array_aceabddb88f848ec27122fcba9cbcf21a_1aceabddb88f848ec27122fcba9cbcf21a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_m2_1_1_a_ring_tower_a0b8fb52a03094a0584d37b7741fc1dc7_1a0b8fb52a03094a0584d37b7741fc1dc7" kindref="member">ElementType</ref> &amp;</type>
+        <definition>const ElementType &amp; M2::ARingTower::ElementArray::operator[]</definition>
+        <argsstring>(size_t idx) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>M2::ARingTower::ElementArray::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="171" column="23" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="171" bodyend="171"/>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_a8862d287544e2bb647c82fb52e2b7b98_1a8862d287544e2bb647c82fb52e2b7b98" compoundref="aring-tower_8hpp" startline="158">mData</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_tower_1_1_element_array_a398913b1c271c360c78118bae5a9d944_1a398913b1c271c360c78118bae5a9d944" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m2_1_1_a_ring_tower_a0b8fb52a03094a0584d37b7741fc1dc7_1a0b8fb52a03094a0584d37b7741fc1dc7" kindref="member">ElementType</ref> *</type>
+        <definition>ElementType * M2::ARingTower::ElementArray::data</definition>
+        <argsstring>()</argsstring>
+        <name>data</name>
+        <qualifiedname>M2::ARingTower::ElementArray::data</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="172" column="17" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="172" bodyend="172"/>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_a8862d287544e2bb647c82fb52e2b7b98_1a8862d287544e2bb647c82fb52e2b7b98" compoundref="aring-tower_8hpp" startline="158">mData</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_tower_1_1_element_array_af3a9862bf6f9bb75c83923a823f8ec7f_1af3a9862bf6f9bb75c83923a823f8ec7f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_m2_1_1_a_ring_tower_a0b8fb52a03094a0584d37b7741fc1dc7_1a0b8fb52a03094a0584d37b7741fc1dc7" kindref="member">ElementType</ref> *</type>
+        <definition>const ElementType * M2::ARingTower::ElementArray::data</definition>
+        <argsstring>() const</argsstring>
+        <name>data</name>
+        <qualifiedname>M2::ARingTower::ElementArray::data</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="173" column="23" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="173" bodyend="173"/>
+        <references refid="class_m2_1_1_a_ring_tower_1_1_element_array_a8862d287544e2bb647c82fb52e2b7b98_1a8862d287544e2bb647c82fb52e2b7b98" compoundref="aring-tower_8hpp" startline="158">mData</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Fixed-size, owned array of <computeroutput><ref refid="class_m2_1_1_a_ring_tower_a0b8fb52a03094a0584d37b7741fc1dc7_1a0b8fb52a03094a0584d37b7741fc1dc7" kindref="member">ElementType</ref></computeroutput>s for the linear-algebra templates that want a flat buffer of tower-polynomial slots. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Backed by a <computeroutput>std::unique_ptr&lt;<ref refid="class_m2_1_1_a_ring_tower_a0b8fb52a03094a0584d37b7741fc1dc7_1a0b8fb52a03094a0584d37b7741fc1dc7" kindref="member">ElementType</ref>[]&gt;</computeroutput>. Slots are zero-initialised at construction and cleared through <computeroutput><ref refid="class_m2_1_1_a_ring_tower_a937e9cb9dcbb30e4946fe3c4c57243aa_1a937e9cb9dcbb30e4946fe3c4c57243aa" kindref="member">ARingTower::clear</ref></computeroutput> in the destructor, so the array owns its tower polynomials. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="22">
+        <label>ElementType *</label>
+      </node>
+      <node id="12">
+        <label>Element</label>
+      </node>
+      <node id="10">
+        <label>RandIter</label>
+      </node>
+      <node id="21">
+        <label>M2::ARingPolynomialStruct</label>
+        <link refid="struct_m2_1_1_a_ring_polynomial_struct"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>deg</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>coeffs</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>polys</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>@060370062327367274074173270322275033252000311351</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>M2::ARingTower</label>
+        <link refid="class_m2_1_1_a_ring_tower"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>ringID</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mBaseRing</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mNumVars</edgelabel>
+          <edgelabel>mStartLevel</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mVarNames</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mExtensions</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>M2::ARingTower::ElementArray</label>
+        <link refid="class_m2_1_1_a_ring_tower_1_1_element_array"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mSize</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mData</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>M2::ARingZZpFFPACK</label>
+        <link refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>ringID</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mFfpackField</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mFfpackRandomIterator</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+          <edgelabel>mDimension</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mGenerator</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mGeneratorComputed</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>M2::SimpleARing&lt; ARingZZpFFPACK &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="template-instance">
+          <edgelabel>&lt; ARingZZpFFPACK &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>T</label>
+      </node>
+      <node id="23">
+        <label>anonymous:@060370062327367274074173270322275033252000311351</label>
+      </node>
+      <node id="13">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="9">
+        <label>const FieldType</label>
+      </node>
+      <node id="14">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="5">
+        <label>static const RingID</label>
+      </node>
+      <node id="17">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="16">
+        <label>std::string</label>
+        <childnode refid="17" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="19" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>std::unique_ptr&lt; M2::ARingPolynomialStruct[]&gt;</label>
+        <childnode refid="21" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="template-instance">
+          <edgelabel>&lt; M2::ARingPolynomialStruct[]&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="19" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>std::vector&lt; M2::ARingPolynomialStruct &gt;</label>
+        <childnode refid="21" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; M2::ARingPolynomialStruct &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="16" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>uint32_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/aring-tower.hpp" line="154" column="3" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="155" bodyend="174"/>
+    <listofallmembers>
+      <member refid="class_m2_1_1_a_ring_tower_1_1_element_array_a398913b1c271c360c78118bae5a9d944_1a398913b1c271c360c78118bae5a9d944" prot="public" virt="non-virtual"><scope>M2::ARingTower::ElementArray</scope><name>data</name></member>
+      <member refid="class_m2_1_1_a_ring_tower_1_1_element_array_af3a9862bf6f9bb75c83923a823f8ec7f_1af3a9862bf6f9bb75c83923a823f8ec7f" prot="public" virt="non-virtual"><scope>M2::ARingTower::ElementArray</scope><name>data</name></member>
+      <member refid="class_m2_1_1_a_ring_tower_1_1_element_array_a92f3e943f589ed255fe0cc5173b2dd02_1a92f3e943f589ed255fe0cc5173b2dd02" prot="public" virt="non-virtual"><scope>M2::ARingTower::ElementArray</scope><name>ElementArray</name></member>
+      <member refid="class_m2_1_1_a_ring_tower_1_1_element_array_a8862d287544e2bb647c82fb52e2b7b98_1a8862d287544e2bb647c82fb52e2b7b98" prot="private" virt="non-virtual"><scope>M2::ARingTower::ElementArray</scope><name>mData</name></member>
+      <member refid="class_m2_1_1_a_ring_tower_1_1_element_array_aee74167b97d62ac92f98679c6a48f389_1aee74167b97d62ac92f98679c6a48f389" prot="private" virt="non-virtual"><scope>M2::ARingTower::ElementArray</scope><name>mSize</name></member>
+      <member refid="class_m2_1_1_a_ring_tower_1_1_element_array_a3e919ad20d1fcb1d71dfbadc1cb51f98_1a3e919ad20d1fcb1d71dfbadc1cb51f98" prot="public" virt="non-virtual"><scope>M2::ARingTower::ElementArray</scope><name>operator[]</name></member>
+      <member refid="class_m2_1_1_a_ring_tower_1_1_element_array_aceabddb88f848ec27122fcba9cbcf21a_1aceabddb88f848ec27122fcba9cbcf21a" prot="public" virt="non-virtual"><scope>M2::ARingTower::ElementArray</scope><name>operator[]</name></member>
+      <member refid="class_m2_1_1_a_ring_tower_1_1_element_array_a4284df26c8feefdf905e1a7913937e12_1a4284df26c8feefdf905e1a7913937e12" prot="private" virt="non-virtual"><scope>M2::ARingTower::ElementArray</scope><name>R</name></member>
+      <member refid="class_m2_1_1_a_ring_tower_1_1_element_array_a00e7937b6eeff4583d17d96f88ca9b3e_1a00e7937b6eeff4583d17d96f88ca9b3e" prot="public" virt="non-virtual"><scope>M2::ARingTower::ElementArray</scope><name>~ElementArray</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

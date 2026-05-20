@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespacemgb_f4" kind="namespace" language="C++">
+    <compoundname>mgbF4</compoundname>
+    <innerclass refid="structmgb_f4_1_1_classic_g_b_alg_params" prot="public">mgbF4::ClassicGBAlgParams</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemgb_f4_a61c91872a6f3fae49531483524cef60f_1a61c91872a6f3fae49531483524cef60f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_basis" kindref="compound">Basis</ref></type>
+        <definition>Basis mgbF4::computeGBClassicAlg</definition>
+        <argsstring>(Basis &amp;&amp;inputBasis, ClassicGBAlgParams params)</argsstring>
+        <name>computeGBClassicAlg</name>
+        <qualifiedname>mgbF4::computeGBClassicAlg</qualifiedname>
+        <param>
+          <type><ref refid="class_basis" kindref="compound">Basis</ref> &amp;&amp;</type>
+          <declname>inputBasis</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref></type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MESClassicGBAlg.hpp" line="29" column="9" declfile="submodules/mathicgb/src/mathicgb/MESClassicGBAlg.hpp" declline="29" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemgb_f4_a0727fc2091051bc198190b4609ad21d5_1a0727fc2091051bc198190b4609ad21d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_basis" kindref="compound">Basis</ref></type>
+        <definition>Basis mgbF4::computeModuleGBClassicAlg</definition>
+        <argsstring>(Basis &amp;&amp;inputBasis, ClassicGBAlgParams params)</argsstring>
+        <name>computeModuleGBClassicAlg</name>
+        <qualifiedname>mgbF4::computeModuleGBClassicAlg</qualifiedname>
+        <param>
+          <type><ref refid="class_basis" kindref="compound">Basis</ref> &amp;&amp;</type>
+          <declname>inputBasis</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref></type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MESClassicGBAlg.hpp" line="30" column="9" declfile="submodules/mathicgb/src/mathicgb/MESClassicGBAlg.hpp" declline="30" declcolumn="9"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb/MESClassicGBAlg.hpp" line="10" column="1"/>
+  </compounddef>
+</doxygen>

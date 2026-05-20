@@ -1,0 +1,5 @@
+var structmathic_1_1_pair_queue_namespace_1_1_construct_pair_data_function_3_01mgb_1_1_concrete_sig_c82e9fb74fde5d79f4160fdca1347f8e =
+[
+    [ "PairData", "structmathic_1_1_pair_queue_namespace_1_1_construct_pair_data_function_a4ee2e641c98c0d25c85a175116b0ba65.html#a4ee2e641c98c0d25c85a175116b0ba65", null ],
+    [ "function", "structmathic_1_1_pair_queue_namespace_1_1_construct_pair_data_function_3_01mgb_1_1_concrete_sig_c82e9fb74fde5d79f4160fdca1347f8e_a75e4e38754349075494afa6e17e8df16.html#a75e4e38754349075494afa6e17e8df16", null ]
+];

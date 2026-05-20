@@ -1,0 +1,251 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_flint_z_z_mat" kind="class" language="C++" prot="public">
+    <compoundname>FlintZZMat</compoundname>
+    <includes refid="dmat-qq-interface-flint_8hpp" local="no">dmat-qq-interface-flint.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" prot="private" static="no" mutable="no">
+        <type>fmpz_mat_t</type>
+        <definition>fmpz_mat_t FlintZZMat::mMatrix</definition>
+        <argsstring></argsstring>
+        <name>mMatrix</name>
+        <qualifiedname>FlintZZMat::mMatrix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="76" column="14" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="76" bodyend="-1"/>
+        <referencedby refid="class_flint_z_z_mat_a1e0d6c45d9fa3c34f518277fd16998eb_1a1e0d6c45d9fa3c34f518277fd16998eb" compoundref="dmat-qq-interface-flint_8hpp" startline="55" endline="59">FlintZZMat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_a96981672d80d42030ac35e27227d352f_1a96981672d80d42030ac35e27227d352f" compoundref="dmat-qq-interface-flint_8hpp" startline="60" endline="63">FlintZZMat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_a46de485baadd6b9347508a20eee4e20f_1a46de485baadd6b9347508a20eee4e20f" compoundref="dmat-qq-interface-flint_8hpp" startline="74" endline="74">numColumns</referencedby>
+        <referencedby refid="class_flint_z_z_mat_a37b03266538159c0f867f1fcf2a5b895_1a37b03266538159c0f867f1fcf2a5b895" compoundref="dmat-qq-interface-flint_8hpp" startline="73" endline="73">numRows</referencedby>
+        <referencedby refid="class_flint_z_z_mat_a94f945b98c39c30206e15deee930605e_1a94f945b98c39c30206e15deee930605e" compoundref="dmat-qq-interface-flint_8hpp" startline="67" endline="71">toDMat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_acec81c5a3a088a5c5f91a86ac50b01ac_1acec81c5a3a088a5c5f91a86ac50b01ac" compoundref="dmat-qq-interface-flint_8hpp" startline="66" endline="66">value</referencedby>
+        <referencedby refid="class_flint_z_z_mat_ac36b2d9e2f144979b07f439de00f61f7_1ac36b2d9e2f144979b07f439de00f61f7" compoundref="dmat-qq-interface-flint_8hpp" startline="65" endline="65">~FlintZZMat</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_flint_z_z_mat_a1e0d6c45d9fa3c34f518277fd16998eb_1a1e0d6c45d9fa3c34f518277fd16998eb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>FlintZZMat::FlintZZMat</definition>
+        <argsstring>(const DMatZZGMP &amp;mat)</argsstring>
+        <name>FlintZZMat</name>
+        <qualifiedname>FlintZZMat::FlintZZMat</qualifiedname>
+        <param>
+          <type>const <ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="55" column="3" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="55" bodyend="59"/>
+        <references refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" compoundref="dmat-qq-interface-flint_8hpp" startline="76">mMatrix</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" compoundref="dmat-qq-interface-flint_8hpp" startline="78" endline="86">to_fmpz_mat</references>
+      </memberdef>
+      <memberdef kind="function" id="class_flint_z_z_mat_a96981672d80d42030ac35e27227d352f_1a96981672d80d42030ac35e27227d352f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>FlintZZMat::FlintZZMat</definition>
+        <argsstring>(long numrows, long numcolumns)</argsstring>
+        <name>FlintZZMat</name>
+        <qualifiedname>FlintZZMat::FlintZZMat</qualifiedname>
+        <param>
+          <type>long</type>
+          <declname>numrows</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>numcolumns</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="60" column="3" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="60" bodyend="63"/>
+        <references refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" compoundref="dmat-qq-interface-flint_8hpp" startline="76">mMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_flint_z_z_mat_ac36b2d9e2f144979b07f439de00f61f7_1ac36b2d9e2f144979b07f439de00f61f7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>FlintZZMat::~FlintZZMat</definition>
+        <argsstring>()</argsstring>
+        <name>~FlintZZMat</name>
+        <qualifiedname>FlintZZMat::~FlintZZMat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="65" column="3" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="65" bodyend="65"/>
+        <references refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" compoundref="dmat-qq-interface-flint_8hpp" startline="76">mMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_flint_z_z_mat_acec81c5a3a088a5c5f91a86ac50b01ac_1acec81c5a3a088a5c5f91a86ac50b01ac" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>fmpz_mat_struct *</type>
+        <definition>fmpz_mat_struct * FlintZZMat::value</definition>
+        <argsstring>()</argsstring>
+        <name>value</name>
+        <qualifiedname>FlintZZMat::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="66" column="19" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="66" bodyend="66"/>
+        <references refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" compoundref="dmat-qq-interface-flint_8hpp" startline="76">mMatrix</references>
+        <referencedby refid="namespace_matrix_ops_ad066fe21b322f2c98fd428c109c13b40_1ad066fe21b322f2c98fd428c109c13b40" compoundref="mat-linalg_8hpp" startline="748" endline="760">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a9e37592d7f52035463e6ad98b39139b0_1a9e37592d7f52035463e6ad98b39139b0" compoundref="mat-linalg_8hpp" startline="784" endline="793">MatrixOps::determinant</referencedby>
+        <referencedby refid="namespace_matrix_ops_a9b242a23e43adb4993ec9df94904ae89_1a9b242a23e43adb4993ec9df94904ae89" compoundref="mat-linalg_8hpp" startline="735" endline="746">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a57eb3d8acd04242a33947f362e56ce1a_1a57eb3d8acd04242a33947f362e56ce1a" compoundref="mat-linalg_8hpp" startline="778" endline="782">MatrixOps::rank</referencedby>
+        <referencedby refid="namespace_matrix_ops_a65bcb4dd717f11407c55d387de2e696e_1a65bcb4dd717f11407c55d387de2e696e" compoundref="mat-linalg_8hpp" startline="762" endline="776">MatrixOps::subtractMultipleTo</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_flint_z_z_mat_a94f945b98c39c30206e15deee930605e_1a94f945b98c39c30206e15deee930605e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void FlintZZMat::toDMat</definition>
+        <argsstring>(DMatZZGMP &amp;result)</argsstring>
+        <name>toDMat</name>
+        <qualifiedname>FlintZZMat::toDMat</qualifiedname>
+        <param>
+          <type><ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="67" column="8" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="67" bodyend="71"/>
+        <references refid="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" compoundref="dmat-qq-interface-flint_8hpp" startline="88" endline="95">from_fmpz_mat</references>
+        <references refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" compoundref="dmat-qq-interface-flint_8hpp" startline="76">mMatrix</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="namespace_matrix_ops_ad066fe21b322f2c98fd428c109c13b40_1ad066fe21b322f2c98fd428c109c13b40" compoundref="mat-linalg_8hpp" startline="748" endline="760">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a9b242a23e43adb4993ec9df94904ae89_1a9b242a23e43adb4993ec9df94904ae89" compoundref="mat-linalg_8hpp" startline="735" endline="746">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a65bcb4dd717f11407c55d387de2e696e_1a65bcb4dd717f11407c55d387de2e696e" compoundref="mat-linalg_8hpp" startline="762" endline="776">MatrixOps::subtractMultipleTo</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_flint_z_z_mat_a37b03266538159c0f867f1fcf2a5b895_1a37b03266538159c0f867f1fcf2a5b895" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long FlintZZMat::numRows</definition>
+        <argsstring>() const</argsstring>
+        <name>numRows</name>
+        <qualifiedname>FlintZZMat::numRows</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="73" column="8" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="73" bodyend="73"/>
+        <references refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" compoundref="dmat-qq-interface-flint_8hpp" startline="76">mMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_flint_z_z_mat_a46de485baadd6b9347508a20eee4e20f_1a46de485baadd6b9347508a20eee4e20f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long FlintZZMat::numColumns</definition>
+        <argsstring>() const</argsstring>
+        <name>numColumns</name>
+        <qualifiedname>FlintZZMat::numColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="74" column="8" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="74" bodyend="74"/>
+        <references refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" compoundref="dmat-qq-interface-flint_8hpp" startline="76">mMatrix</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void FlintZZMat::to_fmpz_mat</definition>
+        <argsstring>(const DMatZZGMP &amp;mat1, fmpz_mat_t result_mat)</argsstring>
+        <name>to_fmpz_mat</name>
+        <qualifiedname>FlintZZMat::to_fmpz_mat</qualifiedname>
+        <param>
+          <type>const <ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref> &amp;</type>
+          <declname>mat1</declname>
+        </param>
+        <param>
+          <type>fmpz_mat_t</type>
+          <declname>result_mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="78" column="15" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="78" bodyend="86"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <referencedby refid="class_flint_z_z_mat_a1e0d6c45d9fa3c34f518277fd16998eb_1a1e0d6c45d9fa3c34f518277fd16998eb" compoundref="dmat-qq-interface-flint_8hpp" startline="55" endline="59">FlintZZMat</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void FlintZZMat::from_fmpz_mat</definition>
+        <argsstring>(fmpz_mat_t mat, DMatZZGMP &amp;result_mat)</argsstring>
+        <name>from_fmpz_mat</name>
+        <qualifiedname>FlintZZMat::from_fmpz_mat</qualifiedname>
+        <param>
+          <type>fmpz_mat_t</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref> &amp;</type>
+          <declname>result_mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="88" column="15" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="88" bodyend="95"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <referencedby refid="class_flint_z_z_mat_a94f945b98c39c30206e15deee930605e_1a94f945b98c39c30206e15deee930605e" compoundref="dmat-qq-interface-flint_8hpp" startline="67" endline="71">toDMat</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>RAII wrapper around FLINT&apos;s <computeroutput>fmpz_mat_t</computeroutput> for translating dense <computeroutput><ref refid="ringelem_8hpp_afea72c39052b53d15e7acad8d36847c1_1afea72c39052b53d15e7acad8d36847c1" kindref="member">ZZ</ref></computeroutput>-coefficient matrices between the engine and FLINT. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Constructed from a <computeroutput><ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref></computeroutput> (or empty with given dimensions), the wrapper holds an initialised <computeroutput>fmpz_mat_t</computeroutput> for the duration of its lifetime and frees it via <computeroutput>fmpz_mat_clear</computeroutput> in the destructor. <computeroutput><ref refid="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" kindref="member">to_fmpz_mat</ref></computeroutput> / <computeroutput><ref refid="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" kindref="member">from_fmpz_mat</ref></computeroutput> translate entry by entry via <computeroutput>fmpz_set_mpz</computeroutput> / <computeroutput>fmpz_get_mpz</computeroutput>. Used so FLINT&apos;s matrix routines (HNF, determinant, ...) can run against engine matrices that store coefficients as GMP <computeroutput>mpz</computeroutput>s <mdash/> a stopgap until <computeroutput><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt;ARingQQ&gt;</computeroutput> is rebased onto FLINT integers directly. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>FlintZZMat</label>
+        <link refid="class_flint_z_z_mat"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mMatrix</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>fmpz_mat_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/dmat-qq-interface-flint.hpp" line="52" column="1" bodyfile="Macaulay2/e/dmat-qq-interface-flint.hpp" bodystart="53" bodyend="96"/>
+    <listofallmembers>
+      <member refid="class_flint_z_z_mat_a1e0d6c45d9fa3c34f518277fd16998eb_1a1e0d6c45d9fa3c34f518277fd16998eb" prot="public" virt="non-virtual"><scope>FlintZZMat</scope><name>FlintZZMat</name></member>
+      <member refid="class_flint_z_z_mat_a96981672d80d42030ac35e27227d352f_1a96981672d80d42030ac35e27227d352f" prot="public" virt="non-virtual"><scope>FlintZZMat</scope><name>FlintZZMat</name></member>
+      <member refid="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" prot="private" virt="non-virtual"><scope>FlintZZMat</scope><name>from_fmpz_mat</name></member>
+      <member refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" prot="private" virt="non-virtual"><scope>FlintZZMat</scope><name>mMatrix</name></member>
+      <member refid="class_flint_z_z_mat_a46de485baadd6b9347508a20eee4e20f_1a46de485baadd6b9347508a20eee4e20f" prot="public" virt="non-virtual"><scope>FlintZZMat</scope><name>numColumns</name></member>
+      <member refid="class_flint_z_z_mat_a37b03266538159c0f867f1fcf2a5b895_1a37b03266538159c0f867f1fcf2a5b895" prot="public" virt="non-virtual"><scope>FlintZZMat</scope><name>numRows</name></member>
+      <member refid="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" prot="private" virt="non-virtual"><scope>FlintZZMat</scope><name>to_fmpz_mat</name></member>
+      <member refid="class_flint_z_z_mat_a94f945b98c39c30206e15deee930605e_1a94f945b98c39c30206e15deee930605e" prot="public" virt="non-virtual"><scope>FlintZZMat</scope><name>toDMat</name></member>
+      <member refid="class_flint_z_z_mat_acec81c5a3a088a5c5f91a86ac50b01ac_1acec81c5a3a088a5c5f91a86ac50b01ac" prot="public" virt="non-virtual"><scope>FlintZZMat</scope><name>value</name></member>
+      <member refid="class_flint_z_z_mat_ac36b2d9e2f144979b07f439de00f61f7_1ac36b2d9e2f144979b07f439de00f61f7" prot="public" virt="non-virtual"><scope>FlintZZMat</scope><name>~FlintZZMat</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

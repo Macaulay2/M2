@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="allocator_8hpp" kind="file" language="C++">
+    <compoundname>allocator.hpp</compoundname>
+    <includedby refid="allocator_8cpp" local="yes">Macaulay2/e/bibasis/allocator.cpp</includedby>
+    <includedby refid="monom_8hpp" local="yes">Macaulay2/e/bibasis/monom.hpp</includedby>
+    <includedby refid="monom_d_l_8hpp" local="yes">Macaulay2/e/bibasis/monomDL.hpp</includedby>
+    <includedby refid="monom_d_r_l_8hpp" local="yes">Macaulay2/e/bibasis/monomDRL.hpp</includedby>
+    <includedby refid="monom_lex_8hpp" local="yes">Macaulay2/e/bibasis/monomLex.hpp</includedby>
+    <includedby refid="polynom_8hpp" local="yes">Macaulay2/e/bibasis/polynom.hpp</includedby>
+    <includedby refid="triple_8hpp" local="yes">Macaulay2/e/bibasis/triple.hpp</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/bibasis/allocator.cpp</label>
+        <link refid="allocator_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/bibasis/allocator.hpp</label>
+        <link refid="allocator_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Macaulay2/e/bibasis/bibasis.cpp</label>
+        <link refid="bibasis_8cpp"/>
+      </node>
+      <node id="18">
+        <label>Macaulay2/e/bibasis/involutive.hpp</label>
+        <link refid="involutive_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Macaulay2/e/bibasis/janettree.hpp</label>
+        <link refid="janettree_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/bibasis/launcher.cpp</label>
+        <link refid="launcher_8cpp"/>
+      </node>
+      <node id="19">
+        <label>Macaulay2/e/bibasis/launcher.hpp</label>
+        <link refid="launcher_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/bibasis/monom.cpp</label>
+        <link refid="monom_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/bibasis/monom.hpp</label>
+        <link refid="monom_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/bibasis/monomDL.cpp</label>
+        <link refid="monom_d_l_8cpp"/>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/bibasis/monomDL.hpp</label>
+        <link refid="monom_d_l_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Macaulay2/e/bibasis/monomDRL.cpp</label>
+        <link refid="monom_d_r_l_8cpp"/>
+      </node>
+      <node id="8">
+        <label>Macaulay2/e/bibasis/monomDRL.hpp</label>
+        <link refid="monom_d_r_l_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Macaulay2/e/bibasis/monomLex.cpp</label>
+        <link refid="monom_lex_8cpp"/>
+      </node>
+      <node id="10">
+        <label>Macaulay2/e/bibasis/monomLex.hpp</label>
+        <link refid="monom_lex_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Macaulay2/e/bibasis/polynom.hpp</label>
+        <link refid="polynom_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Macaulay2/e/bibasis/qset.hpp</label>
+        <link refid="qset_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Macaulay2/e/bibasis/settings-manager.cpp</label>
+        <link refid="settings-manager_8cpp"/>
+      </node>
+      <node id="12">
+        <label>Macaulay2/e/bibasis/settings-manager.hpp</label>
+        <link refid="settings-manager_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Macaulay2/e/bibasis/triple.hpp</label>
+        <link refid="triple_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Macaulay2/e/bibasis/tset.hpp</label>
+        <link refid="tset_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_b_i_basis_1_1_fast_allocator" prot="public">BIBasis::FastAllocator</innerclass>
+    <innernamespace refid="namespace_b_i_basis">BIBasis</innernamespace>
+    <briefdescription>
+<para><computeroutput><ref refid="class_b_i_basis_1_1_fast_allocator" kindref="compound">BIBasis::FastAllocator</ref></computeroutput> <mdash/> per-size-class slab allocator for <ref refid="namespace_b_i_basis" kindref="compound">BIBasis</ref>&apos;s small objects. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares the slab pool that supplies storage for the millions of tiny <computeroutput><ref refid="struct_monom" kindref="compound">Monom</ref></computeroutput>, <computeroutput>Polynom</computeroutput>, and <computeroutput>Triple</computeroutput> records the involutive- basis algorithm churns through. Each <computeroutput>FastAllocator</computeroutput> instance is bound to a single fixed <computeroutput>blockSize</computeroutput> at construction and maintains a free-list of that-sized chunks carved out of large memory pages; <computeroutput>Allocate()</computeroutput> pops the head of the free-list (and calls <computeroutput>ExpandMemory()</computeroutput> to slab in a new page if the list is empty), <computeroutput>Free()</computeroutput> pushes back, both inlined for the inner loop.</para>
+<para>Memory is never returned to the OS <mdash/> the slabs persist for the life of the allocator and are reclaimed only on process exit. The subsystem deliberately bypasses <ref refid="namespace_m2" kindref="compound">M2</ref>&apos;s Boehm GC and the engine&apos;s <computeroutput><ref refid="structour__new__delete" kindref="compound">our_new_delete</ref></computeroutput> pattern; <ref refid="namespace_b_i_basis" kindref="compound">BIBasis</ref> classes opt in by overloading <computeroutput>operator new</computeroutput> / <computeroutput>operator delete</computeroutput> to route through a static <computeroutput>FastAllocator</computeroutput> for their size class.</para>
+<para><simplesect kind="see"><para><ref refid="bibasis_8cpp" kindref="compound">bibasis.cpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="polynom_8hpp" kindref="compound">polynom.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="monom_8hpp" kindref="compound">monom.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*****************************************************************************</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/><sp/>Copyright<sp/>(C)<sp/>2006-2011<sp/>by<sp/>Mikhail<sp/>V.<sp/>Zinin<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*<sp/><sp/><sp/>mzinin@gmail.com<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*<sp/><sp/><sp/>You<sp/>may<sp/>redistribute<sp/>this<sp/>file<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/><sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*<sp/><sp/><sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or<sp/>any<sp/>later<sp/>version.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*****************************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BIBASIS_FAST_ALLOCATOR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BIBASIS_FAST_ALLOCATOR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_b_i_basis" kindref="compound">BIBasis</ref></highlight></codeline>
+<codeline lineno="39"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="52" refid="class_b_i_basis_1_1_fast_allocator" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_b_i_basis_1_1_fast_allocator_a53aca6186ccf8d001b8060e06a53f831_1a53aca6186ccf8d001b8060e06a53f831" kindref="member">FastAllocator</ref></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="55" refid="class_b_i_basis_1_1_fast_allocator_a0c8ddde9a1607694d37947eced4954ec_1a0c8ddde9a1607694d37947eced4954ec" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_a0c8ddde9a1607694d37947eced4954ec_1a0c8ddde9a1607694d37947eced4954ec" kindref="member">MemoryPageSize</ref>;</highlight></codeline>
+<codeline lineno="56" refid="class_b_i_basis_1_1_fast_allocator_aff61cdc80b4912891d274b693358d176_1aff61cdc80b4912891d274b693358d176" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_aff61cdc80b4912891d274b693358d176_1aff61cdc80b4912891d274b693358d176" kindref="member">TSize</ref>;</highlight></codeline>
+<codeline lineno="57" refid="class_b_i_basis_1_1_fast_allocator_acea06a9971a15eefb802eb506c03917c_1acea06a9971a15eefb802eb506c03917c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_acea06a9971a15eefb802eb506c03917c_1acea06a9971a15eefb802eb506c03917c" kindref="member">PageSize</ref>;</highlight></codeline>
+<codeline lineno="58" refid="class_b_i_basis_1_1_fast_allocator_adf9baa3723c271eb4963bf2c3ae9bc65_1adf9baa3723c271eb4963bf2c3ae9bc65" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">**<sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_adf9baa3723c271eb4963bf2c3ae9bc65_1adf9baa3723c271eb4963bf2c3ae9bc65" kindref="member">FreeBlock</ref>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_a53aca6186ccf8d001b8060e06a53f831_1a53aca6186ccf8d001b8060e06a53f831" kindref="member">FastAllocator</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>blockSize);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_a4a316c9f78307c2b8f60c6c90df7512d_1a4a316c9f78307c2b8f60c6c90df7512d" kindref="member">~FastAllocator</ref>();</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/><ref refid="class_b_i_basis_1_1_fast_allocator_a67c8e5eb0731cdfe5373971f6737ed03_1a67c8e5eb0731cdfe5373971f6737ed03" kindref="member">Allocate</ref>();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_a9ad0c89485a951f84e4ecb6e2ef73902_1a9ad0c89485a951f84e4ecb6e2ef73902" kindref="member">Free</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>pointer);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_a6f693eca1a57a46541f47058ea501b81_1a6f693eca1a57a46541f47058ea501b81" kindref="member">ExpandMemory</ref>();</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="class_b_i_basis_1_1_fast_allocator_a67c8e5eb0731cdfe5373971f6737ed03_1a67c8e5eb0731cdfe5373971f6737ed03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/><ref refid="class_b_i_basis_1_1_fast_allocator_a67c8e5eb0731cdfe5373971f6737ed03_1a67c8e5eb0731cdfe5373971f6737ed03" kindref="member">FastAllocator::Allocate</ref>()</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="class_b_i_basis_1_1_fast_allocator_adf9baa3723c271eb4963bf2c3ae9bc65_1adf9baa3723c271eb4963bf2c3ae9bc65" kindref="member">FreeBlock</ref>)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_a6f693eca1a57a46541f47058ea501b81_1a6f693eca1a57a46541f47058ea501b81" kindref="member">ExpandMemory</ref>();</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>pointer<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<ref refid="class_b_i_basis_1_1_fast_allocator_adf9baa3723c271eb4963bf2c3ae9bc65_1adf9baa3723c271eb4963bf2c3ae9bc65" kindref="member">FreeBlock</ref>);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_adf9baa3723c271eb4963bf2c3ae9bc65_1adf9baa3723c271eb4963bf2c3ae9bc65" kindref="member">FreeBlock</ref><sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">**</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(*FreeBlock);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pointer;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="class_b_i_basis_1_1_fast_allocator_a9ad0c89485a951f84e4ecb6e2ef73902_1a9ad0c89485a951f84e4ecb6e2ef73902" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_a9ad0c89485a951f84e4ecb6e2ef73902_1a9ad0c89485a951f84e4ecb6e2ef73902" kindref="member">FastAllocator::Free</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>pointer)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*(</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">***</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(pointer))<sp/>=<sp/><ref refid="class_b_i_basis_1_1_fast_allocator_adf9baa3723c271eb4963bf2c3ae9bc65_1adf9baa3723c271eb4963bf2c3ae9bc65" kindref="member">FreeBlock</ref>;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_fast_allocator_adf9baa3723c271eb4963bf2c3ae9bc65_1adf9baa3723c271eb4963bf2c3ae9bc65" kindref="member">FreeBlock</ref><sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">**</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(pointer);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>BIBASIS_FAST_ALLOCATOR_HPP</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/bibasis/allocator.hpp"/>
+  </compounddef>
+</doxygen>

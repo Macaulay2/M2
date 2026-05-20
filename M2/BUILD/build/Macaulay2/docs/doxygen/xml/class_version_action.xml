@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_version_action" kind="class" language="C++" prot="public">
+    <compoundname>VersionAction</compoundname>
+    <basecompoundref refid="classmathic_1_1_action" prot="public" virt="non-virtual">mathic::Action</basecompoundref>
+    <includes refid="_version_action_8hpp" local="no">VersionAction.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_version_action_aabc921a4288d08b8fb12972d04cac8e9_1aabc921a4288d08b8fb12972d04cac8e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>MATHICGB_NAMESPACE_BEGIN void VersionAction::performAction</definition>
+        <argsstring>()</argsstring>
+        <name>performAction</name>
+        <qualifiedname>VersionAction::performAction</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a6e987a99ab445d6abdaa8709a659c37a_1a6e987a99ab445d6abdaa8709a659c37a">performAction</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/VersionAction.hpp" line="12" column="16" bodyfile="submodules/mathicgb/src/cli/VersionAction.cpp" bodystart="13" bodyend="17"/>
+        <references refid="mathicgb_8cpp_a7d934c933566b5e01745dd3177602125_1a7d934c933566b5e01745dd3177602125" compoundref="mathicgb_8cpp" startline="41">MATHICGB_VERSION_STRING</references>
+      </memberdef>
+      <memberdef kind="function" id="class_version_action_a0bc16c14b7e9f3143883a088cec44a77_1a0bc16c14b7e9f3143883a088cec44a77" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * VersionAction::name</definition>
+        <argsstring>() const</argsstring>
+        <name>name</name>
+        <qualifiedname>VersionAction::name</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a33d9f68f939a171145e49b0839c6ec56_1a33d9f68f939a171145e49b0839c6ec56">name</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/VersionAction.hpp" line="14" column="22" bodyfile="submodules/mathicgb/src/cli/VersionAction.cpp" bodystart="23" bodyend="25"/>
+        <references refid="class_version_action_a5292d54bcf8ca01af190a7e21cdd59a9_1a5292d54bcf8ca01af190a7e21cdd59a9" compoundref="_version_action_8cpp" startline="19" endline="21">staticName</references>
+      </memberdef>
+      <memberdef kind="function" id="class_version_action_ad1fdf9fc9a740a11b3e3b313ccd74c62_1ad1fdf9fc9a740a11b3e3b313ccd74c62" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * VersionAction::description</definition>
+        <argsstring>() const</argsstring>
+        <name>description</name>
+        <qualifiedname>VersionAction::description</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a9b68c910283cdf1c6f08ca0b85f3d001_1a9b68c910283cdf1c6f08ca0b85f3d001">description</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/VersionAction.hpp" line="15" column="22" bodyfile="submodules/mathicgb/src/cli/VersionAction.cpp" bodystart="27" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="class_version_action_ac7a25a066d507b4e306b3ad1d47ddce7_1ac7a25a066d507b4e306b3ad1d47ddce7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * VersionAction::shortDescription</definition>
+        <argsstring>() const</argsstring>
+        <name>shortDescription</name>
+        <qualifiedname>VersionAction::shortDescription</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a560176988354a3e8e89d0bed5e931d7b_1a560176988354a3e8e89d0bed5e931d7b">shortDescription</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/VersionAction.hpp" line="16" column="22" bodyfile="submodules/mathicgb/src/cli/VersionAction.cpp" bodystart="32" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="class_version_action_a94e18604bad9597aaf3af3a999d4d57c_1a94e18604bad9597aaf3af3a999d4d57c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void VersionAction::pushBackParameters</definition>
+        <argsstring>(std::vector&lt; mathic::CliParameter * &gt; &amp;parameters)</argsstring>
+        <name>pushBackParameters</name>
+        <qualifiedname>VersionAction::pushBackParameters</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a2a55e9dd992666f1d3e111536866222f_1a2a55e9dd992666f1d3e111536866222f">pushBackParameters</reimplements>
+        <param>
+          <type>std::vector&lt; <ref refid="classmathic_1_1_cli_parameter" kindref="compound">mathic::CliParameter</ref> * &gt; &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/VersionAction.hpp" line="17" column="16" bodyfile="submodules/mathicgb/src/cli/VersionAction.cpp" bodystart="36" bodyend="39"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_version_action_a5292d54bcf8ca01af190a7e21cdd59a9_1a5292d54bcf8ca01af190a7e21cdd59a9" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * VersionAction::staticName</definition>
+        <argsstring>()</argsstring>
+        <name>staticName</name>
+        <qualifiedname>VersionAction::staticName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/VersionAction.hpp" line="13" column="21" bodyfile="submodules/mathicgb/src/cli/VersionAction.cpp" bodystart="19" bodyend="21"/>
+        <referencedby refid="class_version_action_a0bc16c14b7e9f3143883a088cec44a77_1a0bc16c14b7e9f3143883a088cec44a77" compoundref="_version_action_8cpp" startline="23" endline="25">name</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>VersionAction</label>
+        <link refid="class_version_action"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mathic::Action</label>
+        <link refid="classmathic_1_1_action"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>VersionAction</label>
+        <link refid="class_version_action"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mathic::Action</label>
+        <link refid="classmathic_1_1_action"/>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/cli/VersionAction.hpp" line="10" column="1" bodyfile="submodules/mathicgb/src/cli/VersionAction.hpp" bodystart="10" bodyend="18"/>
+    <listofallmembers>
+      <member refid="class_version_action_ad1fdf9fc9a740a11b3e3b313ccd74c62_1ad1fdf9fc9a740a11b3e3b313ccd74c62" prot="public" virt="virtual"><scope>VersionAction</scope><name>description</name></member>
+      <member refid="classmathic_1_1_action_aa7da7f5378296c7de9dcc6ec051e9b85_1aa7da7f5378296c7de9dcc6ec051e9b85" prot="public" virt="virtual"><scope>VersionAction</scope><name>directOptions</name></member>
+      <member refid="classmathic_1_1_action_afb19093560a9e774ec3451cef12e68a6_1afb19093560a9e774ec3451cef12e68a6" prot="public" virt="virtual"><scope>VersionAction</scope><name>isHelpAction</name></member>
+      <member refid="class_version_action_a0bc16c14b7e9f3143883a088cec44a77_1a0bc16c14b7e9f3143883a088cec44a77" prot="public" virt="virtual"><scope>VersionAction</scope><name>name</name></member>
+      <member refid="class_version_action_aabc921a4288d08b8fb12972d04cac8e9_1aabc921a4288d08b8fb12972d04cac8e9" prot="public" virt="virtual"><scope>VersionAction</scope><name>performAction</name></member>
+      <member refid="class_version_action_a94e18604bad9597aaf3af3a999d4d57c_1a94e18604bad9597aaf3af3a999d4d57c" prot="public" virt="virtual"><scope>VersionAction</scope><name>pushBackParameters</name></member>
+      <member refid="class_version_action_ac7a25a066d507b4e306b3ad1d47ddce7_1ac7a25a066d507b4e306b3ad1d47ddce7" prot="public" virt="virtual"><scope>VersionAction</scope><name>shortDescription</name></member>
+      <member refid="class_version_action_a5292d54bcf8ca01af190a7e21cdd59a9_1a5292d54bcf8ca01af190a7e21cdd59a9" prot="public" virt="non-virtual"><scope>VersionAction</scope><name>staticName</name></member>
+      <member refid="classmathic_1_1_action_a1df019d99d092e2ca328a4ff65c71c0b_1a1df019d99d092e2ca328a4ff65c71c0b" prot="public" virt="virtual"><scope>VersionAction</scope><name>~Action</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

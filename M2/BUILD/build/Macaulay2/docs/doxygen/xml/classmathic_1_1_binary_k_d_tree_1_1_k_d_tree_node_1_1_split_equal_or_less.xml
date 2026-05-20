@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less" kind="class" language="C++" prot="public">
+    <compoundname>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess</compoundname>
+    <includes refid="_binary_k_d_tree_8h" local="no">BinaryKDTree.h</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a62669073b978053d353d1409b4afb884_1a62669073b978053d353d1409b4afb884" prot="public" static="no">
+        <type>C::Exponent</type>
+        <definition>typedef C::Exponent mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::Exponent</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="727" column="34" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="727" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a9916fd086527988ca37806df1dfb60e5_1a9916fd086527988ca37806df1dfb60e5" prot="public" static="no">
+        <type>C::Entry</type>
+        <definition>typedef C::Entry mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::Entry</definition>
+        <argsstring></argsstring>
+        <name>Entry</name>
+        <qualifiedname>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess::Entry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="728" column="31" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="728" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_aace2e6a4f03581e5a65ae4585d304bad_1aace2e6a4f03581e5a65ae4585d304bad" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::_var</definition>
+        <argsstring></argsstring>
+        <name>_var</name>
+        <qualifiedname>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess::_var</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="735" column="12" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="735" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_afa96ef56afc04c9c7fcfd4cc3f4d2995_1afa96ef56afc04c9c7fcfd4cc3f4d2995" compoundref="_binary_k_d_tree_8h" startline="731" endline="733">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::operator()</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a723d122aa4c9314bfcfb54cd27e58fab_1a723d122aa4c9314bfcfb54cd27e58fab" compoundref="_binary_k_d_tree_8h" startline="729" endline="730">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::SplitEqualOrLess</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a7a8a4b79685ff83c4508ac9357e75051_1a7a8a4b79685ff83c4508ac9357e75051" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a62669073b978053d353d1409b4afb884_1a62669073b978053d353d1409b4afb884" kindref="member">Exponent</ref> &amp;</type>
+        <definition>const Exponent&amp; mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::_exp</definition>
+        <argsstring></argsstring>
+        <name>_exp</name>
+        <qualifiedname>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess::_exp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="736" column="20" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="736" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_afa96ef56afc04c9c7fcfd4cc3f4d2995_1afa96ef56afc04c9c7fcfd4cc3f4d2995" compoundref="_binary_k_d_tree_8h" startline="731" endline="733">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::operator()</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a723d122aa4c9314bfcfb54cd27e58fab_1a723d122aa4c9314bfcfb54cd27e58fab" compoundref="_binary_k_d_tree_8h" startline="729" endline="730">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::SplitEqualOrLess</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_aa2667153db862ead3193e80f5971310e_1aa2667153db862ead3193e80f5971310e" prot="private" static="no" mutable="no">
+        <type>const C &amp;</type>
+        <definition>const C&amp; mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::_conf</definition>
+        <argsstring></argsstring>
+        <name>_conf</name>
+        <qualifiedname>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess::_conf</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="737" column="13" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="737" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_afa96ef56afc04c9c7fcfd4cc3f4d2995_1afa96ef56afc04c9c7fcfd4cc3f4d2995" compoundref="_binary_k_d_tree_8h" startline="731" endline="733">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::operator()</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a723d122aa4c9314bfcfb54cd27e58fab_1a723d122aa4c9314bfcfb54cd27e58fab" compoundref="_binary_k_d_tree_8h" startline="729" endline="730">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::SplitEqualOrLess</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a723d122aa4c9314bfcfb54cd27e58fab_1a723d122aa4c9314bfcfb54cd27e58fab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::SplitEqualOrLess</definition>
+        <argsstring>(size_t var, const Exponent &amp;exp, const C &amp;conf)</argsstring>
+        <name>SplitEqualOrLess</name>
+        <qualifiedname>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess::SplitEqualOrLess</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>var</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a62669073b978053d353d1409b4afb884_1a62669073b978053d353d1409b4afb884" kindref="member">Exponent</ref> &amp;</type>
+          <declname>exp</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="729" column="3" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="729" bodyend="730"/>
+        <references refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_aa2667153db862ead3193e80f5971310e_1aa2667153db862ead3193e80f5971310e" compoundref="_binary_k_d_tree_8h" startline="737">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::_conf</references>
+        <references refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a7a8a4b79685ff83c4508ac9357e75051_1a7a8a4b79685ff83c4508ac9357e75051" compoundref="_binary_k_d_tree_8h" startline="736">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::_exp</references>
+        <references refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_aace2e6a4f03581e5a65ae4585d304bad_1aace2e6a4f03581e5a65ae4585d304bad" compoundref="_binary_k_d_tree_8h" startline="735">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::_var</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_afa96ef56afc04c9c7fcfd4cc3f4d2995_1afa96ef56afc04c9c7fcfd4cc3f4d2995" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::operator()</definition>
+        <argsstring>(const Entry &amp;entry) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a9916fd086527988ca37806df1dfb60e5_1a9916fd086527988ca37806df1dfb60e5" kindref="member">Entry</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="731" column="10" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="731" bodyend="733"/>
+        <references refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_aa2667153db862ead3193e80f5971310e_1aa2667153db862ead3193e80f5971310e" compoundref="_binary_k_d_tree_8h" startline="737">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::_conf</references>
+        <references refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a7a8a4b79685ff83c4508ac9357e75051_1a7a8a4b79685ff83c4508ac9357e75051" compoundref="_binary_k_d_tree_8h" startline="736">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::_exp</references>
+        <references refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_aace2e6a4f03581e5a65ae4585d304bad_1aace2e6a4f03581e5a65ae4585d304bad" compoundref="_binary_k_d_tree_8h" startline="735">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess::_var</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>C</label>
+      </node>
+      <node id="3">
+        <label>const Exponent &amp;</label>
+      </node>
+      <node id="1">
+        <label>mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::SplitEqualOrLess</label>
+        <link refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_var</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_exp</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_conf</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>size_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="725" column="3" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="725" bodyend="738"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_aa2667153db862ead3193e80f5971310e_1aa2667153db862ead3193e80f5971310e" prot="private" virt="non-virtual"><scope>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess</scope><name>_conf</name></member>
+      <member refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a7a8a4b79685ff83c4508ac9357e75051_1a7a8a4b79685ff83c4508ac9357e75051" prot="private" virt="non-virtual"><scope>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess</scope><name>_exp</name></member>
+      <member refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_aace2e6a4f03581e5a65ae4585d304bad_1aace2e6a4f03581e5a65ae4585d304bad" prot="private" virt="non-virtual"><scope>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess</scope><name>_var</name></member>
+      <member refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a9916fd086527988ca37806df1dfb60e5_1a9916fd086527988ca37806df1dfb60e5" prot="public" virt="non-virtual"><scope>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess</scope><name>Entry</name></member>
+      <member refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a62669073b978053d353d1409b4afb884_1a62669073b978053d353d1409b4afb884" prot="public" virt="non-virtual"><scope>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess</scope><name>Exponent</name></member>
+      <member refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_afa96ef56afc04c9c7fcfd4cc3f4d2995_1afa96ef56afc04c9c7fcfd4cc3f4d2995" prot="public" virt="non-virtual"><scope>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess</scope><name>operator()</name></member>
+      <member refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_1_1_split_equal_or_less_a723d122aa4c9314bfcfb54cd27e58fab_1a723d122aa4c9314bfcfb54cd27e58fab" prot="public" virt="non-virtual"><scope>mathic::BinaryKDTree::KDTreeNode::SplitEqualOrLess</scope><name>SplitEqualOrLess</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

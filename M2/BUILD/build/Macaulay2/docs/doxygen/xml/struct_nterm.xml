@@ -1,0 +1,404 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_nterm" kind="struct" language="C++" prot="public">
+    <compoundname>Nterm</compoundname>
+    <includes refid="ringelem_8hpp" local="no">ringelem.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_nterm_a395044af0f071742b5d1fdeb74a9efa2_1a395044af0f071742b5d1fdeb74a9efa2" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_nterm" kindref="compound">Nterm</ref> *</type>
+        <definition>Nterm* Nterm::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>Nterm::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="153" column="9" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="153" bodyend="-1"/>
+        <referencedby refid="class_skew_polynomial_ring_ae641d2cb29c7a8ece2560aee13d47704_1ae641d2cb29c7a8ece2560aee13d47704" compoundref="skewpoly_8cpp" startline="37" endline="65">SkewPolynomialRing::antipode</referencedby>
+        <referencedby refid="class_matrix_stream_a3ed6df1491ee2ea227ba4f9dd8fb115e_1a3ed6df1491ee2ea227ba4f9dd8fb115e" compoundref="matrix-stream_8cpp" startline="39" endline="57">MatrixStream::appendTermDone</referencedby>
+        <referencedby refid="ring-vecs_8cpp_ae807ccf8c6b59e940896bb8b24e78ba3_1ae807ccf8c6b59e940896bb8b24e78ba3" compoundref="ring-vecs_8cpp" startline="925" endline="945">check_nterm_multiples</referencedby>
+        <referencedby refid="class_poly_ring_aa2d77e741e2054ac43bd4c1185468a79_1aa2d77e741e2054ac43bd4c1185468a79" compoundref="poly_8cpp" startline="510" endline="531">PolyRing::compare_elems</referencedby>
+        <referencedby refid="class_poly_ring_a425828e3a6617c81298da18dc6cf85cd_1a425828e3a6617c81298da18dc6cf85cd" compoundref="poly_8cpp" startline="2200" endline="2207">PolyRing::content</referencedby>
+        <referencedby refid="class_poly_ring_a88eb219cc43fb820b67f051c2324f7c0_1a88eb219cc43fb820b67f051c2324f7c0" compoundref="poly_8cpp" startline="2209" endline="2217">PolyRing::content</referencedby>
+        <referencedby refid="class_poly_ring_a78b3daea3a56785f90a583e3c9423bf4_1a78b3daea3a56785f90a583e3c9423bf4" compoundref="poly_8cpp" startline="653" endline="662">PolyRing::copy</referencedby>
+        <referencedby refid="class_chinese_remainder_ab8b9b6c5f2bb1bf62617decc4b548e53_1ab8b9b6c5f2bb1bf62617decc4b548e53" compoundref="cra_8cpp" startline="53" endline="159">ChineseRemainder::CRA</referencedby>
+        <referencedby refid="class_poly_ring_aca3156e7b5adf29168490954872ddd9b_1aca3156e7b5adf29168490954872ddd9b" compoundref="poly_8cpp" startline="2115" endline="2135">PolyRing::degree_of_var</referencedby>
+        <referencedby refid="class_poly_ring_a268ffbd716206c7e8925633171d8cea2_1a268ffbd716206c7e8925633171d8cea2" compoundref="poly_8cpp" startline="580" endline="601">PolyRing::degree_weights</referencedby>
+        <referencedby refid="class_poly_ring_a62709d83e3912d105505c9119157d8b5_1a62709d83e3912d105505c9119157d8b5" compoundref="poly_8cpp" startline="2014" endline="2034">PolyRing::diff</referencedby>
+        <referencedby refid="class_poly_ring_a5456e8cdad8870d2f5b436ade715c5cf_1a5456e8cdad8870d2f5b436ade715c5cf" compoundref="poly_8cpp" startline="2175" endline="2192">PolyRing::divide_by_expvector</referencedby>
+        <referencedby refid="class_poly_ring_a67c91e222fc891d8b0a1df289a398120_1a67c91e222fc891d8b0a1df289a398120" compoundref="poly_8cpp" startline="2219" endline="2235">PolyRing::divide_by_given_content</referencedby>
+        <referencedby refid="class_poly_ring_afed6c1e241853e824710c8462177d8c8_1afed6c1e241853e824710c8462177d8c8" compoundref="poly_8cpp" startline="2149" endline="2173">PolyRing::divide_by_var</referencedby>
+        <referencedby refid="class_poly_ring_a3356a0cbe9440c7bbcf0ed4c6dffa65c_1a3356a0cbe9440c7bbcf0ed4c6dffa65c" compoundref="poly_8cpp" startline="809" endline="819">PolyRing::divide_coeff_to</referencedby>
+        <referencedby refid="class_poly_ring_a2449bc6b89fc48477699bf6a2cd4fd58_1a2449bc6b89fc48477699bf6a2cd4fd58" compoundref="poly_8cpp" startline="1517" endline="1551">PolyRing::division_algorithm</referencedby>
+        <referencedby refid="class_poly_ring_a7aec2e0a4779d47ef3dc50bbe1b60473_1a7aec2e0a4779d47ef3dc50bbe1b60473" compoundref="poly_8cpp" startline="1458" endline="1515">PolyRing::division_algorithm</referencedby>
+        <referencedby refid="class_poly_ring_a2cea0331b1a41f24dea78ac5e530777a_1a2cea0331b1a41f24dea78ac5e530777a" compoundref="poly_8cpp" startline="1308" endline="1344">PolyRing::elem_text_out</referencedby>
+        <referencedby refid="_n_a_g_8cpp_abeacbe400da9eb84e1fb27f61ae3f162_1abeacbe400da9eb84e1fb27f61ae3f162" compoundref="_n_a_g_8cpp" startline="191" endline="223">extract_divisible_by_x</referencedby>
+        <referencedby refid="class_poly_ring_ad1a97a9d5a754a5dad10848c4e0d7db8_1ad1a97a9d5a754a5dad10848c4e0d7db8" compoundref="poly_8cpp" startline="2249" endline="2272">PolyRing::fromSmallIntegerCoefficients</referencedby>
+        <referencedby refid="class_poly_ring_ae7054efa9a0232ec3ad7b22c1e47cccb_1ae7054efa9a0232ec3ad7b22c1e47cccb" compoundref="poly_8cpp" startline="1989" endline="2012">PolyRing::get_coeff</referencedby>
+        <referencedby refid="class_poly_ring_a9b0cced87864112a64ff43ac71c6376f_1a9b0cced87864112a64ff43ac71c6376f" compoundref="poly_8cpp" startline="1701" endline="1744">PolyRing::get_logical_coeff</referencedby>
+        <referencedby refid="class_poly_ring_a8c633121e183dfbdd5e27196b36d3065_1a8c633121e183dfbdd5e27196b36d3065" compoundref="poly_8cpp" startline="1855" endline="1880">PolyRing::get_part</referencedby>
+        <referencedby refid="class_poly_ring_ab4b464ee8b0755651089953a3afc0166_1ab4b464ee8b0755651089953a3afc0166" compoundref="poly_8cpp" startline="1919" endline="1956">PolyRing::get_terms</referencedby>
+        <referencedby refid="class_poly_ring_a45458c49e0fa73eeba2ef24437bc5552_1a45458c49e0fa73eeba2ef24437bc5552" compoundref="poly_8cpp" startline="603" endline="638">PolyRing::homogenize</referencedby>
+        <referencedby refid="class_poly_ring_a758ad844bcc512203b786342f19681c7_1a758ad844bcc512203b786342f19681c7" compoundref="poly_8cpp" startline="319" endline="336">PolyRing::index_of_var</referencedby>
+        <referencedby refid="class_poly_ring_a0fe8f347a4921d731f00af1ea0e275c1_1a0fe8f347a4921d731f00af1ea0e275c1" compoundref="poly_8cpp" startline="675" endline="742">PolyRing::internal_add_to</referencedby>
+        <referencedby refid="class_poly_ring_a02b089f9858aaddcaf6cdd834d17b7b6_1a02b089f9858aaddcaf6cdd834d17b7b6" compoundref="poly_8cpp" startline="665" endline="673">PolyRing::internal_negate_to</referencedby>
+        <referencedby refid="class_poly_ring_a602f1924255032635de072826f68a4aa_1a602f1924255032635de072826f68a4aa" compoundref="poly_8cpp" startline="961" endline="989">PolyRing::invert</referencedby>
+        <referencedby refid="class_poly_ring_a0665e5c3d9c1c20de83163a1b206e0da_1a0665e5c3d9c1c20de83163a1b206e0da" compoundref="poly_8cpp" startline="493" endline="508">PolyRing::is_equal</referencedby>
+        <referencedby refid="class_poly_ring_a607a97a1b04b467928a45a9eda66bf8d_1a607a97a1b04b467928a45a9eda66bf8d" compoundref="poly_8cpp" startline="478" endline="485">PolyRing::is_unit</referencedby>
+        <referencedby refid="class_poly_ring_a5c8f6f4ca0bafb9281aaba5fe758c609_1a5c8f6f4ca0bafb9281aaba5fe758c609" compoundref="poly_8cpp" startline="2277" endline="2293">PolyRing::lead_term</referencedby>
+        <referencedby refid="class_poly_ring_a75a4d77a328f96da40c199df944d4bc7_1a75a4d77a328f96da40c199df944d4bc7" compoundref="poly_8cpp" startline="1965" endline="1973">PolyRing::make_flat_term</referencedby>
+        <referencedby refid="class_poly_ring_aa82e0cbc985f27112c7feccc38545ad0_1aa82e0cbc985f27112c7feccc38545ad0" compoundref="poly_8cpp" startline="1882" endline="1917">PolyRing::make_logical_term</referencedby>
+        <referencedby refid="class_poly_ring_ac1577c758816ad8a74abf4c1351f9788_1ac1577c758816ad8a74abf4c1351f9788" compoundref="poly_8cpp" startline="1134" endline="1143">PolyRing::minimal_monomial</referencedby>
+        <referencedby refid="_n_a_g_8cpp_a72ca6d8b851df8a719c18c8ed0498cb4_1a72ca6d8b851df8a719c18c8ed0498cb4" compoundref="_n_a_g_8cpp" startline="281" endline="286">monomials_to_conventional_expvectors</referencedby>
+        <referencedby refid="class_poly_ring_a72af4c57bf0f132ad5d1bffe5f237cfe_1a72af4c57bf0f132ad5d1bffe5f237cfe" compoundref="poly_8cpp" startline="781" endline="797">PolyRing::mult_by_term</referencedby>
+        <referencedby refid="class_skew_polynomial_ring_af9e35a18f56deb892f276aadfffda776_1af9e35a18f56deb892f276aadfffda776" compoundref="skewpoly_8cpp" startline="67" endline="96">SkewPolynomialRing::mult_by_term</referencedby>
+        <referencedby refid="class_poly_ring_a3ce819c3081630c1ee3db976229a3dc6_1a3ce819c3081630c1ee3db976229a3dc6" compoundref="poly_8cpp" startline="799" endline="808">PolyRing::mult_coeff_to</referencedby>
+        <referencedby refid="class_poly_ring_ad0ee8466f8a4b4a656ec8d7fefc6e2bf_1ad0ee8466f8a4b4a656ec8d7fefc6e2bf" compoundref="poly_8cpp" startline="1764" endline="1787">PolyRing::n_logical_terms</referencedby>
+        <referencedby refid="class_poly_ring_a98b8dd0e347e9da5a154efb4eb2f0582_1a98b8dd0e347e9da5a154efb4eb2f0582" compoundref="poly_8cpp" startline="750" endline="763">PolyRing::negate</referencedby>
+        <referencedby refid="class_q_ring_info__field__basic_a5e07e9f4510d12c7e717c332f643be0a_1a5e07e9f4510d12c7e717c332f643be0a" compoundref="qring_8cpp" startline="119" endline="149">QRingInfo_field_basic::normal_form</referencedby>
+        <referencedby refid="class_q_ring_info__field___q_q_a6893af1d428987182508f88e9e3967c1_1a6893af1d428987182508f88e9e3967c1" compoundref="qring_8cpp" startline="212" endline="242">QRingInfo_field_QQ::normal_form</referencedby>
+        <referencedby refid="class_q_ring_info___z_z_a029aac3a4bd0891bbd9bdd6c4dd1f368_1a029aac3a4bd0891bbd9bdd6c4dd1f368" compoundref="qring_8cpp" startline="384" endline="412">QRingInfo_ZZ::normal_form</referencedby>
+        <referencedby refid="class_poly_ring_a04abdb354b3ed208700a4064f107e17f_1a04abdb354b3ed208700a4064f107e17f" compoundref="poly_8cpp" startline="868" endline="916">PolyRing::power_direct</referencedby>
+        <referencedby refid="class_poly_ring_ab586992b2526e0ab8cb025af79c6f3dc_1ab586992b2526e0ab8cb025af79c6f3dc" compoundref="poly_8cpp" startline="1553" endline="1695">PolyRing::powerseries_division_algorithm</referencedby>
+        <referencedby refid="class_poly_ring_ab994d701beffe6d522683086ee20c997_1ab994d701beffe6d522683086ee20c997" compoundref="poly_8cpp" startline="447" endline="457">PolyRing::preferred_associate</referencedby>
+        <referencedby refid="class_q_ring_info___z_z_ae1a2e5efd12cabf570f677d385141c74_1ae1a2e5efd12cabf570f677d385141c74" compoundref="qring_8cpp" startline="316" endline="348">QRingInfo_ZZ::QRingInfo_ZZ</referencedby>
+        <referencedby refid="class_chinese_remainder_add4f0163eb72d9c5c061a50eaff9d9bf_1add4f0163eb72d9c5c061a50eaff9d9bf" compoundref="cra_8cpp" startline="359" endline="388">ChineseRemainder::ratConversion</referencedby>
+        <referencedby refid="classres2__comp_a8fb90ba3fd3f5535a860accdfe173949_1a8fb90ba3fd3f5535a860accdfe173949" compoundref="res-a0_8cpp" startline="1308" endline="1400">res2_comp::reduce3</referencedby>
+        <referencedby refid="classres2__comp_a5c7966f99611f3b25522df595a3efbda_1a5c7966f99611f3b25522df595a3efbda" compoundref="res-a0_8cpp" startline="1402" endline="1495">res2_comp::reduce4</referencedby>
+        <referencedby refid="classres2__comp_a589a27fd6d7fc6cc4f36fbc454ff361c_1a589a27fd6d7fc6cc4f36fbc454ff361c" compoundref="res-a0_8cpp" startline="1554" endline="1615">res2_comp::reduce_heap_by_level</referencedby>
+        <referencedby refid="classpolyheap_adcbb60eb7a18250bc32ee1f20c606b05_1adcbb60eb7a18250bc32ee1f20c606b05" compoundref="geopoly_8hpp" startline="110" endline="151">polyheap::remove_lead_term</referencedby>
+        <referencedby refid="class_ring_map_a1649c6569c2cc37e882adf66c719f289_1a1649c6569c2cc37e882adf66c719f289" compoundref="ringmap_8cpp" startline="10" endline="86">RingMap::RingMap</referencedby>
+        <referencedby refid="class_poly_ring_a3a3598ca27cbfb7fbbd6a798341cb9cd_1a3a3598ca27cbfb7fbbd6a798341cb9cd" compoundref="poly_8cpp" startline="1401" endline="1420">PolyRing::setNegativeExponentMonomial</referencedby>
+        <referencedby refid="class_schur_ring_a306c994e12d979e68ef8c4641cc49b5c_1a306c994e12d979e68ef8c4641cc49b5c" compoundref="schur_8cpp" startline="176" endline="213">SchurRing::SM</referencedby>
+        <referencedby refid="class_poly_ring_af59e2f977ac6baaae50dca401b72d3ed_1af59e2f977ac6baaae50dca401b72d3ed" compoundref="poly_8cpp" startline="2077" endline="2106">PolyRing::sort</referencedby>
+        <referencedby refid="classsagbi_a64a8b4a6e105fb866603f7635109cb9d_1a64a8b4a6e105fb866603f7635109cb9d" compoundref="sagbi_8cpp" startline="7" endline="50">sagbi::subduct</referencedby>
+        <referencedby refid="classsagbi_a7b41ac511b69cf5dd55581f10945c0e8_1a7b41ac511b69cf5dd55581f10945c0e8" compoundref="sagbi_8cpp" startline="71" endline="136">sagbi::subduct1</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a946be21d2157e4223832cd16d6597f50_1a946be21d2157e4223832cd16d6597f50" compoundref="res-f4-m2-interface_8cpp" startline="242" endline="318">ResF4toM2Interface::to_M2_MutableMatrix</referencedby>
+        <referencedby refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" compoundref="f4-m2-interface_8cpp" startline="72" endline="128">F4toM2Interface::to_M2_vec</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a415999e709aee01dbad7f071b9f0a00f_1a415999e709aee01dbad7f071b9f0a00f" compoundref="res-f4-m2-interface_8cpp" startline="94" endline="149">ResF4toM2Interface::to_M2_vec</referencedby>
+        <referencedby refid="class_poly_ring_a7d7613dc63cf5ce56d0fc3206040c4c7_1a7d7613dc63cf5ce56d0fc3206040c4c7" compoundref="poly_8cpp" startline="2639" endline="2701">PolyRing::translate_gbvector_to_vec</referencedby>
+        <referencedby refid="class_poly_ring_ae932376785fd6c09b9a634ae0857c35c_1ae932376785fd6c09b9a634ae0857c35c" compoundref="poly_8cpp" startline="2576" endline="2637">PolyRing::translate_gbvector_to_vec_QQ</referencedby>
+        <referencedby refid="class_poly_ring_ac93bd78f4132a8bebbf4065d45223cd6_1ac93bd78f4132a8bebbf4065d45223cd6" compoundref="poly_8cpp" startline="2345" endline="2372">PolyRing::vec_coefficient_of_var</referencedby>
+        <referencedby refid="classbinomial__ring_a26787526ab35d5f90999653acfe22338_1a26787526ab35d5f90999653acfe22338" compoundref="gb-toric_8cpp" startline="338" endline="354">binomial_ring::vector_to_binomial</referencedby>
+        <referencedby refid="class_weyl_algebra_acf31136d0f728707da46f31aadd16648_1acf31136d0f728707da46f31aadd16648" compoundref="weylalg_8cpp" startline="339" endline="418">WeylAlgebra::weyl_diff</referencedby>
+        <referencedby refid="class_poly_ring_a67d3c963db826c39b0562bf1d98ddd7f_1a67d3c963db826c39b0562bf1d98ddd7f" compoundref="poly_8cpp" startline="1367" endline="1384">PolyRing::zeroize_tiny</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_nterm_a3eb9c9daff3bb4f2a8052be2bfea895a_1a3eb9c9daff3bb4f2a8052be2bfea895a" prot="public" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem Nterm::coeff</definition>
+        <argsstring></argsstring>
+        <name>coeff</name>
+        <qualifiedname>Nterm::coeff</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="154" column="13" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="154" bodyend="-1"/>
+        <referencedby refid="class_skew_polynomial_ring_ae641d2cb29c7a8ece2560aee13d47704_1ae641d2cb29c7a8ece2560aee13d47704" compoundref="skewpoly_8cpp" startline="37" endline="65">SkewPolynomialRing::antipode</referencedby>
+        <referencedby refid="class_matrix_stream_a3ed6df1491ee2ea227ba4f9dd8fb115e_1a3ed6df1491ee2ea227ba4f9dd8fb115e" compoundref="matrix-stream_8cpp" startline="39" endline="57">MatrixStream::appendTermDone</referencedby>
+        <referencedby refid="ring-vecs_8cpp_ae807ccf8c6b59e940896bb8b24e78ba3_1ae807ccf8c6b59e940896bb8b24e78ba3" compoundref="ring-vecs_8cpp" startline="925" endline="945">check_nterm_multiples</referencedby>
+        <referencedby refid="matrix_8cpp_a5a9bc857316007ad2dc636ed01e6f224_1a5a9bc857316007ad2dc636ed01e6f224" compoundref="matrix_8cpp" startline="1807" endline="1850">coeffs_of_vec</referencedby>
+        <referencedby refid="class_poly_ring_aa2d77e741e2054ac43bd4c1185468a79_1aa2d77e741e2054ac43bd4c1185468a79" compoundref="poly_8cpp" startline="510" endline="531">PolyRing::compare_elems</referencedby>
+        <referencedby refid="class_polynomial_ring_ac197ed71022ead1aa87f7d3f8864282b_1ac197ed71022ead1aa87f7d3f8864282b" compoundref="_macaulay2_2e_2polyring_8cpp" startline="212" endline="226">PolynomialRing::computeHashValue</referencedby>
+        <referencedby refid="class_poly_ring_a425828e3a6617c81298da18dc6cf85cd_1a425828e3a6617c81298da18dc6cf85cd" compoundref="poly_8cpp" startline="2200" endline="2207">PolyRing::content</referencedby>
+        <referencedby refid="class_poly_ring_a88eb219cc43fb820b67f051c2324f7c0_1a88eb219cc43fb820b67f051c2324f7c0" compoundref="poly_8cpp" startline="2209" endline="2217">PolyRing::content</referencedby>
+        <referencedby refid="ringelement_8cpp_a5062505cd32d21430d05e0976208a78a_1a5062505cd32d21430d05e0976208a78a" compoundref="ringelement_8cpp" startline="726" endline="760">convolve</referencedby>
+        <referencedby refid="class_poly_ring_a246ef1ae5779d3bd5fa8f27b0425d76e_1a246ef1ae5779d3bd5fa8f27b0425d76e" compoundref="poly_8cpp" startline="161" endline="167">PolyRing::copy_term</referencedby>
+        <referencedby refid="class_chinese_remainder_ab8b9b6c5f2bb1bf62617decc4b548e53_1ab8b9b6c5f2bb1bf62617decc4b548e53" compoundref="cra_8cpp" startline="53" endline="159">ChineseRemainder::CRA</referencedby>
+        <referencedby refid="class_poly_ring_a62709d83e3912d105505c9119157d8b5_1a62709d83e3912d105505c9119157d8b5" compoundref="poly_8cpp" startline="2014" endline="2034">PolyRing::diff</referencedby>
+        <referencedby refid="class_poly_ring_a5456e8cdad8870d2f5b436ade715c5cf_1a5456e8cdad8870d2f5b436ade715c5cf" compoundref="poly_8cpp" startline="2175" endline="2192">PolyRing::divide_by_expvector</referencedby>
+        <referencedby refid="class_poly_ring_a67c91e222fc891d8b0a1df289a398120_1a67c91e222fc891d8b0a1df289a398120" compoundref="poly_8cpp" startline="2219" endline="2235">PolyRing::divide_by_given_content</referencedby>
+        <referencedby refid="class_poly_ring_a3356a0cbe9440c7bbcf0ed4c6dffa65c_1a3356a0cbe9440c7bbcf0ed4c6dffa65c" compoundref="poly_8cpp" startline="809" endline="819">PolyRing::divide_coeff_to</referencedby>
+        <referencedby refid="class_poly_ring_a7aec2e0a4779d47ef3dc50bbe1b60473_1a7aec2e0a4779d47ef3dc50bbe1b60473" compoundref="poly_8cpp" startline="1458" endline="1515">PolyRing::division_algorithm</referencedby>
+        <referencedby refid="class_poly_ring_a2cea0331b1a41f24dea78ac5e530777a_1a2cea0331b1a41f24dea78ac5e530777a" compoundref="poly_8cpp" startline="1308" endline="1344">PolyRing::elem_text_out</referencedby>
+        <referencedby refid="class_poly_ring_ad075681908791457eefddadde1a74019_1ad075681908791457eefddadde1a74019" compoundref="poly_8cpp" startline="194" endline="211">PolyRing::from_rational</referencedby>
+        <referencedby refid="classres2__poly_a2db765b60aa9a8305829a7e4a64fd085_1a2db765b60aa9a8305829a7e4a64fd085" compoundref="res-a0-poly_8cpp" startline="295" endline="315">res2_poly::from_vector</referencedby>
+        <referencedby refid="classres__poly_a4d76d31e3698b7018dc265d0f5159ddf_1a4d76d31e3698b7018dc265d0f5159ddf" compoundref="res-a1-poly_8cpp" startline="279" endline="297">res_poly::from_vector</referencedby>
+        <referencedby refid="class_poly_ring_ad1a97a9d5a754a5dad10848c4e0d7db8_1ad1a97a9d5a754a5dad10848c4e0d7db8" compoundref="poly_8cpp" startline="2249" endline="2272">PolyRing::fromSmallIntegerCoefficients</referencedby>
+        <referencedby refid="class_poly_ring_a9118eba568abe71f52b0ec9a3ca571ed_1a9118eba568abe71f52b0ec9a3ca571ed" compoundref="poly_8cpp" startline="1083" endline="1132">PolyRing::gcd_extended</referencedby>
+        <referencedby refid="class_poly_ring_a9b0cced87864112a64ff43ac71c6376f_1a9b0cced87864112a64ff43ac71c6376f" compoundref="poly_8cpp" startline="1701" endline="1744">PolyRing::get_logical_coeff</referencedby>
+        <referencedby refid="class_poly_ring_ab865e7645d472cd33b2c7c2c75e9296b_1ab865e7645d472cd33b2c7c2c75e9296b" compoundref="poly_8cpp" startline="1010" endline="1058">PolyRing::imp_attempt_to_cancel_lead_term</referencedby>
+        <referencedby refid="class_poly_ring_a758ad844bcc512203b786342f19681c7_1a758ad844bcc512203b786342f19681c7" compoundref="poly_8cpp" startline="319" endline="336">PolyRing::index_of_var</referencedby>
+        <referencedby refid="class_poly_ring_a0fe8f347a4921d731f00af1ea0e275c1_1a0fe8f347a4921d731f00af1ea0e275c1" compoundref="poly_8cpp" startline="675" endline="742">PolyRing::internal_add_to</referencedby>
+        <referencedby refid="class_poly_ring_a02b089f9858aaddcaf6cdd834d17b7b6_1a02b089f9858aaddcaf6cdd834d17b7b6" compoundref="poly_8cpp" startline="665" endline="673">PolyRing::internal_negate_to</referencedby>
+        <referencedby refid="class_poly_ring_a602f1924255032635de072826f68a4aa_1a602f1924255032635de072826f68a4aa" compoundref="poly_8cpp" startline="961" endline="989">PolyRing::invert</referencedby>
+        <referencedby refid="class_poly_ring_a0665e5c3d9c1c20de83163a1b206e0da_1a0665e5c3d9c1c20de83163a1b206e0da" compoundref="poly_8cpp" startline="493" endline="508">PolyRing::is_equal</referencedby>
+        <referencedby refid="class_poly_ring_a607a97a1b04b467928a45a9eda66bf8d_1a607a97a1b04b467928a45a9eda66bf8d" compoundref="poly_8cpp" startline="478" endline="485">PolyRing::is_unit</referencedby>
+        <referencedby refid="class_poly_ring_af9e82a8f50ffc2e63f58f321ae4af614_1af9e82a8f50ffc2e63f58f321ae4af614" compoundref="poly_8cpp" startline="1975" endline="1980">PolyRing::lead_flat_coeff</referencedby>
+        <referencedby refid="class_poly_ring_a75a4d77a328f96da40c199df944d4bc7_1a75a4d77a328f96da40c199df944d4bc7" compoundref="poly_8cpp" startline="1965" endline="1973">PolyRing::make_flat_term</referencedby>
+        <referencedby refid="class_poly_ring_aa82e0cbc985f27112c7feccc38545ad0_1aa82e0cbc985f27112c7feccc38545ad0" compoundref="poly_8cpp" startline="1882" endline="1917">PolyRing::make_logical_term</referencedby>
+        <referencedby refid="class_matrix_a8d9dc9f3b692dbf2905a26259e88960a_1a8d9dc9f3b692dbf2905a26259e88960a" compoundref="matrix_8cpp" startline="1925" endline="1976">Matrix::make_monideal</referencedby>
+        <referencedby refid="class_skew_polynomial_ring_af9e35a18f56deb892f276aadfffda776_1af9e35a18f56deb892f276aadfffda776" compoundref="skewpoly_8cpp" startline="67" endline="96">SkewPolynomialRing::mult_by_term</referencedby>
+        <referencedby refid="class_poly_ring_a3ce819c3081630c1ee3db976229a3dc6_1a3ce819c3081630c1ee3db976229a3dc6" compoundref="poly_8cpp" startline="799" endline="808">PolyRing::mult_coeff_to</referencedby>
+        <referencedby refid="class_s_l_p_a3d97685ecc8e908919ef18c203b7c9aa_1a3d97685ecc8e908919ef18c203b7c9aa" compoundref="_n_a_g_8cpp" startline="237" endline="279">SLP&lt; Field &gt;::poly_to_horner_slp</referencedby>
+        <referencedby refid="class_poly_ring_a2c8d855ee69bda82b43000325ced0863_1a2c8d855ee69bda82b43000325ced0863" compoundref="poly_8cpp" startline="829" endline="866">PolyRing::power</referencedby>
+        <referencedby refid="class_poly_ring_a04abdb354b3ed208700a4064f107e17f_1a04abdb354b3ed208700a4064f107e17f" compoundref="poly_8cpp" startline="868" endline="916">PolyRing::power_direct</referencedby>
+        <referencedby refid="class_poly_ring_ab586992b2526e0ab8cb025af79c6f3dc_1ab586992b2526e0ab8cb025af79c6f3dc" compoundref="poly_8cpp" startline="1553" endline="1695">PolyRing::powerseries_division_algorithm</referencedby>
+        <referencedby refid="class_poly_ring_ab994d701beffe6d522683086ee20c997_1ab994d701beffe6d522683086ee20c997" compoundref="poly_8cpp" startline="447" endline="457">PolyRing::preferred_associate</referencedby>
+        <referencedby refid="class_q_ring_info___z_z_ae1a2e5efd12cabf570f677d385141c74_1ae1a2e5efd12cabf570f677d385141c74" compoundref="qring_8cpp" startline="316" endline="348">QRingInfo_ZZ::QRingInfo_ZZ</referencedby>
+        <referencedby refid="class_chinese_remainder_add4f0163eb72d9c5c061a50eaff9d9bf_1add4f0163eb72d9c5c061a50eaff9d9bf" compoundref="cra_8cpp" startline="359" endline="388">ChineseRemainder::ratConversion</referencedby>
+        <referencedby refid="class_q_ring_info__field__basic_ad0369ed15768792d00b7281876b8b56c_1ad0369ed15768792d00b7281876b8b56c" compoundref="qring_8cpp" startline="95" endline="117">QRingInfo_field_basic::reduce_lead_term_basic_field</referencedby>
+        <referencedby refid="class_q_ring_info__field___q_q_accc79e7c6d70819b2c8882e3f2443a99_1accc79e7c6d70819b2c8882e3f2443a99" compoundref="qring_8cpp" startline="188" endline="210">QRingInfo_field_QQ::reduce_lead_term_QQ</referencedby>
+        <referencedby refid="class_ring_map_a1649c6569c2cc37e882adf66c719f289_1a1649c6569c2cc37e882adf66c719f289" compoundref="ringmap_8cpp" startline="10" endline="86">RingMap::RingMap</referencedby>
+        <referencedby refid="classgbres__comp_a9b87f27dd19d3bc5a1c91ed230e80dfc_1a9b87f27dd19d3bc5a1c91ed230e80dfc" compoundref="res-a2_8cpp" startline="79" endline="150">gbres_comp::setup</referencedby>
+        <referencedby refid="class_schur_ring_a306c994e12d979e68ef8c4641cc49b5c_1a306c994e12d979e68ef8c4641cc49b5c" compoundref="schur_8cpp" startline="176" endline="213">SchurRing::SM</referencedby>
+        <referencedby refid="class_matrix_a5ece789b657b9e79e585011588443142_1a5ece789b657b9e79e585011588443142" compoundref="matrix_8cpp" startline="922" endline="992">Matrix::support</referencedby>
+        <referencedby refid="class_poly_ring_afb088e5e8100daa2cac0f55f7c279d70_1afb088e5e8100daa2cac0f55f7c279d70" compoundref="poly_8cpp" startline="2542" endline="2570">PolyRing::translate_gbvector_from_vec</referencedby>
+        <referencedby refid="class_poly_ring_ab326720537af6abb0940193263bc8b2d_1ab326720537af6abb0940193263bc8b2d" compoundref="poly_8cpp" startline="2504" endline="2540">PolyRing::translate_gbvector_from_vec_QQ</referencedby>
+        <referencedby refid="class_poly_ring_ac93bd78f4132a8bebbf4065d45223cd6_1ac93bd78f4132a8bebbf4065d45223cd6" compoundref="poly_8cpp" startline="2345" endline="2372">PolyRing::vec_coefficient_of_var</referencedby>
+        <referencedby refid="class_ring_abc3a4dad081c84e3f09edc8077d579f9_1abc3a4dad081c84e3f09edc8077d579f9" compoundref="ring-vecs_8cpp" startline="947" endline="972">Ring::vec_is_scalar_multiple</referencedby>
+        <referencedby refid="class_poly_ring_a279bb489b4fccf07b8c46575a9c3ad4b_1a279bb489b4fccf07b8c46575a9c3ad4b" compoundref="poly_8cpp" startline="2374" endline="2411">PolyRing::vec_top_coefficient</referencedby>
+        <referencedby refid="classbinomial__ring_a26787526ab35d5f90999653acfe22338_1a26787526ab35d5f90999653acfe22338" compoundref="gb-toric_8cpp" startline="338" endline="354">binomial_ring::vector_to_binomial</referencedby>
+        <referencedby refid="class_weyl_algebra_acf31136d0f728707da46f31aadd16648_1acf31136d0f728707da46f31aadd16648" compoundref="weylalg_8cpp" startline="339" endline="418">WeylAlgebra::weyl_diff</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_nterm_a7d8ae0809fcf1cf7cdb9aa339538e6e7_1a7d8ae0809fcf1cf7cdb9aa339538e6e7" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int Nterm::monom[1]</definition>
+        <argsstring>[1]</argsstring>
+        <name>monom</name>
+        <qualifiedname>Nterm::monom</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="156" column="7" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="156" bodyend="-1"/>
+        <referencedby refid="class_skew_polynomial_ring_ae641d2cb29c7a8ece2560aee13d47704_1ae641d2cb29c7a8ece2560aee13d47704" compoundref="skewpoly_8cpp" startline="37" endline="65">SkewPolynomialRing::antipode</referencedby>
+        <referencedby refid="class_matrix_stream_a3ed6df1491ee2ea227ba4f9dd8fb115e_1a3ed6df1491ee2ea227ba4f9dd8fb115e" compoundref="matrix-stream_8cpp" startline="39" endline="57">MatrixStream::appendTermDone</referencedby>
+        <referencedby refid="franzi-interface_8cpp_a98e398924f5c128885cad27586cec73e_1a98e398924f5c128885cad27586cec73e" compoundref="franzi-interface_8cpp" startline="40" endline="64">BRPSfromMatrix</referencedby>
+        <referencedby refid="ring-vecs_8cpp_ae807ccf8c6b59e940896bb8b24e78ba3_1ae807ccf8c6b59e940896bb8b24e78ba3" compoundref="ring-vecs_8cpp" startline="925" endline="945">check_nterm_multiples</referencedby>
+        <referencedby refid="matrix_8cpp_a5a9bc857316007ad2dc636ed01e6f224_1a5a9bc857316007ad2dc636ed01e6f224" compoundref="matrix_8cpp" startline="1807" endline="1850">coeffs_of_vec</referencedby>
+        <referencedby refid="class_poly_ring_aa2d77e741e2054ac43bd4c1185468a79_1aa2d77e741e2054ac43bd4c1185468a79" compoundref="poly_8cpp" startline="510" endline="531">PolyRing::compare_elems</referencedby>
+        <referencedby refid="class_polynomial_ring_ac197ed71022ead1aa87f7d3f8864282b_1ac197ed71022ead1aa87f7d3f8864282b" compoundref="_macaulay2_2e_2polyring_8cpp" startline="212" endline="226">PolynomialRing::computeHashValue</referencedby>
+        <referencedby refid="ringelement_8cpp_a5062505cd32d21430d05e0976208a78a_1a5062505cd32d21430d05e0976208a78a" compoundref="ringelement_8cpp" startline="726" endline="760">convolve</referencedby>
+        <referencedby refid="class_poly_ring_a246ef1ae5779d3bd5fa8f27b0425d76e_1a246ef1ae5779d3bd5fa8f27b0425d76e" compoundref="poly_8cpp" startline="161" endline="167">PolyRing::copy_term</referencedby>
+        <referencedby refid="class_chinese_remainder_ab8b9b6c5f2bb1bf62617decc4b548e53_1ab8b9b6c5f2bb1bf62617decc4b548e53" compoundref="cra_8cpp" startline="53" endline="159">ChineseRemainder::CRA</referencedby>
+        <referencedby refid="class_poly_ring_aca3156e7b5adf29168490954872ddd9b_1aca3156e7b5adf29168490954872ddd9b" compoundref="poly_8cpp" startline="2115" endline="2135">PolyRing::degree_of_var</referencedby>
+        <referencedby refid="class_poly_ring_a268ffbd716206c7e8925633171d8cea2_1a268ffbd716206c7e8925633171d8cea2" compoundref="poly_8cpp" startline="580" endline="601">PolyRing::degree_weights</referencedby>
+        <referencedby refid="class_poly_ring_a62709d83e3912d105505c9119157d8b5_1a62709d83e3912d105505c9119157d8b5" compoundref="poly_8cpp" startline="2014" endline="2034">PolyRing::diff</referencedby>
+        <referencedby refid="class_poly_ring_a5456e8cdad8870d2f5b436ade715c5cf_1a5456e8cdad8870d2f5b436ade715c5cf" compoundref="poly_8cpp" startline="2175" endline="2192">PolyRing::divide_by_expvector</referencedby>
+        <referencedby refid="class_poly_ring_a67c91e222fc891d8b0a1df289a398120_1a67c91e222fc891d8b0a1df289a398120" compoundref="poly_8cpp" startline="2219" endline="2235">PolyRing::divide_by_given_content</referencedby>
+        <referencedby refid="class_poly_ring_a2449bc6b89fc48477699bf6a2cd4fd58_1a2449bc6b89fc48477699bf6a2cd4fd58" compoundref="poly_8cpp" startline="1517" endline="1551">PolyRing::division_algorithm</referencedby>
+        <referencedby refid="class_poly_ring_a7aec2e0a4779d47ef3dc50bbe1b60473_1a7aec2e0a4779d47ef3dc50bbe1b60473" compoundref="poly_8cpp" startline="1458" endline="1515">PolyRing::division_algorithm</referencedby>
+        <referencedby refid="class_poly_ring_a2cea0331b1a41f24dea78ac5e530777a_1a2cea0331b1a41f24dea78ac5e530777a" compoundref="poly_8cpp" startline="1308" endline="1344">PolyRing::elem_text_out</referencedby>
+        <referencedby refid="_n_a_g_8cpp_abeacbe400da9eb84e1fb27f61ae3f162_1abeacbe400da9eb84e1fb27f61ae3f162" compoundref="_n_a_g_8cpp" startline="191" endline="223">extract_divisible_by_x</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_boolean_involutive_basis_ab7a30c46a2caf5c404dc785d6988c5d7_1ab7a30c46a2caf5c404dc785d6988c5d7" compoundref="involutive_8hpp" startline="187" endline="231">BIBasis::BooleanInvolutiveBasis&lt; MonomType &gt;::FillInitialSet</referencedby>
+        <referencedby refid="classgb2__comp_a7acfed66bb7daa507f03c1685d42f14a_1a7acfed66bb7daa507f03c1685d42f14a" compoundref="res-a2-gb_8cpp" startline="195" endline="309">gb2_comp::find_pairs</referencedby>
+        <referencedby refid="class_poly_ring_ad075681908791457eefddadde1a74019_1ad075681908791457eefddadde1a74019" compoundref="poly_8cpp" startline="194" endline="211">PolyRing::from_rational</referencedby>
+        <referencedby refid="classres2__poly_a2db765b60aa9a8305829a7e4a64fd085_1a2db765b60aa9a8305829a7e4a64fd085" compoundref="res-a0-poly_8cpp" startline="295" endline="315">res2_poly::from_vector</referencedby>
+        <referencedby refid="classres__poly_a4d76d31e3698b7018dc265d0f5159ddf_1a4d76d31e3698b7018dc265d0f5159ddf" compoundref="res-a1-poly_8cpp" startline="279" endline="297">res_poly::from_vector</referencedby>
+        <referencedby refid="class_poly_ring_ad1a97a9d5a754a5dad10848c4e0d7db8_1ad1a97a9d5a754a5dad10848c4e0d7db8" compoundref="poly_8cpp" startline="2249" endline="2272">PolyRing::fromSmallIntegerCoefficients</referencedby>
+        <referencedby refid="class_m2_1_1_galois_field_table_a5506deba17bc1f7a5a3845be903048c6_1a5506deba17bc1f7a5a3845be903048c6" compoundref="aring-m2-gf_8cpp" startline="18" endline="97">M2::GaloisFieldTable::GaloisFieldTable</referencedby>
+        <referencedby refid="class_poly_ring_ae7054efa9a0232ec3ad7b22c1e47cccb_1ae7054efa9a0232ec3ad7b22c1e47cccb" compoundref="poly_8cpp" startline="1989" endline="2012">PolyRing::get_coeff</referencedby>
+        <referencedby refid="class_poly_ring_a9b0cced87864112a64ff43ac71c6376f_1a9b0cced87864112a64ff43ac71c6376f" compoundref="poly_8cpp" startline="1701" endline="1744">PolyRing::get_logical_coeff</referencedby>
+        <referencedby refid="class_poly_ring_ab4b464ee8b0755651089953a3afc0166_1ab4b464ee8b0755651089953a3afc0166" compoundref="poly_8cpp" startline="1919" endline="1956">PolyRing::get_terms</referencedby>
+        <referencedby refid="class_poly_ring_ab865e7645d472cd33b2c7c2c75e9296b_1ab865e7645d472cd33b2c7c2c75e9296b" compoundref="poly_8cpp" startline="1010" endline="1058">PolyRing::imp_attempt_to_cancel_lead_term</referencedby>
+        <referencedby refid="class_poly_ring_a758ad844bcc512203b786342f19681c7_1a758ad844bcc512203b786342f19681c7" compoundref="poly_8cpp" startline="319" endline="336">PolyRing::index_of_var</referencedby>
+        <referencedby refid="class_g_f_a4c84185c18406893409e0bca62470623_1a4c84185c18406893409e0bca62470623" compoundref="_g_f_8cpp" startline="39" endline="123">GF::initialize_GF</referencedby>
+        <referencedby refid="class_poly_ring_a0fe8f347a4921d731f00af1ea0e275c1_1a0fe8f347a4921d731f00af1ea0e275c1" compoundref="poly_8cpp" startline="675" endline="742">PolyRing::internal_add_to</referencedby>
+        <referencedby refid="class_poly_ring_a602f1924255032635de072826f68a4aa_1a602f1924255032635de072826f68a4aa" compoundref="poly_8cpp" startline="961" endline="989">PolyRing::invert</referencedby>
+        <referencedby refid="class_poly_ring_a0665e5c3d9c1c20de83163a1b206e0da_1a0665e5c3d9c1c20de83163a1b206e0da" compoundref="poly_8cpp" startline="493" endline="508">PolyRing::is_equal</referencedby>
+        <referencedby refid="class_poly_ring_a6b409cb315cde0f4f0b3551249c2523f_1a6b409cb315cde0f4f0b3551249c2523f" compoundref="poly_8cpp" startline="533" endline="549">PolyRing::is_homogeneous</referencedby>
+        <referencedby refid="class_poly_ring_a607a97a1b04b467928a45a9eda66bf8d_1a607a97a1b04b467928a45a9eda66bf8d" compoundref="poly_8cpp" startline="478" endline="485">PolyRing::is_unit</referencedby>
+        <referencedby refid="class_poly_ring_af61bbba28f3197b5aafd7f1097116798_1af61bbba28f3197b5aafd7f1097116798" compoundref="poly_8cpp" startline="1982" endline="1987">PolyRing::lead_flat_monomial</referencedby>
+        <referencedby refid="class_poly_ring_ac27edf6bc77a06196d5f178ae7459991_1ac27edf6bc77a06196d5f178ae7459991" compoundref="poly_8cpp" startline="1746" endline="1755">PolyRing::lead_logical_exponents</referencedby>
+        <referencedby refid="class_poly_ring_a5c8f6f4ca0bafb9281aaba5fe758c609_1a5c8f6f4ca0bafb9281aaba5fe758c609" compoundref="poly_8cpp" startline="2277" endline="2293">PolyRing::lead_term</referencedby>
+        <referencedby refid="class_poly_ring_ae9b8ecaaaf7173addac81adeff948c88_1ae9b8ecaaaf7173addac81adeff948c88" compoundref="poly_8cpp" startline="1789" endline="1828">PolyRing::list_form</referencedby>
+        <referencedby refid="class_poly_ring_a75a4d77a328f96da40c199df944d4bc7_1a75a4d77a328f96da40c199df944d4bc7" compoundref="poly_8cpp" startline="1965" endline="1973">PolyRing::make_flat_term</referencedby>
+        <referencedby refid="class_poly_ring_aa82e0cbc985f27112c7feccc38545ad0_1aa82e0cbc985f27112c7feccc38545ad0" compoundref="poly_8cpp" startline="1882" endline="1917">PolyRing::make_logical_term</referencedby>
+        <referencedby refid="class_matrix_a8d9dc9f3b692dbf2905a26259e88960a_1a8d9dc9f3b692dbf2905a26259e88960a" compoundref="matrix_8cpp" startline="1925" endline="1976">Matrix::make_monideal</referencedby>
+        <referencedby refid="class_poly_ring_ac1577c758816ad8a74abf4c1351f9788_1ac1577c758816ad8a74abf4c1351f9788" compoundref="poly_8cpp" startline="1134" endline="1143">PolyRing::minimal_monomial</referencedby>
+        <referencedby refid="class_matrix_a6c889f744b576633a501899aed9c4829_1a6c889f744b576633a501899aed9c4829" compoundref="matrix_8cpp" startline="1699" endline="1786">Matrix::monomials</referencedby>
+        <referencedby refid="_n_a_g_8cpp_a72ca6d8b851df8a719c18c8ed0498cb4_1a72ca6d8b851df8a719c18c8ed0498cb4" compoundref="_n_a_g_8cpp" startline="281" endline="286">monomials_to_conventional_expvectors</referencedby>
+        <referencedby refid="class_skew_polynomial_ring_af9e35a18f56deb892f276aadfffda776_1af9e35a18f56deb892f276aadfffda776" compoundref="skewpoly_8cpp" startline="67" endline="96">SkewPolynomialRing::mult_by_term</referencedby>
+        <referencedby refid="class_poly_ring_acb856967218704f37951aa35db9fc990_1acb856967218704f37951aa35db9fc990" compoundref="poly_8cpp" startline="553" endline="578">PolyRing::multi_degree</referencedby>
+        <referencedby refid="class_poly_ring_ad0ee8466f8a4b4a656ec8d7fefc6e2bf_1ad0ee8466f8a4b4a656ec8d7fefc6e2bf" compoundref="poly_8cpp" startline="1764" endline="1787">PolyRing::n_logical_terms</referencedby>
+        <referencedby refid="class_q_ring_info__field__basic_a5e07e9f4510d12c7e717c332f643be0a_1a5e07e9f4510d12c7e717c332f643be0a" compoundref="qring_8cpp" startline="119" endline="149">QRingInfo_field_basic::normal_form</referencedby>
+        <referencedby refid="class_q_ring_info__field___q_q_a6893af1d428987182508f88e9e3967c1_1a6893af1d428987182508f88e9e3967c1" compoundref="qring_8cpp" startline="212" endline="242">QRingInfo_field_QQ::normal_form</referencedby>
+        <referencedby refid="class_q_ring_info___z_z_a029aac3a4bd0891bbd9bdd6c4dd1f368_1a029aac3a4bd0891bbd9bdd6c4dd1f368" compoundref="qring_8cpp" startline="384" endline="412">QRingInfo_ZZ::normal_form</referencedby>
+        <referencedby refid="class_poly_ring_a2c8d855ee69bda82b43000325ced0863_1a2c8d855ee69bda82b43000325ced0863" compoundref="poly_8cpp" startline="829" endline="866">PolyRing::power</referencedby>
+        <referencedby refid="class_poly_ring_a04abdb354b3ed208700a4064f107e17f_1a04abdb354b3ed208700a4064f107e17f" compoundref="poly_8cpp" startline="868" endline="916">PolyRing::power_direct</referencedby>
+        <referencedby refid="class_poly_ring_ab586992b2526e0ab8cb025af79c6f3dc_1ab586992b2526e0ab8cb025af79c6f3dc" compoundref="poly_8cpp" startline="1553" endline="1695">PolyRing::powerseries_division_algorithm</referencedby>
+        <referencedby refid="class_poly_ring_ab994d701beffe6d522683086ee20c997_1ab994d701beffe6d522683086ee20c997" compoundref="poly_8cpp" startline="447" endline="457">PolyRing::preferred_associate</referencedby>
+        <referencedby refid="class_q_ring_info__field_aee767e3ff2ca9cbf8c54720542a61299_1aee767e3ff2ca9cbf8c54720542a61299" compoundref="qring_8cpp" startline="43" endline="86">QRingInfo_field::QRingInfo_field</referencedby>
+        <referencedby refid="class_q_ring_info___z_z_ae1a2e5efd12cabf570f677d385141c74_1ae1a2e5efd12cabf570f677d385141c74" compoundref="qring_8cpp" startline="316" endline="348">QRingInfo_ZZ::QRingInfo_ZZ</referencedby>
+        <referencedby refid="class_chinese_remainder_add4f0163eb72d9c5c061a50eaff9d9bf_1add4f0163eb72d9c5c061a50eaff9d9bf" compoundref="cra_8cpp" startline="359" endline="388">ChineseRemainder::ratConversion</referencedby>
+        <referencedby refid="classres2__comp_a1b832b778a864c64782dfec48f8ae4a3_1a1b832b778a864c64782dfec48f8ae4a3" compoundref="res-a0_8cpp" startline="1126" endline="1198">res2_comp::reduce</referencedby>
+        <referencedby refid="classres__comp_ad87173b52600a89f03fdec667c0be4b9_1ad87173b52600a89f03fdec667c0be4b9" compoundref="res-a1_8cpp" startline="743" endline="791">res_comp::reduce</referencedby>
+        <referencedby refid="classres2__comp_ab86e0292fabfd36ef5a15b8b8c6457d7_1ab86e0292fabfd36ef5a15b8b8c6457d7" compoundref="res-a0_8cpp" startline="1200" endline="1304">res2_comp::reduce2</referencedby>
+        <referencedby refid="classres2__comp_a8fb90ba3fd3f5535a860accdfe173949_1a8fb90ba3fd3f5535a860accdfe173949" compoundref="res-a0_8cpp" startline="1308" endline="1400">res2_comp::reduce3</referencedby>
+        <referencedby refid="classres2__comp_a5c7966f99611f3b25522df595a3efbda_1a5c7966f99611f3b25522df595a3efbda" compoundref="res-a0_8cpp" startline="1402" endline="1495">res2_comp::reduce4</referencedby>
+        <referencedby refid="classres2__comp_ab1c00cdeaa2ec34be8b796b98d53a31d_1ab1c00cdeaa2ec34be8b796b98d53a31d" compoundref="res-a0_8cpp" startline="1497" endline="1552">res2_comp::reduce_by_level</referencedby>
+        <referencedby refid="classres__comp_a54b4eedb224985c4bb04cee5b0bef70a_1a54b4eedb224985c4bb04cee5b0bef70a" compoundref="res-a1_8cpp" startline="844" endline="873">res_comp::reduce_gen</referencedby>
+        <referencedby refid="classres2__comp_a589a27fd6d7fc6cc4f36fbc454ff361c_1a589a27fd6d7fc6cc4f36fbc454ff361c" compoundref="res-a0_8cpp" startline="1554" endline="1615">res2_comp::reduce_heap_by_level</referencedby>
+        <referencedby refid="class_q_ring_info__field__basic_ad0369ed15768792d00b7281876b8b56c_1ad0369ed15768792d00b7281876b8b56c" compoundref="qring_8cpp" startline="95" endline="117">QRingInfo_field_basic::reduce_lead_term_basic_field</referencedby>
+        <referencedby refid="class_q_ring_info__field___q_q_accc79e7c6d70819b2c8882e3f2443a99_1accc79e7c6d70819b2c8882e3f2443a99" compoundref="qring_8cpp" startline="188" endline="210">QRingInfo_field_QQ::reduce_lead_term_QQ</referencedby>
+        <referencedby refid="classres__comp_a641c7e671c4c0e508eb616efa151058d_1a641c7e671c4c0e508eb616efa151058d" compoundref="res-a1_8cpp" startline="795" endline="842">res_comp::reduce_level_one</referencedby>
+        <referencedby refid="class_ring_map_a1649c6569c2cc37e882adf66c719f289_1a1649c6569c2cc37e882adf66c719f289" compoundref="ringmap_8cpp" startline="10" endline="86">RingMap::RingMap</referencedby>
+        <referencedby refid="class_poly_ring_a3a3598ca27cbfb7fbbd6a798341cb9cd_1a3a3598ca27cbfb7fbbd6a798341cb9cd" compoundref="poly_8cpp" startline="1401" endline="1420">PolyRing::setNegativeExponentMonomial</referencedby>
+        <referencedby refid="classgbres__comp_a9b87f27dd19d3bc5a1c91ed230e80dfc_1a9b87f27dd19d3bc5a1c91ed230e80dfc" compoundref="res-a2_8cpp" startline="79" endline="150">gbres_comp::setup</referencedby>
+        <referencedby refid="class_schur_ring_a306c994e12d979e68ef8c4641cc49b5c_1a306c994e12d979e68ef8c4641cc49b5c" compoundref="schur_8cpp" startline="176" endline="213">SchurRing::SM</referencedby>
+        <referencedby refid="class_matrix_a5ece789b657b9e79e585011588443142_1a5ece789b657b9e79e585011588443142" compoundref="matrix_8cpp" startline="922" endline="992">Matrix::support</referencedby>
+        <referencedby refid="class_poly_ring_afb088e5e8100daa2cac0f55f7c279d70_1afb088e5e8100daa2cac0f55f7c279d70" compoundref="poly_8cpp" startline="2542" endline="2570">PolyRing::translate_gbvector_from_vec</referencedby>
+        <referencedby refid="class_poly_ring_ab326720537af6abb0940193263bc8b2d_1ab326720537af6abb0940193263bc8b2d" compoundref="poly_8cpp" startline="2504" endline="2540">PolyRing::translate_gbvector_from_vec_QQ</referencedby>
+        <referencedby refid="class_poly_ring_ac93bd78f4132a8bebbf4065d45223cd6_1ac93bd78f4132a8bebbf4065d45223cd6" compoundref="poly_8cpp" startline="2345" endline="2372">PolyRing::vec_coefficient_of_var</referencedby>
+        <referencedby refid="class_ring_a629f09fa842540aca946bcec51719ca4_1a629f09fa842540aca946bcec51719ca4" compoundref="ring-vecs_8cpp" startline="974" endline="996">Ring::vec_remove_monomial_factors</referencedby>
+        <referencedby refid="class_poly_ring_a279bb489b4fccf07b8c46575a9c3ad4b_1a279bb489b4fccf07b8c46575a9c3ad4b" compoundref="poly_8cpp" startline="2374" endline="2411">PolyRing::vec_top_coefficient</referencedby>
+        <referencedby refid="classbinomial__ring_a26787526ab35d5f90999653acfe22338_1a26787526ab35d5f90999653acfe22338" compoundref="gb-toric_8cpp" startline="338" endline="354">binomial_ring::vector_to_binomial</referencedby>
+        <referencedby refid="class_weyl_algebra_acf31136d0f728707da46f31aadd16648_1acf31136d0f728707da46f31aadd16648" compoundref="weylalg_8cpp" startline="339" endline="418">WeylAlgebra::weyl_diff</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Singly linked-list node carrying one term of a polynomial-ring element. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="struct_nterm_a395044af0f071742b5d1fdeb74a9efa2_1a395044af0f071742b5d1fdeb74a9efa2" kindref="member">next</ref></computeroutput> chains to the next term, <computeroutput><ref refid="struct_nterm_a3eb9c9daff3bb4f2a8052be2bfea895a_1a3eb9c9daff3bb4f2a8052be2bfea895a" kindref="member">coeff</ref></computeroutput> holds the term&apos;s coefficient (in the parent ring&apos;s <computeroutput><ref refid="unionring__elem" kindref="compound">ring_elem</ref></computeroutput> representation), and <computeroutput><ref refid="struct_nterm_a7d8ae0809fcf1cf7cdb9aa339538e6e7_1a7d8ae0809fcf1cf7cdb9aa339538e6e7" kindref="member">monom</ref>[1]</computeroutput> is a C99-style flexible-array tail holding the monomial&apos;s encoded <computeroutput><ref refid="classint" kindref="compound">int</ref></computeroutput> payload <mdash/> the actual length is determined by the ring&apos;s monoid. <ref refid="class_polynomial" kindref="compound">Polynomial</ref> values stored in a <computeroutput><ref refid="unionring__elem" kindref="compound">ring_elem</ref></computeroutput> via the <computeroutput>poly_val</computeroutput> union arm point at the head of a chain of these. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="15">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="13">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>const void *</label>
+      </node>
+      <node id="8">
+        <label>double</label>
+      </node>
+      <node id="6">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="5">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>long</label>
+      </node>
+      <node id="12">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="11">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="9">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="10">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="2">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/ringelem.hpp" line="151" column="1" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="152" bodyend="157"/>
+    <listofallmembers>
+      <member refid="struct_nterm_a3eb9c9daff3bb4f2a8052be2bfea895a_1a3eb9c9daff3bb4f2a8052be2bfea895a" prot="public" virt="non-virtual"><scope>Nterm</scope><name>coeff</name></member>
+      <member refid="struct_nterm_a7d8ae0809fcf1cf7cdb9aa339538e6e7_1a7d8ae0809fcf1cf7cdb9aa339538e6e7" prot="public" virt="non-virtual"><scope>Nterm</scope><name>monom</name></member>
+      <member refid="struct_nterm_a395044af0f071742b5d1fdeb74a9efa2_1a395044af0f071742b5d1fdeb74a9efa2" prot="public" virt="non-virtual"><scope>Nterm</scope><name>next</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

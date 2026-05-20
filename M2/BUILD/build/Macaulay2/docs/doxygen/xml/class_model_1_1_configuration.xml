@@ -1,0 +1,334 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_model_1_1_configuration" kind="class" language="C++" prot="private">
+    <compoundname>Model::Configuration</compoundname>
+    <basecompoundref refid="class_configuration_base" prot="public" virt="non-virtual">ConfigurationBase</basecompoundref>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_model_1_1_configuration_acb6051d6e3b77a53bb0a3ffdbbf6e5e7_1acb6051d6e3b77a53bb0a3ffdbbf6e5e7" prot="public" static="no">
+        <type><ref refid="struct_item_or_value" kindref="compound">ItemOrValue</ref>&lt; OnSpans &gt;::Entry</type>
+        <definition>typedef ItemOrValue&lt;OnSpans&gt;::Entry Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::Entry</definition>
+        <argsstring></argsstring>
+        <name>Entry</name>
+        <qualifiedname>Model::Configuration::Entry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="74" column="42" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_model_1_1_configuration_af14b794f35942d44923706fc26502bdb_1af14b794f35942d44923706fc26502bdb" prot="public" static="no">
+        <type><ref refid="_item_8h_af701370a338671ae24da9926dd39487d_1af701370a338671ae24da9926dd39487d" kindref="member">::CompareResult</ref></type>
+        <definition>typedef ::CompareResult Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::CompareResult</definition>
+        <argsstring></argsstring>
+        <name>CompareResult</name>
+        <qualifiedname>Model::Configuration::CompareResult</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="81" column="29" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_model_1_1_configuration_ad69a87793819a748bea2f469c29c4c8b_1ad69a87793819a748bea2f469c29c4c8b" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::supportDeduplication</definition>
+        <argsstring></argsstring>
+        <name>supportDeduplication</name>
+        <qualifiedname>Model::Configuration::supportDeduplication</qualifiedname>
+        <initializer>= Deduplicate</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="99" column="23" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="99" bodyend="-1"/>
+        <referencedby refid="class_model_1_1_configuration_a37d4d725a5213eb2f222d04ffd48d0c9_1a37d4d725a5213eb2f222d04ffd48d0c9" compoundref="_model_8h" startline="87" endline="90">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::cmpEqual</referencedby>
+        <referencedby refid="class_model_1_1_configuration_a7619b0354ce5671fedb35068603d86b4_1a7619b0354ce5671fedb35068603d86b4" compoundref="_model_8h" startline="91" endline="94">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::deduplicate</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_model_1_1_configuration_a91867916de240faefe2c208955dfbe54_1a91867916de240faefe2c208955dfbe54" prot="private" static="no" mutable="yes">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::_comparisons</definition>
+        <argsstring></argsstring>
+        <name>_comparisons</name>
+        <qualifiedname>Model::Configuration::_comparisons</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="102" column="20" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="102" bodyend="-1"/>
+        <referencedby refid="class_model_1_1_configuration_aa348b993634b467300d795636fb69228_1aa348b993634b467300d795636fb69228" compoundref="_model_8h" startline="82" endline="85">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::compare</referencedby>
+        <referencedby refid="class_model_1_1_configuration_a6254e016d4acdd3e9dca28cb6a102303_1a6254e016d4acdd3e9dca28cb6a102303" compoundref="_model_8h" startline="76" endline="76">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::Configuration</referencedby>
+        <referencedby refid="class_model_1_1_configuration_aa326e495cb775393369995c96518f78b_1aa326e495cb775393369995c96518f78b" compoundref="_model_8h" startline="78" endline="79">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::Configuration</referencedby>
+        <referencedby refid="class_model_1_1_configuration_a4e0733dcfd0fa480969f7e48db408b11_1a4e0733dcfd0fa480969f7e48db408b11" compoundref="_model_8h" startline="97" endline="97">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::getComparisons</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_model_1_1_configuration_ae0a063171b8be47711ff35094b927e58_1ae0a063171b8be47711ff35094b927e58" prot="private" static="no" mutable="yes">
+        <type>std::vector&lt; <ref refid="class_model_1_1_configuration_acb6051d6e3b77a53bb0a3ffdbbf6e5e7_1acb6051d6e3b77a53bb0a3ffdbbf6e5e7" kindref="member">Entry</ref> &gt;</type>
+        <definition>std::vector&lt;Entry&gt; Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::_pending</definition>
+        <argsstring></argsstring>
+        <name>_pending</name>
+        <qualifiedname>Model::Configuration::_pending</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="103" column="25" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="103" bodyend="-1"/>
+        <referencedby refid="class_model_1_1_configuration_a7619b0354ce5671fedb35068603d86b4_1a7619b0354ce5671fedb35068603d86b4" compoundref="_model_8h" startline="91" endline="94">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::deduplicate</referencedby>
+        <referencedby refid="class_model_1_1_configuration_acc12c7ebba31506c9648b3cb08044f06_1acc12c7ebba31506c9648b3cb08044f06" compoundref="_model_8h" startline="96" endline="96">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::getPending</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_model_1_1_configuration_a6254e016d4acdd3e9dca28cb6a102303_1a6254e016d4acdd3e9dca28cb6a102303" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::Configuration</definition>
+        <argsstring>()</argsstring>
+        <name>Configuration</name>
+        <qualifiedname>Model::Configuration::Configuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="76" column="5" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="76" bodyend="76"/>
+        <references refid="class_model_1_1_configuration_a91867916de240faefe2c208955dfbe54_1a91867916de240faefe2c208955dfbe54" compoundref="_model_8h" startline="102">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::_comparisons</references>
+      </memberdef>
+      <memberdef kind="function" id="class_model_1_1_configuration_aa326e495cb775393369995c96518f78b_1aa326e495cb775393369995c96518f78b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class A</type>
+          </param>
+          <param>
+            <type>class B</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::Configuration</definition>
+        <argsstring>(const A &amp;a, const B &amp;b)</argsstring>
+        <name>Configuration</name>
+        <qualifiedname>Model::Configuration::Configuration</qualifiedname>
+        <param>
+          <type>const A &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const B &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="78" column="5" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="78" bodyend="79"/>
+        <references refid="class_model_1_1_configuration_a91867916de240faefe2c208955dfbe54_1a91867916de240faefe2c208955dfbe54" compoundref="_model_8h" startline="102">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::_comparisons</references>
+      </memberdef>
+      <memberdef kind="function" id="class_model_1_1_configuration_aa348b993634b467300d795636fb69228_1aa348b993634b467300d795636fb69228" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_model_1_1_configuration_af14b794f35942d44923706fc26502bdb_1af14b794f35942d44923706fc26502bdb" kindref="member">CompareResult</ref></type>
+        <definition>CompareResult Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::compare</definition>
+        <argsstring>(const Entry &amp;a, const Entry &amp;b) const</argsstring>
+        <name>compare</name>
+        <qualifiedname>Model::Configuration::compare</qualifiedname>
+        <param>
+          <type>const <ref refid="class_model_1_1_configuration_acb6051d6e3b77a53bb0a3ffdbbf6e5e7_1acb6051d6e3b77a53bb0a3ffdbbf6e5e7" kindref="member">Entry</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_model_1_1_configuration_acb6051d6e3b77a53bb0a3ffdbbf6e5e7_1acb6051d6e3b77a53bb0a3ffdbbf6e5e7" kindref="member">Entry</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="82" column="19" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="82" bodyend="85"/>
+        <references refid="class_model_1_1_configuration_a91867916de240faefe2c208955dfbe54_1a91867916de240faefe2c208955dfbe54" compoundref="_model_8h" startline="102">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::_comparisons</references>
+      </memberdef>
+      <memberdef kind="function" id="class_model_1_1_configuration_a8b5b32fe806fc9de40e620772d939c39_1a8b5b32fe806fc9de40e620772d939c39" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::cmpLessThan</definition>
+        <argsstring>(CompareResult r) const</argsstring>
+        <name>cmpLessThan</name>
+        <qualifiedname>Model::Configuration::cmpLessThan</qualifiedname>
+        <param>
+          <type><ref refid="class_model_1_1_configuration_af14b794f35942d44923706fc26502bdb_1af14b794f35942d44923706fc26502bdb" kindref="member">CompareResult</ref></type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="86" column="10" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="86" bodyend="86"/>
+        <references refid="_item_8h_af701370a338671ae24da9926dd39487d_1af701370a338671ae24da9926dd39487daf2360f16fa13d5c5e9b71b733268b47e" compoundref="_item_8h" startline="10">Less</references>
+      </memberdef>
+      <memberdef kind="function" id="class_model_1_1_configuration_a37d4d725a5213eb2f222d04ffd48d0c9_1a37d4d725a5213eb2f222d04ffd48d0c9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::cmpEqual</definition>
+        <argsstring>(CompareResult r) const</argsstring>
+        <name>cmpEqual</name>
+        <qualifiedname>Model::Configuration::cmpEqual</qualifiedname>
+        <param>
+          <type><ref refid="class_model_1_1_configuration_af14b794f35942d44923706fc26502bdb_1af14b794f35942d44923706fc26502bdb" kindref="member">CompareResult</ref></type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="87" column="10" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="87" bodyend="90"/>
+        <references refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" compoundref="mathic_2src_2divsim_2stdinc_8h" startline="53">ASSERT</references>
+        <references refid="_item_8h_af701370a338671ae24da9926dd39487d_1af701370a338671ae24da9926dd39487da4c2ccc0164cc7fc1102a4b69361acd1e" compoundref="_item_8h" startline="10">Equal</references>
+        <references refid="class_model_1_1_configuration_ad69a87793819a748bea2f469c29c4c8b_1ad69a87793819a748bea2f469c29c4c8b" compoundref="_model_8h" startline="99">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::supportDeduplication</references>
+      </memberdef>
+      <memberdef kind="function" id="class_model_1_1_configuration_a7619b0354ce5671fedb35068603d86b4_1a7619b0354ce5671fedb35068603d86b4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_model_1_1_configuration_acb6051d6e3b77a53bb0a3ffdbbf6e5e7_1acb6051d6e3b77a53bb0a3ffdbbf6e5e7" kindref="member">Entry</ref></type>
+        <definition>Entry Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::deduplicate</definition>
+        <argsstring>(const Entry &amp;a, const Entry &amp;b) const</argsstring>
+        <name>deduplicate</name>
+        <qualifiedname>Model::Configuration::deduplicate</qualifiedname>
+        <param>
+          <type>const <ref refid="class_model_1_1_configuration_acb6051d6e3b77a53bb0a3ffdbbf6e5e7_1acb6051d6e3b77a53bb0a3ffdbbf6e5e7" kindref="member">Entry</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_model_1_1_configuration_acb6051d6e3b77a53bb0a3ffdbbf6e5e7_1acb6051d6e3b77a53bb0a3ffdbbf6e5e7" kindref="member">Entry</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="91" column="11" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="91" bodyend="94"/>
+        <references refid="class_model_1_1_configuration_ae0a063171b8be47711ff35094b927e58_1ae0a063171b8be47711ff35094b927e58" compoundref="_model_8h" startline="103">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::_pending</references>
+        <references refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" compoundref="mathic_2src_2divsim_2stdinc_8h" startline="53">ASSERT</references>
+        <references refid="namespace_model_helper_aae4ab6fcef2dbcf710154807d1cb8c96_1aae4ab6fcef2dbcf710154807d1cb8c96" compoundref="_model_8h" startline="189" endline="191">ModelHelper::deduplicate</references>
+        <references refid="class_model_1_1_configuration_ad69a87793819a748bea2f469c29c4c8b_1ad69a87793819a748bea2f469c29c4c8b" compoundref="_model_8h" startline="99">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::supportDeduplication</references>
+      </memberdef>
+      <memberdef kind="function" id="class_model_1_1_configuration_acc12c7ebba31506c9648b3cb08044f06_1acc12c7ebba31506c9648b3cb08044f06" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="class_model_1_1_configuration_acb6051d6e3b77a53bb0a3ffdbbf6e5e7_1acb6051d6e3b77a53bb0a3ffdbbf6e5e7" kindref="member">Entry</ref> &gt; &amp;</type>
+        <definition>std::vector&lt; Entry &gt; &amp; Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::getPending</definition>
+        <argsstring>()</argsstring>
+        <name>getPending</name>
+        <qualifiedname>Model::Configuration::getPending</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="96" column="17" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="96" bodyend="96"/>
+        <references refid="class_model_1_1_configuration_ae0a063171b8be47711ff35094b927e58_1ae0a063171b8be47711ff35094b927e58" compoundref="_model_8h" startline="103">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::_pending</references>
+      </memberdef>
+      <memberdef kind="function" id="class_model_1_1_configuration_a4e0733dcfd0fa480969f7e48db408b11_1a4e0733dcfd0fa480969f7e48db408b11" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::getComparisons</definition>
+        <argsstring>() const</argsstring>
+        <name>getComparisons</name>
+        <qualifiedname>Model::Configuration::getComparisons</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="97" column="12" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="97" bodyend="97"/>
+        <references refid="class_model_1_1_configuration_a91867916de240faefe2c208955dfbe54_1a91867916de240faefe2c208955dfbe54" compoundref="_model_8h" startline="102">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::_comparisons</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>ConfigurationBase</label>
+        <link refid="class_configuration_base"/>
+      </node>
+      <node id="1">
+        <label>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration</label>
+        <link refid="class_model_1_1_configuration"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>ConfigurationBase</label>
+        <link refid="class_configuration_base"/>
+      </node>
+      <node id="1">
+        <label>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration</label>
+        <link refid="class_model_1_1_configuration"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>supportDeduplication</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_comparisons</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_pending</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>T</label>
+      </node>
+      <node id="3">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="4">
+        <label>size_t</label>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; Entry &gt;</label>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; Entry &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/pqsim/Model.h" line="72" column="3" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="72" bodyend="104"/>
+    <listofallmembers>
+      <member refid="class_model_1_1_configuration_a91867916de240faefe2c208955dfbe54_1a91867916de240faefe2c208955dfbe54" prot="private" virt="non-virtual"><scope>Model::Configuration</scope><name>_comparisons</name></member>
+      <member refid="class_model_1_1_configuration_ae0a063171b8be47711ff35094b927e58_1ae0a063171b8be47711ff35094b927e58" prot="private" virt="non-virtual"><scope>Model::Configuration</scope><name>_pending</name></member>
+      <member refid="class_model_1_1_configuration_a37d4d725a5213eb2f222d04ffd48d0c9_1a37d4d725a5213eb2f222d04ffd48d0c9" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>cmpEqual</name></member>
+      <member refid="class_model_1_1_configuration_a8b5b32fe806fc9de40e620772d939c39_1a8b5b32fe806fc9de40e620772d939c39" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>cmpLessThan</name></member>
+      <member refid="class_model_1_1_configuration_aa348b993634b467300d795636fb69228_1aa348b993634b467300d795636fb69228" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>compare</name></member>
+      <member refid="class_model_1_1_configuration_af14b794f35942d44923706fc26502bdb_1af14b794f35942d44923706fc26502bdb" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>CompareResult</name></member>
+      <member refid="class_model_1_1_configuration_a6254e016d4acdd3e9dca28cb6a102303_1a6254e016d4acdd3e9dca28cb6a102303" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>Configuration</name></member>
+      <member refid="class_model_1_1_configuration_aa326e495cb775393369995c96518f78b_1aa326e495cb775393369995c96518f78b" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>Configuration</name></member>
+      <member refid="class_model_1_1_configuration_a7619b0354ce5671fedb35068603d86b4_1a7619b0354ce5671fedb35068603d86b4" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>deduplicate</name></member>
+      <member refid="class_model_1_1_configuration_acb6051d6e3b77a53bb0a3ffdbbf6e5e7_1acb6051d6e3b77a53bb0a3ffdbbf6e5e7" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>Entry</name></member>
+      <member refid="class_model_1_1_configuration_a4e0733dcfd0fa480969f7e48db408b11_1a4e0733dcfd0fa480969f7e48db408b11" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>getComparisons</name></member>
+      <member refid="class_model_1_1_configuration_acc12c7ebba31506c9648b3cb08044f06_1acc12c7ebba31506c9648b3cb08044f06" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>getPending</name></member>
+      <member refid="class_model_1_1_configuration_ad69a87793819a748bea2f469c29c4c8b_1ad69a87793819a748bea2f469c29c4c8b" prot="public" virt="non-virtual"><scope>Model::Configuration</scope><name>supportDeduplication</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

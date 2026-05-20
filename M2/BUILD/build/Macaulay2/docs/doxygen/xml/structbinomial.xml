@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structbinomial" kind="struct" language="C++" prot="public">
+    <compoundname>binomial</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="gb-toric_8hpp" local="no">gb-toric.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbinomial_adb38e3fb26ecd665587bcec7a4f757a7_1adb38e3fb26ecd665587bcec7a4f757a7" prot="public" static="no" mutable="no">
+        <type><ref refid="gb-toric_8hpp_a3667498ea82610ba25996f8ccd3d1dc5_1a3667498ea82610ba25996f8ccd3d1dc5" kindref="member">monomial0</ref></type>
+        <definition>monomial0 binomial::lead</definition>
+        <argsstring></argsstring>
+        <name>lead</name>
+        <qualifiedname>binomial::lead</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="49" column="13" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="49" bodyend="-1"/>
+        <referencedby refid="structbinomial_ae46efe880210eaf8b2fbb65fa95ab387_1ae46efe880210eaf8b2fbb65fa95ab387" compoundref="gb-toric_8hpp" startline="52" endline="52">binomial</referencedby>
+        <referencedby refid="structbinomial_a4c0df96ae12caedd69bb50291495967c_1a4c0df96ae12caedd69bb50291495967c" compoundref="gb-toric_8hpp" startline="53" endline="53">binomial</referencedby>
+        <referencedby refid="classbinomial__ring_aee89872ca6567e526cc0138ac7d9be68_1aee89872ca6567e526cc0138ac7d9be68" compoundref="gb-toric_8cpp" startline="311" endline="317">binomial_ring::binomial_to_vector</referencedby>
+        <referencedby refid="classbinomial__ring_a8618caff47a6f7c4a73f96eff9dfad3b_1a8618caff47a6f7c4a73f96eff9dfad3b" compoundref="gb-toric_8cpp" startline="318" endline="336">binomial_ring::binomial_to_vector</referencedby>
+        <referencedby refid="classbinomial__ring_a58e003888dfe91554946d7a8fc768d47_1a58e003888dfe91554946d7a8fc768d47" compoundref="gb-toric_8cpp" startline="406" endline="417">binomial_ring::calc_s_pair</referencedby>
+        <referencedby refid="classbinomial__ring_ad9524d4d5932e6246267ab3b04abf111_1ad9524d4d5932e6246267ab3b04abf111" compoundref="gb-toric_8cpp" startline="105" endline="108">binomial_ring::copy_binomial</referencedby>
+        <referencedby refid="classbinomial__ring_a0b54599866149ed6e117e76156f9d2be_1a0b54599866149ed6e117e76156f9d2be" compoundref="gb-toric_8cpp" startline="430" endline="436">binomial_ring::elem_text_out</referencedby>
+        <referencedby refid="classbinomial__ring_adbabed5b8e0dd26349c0a017a95fc423_1adbabed5b8e0dd26349c0a017a95fc423" compoundref="gb-toric_8cpp" startline="185" endline="188">binomial_ring::gcd_is_one</referencedby>
+        <referencedby refid="classbinomial_g_b_aaafd0bb2e5e73f7ca55c31a8e8bcfb81_1aaafd0bb2e5e73f7ca55c31a8e8bcfb81" compoundref="gb-toric_8cpp" startline="735" endline="794">binomialGB::ideal_quotient</referencedby>
+        <referencedby refid="classbinomial__ring_ab67df61e9ddf6f8c911045515d5a24b0_1ab67df61e9ddf6f8c911045515d5a24b0" compoundref="gb-toric_8hpp" startline="142" endline="142">binomial_ring::lead_monomial</referencedby>
+        <referencedby refid="classbinomial_g_b_af9eef7673c48c15fab53b12f53daad49_1af9eef7673c48c15fab53b12f53daad49" compoundref="gb-toric_8cpp" startline="796" endline="834">binomialGB::make_new_pairs</referencedby>
+        <referencedby refid="classbinomial_g_b_ab4dc57aeae47627ac34f39f84c45c5f1_1ab4dc57aeae47627ac34f39f84c45c5f1" compoundref="gb-toric_8cpp" startline="681" endline="718">binomialGB::minimalize_and_insert</referencedby>
+        <referencedby refid="classbinomial_g_b__comp_a9e8f7ab5aa010dbd7d276eb9c19edd66_1a9e8f7ab5aa010dbd7d276eb9c19edd66" compoundref="gb-toric_8cpp" startline="1096" endline="1157">binomialGB_comp::process_pair</referencedby>
+        <referencedby refid="classbinomial_g_b_a5004e8d4974fa97fb5eb1201c7a52863_1a5004e8d4974fa97fb5eb1201c7a52863" compoundref="gb-toric_8cpp" startline="884" endline="901">binomialGB::reduce</referencedby>
+        <referencedby refid="classbinomial__ring_a2eab32043f7aaf46b6edf111aafd9c22_1a2eab32043f7aaf46b6edf111aafd9c22" compoundref="gb-toric_8cpp" startline="95" endline="99">binomial_ring::remove_binomial</referencedby>
+        <referencedby refid="classbinomial__ring_a8d6531914dbf11d471a0f8ea03f6b935_1a8d6531914dbf11d471a0f8ea03f6b935" compoundref="gb-toric_8cpp" startline="190" endline="221">binomial_ring::remove_content</referencedby>
+        <referencedby refid="classbinomial__ring_a832a384d43a86e560886acdb713586bc_1a832a384d43a86e560886acdb713586bc" compoundref="gb-toric_8cpp" startline="296" endline="301">binomial_ring::translate_binomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structbinomial_a9973eac10b3da654305bb7741d8bec5c_1a9973eac10b3da654305bb7741d8bec5c" prot="public" static="no" mutable="no">
+        <type><ref refid="gb-toric_8hpp_a3667498ea82610ba25996f8ccd3d1dc5_1a3667498ea82610ba25996f8ccd3d1dc5" kindref="member">monomial0</ref></type>
+        <definition>monomial0 binomial::tail</definition>
+        <argsstring></argsstring>
+        <name>tail</name>
+        <qualifiedname>binomial::tail</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="50" column="13" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="50" bodyend="-1"/>
+        <referencedby refid="structbinomial_ae46efe880210eaf8b2fbb65fa95ab387_1ae46efe880210eaf8b2fbb65fa95ab387" compoundref="gb-toric_8hpp" startline="52" endline="52">binomial</referencedby>
+        <referencedby refid="structbinomial_a4c0df96ae12caedd69bb50291495967c_1a4c0df96ae12caedd69bb50291495967c" compoundref="gb-toric_8hpp" startline="53" endline="53">binomial</referencedby>
+        <referencedby refid="classbinomial__ring_aee89872ca6567e526cc0138ac7d9be68_1aee89872ca6567e526cc0138ac7d9be68" compoundref="gb-toric_8cpp" startline="311" endline="317">binomial_ring::binomial_to_vector</referencedby>
+        <referencedby refid="classbinomial__ring_a8618caff47a6f7c4a73f96eff9dfad3b_1a8618caff47a6f7c4a73f96eff9dfad3b" compoundref="gb-toric_8cpp" startline="318" endline="336">binomial_ring::binomial_to_vector</referencedby>
+        <referencedby refid="classbinomial__ring_a58e003888dfe91554946d7a8fc768d47_1a58e003888dfe91554946d7a8fc768d47" compoundref="gb-toric_8cpp" startline="406" endline="417">binomial_ring::calc_s_pair</referencedby>
+        <referencedby refid="classbinomial__ring_ad9524d4d5932e6246267ab3b04abf111_1ad9524d4d5932e6246267ab3b04abf111" compoundref="gb-toric_8cpp" startline="105" endline="108">binomial_ring::copy_binomial</referencedby>
+        <referencedby refid="classbinomial__ring_a0b54599866149ed6e117e76156f9d2be_1a0b54599866149ed6e117e76156f9d2be" compoundref="gb-toric_8cpp" startline="430" endline="436">binomial_ring::elem_text_out</referencedby>
+        <referencedby refid="classbinomial__ring_adbabed5b8e0dd26349c0a017a95fc423_1adbabed5b8e0dd26349c0a017a95fc423" compoundref="gb-toric_8cpp" startline="185" endline="188">binomial_ring::gcd_is_one</referencedby>
+        <referencedby refid="classbinomial_g_b_af9eef7673c48c15fab53b12f53daad49_1af9eef7673c48c15fab53b12f53daad49" compoundref="gb-toric_8cpp" startline="796" endline="834">binomialGB::make_new_pairs</referencedby>
+        <referencedby refid="classbinomial_g_b_a5004e8d4974fa97fb5eb1201c7a52863_1a5004e8d4974fa97fb5eb1201c7a52863" compoundref="gb-toric_8cpp" startline="884" endline="901">binomialGB::reduce</referencedby>
+        <referencedby refid="classbinomial__ring_a2eab32043f7aaf46b6edf111aafd9c22_1a2eab32043f7aaf46b6edf111aafd9c22" compoundref="gb-toric_8cpp" startline="95" endline="99">binomial_ring::remove_binomial</referencedby>
+        <referencedby refid="classbinomial__ring_a8d6531914dbf11d471a0f8ea03f6b935_1a8d6531914dbf11d471a0f8ea03f6b935" compoundref="gb-toric_8cpp" startline="190" endline="221">binomial_ring::remove_content</referencedby>
+        <referencedby refid="classbinomial__ring_a832a384d43a86e560886acdb713586bc_1a832a384d43a86e560886acdb713586bc" compoundref="gb-toric_8cpp" startline="296" endline="301">binomial_ring::translate_binomial</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structbinomial_ae46efe880210eaf8b2fbb65fa95ab387_1ae46efe880210eaf8b2fbb65fa95ab387" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>binomial::binomial</definition>
+        <argsstring>()</argsstring>
+        <name>binomial</name>
+        <qualifiedname>binomial::binomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="52" column="3" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="52" bodyend="52"/>
+        <references refid="structbinomial_adb38e3fb26ecd665587bcec7a4f757a7_1adb38e3fb26ecd665587bcec7a4f757a7" compoundref="gb-toric_8hpp" startline="49">lead</references>
+        <references refid="structbinomial_a9973eac10b3da654305bb7741d8bec5c_1a9973eac10b3da654305bb7741d8bec5c" compoundref="gb-toric_8hpp" startline="50">tail</references>
+      </memberdef>
+      <memberdef kind="function" id="structbinomial_a4c0df96ae12caedd69bb50291495967c_1a4c0df96ae12caedd69bb50291495967c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>binomial::binomial</definition>
+        <argsstring>(monomial0 lead0, monomial0 tail0)</argsstring>
+        <name>binomial</name>
+        <qualifiedname>binomial::binomial</qualifiedname>
+        <param>
+          <type><ref refid="gb-toric_8hpp_a3667498ea82610ba25996f8ccd3d1dc5_1a3667498ea82610ba25996f8ccd3d1dc5" kindref="member">monomial0</ref></type>
+          <declname>lead0</declname>
+        </param>
+        <param>
+          <type><ref refid="gb-toric_8hpp_a3667498ea82610ba25996f8ccd3d1dc5_1a3667498ea82610ba25996f8ccd3d1dc5" kindref="member">monomial0</ref></type>
+          <declname>tail0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="53" column="3" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="53" bodyend="53"/>
+        <references refid="structbinomial_adb38e3fb26ecd665587bcec7a4f757a7_1adb38e3fb26ecd665587bcec7a4f757a7" compoundref="gb-toric_8hpp" startline="49">lead</references>
+        <references refid="structbinomial_a9973eac10b3da654305bb7741d8bec5c_1a9973eac10b3da654305bb7741d8bec5c" compoundref="gb-toric_8hpp" startline="50">tail</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>binomial</label>
+        <link refid="structbinomial"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>binomial</label>
+        <link refid="structbinomial"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>lead</edgelabel>
+          <edgelabel>tail</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-toric.hpp" line="47" column="1" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="48" bodyend="54"/>
+    <listofallmembers>
+      <member refid="structbinomial_ae46efe880210eaf8b2fbb65fa95ab387_1ae46efe880210eaf8b2fbb65fa95ab387" prot="public" virt="non-virtual"><scope>binomial</scope><name>binomial</name></member>
+      <member refid="structbinomial_a4c0df96ae12caedd69bb50291495967c_1a4c0df96ae12caedd69bb50291495967c" prot="public" virt="non-virtual"><scope>binomial</scope><name>binomial</name></member>
+      <member refid="structbinomial_adb38e3fb26ecd665587bcec7a4f757a7_1adb38e3fb26ecd665587bcec7a4f757a7" prot="public" virt="non-virtual"><scope>binomial</scope><name>lead</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>binomial</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>binomial</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>binomial</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>binomial</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>binomial</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>binomial</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>binomial</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>binomial</scope><name>operator new[]</name></member>
+      <member refid="structbinomial_a9973eac10b3da654305bb7741d8bec5c_1a9973eac10b3da654305bb7741d8bec5c" prot="public" virt="non-virtual"><scope>binomial</scope><name>tail</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

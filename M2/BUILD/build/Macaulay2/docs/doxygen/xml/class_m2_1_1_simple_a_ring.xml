@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m2_1_1_simple_a_ring" kind="class" language="C++" prot="public">
+    <compoundname>M2::SimpleARing</compoundname>
+    <basecompoundref refid="class_m2_1_1_ring_interface" prot="public" virt="non-virtual">M2::RingInterface</basecompoundref>
+    <includes refid="aring_8hpp" local="no">aring.hpp</includes>
+    <innerclass refid="class_m2_1_1_simple_a_ring_1_1_element" prot="public">M2::SimpleARing::Element</innerclass>
+    <innerclass refid="class_m2_1_1_simple_a_ring_1_1_element_array" prot="public">M2::SimpleARing::ElementArray</innerclass>
+    <templateparamlist>
+      <param>
+        <type>class <ref refid="class_a_ring" kindref="compound">ARing</ref></type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+<para>A base class for simple ARings. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>An <ref refid="class_a_ring" kindref="compound">ARing</ref> class inheriting from this should provide the clear method as a static member function. This class will then provide a simple implementation of an <ref refid="class_m2_1_1_simple_a_ring_1_1_element" kindref="compound">Element</ref> class </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="5">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>M2::ARingCC</label>
+        <link refid="class_m2_1_1_a_ring_c_c"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>M2::ARingCCC</label>
+        <link refid="class_m2_1_1_a_ring_c_c_c"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>M2::ARingCCi</label>
+        <link refid="class_m2_1_1_a_ring_c_ci"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>M2::ARingGFM2</label>
+        <link refid="class_m2_1_1_a_ring_g_f_m2"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>M2::ARingQQFlint</label>
+        <link refid="class_m2_1_1_a_ring_q_q_flint"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>M2::ARingQQGMP</label>
+        <link refid="class_m2_1_1_a_ring_q_q_g_m_p"/>
+        <childnode refid="16" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>M2::ARingRR</label>
+        <link refid="class_m2_1_1_a_ring_r_r"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>M2::ARingRRR</label>
+        <link refid="class_m2_1_1_a_ring_r_r_r"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>M2::ARingRRi</label>
+        <link refid="class_m2_1_1_a_ring_r_ri"/>
+        <childnode refid="22" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>M2::ARingZZ</label>
+        <link refid="class_m2_1_1_a_ring_z_z"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>M2::ARingZZGMP</label>
+        <link refid="class_m2_1_1_a_ring_z_z_g_m_p"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>M2::ARingZZp</label>
+        <link refid="class_m2_1_1_a_ring_z_zp"/>
+        <childnode refid="28" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>M2::ARingZZpFFPACK</label>
+        <link refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k"/>
+        <childnode refid="30" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>M2::ARingZZpFlint</label>
+        <link refid="class_m2_1_1_a_ring_z_zp_flint"/>
+        <childnode refid="32" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>M2::DummyRing</label>
+        <link refid="class_m2_1_1_dummy_ring"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>M2::SimpleARing&lt; ARingCC &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingCC &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>M2::SimpleARing&lt; ARingCCC &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingCCC &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>M2::SimpleARing&lt; ARingCCi &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingCCi &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>M2::SimpleARing&lt; ARingGFM2 &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingGFM2 &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>M2::SimpleARing&lt; ARingQQFlint &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingQQFlint &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>M2::SimpleARing&lt; ARingQQGMP &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingQQGMP &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>M2::SimpleARing&lt; ARingRR &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingRR &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>M2::SimpleARing&lt; ARingRRR &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingRRR &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>M2::SimpleARing&lt; ARingRRi &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingRRi &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>M2::SimpleARing&lt; ARingZZ &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingZZ &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>M2::SimpleARing&lt; ARingZZGMP &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingZZGMP &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>M2::SimpleARing&lt; ARingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>M2::SimpleARing&lt; ARingZZpFFPACK &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingZZpFFPACK &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>M2::SimpleARing&lt; ARingZZpFlint &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ARingZZpFlint &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>M2::SimpleARing&lt; DummyRing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; DummyRing &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/aring.hpp" line="144" column="1" bodyfile="Macaulay2/e/aring.hpp" bodystart="145" bodyend="195"/>
+    <listofallmembers>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>M2::SimpleARing</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>M2::SimpleARing</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>M2::SimpleARing</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>M2::SimpleARing</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>M2::SimpleARing</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>M2::SimpleARing</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>M2::SimpleARing</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>M2::SimpleARing</scope><name>operator new[]</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

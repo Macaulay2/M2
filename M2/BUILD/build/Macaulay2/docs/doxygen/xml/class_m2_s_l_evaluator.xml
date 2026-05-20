@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m2_s_l_evaluator" kind="class" language="C++" prot="public">
+    <compoundname>M2SLEvaluator</compoundname>
+    <basecompoundref refid="class_mutable_engine_object" prot="public" virt="non-virtual">MutableEngineObject</basecompoundref>
+    <includes refid="_s_l_p-defs_8hpp" local="no">SLP-defs.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_m2_s_l_evaluator_ace00492ba24d414a9d1d38b70660fa5e_1ace00492ba24d414a9d1d38b70660fa5e" prot="private" static="no" mutable="no">
+        <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> *</type>
+        <definition>SLEvaluator* M2SLEvaluator::mSLEvaluator</definition>
+        <argsstring></argsstring>
+        <name>mSLEvaluator</name>
+        <qualifiedname>M2SLEvaluator::mSLEvaluator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="227" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="227" bodyend="-1"/>
+        <referencedby refid="class_m2_s_l_evaluator_a08911729e302c7190f6f35d8fdb22af8_1a08911729e302c7190f6f35d8fdb22af8" compoundref="_s_l_p-defs_8hpp" startline="230" endline="230">M2SLEvaluator</referencedby>
+        <referencedby refid="class_m2_s_l_evaluator_a948a2db6aa407dfb5555d616387e7e15_1a948a2db6aa407dfb5555d616387e7e15" compoundref="_s_l_p-defs_8hpp" startline="232" endline="232">value</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_m2_s_l_evaluator_a08911729e302c7190f6f35d8fdb22af8_1a08911729e302c7190f6f35d8fdb22af8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2SLEvaluator::M2SLEvaluator</definition>
+        <argsstring>(SLEvaluator *pa)</argsstring>
+        <name>M2SLEvaluator</name>
+        <qualifiedname>M2SLEvaluator::M2SLEvaluator</qualifiedname>
+        <param>
+          <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> *</type>
+          <declname>pa</declname>
+        </param>
+        <briefdescription>
+<para>!! this is a hack to avoid memory corruption, it results in a memory leak </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="230" column="3" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="230" bodyend="230"/>
+        <references refid="class_m2_s_l_evaluator_ace00492ba24d414a9d1d38b70660fa5e_1ace00492ba24d414a9d1d38b70660fa5e" compoundref="_s_l_p-defs_8hpp" startline="227">mSLEvaluator</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_s_l_evaluator_a948a2db6aa407dfb5555d616387e7e15_1a948a2db6aa407dfb5555d616387e7e15" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> &amp;</type>
+        <definition>SLEvaluator &amp; M2SLEvaluator::value</definition>
+        <argsstring>()</argsstring>
+        <name>value</name>
+        <qualifiedname>M2SLEvaluator::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="232" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="232" bodyend="232"/>
+        <references refid="class_m2_s_l_evaluator_ace00492ba24d414a9d1d38b70660fa5e_1ace00492ba24d414a9d1d38b70660fa5e" compoundref="_s_l_p-defs_8hpp" startline="227">mSLEvaluator</references>
+        <referencedby refid="interface_2matrix_8cpp_ac3db72a9b8a8b83a49bfc791afb1c591_1ac3db72a9b8a8b83a49bfc791afb1c591" compoundref="interface_2matrix_8cpp" startline="831" endline="841">rawHomotopy</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a55ad5ab11336cf2a3d498a27fc868085_1a55ad5ab11336cf2a3d498a27fc868085" compoundref="interface_2matrix_8cpp" startline="906" endline="916">rawSLEvaluatorEvaluate</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a33b02407e301b46a7459b631de38a8c1_1a33b02407e301b46a7459b631de38a8c1" compoundref="interface_2matrix_8cpp" startline="894" endline="904">rawSLEvaluatorSpecialize</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_ac169477b9ebd18487a6e0b1d33273b6a_1ac169477b9ebd18487a6e0b1d33273b6a" compoundref="interface_2matrix_8cpp" startline="918" endline="923">rawSLEvaluatorToString</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_mutable_engine_object" kindref="compound">MutableEngineObject</ref></computeroutput> wrapper holding a raw <computeroutput>SLEvaluator*</computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Stores a raw pointer rather than <computeroutput>unique_ptr</computeroutput> <mdash/> per the inline comment, this is a deliberate leak that avoids a heap-corruption bug triggered when ownership is transferred. <computeroutput><ref refid="class_m2_s_l_evaluator_a948a2db6aa407dfb5555d616387e7e15_1a948a2db6aa407dfb5555d616387e7e15" kindref="member">value()</ref></computeroutput> returns the underlying abstract evaluator for engine code that needs to call <computeroutput>evaluate</computeroutput> / <computeroutput>specialize</computeroutput> directly. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>M2SLEvaluator</label>
+        <link refid="class_m2_s_l_evaluator"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>M2SLEvaluator</label>
+        <link refid="class_m2_s_l_evaluator"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mSLEvaluator</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>SLEvaluator</label>
+        <link refid="class_s_l_evaluator"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>slp</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>inputPositionsIt</edgelabel>
+          <edgelabel>numInputsIt</edgelabel>
+          <edgelabel>varsPos</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>nIt</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>SLProgram</label>
+        <link refid="class_s_l_program"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mNodes</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mInputPositions</edgelabel>
+          <edgelabel>mNumInputs</edgelabel>
+          <edgelabel>mOutputPositions</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>inputCounter</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>GATE_TYPE</label>
+      </node>
+      <node id="11">
+        <label>T</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>std::vector&lt; GATE_TYPE &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; SLProgram::GATE_TYPE &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; SLProgram::GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/SLP-defs.hpp" line="225" column="1" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="226" bodyend="233"/>
+    <listofallmembers>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>hash</name></member>
+      <member refid="class_m2_s_l_evaluator_a08911729e302c7190f6f35d8fdb22af8_1a08911729e302c7190f6f35d8fdb22af8" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>M2SLEvaluator</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>M2SLEvaluator</scope><name>mHashValue</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>M2SLEvaluator</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_m2_s_l_evaluator_ace00492ba24d414a9d1d38b70660fa5e_1ace00492ba24d414a9d1d38b70660fa5e" prot="private" virt="non-virtual"><scope>M2SLEvaluator</scope><name>mSLEvaluator</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>MutableEngineObject</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_m2_s_l_evaluator_a948a2db6aa407dfb5555d616387e7e15_1a948a2db6aa407dfb5555d616387e7e15" prot="public" virt="non-virtual"><scope>M2SLEvaluator</scope><name>value</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>M2SLEvaluator</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>M2SLEvaluator</scope><name>~our_gc_cleanup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1853 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="res-schreyer-frame_8hpp" kind="file" language="C++">
+    <compoundname>res-schreyer-frame.hpp</compoundname>
+    <includes refid="m2tbb_8hpp" local="yes">m2tbb.hpp</includes>
+    <includes refid="betti_8hpp" local="yes">betti.hpp</includes>
+    <includes refid="m2-types_8h" local="yes">interface/m2-types.h</includes>
+    <includes refid="res-memblock_8hpp" local="yes">schreyer-resolution/res-memblock.hpp</includes>
+    <includes refid="res-moninfo_8hpp" local="yes">schreyer-resolution/res-moninfo.hpp</includes>
+    <includes refid="res-monomial-types_8hpp" local="yes">schreyer-resolution/res-monomial-types.hpp</includes>
+    <includes refid="res-poly-ring_8hpp" local="yes">schreyer-resolution/res-poly-ring.hpp</includes>
+    <includes refid="res-schreyer-order_8hpp" local="yes">schreyer-resolution/res-schreyer-order.hpp</includes>
+    <includes refid="res-dep-graph_8hpp" local="yes">schreyer-resolution/res-dep-graph.hpp</includes>
+    <includes local="no">utility</includes>
+    <includes local="no">vector</includes>
+    <includedby refid="res-dep-graph_8cpp" local="yes">Macaulay2/e/schreyer-resolution/res-dep-graph.cpp</includedby>
+    <includedby refid="res-f4-computation_8cpp" local="yes">Macaulay2/e/schreyer-resolution/res-f4-computation.cpp</includedby>
+    <includedby refid="res-f4-m2-interface_8cpp" local="yes">Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</includedby>
+    <includedby refid="res-f4_8cpp" local="yes">Macaulay2/e/schreyer-resolution/res-f4.cpp</includedby>
+    <includedby refid="res-schreyer-frame_8cpp" local="yes">Macaulay2/e/schreyer-resolution/res-schreyer-frame.cpp</includedby>
+    <incdepgraph>
+      <node id="40">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>MemoryBlock.hpp</label>
+        <link refid="_memory_block_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>NCAlgebras/Range.hpp</label>
+        <link refid="_macaulay2_2e_2_n_c_algebras_2_range_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="138">
+        <label>SLP-defs.hpp</label>
+        <link refid="_s_l_p-defs_8hpp"/>
+      </node>
+      <node id="140">
+        <label>SLP-imp.hpp</label>
+        <link refid="_s_l_p-imp_8hpp"/>
+        <childnode refid="141" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="142" relation="include">
+        </childnode>
+        <childnode refid="143" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>VectorArithmetic.hpp</label>
+        <link refid="_vector_arithmetic_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="145" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="124">
+        <label>ZZp.hpp</label>
+        <link refid="_z_zp_8hpp"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+      </node>
+      <node id="73">
+        <label>aring-CC.hpp</label>
+        <link refid="aring-_c_c_8hpp"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="76">
+        <label>aring-CCC.hpp</label>
+        <link refid="aring-_c_c_c_8hpp"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+      </node>
+      <node id="79">
+        <label>aring-CCi.hpp</label>
+        <link refid="aring-_c_ci_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>aring-RR.hpp</label>
+        <link refid="aring-_r_r_8hpp"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="75">
+        <label>aring-RRR.hpp</label>
+        <link refid="aring-_r_r_r_8hpp"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="77">
+        <label>aring-RRi.hpp</label>
+        <link refid="aring-_r_ri_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+      </node>
+      <node id="99">
+        <label>aring-gf-flint-big.hpp</label>
+        <link refid="aring-gf-flint-big_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="102">
+        <label>aring-gf-flint.hpp</label>
+        <link refid="aring-gf-flint_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="103" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>aring-glue.hpp</label>
+        <link refid="aring-glue_8hpp"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+      </node>
+      <node id="92">
+        <label>aring-m2-gf.hpp</label>
+        <link refid="aring-m2-gf_8hpp"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+      </node>
+      <node id="86">
+        <label>aring-qq-flint.hpp</label>
+        <link refid="aring-qq-flint_8hpp"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="90">
+        <label>aring-qq-gmp.hpp</label>
+        <link refid="aring-qq-gmp_8hpp"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="85">
+        <label>aring-qq.hpp</label>
+        <link refid="aring-qq_8hpp"/>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+      </node>
+      <node id="96">
+        <label>aring-tower.hpp</label>
+        <link refid="aring-tower_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>aring-translate.hpp</label>
+        <link refid="aring-translate_8hpp"/>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="99" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+      </node>
+      <node id="97">
+        <label>aring-zz-flint.hpp</label>
+        <link refid="aring-zz-flint_8hpp"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+      </node>
+      <node id="80">
+        <label>aring-zz-gmp.hpp</label>
+        <link refid="aring-zz-gmp_8hpp"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+      </node>
+      <node id="82">
+        <label>aring-zzp-ffpack.hpp</label>
+        <link refid="aring-zzp-ffpack_8hpp"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+      </node>
+      <node id="98">
+        <label>aring-zzp-flint.hpp</label>
+        <link refid="aring-zzp-flint_8hpp"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+      </node>
+      <node id="81">
+        <label>aring-zzp.hpp</label>
+        <link refid="aring-zzp_8hpp"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>betti.hpp</label>
+        <link refid="betti_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="125">
+        <label>coeffrings.hpp</label>
+        <link refid="coeffrings_8hpp"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+      </node>
+      <node id="119">
+        <label>dmat-gf-flint-big.hpp</label>
+        <link refid="dmat-gf-flint-big_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="99" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+      </node>
+      <node id="121">
+        <label>dmat-gf-flint.hpp</label>
+        <link refid="dmat-gf-flint_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="122" relation="include">
+        </childnode>
+      </node>
+      <node id="131">
+        <label>dmat-lu-inplace.hpp</label>
+        <link refid="dmat-lu-inplace_8hpp"/>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+      </node>
+      <node id="135">
+        <label>dmat-lu-qq.hpp</label>
+        <link refid="dmat-lu-qq_8hpp"/>
+        <childnode refid="136" relation="include">
+        </childnode>
+      </node>
+      <node id="133">
+        <label>dmat-lu-zzp-ffpack.hpp</label>
+        <link refid="dmat-lu-zzp-ffpack_8hpp"/>
+      </node>
+      <node id="134">
+        <label>dmat-lu-zzp-flint.hpp</label>
+        <link refid="dmat-lu-zzp-flint_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+      </node>
+      <node id="130">
+        <label>dmat-lu.hpp</label>
+        <link refid="dmat-lu_8hpp"/>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="131" relation="include">
+        </childnode>
+        <childnode refid="133" relation="include">
+        </childnode>
+        <childnode refid="134" relation="include">
+        </childnode>
+        <childnode refid="135" relation="include">
+        </childnode>
+      </node>
+      <node id="115">
+        <label>dmat-qq-flint.hpp</label>
+        <link refid="dmat-qq-flint_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+      </node>
+      <node id="136">
+        <label>dmat-qq-interface-flint.hpp</label>
+        <link refid="dmat-qq-interface-flint_8hpp"/>
+      </node>
+      <node id="113">
+        <label>dmat-zz-flint.hpp</label>
+        <link refid="dmat-zz-flint_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+      </node>
+      <node id="117">
+        <label>dmat-zzp-flint.hpp</label>
+        <link refid="dmat-zzp-flint_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+      </node>
+      <node id="109">
+        <label>dmat.hpp</label>
+        <link refid="dmat_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="113" relation="include">
+        </childnode>
+        <childnode refid="115" relation="include">
+        </childnode>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+      </node>
+      <node id="137">
+        <label>eigen.hpp</label>
+        <link refid="eigen_8hpp"/>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="47">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="94">
+        <label>interface/computation.h</label>
+        <link refid="computation_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="74">
+        <label>interface/gmp-util.h</label>
+        <link refid="gmp-util_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>interface/random.h</label>
+        <link refid="random_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="129">
+        <label>lapack.hpp</label>
+        <link refid="lapack_8hpp"/>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>m2tbb.hpp</label>
+        <link refid="m2tbb_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="127">
+        <label>mat-arith.hpp</label>
+        <link refid="mat-arith_8hpp"/>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+      </node>
+      <node id="126">
+        <label>mat-elem-ops.hpp</label>
+        <link refid="mat-elem-ops_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="128">
+        <label>mat-linalg.hpp</label>
+        <link refid="mat-linalg_8hpp"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="99" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="129" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="136" relation="include">
+        </childnode>
+        <childnode refid="137" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+      </node>
+      <node id="110">
+        <label>mat-util.hpp</label>
+        <link refid="mat-util_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="111" relation="include">
+        </childnode>
+      </node>
+      <node id="106">
+        <label>mat.hpp</label>
+        <link refid="mat_8hpp"/>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="108">
+        <label>matrix-con.hpp</label>
+        <link refid="matrix-con_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
+      <node id="105">
+        <label>mutablemat-defs.hpp</label>
+        <link refid="mutablemat-defs_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="106" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+      </node>
+      <node id="139">
+        <label>mutablemat-imp.hpp</label>
+        <link refid="mutablemat-imp_8hpp"/>
+      </node>
+      <node id="104">
+        <label>mutablemat.hpp</label>
+        <link refid="mutablemat_8hpp"/>
+        <childnode refid="105" relation="include">
+        </childnode>
+        <childnode refid="138" relation="include">
+        </childnode>
+        <childnode refid="139" relation="include">
+        </childnode>
+        <childnode refid="140" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="93">
+        <label>polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="95" relation="include">
+        </childnode>
+      </node>
+      <node id="95">
+        <label>qring.hpp</label>
+        <link refid="qring_8hpp"/>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="107">
+        <label>relem.hpp</label>
+        <link refid="relem_8hpp"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>ringmap.hpp</label>
+        <link refid="ringmap_8hpp"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="147">
+        <label>schreyer-resolution/res-dep-graph.hpp</label>
+        <link refid="res-dep-graph_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>schreyer-resolution/res-memblock.hpp</label>
+        <link refid="res-memblock_8hpp"/>
+      </node>
+      <node id="36">
+        <label>schreyer-resolution/res-moninfo-dense.hpp</label>
+        <link refid="res-moninfo-dense_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>schreyer-resolution/res-moninfo-sparse.hpp</label>
+        <link refid="res-moninfo-sparse_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>schreyer-resolution/res-moninfo.hpp</label>
+        <link refid="res-moninfo_8hpp"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>schreyer-resolution/res-monomial-types.hpp</label>
+        <link refid="res-monomial-types_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>schreyer-resolution/res-poly-ring.hpp</label>
+        <link refid="res-poly-ring_8hpp"/>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp</label>
+        <link refid="res-schreyer-frame_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="146" relation="include">
+        </childnode>
+        <childnode refid="147" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="146">
+        <label>schreyer-resolution/res-schreyer-order.hpp</label>
+        <link refid="res-schreyer-order_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="123">
+        <label>smat.hpp</label>
+        <link refid="smat_8hpp"/>
+        <childnode refid="124" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="111">
+        <label>text-io.hpp</label>
+        <link refid="text-io_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="143">
+        <label>timing.hpp</label>
+        <link refid="timing_8hpp"/>
+        <childnode refid="144" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mathicgb/mtbb.hpp</label>
+        <link refid="mtbb_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>memtailor.h</label>
+        <link refid="memtailor_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>memtailor/Arena.h</label>
+        <link refid="_arena_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>memtailor/ArenaVector.h</label>
+        <link refid="_arena_vector_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>memtailor/BufferPool.h</label>
+        <link refid="_buffer_pool_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>MemoryBlocks.h</label>
+        <link refid="_memory_blocks_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>stdinc.h</label>
+        <link refid="memtailor_2src_2memtailor_2stdinc_8h"/>
+      </node>
+      <node id="3">
+        <label>M2/config.h</label>
+      </node>
+      <node id="14">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="20">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="112">
+        <label>algorithm</label>
+      </node>
+      <node id="43">
+        <label>assert.h</label>
+      </node>
+      <node id="49">
+        <label>cassert</label>
+      </node>
+      <node id="144">
+        <label>chrono</label>
+      </node>
+      <node id="26">
+        <label>cstddef</label>
+      </node>
+      <node id="39">
+        <label>cstdint</label>
+      </node>
+      <node id="41">
+        <label>cstdio</label>
+      </node>
+      <node id="141">
+        <label>cstdlib</label>
+      </node>
+      <node id="142">
+        <label>dlfcn.h</label>
+      </node>
+      <node id="84">
+        <label>fflas-ffpack/ffpack/ffpack.h</label>
+      </node>
+      <node id="87">
+        <label>flint/flint.h</label>
+      </node>
+      <node id="88">
+        <label>flint/fmpq.h</label>
+      </node>
+      <node id="116">
+        <label>flint/fmpq_mat.h</label>
+      </node>
+      <node id="89">
+        <label>flint/fmpz.h</label>
+      </node>
+      <node id="114">
+        <label>flint/fmpz_mat.h</label>
+      </node>
+      <node id="100">
+        <label>flint/fq_nmod.h</label>
+      </node>
+      <node id="120">
+        <label>flint/fq_nmod_mat.h</label>
+      </node>
+      <node id="103">
+        <label>flint/fq_zech.h</label>
+      </node>
+      <node id="122">
+        <label>flint/fq_zech_mat.h</label>
+      </node>
+      <node id="118">
+        <label>flint/nmod_mat.h</label>
+      </node>
+      <node id="101">
+        <label>flint/nmod_poly.h</label>
+      </node>
+      <node id="132">
+        <label>flint/perm.h</label>
+      </node>
+      <node id="15">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="91">
+        <label>iosfwd</label>
+      </node>
+      <node id="37">
+        <label>iostream</label>
+      </node>
+      <node id="27">
+        <label>memory</label>
+      </node>
+      <node id="78">
+        <label>mpfi.h</label>
+      </node>
+      <node id="7">
+        <label>mutex</label>
+      </node>
+      <node id="28">
+        <label>new</label>
+      </node>
+      <node id="83">
+        <label>ratio</label>
+      </node>
+      <node id="60">
+        <label>stddef.h</label>
+      </node>
+      <node id="48">
+        <label>stdexcept</label>
+      </node>
+      <node id="19">
+        <label>stdint.h</label>
+      </node>
+      <node id="12">
+        <label>stdlib.h</label>
+      </node>
+      <node id="21">
+        <label>string</label>
+      </node>
+      <node id="44">
+        <label>string.h</label>
+      </node>
+      <node id="5">
+        <label>tbb/tbb.h</label>
+      </node>
+      <node id="6">
+        <label>thread</label>
+      </node>
+      <node id="45">
+        <label>type_traits</label>
+      </node>
+      <node id="33">
+        <label>unordered_map</label>
+      </node>
+      <node id="32">
+        <label>unordered_set</label>
+      </node>
+      <node id="29">
+        <label>utility</label>
+      </node>
+      <node id="13">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="145">
+        <label>variant</label>
+      </node>
+      <node id="16">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/schreyer-resolution/res-dep-graph.cpp</label>
+        <link refid="res-dep-graph_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.cpp</label>
+        <link refid="res-f4-computation_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</label>
+        <link refid="res-f4-m2-interface_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.cpp</label>
+        <link refid="res-f4_8cpp"/>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.cpp</label>
+        <link refid="res-schreyer-frame_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp</label>
+        <link refid="res-schreyer-frame_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="struct_schreyer_frame_types_1_1_frame_element" prot="public">SchreyerFrameTypes::FrameElement</innerclass>
+    <innerclass refid="struct_schreyer_frame_types_1_1_pre_element" prot="public">SchreyerFrameTypes::PreElement</innerclass>
+    <innerclass refid="class_schreyer_frame" prot="public">SchreyerFrame</innerclass>
+    <innerclass refid="struct_schreyer_frame_1_1_level" prot="private">SchreyerFrame::Level</innerclass>
+    <innerclass refid="struct_schreyer_frame_1_1_frame" prot="private">SchreyerFrame::Frame</innerclass>
+    <innernamespace refid="namespace_schreyer_frame_types">SchreyerFrameTypes</innernamespace>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="res-schreyer-frame_8hpp_a46aff60fe9e7b02cb075b491f6e3af7b_1a46aff60fe9e7b02cb075b491f6e3af7b" prot="public" static="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>typedef int ComponentIndex</definition>
+        <argsstring></argsstring>
+        <name>ComponentIndex</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp" line="74" column="13" bodyfile="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp" bodystart="74" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_schreyer_frame" kindref="compound">SchreyerFrame</ref></computeroutput> <mdash/> in-progress representation of a free resolution organised by (level, degree). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares the state container the F4 resolution engine builds up as it walks homological levels. Each <computeroutput>Level</computeroutput> holds a <computeroutput>std::vector&lt;FrameElement&gt;</computeroutput>, where every <computeroutput>FrameElement</computeroutput> carries its leading monomial <computeroutput>mMonom</computeroutput>, the actual <computeroutput>mDegree</computeroutput>, a <computeroutput>mBegin</computeroutput> / <computeroutput>mEnd</computeroutput> slice into the next level&apos;s element vector (the descendants this generator contributes), and the <computeroutput>mSyzygy</computeroutput> polynomial once that level has been computed. Each level additionally carries its <computeroutput><ref refid="struct_res_schreyer_order" kindref="compound">ResSchreyerOrder</ref></computeroutput> so the next level inherits the right tie-breaker data. These together let <computeroutput><ref refid="class_f4_res" kindref="compound">F4Res</ref></computeroutput> build the next level&apos;s Macaulay matrix without ever revisiting the original input, and <computeroutput><ref refid="class_betti_display" kindref="compound">BettiDisplay</ref></computeroutput> production reads directly off the frame so users can pull a partial Betti table mid-run.</para>
+<para>The header pulls in <computeroutput><ref refid="m2tbb_8hpp" kindref="compound">m2tbb.hpp</ref></computeroutput> so the per-cell scheduler in <computeroutput><ref refid="res-dep-graph_8hpp" kindref="compound">res-dep-graph.hpp</ref></computeroutput> can fire work in parallel across <computeroutput>(level, slanted_degree)</computeroutput> cells; the <computeroutput>parallelizeByDegree</computeroutput> flag on <computeroutput><ref refid="class_f4_res_computation" kindref="compound">F4ResComputation</ref></computeroutput> picks the grain. The TODO list at the top of the file is the active refactor agenda (display of <computeroutput>poly</computeroutput> elements, lazy <computeroutput>get_matrix</computeroutput>, incremental <computeroutput>CoefficientArray</computeroutput>, monomial-lookup choices); the long-form work plan lives in <computeroutput>TODO-branch-res-2018</computeroutput> in this subdir.</para>
+<para><simplesect kind="see"><para><ref refid="res-f4_8hpp" kindref="compound">res-f4.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="res-f4-computation_8hpp" kindref="compound">res-f4-computation.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="res-schreyer-order_8hpp" kindref="compound">res-schreyer-order.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="res-dep-graph_8hpp" kindref="compound">res-dep-graph.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="res-poly-ring_8hpp" kindref="compound">res-poly-ring.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="betti_8hpp" kindref="compound">betti.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>2014-2015<sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//<sp/>to<sp/>do<sp/>list</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>-<sp/>display<sp/>of<sp/>&quot;poly&quot;<sp/>elements<sp/>in<sp/>the<sp/>resolution</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>-<sp/>get_matrix:<sp/>should<sp/>get<sp/>these<sp/>elements<sp/>(if<sp/>they<sp/>are<sp/>there<sp/>yet)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>-<sp/>CoefficientArray:<sp/>need<sp/>to<sp/>be<sp/>able<sp/>to<sp/>build<sp/>one<sp/>incrementally</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>-<sp/>monomial<sp/>lookup<sp/>routine</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>-<sp/>should<sp/>monomials<sp/>be<sp/>varpowers?<sp/><sp/>or<sp/>even<sp/>lists<sp/>of<sp/>variables?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>-<sp/>make<sp/>sure<sp/>monomials<sp/>are<sp/>always<sp/>constructed<sp/>with<sp/>that<sp/>&quot;extra<sp/>space&quot;<sp/>for<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>reducer<sp/>number.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">//<sp/>res-f4-m2-interface:<sp/>needs<sp/>to<sp/>be<sp/>rewritten:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/>.<sp/>don&apos;t<sp/>use<sp/>gc</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/>.<sp/>gb_array:<sp/>3<sp/>routines<sp/>commented<sp/>out,<sp/>due<sp/>to<sp/>using<sp/>these.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/>.<sp/>need<sp/>a<sp/>display<sp/>routine<sp/>for<sp/>Polynomial,<sp/>also<sp/>one<sp/>that<sp/>limits<sp/>the<sp/>number<sp/>of</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/>monomials<sp/>displayed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">//<sp/>res-f4-types.hpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/>.<sp/>has<sp/>lots<sp/>of<sp/>junk<sp/>(most<sp/>already<sp/>commented<sp/>out)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_res_schreyer_frame_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_res_schreyer_frame_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="m2tbb_8hpp" kindref="compound">m2tbb.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>TBB<sp/>headers</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="betti_8hpp" kindref="compound">betti.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>BettiDisplay</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="m2-types_8h" kindref="compound">interface/m2-types.h</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>M2_arrayint</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="res-memblock_8hpp" kindref="compound">schreyer-resolution/res-memblock.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>ResMemoryBlock</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="res-moninfo_8hpp" kindref="compound">schreyer-resolution/res-moninfo.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>ResMonoid</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="res-monomial-types_8hpp" kindref="compound">schreyer-resolution/res-monomial-types.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>component_index</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="res-poly-ring_8hpp" kindref="compound">schreyer-resolution/res-poly-ring.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>ResPolyRing,<sp/>ResPolynomial</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="res-schreyer-order_8hpp" kindref="compound">schreyer-resolution/res-schreyer-order.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>ResSchreyerOrder</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="res-dep-graph_8hpp" kindref="compound">schreyer-resolution/res-dep-graph.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>DependencyGraph</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;utility&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>pair</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>vector</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_stop_conditions" kindref="compound">StopConditions</ref>;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_f4_res" kindref="compound">F4Res</ref>;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="res-schreyer-frame_8hpp_a46aff60fe9e7b02cb075b491f6e3af7b_1a46aff60fe9e7b02cb075b491f6e3af7b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="res-schreyer-frame_8hpp_a46aff60fe9e7b02cb075b491f6e3af7b_1a46aff60fe9e7b02cb075b491f6e3af7b" kindref="member">ComponentIndex</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>index<sp/>into<sp/>f4<sp/>matrices<sp/>over<sp/>kk.<sp/><sp/>These<sp/>tend<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>be<sp/>larger,<sp/>not<sp/>sure<sp/>if<sp/>they</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="comment">//<sp/>will<sp/>ever<sp/>be<sp/>&gt;<sp/>2billion,<sp/>but<sp/>probably...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="namespace_schreyer_frame_types" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_schreyer_frame_types" kindref="compound">SchreyerFrameTypes</ref><sp/>{</highlight></codeline>
+<codeline lineno="90" refid="struct_schreyer_frame_types_1_1_frame_element" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_schreyer_frame_types_1_1_frame_element_ad7d0a4b1309df3a22be23ec6c822ee61_1ad7d0a4b1309df3a22be23ec6c822ee61" kindref="member">FrameElement</ref></highlight></codeline>
+<codeline lineno="91"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="92" refid="struct_schreyer_frame_types_1_1_frame_element_ac4a3047f843f189cb73c865d1cb67e49_1ac4a3047f843f189cb73c865d1cb67e49" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref><sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_ac4a3047f843f189cb73c865d1cb67e49_1ac4a3047f843f189cb73c865d1cb67e49" kindref="member">mMonom</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>has<sp/>component,<sp/>degree<sp/>too</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>res_packed_monomial<sp/>mTotalMonom;<sp/>//<sp/>used<sp/>for<sp/>Schreyer<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>long<sp/>mTiebreaker;<sp/>//<sp/>used<sp/>for<sp/>Schreyer<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="struct_schreyer_frame_types_1_1_frame_element_a9f8bc30729f060ada16103377c3f1919_1a9f8bc30729f060ada16103377c3f1919" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_a9f8bc30729f060ada16103377c3f1919_1a9f8bc30729f060ada16103377c3f1919" kindref="member">mDegree</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>actual<sp/>degree,<sp/>not<sp/>slanted<sp/>degree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="struct_schreyer_frame_types_1_1_frame_element_af72f55bf86118a716c7b6126a304a23e_1af72f55bf86118a716c7b6126a304a23e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_af72f55bf86118a716c7b6126a304a23e_1af72f55bf86118a716c7b6126a304a23e" kindref="member">mBegin</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>points<sp/>into<sp/>next<sp/>level&apos;s<sp/>elements</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="struct_schreyer_frame_types_1_1_frame_element_afe3ba389ac6f02f833c8ccd365fdebf8_1afe3ba389ac6f02f833c8ccd365fdebf8" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_afe3ba389ac6f02f833c8ccd365fdebf8_1afe3ba389ac6f02f833c8ccd365fdebf8" kindref="member">mEnd</ref>;</highlight></codeline>
+<codeline lineno="98" refid="struct_schreyer_frame_types_1_1_frame_element_a1f853a2f5ccf62bef6df4682a383f604_1a1f853a2f5ccf62bef6df4682a383f604" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_res_polynomial" kindref="compound">ResPolynomial</ref><sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_a1f853a2f5ccf62bef6df4682a383f604_1a1f853a2f5ccf62bef6df4682a383f604" kindref="member">mSyzygy</ref>;</highlight></codeline>
+<codeline lineno="99" refid="struct_schreyer_frame_types_1_1_frame_element_ad7d0a4b1309df3a22be23ec6c822ee61_1ad7d0a4b1309df3a22be23ec6c822ee61" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_ad7d0a4b1309df3a22be23ec6c822ee61_1ad7d0a4b1309df3a22be23ec6c822ee61" kindref="member">FrameElement</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="100" refid="struct_schreyer_frame_types_1_1_frame_element_a44f69ba5634964aeb85071649501ff37_1a44f69ba5634964aeb85071649501ff37" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_a44f69ba5634964aeb85071649501ff37_1a44f69ba5634964aeb85071649501ff37" kindref="member">FrameElement</ref>(<ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref><sp/>monom)</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_ac4a3047f843f189cb73c865d1cb67e49_1ac4a3047f843f189cb73c865d1cb67e49" kindref="member">mMonom</ref>(monom),<sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_a9f8bc30729f060ada16103377c3f1919_1a9f8bc30729f060ada16103377c3f1919" kindref="member">mDegree</ref>(0),<sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_af72f55bf86118a716c7b6126a304a23e_1af72f55bf86118a716c7b6126a304a23e" kindref="member">mBegin</ref>(-1),<sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_afe3ba389ac6f02f833c8ccd365fdebf8_1afe3ba389ac6f02f833c8ccd365fdebf8" kindref="member">mEnd</ref>(-1)</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="104" refid="struct_schreyer_frame_types_1_1_frame_element_accbcf1b4f6720689ebaded2706110c90_1accbcf1b4f6720689ebaded2706110c90" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_accbcf1b4f6720689ebaded2706110c90_1accbcf1b4f6720689ebaded2706110c90" kindref="member">FrameElement</ref>(<ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref><sp/>monom,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>deg)</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_ac4a3047f843f189cb73c865d1cb67e49_1ac4a3047f843f189cb73c865d1cb67e49" kindref="member">mMonom</ref>(monom),<sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_a9f8bc30729f060ada16103377c3f1919_1a9f8bc30729f060ada16103377c3f1919" kindref="member">mDegree</ref>(deg),<sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_af72f55bf86118a716c7b6126a304a23e_1af72f55bf86118a716c7b6126a304a23e" kindref="member">mBegin</ref>(-1),<sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element_afe3ba389ac6f02f833c8ccd365fdebf8_1afe3ba389ac6f02f833c8ccd365fdebf8" kindref="member">mEnd</ref>(-1)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="struct_schreyer_frame_types_1_1_pre_element" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_schreyer_frame_types_1_1_pre_element" kindref="compound">PreElement</ref></highlight></codeline>
+<codeline lineno="121"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="122" refid="struct_schreyer_frame_types_1_1_pre_element_a31270a8c66a8cc621825f09a4b99c80f_1a31270a8c66a8cc621825f09a4b99c80f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-monomial-types_8hpp_a184f0cb454f74a5f8e8a0a16136ae244_1a184f0cb454f74a5f8e8a0a16136ae244" kindref="member">res_varpower_monomial</ref><sp/><ref refid="struct_schreyer_frame_types_1_1_pre_element_a31270a8c66a8cc621825f09a4b99c80f_1a31270a8c66a8cc621825f09a4b99c80f" kindref="member">vp</ref>;</highlight></codeline>
+<codeline lineno="123" refid="struct_schreyer_frame_types_1_1_pre_element_a7d17dcc423a73264094066ec9b8fd66e_1a7d17dcc423a73264094066ec9b8fd66e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="struct_schreyer_frame_types_1_1_pre_element_a7d17dcc423a73264094066ec9b8fd66e_1a7d17dcc423a73264094066ec9b8fd66e" kindref="member">degree</ref>;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="125"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="class_schreyer_frame" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_schreyer_frame_a2680bfa79a065a38e3728b6134018f53_1a2680bfa79a065a38e3728b6134018f53" kindref="member">SchreyerFrame</ref></highlight></codeline>
+<codeline lineno="145"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="147" refid="class_schreyer_frame_a6579d9a43d704f0b4607914009e80ffb_1a6579d9a43d704f0b4607914009e80ffb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_schreyer_frame_a6579d9a43d704f0b4607914009e80ffb_1a6579d9a43d704f0b4607914009e80ffb" kindref="member">F4Res</ref>;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(WITH_TBB)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">DependencyGraph;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="152" refid="class_schreyer_frame_a2e81a03992e5beca83586384f3200cfb_1a2e81a03992e5beca83586384f3200cfb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="struct_schreyer_frame_types_1_1_frame_element" kindref="compound">SchreyerFrameTypes::FrameElement</ref><sp/><ref refid="class_schreyer_frame_a2e81a03992e5beca83586384f3200cfb_1a2e81a03992e5beca83586384f3200cfb" kindref="member">FrameElement</ref>;</highlight></codeline>
+<codeline lineno="153" refid="class_schreyer_frame_a97e22ca66b82e2d964e946b04c31e667_1a97e22ca66b82e2d964e946b04c31e667" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="struct_schreyer_frame_types_1_1_pre_element" kindref="compound">SchreyerFrameTypes::PreElement</ref><sp/><ref refid="class_schreyer_frame_a97e22ca66b82e2d964e946b04c31e667_1a97e22ca66b82e2d964e946b04c31e667" kindref="member">PreElement</ref>;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Construct<sp/>an<sp/>empty<sp/>frame</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><ref refid="class_schreyer_frame_a2680bfa79a065a38e3728b6134018f53_1a2680bfa79a065a38e3728b6134018f53" kindref="member">SchreyerFrame</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_res_poly_ring" kindref="compound">ResPolyRing</ref>&amp;<sp/>R,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>max_level,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>numThreads,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>parallelizeByDegree);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Destruct<sp/>the<sp/>frame</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><ref refid="class_schreyer_frame_aeaaf40f3a814099248348c786f96938e_1aeaaf40f3a814099248348c786f96938e" kindref="member">~SchreyerFrame</ref>();</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="class_schreyer_frame_a731247b5784a97f9855ec62b64ba7e9a_1a731247b5784a97f9855ec62b64ba7e9a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="res-moninfo_8hpp_a7bc93e1c6a618d8b5a83f61057c445dd_1a7bc93e1c6a618d8b5a83f61057c445dd" kindref="member">ResMonoid</ref>&amp;<sp/><ref refid="class_schreyer_frame_a731247b5784a97f9855ec62b64ba7e9a_1a731247b5784a97f9855ec62b64ba7e9a" kindref="member">monoid</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_aade03acdae318baa488ee4b2740751fe_1aade03acdae318baa488ee4b2740751fe" kindref="member">mRing</ref>.monoid();<sp/>}</highlight></codeline>
+<codeline lineno="162" refid="class_schreyer_frame_aa4036667603792e583e4431ed359810b_1aa4036667603792e583e4431ed359810b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_res_poly_ring" kindref="compound">ResPolyRing</ref>&amp;<sp/><ref refid="class_schreyer_frame_aa4036667603792e583e4431ed359810b_1aa4036667603792e583e4431ed359810b" kindref="member">ring</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_aade03acdae318baa488ee4b2740751fe_1aade03acdae318baa488ee4b2740751fe" kindref="member">mRing</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="163" refid="class_schreyer_frame_ab8b20e8e168ecb621c1ca0548760aae1_1ab8b20e8e168ecb621c1ca0548760aae1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref>&amp;<sp/><ref refid="class_schreyer_frame_ab8b20e8e168ecb621c1ca0548760aae1_1ab8b20e8e168ecb621c1ca0548760aae1" kindref="member">vectorArithmetic</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_aade03acdae318baa488ee4b2740751fe_1aade03acdae318baa488ee4b2740751fe" kindref="member">mRing</ref>.vectorArithmetic();<sp/>}</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>where<sp/>we<sp/>place<sp/>the<sp/>monomials<sp/>in<sp/>the<sp/>frame</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>requires<sp/>some<sp/>care<sp/>from<sp/>people<sp/>calling<sp/>this<sp/>function</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167" refid="class_schreyer_frame_a74ec7d0ed3525ab01086a8a83276b6b4_1a74ec7d0ed3525ab01086a8a83276b6b4" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_res_memory_block" kindref="compound">ResMemoryBlock&lt;res_monomial_word&gt;</ref>&amp;<sp/><ref refid="class_schreyer_frame_a74ec7d0ed3525ab01086a8a83276b6b4_1a74ec7d0ed3525ab01086a8a83276b6b4" kindref="member">monomialBlock</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_abc958584e8fac21126082f5f5f1a6842_1abc958584e8fac21126082f5f5f1a6842" kindref="member">mMonomialSpace</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Debugging,<sp/>Memory<sp/>info<sp/>//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a742856ee7ede79a9a553d15f84953c79_1a742856ee7ede79a9a553d15f84953c79" kindref="member">show</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>len)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;<sp/><sp/></highlight><highlight class="comment">//<sp/>len<sp/>is<sp/>how<sp/>much<sp/>of<sp/>the<sp/>polynomials<sp/>to<sp/>display</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>(len=-1<sp/>means<sp/>all,<sp/>len=0<sp/>means<sp/>just<sp/>the<sp/>frame)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a33714775147639928001adac1fed599c_1a33714775147639928001adac1fed599c" kindref="member">memoryUsage</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;<sp/><sp/></highlight><highlight class="comment">//<sp/>Return<sp/>number<sp/>of<sp/>bytes<sp/>in<sp/>use.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_ac754b34621d8fe8d5ab6bc55e9d618dc_1ac754b34621d8fe8d5ab6bc55e9d618dc" kindref="member">showMemoryUsage</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_afdade2fc3d311209cf0a6874b80d72f0_1afdade2fc3d311209cf0a6874b80d72f0" kindref="member">debugCheckOrder</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;<sp/><sp/></highlight><highlight class="comment">//<sp/>make<sp/>sure<sp/>polynomials<sp/>constructed,<sp/>at<sp/>level<sp/>&apos;lev&apos;<sp/>are<sp/>in<sp/>order.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_adffef4485c1d02d671fda9348fe583b1_1adffef4485c1d02d671fda9348fe583b1" kindref="member">debugCheckOrderAll</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/><ref refid="class_schreyer_frame_a979af3c9ad969325eaebb8a68280b526_1a979af3c9ad969325eaebb8a68280b526" kindref="member">getBetti</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>type);<sp/><sp/></highlight><highlight class="comment">//<sp/>will<sp/>compute<sp/>ranks<sp/>of<sp/>matrices,<sp/>if<sp/>needed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_abfd8ba7f405c36faf9e396dd48ed1295_1abfd8ba7f405c36faf9e396dd48ed1295" kindref="member">getBounds</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>loDegree,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>hiDegree,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>length)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a6b0f9a04ba79d8abac92bb6bbeca97c1_1a6b0f9a04ba79d8abac92bb6bbeca97c1" kindref="member">insertLevelZero</ref>(<ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref><sp/>monom,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a0636a13b9d3f4adc40596543074eb9c7_1a0636a13b9d3f4adc40596543074eb9c7" kindref="member">degree</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>maxdeglevel0);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a7ed034dff61ef5245387754e439633f0_1a7ed034dff61ef5245387754e439633f0" kindref="member">insertLevelOne</ref>(<ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref><sp/>monom,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a0636a13b9d3f4adc40596543074eb9c7_1a0636a13b9d3f4adc40596543074eb9c7" kindref="member">degree</ref>,</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_res_polynomial" kindref="compound">ResPolynomial</ref>&amp;<sp/>syzygy);<sp/><sp/></highlight><highlight class="comment">//<sp/>grabs<sp/>syzygy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>insertLevelOne:<sp/>insert<sp/>element.<sp/><sp/>If<sp/>the<sp/>elements<sp/>are<sp/>not<sp/>in<sp/>order,<sp/>then</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>false<sp/>is<sp/>returned.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a318d6c4929effaab0503aacfdd9d544e_1a318d6c4929effaab0503aacfdd9d544e" kindref="member">endLevel</ref>();<sp/><sp/></highlight><highlight class="comment">//<sp/>done<sp/>with<sp/>the<sp/>frame<sp/>for<sp/>the<sp/>current<sp/>level:<sp/>set&apos;s<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>begin/end&apos;s</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>each<sp/>element<sp/>at<sp/>previous<sp/>level</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a841049f879cf22f9cdd6670c304afe91_1a841049f879cf22f9cdd6670c304afe91" kindref="member">start_computation</ref>(<ref refid="struct_stop_conditions" kindref="compound">StopConditions</ref>&amp;<sp/>stop);</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a9db8c505acfa90796e1c0a8d0e68ed56_1a9db8c505acfa90796e1c0a8d0e68ed56" kindref="member">insertBasic</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev,<sp/><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref><sp/>monom,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a0636a13b9d3f4adc40596543074eb9c7_1a0636a13b9d3f4adc40596543074eb9c7" kindref="member">degree</ref>);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a302bbd2765ab7148ac9d8b08ae59a0ba_1a302bbd2765ab7148ac9d8b08ae59a0ba" kindref="member">setSchreyerOrder</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/><ref refid="class_schreyer_frame_a6d867419a1cd70cca463a5380d2e6bfc_1a6d867419a1cd70cca463a5380d2e6bfc" kindref="member">computeNextLevel</ref>();<sp/><sp/></highlight><highlight class="comment">//<sp/>returns<sp/>#<sp/>of<sp/>new<sp/>elements<sp/>added</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200" refid="class_schreyer_frame_ad39bcbca499be22d20909bd4b367b9dc_1ad39bcbca499be22d20909bd4b367b9dc" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref><sp/><ref refid="class_schreyer_frame_ad39bcbca499be22d20909bd4b367b9dc_1ad39bcbca499be22d20909bd4b367b9dc" kindref="member">monomial</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev,<sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/>component)</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a99408c321fa57d359c96af412a59282a_1a99408c321fa57d359c96af412a59282a" kindref="member">level</ref>(lev)[component].mMonom;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/><ref refid="class_schreyer_frame_a4abd5cf9d202f0055ced815e0fcc9317_1a4abd5cf9d202f0055ced815e0fcc9317" kindref="member">getBettiFrame</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a565b0aa021f597cb41c19d005854b8d0_1a565b0aa021f597cb41c19d005854b8d0" kindref="member">setBettiDisplays</ref>();</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a3fe74dec733d6133718823e53def85bd_1a3fe74dec733d6133718823e53def85bd" kindref="member">rank</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>slanted_degree,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev);<sp/><sp/></highlight><highlight class="comment">//<sp/>rank<sp/>of<sp/>the<sp/>degree<sp/>&apos;degree&apos;<sp/>map<sp/>of</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>scalars<sp/>level<sp/>&apos;lev&apos;<sp/>to<sp/>&apos;lev-1&apos;.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Gen&gt;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a1a1c594b87e15a4eda3460540aac3b64_1a1a1c594b87e15a4eda3460540aac3b64" kindref="member">rankUsingSparseMatrix</ref>(Gen&amp;<sp/>D);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Gen&gt;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_aed05272971b00971de76e0ff864ed92b_1aed05272971b00971de76e0ff864ed92b" kindref="member">rankUsingDenseMatrix</ref>(Gen&amp;<sp/>D,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>transposed=</highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Gen&gt;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a06503fa2e462f02860f9c7c03e1c785b_1a06503fa2e462f02860f9c7c03e1c785b" kindref="member">rankUsingDenseMatrixFlint</ref>(Gen&amp;<sp/>D,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>transposed=</highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a4623359888aea0edc6e875b5476586e3_1a4623359888aea0edc6e875b5476586e3" kindref="member">computeFrame</ref>();<sp/><sp/></highlight><highlight class="comment">//<sp/>returns<sp/>true<sp/>if<sp/>the<sp/>whole<sp/>frame<sp/>is<sp/>created.<sp/><sp/>false<sp/>if</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>interrupted.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a1336ef7af43d6f83331f2bde4decb27a_1a1336ef7af43d6f83331f2bde4decb27a" kindref="member">computeSyzygies</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>slanted_degree,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>maxlevel);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a22bb5d13047e03fc41032567ba84928d_1a22bb5d13047e03fc41032567ba84928d" kindref="member">computeRanks</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>slanted_degree,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>maxlevel);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><ref refid="class_betti_display" kindref="compound">BettiDisplay</ref><sp/><ref refid="class_schreyer_frame_a2e9d6a02bbdf20e16703110b876f1c61_1a2e9d6a02bbdf20e16703110b876f1c61" kindref="member">minimalBettiNumbers</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>stop_after_degree,</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>top_slanted_degree,</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>length_limit);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="238" refid="struct_schreyer_frame_1_1_level" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_schreyer_frame_1_1_level" kindref="compound">Level</ref></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="240" refid="struct_schreyer_frame_1_1_level_a7c262eb987643c2cda4baf260bb8fbf5_1a7c262eb987643c2cda4baf260bb8fbf5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;FrameElement&gt;<sp/><ref refid="struct_schreyer_frame_1_1_level_a7c262eb987643c2cda4baf260bb8fbf5_1a7c262eb987643c2cda4baf260bb8fbf5" kindref="member">mElements</ref>;</highlight></codeline>
+<codeline lineno="241" refid="struct_schreyer_frame_1_1_level_aa14a803027e9b8d12694ea9042e203d4_1aa14a803027e9b8d12694ea9042e203d4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_res_schreyer_order" kindref="compound">ResSchreyerOrder</ref><sp/><ref refid="struct_schreyer_frame_1_1_level_aa14a803027e9b8d12694ea9042e203d4_1aa14a803027e9b8d12694ea9042e203d4" kindref="member">mSchreyerOrder</ref>;</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="250" refid="struct_schreyer_frame_1_1_frame" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_schreyer_frame_1_1_frame" kindref="compound">Frame</ref></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="252" refid="struct_schreyer_frame_1_1_frame_aa0e2b7d4d0f4dbc705c0f09946466d19_1aa0e2b7d4d0f4dbc705c0f09946466d19" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Level&gt;<sp/><ref refid="struct_schreyer_frame_1_1_frame_aa0e2b7d4d0f4dbc705c0f09946466d19_1aa0e2b7d4d0f4dbc705c0f09946466d19" kindref="member">mLevels</ref>;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255" refid="class_schreyer_frame_aabcdcc182408d2fbfaa2af487798fdf6_1aabcdcc182408d2fbfaa2af487798fdf6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_aabcdcc182408d2fbfaa2af487798fdf6_1aabcdcc182408d2fbfaa2af487798fdf6" kindref="member">currentLevel</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a15555dc47ffb59bdeb775ed457c88a08_1a15555dc47ffb59bdeb775ed457c88a08" kindref="member">mCurrentLevel</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="256" refid="class_schreyer_frame_a0636a13b9d3f4adc40596543074eb9c7_1a0636a13b9d3f4adc40596543074eb9c7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a0636a13b9d3f4adc40596543074eb9c7_1a0636a13b9d3f4adc40596543074eb9c7" kindref="member">degree</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev,<sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/>component)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="257"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a99408c321fa57d359c96af412a59282a_1a99408c321fa57d359c96af412a59282a" kindref="member">level</ref>(lev)[component].mDegree;</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="262" refid="class_schreyer_frame_af207acde347b9dbc2fd9a6a6e09a59c7_1af207acde347b9dbc2fd9a6a6e09a59c7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="struct_res_schreyer_order" kindref="compound">ResSchreyerOrder</ref>&amp;<sp/><ref refid="class_schreyer_frame_af207acde347b9dbc2fd9a6a6e09a59c7_1af207acde347b9dbc2fd9a6a6e09a59c7" kindref="member">schreyerOrder</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev)</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_ad813b46bc863a2c7bc9374020af2d846_1ad813b46bc863a2c7bc9374020af2d846" kindref="member">mFrame</ref>.mLevels[lev].mSchreyerOrder;</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="266" refid="class_schreyer_frame_a3fbf23f9ccfbe2e1f51393ebafb9960b_1a3fbf23f9ccfbe2e1f51393ebafb9960b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="struct_res_schreyer_order" kindref="compound">ResSchreyerOrder</ref>&amp;<sp/><ref refid="class_schreyer_frame_a3fbf23f9ccfbe2e1f51393ebafb9960b_1a3fbf23f9ccfbe2e1f51393ebafb9960b" kindref="member">schreyerOrder</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="267"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_ad813b46bc863a2c7bc9374020af2d846_1ad813b46bc863a2c7bc9374020af2d846" kindref="member">mFrame</ref>.mLevels[lev].mSchreyerOrder;</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="270" refid="class_schreyer_frame_a49f8f5b912c8ca7a2630abcd0ae2d214_1a49f8f5b912c8ca7a2630abcd0ae2d214" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a49f8f5b912c8ca7a2630abcd0ae2d214_1a49f8f5b912c8ca7a2630abcd0ae2d214" kindref="member">maxLevel</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<ref refid="class_schreyer_frame_ad813b46bc863a2c7bc9374020af2d846_1ad813b46bc863a2c7bc9374020af2d846" kindref="member">mFrame</ref>.mLevels.size()<sp/>-<sp/>1);<sp/>}</highlight></codeline>
+<codeline lineno="271" refid="class_schreyer_frame_a99408c321fa57d359c96af412a59282a_1a99408c321fa57d359c96af412a59282a" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;FrameElement&gt;&amp;<sp/><ref refid="class_schreyer_frame_a99408c321fa57d359c96af412a59282a_1a99408c321fa57d359c96af412a59282a" kindref="member">level</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev)</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_ad813b46bc863a2c7bc9374020af2d846_1ad813b46bc863a2c7bc9374020af2d846" kindref="member">mFrame</ref>.mLevels[lev].mElements;</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="275" refid="class_schreyer_frame_a589ce05af61fb3686a418f7376c3012b_1a589ce05af61fb3686a418f7376c3012b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;FrameElement&gt;&amp;<sp/><ref refid="class_schreyer_frame_a589ce05af61fb3686a418f7376c3012b_1a589ce05af61fb3686a418f7376c3012b" kindref="member">level</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="276"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_ad813b46bc863a2c7bc9374020af2d846_1ad813b46bc863a2c7bc9374020af2d846" kindref="member">mFrame</ref>.mLevels[lev].mElements;</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_af442fec511a0c2e1b4f7073bd801401e_1af442fec511a0c2e1b4f7073bd801401e" kindref="member">fillinSyzygies</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>slanted_deg,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a28c275d40d85482caa1ca9bef9e1333b_1a28c275d40d85482caa1ca9bef9e1333b" kindref="member">computeRank</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>slanted_degree,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Private<sp/>functions<sp/>for<sp/>frame<sp/>construction<sp/>//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><ref refid="class_schreyer_frame_a97e22ca66b82e2d964e946b04c31e667_1a97e22ca66b82e2d964e946b04c31e667" kindref="member">PreElement</ref>*<sp/><ref refid="class_schreyer_frame_aa634f33290f6e5a896a6585d9c24e4f4_1aa634f33290f6e5a896a6585d9c24e4f4" kindref="member">createQuotientElement</ref>(<ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref><sp/>m1,</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref><sp/>m);</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/><ref refid="class_schreyer_frame_a7aa65f42ee24c75759a741038edb3e34_1a7aa65f42ee24c75759a741038edb3e34" kindref="member">computeIdealQuotient</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev,</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/>elem);</highlight></codeline>
+<codeline lineno="292" refid="class_schreyer_frame_a5c538a012e7ead19507156eb4ac9081d_1a5c538a012e7ead19507156eb4ac9081d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/><ref refid="class_schreyer_frame_a5c538a012e7ead19507156eb4ac9081d_1a5c538a012e7ead19507156eb4ac9081d" kindref="member">insertElements</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lev,<sp/><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref><sp/>elem);</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Private<sp/>Data<sp/>///</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="298" refid="class_schreyer_frame_aade03acdae318baa488ee4b2740751fe_1aade03acdae318baa488ee4b2740751fe" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_res_poly_ring" kindref="compound">ResPolyRing</ref>&amp;<sp/><ref refid="class_schreyer_frame_aade03acdae318baa488ee4b2740751fe_1aade03acdae318baa488ee4b2740751fe" kindref="member">mRing</ref>;</highlight></codeline>
+<codeline lineno="299" refid="class_schreyer_frame_ad813b46bc863a2c7bc9374020af2d846_1ad813b46bc863a2c7bc9374020af2d846" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="struct_schreyer_frame_1_1_frame" kindref="compound">Frame</ref><sp/><ref refid="class_schreyer_frame_ad813b46bc863a2c7bc9374020af2d846_1ad813b46bc863a2c7bc9374020af2d846" kindref="member">mFrame</ref>;</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><ref refid="class_res_memory_block" kindref="compound">ResMemoryBlock&lt;res_monomial_word&gt;</ref></highlight></codeline>
+<codeline lineno="301" refid="class_schreyer_frame_abc958584e8fac21126082f5f5f1a6842_1abc958584e8fac21126082f5f5f1a6842" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_schreyer_frame_abc958584e8fac21126082f5f5f1a6842_1abc958584e8fac21126082f5f5f1a6842" kindref="member">mMonomialSpace</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>keep<sp/>all<sp/>of<sp/>the<sp/>monomials<sp/>here,<sp/>in<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>class<sp/>contains,<sp/>and<sp/>allows<sp/>one<sp/>to<sp/>uniquify,<sp/>all<sp/>degrees<sp/>appearing</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>It<sp/>contains:<sp/>memt::Arena,<sp/>and<sp/>unordered_set.<sp/>WORKING<sp/>ON</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>MonomialCollection<sp/>mDegrees;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Betti<sp/>tables:<sp/>set<sp/>after<sp/>the<sp/>frame<sp/>has<sp/>been<sp/>constructed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="308" refid="class_schreyer_frame_ac956944cf2986eb65281e85dc82a289c_1ac956944cf2986eb65281e85dc82a289c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_betti_display" kindref="compound">BettiDisplay</ref><sp/><ref refid="class_schreyer_frame_ac956944cf2986eb65281e85dc82a289c_1ac956944cf2986eb65281e85dc82a289c" kindref="member">mBettiNonminimal</ref>;</highlight></codeline>
+<codeline lineno="309" refid="class_schreyer_frame_a3a484ea864469d22c88cdca4fc064819_1a3a484ea864469d22c88cdca4fc064819" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_betti_display" kindref="compound">BettiDisplay</ref><sp/><ref refid="class_schreyer_frame_a3a484ea864469d22c88cdca4fc064819_1a3a484ea864469d22c88cdca4fc064819" kindref="member">mBettiMinimal</ref>;</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"></highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>each<sp/>(deg,<sp/>level),<sp/>where<sp/>deg<sp/>is<sp/>the<sp/>slanted<sp/>degree<sp/>(actual<sp/>degree<sp/>-<sp/>level).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>the<sp/>following<sp/>Betti<sp/>display<sp/>contains<sp/>the<sp/>status<sp/>of<sp/>the<sp/>computation<sp/>of<sp/>that<sp/>part.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>value<sp/>=<sp/>0.<sp/><sp/>No<sp/>syzygies<sp/>in<sp/>this<sp/>(deg,<sp/>level).<sp/><sp/>Nothing<sp/>to<sp/>see<sp/>here.<sp/>Move<sp/>along.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>value<sp/>=<sp/>1.<sp/><sp/>The<sp/>frame<sp/>is<sp/>nonzero,<sp/>but<sp/>the<sp/>syzygies<sp/>themselves<sp/>have<sp/>not<sp/>yet<sp/>been<sp/>computed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>value<sp/>=<sp/>2.<sp/><sp/>The<sp/>syzygies<sp/>have<sp/>been<sp/>constructed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>value<sp/>=<sp/>3.<sp/><sp/>The<sp/>rank<sp/>from<sp/>(deg,lev)<sp/>to<sp/>(deg+1,lev-1)<sp/>has<sp/>been<sp/>computed<sp/>(this<sp/>requires<sp/>the<sp/>syzygies<sp/>have<sp/>been<sp/>constructed).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cannot<sp/>do<sp/>thiese<sp/>computations<sp/>until<sp/>the<sp/>syzygies<sp/>have<sp/>been<sp/>constructed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="318" refid="class_schreyer_frame_a8766355b95ed1f78b6447a99d76f92c8_1a8766355b95ed1f78b6447a99d76f92c8" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_betti_display" kindref="compound">BettiDisplay</ref><sp/><ref refid="class_schreyer_frame_a8766355b95ed1f78b6447a99d76f92c8_1a8766355b95ed1f78b6447a99d76f92c8" kindref="member">mComputationStatus</ref>;</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Another<sp/>way<sp/>to<sp/>organize<sp/>this.<sp/>Say<sp/>degrees<sp/>are<sp/>bigrees.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>(deg1,<sp/>deg2,<sp/>lev),<sp/>where<sp/>the<sp/>deg1,<sp/>deg2<sp/>are<sp/>the<sp/>actual<sp/>degrees<sp/>(not<sp/>slanted).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>have<sp/>lots<sp/>of<sp/>(deg1,<sp/>deg2,<sp/>lev)<sp/>slots<sp/>(each<sp/>one<sp/>is<sp/>where<sp/>there<sp/>are<sp/>elements<sp/>in<sp/>the<sp/>frame).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>nodes:<sp/>(deg1,<sp/>deg2,<sp/>lev,<sp/>do_syzygies)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>nodes:<sp/>(deg1,<sp/>deg2,<sp/>lev,<sp/>do_rank)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>(deg1,<sp/>deg2,<sp/>lev,<sp/>do_syzygies)<sp/>depends<sp/>on<sp/>:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>(deg1-i,<sp/>deg2-j,<sp/>lev-1,<sp/>do_syzygies)<sp/>for<sp/>all<sp/>(i,j)<sp/>in<sp/>semigroup<sp/>of<sp/>degrees<sp/>of<sp/>the<sp/>variables.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>computeSyzygiesInDegree(deg1,deg2,lev).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>computeRankInDegree(deg1,deg2,lev).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Want<sp/>(maybe)<sp/>a<sp/>data<sp/>structure:<sp/>contains<sp/>nodes<sp/>as<sp/>above,<sp/>knows<sp/>the<sp/>partial<sp/>order.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Select<sp/>the<sp/>minimal<sp/>elements<sp/>and<sp/>remove<sp/>them<sp/>from<sp/>this<sp/>list.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="331"><highlight class="normal"></highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>TODO<sp/>for<sp/>Frank<sp/>and<sp/>Mike<sp/>(29<sp/>April<sp/>2022)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="333"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>1.<sp/>keep<sp/>the<sp/>singly<sp/>graded<sp/>aspect<sp/>for<sp/>now,<sp/>but<sp/>create<sp/>a<sp/>graph<sp/>of<sp/>nodes.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>2.<sp/>use<sp/>chapter<sp/>3<sp/>flow<sp/>graphs<sp/>from<sp/>ProTBB<sp/>book.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>3.<sp/>After<sp/>we<sp/>get<sp/>this<sp/>to<sp/>work,<sp/>we<sp/>will<sp/>generalize<sp/>to<sp/>multi-graded<sp/>situation<sp/>(at<sp/>least<sp/>for<sp/>products<sp/>of<sp/>PP^n&apos;s,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>but<sp/>hopefully<sp/>for<sp/>toric<sp/>degrees<sp/>eventually.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="337"><highlight class="normal"></highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>currently<sp/>unused.<sp/><sp/>Remove?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="339" refid="class_schreyer_frame_a0d9094edc10d5b2116869ffbae87af21_1a0d9094edc10d5b2116869ffbae87af21" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;std::pair&lt;int,<sp/>int&gt;&gt;<sp/><ref refid="class_schreyer_frame_a0d9094edc10d5b2116869ffbae87af21_1a0d9094edc10d5b2116869ffbae87af21" kindref="member">mMinimalizeTODO</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>a<sp/>list<sp/>of<sp/>(slanted<sp/>deg,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>level)<sp/>for<sp/>which<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>compute<sp/>min<sp/>betti</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>numbers.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight></codeline>
+<codeline lineno="344"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Computation<sp/>control</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="345" refid="class_schreyer_frame_a4b5aa56345b541df4aba5e8e6494a210_1a4b5aa56345b541df4aba5e8e6494a210a4d2f2c57811d0efca2e7f4c232e1eaa7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{<sp/><ref refid="class_schreyer_frame_a4b5aa56345b541df4aba5e8e6494a210_1a4b5aa56345b541df4aba5e8e6494a210ad996a64194ed9aff760b4d1f2dcf0718" kindref="member">Initializing</ref>,<sp/><ref refid="struct_schreyer_frame_1_1_frame" kindref="compound">Frame</ref>,<sp/><ref refid="class_schreyer_frame_a4b5aa56345b541df4aba5e8e6494a210_1a4b5aa56345b541df4aba5e8e6494a210a0534e6b5579376eda1d407dc8db791cb" kindref="member">Matrices</ref>,<sp/><ref refid="class_schreyer_frame_a4b5aa56345b541df4aba5e8e6494a210_1a4b5aa56345b541df4aba5e8e6494a210a4d2f2c57811d0efca2e7f4c232e1eaa7" kindref="member">Done</ref><sp/>}<sp/><ref refid="class_schreyer_frame_a49fdf772fac929ae8ff3321a431ae33f_1a49fdf772fac929ae8ff3321a431ae33f" kindref="member">mState</ref>;</highlight></codeline>
+<codeline lineno="346" refid="class_schreyer_frame_a15555dc47ffb59bdeb775ed457c88a08_1a15555dc47ffb59bdeb775ed457c88a08" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a15555dc47ffb59bdeb775ed457c88a08_1a15555dc47ffb59bdeb775ed457c88a08" kindref="member">mCurrentLevel</ref>;</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>are<sp/>only<sp/>valid<sp/>once<sp/>we<sp/>are<sp/>done<sp/>with<sp/>&quot;Frame&quot;.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="348" refid="class_schreyer_frame_a617664b1f1b1a3d48bb5f52331d5af58_1a617664b1f1b1a3d48bb5f52331d5af58" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a617664b1f1b1a3d48bb5f52331d5af58_1a617664b1f1b1a3d48bb5f52331d5af58" kindref="member">mSlantedDegree</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>next<sp/>degree<sp/>to<sp/>be<sp/>considered,<sp/>when</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;start_computation&quot;<sp/>is<sp/>called<sp/>next.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="350" refid="class_schreyer_frame_a512938e46745e8754bc956130ca97ba3_1a512938e46745e8754bc956130ca97ba3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a512938e46745e8754bc956130ca97ba3_1a512938e46745e8754bc956130ca97ba3" kindref="member">mLoSlantedDegree</ref>;</highlight></codeline>
+<codeline lineno="351" refid="class_schreyer_frame_a67118af964a54faadc9bea84dd668968_1a67118af964a54faadc9bea84dd668968" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a67118af964a54faadc9bea84dd668968_1a67118af964a54faadc9bea84dd668968" kindref="member">mHiSlantedDegree</ref>;</highlight></codeline>
+<codeline lineno="352" refid="class_schreyer_frame_a38628cd410b842abd900a0ccd8f0908b_1a38628cd410b842abd900a0ccd8f0908b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a38628cd410b842abd900a0ccd8f0908b_1a38628cd410b842abd900a0ccd8f0908b" kindref="member">mMaxLength</ref>;</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>These<sp/>are<sp/>used<sp/>during<sp/>frame<sp/>construction</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="355"><highlight class="normal"></highlight></codeline>
+<codeline lineno="356" refid="class_schreyer_frame_a803e4c66c3792b11795a901776f071a3_1a803e4c66c3792b11795a901776f071a3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_res_memory_block" kindref="compound">ResMemoryBlock&lt;PreElement&gt;</ref><sp/><ref refid="class_schreyer_frame_a803e4c66c3792b11795a901776f071a3_1a803e4c66c3792b11795a901776f071a3" kindref="member">mPreElements</ref>;</highlight></codeline>
+<codeline lineno="357" refid="class_schreyer_frame_a82b98218613dfaea7fb9c942ede5d020_1a82b98218613dfaea7fb9c942ede5d020" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_res_memory_block" kindref="compound">ResMemoryBlock&lt;res_varpower_word&gt;</ref><sp/><ref refid="class_schreyer_frame_a82b98218613dfaea7fb9c942ede5d020_1a82b98218613dfaea7fb9c942ede5d020" kindref="member">mVarpowers</ref>;</highlight></codeline>
+<codeline lineno="358" refid="class_schreyer_frame_a1f3bd1ec68b9fa92240662cc974862ab_1a1f3bd1ec68b9fa92240662cc974862ab" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a1f3bd1ec68b9fa92240662cc974862ab_1a1f3bd1ec68b9fa92240662cc974862ab" kindref="member">mMaxVPSize</ref>;</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"></highlight></codeline>
+<codeline lineno="360"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>These<sp/>are<sp/>used<sp/>during<sp/>matrix<sp/>computation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="361" refid="class_schreyer_frame_afd1b086dc8d552177dc4a2e83a67bf19_1afd1b086dc8d552177dc4a2e83a67bf19" refkind="member"><highlight class="normal"><sp/><sp/>std::unique_ptr&lt;F4Res&gt;<sp/><ref refid="class_schreyer_frame_afd1b086dc8d552177dc4a2e83a67bf19_1afd1b086dc8d552177dc4a2e83a67bf19" kindref="member">mComputer</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>used<sp/>to<sp/>construct<sp/>(level,degree)<sp/>part<sp/>of<sp/>the<sp/>resolution</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="362"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>this<sp/>is<sp/>a<sp/>separate<sp/>class<sp/>because<sp/>there<sp/>could<sp/>be<sp/>several<sp/>of<sp/>these,<sp/>running</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="363"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>in<sp/>parallel.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="364"><highlight class="normal"></highlight></codeline>
+<codeline lineno="365" refid="class_schreyer_frame_aaeddc7b12765cf35dbc01acc4d9a47d7_1aaeddc7b12765cf35dbc01acc4d9a47d7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_aaeddc7b12765cf35dbc01acc4d9a47d7_1aaeddc7b12765cf35dbc01acc4d9a47d7" kindref="member">mNumThreads</ref>;</highlight></codeline>
+<codeline lineno="366" refid="class_schreyer_frame_a29a6332a54cf0550847a23f3719d9e97_1a29a6332a54cf0550847a23f3719d9e97" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a29a6332a54cf0550847a23f3719d9e97_1a29a6332a54cf0550847a23f3719d9e97" kindref="member">mParallelizeByDegree</ref>;<sp/></highlight><highlight class="comment">//<sp/>only<sp/>used<sp/>in<sp/>case<sp/>WITH_TBB<sp/>is<sp/>set.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="367"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(WITH_TBB)<sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/>mtbb::task_arena<sp/>mScheduler;</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"><sp/><sp/>DependencyGraph<sp/>mDepGraph;</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"></highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/>mtbb::task_arena&amp;<sp/>getScheduler()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mScheduler;<sp/>}</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>getNumThreads()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_aaeddc7b12765cf35dbc01acc4d9a47d7_1aaeddc7b12765cf35dbc01acc4d9a47d7" kindref="member">mNumThreads</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>To<sp/>allow<sp/>res-f4.cpp<sp/>to<sp/>add<sp/>to<sp/>timings.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="377" refid="class_schreyer_frame_ac5d153e88d756fc611390624187787b1_1ac5d153e88d756fc611390624187787b1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_ac5d153e88d756fc611390624187787b1_1ac5d153e88d756fc611390624187787b1" kindref="member">timeMakeMatrix</ref>;</highlight></codeline>
+<codeline lineno="378" refid="class_schreyer_frame_a5ae5a54afed24c089e2f5360a2debec3_1a5ae5a54afed24c089e2f5360a2debec3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a5ae5a54afed24c089e2f5360a2debec3_1a5ae5a54afed24c089e2f5360a2debec3" kindref="member">timeSortMatrix</ref>;</highlight></codeline>
+<codeline lineno="379" refid="class_schreyer_frame_a251b4b9672a163bbf9a0519a4aaf7666_1a251b4b9672a163bbf9a0519a4aaf7666" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a251b4b9672a163bbf9a0519a4aaf7666_1a251b4b9672a163bbf9a0519a4aaf7666" kindref="member">timeReorderMatrix</ref>;</highlight></codeline>
+<codeline lineno="380" refid="class_schreyer_frame_adfd8087cf9af9daf9e772de6d14cbe2f_1adfd8087cf9af9daf9e772de6d14cbe2f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_adfd8087cf9af9daf9e772de6d14cbe2f_1adfd8087cf9af9daf9e772de6d14cbe2f" kindref="member">timeGaussMatrix</ref>;</highlight></codeline>
+<codeline lineno="381" refid="class_schreyer_frame_afe5e85a4fd10cf1e579af052371a5f24_1afe5e85a4fd10cf1e579af052371a5f24" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_afe5e85a4fd10cf1e579af052371a5f24_1afe5e85a4fd10cf1e579af052371a5f24" kindref="member">timeClearMatrix</ref>;</highlight></codeline>
+<codeline lineno="382" refid="class_schreyer_frame_a7a96a9305bfcc4034efc73bcf7ab509d_1a7a96a9305bfcc4034efc73bcf7ab509d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a7a96a9305bfcc4034efc73bcf7ab509d_1a7a96a9305bfcc4034efc73bcf7ab509d" kindref="member">timeResetHashTable</ref>;</highlight></codeline>
+<codeline lineno="383" refid="class_schreyer_frame_a57668cdf8358f43c408e957850c7ef83_1a57668cdf8358f43c408e957850c7ef83" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_a57668cdf8358f43c408e957850c7ef83_1a57668cdf8358f43c408e957850c7ef83" kindref="member">timeComputeRanks</ref>;</highlight></codeline>
+<codeline lineno="384" refid="class_schreyer_frame_ab51205ca8fdc80ff607ae7b3feaeabd9_1ab51205ca8fdc80ff607ae7b3feaeabd9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_schreyer_frame_ab51205ca8fdc80ff607ae7b3feaeabd9_1ab51205ca8fdc80ff607ae7b3feaeabd9" kindref="member">timeComputeSparseRanks</ref>;</highlight></codeline>
+<codeline lineno="385"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"></highlight></codeline>
+<codeline lineno="387"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="388"><highlight class="normal"></highlight></codeline>
+<codeline lineno="389"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="390"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="392"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp"/>
+  </compounddef>
+</doxygen>

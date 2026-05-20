@@ -1,0 +1,603 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_static_mono_lookup" kind="class" language="C++" prot="public">
+    <compoundname>StaticMonoLookup</compoundname>
+    <includes refid="_static_mono_map_8hpp" local="no">StaticMonoMap.hpp</includes>
+    <innerclass refid="class_static_mono_lookup_1_1_configuration" prot="private">StaticMonoLookup::Configuration</innerclass>
+    <innerclass refid="class_static_mono_lookup_1_1_lambda_wrap" prot="public">StaticMonoLookup::LambdaWrap</innerclass>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>UseKDTree</declname>
+        <defname>UseKDTree</defname>
+      </param>
+      <param>
+        <type>class Data</type>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>AR</declname>
+        <defname>AR</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>DM</declname>
+        <defname>DM</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_static_mono_lookup_a24c16aaab615fd8f900cc62fe235687b_1a24c16aaab615fd8f900cc62fe235687b" prot="private" static="no">
+        <type><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref></type>
+        <definition>typedef PolyRing::Monoid StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>StaticMonoLookup::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="40" column="28" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" prot="private" static="no">
+        <type>Monoid::ConstMonoRef</type>
+        <definition>typedef Monoid::ConstMonoRef StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>StaticMonoLookup::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="41" column="32" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_static_mono_lookup_ac634abb2cc20584faefe40caedaf9fb5_1ac634abb2cc20584faefe40caedaf9fb5" prot="private" static="no">
+        <type>Monoid::ConstMonoPtr</type>
+        <definition>typedef Monoid::ConstMonoPtr StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::ConstMonoPtr</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoPtr</name>
+        <qualifiedname>StaticMonoLookup::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="42" column="32" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_static_mono_lookup_adc4e9fec57bc3d9b0ed36f1422b8a02d_1adc4e9fec57bc3d9b0ed36f1422b8a02d" prot="private" static="no">
+        <type><ref refid="class_mono_lookup_1_1_entry_output" kindref="compound">MonoLookup::EntryOutput</ref></type>
+        <definition>typedef MonoLookup::EntryOutput StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::EntryOutput</definition>
+        <argsstring></argsstring>
+        <name>EntryOutput</name>
+        <qualifiedname>StaticMonoLookup::EntryOutput</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="43" column="35" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_static_mono_lookup_a459046e8a09671a4109f16bc860f7db4_1a459046e8a09671a4109f16bc860f7db4" prot="public" static="no">
+        <type>std::conditional&lt; UseKDTree, <ref refid="classmathic_1_1_k_d_tree" kindref="compound">mathic::KDTree</ref>&lt; <ref refid="class_static_mono_lookup_1_1_configuration" kindref="compound">Configuration</ref> &gt;, <ref refid="classmathic_1_1_div_list" kindref="compound">mathic::DivList</ref>&lt; <ref refid="class_static_mono_lookup_1_1_configuration" kindref="compound">Configuration</ref> &gt; &gt;::type</type>
+        <definition>typedef std::conditional&lt;UseKDTree,mathic::KDTree&lt;Configuration&gt;,mathic::DivList&lt;Configuration&gt;&gt;::type StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::BaseLookup</definition>
+        <argsstring></argsstring>
+        <name>BaseLookup</name>
+        <qualifiedname>StaticMonoLookup::BaseLookup</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="131" column="9" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_static_mono_lookup_a9dcee866f5caea31f0dd2edc0a6782e1_1a9dcee866f5caea31f0dd2edc0a6782e1" prot="public" static="no">
+        <type>BaseLookup::Entry</type>
+        <definition>typedef BaseLookup::Entry StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::Entry</definition>
+        <argsstring></argsstring>
+        <name>Entry</name>
+        <qualifiedname>StaticMonoLookup::Entry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="132" column="38" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="132" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_static_mono_lookup_a31382856feb4abbe1e86c6ad4d63c507_1a31382856feb4abbe1e86c6ad4d63c507" prot="private" static="no" mutable="no">
+        <type><ref refid="class_static_mono_lookup_a459046e8a09671a4109f16bc860f7db4_1a459046e8a09671a4109f16bc860f7db4" kindref="member">BaseLookup</ref></type>
+        <definition>BaseLookup StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::mLookup</definition>
+        <argsstring></argsstring>
+        <name>mLookup</name>
+        <qualifiedname>StaticMonoLookup::mLookup</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="380" column="14" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="380" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_static_mono_lookup_a43b6c82176a27ad474f1d036e4b8b75a_1a43b6c82176a27ad474f1d036e4b8b75a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::StaticMonoLookup</definition>
+        <argsstring>(const Monoid &amp;monoid)</argsstring>
+        <name>StaticMonoLookup</name>
+        <qualifiedname>StaticMonoLookup::StaticMonoLookup</qualifiedname>
+        <param>
+          <type>const <ref refid="class_static_mono_lookup_a24c16aaab615fd8f900cc62fe235687b_1a24c16aaab615fd8f900cc62fe235687b" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+          <declname>monoid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="137" column="3" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="137" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_add06722e65c1229e7008875b35ca6b9a_1add06722e65c1229e7008875b35ca6b9a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_static_mono_lookup_a24c16aaab615fd8f900cc62fe235687b_1a24c16aaab615fd8f900cc62fe235687b" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+        <definition>const Monoid &amp; StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::monoid</definition>
+        <argsstring>() const</argsstring>
+        <name>monoid</name>
+        <qualifiedname>StaticMonoLookup::monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="139" column="16" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="139" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_ad143e0f1e2e19f51f50b1e839145b852_1ad143e0f1e2e19f51f50b1e839145b852" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Lambda</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::forAll</definition>
+        <argsstring>(Lambda &amp;&amp;lambda) const</argsstring>
+        <name>forAll</name>
+        <qualifiedname>StaticMonoLookup::forAll</qualifiedname>
+        <param>
+          <type>Lambda &amp;&amp;</type>
+          <declname>lambda</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="156" column="8" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="156" bodyend="163"/>
+        <referencedby refid="class_concrete_module_mono_set_a5be488333da098b13ccf162ed1958de8_1a5be488333da098b13ccf162ed1958de8" compoundref="_module_mono_set_8cpp" startline="60" endline="82">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::display</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_a25f4438e35fd6acb71b4a1fd8a555513_1a25f4438e35fd6acb71b4a1fd8a555513" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::regularReducer</definition>
+        <argsstring>(ConstMonoRef sig, ConstMonoRef mono, const SigPolyBasis &amp;sigBasis, const bool preferSparseReducers) const</argsstring>
+        <name>regularReducer</name>
+        <qualifiedname>StaticMonoLookup::regularReducer</qualifiedname>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>sig</declname>
+        </param>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sig_poly_basis" kindref="compound">SigPolyBasis</ref> &amp;</type>
+          <declname>sigBasis</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>preferSparseReducers</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="167" column="10" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="167" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_a5f4cb26c5cc29391071fa63f5276a858_1a5f4cb26c5cc29391071fa63f5276a858" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::lowBaseDivisors</definition>
+        <argsstring>(std::vector&lt; size_t &gt; &amp;divisors, const size_t maxDivisors, const size_t newGenerator, const SigPolyBasis &amp;basis) const</argsstring>
+        <name>lowBaseDivisors</name>
+        <qualifiedname>StaticMonoLookup::lowBaseDivisors</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &amp;</type>
+          <declname>divisors</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>maxDivisors</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>newGenerator</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sig_poly_basis" kindref="compound">SigPolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="203" column="8" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="203" bodyend="235"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_af4364717fa5ba177bdd8255f471584a5_1af4364717fa5ba177bdd8255f471584a5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::highBaseDivisor</definition>
+        <argsstring>(const size_t newGenerator, const SigPolyBasis &amp;basis) const</argsstring>
+        <name>highBaseDivisor</name>
+        <qualifiedname>StaticMonoLookup::highBaseDivisor</qualifiedname>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>newGenerator</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sig_poly_basis" kindref="compound">SigPolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="237" column="10" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="237" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_a148464312e6744c5c2f1880415002230_1a148464312e6744c5c2f1880415002230" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::minimalLeadInSig</definition>
+        <argsstring>(ConstMonoRef sig, const SigPolyBasis &amp;basis) const</argsstring>
+        <name>minimalLeadInSig</name>
+        <qualifiedname>StaticMonoLookup::minimalLeadInSig</qualifiedname>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>sig</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sig_poly_basis" kindref="compound">SigPolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="261" column="10" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="261" bodyend="308"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_acbd8afe1fa6f63bf109f3a7119ed4638_1acbd8afe1fa6f63bf109f3a7119ed4638" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::classicReducer</definition>
+        <argsstring>(ConstMonoRef mono, const PolyBasis &amp;basis, const bool preferSparseReducers) const</argsstring>
+        <name>classicReducer</name>
+        <qualifiedname>StaticMonoLookup::classicReducer</qualifiedname>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly_basis" kindref="compound">PolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>preferSparseReducers</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="312" column="10" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="312" bodyend="341"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_a6629c63883dcbbe688a41415b5b50eda_1a6629c63883dcbbe688a41415b5b50eda" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_static_mono_lookup_a9dcee866f5caea31f0dd2edc0a6782e1_1a9dcee866f5caea31f0dd2edc0a6782e1" kindref="member">Entry</ref> *</type>
+        <definition>const Entry * StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::divisor</definition>
+        <argsstring>(ConstMonoRef mono) const</argsstring>
+        <name>divisor</name>
+        <qualifiedname>StaticMonoLookup::divisor</qualifiedname>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="345" column="15" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="345" bodyend="347"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_a1b77eda37cca16d6fd0066e978c6b9c0_1a1b77eda37cca16d6fd0066e978c6b9c0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::divisors</definition>
+        <argsstring>(ConstMonoRef mono, EntryOutput &amp;consumer) const</argsstring>
+        <name>divisors</name>
+        <qualifiedname>StaticMonoLookup::divisors</qualifiedname>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <param>
+          <type><ref refid="class_static_mono_lookup_adc4e9fec57bc3d9b0ed36f1422b8a02d_1adc4e9fec57bc3d9b0ed36f1422b8a02d" kindref="member">EntryOutput</ref> &amp;</type>
+          <declname>consumer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="349" column="8" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="349" bodyend="353"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_ab5f0b3a8f19f56a747b52acdbde9c79f_1ab5f0b3a8f19f56a747b52acdbde9c79f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::multiples</definition>
+        <argsstring>(ConstMonoRef mono, EntryOutput &amp;consumer) const</argsstring>
+        <name>multiples</name>
+        <qualifiedname>StaticMonoLookup::multiples</qualifiedname>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <param>
+          <type><ref refid="class_static_mono_lookup_adc4e9fec57bc3d9b0ed36f1422b8a02d_1adc4e9fec57bc3d9b0ed36f1422b8a02d" kindref="member">EntryOutput</ref> &amp;</type>
+          <declname>consumer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="355" column="8" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="355" bodyend="359"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_ac37083e6d42706cc3fb34b23111848f9_1ac37083e6d42706cc3fb34b23111848f9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::removeMultiples</definition>
+        <argsstring>(ConstMonoRef mono)</argsstring>
+        <name>removeMultiples</name>
+        <qualifiedname>StaticMonoLookup::removeMultiples</qualifiedname>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="361" column="8" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="361" bodyend="363"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_a1bec8d8f64e7bc49d781fa82b1db38f2_1a1bec8d8f64e7bc49d781fa82b1db38f2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::remove</definition>
+        <argsstring>(ConstMonoRef mono)</argsstring>
+        <name>remove</name>
+        <qualifiedname>StaticMonoLookup::remove</qualifiedname>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="365" column="8" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="365" bodyend="365"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_a76b40a62f93c18dd2d33b316ccb95fd8_1a76b40a62f93c18dd2d33b316ccb95fd8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>StaticMonoLookup::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="367" column="10" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="367" bodyend="367"/>
+        <referencedby refid="class_concrete_module_mono_set_a5be488333da098b13ccf162ed1958de8_1a5be488333da098b13ccf162ed1958de8" compoundref="_module_mono_set_8cpp" startline="60" endline="82">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::display</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_ab3b58a617381377d63495843e6d2c1fe_1ab3b58a617381377d63495843e6d2c1fe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::getName</definition>
+        <argsstring>() const</argsstring>
+        <name>getName</name>
+        <qualifiedname>StaticMonoLookup::getName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="369" column="15" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="369" bodyend="369"/>
+        <referencedby refid="class_concrete_module_mono_set_a0c1be679f87f0edfd1b3ff4cdfacde40_1a0c1be679f87f0edfd1b3ff4cdfacde40" compoundref="_module_mono_set_8cpp" startline="56" endline="58">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::name</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_a40452dff07dee7ba397b2eb216dc6667_1a40452dff07dee7ba397b2eb216dc6667" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+        <definition>const PolyRing &amp; StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::ring</definition>
+        <argsstring>() const</argsstring>
+        <name>ring</name>
+        <qualifiedname>StaticMonoLookup::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="370" column="18" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="370" bodyend="370"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_acfb32dc153b43efbac12094a7e8e146f_1acfb32dc153b43efbac12094a7e8e146f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::getMemoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>getMemoryUse</name>
+        <qualifiedname>StaticMonoLookup::getMemoryUse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="372" column="10" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="372" bodyend="372"/>
+      </memberdef>
+      <memberdef kind="function" id="class_static_mono_lookup_a8a0671bae77610ca245bdfdd26068206_1a8a0671bae77610ca245bdfdd26068206" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::insert</definition>
+        <argsstring>(ConstMonoRef mono, D &amp;&amp;data)</argsstring>
+        <name>insert</name>
+        <qualifiedname>StaticMonoLookup::insert</qualifiedname>
+        <param>
+          <type><ref refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <param>
+          <type>D &amp;&amp;</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="375" column="8" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="375" bodyend="377"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_static_mono_lookup_ad60a07e0242b1cba51985778ff52727c_1ad60a07e0242b1cba51985778ff52727c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Lambda</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_static_mono_lookup_1_1_lambda_wrap" kindref="compound">LambdaWrap</ref>&lt; Lambda &gt;</type>
+        <definition>static LambdaWrap&lt; Lambda &gt; StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::lambdaWrap</definition>
+        <argsstring>(Lambda &amp;lambda)</argsstring>
+        <name>lambdaWrap</name>
+        <qualifiedname>StaticMonoLookup::lambdaWrap</qualifiedname>
+        <param>
+          <type>Lambda &amp;</type>
+          <declname>lambda</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="151" column="21" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="151" bodyend="153"/>
+        <referencedby refid="class_static_mono_lookup_acbd8afe1fa6f63bf109f3a7119ed4638_1acbd8afe1fa6f63bf109f3a7119ed4638" compoundref="_static_mono_map_8hpp" startline="312" endline="341">StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;::classicReducer</referencedby>
+        <referencedby refid="class_static_mono_lookup_a1b77eda37cca16d6fd0066e978c6b9c0_1a1b77eda37cca16d6fd0066e978c6b9c0" compoundref="_static_mono_map_8hpp" startline="349" endline="353">StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;::divisors</referencedby>
+        <referencedby refid="class_static_mono_lookup_ad143e0f1e2e19f51f50b1e839145b852_1ad143e0f1e2e19f51f50b1e839145b852" compoundref="_static_mono_map_8hpp" startline="156" endline="163">StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;::forAll</referencedby>
+        <referencedby refid="class_static_mono_lookup_af4364717fa5ba177bdd8255f471584a5_1af4364717fa5ba177bdd8255f471584a5" compoundref="_static_mono_map_8hpp" startline="237" endline="259">StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;::highBaseDivisor</referencedby>
+        <referencedby refid="class_static_mono_lookup_a5f4cb26c5cc29391071fa63f5276a858_1a5f4cb26c5cc29391071fa63f5276a858" compoundref="_static_mono_map_8hpp" startline="203" endline="235">StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;::lowBaseDivisors</referencedby>
+        <referencedby refid="class_static_mono_lookup_a148464312e6744c5c2f1880415002230_1a148464312e6744c5c2f1880415002230" compoundref="_static_mono_map_8hpp" startline="261" endline="308">StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;::minimalLeadInSig</referencedby>
+        <referencedby refid="class_static_mono_lookup_ab5f0b3a8f19f56a747b52acdbde9c79f_1ab5f0b3a8f19f56a747b52acdbde9c79f" compoundref="_static_mono_map_8hpp" startline="355" endline="359">StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;::multiples</referencedby>
+        <referencedby refid="class_static_mono_lookup_a25f4438e35fd6acb71b4a1fd8a555513_1a25f4438e35fd6acb71b4a1fd8a555513" compoundref="_static_mono_map_8hpp" startline="167" endline="201">StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;::regularReducer</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Data structure for performing queries on a set of monomials. This is static in the sense that the interface is not virtual. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;</label>
+        <link refid="class_static_mono_lookup"/>
+      </node>
+      <node id="2">
+        <label>StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;</label>
+        <link refid="class_static_mono_lookup"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>StaticMonoLookup&lt; UseKDTree, size_t, AllowRemovals, UseDivMask &gt;</label>
+        <link refid="class_static_mono_lookup"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; UseKDTree, size_t, AllowRemovals, UseDivMask &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>type</label>
+      </node>
+      <node id="1">
+        <label>StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;</label>
+        <link refid="class_static_mono_lookup"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mLookup</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" line="38" column="1" bodyfile="submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp" bodystart="38" bodyend="381"/>
+    <listofallmembers>
+      <member refid="class_static_mono_lookup_a459046e8a09671a4109f16bc860f7db4_1a459046e8a09671a4109f16bc860f7db4" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>BaseLookup</name></member>
+      <member refid="class_static_mono_lookup_acbd8afe1fa6f63bf109f3a7119ed4638_1acbd8afe1fa6f63bf109f3a7119ed4638" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>classicReducer</name></member>
+      <member refid="class_static_mono_lookup_ac634abb2cc20584faefe40caedaf9fb5_1ac634abb2cc20584faefe40caedaf9fb5" prot="private" virt="non-virtual"><scope>StaticMonoLookup</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_static_mono_lookup_a0959bd150d83a60544e5893308155611_1a0959bd150d83a60544e5893308155611" prot="private" virt="non-virtual"><scope>StaticMonoLookup</scope><name>ConstMonoRef</name></member>
+      <member refid="class_static_mono_lookup_a6629c63883dcbbe688a41415b5b50eda_1a6629c63883dcbbe688a41415b5b50eda" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>divisor</name></member>
+      <member refid="class_static_mono_lookup_a1b77eda37cca16d6fd0066e978c6b9c0_1a1b77eda37cca16d6fd0066e978c6b9c0" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>divisors</name></member>
+      <member refid="class_static_mono_lookup_a9dcee866f5caea31f0dd2edc0a6782e1_1a9dcee866f5caea31f0dd2edc0a6782e1" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>Entry</name></member>
+      <member refid="class_static_mono_lookup_adc4e9fec57bc3d9b0ed36f1422b8a02d_1adc4e9fec57bc3d9b0ed36f1422b8a02d" prot="private" virt="non-virtual"><scope>StaticMonoLookup</scope><name>EntryOutput</name></member>
+      <member refid="class_static_mono_lookup_ad143e0f1e2e19f51f50b1e839145b852_1ad143e0f1e2e19f51f50b1e839145b852" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>forAll</name></member>
+      <member refid="class_static_mono_lookup_acfb32dc153b43efbac12094a7e8e146f_1acfb32dc153b43efbac12094a7e8e146f" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>getMemoryUse</name></member>
+      <member refid="class_static_mono_lookup_ab3b58a617381377d63495843e6d2c1fe_1ab3b58a617381377d63495843e6d2c1fe" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>getName</name></member>
+      <member refid="class_static_mono_lookup_af4364717fa5ba177bdd8255f471584a5_1af4364717fa5ba177bdd8255f471584a5" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>highBaseDivisor</name></member>
+      <member refid="class_static_mono_lookup_a8a0671bae77610ca245bdfdd26068206_1a8a0671bae77610ca245bdfdd26068206" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>insert</name></member>
+      <member refid="class_static_mono_lookup_ad60a07e0242b1cba51985778ff52727c_1ad60a07e0242b1cba51985778ff52727c" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>lambdaWrap</name></member>
+      <member refid="class_static_mono_lookup_a5f4cb26c5cc29391071fa63f5276a858_1a5f4cb26c5cc29391071fa63f5276a858" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>lowBaseDivisors</name></member>
+      <member refid="class_static_mono_lookup_a148464312e6744c5c2f1880415002230_1a148464312e6744c5c2f1880415002230" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>minimalLeadInSig</name></member>
+      <member refid="class_static_mono_lookup_a31382856feb4abbe1e86c6ad4d63c507_1a31382856feb4abbe1e86c6ad4d63c507" prot="private" virt="non-virtual"><scope>StaticMonoLookup</scope><name>mLookup</name></member>
+      <member refid="class_static_mono_lookup_a24c16aaab615fd8f900cc62fe235687b_1a24c16aaab615fd8f900cc62fe235687b" prot="private" virt="non-virtual"><scope>StaticMonoLookup</scope><name>Monoid</name></member>
+      <member refid="class_static_mono_lookup_add06722e65c1229e7008875b35ca6b9a_1add06722e65c1229e7008875b35ca6b9a" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>monoid</name></member>
+      <member refid="class_static_mono_lookup_ab5f0b3a8f19f56a747b52acdbde9c79f_1ab5f0b3a8f19f56a747b52acdbde9c79f" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>multiples</name></member>
+      <member refid="class_static_mono_lookup_a25f4438e35fd6acb71b4a1fd8a555513_1a25f4438e35fd6acb71b4a1fd8a555513" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>regularReducer</name></member>
+      <member refid="class_static_mono_lookup_a1bec8d8f64e7bc49d781fa82b1db38f2_1a1bec8d8f64e7bc49d781fa82b1db38f2" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>remove</name></member>
+      <member refid="class_static_mono_lookup_ac37083e6d42706cc3fb34b23111848f9_1ac37083e6d42706cc3fb34b23111848f9" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>removeMultiples</name></member>
+      <member refid="class_static_mono_lookup_a40452dff07dee7ba397b2eb216dc6667_1a40452dff07dee7ba397b2eb216dc6667" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>ring</name></member>
+      <member refid="class_static_mono_lookup_a76b40a62f93c18dd2d33b316ccb95fd8_1a76b40a62f93c18dd2d33b316ccb95fd8" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>size</name></member>
+      <member refid="class_static_mono_lookup_a43b6c82176a27ad474f1d036e4b8b75a_1a43b6c82176a27ad474f1d036e4b8b75a" prot="public" virt="non-virtual"><scope>StaticMonoLookup</scope><name>StaticMonoLookup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

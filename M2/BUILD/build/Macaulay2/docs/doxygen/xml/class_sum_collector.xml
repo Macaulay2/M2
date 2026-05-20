@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_sum_collector" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>SumCollector</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <derivedcompoundref refid="class_sum_collector_default" prot="public" virt="non-virtual">SumCollectorDefault</derivedcompoundref>
+    <derivedcompoundref refid="class_sum_collector_free_algebra_heap" prot="public" virt="non-virtual">SumCollectorFreeAlgebraHeap</derivedcompoundref>
+    <derivedcompoundref refid="class_sum_collector_poly_heap" prot="public" virt="non-virtual">SumCollectorPolyHeap</derivedcompoundref>
+    <includes refid="ring_8hpp" local="no">ring.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_sum_collector_af69401278669c9817641089ae2b60da1_1af69401278669c9817641089ae2b60da1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SumCollector::SumCollector</definition>
+        <argsstring>()</argsstring>
+        <name>SumCollector</name>
+        <qualifiedname>SumCollector::SumCollector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ring.hpp" line="666" column="3" bodyfile="Macaulay2/e/ring.hpp" bodystart="666" bodyend="666"/>
+      </memberdef>
+      <memberdef kind="function" id="class_sum_collector_ae139f38f5f35d89b4eea666919a01bad_1ae139f38f5f35d89b4eea666919a01bad" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual SumCollector::~SumCollector</definition>
+        <argsstring>()</argsstring>
+        <name>~SumCollector</name>
+        <qualifiedname>SumCollector::~SumCollector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ring.hpp" line="667" column="11" bodyfile="Macaulay2/e/ring.hpp" bodystart="667" bodyend="667"/>
+      </memberdef>
+      <memberdef kind="function" id="class_sum_collector_aae62dbb1fff9d62ff18ca4c6924098f3_1aae62dbb1fff9d62ff18ca4c6924098f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void SumCollector::add</definition>
+        <argsstring>(ring_elem f)=0</argsstring>
+        <name>add</name>
+        <qualifiedname>SumCollector::add</qualifiedname>
+        <reimplementedby refid="class_sum_collector_default_a5d11102785013f0f6953d04f8d551cda_1a5d11102785013f0f6953d04f8d551cda">add</reimplementedby>
+        <reimplementedby refid="class_sum_collector_free_algebra_heap_ab4f592bdf66b68982215b9b7a26b4fcf_1ab4f592bdf66b68982215b9b7a26b4fcf">add</reimplementedby>
+        <reimplementedby refid="class_sum_collector_poly_heap_adc46fa32455efda953681df09dfe2a9a_1adc46fa32455efda953681df09dfe2a9a">add</reimplementedby>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ring.hpp" line="668" column="16"/>
+        <referencedby refid="class_free_algebra_abb084af5b943d04033b2296e230664ab_1abb084af5b943d04033b2296e230664ab" compoundref="_free_algebra_8cpp" startline="731" endline="759">FreeAlgebra::eval</referencedby>
+        <referencedby refid="class_poly_ring_a62d2ed20aa3e354a639db5ce8461975a_1a62d2ed20aa3e354a639db5ce8461975a" compoundref="poly_8cpp" startline="1346" endline="1365">PolyRing::eval</referencedby>
+        <referencedby refid="class_poly_ring_ad1a97a9d5a754a5dad10848c4e0d7db8_1ad1a97a9d5a754a5dad10848c4e0d7db8" compoundref="poly_8cpp" startline="2249" endline="2272">PolyRing::fromSmallIntegerCoefficients</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_sum_collector_a80633837fdba90a2fde98b2118db0a11_1a80633837fdba90a2fde98b2118db0a11" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>virtual ring_elem SumCollector::getValue</definition>
+        <argsstring>()=0</argsstring>
+        <name>getValue</name>
+        <qualifiedname>SumCollector::getValue</qualifiedname>
+        <reimplementedby refid="class_sum_collector_default_af93d829f5a2bfc99497621ec73e987e0_1af93d829f5a2bfc99497621ec73e987e0">getValue</reimplementedby>
+        <reimplementedby refid="class_sum_collector_free_algebra_heap_af31b1142fb3e4403265eb1664e465b8e_1af31b1142fb3e4403265eb1664e465b8e">getValue</reimplementedby>
+        <reimplementedby refid="class_sum_collector_poly_heap_aaf8912b20d670213905d87f4dc97ea41_1aaf8912b20d670213905d87f4dc97ea41">getValue</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ring.hpp" line="669" column="21"/>
+        <referencedby refid="class_free_algebra_abb084af5b943d04033b2296e230664ab_1abb084af5b943d04033b2296e230664ab" compoundref="_free_algebra_8cpp" startline="731" endline="759">FreeAlgebra::eval</referencedby>
+        <referencedby refid="class_poly_ring_a62d2ed20aa3e354a639db5ce8461975a_1a62d2ed20aa3e354a639db5ce8461975a" compoundref="poly_8cpp" startline="1346" endline="1365">PolyRing::eval</referencedby>
+        <referencedby refid="class_poly_ring_ad1a97a9d5a754a5dad10848c4e0d7db8_1ad1a97a9d5a754a5dad10848c4e0d7db8" compoundref="poly_8cpp" startline="2249" endline="2272">PolyRing::fromSmallIntegerCoefficients</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Abstract incremental accumulator that builds a <computeroutput><ref refid="unionring__elem" kindref="compound">ring_elem</ref></computeroutput> from many <computeroutput>add(f)</computeroutput> calls. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Provides a single-value <computeroutput><ref refid="class_sum_collector_a80633837fdba90a2fde98b2118db0a11_1a80633837fdba90a2fde98b2118db0a11" kindref="member">getValue()</ref></computeroutput> entry point that finalises whatever the underlying ring decided to do with the staged summands (geobucket merge, hash deduplication, polynomial normalisation, ...). Concrete subclasses include <computeroutput><ref refid="class_sum_collector_free_algebra_heap" kindref="compound">SumCollectorFreeAlgebraHeap</ref></computeroutput> (in <computeroutput><ref refid="_free_algebra_8hpp" kindref="compound">FreeAlgebra.hpp</ref></computeroutput>) and the ring-specific implementations the engine instantiates through <computeroutput><ref refid="class_ring_afdf9776b22c9fc94f2e820fc8843622f_1afdf9776b22c9fc94f2e820fc8843622f" kindref="member">Ring::make_SumCollector</ref></computeroutput>. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>SumCollector</label>
+        <link refid="class_sum_collector"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>SumCollectorDefault</label>
+        <link refid="class_sum_collector_default"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>SumCollectorFreeAlgebraHeap</label>
+        <link refid="class_sum_collector_free_algebra_heap"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>SumCollectorPolyHeap</label>
+        <link refid="class_sum_collector_poly_heap"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>SumCollector</label>
+        <link refid="class_sum_collector"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/ring.hpp" line="663" column="1" bodyfile="Macaulay2/e/ring.hpp" bodystart="664" bodyend="670"/>
+    <listofallmembers>
+      <member refid="class_sum_collector_aae62dbb1fff9d62ff18ca4c6924098f3_1aae62dbb1fff9d62ff18ca4c6924098f3" prot="public" virt="pure-virtual"><scope>SumCollector</scope><name>add</name></member>
+      <member refid="class_sum_collector_a80633837fdba90a2fde98b2118db0a11_1a80633837fdba90a2fde98b2118db0a11" prot="public" virt="pure-virtual"><scope>SumCollector</scope><name>getValue</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>SumCollector</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>SumCollector</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>SumCollector</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>SumCollector</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>SumCollector</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>SumCollector</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>SumCollector</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>SumCollector</scope><name>operator new[]</name></member>
+      <member refid="class_sum_collector_af69401278669c9817641089ae2b60da1_1af69401278669c9817641089ae2b60da1" prot="public" virt="non-virtual"><scope>SumCollector</scope><name>SumCollector</name></member>
+      <member refid="class_sum_collector_ae139f38f5f35d89b4eea666919a01bad_1ae139f38f5f35d89b4eea666919a01bad" prot="public" virt="virtual"><scope>SumCollector</scope><name>~SumCollector</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

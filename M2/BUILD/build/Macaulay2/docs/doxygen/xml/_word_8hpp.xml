@@ -1,0 +1,464 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_word_8hpp" kind="file" language="C++">
+    <compoundname>Word.hpp</compoundname>
+    <includes local="no">iosfwd</includes>
+    <includes local="no">vector</includes>
+    <includedby refid="_free_algebra_8cpp" local="yes">Macaulay2/e/NCAlgebras/FreeAlgebra.cpp</includedby>
+    <includedby refid="_free_algebra_8hpp" local="yes">Macaulay2/e/NCAlgebras/FreeAlgebra.hpp</includedby>
+    <includedby refid="_free_monoid_8cpp" local="yes">Macaulay2/e/NCAlgebras/FreeMonoid.cpp</includedby>
+    <includedby refid="_free_monoid_8hpp" local="yes">Macaulay2/e/NCAlgebras/FreeMonoid.hpp</includedby>
+    <includedby refid="_n_c_f4_8hpp" local="yes">Macaulay2/e/NCAlgebras/NCF4.hpp</includedby>
+    <includedby refid="_n_c_groebner_8cpp" local="yes">Macaulay2/e/NCAlgebras/NCGroebner.cpp</includedby>
+    <includedby refid="_n_c_reduction_8cpp" local="yes">Macaulay2/e/NCAlgebras/NCReduction.cpp</includedby>
+    <includedby refid="_suffix_tree_8cpp" local="yes">Macaulay2/e/NCAlgebras/SuffixTree.cpp</includedby>
+    <includedby refid="_suffix_tree_8hpp" local="yes">Macaulay2/e/NCAlgebras/SuffixTree.hpp</includedby>
+    <includedby refid="_word_8cpp" local="yes">Macaulay2/e/NCAlgebras/Word.cpp</includedby>
+    <includedby refid="_word_table_8cpp" local="yes">Macaulay2/e/NCAlgebras/WordTable.cpp</includedby>
+    <includedby refid="matrix-ncbasis_8cpp" local="yes">Macaulay2/e/matrix-ncbasis.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>Macaulay2/e/NCAlgebras/Word.hpp</label>
+        <link refid="_word_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>iosfwd</label>
+      </node>
+      <node id="3">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="5">
+        <label>Macaulay2/e/M2FreeAlgebra.cpp</label>
+        <link refid="_m2_free_algebra_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/M2FreeAlgebra.hpp</label>
+        <link refid="_m2_free_algebra_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/M2FreeAlgebraQuotient.cpp</label>
+        <link refid="_m2_free_algebra_quotient_8cpp"/>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/M2FreeAlgebraQuotient.hpp</label>
+        <link refid="_m2_free_algebra_quotient_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebra.cpp</label>
+        <link refid="_free_algebra_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebra.hpp</label>
+        <link refid="_free_algebra_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebraQuotient.cpp</label>
+        <link refid="_free_algebra_quotient_8cpp"/>
+      </node>
+      <node id="14">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebraQuotient.hpp</label>
+        <link refid="_free_algebra_quotient_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>Macaulay2/e/NCAlgebras/FreeMonoid.cpp</label>
+        <link refid="_free_monoid_8cpp"/>
+      </node>
+      <node id="25">
+        <label>Macaulay2/e/NCAlgebras/FreeMonoid.hpp</label>
+        <link refid="_free_monoid_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Macaulay2/e/NCAlgebras/NCF4.cpp</label>
+        <link refid="_n_c_f4_8cpp"/>
+      </node>
+      <node id="20">
+        <label>Macaulay2/e/NCAlgebras/NCF4.hpp</label>
+        <link refid="_n_c_f4_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Macaulay2/e/NCAlgebras/NCGroebner.cpp</label>
+        <link refid="_n_c_groebner_8cpp"/>
+      </node>
+      <node id="28">
+        <label>Macaulay2/e/NCAlgebras/NCGroebner.hpp</label>
+        <link refid="_n_c_groebner_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>Macaulay2/e/NCAlgebras/NCReduction.cpp</label>
+        <link refid="_n_c_reduction_8cpp"/>
+      </node>
+      <node id="26">
+        <label>Macaulay2/e/NCAlgebras/SuffixTree.cpp</label>
+        <link refid="_suffix_tree_8cpp"/>
+      </node>
+      <node id="27">
+        <label>Macaulay2/e/NCAlgebras/SuffixTree.hpp</label>
+        <link refid="_suffix_tree_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>Macaulay2/e/NCAlgebras/Word.cpp</label>
+        <link refid="_word_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/NCAlgebras/Word.hpp</label>
+        <link refid="_word_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>Macaulay2/e/NCAlgebras/WordTable.cpp</label>
+        <link refid="_word_table_8cpp"/>
+      </node>
+      <node id="8">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.cpp</label>
+        <link refid="nc-res-computation_8cpp"/>
+      </node>
+      <node id="16">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.hpp</label>
+        <link refid="nc-res-computation_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+      <node id="11">
+        <label>Macaulay2/e/interface/groebner.cpp</label>
+        <link refid="groebner_8cpp"/>
+      </node>
+      <node id="9">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="10">
+        <label>Macaulay2/e/interface/ringelement.cpp</label>
+        <link refid="ringelement_8cpp"/>
+      </node>
+      <node id="23">
+        <label>Macaulay2/e/matrix-ncbasis.cpp</label>
+        <link refid="matrix-ncbasis_8cpp"/>
+      </node>
+      <node id="12">
+        <label>Macaulay2/e/matrix.cpp</label>
+        <link refid="matrix_8cpp"/>
+      </node>
+      <node id="13">
+        <label>Macaulay2/e/relem.cpp</label>
+        <link refid="relem_8cpp"/>
+      </node>
+      <node id="18">
+        <label>Macaulay2/e/unit-tests/NCGroebnerTest.cpp</label>
+        <link refid="_n_c_groebner_test_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_word" prot="public">Word</innerclass>
+    <innerclass refid="class_word_with_data" prot="public">WordWithData</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_word_8hpp_a2fdcf5230f1369a3c523f74f1b5138d4_1a2fdcf5230f1369a3c523f74f1b5138d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;o, const Word &amp;w)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_word" kindref="compound">Word</ref> &amp;</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="91" column="1" bodyfile="Macaulay2/e/NCAlgebras/Word.cpp" bodystart="4" bodyend="18" declfile="Macaulay2/e/NCAlgebras/Word.hpp" declline="91" declcolumn="1"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">Word::begin</references>
+        <references refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">Word::size</references>
+      </memberdef>
+      <memberdef kind="function" id="_word_8hpp_a9793ecb541d9fff8dc18605eaff42882_1a9793ecb541d9fff8dc18605eaff42882" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;o, const WordWithData &amp;w)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_word_with_data" kindref="compound">WordWithData</ref> &amp;</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="160" column="1" bodyfile="Macaulay2/e/NCAlgebras/Word.cpp" bodystart="20" bodyend="24" declfile="Macaulay2/e/NCAlgebras/Word.hpp" declline="160" declcolumn="1"/>
+        <references refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" compoundref="_word_8hpp" startline="139" endline="139">WordWithData::ecartDegree</references>
+        <references refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" compoundref="_word_8hpp" startline="137" endline="137">WordWithData::word</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput> and <computeroutput><ref refid="class_word_with_data" kindref="compound">WordWithData</ref></computeroutput> <mdash/> non-owning views over the flat-int encoding of a non-commutative word. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares the NC-side lightweight view that every word-table, suffix-tree, overlap, and reduction routine passes around. <computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput> carries <computeroutput>mBegin</computeroutput> / <computeroutput>mEnd</computeroutput> pointers plus a cached size into a raw <computeroutput><ref refid="classint" kindref="compound">int</ref>[]</computeroutput> of variable indices <computeroutput>[v_1, ..., v_k]</computeroutput> <mdash/> with no length or weight prefix, since <computeroutput><ref refid="class_free_monoid" kindref="compound">FreeMonoid</ref></computeroutput> already stores those separately. The class never allocates; the underlying buffer normally lives in a <computeroutput><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref></computeroutput> or in a <computeroutput>std::vector&lt;<ref refid="classint" kindref="compound">int</ref>&gt;</computeroutput> that outlives the <computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput>. <computeroutput>init</computeroutput> lets one <computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput> instance be rebound across many buffers in a tight loop without reconstruction; the <computeroutput>std::vector&lt;<ref refid="classint" kindref="compound">int</ref>&gt;</computeroutput> constructor is <computeroutput>explicit</computeroutput> and exists for unit tests where the lifetime is obvious.</para>
+<para><computeroutput><ref refid="class_word_with_data" kindref="compound">WordWithData</ref></computeroutput> decorates a <computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput> with <computeroutput>mEcartDegree</computeroutput> and <computeroutput>mHeftDegree</computeroutput> so the word-table sort and divisibility checks over a homogenised system can compare by ecart degree before walking the variable indices. Equality on <computeroutput><ref refid="class_word_with_data" kindref="compound">WordWithData</ref></computeroutput> deliberately ignores heft degree but respects ecart degree, matching the divisibility convention used by <computeroutput><ref refid="class_n_c_groebner" kindref="compound">NCGroebner</ref></computeroutput>&apos;s reducer-selection step. Commutative counterpart is <computeroutput>gb-f4/MonomialView</computeroutput>.</para>
+<para><simplesect kind="see"><para><ref refid="_free_monoid_8hpp" kindref="compound">FreeMonoid.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_word_table_8hpp" kindref="compound">WordTable.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_suffix_tree_8hpp" kindref="compound">SuffixTree.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_overlap_table_8hpp" kindref="compound">OverlapTable.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_monomial_view_8hpp" kindref="compound">gb-f4/MonomialView.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>_word_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_word_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iosfwd&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>ostream</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>vector,<sp/>vector&lt;&gt;::value_type</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="class_word" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" kindref="member">Word</ref></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>warning:<sp/>the<sp/>pointers<sp/>begin,<sp/>end,<sp/>should<sp/>not<sp/>go<sp/>out<sp/>of<sp/>scope<sp/>while<sp/>this<sp/>Word<sp/>is<sp/>in<sp/>use.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" kindref="member">Word</ref>()<sp/>:<sp/><ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref>(nullptr),<sp/><ref refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" kindref="member">mEnd</ref>(nullptr),<sp/><ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref>(0)<sp/>{}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="class_word_a0e4d3b7bd337ea9d87cfddfa0cea9733_1a0e4d3b7bd337ea9d87cfddfa0cea9733" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_word_a0e4d3b7bd337ea9d87cfddfa0cea9733_1a0e4d3b7bd337ea9d87cfddfa0cea9733" kindref="member">Word</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end</ref>)<sp/>:<sp/><ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref>(<ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin</ref>),<sp/><ref refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" kindref="member">mEnd</ref>(<ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end</ref>),<sp/><ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref>(<ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end</ref>-<ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin</ref>)<sp/>{}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>keyword<sp/>&apos;explicit&apos;<sp/>to<sp/>prevent<sp/>calling<sp/>this<sp/>constructor<sp/>implicitly.<sp/><sp/>It</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>causes<sp/>some<sp/>strange<sp/>behavior<sp/>in<sp/>debugging.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>to<sp/>be<sp/>honest,<sp/>we<sp/>should<sp/>only<sp/>be<sp/>using<sp/>this<sp/>in<sp/>the<sp/>unit-tests<sp/>file<sp/>ONLY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="class_word_a60168628b547268284ae1ca08901c722_1a60168628b547268284ae1ca08901c722" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_word_a60168628b547268284ae1ca08901c722_1a60168628b547268284ae1ca08901c722" kindref="member">Word</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;int&gt;&amp;<sp/>val)<sp/>:<sp/><ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref>(val.data()),<sp/><ref refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" kindref="member">mEnd</ref>(val.data()<sp/>+<sp/>val.<ref refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" kindref="member">size</ref>()),<sp/><ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref>(val.<ref refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" kindref="member">size</ref>())<sp/>{}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="class_word_a2800554dbde8a6b143b9cf40b71fdb30_1a2800554dbde8a6b143b9cf40b71fdb30" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_word_a2800554dbde8a6b143b9cf40b71fdb30_1a2800554dbde8a6b143b9cf40b71fdb30" kindref="member">init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end</ref>)<sp/>{<sp/><ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref><sp/>=<sp/><ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin</ref>;<sp/><ref refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" kindref="member">mEnd</ref><sp/>=<sp/><ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end</ref>;<sp/><ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref><sp/>=<sp/><ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end</ref>-<ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>this<sp/>constructor<sp/>is<sp/>a<sp/>bit<sp/>dangerous<sp/>since<sp/>we<sp/>have<sp/>several<sp/>std::vector&lt;int&gt;<sp/>types<sp/>running<sp/>around</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//void<sp/>init(const<sp/>std::vector&lt;int&gt;&amp;<sp/>val)<sp/>{<sp/>mBegin<sp/>=<sp/>val.data();<sp/>mEnd<sp/>=<sp/>val.data()<sp/>+<sp/>val.size();<sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="68" refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="69" refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" kindref="member">mEnd</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="70" refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" kindref="member">size</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="class_word_a0ea95bf15f1c0e2e09cc5d98e8ede30a_1a0ea95bf15f1c0e2e09cc5d98e8ede30a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_word_a0ea95bf15f1c0e2e09cc5d98e8ede30a_1a0ea95bf15f1c0e2e09cc5d98e8ede30a" kindref="member">operator==</ref>(<ref refid="class_word_a17baf7109d46beb48d5b469f3baedc48_1a17baf7109d46beb48d5b469f3baedc48" kindref="member">Word</ref><sp/>rhs)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="73"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref><sp/>!=<sp/>rhs.<ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref>)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;<ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref>;<sp/>++i)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref>[i]<sp/>!=<sp/>rhs.<ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref>[i])</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="class_word_aaaf279f5bb81e516fc679d1b0eb67bbc_1aaaf279f5bb81e516fc679d1b0eb67bbc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_aaaf279f5bb81e516fc679d1b0eb67bbc_1aaaf279f5bb81e516fc679d1b0eb67bbc" kindref="member">operator[]</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*(<ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref><sp/>+<sp/>i);<sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Caution.<sp/>We<sp/>DO<sp/>NOT<sp/>own<sp/>these<sp/>pointers.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>It<sp/>is<sp/>the<sp/>responsibility<sp/>of<sp/>the<sp/>calling<sp/>code<sp/>to<sp/>not<sp/>let<sp/>these<sp/>pointers<sp/>expire.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_a6b3128c4ff711018aa7c260c32f15e0b_1a6b3128c4ff711018aa7c260c32f15e0b" kindref="member">mBegin</ref>;</highlight></codeline>
+<codeline lineno="87" refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_a5428e2e40693dbb68b45d20ce164bc90_1a5428e2e40693dbb68b45d20ce164bc90" kindref="member">mEnd</ref>;</highlight></codeline>
+<codeline lineno="88" refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_a41988b1f6413e08d2d9d986016f80188_1a41988b1f6413e08d2d9d986016f80188" kindref="member">mSize</ref>;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal">std::ostream&amp;<sp/><ref refid="_word_8hpp_a2fdcf5230f1369a3c523f74f1b5138d4_1a2fdcf5230f1369a3c523f74f1b5138d4" kindref="member">operator&lt;&lt;</ref>(std::ostream&amp;<sp/>o,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_word" kindref="compound">Word</ref>&amp;<sp/>w);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/>this<sp/>class<sp/>is<sp/>intended<sp/>for<sp/>use<sp/>in<sp/>the<sp/>word<sp/>table,<sp/>taking<sp/>ecart<sp/>degree<sp/>(i.e.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>power<sp/>of<sp/>an<sp/>&apos;invisible&apos;<sp/>homogenizing<sp/>variable)<sp/>into<sp/>consideration<sp/>when</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="comment">//<sp/>checking<sp/>divisibility.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Other<sp/>data<sp/>included<sp/>is<sp/>the<sp/>heft<sp/>degree<sp/>of<sp/>the<sp/>monomial<sp/>as<sp/>entered,<sp/>so<sp/>that</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/>a<sp/>word<sp/>table<sp/>may<sp/>sort.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="class_word_with_data" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" kindref="member">WordWithData</ref></highlight></codeline>
+<codeline lineno="110"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>warning:<sp/>the<sp/>pointers<sp/>begin,<sp/>end,<sp/>should<sp/>not<sp/>go<sp/>out<sp/>of<sp/>scope<sp/>while<sp/>this<sp/>Word<sp/>is<sp/>in<sp/>use.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" kindref="member">WordWithData</ref>()<sp/>:<sp/><ref refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" kindref="member">mWord</ref>(),<sp/><ref refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" kindref="member">mEcartDegree</ref>(0),<sp/><ref refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" kindref="member">mHeftDegree</ref>(0)<sp/>{}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" kindref="member">WordWithData</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" kindref="member">begin</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" kindref="member">end</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" kindref="member">ecartDegree</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" kindref="member">heftDegree</ref>)<sp/>:</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" kindref="member">mEcartDegree</ref>(<ref refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" kindref="member">ecartDegree</ref>),</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" kindref="member">mHeftDegree</ref>(<ref refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" kindref="member">heftDegree</ref>)</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" kindref="member">mWord</ref>.init(<ref refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" kindref="member">begin</ref>,<ref refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>keyword<sp/>&apos;explicit&apos;<sp/>to<sp/>prevent<sp/>calling<sp/>this<sp/>constructor<sp/>implicitly.<sp/><sp/>It</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>causes<sp/>some<sp/>strange<sp/>behavior<sp/>in<sp/>debugging.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>to<sp/>be<sp/>honest,<sp/>we<sp/>should<sp/>only<sp/>be<sp/>using<sp/>this<sp/>in<sp/>the<sp/>unit-tests<sp/>file<sp/>ONLY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//explicit<sp/>WordWithData(const<sp/>std::vector&lt;int&gt;&amp;<sp/>val)<sp/>:<sp/>mBegin(val.data()),<sp/>mEnd(val.data()<sp/>+<sp/>val.size())<sp/>{}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" kindref="member">init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" kindref="member">begin</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" kindref="member">end</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" kindref="member">ecartDegree</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" kindref="member">heftDegree</ref>)</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" kindref="member">mWord</ref>.init(<ref refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" kindref="member">begin</ref>,<ref refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" kindref="member">mEcartDegree</ref><sp/>=<sp/><ref refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" kindref="member">ecartDegree</ref>;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" kindref="member">mHeftDegree</ref><sp/>=<sp/><ref refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" kindref="member">heftDegree</ref>;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" kindref="member">begin</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" kindref="member">word</ref>().<ref refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" kindref="member">begin</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="135" refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" kindref="member">end</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" kindref="member">word</ref>().<ref refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" kindref="member">end</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_word" kindref="compound">Word</ref><sp/><ref refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" kindref="member">word</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" kindref="member">mWord</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139" refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" kindref="member">ecartDegree</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" kindref="member">mEcartDegree</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="140" refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" kindref="member">heftDegree</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" kindref="member">mHeftDegree</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="class_word_with_data_aef228c8a14e8d252ec8fa6a6a3e29ae0_1aef228c8a14e8d252ec8fa6a6a3e29ae0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_aef228c8a14e8d252ec8fa6a6a3e29ae0_1aef228c8a14e8d252ec8fa6a6a3e29ae0" kindref="member">size</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" kindref="member">word</ref>().<ref refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" kindref="member">size</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="class_word_with_data_af2dce63bf7179af874580b92c5e2c720_1af2dce63bf7179af874580b92c5e2c720" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_af2dce63bf7179af874580b92c5e2c720_1af2dce63bf7179af874580b92c5e2c720" kindref="member">operator==</ref>(<ref refid="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" kindref="member">WordWithData</ref><sp/>rhs)</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Warning:<sp/>==<sp/>ignores<sp/>heft<sp/>degree,<sp/>but<sp/>not<sp/>ecart<sp/>degree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" kindref="member">ecartDegree</ref>()<sp/>!=<sp/>rhs.<ref refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" kindref="member">ecartDegree</ref>())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" kindref="member">word</ref>()<sp/>==<sp/>rhs.<ref refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" kindref="member">word</ref>();</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Caution.<sp/>We<sp/>DO<sp/>NOT<sp/>own<sp/>the<sp/>pointers<sp/>that<sp/>are<sp/>in<sp/>mWord</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>It<sp/>is<sp/>the<sp/>responsibility<sp/>of<sp/>the<sp/>calling<sp/>code<sp/>to<sp/>not<sp/>let<sp/>these<sp/>pointers<sp/>expire.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154" refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_word" kindref="compound">Word</ref><sp/><ref refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" kindref="member">mWord</ref>;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" kindref="member">mEcartDegree</ref>;</highlight></codeline>
+<codeline lineno="157" refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" kindref="member">mHeftDegree</ref>;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal">std::ostream&amp;<sp/><ref refid="_word_8hpp_a2fdcf5230f1369a3c523f74f1b5138d4_1a2fdcf5230f1369a3c523f74f1b5138d4" kindref="member">operator&lt;&lt;</ref>(std::ostream&amp;<sp/>o,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_word_with_data" kindref="compound">WordWithData</ref>&amp;<sp/>w);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/NCAlgebras/Word.hpp"/>
+  </compounddef>
+</doxygen>

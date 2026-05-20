@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structmathic_1_1_binary_k_d_tree_1_1_exp_order" kind="struct" language="C++" prot="public">
+    <compoundname>mathic::BinaryKDTree::ExpOrder</compoundname>
+    <includes refid="_binary_k_d_tree_8h" local="no">BinaryKDTree.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="structmathic_1_1_binary_k_d_tree_1_1_exp_order_ac5c854d273d74e9bb213455b9d121ca4_1ac5c854d273d74e9bb213455b9d121ca4" prot="private" static="no" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t mathic::BinaryKDTree&lt; C &gt;::ExpOrder::_var</definition>
+        <argsstring></argsstring>
+        <name>_var</name>
+        <qualifiedname>mathic::BinaryKDTree::ExpOrder::_var</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="27" column="20" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="27" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_ad803bd1f4d16f8c5678847f84d5be9f7_1ad803bd1f4d16f8c5678847f84d5be9f7" compoundref="_binary_k_d_tree_8h" startline="22" endline="22">mathic::BinaryKDTree&lt; C &gt;::ExpOrder::ExpOrder</referencedby>
+        <referencedby refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_acc42bf036234b7578ce21fc2610bdcbd_1acc42bf036234b7578ce21fc2610bdcbd" compoundref="_binary_k_d_tree_8h" startline="23" endline="25">mathic::BinaryKDTree&lt; C &gt;::ExpOrder::operator()</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmathic_1_1_binary_k_d_tree_1_1_exp_order_aa7e5d39b667fab720611d77bf571bbee_1aa7e5d39b667fab720611d77bf571bbee" prot="private" static="no" mutable="no">
+        <type>const C &amp;</type>
+        <definition>const C&amp; mathic::BinaryKDTree&lt; C &gt;::ExpOrder::_conf</definition>
+        <argsstring></argsstring>
+        <name>_conf</name>
+        <qualifiedname>mathic::BinaryKDTree::ExpOrder::_conf</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="28" column="15" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="28" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_ad803bd1f4d16f8c5678847f84d5be9f7_1ad803bd1f4d16f8c5678847f84d5be9f7" compoundref="_binary_k_d_tree_8h" startline="22" endline="22">mathic::BinaryKDTree&lt; C &gt;::ExpOrder::ExpOrder</referencedby>
+        <referencedby refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_acc42bf036234b7578ce21fc2610bdcbd_1acc42bf036234b7578ce21fc2610bdcbd" compoundref="_binary_k_d_tree_8h" startline="23" endline="25">mathic::BinaryKDTree&lt; C &gt;::ExpOrder::operator()</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structmathic_1_1_binary_k_d_tree_1_1_exp_order_ad803bd1f4d16f8c5678847f84d5be9f7_1ad803bd1f4d16f8c5678847f84d5be9f7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::BinaryKDTree&lt; C &gt;::ExpOrder::ExpOrder</definition>
+        <argsstring>(size_t var, const C &amp;conf)</argsstring>
+        <name>ExpOrder</name>
+        <qualifiedname>mathic::BinaryKDTree::ExpOrder::ExpOrder</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>var</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="22" column="5" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="22" bodyend="22"/>
+        <references refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_aa7e5d39b667fab720611d77bf571bbee_1aa7e5d39b667fab720611d77bf571bbee" compoundref="_binary_k_d_tree_8h" startline="28">mathic::BinaryKDTree&lt; C &gt;::ExpOrder::_conf</references>
+        <references refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_ac5c854d273d74e9bb213455b9d121ca4_1ac5c854d273d74e9bb213455b9d121ca4" compoundref="_binary_k_d_tree_8h" startline="27">mathic::BinaryKDTree&lt; C &gt;::ExpOrder::_var</references>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_binary_k_d_tree_1_1_exp_order_acc42bf036234b7578ce21fc2610bdcbd_1acc42bf036234b7578ce21fc2610bdcbd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::BinaryKDTree&lt; C &gt;::ExpOrder::operator()</definition>
+        <argsstring>(const ExtEntry &amp;a, const ExtEntry &amp;b) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>mathic::BinaryKDTree::ExpOrder::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_binary_k_d_tree_ac6c2145e4ba88e506635083621216abe_1ac6c2145e4ba88e506635083621216abe" kindref="member">ExtEntry</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmathic_1_1_binary_k_d_tree_ac6c2145e4ba88e506635083621216abe_1ac6c2145e4ba88e506635083621216abe" kindref="member">ExtEntry</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="23" column="12" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="23" bodyend="25"/>
+        <references refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_aa7e5d39b667fab720611d77bf571bbee_1aa7e5d39b667fab720611d77bf571bbee" compoundref="_binary_k_d_tree_8h" startline="28">mathic::BinaryKDTree&lt; C &gt;::ExpOrder::_conf</references>
+        <references refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_ac5c854d273d74e9bb213455b9d121ca4_1ac5c854d273d74e9bb213455b9d121ca4" compoundref="_binary_k_d_tree_8h" startline="27">mathic::BinaryKDTree&lt; C &gt;::ExpOrder::_var</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>C</label>
+      </node>
+      <node id="1">
+        <label>mathic::BinaryKDTree&lt; C &gt;::ExpOrder</label>
+        <link refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_var</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_conf</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>size_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/BinaryKDTree.h" line="21" column="5" bodyfile="submodules/mathic/src/mathic/BinaryKDTree.h" bodystart="21" bodyend="29"/>
+    <listofallmembers>
+      <member refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_aa7e5d39b667fab720611d77bf571bbee_1aa7e5d39b667fab720611d77bf571bbee" prot="private" virt="non-virtual"><scope>mathic::BinaryKDTree::ExpOrder</scope><name>_conf</name></member>
+      <member refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_ac5c854d273d74e9bb213455b9d121ca4_1ac5c854d273d74e9bb213455b9d121ca4" prot="private" virt="non-virtual"><scope>mathic::BinaryKDTree::ExpOrder</scope><name>_var</name></member>
+      <member refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_ad803bd1f4d16f8c5678847f84d5be9f7_1ad803bd1f4d16f8c5678847f84d5be9f7" prot="public" virt="non-virtual"><scope>mathic::BinaryKDTree::ExpOrder</scope><name>ExpOrder</name></member>
+      <member refid="structmathic_1_1_binary_k_d_tree_1_1_exp_order_acc42bf036234b7578ce21fc2610bdcbd_1acc42bf036234b7578ce21fc2610bdcbd" prot="public" virt="non-virtual"><scope>mathic::BinaryKDTree::ExpOrder</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

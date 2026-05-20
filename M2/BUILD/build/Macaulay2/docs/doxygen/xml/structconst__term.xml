@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structconst__term" kind="struct" language="C++" prot="public">
+    <compoundname>const_term</compoundname>
+    <includes refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" local="no">PolyRing.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structconst__term_a8e7d1018e35835514e26d73ba7686734_1a8e7d1018e35835514e26d73ba7686734" prot="public" static="no" mutable="no">
+        <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ab4ae66f49c47a344b1f97e77c2327de0_1ab4ae66f49c47a344b1f97e77c2327de0" kindref="member">const_coefficient</ref></type>
+        <definition>const_coefficient const_term::coeff</definition>
+        <argsstring></argsstring>
+        <name>coeff</name>
+        <qualifiedname>const_term::coeff</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="219" column="21" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="219" bodyend="-1"/>
+        <referencedby refid="structconst__term_ac27989f629d8c33181dfba02b2f644ea_1ac27989f629d8c33181dfba02b2f644ea" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="217" endline="217">const_term</referencedby>
+        <referencedby refid="class_typical_reducer_aec37812a47206a59a60c003329ab12d5_1aec37812a47206a59a60c003329ab12d5" compoundref="_typical_reducer_8hpp" startline="61" endline="65">TypicalReducer::insertTail</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structconst__term_a4022c7c69a211fea4fe82ddbd4b93acc_1a4022c7c69a211fea4fe82ddbd4b93acc" prot="public" static="no" mutable="no">
+        <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ada3b88f00a2d343f9e290015ff2d3126_1ada3b88f00a2d343f9e290015ff2d3126" kindref="member">const_monomial</ref></type>
+        <definition>const_monomial const_term::monom</definition>
+        <argsstring></argsstring>
+        <name>monom</name>
+        <qualifiedname>const_term::monom</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="220" column="18" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="220" bodyend="-1"/>
+        <referencedby refid="structconst__term_ac27989f629d8c33181dfba02b2f644ea_1ac27989f629d8c33181dfba02b2f644ea" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="217" endline="217">const_term</referencedby>
+        <referencedby refid="class_typical_reducer_aec37812a47206a59a60c003329ab12d5_1aec37812a47206a59a60c003329ab12d5" compoundref="_typical_reducer_8hpp" startline="61" endline="65">TypicalReducer::insertTail</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structconst__term_a40a7f438f1b4b0e8afa672f5768769db_1a40a7f438f1b4b0e8afa672f5768769db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>const_term::const_term</definition>
+        <argsstring>()</argsstring>
+        <name>const_term</name>
+        <qualifiedname>const_term::const_term</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="216" column="3" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="216" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="structconst__term_ac27989f629d8c33181dfba02b2f644ea_1ac27989f629d8c33181dfba02b2f644ea" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>const_term::const_term</definition>
+        <argsstring>(const_coefficient c, const_monomial m)</argsstring>
+        <name>const_term</name>
+        <qualifiedname>const_term::const_term</qualifiedname>
+        <param>
+          <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ab4ae66f49c47a344b1f97e77c2327de0_1ab4ae66f49c47a344b1f97e77c2327de0" kindref="member">const_coefficient</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ada3b88f00a2d343f9e290015ff2d3126_1ada3b88f00a2d343f9e290015ff2d3126" kindref="member">const_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="217" column="3" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="217" bodyend="217"/>
+        <references refid="structconst__term_a8e7d1018e35835514e26d73ba7686734_1a8e7d1018e35835514e26d73ba7686734" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="219">coeff</references>
+        <references refid="structconst__term_a4022c7c69a211fea4fe82ddbd4b93acc_1a4022c7c69a211fea4fe82ddbd4b93acc" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="220">monom</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>const_term</label>
+        <link refid="structconst__term"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="215" column="1" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="215" bodyend="221"/>
+    <listofallmembers>
+      <member refid="structconst__term_a8e7d1018e35835514e26d73ba7686734_1a8e7d1018e35835514e26d73ba7686734" prot="public" virt="non-virtual"><scope>const_term</scope><name>coeff</name></member>
+      <member refid="structconst__term_a40a7f438f1b4b0e8afa672f5768769db_1a40a7f438f1b4b0e8afa672f5768769db" prot="public" virt="non-virtual"><scope>const_term</scope><name>const_term</name></member>
+      <member refid="structconst__term_ac27989f629d8c33181dfba02b2f644ea_1ac27989f629d8c33181dfba02b2f644ea" prot="public" virt="non-virtual"><scope>const_term</scope><name>const_term</name></member>
+      <member refid="structconst__term_a4022c7c69a211fea4fe82ddbd4b93acc_1a4022c7c69a211fea4fe82ddbd4b93acc" prot="public" virt="non-virtual"><scope>const_term</scope><name>monom</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

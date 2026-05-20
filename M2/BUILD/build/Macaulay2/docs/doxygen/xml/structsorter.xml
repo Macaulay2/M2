@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structsorter" kind="struct" language="C++" prot="public">
+    <compoundname>sorter</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structsorter_ac730948b467a812889fd6fd924e4050a_1ac730948b467a812889fd6fd924e4050a" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int sorter::nvars</definition>
+        <argsstring></argsstring>
+        <name>nvars</name>
+        <qualifiedname>sorter::nvars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montable.cpp" line="271" column="7" bodyfile="Macaulay2/e/montable.cpp" bodystart="271" bodyend="-1"/>
+        <referencedby refid="structsorter_a2ef9b442718d2de96b6878bee31ca06f_1a2ef9b442718d2de96b6878bee31ca06f" compoundref="montable_8cpp" startline="280" endline="294">operator()</referencedby>
+        <referencedby refid="structsorter_acc4ed5993b4580570001eee6490d998d_1acc4ed5993b4580570001eee6490d998d" compoundref="montable_8cpp" startline="274" endline="279">sorter</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structsorter_a4fc917ca9f016fb14d5a3171af7cde2d_1a4fc917ca9f016fb14d5a3171af7cde2d" prot="public" static="no" const="no" explicit="no" inline="no" refqual="lvalue" virt="non-virtual">
+        <type>const</type>
+        <definition>const sorter::VECTOR</definition>
+        <argsstring>(exponents_t) &amp;exps</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>sorter::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montable.cpp" line="272" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="structsorter_a742a5e3a9e9ab9347e5cc72962bbfc71_1a742a5e3a9e9ab9347e5cc72962bbfc71" prot="public" static="no" const="no" explicit="no" inline="no" refqual="lvalue" virt="non-virtual">
+        <type>const</type>
+        <definition>const sorter::VECTOR</definition>
+        <argsstring>(int) &amp;comps</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>sorter::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montable.cpp" line="273" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="structsorter_acc4ed5993b4580570001eee6490d998d_1acc4ed5993b4580570001eee6490d998d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>sorter::sorter</definition>
+        <argsstring>(int nvars0, const VECTOR(exponents_t) &amp;exps0, const VECTOR(int) &amp;comps0)</argsstring>
+        <name>sorter</name>
+        <qualifiedname>sorter::sorter</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structsorter_a4fc917ca9f016fb14d5a3171af7cde2d_1a4fc917ca9f016fb14d5a3171af7cde2d" kindref="member">VECTOR</ref>(<ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref>) &amp;</type>
+          <declname>exps0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structsorter_a4fc917ca9f016fb14d5a3171af7cde2d_1a4fc917ca9f016fb14d5a3171af7cde2d" kindref="member">VECTOR</ref>(<ref refid="classint" kindref="compound">int</ref>) &amp;</type>
+          <declname>comps0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montable.cpp" line="274" column="3" bodyfile="Macaulay2/e/montable.cpp" bodystart="274" bodyend="279"/>
+        <references refid="structsorter_ac730948b467a812889fd6fd924e4050a_1ac730948b467a812889fd6fd924e4050a" compoundref="montable_8cpp" startline="271">nvars</references>
+      </memberdef>
+      <memberdef kind="function" id="structsorter_a2ef9b442718d2de96b6878bee31ca06f_1a2ef9b442718d2de96b6878bee31ca06f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool sorter::operator()</definition>
+        <argsstring>(int x, int y)</argsstring>
+        <name>operator()</name>
+        <qualifiedname>sorter::operator()</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montable.cpp" line="280" column="8" bodyfile="Macaulay2/e/montable.cpp" bodystart="280" bodyend="294"/>
+        <references refid="structsorter_ac730948b467a812889fd6fd924e4050a_1ac730948b467a812889fd6fd924e4050a" compoundref="montable_8cpp" startline="271">nvars</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="1">
+        <label>sorter</label>
+        <link refid="structsorter"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>nvars</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/montable.cpp" line="269" column="1" bodyfile="Macaulay2/e/montable.cpp" bodystart="270" bodyend="295"/>
+    <listofallmembers>
+      <member refid="structsorter_ac730948b467a812889fd6fd924e4050a_1ac730948b467a812889fd6fd924e4050a" prot="public" virt="non-virtual"><scope>sorter</scope><name>nvars</name></member>
+      <member refid="structsorter_a2ef9b442718d2de96b6878bee31ca06f_1a2ef9b442718d2de96b6878bee31ca06f" prot="public" virt="non-virtual"><scope>sorter</scope><name>operator()</name></member>
+      <member refid="structsorter_acc4ed5993b4580570001eee6490d998d_1acc4ed5993b4580570001eee6490d998d" prot="public" virt="non-virtual"><scope>sorter</scope><name>sorter</name></member>
+      <member refid="structsorter_a4fc917ca9f016fb14d5a3171af7cde2d_1a4fc917ca9f016fb14d5a3171af7cde2d" prot="public" virt="non-virtual"><scope>sorter</scope><name>VECTOR</name></member>
+      <member refid="structsorter_a742a5e3a9e9ab9347e5cc72962bbfc71_1a742a5e3a9e9ab9347e5cc72962bbfc71" prot="public" virt="non-virtual"><scope>sorter</scope><name>VECTOR</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

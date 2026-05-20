@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_log_domain_internal_1_1_tag__" kind="struct" language="C++" prot="public">
+    <compoundname>LogDomainInternal::Tag_</compoundname>
+    <includes refid="_log_domain_8hpp" local="no">LogDomain.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="190" column="12" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="190" bodyend="190"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

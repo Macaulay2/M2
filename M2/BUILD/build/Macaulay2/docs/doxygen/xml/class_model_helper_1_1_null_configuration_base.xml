@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_model_helper_1_1_null_configuration_base" kind="class" language="C++" prot="public">
+    <compoundname>ModelHelper::NullConfigurationBase</compoundname>
+    <includes refid="_model_8h" local="no">Model.h</includes>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/pqsim/Model.h" line="8" column="3" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="8" bodyend="8"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

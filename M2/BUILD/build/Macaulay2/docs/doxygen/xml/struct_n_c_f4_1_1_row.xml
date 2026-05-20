@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_n_c_f4_1_1_row" kind="struct" language="C++" prot="private">
+    <compoundname>NCF4::Row</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_n_c_f4_1_1_row_a24562b772bc06a14ea89ec07154d08da_1a24562b772bc06a14ea89ec07154d08da" prot="public" static="no" mutable="no">
+        <type><ref refid="class_element_array" kindref="compound">ElementArray</ref></type>
+        <definition>ElementArray NCF4::Row::coeffVector</definition>
+        <argsstring></argsstring>
+        <name>coeffVector</name>
+        <qualifiedname>NCF4::Row::coeffVector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCF4.hpp" line="151" column="18" bodyfile="Macaulay2/e/NCAlgebras/NCF4.hpp" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_n_c_f4_1_1_row_ac46b8cd85502f0de6c6f0108f4fea4db_1ac46b8cd85502f0de6c6f0108f4fea4db" prot="public" static="no" mutable="no">
+        <type><ref refid="class_range" kindref="compound">Range</ref>&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>Range&lt;int&gt; NCF4::Row::columnIndices</definition>
+        <argsstring></argsstring>
+        <name>columnIndices</name>
+        <qualifiedname>NCF4::Row::columnIndices</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCF4.hpp" line="152" column="11" bodyfile="Macaulay2/e/NCAlgebras/NCF4.hpp" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_n_c_f4_1_1_row_a8be32d5db4a9fa3af6111b9728509a8e_1a8be32d5db4a9fa3af6111b9728509a8e" prot="public" static="no" mutable="no">
+        <type><ref refid="class_range" kindref="compound">Range</ref>&lt; <ref refid="class_word" kindref="compound">Word</ref> &gt;</type>
+        <definition>Range&lt;Word&gt; NCF4::Row::columnWords</definition>
+        <argsstring></argsstring>
+        <name>columnWords</name>
+        <qualifiedname>NCF4::Row::columnWords</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCF4.hpp" line="154" column="11" bodyfile="Macaulay2/e/NCAlgebras/NCF4.hpp" bodystart="154" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A materialised row of the Macaulay matrix: parallel coefficient and monomial arrays. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="struct_n_c_f4_1_1_row_a24562b772bc06a14ea89ec07154d08da_1a24562b772bc06a14ea89ec07154d08da" kindref="member">coeffVector</ref></computeroutput> carries the coefficients via the <computeroutput><ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref></computeroutput> abstraction. <computeroutput><ref refid="struct_n_c_f4_1_1_row_a8be32d5db4a9fa3af6111b9728509a8e_1a8be32d5db4a9fa3af6111b9728509a8e" kindref="member">columnWords</ref></computeroutput> holds the monomial of each non-zero entry and is only valid before reduction starts; once columns are labelled, <computeroutput><ref refid="struct_n_c_f4_1_1_row_ac46b8cd85502f0de6c6f0108f4fea4db_1ac46b8cd85502f0de6c6f0108f4fea4db" kindref="member">columnIndices</ref></computeroutput> carries the integer column indices that reduction actually uses. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Iter</label>
+      </node>
+      <node id="1">
+        <label>NCF4::Row</label>
+        <link refid="struct_n_c_f4_1_1_row"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>coeffVector</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>columnIndices</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>columnWords</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Range&lt; T &gt;</label>
+        <link refid="class_range"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mFirst</edgelabel>
+          <edgelabel>mLast</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Range&lt; Word &gt;</label>
+        <link refid="class_range"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mFirst</edgelabel>
+          <edgelabel>mLast</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; Word &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Range&lt; int &gt;</label>
+        <link refid="class_range"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mFirst</edgelabel>
+          <edgelabel>mLast</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Word</label>
+        <link refid="class_word"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+          <edgelabel>mSize</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>const void *</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="10">
+        <label>unsigned</label>
+      </node>
+      <node id="9">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="3">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/NCAlgebras/NCF4.hpp" line="149" column="3" bodyfile="Macaulay2/e/NCAlgebras/NCF4.hpp" bodystart="150" bodyend="156"/>
+    <listofallmembers>
+      <member refid="struct_n_c_f4_1_1_row_a24562b772bc06a14ea89ec07154d08da_1a24562b772bc06a14ea89ec07154d08da" prot="public" virt="non-virtual"><scope>NCF4::Row</scope><name>coeffVector</name></member>
+      <member refid="struct_n_c_f4_1_1_row_ac46b8cd85502f0de6c6f0108f4fea4db_1ac46b8cd85502f0de6c6f0108f4fea4db" prot="public" virt="non-virtual"><scope>NCF4::Row</scope><name>columnIndices</name></member>
+      <member refid="struct_n_c_f4_1_1_row_a8be32d5db4a9fa3af6111b9728509a8e_1a8be32d5db4a9fa3af6111b9728509a8e" prot="public" virt="non-virtual"><scope>NCF4::Row</scope><name>columnWords</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

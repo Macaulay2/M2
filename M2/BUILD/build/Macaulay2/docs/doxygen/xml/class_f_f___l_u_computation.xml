@@ -1,0 +1,1185 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_f_f___l_u_computation" kind="class" language="C++" prot="public">
+    <compoundname>FF_LUComputation</compoundname>
+    <includes refid="fractionfree_l_u_8hpp" local="no">fractionfreeLU.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_f_f___l_u_computation_a31bcdc37d60ab2b2c2f171ebea64fe2d_1a31bcdc37d60ab2b2c2f171ebea64fe2d" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>const Ring* FF_LUComputation::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>FF_LUComputation::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="54" column="14" bodyfile="Macaulay2/e/fractionfreeLU.hpp" bodystart="54" bodyend="-1"/>
+        <referencedby refid="class_f_f___l_u_computation_abdb0b6dc6f90050bf451c28f4c26c9eb_1abdb0b6dc6f90050bf451c28f4c26c9eb" compoundref="fractionfree_l_u_8cpp" startline="54" endline="79">do_pivots</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" compoundref="fractionfree_l_u_8cpp" startline="10" endline="25">FF_LUComputation</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_ad8d81fec6cb02ebfe3ae0c59ff7c0404_1ad8d81fec6cb02ebfe3ae0c59ff7c0404" compoundref="fractionfree_l_u_8cpp" startline="27" endline="33">~FF_LUComputation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f_f___l_u_computation_a7619a67b976173e5184e5d8c06de5cd0_1a7619a67b976173e5184e5d8c06de5cd0" prot="private" static="no" mutable="no">
+        <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+        <definition>MutableMatrix* FF_LUComputation::M</definition>
+        <argsstring></argsstring>
+        <name>M</name>
+        <qualifiedname>FF_LUComputation::M</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="55" column="17" bodyfile="Macaulay2/e/fractionfreeLU.hpp" bodystart="55" bodyend="-1"/>
+        <referencedby refid="class_f_f___l_u_computation_a7cb994ac19d378232e22c1e0f795e56c_1a7cb994ac19d378232e22c1e0f795e56c" compoundref="fractionfree_l_u_8cpp" startline="81" endline="106">calc</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_a1d5931c68c49ae6cb42fbaf852d26e19_1a1d5931c68c49ae6cb42fbaf852d26e19" compoundref="fractionfree_l_u_8cpp" startline="35" endline="52">choose_pivot_column</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_afc3b7d57144a89049ea7a4fc27abee1b_1afc3b7d57144a89049ea7a4fc27abee1b" compoundref="fractionfree_l_u_8cpp" startline="116" endline="122">DO</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_abdb0b6dc6f90050bf451c28f4c26c9eb_1abdb0b6dc6f90050bf451c28f4c26c9eb" compoundref="fractionfree_l_u_8cpp" startline="54" endline="79">do_pivots</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" compoundref="fractionfree_l_u_8cpp" startline="10" endline="25">FF_LUComputation</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_a2b1ab45c947660e06fb83a8eba171c47_1a2b1ab45c947660e06fb83a8eba171c47" compoundref="fractionfree_l_u_8cpp" startline="108" endline="114">get_column_permutation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f_f___l_u_computation_a77a34a616112102f7b19111554d3490a_1a77a34a616112102f7b19111554d3490a" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* FF_LUComputation::col_perm</definition>
+        <argsstring></argsstring>
+        <name>col_perm</name>
+        <qualifiedname>FF_LUComputation::col_perm</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="56" column="7" bodyfile="Macaulay2/e/fractionfreeLU.hpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="class_f_f___l_u_computation_a7cb994ac19d378232e22c1e0f795e56c_1a7cb994ac19d378232e22c1e0f795e56c" compoundref="fractionfree_l_u_8cpp" startline="81" endline="106">calc</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" compoundref="fractionfree_l_u_8cpp" startline="10" endline="25">FF_LUComputation</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_a2b1ab45c947660e06fb83a8eba171c47_1a2b1ab45c947660e06fb83a8eba171c47" compoundref="fractionfree_l_u_8cpp" startline="108" endline="114">get_column_permutation</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_ad8d81fec6cb02ebfe3ae0c59ff7c0404_1ad8d81fec6cb02ebfe3ae0c59ff7c0404" compoundref="fractionfree_l_u_8cpp" startline="27" endline="33">~FF_LUComputation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f_f___l_u_computation_a0e8a35c803e107598a3a2318f4192292_1a0e8a35c803e107598a3a2318f4192292" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref> *</type>
+        <definition>bool* FF_LUComputation::need_div</definition>
+        <argsstring></argsstring>
+        <name>need_div</name>
+        <qualifiedname>FF_LUComputation::need_div</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="57" column="8" bodyfile="Macaulay2/e/fractionfreeLU.hpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="class_f_f___l_u_computation_a7cb994ac19d378232e22c1e0f795e56c_1a7cb994ac19d378232e22c1e0f795e56c" compoundref="fractionfree_l_u_8cpp" startline="81" endline="106">calc</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_abdb0b6dc6f90050bf451c28f4c26c9eb_1abdb0b6dc6f90050bf451c28f4c26c9eb" compoundref="fractionfree_l_u_8cpp" startline="54" endline="79">do_pivots</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" compoundref="fractionfree_l_u_8cpp" startline="10" endline="25">FF_LUComputation</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_ad8d81fec6cb02ebfe3ae0c59ff7c0404_1ad8d81fec6cb02ebfe3ae0c59ff7c0404" compoundref="fractionfree_l_u_8cpp" startline="27" endline="33">~FF_LUComputation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f_f___l_u_computation_a2ee0af2b934fa96ff32fdc282677c8e3_1a2ee0af2b934fa96ff32fdc282677c8e3" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int FF_LUComputation::pivot_col</definition>
+        <argsstring></argsstring>
+        <name>pivot_col</name>
+        <qualifiedname>FF_LUComputation::pivot_col</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="58" column="7" bodyfile="Macaulay2/e/fractionfreeLU.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="class_f_f___l_u_computation_a7cb994ac19d378232e22c1e0f795e56c_1a7cb994ac19d378232e22c1e0f795e56c" compoundref="fractionfree_l_u_8cpp" startline="81" endline="106">calc</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" compoundref="fractionfree_l_u_8cpp" startline="10" endline="25">FF_LUComputation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f_f___l_u_computation_ac174cbd611fd3e4dd891e52e6d9d9012_1ac174cbd611fd3e4dd891e52e6d9d9012" prot="private" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem FF_LUComputation::lastpivot</definition>
+        <argsstring></argsstring>
+        <name>lastpivot</name>
+        <qualifiedname>FF_LUComputation::lastpivot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="59" column="13" bodyfile="Macaulay2/e/fractionfreeLU.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="class_f_f___l_u_computation_abdb0b6dc6f90050bf451c28f4c26c9eb_1abdb0b6dc6f90050bf451c28f4c26c9eb" compoundref="fractionfree_l_u_8cpp" startline="54" endline="79">do_pivots</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" compoundref="fractionfree_l_u_8cpp" startline="10" endline="25">FF_LUComputation</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_ad8d81fec6cb02ebfe3ae0c59ff7c0404_1ad8d81fec6cb02ebfe3ae0c59ff7c0404" compoundref="fractionfree_l_u_8cpp" startline="27" endline="33">~FF_LUComputation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f_f___l_u_computation_a19795363f26ee0c62fc6309df97eea12_1a19795363f26ee0c62fc6309df97eea12" prot="private" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem FF_LUComputation::pivot</definition>
+        <argsstring></argsstring>
+        <name>pivot</name>
+        <qualifiedname>FF_LUComputation::pivot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="60" column="13" bodyfile="Macaulay2/e/fractionfreeLU.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="class_f_f___l_u_computation_abdb0b6dc6f90050bf451c28f4c26c9eb_1abdb0b6dc6f90050bf451c28f4c26c9eb" compoundref="fractionfree_l_u_8cpp" startline="54" endline="79">do_pivots</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" compoundref="fractionfree_l_u_8cpp" startline="10" endline="25">FF_LUComputation</referencedby>
+        <referencedby refid="class_f_f___l_u_computation_ad8d81fec6cb02ebfe3ae0c59ff7c0404_1ad8d81fec6cb02ebfe3ae0c59ff7c0404" compoundref="fractionfree_l_u_8cpp" startline="27" endline="33">~FF_LUComputation</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FF_LUComputation::FF_LUComputation</definition>
+        <argsstring>(MutableMatrix *M)</argsstring>
+        <name>FF_LUComputation</name>
+        <qualifiedname>FF_LUComputation::FF_LUComputation</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="63" column="3" bodyfile="Macaulay2/e/fractionfreeLU.cpp" bodystart="10" bodyend="25"/>
+        <references refid="class_f_f___l_u_computation_a77a34a616112102f7b19111554d3490a_1a77a34a616112102f7b19111554d3490a" compoundref="fractionfree_l_u_8hpp" startline="56">col_perm</references>
+        <references refid="class_f_f___l_u_computation_ac174cbd611fd3e4dd891e52e6d9d9012_1ac174cbd611fd3e4dd891e52e6d9d9012" compoundref="fractionfree_l_u_8hpp" startline="59">lastpivot</references>
+        <references refid="class_f_f___l_u_computation_a7619a67b976173e5184e5d8c06de5cd0_1a7619a67b976173e5184e5d8c06de5cd0" compoundref="fractionfree_l_u_8hpp" startline="55">M</references>
+        <references refid="class_f_f___l_u_computation_a0e8a35c803e107598a3a2318f4192292_1a0e8a35c803e107598a3a2318f4192292" compoundref="fractionfree_l_u_8hpp" startline="57">need_div</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="class_f_f___l_u_computation_a19795363f26ee0c62fc6309df97eea12_1a19795363f26ee0c62fc6309df97eea12" compoundref="fractionfree_l_u_8hpp" startline="60">pivot</references>
+        <references refid="class_f_f___l_u_computation_a2ee0af2b934fa96ff32fdc282677c8e3_1a2ee0af2b934fa96ff32fdc282677c8e3" compoundref="fractionfree_l_u_8hpp" startline="58">pivot_col</references>
+        <references refid="class_f_f___l_u_computation_a31bcdc37d60ab2b2c2f171ebea64fe2d_1a31bcdc37d60ab2b2c2f171ebea64fe2d" compoundref="fractionfree_l_u_8hpp" startline="54">R</references>
+        <referencedby refid="class_f_f___l_u_computation_afc3b7d57144a89049ea7a4fc27abee1b_1afc3b7d57144a89049ea7a4fc27abee1b" compoundref="fractionfree_l_u_8cpp" startline="116" endline="122">DO</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f_f___l_u_computation_ad8d81fec6cb02ebfe3ae0c59ff7c0404_1ad8d81fec6cb02ebfe3ae0c59ff7c0404" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FF_LUComputation::~FF_LUComputation</definition>
+        <argsstring>()</argsstring>
+        <name>~FF_LUComputation</name>
+        <qualifiedname>FF_LUComputation::~FF_LUComputation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="64" column="3" bodyfile="Macaulay2/e/fractionfreeLU.cpp" bodystart="27" bodyend="33"/>
+        <references refid="class_f_f___l_u_computation_a77a34a616112102f7b19111554d3490a_1a77a34a616112102f7b19111554d3490a" compoundref="fractionfree_l_u_8hpp" startline="56">col_perm</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="class_f_f___l_u_computation_ac174cbd611fd3e4dd891e52e6d9d9012_1ac174cbd611fd3e4dd891e52e6d9d9012" compoundref="fractionfree_l_u_8hpp" startline="59">lastpivot</references>
+        <references refid="class_f_f___l_u_computation_a0e8a35c803e107598a3a2318f4192292_1a0e8a35c803e107598a3a2318f4192292" compoundref="fractionfree_l_u_8hpp" startline="57">need_div</references>
+        <references refid="class_f_f___l_u_computation_a19795363f26ee0c62fc6309df97eea12_1a19795363f26ee0c62fc6309df97eea12" compoundref="fractionfree_l_u_8hpp" startline="60">pivot</references>
+        <references refid="class_f_f___l_u_computation_a31bcdc37d60ab2b2c2f171ebea64fe2d_1a31bcdc37d60ab2b2c2f171ebea64fe2d" compoundref="fractionfree_l_u_8hpp" startline="54">R</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f_f___l_u_computation_a1d5931c68c49ae6cb42fbaf852d26e19_1a1d5931c68c49ae6cb42fbaf852d26e19" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool FF_LUComputation::choose_pivot_column</definition>
+        <argsstring>(int lo, int hi, int &amp;result)</argsstring>
+        <name>choose_pivot_column</name>
+        <qualifiedname>FF_LUComputation::choose_pivot_column</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>hi</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="66" column="8" bodyfile="Macaulay2/e/fractionfreeLU.cpp" bodystart="35" bodyend="52"/>
+        <references refid="class_f_f___l_u_computation_a7619a67b976173e5184e5d8c06de5cd0_1a7619a67b976173e5184e5d8c06de5cd0" compoundref="fractionfree_l_u_8hpp" startline="55">M</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_f_f___l_u_computation_a7cb994ac19d378232e22c1e0f795e56c_1a7cb994ac19d378232e22c1e0f795e56c" compoundref="fractionfree_l_u_8cpp" startline="81" endline="106">calc</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f_f___l_u_computation_abdb0b6dc6f90050bf451c28f4c26c9eb_1abdb0b6dc6f90050bf451c28f4c26c9eb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void FF_LUComputation::do_pivots</definition>
+        <argsstring>(int lo, int hi, int pivot_col)</argsstring>
+        <name>do_pivots</name>
+        <qualifiedname>FF_LUComputation::do_pivots</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>hi</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>pivot_col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="72" column="8" bodyfile="Macaulay2/e/fractionfreeLU.cpp" bodystart="54" bodyend="79"/>
+        <references refid="class_f_f___l_u_computation_ac174cbd611fd3e4dd891e52e6d9d9012_1ac174cbd611fd3e4dd891e52e6d9d9012" compoundref="fractionfree_l_u_8hpp" startline="59">lastpivot</references>
+        <references refid="class_f_f___l_u_computation_a7619a67b976173e5184e5d8c06de5cd0_1a7619a67b976173e5184e5d8c06de5cd0" compoundref="fractionfree_l_u_8hpp" startline="55">M</references>
+        <references refid="class_f_f___l_u_computation_a0e8a35c803e107598a3a2318f4192292_1a0e8a35c803e107598a3a2318f4192292" compoundref="fractionfree_l_u_8hpp" startline="57">need_div</references>
+        <references refid="class_f_f___l_u_computation_a19795363f26ee0c62fc6309df97eea12_1a19795363f26ee0c62fc6309df97eea12" compoundref="fractionfree_l_u_8hpp" startline="60">pivot</references>
+        <references refid="class_f_f___l_u_computation_a31bcdc37d60ab2b2c2f171ebea64fe2d_1a31bcdc37d60ab2b2c2f171ebea64fe2d" compoundref="fractionfree_l_u_8hpp" startline="54">R</references>
+        <referencedby refid="class_f_f___l_u_computation_a7cb994ac19d378232e22c1e0f795e56c_1a7cb994ac19d378232e22c1e0f795e56c" compoundref="fractionfree_l_u_8cpp" startline="81" endline="106">calc</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f_f___l_u_computation_a7cb994ac19d378232e22c1e0f795e56c_1a7cb994ac19d378232e22c1e0f795e56c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool FF_LUComputation::calc</definition>
+        <argsstring>()</argsstring>
+        <name>calc</name>
+        <qualifiedname>FF_LUComputation::calc</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="79" column="8" bodyfile="Macaulay2/e/fractionfreeLU.cpp" bodystart="81" bodyend="106"/>
+        <references refid="class_f_f___l_u_computation_a1d5931c68c49ae6cb42fbaf852d26e19_1a1d5931c68c49ae6cb42fbaf852d26e19" compoundref="fractionfree_l_u_8cpp" startline="35" endline="52">choose_pivot_column</references>
+        <references refid="class_f_f___l_u_computation_a77a34a616112102f7b19111554d3490a_1a77a34a616112102f7b19111554d3490a" compoundref="fractionfree_l_u_8hpp" startline="56">col_perm</references>
+        <references refid="class_f_f___l_u_computation_abdb0b6dc6f90050bf451c28f4c26c9eb_1abdb0b6dc6f90050bf451c28f4c26c9eb" compoundref="fractionfree_l_u_8cpp" startline="54" endline="79">do_pivots</references>
+        <references refid="class_f_f___l_u_computation_a7619a67b976173e5184e5d8c06de5cd0_1a7619a67b976173e5184e5d8c06de5cd0" compoundref="fractionfree_l_u_8hpp" startline="55">M</references>
+        <references refid="class_f_f___l_u_computation_a0e8a35c803e107598a3a2318f4192292_1a0e8a35c803e107598a3a2318f4192292" compoundref="fractionfree_l_u_8hpp" startline="57">need_div</references>
+        <references refid="class_f_f___l_u_computation_a2ee0af2b934fa96ff32fdc282677c8e3_1a2ee0af2b934fa96ff32fdc282677c8e3" compoundref="fractionfree_l_u_8hpp" startline="58">pivot_col</references>
+        <references refid="interrupted_8cpp_a5035d07c37876dc3b866e1d4457ff390_1a5035d07c37876dc3b866e1d4457ff390" compoundref="interrupted_8cpp" startline="6" endline="6">system_interrupted</references>
+        <referencedby refid="class_f_f___l_u_computation_afc3b7d57144a89049ea7a4fc27abee1b_1afc3b7d57144a89049ea7a4fc27abee1b" compoundref="fractionfree_l_u_8cpp" startline="116" endline="122">DO</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f_f___l_u_computation_a2b1ab45c947660e06fb83a8eba171c47_1a2b1ab45c947660e06fb83a8eba171c47" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        <definition>M2_arrayint FF_LUComputation::get_column_permutation</definition>
+        <argsstring>()</argsstring>
+        <name>get_column_permutation</name>
+        <qualifiedname>FF_LUComputation::get_column_permutation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="83" column="15" bodyfile="Macaulay2/e/fractionfreeLU.cpp" bodystart="108" bodyend="114"/>
+        <references refid="class_f_f___l_u_computation_a77a34a616112102f7b19111554d3490a_1a77a34a616112102f7b19111554d3490a" compoundref="fractionfree_l_u_8hpp" startline="56">col_perm</references>
+        <references refid="class_f_f___l_u_computation_a7619a67b976173e5184e5d8c06de5cd0_1a7619a67b976173e5184e5d8c06de5cd0" compoundref="fractionfree_l_u_8hpp" startline="55">M</references>
+        <references refid="m2-types_8cpp_a84a8e7c0bac25be533dcc0125ff14c50_1a84a8e7c0bac25be533dcc0125ff14c50" compoundref="m2-types_8cpp" startline="6" endline="12">M2_makearrayint</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_f_f___l_u_computation_afc3b7d57144a89049ea7a4fc27abee1b_1afc3b7d57144a89049ea7a4fc27abee1b" compoundref="fractionfree_l_u_8cpp" startline="116" endline="122">DO</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_f_f___l_u_computation_afc3b7d57144a89049ea7a4fc27abee1b_1afc3b7d57144a89049ea7a4fc27abee1b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a071c143092bff3ecfb25de7581dfba58_1a071c143092bff3ecfb25de7581dfba58" kindref="member">M2_arrayintOrNull</ref></type>
+        <definition>M2_arrayintOrNull FF_LUComputation::DO</definition>
+        <argsstring>(MutableMatrix *M)</argsstring>
+        <name>DO</name>
+        <qualifiedname>FF_LUComputation::DO</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/fractionfreeLU.hpp" line="86" column="28" bodyfile="Macaulay2/e/fractionfreeLU.cpp" bodystart="116" bodyend="122"/>
+        <references refid="class_f_f___l_u_computation_a7cb994ac19d378232e22c1e0f795e56c_1a7cb994ac19d378232e22c1e0f795e56c" compoundref="fractionfree_l_u_8cpp" startline="81" endline="106">calc</references>
+        <references refid="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" compoundref="fractionfree_l_u_8cpp" startline="10" endline="25">FF_LUComputation</references>
+        <references refid="class_f_f___l_u_computation_a2b1ab45c947660e06fb83a8eba171c47_1a2b1ab45c947660e06fb83a8eba171c47" compoundref="fractionfree_l_u_8cpp" startline="108" endline="114">get_column_permutation</references>
+        <references refid="class_f_f___l_u_computation_a7619a67b976173e5184e5d8c06de5cd0_1a7619a67b976173e5184e5d8c06de5cd0" compoundref="fractionfree_l_u_8hpp" startline="55">M</references>
+        <referencedby refid="mutable-matrix_8cpp_ae2f44f899d28a1a5921bb6bd2d0313b7_1ae2f44f899d28a1a5921bb6bd2d0313b7" compoundref="mutable-matrix_8cpp" startline="597" endline="600">IM2_FF_LU</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>LU decomposition over a domain using fraction-free Gaussian elimination. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The classical Bareiss-style algorithm: at each step, the new entry is <computeroutput>(<ref refid="class_f_f___l_u_computation_a19795363f26ee0c62fc6309df97eea12_1a19795363f26ee0c62fc6309df97eea12" kindref="member">pivot</ref> * a - factor * b) / <ref refid="class_f_f___l_u_computation_ac174cbd611fd3e4dd891e52e6d9d9012_1ac174cbd611fd3e4dd891e52e6d9d9012" kindref="member">lastpivot</ref></computeroutput>, where the division is exact because the ring is a domain. Tracks <computeroutput><ref refid="class_f_f___l_u_computation_a77a34a616112102f7b19111554d3490a_1a77a34a616112102f7b19111554d3490a" kindref="member">col_perm</ref></computeroutput> for the column permutation and <computeroutput><ref refid="class_f_f___l_u_computation_a0e8a35c803e107598a3a2318f4192292_1a0e8a35c803e107598a3a2318f4192292" kindref="member">need_div</ref>[i]</computeroutput> for which columns still need the trailing division. Used by the engine wherever an integer-coefficient LU is needed without introducing fractions. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="80">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="66" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>FF_LUComputation</label>
+        <link refid="class_f_f___l_u_computation"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>col_perm</edgelabel>
+          <edgelabel>pivot_col</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>need_div</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>lastpivot</edgelabel>
+          <edgelabel>pivot</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="67" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="67" relation="public-inheritance">
+        </childnode>
+        <childnode refid="68" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="29" relation="private-inheritance">
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="31" relation="public-inheritance">
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="24" relation="private-inheritance">
+        </childnode>
+        <childnode refid="28" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="53">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>MutableMatrix</label>
+        <link refid="class_mutable_matrix"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="31">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="32" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>CoefficientType</label>
+      </node>
+      <node id="77">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="49">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="9">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="47">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="42" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>char</label>
+      </node>
+      <node id="79">
+        <label>const ARing *</label>
+      </node>
+      <node id="21">
+        <label>const void *</label>
+      </node>
+      <node id="42">
+        <label>double</label>
+      </node>
+      <node id="63">
+        <label>overflow_type *</label>
+      </node>
+      <node id="60">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="62">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="78">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="6">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="41">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="38" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>long</label>
+      </node>
+      <node id="33">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="34" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>mon_part</label>
+      </node>
+      <node id="46">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="45">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="43">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="44">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="4">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="38">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>size_t</label>
+      </node>
+      <node id="70">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>spinLock</label>
+      </node>
+      <node id="69">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="57">
+        <label>std::string</label>
+        <childnode refid="58" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="17" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="57" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>unsigned</label>
+      </node>
+      <node id="18">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="22">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/fractionfreeLU.hpp" line="49" column="1" bodyfile="Macaulay2/e/fractionfreeLU.hpp" bodystart="50" bodyend="95"/>
+    <listofallmembers>
+      <member refid="class_f_f___l_u_computation_a7cb994ac19d378232e22c1e0f795e56c_1a7cb994ac19d378232e22c1e0f795e56c" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>calc</name></member>
+      <member refid="class_f_f___l_u_computation_a1d5931c68c49ae6cb42fbaf852d26e19_1a1d5931c68c49ae6cb42fbaf852d26e19" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>choose_pivot_column</name></member>
+      <member refid="class_f_f___l_u_computation_a77a34a616112102f7b19111554d3490a_1a77a34a616112102f7b19111554d3490a" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>col_perm</name></member>
+      <member refid="class_f_f___l_u_computation_afc3b7d57144a89049ea7a4fc27abee1b_1afc3b7d57144a89049ea7a4fc27abee1b" prot="public" virt="non-virtual"><scope>FF_LUComputation</scope><name>DO</name></member>
+      <member refid="class_f_f___l_u_computation_abdb0b6dc6f90050bf451c28f4c26c9eb_1abdb0b6dc6f90050bf451c28f4c26c9eb" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>do_pivots</name></member>
+      <member refid="class_f_f___l_u_computation_af9a441eda248b3300d8ea5b7f5701137_1af9a441eda248b3300d8ea5b7f5701137" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>FF_LUComputation</name></member>
+      <member refid="class_f_f___l_u_computation_a2b1ab45c947660e06fb83a8eba171c47_1a2b1ab45c947660e06fb83a8eba171c47" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>get_column_permutation</name></member>
+      <member refid="class_f_f___l_u_computation_ac174cbd611fd3e4dd891e52e6d9d9012_1ac174cbd611fd3e4dd891e52e6d9d9012" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>lastpivot</name></member>
+      <member refid="class_f_f___l_u_computation_a7619a67b976173e5184e5d8c06de5cd0_1a7619a67b976173e5184e5d8c06de5cd0" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>M</name></member>
+      <member refid="class_f_f___l_u_computation_a0e8a35c803e107598a3a2318f4192292_1a0e8a35c803e107598a3a2318f4192292" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>need_div</name></member>
+      <member refid="class_f_f___l_u_computation_a19795363f26ee0c62fc6309df97eea12_1a19795363f26ee0c62fc6309df97eea12" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>pivot</name></member>
+      <member refid="class_f_f___l_u_computation_a2ee0af2b934fa96ff32fdc282677c8e3_1a2ee0af2b934fa96ff32fdc282677c8e3" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>pivot_col</name></member>
+      <member refid="class_f_f___l_u_computation_a31bcdc37d60ab2b2c2f171ebea64fe2d_1a31bcdc37d60ab2b2c2f171ebea64fe2d" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>R</name></member>
+      <member refid="class_f_f___l_u_computation_ad8d81fec6cb02ebfe3ae0c59ff7c0404_1ad8d81fec6cb02ebfe3ae0c59ff7c0404" prot="private" virt="non-virtual"><scope>FF_LUComputation</scope><name>~FF_LUComputation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

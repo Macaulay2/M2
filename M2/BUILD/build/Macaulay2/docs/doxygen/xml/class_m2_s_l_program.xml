@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m2_s_l_program" kind="class" language="C++" prot="public">
+    <compoundname>M2SLProgram</compoundname>
+    <basecompoundref refid="class_mutable_engine_object" prot="public" virt="non-virtual">MutableEngineObject</basecompoundref>
+    <includes refid="_s_l_p-defs_8hpp" local="no">SLP-defs.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_m2_s_l_program_a8933c28db2ff74670c1f77fea66bd405_1a8933c28db2ff74670c1f77fea66bd405" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_s_l_program" kindref="compound">SLProgram</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;SLProgram&gt; M2SLProgram::mSLProgram</definition>
+        <argsstring></argsstring>
+        <name>mSLProgram</name>
+        <qualifiedname>M2SLProgram::mSLProgram</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="61" column="19" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="class_m2_s_l_program_ac95bd1d615a8ab69fa9767919c56c022_1ac95bd1d615a8ab69fa9767919c56c022" compoundref="_s_l_p-defs_8hpp" startline="63" endline="63">M2SLProgram</referencedby>
+        <referencedby refid="class_m2_s_l_program_a1005118ac05ff326296ea86f3994d46c_1a1005118ac05ff326296ea86f3994d46c" compoundref="_s_l_p-defs_8hpp" startline="65" endline="65">value</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_m2_s_l_program_ac95bd1d615a8ab69fa9767919c56c022_1ac95bd1d615a8ab69fa9767919c56c022" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2SLProgram::M2SLProgram</definition>
+        <argsstring>(SLProgram *pa)</argsstring>
+        <name>M2SLProgram</name>
+        <qualifiedname>M2SLProgram::M2SLProgram</qualifiedname>
+        <param>
+          <type><ref refid="class_s_l_program" kindref="compound">SLProgram</ref> *</type>
+          <declname>pa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="63" column="3" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="63" bodyend="63"/>
+        <references refid="class_m2_s_l_program_a8933c28db2ff74670c1f77fea66bd405_1a8933c28db2ff74670c1f77fea66bd405" compoundref="_s_l_p-defs_8hpp" startline="61">mSLProgram</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_s_l_program_a1005118ac05ff326296ea86f3994d46c_1a1005118ac05ff326296ea86f3994d46c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_s_l_program" kindref="compound">SLProgram</ref> &amp;</type>
+        <definition>SLProgram &amp; M2SLProgram::value</definition>
+        <argsstring>()</argsstring>
+        <name>value</name>
+        <qualifiedname>M2SLProgram::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="65" column="13" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="65" bodyend="65"/>
+        <references refid="class_m2_s_l_program_a8933c28db2ff74670c1f77fea66bd405_1a8933c28db2ff74670c1f77fea66bd405" compoundref="_s_l_p-defs_8hpp" startline="61">mSLProgram</references>
+        <referencedby refid="class_mutable_mat_a6250ccd41399eeb1ed5d802336eef98f_1a6250ccd41399eeb1ed5d802336eef98f" compoundref="mutablemat-imp_8hpp" startline="39" endline="49">MutableMat&lt; Mat &gt;::createSLEvaluator</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a03c7599d1702a53f860a1edb753e91e9_1a03c7599d1702a53f860a1edb753e91e9" compoundref="interface_2matrix_8cpp" startline="946" endline="949">rawSLPDetGate</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a2119ebe895ebb86b0fe3824e5f81ab86_1a2119ebe895ebb86b0fe3824e5f81ab86" compoundref="interface_2matrix_8cpp" startline="955" endline="958">rawSLPDivideGate</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_acc261ca93baf94c21fbf9c57069867ff_1acc261ca93baf94c21fbf9c57069867ff" compoundref="interface_2matrix_8cpp" startline="937" endline="937">rawSLPInputGate</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a3d7d18c91298fc4d8a27397c38a4d7b9_1a3d7d18c91298fc4d8a27397c38a4d7b9" compoundref="interface_2matrix_8cpp" startline="942" endline="945">rawSLPProductGate</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a528bb28b4bcd6be33f81b1c13287ed09_1a528bb28b4bcd6be33f81b1c13287ed09" compoundref="interface_2matrix_8cpp" startline="930" endline="935">rawSLProgramToString</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a48098827fe55ab0f7eb0d8d9836a1d43_1a48098827fe55ab0f7eb0d8d9836a1d43" compoundref="interface_2matrix_8cpp" startline="950" endline="954">rawSLPsetOutputPositions</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a89f736989e906499dbe7cb16286be919_1a89f736989e906499dbe7cb16286be919" compoundref="interface_2matrix_8cpp" startline="938" endline="941">rawSLPSumGate</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_mutable_engine_object" kindref="compound">MutableEngineObject</ref></computeroutput> wrapper that owns an <computeroutput><ref refid="class_s_l_program" kindref="compound">SLProgram</ref></computeroutput> via <computeroutput>unique_ptr</computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Exposes the unwrapped DAG through <computeroutput><ref refid="class_m2_s_l_program_a1005118ac05ff326296ea86f3994d46c_1a1005118ac05ff326296ea86f3994d46c" kindref="member">value()</ref></computeroutput> so engine code that holds an <computeroutput>M2SLProgram*</computeroutput> can reach the actual program without leaking its concrete type to interpreter callers. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>M2SLProgram</label>
+        <link refid="class_m2_s_l_program"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>M2SLProgram</label>
+        <link refid="class_m2_s_l_program"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mSLProgram</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>SLProgram</label>
+        <link refid="class_s_l_program"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mNodes</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mInputPositions</edgelabel>
+          <edgelabel>mNumInputs</edgelabel>
+          <edgelabel>mOutputPositions</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>inputCounter</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>GATE_TYPE</label>
+      </node>
+      <node id="11">
+        <label>T</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="13">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::unique_ptr&lt; SLProgram &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; SLProgram &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>std::vector&lt; GATE_TYPE &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/SLP-defs.hpp" line="59" column="1" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="60" bodyend="66"/>
+    <listofallmembers>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>hash</name></member>
+      <member refid="class_m2_s_l_program_ac95bd1d615a8ab69fa9767919c56c022_1ac95bd1d615a8ab69fa9767919c56c022" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>M2SLProgram</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>M2SLProgram</scope><name>mHashValue</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>M2SLProgram</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_m2_s_l_program_a8933c28db2ff74670c1f77fea66bd405_1a8933c28db2ff74670c1f77fea66bd405" prot="private" virt="non-virtual"><scope>M2SLProgram</scope><name>mSLProgram</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>MutableEngineObject</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_m2_s_l_program_a1005118ac05ff326296ea86f3994d46c_1a1005118ac05ff326296ea86f3994d46c" prot="public" virt="non-virtual"><scope>M2SLProgram</scope><name>value</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>M2SLProgram</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>M2SLProgram</scope><name>~our_gc_cleanup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

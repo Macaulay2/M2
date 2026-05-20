@@ -1,0 +1,6 @@
+var struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_params =
+[
+    [ "monoid", "struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_params_aeecb02d38b4fc810f987c200590bea03.html#aeecb02d38b4fc810f987c200590bea03", null ],
+    [ "preferSparseReducers", "struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_params_a156df1b09816a67744c886566ffb4bb8.html#a156df1b09816a67744c886566ffb4bb8", null ],
+    [ "type", "struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_params_af1bb7a9021eaf50ab0d2e69c6a175449.html#af1bb7a9021eaf50ab0d2e69c6a175449", null ]
+];

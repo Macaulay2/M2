@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_givaro_test_8cpp" kind="file" language="C++">
+    <compoundname>GivaroTest.cpp</compoundname>
+    <includes local="no">iostream</includes>
+    <includes local="no">givaro/modular.h</includes>
+    <includes local="no">givaro/montgomery.h</includes>
+    <includes local="no">givaro/gfq.h</includes>
+    <includes local="no">givaro/gfqext.h</includes>
+    <includes local="no">sys/time.h</includes>
+    <includes local="no">sys/resource.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>Macaulay2/e/unit-tests/GivaroTest.cpp</label>
+        <link refid="_givaro_test_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>givaro/gfq.h</label>
+      </node>
+      <node id="6">
+        <label>givaro/gfqext.h</label>
+      </node>
+      <node id="3">
+        <label>givaro/modular.h</label>
+      </node>
+      <node id="4">
+        <label>givaro/montgomery.h</label>
+      </node>
+      <node id="2">
+        <label>iostream</label>
+      </node>
+      <node id="8">
+        <label>sys/resource.h</label>
+      </node>
+      <node id="7">
+        <label>sys/time.h</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespace_givaro">Givaro</innernamespace>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aa56106941a453e03ff5dde0a32d208db_1aa56106941a453e03ff5dde0a32d208db" kindref="member">Field</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void TestField</definition>
+        <argsstring>(const Field &amp;F)</argsstring>
+        <name>TestField</name>
+        <param>
+          <type>const <ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aa56106941a453e03ff5dde0a32d208db_1aa56106941a453e03ff5dde0a32d208db" kindref="member">Field</ref> &amp;</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/GivaroTest.cpp" line="38" column="6" bodyfile="Macaulay2/e/unit-tests/GivaroTest.cpp" bodystart="38" bodyend="142"/>
+        <referencedby refid="_givaro_test_8cpp_a3c04138a5bfe5d72780bb7e82a18e627_1a3c04138a5bfe5d72780bb7e82a18e627" compoundref="_givaro_test_8cpp" startline="147" endline="222">main</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_givaro_test_8cpp_a3c04138a5bfe5d72780bb7e82a18e627_1a3c04138a5bfe5d72780bb7e82a18e627" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int main</definition>
+        <argsstring>(int argc, char **argv)</argsstring>
+        <name>main</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>argc</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>argv</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/GivaroTest.cpp" line="147" column="5" bodyfile="Macaulay2/e/unit-tests/GivaroTest.cpp" bodystart="147" bodyend="222"/>
+        <references refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" compoundref="_givaro_test_8cpp" startline="38" endline="142">TestField</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Adapted-upstream Givaro smoke test exercising <computeroutput>modular</computeroutput>, <computeroutput>montgomery</computeroutput>, <computeroutput>gfq</computeroutput>, <computeroutput>gfqext</computeroutput> templates. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Carries a templated <computeroutput><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>&lt;<ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aa56106941a453e03ff5dde0a32d208db_1aa56106941a453e03ff5dde0a32d208db" kindref="member">Field</ref>&gt;(F)</computeroutput> that runs the standard arithmetic / <computeroutput>axpy</computeroutput> / <computeroutput>maxpy</computeroutput> battery against any Givaro field type, then instantiates it for the four Givaro-shipped variants the engine ever consumes (<computeroutput>Modular&lt;&gt;</computeroutput>, <computeroutput>Montgomery&lt;&gt;</computeroutput>, <computeroutput>GFqDom&lt;&gt;</computeroutput>, <computeroutput>GFqExt&lt;&gt;</computeroutput>). Code is adapted from Givaro&apos;s own example tests (note the file-header typo <computeroutput>(c) 994-2009</computeroutput>) and lives in <ref refid="namespace_m2" kindref="compound">M2</ref>&apos;s tree so the engine&apos;s CI catches Givaro packaging regressions before they reach <computeroutput>ARingGFGivaro</computeroutput>.</para>
+<para>Companion to <computeroutput><ref refid="_a_ring_g_f_test_8cpp" kindref="compound">ARingGFTest.cpp</ref></computeroutput> (both under the <computeroutput>file-aring-gf-tests</computeroutput> markdown): that file tests the FLINT-backed <ref refid="namespace_m2" kindref="compound">M2</ref> <ref refid="class_g_f" kindref="compound">GF</ref> arings, this one is the upstream-library canary. If <computeroutput>GivaroTest</computeroutput> fails, the problem is in Givaro itself or the linker recipe, not in any <ref refid="namespace_m2" kindref="compound">M2</ref> wrapper.</para>
+<para><simplesect kind="see"><para><ref refid="_a_ring_g_f_test_8cpp" kindref="compound">ARingGFTest.cpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="aring-gf-flint_8hpp" kindref="compound">aring-gf-flint.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>994-2009<sp/>by<sp/>The<sp/>Givaro<sp/>group</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>Givaro.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Givaro<sp/>is<sp/>governed<sp/>by<sp/>the<sp/>CeCILL-B<sp/>license<sp/>under<sp/>French<sp/>law</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//<sp/>and<sp/>abiding<sp/>by<sp/>the<sp/>rules<sp/>of<sp/>distribution<sp/>of<sp/>free<sp/>software.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//<sp/>see<sp/>the<sp/>COPYRIGHT<sp/>file<sp/>for<sp/>more<sp/>details.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;givaro/modular.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;givaro/montgomery.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;givaro/gfq.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;givaro/gfqext.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">Givaro;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Field&gt;</highlight></codeline>
+<codeline lineno="38" refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aa56106941a453e03ff5dde0a32d208db_1aa56106941a453e03ff5dde0a32d208db" kindref="member">Field</ref>&amp;<sp/>F)</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Within<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>F.write(std::cerr);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Field::Element<sp/>a,<sp/>b,<sp/>c,<sp/>d;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>F.init(a,<sp/>7U);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>F.init(b,<sp/>-29.3);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>F.init(c);<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>empty<sp/>constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>F.init(d);<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>empty<sp/>constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>F.add(c,<sp/>a,<sp/>b);<sp/><sp/></highlight><highlight class="comment">//<sp/>c<sp/>=<sp/>a+b</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Separate<sp/>output<sp/>writing</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>F.write(std::cout,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>+<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>F.write(std::cout,<sp/>b)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>F.write(std::cerr,<sp/>c)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>F.mul(c,<sp/>a,<sp/>b);<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>c<sp/>=<sp/>a*b</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>F.axpy(d,<sp/>a,<sp/>b,<sp/>c);<sp/><sp/></highlight><highlight class="comment">//<sp/>d<sp/>=<sp/>a*b<sp/>+<sp/>c;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Writing<sp/>all<sp/>outputs<sp/>in<sp/>a<sp/>single<sp/>command<sp/>line</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>F.write(std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Within<sp/>&quot;</highlight><highlight class="normal">)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>F.write(F.write(F.write(F.write(std::cout,<sp/>c)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>+<sp/>&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>*<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>=<sp/>&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>d)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Field::Element<sp/>e;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>F.init(e);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>F.assign(e,<sp/>d);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>F.maxpy(e,<sp/>a,<sp/>b,<sp/>d);<sp/><sp/></highlight><highlight class="comment">//<sp/>e<sp/>=<sp/>d-a*b</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Writing<sp/>all<sp/>outputs<sp/>in<sp/>a<sp/>single<sp/>command<sp/>line</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>F.write(std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Within<sp/>&quot;</highlight><highlight class="normal">)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>F.write(F.write(F.write(F.write(std::cout,<sp/>d)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>-<sp/>&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>*<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>=<sp/>&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Field::Element<sp/>e;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>F.init(e);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>F.assign(e,<sp/>d);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>F.maxpyin(e,<sp/>a,<sp/>b);<sp/><sp/></highlight><highlight class="comment">//<sp/>e<sp/>=<sp/>d<sp/>-<sp/>a*b;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Writing<sp/>all<sp/>outputs<sp/>in<sp/>a<sp/>single<sp/>command<sp/>line</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>F.write(std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Within<sp/>&quot;</highlight><highlight class="normal">)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>F.write(F.write(F.write(F.write(std::cout,<sp/>d)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>-<sp/>&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>*<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>=<sp/>&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Field::Element<sp/>e;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>F.init(e);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>F.assign(e,<sp/>d);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>F.axmy(e,<sp/>a,<sp/>b,<sp/>d);<sp/><sp/></highlight><highlight class="comment">//<sp/>e<sp/>=<sp/>a*b<sp/>-d;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Writing<sp/>all<sp/>outputs<sp/>in<sp/>a<sp/>single<sp/>command<sp/>line</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>F.write(std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Within<sp/>&quot;</highlight><highlight class="normal">)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>F.write(F.write(F.write(F.write(std::cout,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>*<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>-<sp/>&quot;</highlight><highlight class="normal">,<sp/>d)</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>=<sp/>&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e)</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Field::Element<sp/>e;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>F.init(e);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>F.assign(e,<sp/>d);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>F.maxpyin(e,<sp/>a,<sp/>b);<sp/><sp/></highlight><highlight class="comment">//<sp/>e<sp/>=<sp/>d<sp/>-<sp/>a*b;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Writing<sp/>all<sp/>outputs<sp/>in<sp/>a<sp/>single<sp/>command<sp/>line</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>F.write(std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Within<sp/>&quot;</highlight><highlight class="normal">)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>F.write(F.write(F.write(F.write(std::cout,<sp/>d)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>-<sp/>&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>*<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>=<sp/>&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e)</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Four<sp/>operations</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>F.write(F.write(std::cout,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>+=<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>is<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/>F.write(std::cout,<sp/>F.addin(a,<sp/>b))<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>;<sp/><sp/><sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>F.write(F.write(std::cout,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>-=<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>is<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>F.write(std::cout,<sp/>F.subin(a,<sp/>b))<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>;<sp/><sp/><sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>F.write(F.write(std::cout,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>*=<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>is<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/>F.write(std::cout,<sp/>F.mulin(a,<sp/>b))<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>;<sp/><sp/><sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>F.write(F.write(std::cout,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>/=<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>is<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>F.write(std::cout,<sp/>F.divin(a,<sp/>b))<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>F.init(a,<sp/>22996);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>F.inv(b,<sp/>a);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/>F.write(F.write(std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;1/&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>is<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>F.mul(c,<sp/>b,<sp/>a);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/>F.write(std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;1<sp/>is<sp/>&quot;</highlight><highlight class="normal">,<sp/>c)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>F.init(a,<sp/>22996);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/>F.init(b,<sp/>22996);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>F.write(std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;1/&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>is<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>F.invin(a);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/>F.write(std::cout,<sp/>a)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>F.mulin(a,<sp/>b);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/>F.write(std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;1<sp/>is<sp/>&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/>F.init(a,<sp/>37403);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>F.inv(b,<sp/>a);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/>F.write(F.write(std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;1/&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>is<sp/>&quot;</highlight><highlight class="normal">,<sp/>b)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>F.mul(c,<sp/>b,<sp/>a);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/>F.write(std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;1<sp/>is<sp/>&quot;</highlight><highlight class="normal">,<sp/>c)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/>F.init(a,<sp/>37403);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/>F.init(b,<sp/>37403);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/>F.write(std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;1/&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>is<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/>F.invin(a);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/>F.write(std::cout,<sp/>a)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>F.mulin(a,<sp/>b);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/>F.write(std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;1<sp/>is<sp/>&quot;</highlight><highlight class="normal">,<sp/>a)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/time.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/resource.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="147" refid="_givaro_test_8cpp_a3c04138a5bfe5d72780bb7e82a18e627_1a3c04138a5bfe5d72780bb7e82a18e627" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="franzi-brp-test_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_1ae66f6b31b5ad750f1fe042a706a4e3d4" kindref="member">main</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)</highlight></codeline>
+<codeline lineno="148"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>modulo<sp/>13<sp/>over<sp/>16<sp/>bits</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/>Modular&lt;int16_t&gt;<sp/>C13(13);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(C13);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>modulo<sp/>13<sp/>over<sp/>32<sp/>bits</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/>Modular&lt;int32_t&gt;<sp/>Z13(13);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(Z13);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>modulo<sp/>13<sp/>over<sp/>unsigned<sp/>32<sp/>bits</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/>Modular&lt;uint32_t&gt;<sp/>U13(13);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(U13);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__USE_Givaro_SIXTYFOUR__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>modulo<sp/>13<sp/>over<sp/>64<sp/>bits</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/>Modular&lt;int64_t&gt;<sp/>LL13(13U);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(LL13);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>modulo<sp/>13<sp/>fully<sp/>tabulated</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>Modular&lt;Log16&gt;<sp/>L13(13);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(L13);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>modulo<sp/>13<sp/>over<sp/>32<sp/>bits<sp/>with<sp/>Montgomery<sp/>reduction</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/>Montgomery&lt;int32_t&gt;<sp/>M13(13);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(M13);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/>Montgomery&lt;int32_t&gt;<sp/>M3(39989);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(M3);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>modulo<sp/>13<sp/>with<sp/>primitive<sp/>root<sp/>representation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/>GFqDom&lt;int&gt;<sp/>GF13(13);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(GF13);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>modulo<sp/>13<sp/>over<sp/>arbitrary<sp/>size</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/>Modular&lt;Integer&gt;<sp/>IntZ13(13);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(IntZ13);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Zech<sp/>log<sp/>finite<sp/>field<sp/>with<sp/>5^4<sp/>elements</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/>GFqDom&lt;int&gt;<sp/>GF625(5,<sp/>4);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(GF625);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>0<sp/></highlight><highlight class="comment">//<sp/>Possibly<sp/>related:<sp/>https://github.com/cr-marcstevens/m4gb/issues/8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Zech<sp/>log<sp/>finite<sp/>field<sp/>with<sp/>256<sp/>elements</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>and<sp/>prescribed<sp/>irreducible<sp/>polynomial</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/>std::vector&lt;GFqDom&lt;unsigned<sp/>long<sp/>long&gt;::Residu_t&gt;<sp/>Irred(9);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/>Irred[0]<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/>Irred[1]<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/>Irred[2]<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/>Irred[3]<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/>Irred[4]<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/>Irred[5]<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/>Irred[6]<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/>Irred[7]<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/>Irred[8]<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/>GFqDom&lt;unsigned<sp/>long<sp/>long&gt;<sp/>F256(2,<sp/>8,<sp/>Irred);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(F256);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Zech<sp/>log<sp/>finite<sp/>field<sp/>with<sp/>3^4<sp/>elements</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Using<sp/>the<sp/>Q-adic<sp/>Transform</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/>GFqExt&lt;int32_t&gt;<sp/>GF81(3,<sp/>4);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><ref refid="_givaro_test_8cpp_a0cdcae3c279645847a1edf1dde509708_1a0cdcae3c279645847a1edf1dde509708" kindref="member">TestField</ref>(GF81);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Zech<sp/>log<sp/>finite<sp/>field<sp/>with<sp/>2Mb<sp/>tables</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">rusage<sp/>tmp1;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/>getrusage(RUSAGE_SELF,<sp/>&amp;tmp1);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>user<sp/>time</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tim<sp/>=<sp/>(double)tmp1.ru_utime.tv_sec<sp/>+</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)tmp1.ru_utime.tv_usec)<sp/>/<sp/>(1000000.0);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/>;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/>getrusage(RUSAGE_SELF,<sp/>&amp;tmp1);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/>tim<sp/>=<sp/>(double)tmp1.ru_utime.tv_sec<sp/>+</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>((</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)tmp1.ru_utime.tv_usec)<sp/>/<sp/>(1000000.0)<sp/>-<sp/>tim;</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Initialization<sp/>took<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>tim</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>cpu<sp/>seconds<sp/>and<sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/>tmp1.ru_maxrss<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>maximum<sp/>resident<sp/>set<sp/>size&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>tmp1.ru_ixrss<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>integral<sp/>shared<sp/>memory<sp/>size&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>tmp1.ru_idrss<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>integral<sp/>unshared<sp/>data<sp/>size&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>tmp1.ru_isrss<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>integral<sp/>unshared<sp/>stack<sp/>size&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>tmp1.ru_minflt<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>page<sp/>reclaims&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>tmp1.ru_majflt<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>page<sp/>faults&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>tmp1.ru_nswap<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>swaps&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>tmp1.ru_inblock<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>block<sp/>input<sp/>operations&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>tmp1.ru_oublock<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>block<sp/>output<sp/>operations&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="222"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/unit-tests/GivaroTest.cpp"/>
+  </compounddef>
+</doxygen>

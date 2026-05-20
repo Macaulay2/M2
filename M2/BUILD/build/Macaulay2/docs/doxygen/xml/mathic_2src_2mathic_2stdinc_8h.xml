@@ -1,0 +1,1780 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="mathic_2src_2mathic_2stdinc_8h" kind="file" language="C++">
+    <compoundname>stdinc.h</compoundname>
+    <includedby refid="_action_8h" local="yes">submodules/mathic/src/mathic/Action.h</includedby>
+    <includedby refid="_binary_k_d_tree_8h" local="yes">submodules/mathic/src/mathic/BinaryKDTree.h</includedby>
+    <includedby refid="mathic_2_bit_triangle_8cpp" local="yes">submodules/mathic/src/mathic/BitTriangle.cpp</includedby>
+    <includedby refid="_bit_triangle_8h" local="yes">submodules/mathic/src/mathic/BitTriangle.h</includedby>
+    <includedby refid="_bool_parameter_8h" local="yes">submodules/mathic/src/mathic/BoolParameter.h</includedby>
+    <includedby refid="_cli_parameter_8h" local="yes">submodules/mathic/src/mathic/CliParameter.h</includedby>
+    <includedby refid="_column_printer_8h" local="yes">submodules/mathic/src/mathic/ColumnPrinter.h</includedby>
+    <includedby refid="_com_tree_8h" local="yes">submodules/mathic/src/mathic/ComTree.h</includedby>
+    <includedby refid="_div_list_8h" local="yes">submodules/mathic/src/mathic/DivList.h</includedby>
+    <includedby refid="_div_mask_8h" local="yes">submodules/mathic/src/mathic/DivMask.h</includedby>
+    <includedby refid="_geo_front_8h" local="yes">submodules/mathic/src/mathic/GeoFront.h</includedby>
+    <includedby refid="_geobucket_8h" local="yes">submodules/mathic/src/mathic/Geobucket.h</includedby>
+    <includedby refid="_hash_table_8h" local="yes">submodules/mathic/src/mathic/HashTable.h</includedby>
+    <includedby refid="_heap_8h" local="yes">submodules/mathic/src/mathic/Heap.h</includedby>
+    <includedby refid="_help_action_8h" local="yes">submodules/mathic/src/mathic/HelpAction.h</includedby>
+    <includedby refid="_integer_parameter_8h" local="yes">submodules/mathic/src/mathic/IntegerParameter.h</includedby>
+    <includedby refid="_k_d_entry_array_8h" local="yes">submodules/mathic/src/mathic/KDEntryArray.h</includedby>
+    <includedby refid="_k_d_tree_8h" local="yes">submodules/mathic/src/mathic/KDTree.h</includedby>
+    <includedby refid="_name_factory_8h" local="yes">submodules/mathic/src/mathic/NameFactory.h</includedby>
+    <includedby refid="_packed_k_d_tree_8h" local="yes">submodules/mathic/src/mathic/PackedKDTree.h</includedby>
+    <includedby refid="_pair_queue_8h" local="yes">submodules/mathic/src/mathic/PairQueue.h</includedby>
+    <includedby refid="_stl_set_8h" local="yes">submodules/mathic/src/mathic/StlSet.h</includedby>
+    <includedby refid="_string_parameter_8h" local="yes">submodules/mathic/src/mathic/StringParameter.h</includedby>
+    <includedby refid="_timer_8h" local="yes">submodules/mathic/src/mathic/Timer.h</includedby>
+    <includedby refid="_tour_tree_8h" local="yes">submodules/mathic/src/mathic/TourTree.h</includedby>
+    <includedby refid="display_8h" local="yes">submodules/mathic/src/mathic/display.h</includedby>
+    <invincdepgraph>
+      <node id="122">
+        <label>Macaulay2/e/NCAlgebras/NCReduction.cpp</label>
+        <link refid="_n_c_reduction_8cpp"/>
+      </node>
+      <node id="130">
+        <label>submodules/mathic/src/divsim/DivListModel.h</label>
+        <link refid="_div_list_model_8h"/>
+        <childnode refid="103" relation="include">
+        </childnode>
+      </node>
+      <node id="102">
+        <label>submodules/mathic/src/divsim/KDTreeModel.h</label>
+        <link refid="_k_d_tree_model_8h"/>
+        <childnode refid="103" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+      </node>
+      <node id="117">
+        <label>submodules/mathic/src/divsim/Simulation.cpp</label>
+        <link refid="_simulation_8cpp"/>
+      </node>
+      <node id="144">
+        <label>submodules/mathic/src/divsim/Simulation.h</label>
+        <link refid="_simulation_8h"/>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="103" relation="include">
+        </childnode>
+      </node>
+      <node id="103">
+        <label>submodules/mathic/src/divsim/divMain.cpp</label>
+        <link refid="div_main_8cpp"/>
+      </node>
+      <node id="4">
+        <label>submodules/mathic/src/mathic.cpp</label>
+        <link refid="mathic_8cpp"/>
+      </node>
+      <node id="3">
+        <label>submodules/mathic/src/mathic.h</label>
+        <link refid="mathic_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="95">
+        <label>submodules/mathic/src/mathic/Action.cpp</label>
+        <link refid="_action_8cpp"/>
+      </node>
+      <node id="2">
+        <label>submodules/mathic/src/mathic/Action.h</label>
+        <link refid="_action_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="99" relation="include">
+        </childnode>
+      </node>
+      <node id="100">
+        <label>submodules/mathic/src/mathic/BinaryKDTree.h</label>
+        <link refid="_binary_k_d_tree_8h"/>
+        <childnode refid="101" relation="include">
+        </childnode>
+      </node>
+      <node id="105">
+        <label>submodules/mathic/src/mathic/BitTriangle.cpp</label>
+        <link refid="mathic_2_bit_triangle_8cpp"/>
+      </node>
+      <node id="106">
+        <label>submodules/mathic/src/mathic/BitTriangle.h</label>
+        <link refid="_bit_triangle_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+      </node>
+      <node id="109">
+        <label>submodules/mathic/src/mathic/BoolParameter.cpp</label>
+        <link refid="_bool_parameter_8cpp"/>
+      </node>
+      <node id="108">
+        <label>submodules/mathic/src/mathic/BoolParameter.h</label>
+        <link refid="_bool_parameter_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+      </node>
+      <node id="111">
+        <label>submodules/mathic/src/mathic/CliParameter.cpp</label>
+        <link refid="_cli_parameter_8cpp"/>
+      </node>
+      <node id="110">
+        <label>submodules/mathic/src/mathic/CliParameter.h</label>
+        <link refid="_cli_parameter_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="111" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+      </node>
+      <node id="97">
+        <label>submodules/mathic/src/mathic/CliParser.cpp</label>
+        <link refid="_cli_parser_8cpp"/>
+      </node>
+      <node id="96">
+        <label>submodules/mathic/src/mathic/CliParser.h</label>
+        <link refid="_cli_parser_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+      </node>
+      <node id="118">
+        <label>submodules/mathic/src/mathic/ColumnPrinter.cpp</label>
+        <link refid="_column_printer_8cpp"/>
+      </node>
+      <node id="116">
+        <label>submodules/mathic/src/mathic/ColumnPrinter.h</label>
+        <link refid="_column_printer_8h"/>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+      </node>
+      <node id="120">
+        <label>submodules/mathic/src/mathic/ComTree.h</label>
+        <link refid="_com_tree_8h"/>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+      </node>
+      <node id="129">
+        <label>submodules/mathic/src/mathic/DivList.h</label>
+        <link refid="_div_list_8h"/>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+      </node>
+      <node id="132">
+        <label>submodules/mathic/src/mathic/DivMask.cpp</label>
+        <link refid="_div_mask_8cpp"/>
+      </node>
+      <node id="131">
+        <label>submodules/mathic/src/mathic/DivMask.h</label>
+        <link refid="_div_mask_8h"/>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="129" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+        <childnode refid="133" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="134" relation="include">
+        </childnode>
+      </node>
+      <node id="135">
+        <label>submodules/mathic/src/mathic/GeoFront.h</label>
+        <link refid="_geo_front_8h"/>
+        <childnode refid="136" relation="include">
+        </childnode>
+      </node>
+      <node id="136">
+        <label>submodules/mathic/src/mathic/Geobucket.h</label>
+        <link refid="_geobucket_8h"/>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="137" relation="include">
+        </childnode>
+      </node>
+      <node id="138">
+        <label>submodules/mathic/src/mathic/HashTable.h</label>
+        <link refid="_hash_table_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="139" relation="include">
+        </childnode>
+      </node>
+      <node id="121">
+        <label>submodules/mathic/src/mathic/Heap.h</label>
+        <link refid="_heap_8h"/>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+      </node>
+      <node id="98">
+        <label>submodules/mathic/src/mathic/HelpAction.cpp</label>
+        <link refid="src_2mathic_2_help_action_8cpp"/>
+      </node>
+      <node id="99">
+        <label>submodules/mathic/src/mathic/HelpAction.h</label>
+        <link refid="_help_action_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+      </node>
+      <node id="113">
+        <label>submodules/mathic/src/mathic/IntegerParameter.cpp</label>
+        <link refid="_integer_parameter_8cpp"/>
+      </node>
+      <node id="112">
+        <label>submodules/mathic/src/mathic/IntegerParameter.h</label>
+        <link refid="_integer_parameter_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="113" relation="include">
+        </childnode>
+      </node>
+      <node id="133">
+        <label>submodules/mathic/src/mathic/KDEntryArray.h</label>
+        <link refid="_k_d_entry_array_8h"/>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="134" relation="include">
+        </childnode>
+      </node>
+      <node id="101">
+        <label>submodules/mathic/src/mathic/KDTree.h</label>
+        <link refid="_k_d_tree_8h"/>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+      </node>
+      <node id="140">
+        <label>submodules/mathic/src/mathic/NameFactory.h</label>
+        <link refid="_name_factory_8h"/>
+        <childnode refid="96" relation="include">
+        </childnode>
+      </node>
+      <node id="134">
+        <label>submodules/mathic/src/mathic/PackedKDTree.h</label>
+        <link refid="_packed_k_d_tree_8h"/>
+        <childnode refid="101" relation="include">
+        </childnode>
+      </node>
+      <node id="126">
+        <label>submodules/mathic/src/mathic/PairQueue.h</label>
+        <link refid="_pair_queue_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+      </node>
+      <node id="141">
+        <label>submodules/mathic/src/mathic/StlSet.h</label>
+        <link refid="_stl_set_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="142" relation="include">
+        </childnode>
+      </node>
+      <node id="115">
+        <label>submodules/mathic/src/mathic/StringParameter.cpp</label>
+        <link refid="_string_parameter_8cpp"/>
+      </node>
+      <node id="114">
+        <label>submodules/mathic/src/mathic/StringParameter.h</label>
+        <link refid="_string_parameter_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="115" relation="include">
+        </childnode>
+      </node>
+      <node id="145">
+        <label>submodules/mathic/src/mathic/Timer.cpp</label>
+        <link refid="_timer_8cpp"/>
+      </node>
+      <node id="143">
+        <label>submodules/mathic/src/mathic/Timer.h</label>
+        <link refid="_timer_8h"/>
+        <childnode refid="144" relation="include">
+        </childnode>
+        <childnode refid="103" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="145" relation="include">
+        </childnode>
+      </node>
+      <node id="125">
+        <label>submodules/mathic/src/mathic/TourTree.h</label>
+        <link refid="_tour_tree_8h"/>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+      </node>
+      <node id="147">
+        <label>submodules/mathic/src/mathic/display.cpp</label>
+        <link refid="display_8cpp"/>
+      </node>
+      <node id="146">
+        <label>submodules/mathic/src/mathic/display.h</label>
+        <link refid="display_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="147" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/mathic/stdinc.h</label>
+        <link refid="mathic_2src_2mathic_2stdinc_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+        <childnode refid="106" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="129" relation="include">
+        </childnode>
+        <childnode refid="131" relation="include">
+        </childnode>
+        <childnode refid="135" relation="include">
+        </childnode>
+        <childnode refid="136" relation="include">
+        </childnode>
+        <childnode refid="138" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="99" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="133" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="140" relation="include">
+        </childnode>
+        <childnode refid="134" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="141" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="143" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="146" relation="include">
+        </childnode>
+      </node>
+      <node id="137">
+        <label>submodules/mathic/src/pqsim/GeobucketModel.h</label>
+        <link refid="_geobucket_model_8h"/>
+        <childnode refid="124" relation="include">
+        </childnode>
+      </node>
+      <node id="123">
+        <label>submodules/mathic/src/pqsim/HeapModel.h</label>
+        <link refid="_heap_model_8h"/>
+        <childnode refid="124" relation="include">
+        </childnode>
+      </node>
+      <node id="119">
+        <label>submodules/mathic/src/pqsim/Simulator.cpp</label>
+        <link refid="_simulator_8cpp"/>
+      </node>
+      <node id="142">
+        <label>submodules/mathic/src/pqsim/StlSetModel.h</label>
+        <link refid="_stl_set_model_8h"/>
+        <childnode refid="124" relation="include">
+        </childnode>
+      </node>
+      <node id="128">
+        <label>submodules/mathic/src/pqsim/TourTreeModel.h</label>
+        <link refid="_tour_tree_model_8h"/>
+        <childnode refid="124" relation="include">
+        </childnode>
+      </node>
+      <node id="124">
+        <label>submodules/mathic/src/pqsim/pqMain.cpp</label>
+        <link refid="pq_main_8cpp"/>
+      </node>
+      <node id="107">
+        <label>submodules/mathic/src/test/BitTriangle.cpp</label>
+        <link refid="test_2_bit_triangle_8cpp"/>
+      </node>
+      <node id="104">
+        <label>submodules/mathic/src/test/DivFinder.cpp</label>
+        <link refid="_div_finder_8cpp"/>
+      </node>
+      <node id="139">
+        <label>submodules/mathic/src/test/HashTable.cpp</label>
+        <link refid="_hash_table_8cpp"/>
+      </node>
+      <node id="127">
+        <label>submodules/mathic/src/test/PairQueue.cpp</label>
+        <link refid="_pair_queue_8cpp"/>
+      </node>
+      <node id="6">
+        <label>submodules/mathicgb/src/cli/CommonParams.cpp</label>
+        <link refid="_common_params_8cpp"/>
+      </node>
+      <node id="5">
+        <label>submodules/mathicgb/src/cli/CommonParams.hpp</label>
+        <link refid="_common_params_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>submodules/mathicgb/src/cli/GBAction.cpp</label>
+        <link refid="_g_b_action_8cpp"/>
+      </node>
+      <node id="7">
+        <label>submodules/mathicgb/src/cli/GBAction.hpp</label>
+        <link refid="_g_b_action_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>submodules/mathicgb/src/cli/GBCommonParams.cpp</label>
+        <link refid="_g_b_common_params_8cpp"/>
+      </node>
+      <node id="14">
+        <label>submodules/mathicgb/src/cli/GBCommonParams.hpp</label>
+        <link refid="_g_b_common_params_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>submodules/mathicgb/src/cli/GBMain.cpp</label>
+        <link refid="_g_b_main_8cpp"/>
+      </node>
+      <node id="17">
+        <label>submodules/mathicgb/src/cli/HelpAction.cpp</label>
+        <link refid="b_2src_2cli_2_help_action_8cpp"/>
+      </node>
+      <node id="16">
+        <label>submodules/mathicgb/src/cli/HelpAction.hpp</label>
+        <link refid="_help_action_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>submodules/mathicgb/src/cli/MatrixAction.cpp</label>
+        <link refid="_matrix_action_8cpp"/>
+      </node>
+      <node id="10">
+        <label>submodules/mathicgb/src/cli/MatrixAction.hpp</label>
+        <link refid="_matrix_action_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>submodules/mathicgb/src/cli/SigGBAction.cpp</label>
+        <link refid="_sig_g_b_action_8cpp"/>
+      </node>
+      <node id="12">
+        <label>submodules/mathicgb/src/cli/SigGBAction.hpp</label>
+        <link refid="_sig_g_b_action_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>submodules/mathicgb/src/cli/VersionAction.cpp</label>
+        <link refid="_version_action_8cpp"/>
+      </node>
+      <node id="18">
+        <label>submodules/mathicgb/src/cli/VersionAction.hpp</label>
+        <link refid="_version_action_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>submodules/mathicgb/src/mathicgb.cpp</label>
+        <link refid="mathicgb_8cpp"/>
+      </node>
+      <node id="37">
+        <label>submodules/mathicgb/src/mathicgb/Basis.cpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_basis_8cpp"/>
+      </node>
+      <node id="38">
+        <label>submodules/mathicgb/src/mathicgb/Basis.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_basis_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>submodules/mathicgb/src/mathicgb/CFile.cpp</label>
+        <link refid="_c_file_8cpp"/>
+      </node>
+      <node id="22">
+        <label>submodules/mathicgb/src/mathicgb/ClassicGBAlg.cpp</label>
+        <link refid="_classic_g_b_alg_8cpp"/>
+      </node>
+      <node id="58">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp</label>
+        <link refid="mathicgb_2_f4_matrix_builder_8cpp"/>
+      </node>
+      <node id="57">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp</label>
+        <link refid="_f4_matrix_builder_8hpp"/>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder2.cpp</label>
+        <link refid="_f4_matrix_builder2_8cpp"/>
+      </node>
+      <node id="60">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder2.hpp</label>
+        <link refid="_f4_matrix_builder2_8hpp"/>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp</label>
+        <link refid="_f4_matrix_projection_8cpp"/>
+      </node>
+      <node id="64">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp</label>
+        <link refid="_f4_matrix_projection_8hpp"/>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp</label>
+        <link refid="mathicgb_2_f4_matrix_reducer_8cpp"/>
+      </node>
+      <node id="92">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixReducer.hpp</label>
+        <link refid="_f4_matrix_reducer_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>submodules/mathicgb/src/mathicgb/F4ProtoMatrix.cpp</label>
+        <link refid="_f4_proto_matrix_8cpp"/>
+      </node>
+      <node id="63">
+        <label>submodules/mathicgb/src/mathicgb/F4ProtoMatrix.hpp</label>
+        <link refid="_f4_proto_matrix_8hpp"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>submodules/mathicgb/src/mathicgb/F4Reducer.cpp</label>
+        <link refid="_f4_reducer_8cpp"/>
+      </node>
+      <node id="67">
+        <label>submodules/mathicgb/src/mathicgb/FixedSizeMonomialMap.h</label>
+        <link refid="_fixed_size_monomial_map_8h"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>submodules/mathicgb/src/mathicgb/KoszulQueue.hpp</label>
+        <link refid="_koszul_queue_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>submodules/mathicgb/src/mathicgb/LogDomain.cpp</label>
+        <link refid="_log_domain_8cpp"/>
+      </node>
+      <node id="32">
+        <label>submodules/mathicgb/src/mathicgb/LogDomainSet.cpp</label>
+        <link refid="_log_domain_set_8cpp"/>
+      </node>
+      <node id="33">
+        <label>submodules/mathicgb/src/mathicgb/MESClassicGBAlg.cpp</label>
+        <link refid="_m_e_s_classic_g_b_alg_8cpp"/>
+      </node>
+      <node id="39">
+        <label>submodules/mathicgb/src/mathicgb/MathicIO.hpp</label>
+        <link refid="_mathic_i_o_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp</label>
+        <link refid="_module_mono_set_8cpp"/>
+      </node>
+      <node id="71">
+        <label>submodules/mathicgb/src/mathicgb/ModuleMonoSet.hpp</label>
+        <link refid="_module_mono_set_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>submodules/mathicgb/src/mathicgb/MonoLookup.cpp</label>
+        <link refid="_mono_lookup_8cpp"/>
+      </node>
+      <node id="72">
+        <label>submodules/mathicgb/src/mathicgb/MonoLookup.hpp</label>
+        <link refid="_mono_lookup_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>submodules/mathicgb/src/mathicgb/MonoMonoid.hpp</label>
+        <link refid="_mono_monoid_8hpp"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>submodules/mathicgb/src/mathicgb/MonoProcessor.hpp</label>
+        <link refid="_mono_processor_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>submodules/mathicgb/src/mathicgb/MonomialMap.hpp</label>
+        <link refid="_monomial_map_8hpp"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="75">
+        <label>submodules/mathicgb/src/mathicgb/Poly.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>submodules/mathicgb/src/mathicgb/PolyBasis.cpp</label>
+        <link refid="_poly_basis_8cpp"/>
+      </node>
+      <node id="73">
+        <label>submodules/mathicgb/src/mathicgb/PolyBasis.hpp</label>
+        <link refid="_poly_basis_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="77">
+        <label>submodules/mathicgb/src/mathicgb/PolyHashTable.cpp</label>
+        <link refid="_poly_hash_table_8cpp"/>
+      </node>
+      <node id="76">
+        <label>submodules/mathicgb/src/mathicgb/PolyHashTable.hpp</label>
+        <link refid="_poly_hash_table_8hpp"/>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+      </node>
+      <node id="86">
+        <label>submodules/mathicgb/src/mathicgb/PolyRing.cpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8cpp"/>
+      </node>
+      <node id="36">
+        <label>submodules/mathicgb/src/mathicgb/PolyRing.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>submodules/mathicgb/src/mathicgb/QuadMatrix.cpp</label>
+        <link refid="_quad_matrix_8cpp"/>
+      </node>
+      <node id="87">
+        <label>submodules/mathicgb/src/mathicgb/QuadMatrix.hpp</label>
+        <link refid="_quad_matrix_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.cpp</label>
+        <link refid="mathicgb_2_quad_matrix_builder_8cpp"/>
+      </node>
+      <node id="69">
+        <label>submodules/mathicgb/src/mathicgb/QuadMatrixBuilder.hpp</label>
+        <link refid="_quad_matrix_builder_8hpp"/>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>submodules/mathicgb/src/mathicgb/Reducer.cpp</label>
+        <link refid="_reducer_8cpp"/>
+      </node>
+      <node id="88">
+        <label>submodules/mathicgb/src/mathicgb/Reducer.hpp</label>
+        <link refid="_reducer_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+      </node>
+      <node id="82">
+        <label>submodules/mathicgb/src/mathicgb/ReducerDedup.cpp</label>
+        <link refid="_reducer_dedup_8cpp"/>
+      </node>
+      <node id="78">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHash.cpp</label>
+        <link refid="_reducer_hash_8cpp"/>
+      </node>
+      <node id="79">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp</label>
+        <link refid="_reducer_hash_pack_8cpp"/>
+      </node>
+      <node id="89">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHelper.hpp</label>
+        <link refid="_reducer_helper_8hpp"/>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+      </node>
+      <node id="83">
+        <label>submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp</label>
+        <link refid="_reducer_no_dedup_8cpp"/>
+      </node>
+      <node id="84">
+        <label>submodules/mathicgb/src/mathicgb/ReducerPack.cpp</label>
+        <link refid="_reducer_pack_8cpp"/>
+      </node>
+      <node id="85">
+        <label>submodules/mathicgb/src/mathicgb/ReducerPackDedup.cpp</label>
+        <link refid="_reducer_pack_dedup_8cpp"/>
+      </node>
+      <node id="42">
+        <label>submodules/mathicgb/src/mathicgb/SPairs.cpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp"/>
+      </node>
+      <node id="74">
+        <label>submodules/mathicgb/src/mathicgb/SPairs.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="94">
+        <label>submodules/mathicgb/src/mathicgb/Scanner.cpp</label>
+        <link refid="mathicgb_2_scanner_8cpp"/>
+      </node>
+      <node id="43">
+        <label>submodules/mathicgb/src/mathicgb/SigPolyBasis.cpp</label>
+        <link refid="_sig_poly_basis_8cpp"/>
+      </node>
+      <node id="52">
+        <label>submodules/mathicgb/src/mathicgb/SigPolyBasis.hpp</label>
+        <link refid="_sig_poly_basis_8hpp"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairQueue.cpp</label>
+        <link refid="_sig_s_pair_queue_8cpp"/>
+      </node>
+      <node id="90">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairQueue.hpp</label>
+        <link refid="_sig_s_pair_queue_8hpp"/>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairs.cpp</label>
+        <link refid="_sig_s_pairs_8cpp"/>
+      </node>
+      <node id="24">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairs.hpp</label>
+        <link refid="_sig_s_pairs_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>submodules/mathicgb/src/mathicgb/SignatureGB.cpp</label>
+        <link refid="_signature_g_b_8cpp"/>
+      </node>
+      <node id="27">
+        <label>submodules/mathicgb/src/mathicgb/SignatureGB.hpp</label>
+        <link refid="_signature_g_b_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="80">
+        <label>submodules/mathicgb/src/mathicgb/SparseMatrix.cpp</label>
+        <link refid="mathicgb_2_sparse_matrix_8cpp"/>
+      </node>
+      <node id="91">
+        <label>submodules/mathicgb/src/mathicgb/SparseMatrix.hpp</label>
+        <link refid="_sparse_matrix_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp</label>
+        <link refid="_static_mono_map_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>submodules/mathicgb/src/mathicgb/TypicalReducer.cpp</label>
+        <link refid="_typical_reducer_8cpp"/>
+      </node>
+      <node id="81">
+        <label>submodules/mathicgb/src/mathicgb/TypicalReducer.hpp</label>
+        <link refid="_typical_reducer_8hpp"/>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>submodules/mathicgb/src/mathicgb/io-util.cpp</label>
+        <link refid="io-util_8cpp"/>
+      </node>
+      <node id="93">
+        <label>submodules/mathicgb/src/mathicgb/io-util.hpp</label>
+        <link refid="io-util_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>submodules/mathicgb/src/test/F4MatrixBuilder.cpp</label>
+        <link refid="test_2_f4_matrix_builder_8cpp"/>
+      </node>
+      <node id="46">
+        <label>submodules/mathicgb/src/test/F4MatrixReducer.cpp</label>
+        <link refid="test_2_f4_matrix_reducer_8cpp"/>
+      </node>
+      <node id="47">
+        <label>submodules/mathicgb/src/test/MathicIO.cpp</label>
+        <link refid="_mathic_i_o_8cpp"/>
+      </node>
+      <node id="48">
+        <label>submodules/mathicgb/src/test/MonoMonoid.cpp</label>
+        <link refid="_mono_monoid_8cpp"/>
+      </node>
+      <node id="49">
+        <label>submodules/mathicgb/src/test/QuadMatrixBuilder.cpp</label>
+        <link refid="test_2_quad_matrix_builder_8cpp"/>
+      </node>
+      <node id="50">
+        <label>submodules/mathicgb/src/test/SparseMatrix.cpp</label>
+        <link refid="test_2_sparse_matrix_8cpp"/>
+      </node>
+      <node id="29">
+        <label>submodules/mathicgb/src/test/gb-test.cpp</label>
+        <link refid="gb-test_8cpp"/>
+      </node>
+      <node id="30">
+        <label>submodules/mathicgb/src/test/poly-test.cpp</label>
+        <link refid="poly-test_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemathic">mathic</innernamespace>
+    <innernamespace refid="namespacemic">mic</innernamespace>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_a4ce27060203c10a724cddcfd3809dbfe_1a4ce27060203c10a724cddcfd3809dbfe" prot="public" static="no">
+        <name>MATHIC_NO_INLINE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="61" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_ae2036df0f75d42d6498411a4d23cc4da_1ae2036df0f75d42d6498411a4d23cc4da" prot="public" static="no">
+        <name>MATHIC_INLINE</name>
+        <initializer>inline</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="62" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="62" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_bit_triangle_aa1c6715ebf000cfeab086ab4ff583892_1aa1c6715ebf000cfeab086ab4ff583892" compoundref="_bit_triangle_8h" startline="41" endline="45">mathic::BitTriangle::bit</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_a18937b535f197da47bba2abff34d9c56_1a18937b535f197da47bba2abff34d9c56" compoundref="_bit_triangle_8h" startline="60" endline="64">mathic::BitTriangle::setBit</referencedby>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_a514a893d8a96c29bbed9f4b0fcceb029_1a514a893d8a96c29bbed9f4b0fcceb029" prot="public" static="no">
+        <name>MATHIC_ASSUME</name>
+        <param><defname>X</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="63" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_a355d88cb3fb1e226b53e3bf37ea0afea_1a355d88cb3fb1e226b53e3bf37ea0afea" prot="public" static="no">
+        <name>MATHIC_ASSUME_AND_MAY_EVALUATE</name>
+        <param><defname>X</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="64" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_a1be3cd9ca3c989f8d5d088e42d879fd9_1a1be3cd9ca3c989f8d5d088e42d879fd9" prot="public" static="no">
+        <name>MATHIC_RETURN_NO_ALIAS</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="65" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_a209329cc7f99bdc08cd3bd50448cb7c9_1a209329cc7f99bdc08cd3bd50448cb7c9" prot="public" static="no">
+        <name>MATHIC_NOTHROW</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="66" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_abbae6d69dd643e3e5e831000f8c028c6_1abbae6d69dd643e3e5e831000f8c028c6" prot="public" static="no">
+        <name>MATHIC_PURE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="67" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_a0fd29092969ac246dd156a78bcc0ad23_1a0fd29092969ac246dd156a78bcc0ad23" prot="public" static="no">
+        <name>MATHIC_MUST_CHECK_RETURN_VALUE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="68" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_a5fe460cbc27b6c357e6c64bf64248fba_1a5fe460cbc27b6c357e6c64bf64248fba" prot="public" static="no">
+        <name>MATHIC_UNREACHABLE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="69" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_ab04f34a08bd958c4e2e59b64f1d49780_1ab04f34a08bd958c4e2e59b64f1d49780" prot="public" static="no">
+        <name>MATHIC_SLOW_ASSERT</name>
+        <param><defname>X</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="81" column="10" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="81" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_heap_a6394588ca0d092e4d04f62d181745a1e_1a6394588ca0d092e4d04f62d181745a1e" compoundref="_heap_8h" startline="112" endline="115">mathic::Heap&lt; C &gt;::decreaseTop</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a991ef898fe64b138bd4590a7ce228444_1a991ef898fe64b138bd4590a7ce228444" compoundref="_tour_tree_8h" startline="153" endline="164">mathic::TourTree&lt; C &gt;::decreaseTop</referencedby>
+        <referencedby refid="classmathic_1_1_heap_a8e058dac0e672a5a3da14efe686ff72c_1a8e058dac0e672a5a3da14efe686ff72c" compoundref="_heap_8h" startline="162" endline="192">mathic::Heap&lt; C &gt;::moveValueUp</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ad1fee0a0e4ab54c4cc954d0ec35337b6_1ad1fee0a0e4ab54c4cc954d0ec35337b6" compoundref="_geobucket_8h" startline="447" endline="456">mathic::Geobucket&lt; C &gt;::pop</referencedby>
+        <referencedby refid="classmathic_1_1_heap_a8d4f2c21ad202e2c12453a3d3e1acc21_1a8d4f2c21ad202e2c12453a3d3e1acc21" compoundref="_heap_8h" startline="125" endline="133">mathic::Heap&lt; C &gt;::pop</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a0a6aef84e683d835dd5d99d08485820d_1a0a6aef84e683d835dd5d99d08485820d" compoundref="_tour_tree_8h" startline="167" endline="208">mathic::TourTree&lt; C &gt;::pop</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_aa98e5ab99841dd85808c0ce4b3cfdbef_1aa98e5ab99841dd85808c0ce4b3cfdbef" compoundref="_geobucket_8h" startline="404" endline="434">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_heap_a17a3c6360f4146644f3ed8416f0e2c4a_1a17a3c6360f4146644f3ed8416f0e2c4a" compoundref="_heap_8h" startline="98" endline="102">mathic::Heap&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a973e3120d6e9b027b33ec0858bc9fa82_1a973e3120d6e9b027b33ec0858bc9fa82" compoundref="_tour_tree_8h" startline="108" endline="143">mathic::TourTree&lt; C &gt;::push</referencedby>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" prot="public" static="no">
+        <name>MATHIC_ASSERT</name>
+        <param><defname>X</defname></param>
+        <initializer><ref refid="mathic_2src_2mathic_2stdinc_8h_a514a893d8a96c29bbed9f4b0fcceb029_1a514a893d8a96c29bbed9f4b0fcceb029" kindref="member">MATHIC_ASSUME</ref>(X)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="89" column="10" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="89" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_geobucket_aedc2889e8d96221524eaaf4ac6f03b50_1aedc2889e8d96221524eaaf4ac6f03b50" compoundref="_geobucket_8h" startline="505" endline="563">mathic::Geobucket&lt; C &gt;::addBucket</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_ac6970f47bb3add4cb1daeebaceef877f_1ac6970f47bb3add4cb1daeebaceef877f" compoundref="_pair_queue_8h" startline="547" endline="579">mathic::PairQueue&lt; C &gt;::addColumnDescending</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_af0cc8b755cb6d85ba0ab246b3068bbaf_1af0cc8b755cb6d85ba0ab246b3068bbaf" compoundref="_binary_k_d_tree_8h" startline="68" endline="71">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::asInterior</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_a3cb2560e5226885e0379fb7dde9143d4_1a3cb2560e5226885e0379fb7dde9143d4" compoundref="_binary_k_d_tree_8h" startline="64" endline="67">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::asInterior</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_a4ba5282ff4f64cf29ccc7c96f74d9317_1a4ba5282ff4f64cf29ccc7c96f74d9317" compoundref="_binary_k_d_tree_8h" startline="58" endline="61">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::asLeaf</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_node_a2ac840e839de10299299f715a95f060a_1a2ac840e839de10299299f715a95f060a" compoundref="_binary_k_d_tree_8h" startline="54" endline="57">mathic::BinaryKDTree&lt; C &gt;::KDTreeNode::asLeaf</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a5e7370e1abf131bc7867f01b9989d40e_1a5e7370e1abf131bc7867f01b9989d40e" compoundref="_geobucket_8h" startline="240" endline="246">mathic::Geobucket&lt; C &gt;::Bucket::assign</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a43238548afc987cb7d7017e40e6b9b6f_1a43238548afc987cb7d7017e40e6b9b6f" compoundref="_geobucket_8h" startline="184" endline="187">mathic::Geobucket&lt; C &gt;::Bucket::back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a20cc8d084eba86d292209fcb3a77cc9a_1a20cc8d084eba86d292209fcb3a77cc9a" compoundref="_k_d_entry_array_8h" startline="53" endline="53">mathic::KDEntryArray&lt; C, EE &gt;::back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a20272d7fc061d02b567098763d1c3e61_1a20272d7fc061d02b567098763d1c3e61" compoundref="_k_d_entry_array_8h" startline="54" endline="54">mathic::KDEntryArray&lt; C, EE &gt;::back</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_adb625f042c88c42abd58dc970e1d1281_1adb625f042c88c42abd58dc970e1d1281" compoundref="_binary_k_d_tree_8h" startline="248" endline="252">mathic::BinaryKDTree&lt; C &gt;::BinaryKDTree</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_aa1c6715ebf000cfeab086ab4ff583892_1aa1c6715ebf000cfeab086ab4ff583892" compoundref="_bit_triangle_8h" startline="41" endline="45">mathic::BitTriangle::bit</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_aafcc8c4936ddabcefc79fb5534dcb78d_1aafcc8c4936ddabcefc79fb5534dcb78d" compoundref="_bit_triangle_8h" startline="49" endline="56">mathic::BitTriangle::bitUnordered</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_af9c07f4899d464b6dd18fc14b43087ae_1af9c07f4899d464b6dd18fc14b43087ae" compoundref="_binary_k_d_tree_8h" startline="560" endline="577">mathic::BinaryKDTree&lt; C &gt;::clear</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_af41fd2c6becea74bff7f7336220a1b50_1af41fd2c6becea74bff7f7336220a1b50" compoundref="_geobucket_8h" startline="437" endline="444">mathic::Geobucket&lt; C &gt;::clear</referencedby>
+        <referencedby refid="classmathic_1_1_heap_a198116d3f2933918340420a8d51f9255_1a198116d3f2933918340420a8d51f9255" compoundref="_heap_8h" startline="118" endline="122">mathic::Heap&lt; C &gt;::clear</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a591e063495c7e1d841a98ed1d4a08e36_1a591e063495c7e1d841a98ed1d4a08e36" compoundref="_packed_k_d_tree_8h" startline="522" endline="537">mathic::PackedKDTree&lt; C &gt;::clear</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a37345282d76c7ea40ec36bc6d9e27018_1a37345282d76c7ea40ec36bc6d9e27018" compoundref="_tour_tree_8h" startline="82" endline="87">mathic::TourTree&lt; C &gt;::clear</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a73242493a3539404c9312471a6ae8442_1a73242493a3539404c9312471a6ae8442" compoundref="_com_tree_8h" startline="158" endline="175">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a8ac03b2924f1a4426db78857055722d5_1a8ac03b2924f1a4426db78857055722d5" compoundref="_com_tree_8h" startline="143" endline="155">mathic::ComTree&lt; Entry, FastIndex &gt;::ComTree</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_1_1_column_a974c0c51fc1462af93435b597aa9dee3_1a974c0c51fc1462af93435b597aa9dee3" compoundref="_pair_queue_8h" startline="386" endline="458">mathic::PairQueue&lt; C &gt;::Column::create</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_aebe952498e5b59ba6bcf2858ecbda0cb_1aebe952498e5b59ba6bcf2858ecbda0cb" compoundref="_binary_k_d_tree_8h" startline="622" endline="699">mathic::BinaryKDTree&lt; C &gt;::debugIsValid</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a120294e5060d9284b29291fdd38bc8ce_1a120294e5060d9284b29291fdd38bc8ce" compoundref="_packed_k_d_tree_8h" startline="577" endline="653">mathic::PackedKDTree&lt; C &gt;::debugIsValid</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_a38457691fe82cc97e2b5478d9aea7ec9_1a38457691fe82cc97e2b5478d9aea7ec9" compoundref="_packed_k_d_tree_8h" startline="738" endline="758">mathic::PackedKDTree&lt; C &gt;::Node::debugIsValid</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ac8d4d8207062fcb0ee72d3224bda5e30_1ac8d4d8207062fcb0ee72d3224bda5e30" compoundref="_geobucket_8h" startline="465" endline="469">mathic::Geobucket&lt; C &gt;::decreaseTop</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a991ef898fe64b138bd4590a7ce228444_1a991ef898fe64b138bd4590a7ce228444" compoundref="_tour_tree_8h" startline="153" endline="164">mathic::TourTree&lt; C &gt;::decreaseTop</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_a6e513d9a712d207c11a10f75af4379ed_1a6e513d9a712d207c11a10f75af4379ed" compoundref="_pair_queue_8h" startline="532" endline="535">mathic::PairQueue&lt; C &gt;::empty</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_a6ff15080b11d6fb2c74ca13d1460b3ec_1a6ff15080b11d6fb2c74ca13d1460b3ec" compoundref="_binary_k_d_tree_8h" startline="467" endline="498">mathic::BinaryKDTree&lt; C &gt;::findAllDivisors</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ac203e258b1b89430fc5c75660f826dd0_1ac203e258b1b89430fc5c75660f826dd0" compoundref="_k_d_entry_array_8h" startline="385" endline="412">mathic::KDEntryArray&lt; C, EE &gt;::findAllDivisors</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_adecf49251223b4f8c34176a9807ba4df_1adecf49251223b4f8c34176a9807ba4df" compoundref="_packed_k_d_tree_8h" startline="438" endline="466">mathic::PackedKDTree&lt; C &gt;::findAllDivisors</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_a5cd23592e957ce07315afe2a3108509b_1a5cd23592e957ce07315afe2a3108509b" compoundref="_binary_k_d_tree_8h" startline="502" endline="530">mathic::BinaryKDTree&lt; C &gt;::findAllMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a174047e0465c482447789971095f023e_1a174047e0465c482447789971095f023e" compoundref="_k_d_entry_array_8h" startline="417" endline="432">mathic::KDEntryArray&lt; C, mathic::DivMask::Extender&lt; Entry, C::UseDivMask &gt; &gt;::findAllMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a9a127df4aeee3a3d191f1b4c6b0c1533_1a9a127df4aeee3a3d191f1b4c6b0c1533" compoundref="_packed_k_d_tree_8h" startline="470" endline="496">mathic::PackedKDTree&lt; C &gt;::findAllMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_ae3fa1fa9d75fec0a8f3d465c00fa4758_1ae3fa1fa9d75fec0a8f3d465c00fa4758" compoundref="_binary_k_d_tree_8h" startline="425" endline="463">mathic::BinaryKDTree&lt; C &gt;::findDivisor</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a1253ea4fd593633c49b70d3a9e5a4745_1a1253ea4fd593633c49b70d3a9e5a4745" compoundref="_k_d_entry_array_8h" startline="351" endline="380">mathic::KDEntryArray&lt; C, EE &gt;::findDivisor</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a09cf28db58e8d425a27ae35c7efe9b62_1a09cf28db58e8d425a27ae35c7efe9b62" compoundref="_packed_k_d_tree_8h" startline="398" endline="434">mathic::PackedKDTree&lt; C &gt;::findDivisor</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_a05331d9b3f011aa7e721910705c9a5b4_1a05331d9b3f011aa7e721910705c9a5b4" compoundref="_binary_k_d_tree_8h" startline="534" endline="557">mathic::BinaryKDTree&lt; C &gt;::forAll</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ac5d02d9b99e10708805d2b23712f1f51_1ac5d02d9b99e10708805d2b23712f1f51" compoundref="_geobucket_8h" startline="155" endline="166">mathic::Geobucket&lt; C &gt;::forAll</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a06b17a4d45a9697ec4630ce54cc3f4f9_1a06b17a4d45a9697ec4630ce54cc3f4f9" compoundref="_k_d_entry_array_8h" startline="436" endline="446">mathic::KDEntryArray&lt; C, EE &gt;::forAll</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a6b16c8aeb6f54acc29f41b31783f6ae1_1a6b16c8aeb6f54acc29f41b31783f6ae1" compoundref="_packed_k_d_tree_8h" startline="500" endline="519">mathic::PackedKDTree&lt; C &gt;::forAll</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a412b3c0b231c89e5dcf6601d5ed80375_1a412b3c0b231c89e5dcf6601d5ed80375" compoundref="_k_d_entry_array_8h" startline="51" endline="51">mathic::KDEntryArray&lt; C, EE &gt;::front</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_abe2c393fde072d04843c3da9a41f8e20_1abe2c393fde072d04843c3da9a41f8e20" compoundref="_k_d_entry_array_8h" startline="52" endline="52">mathic::KDEntryArray&lt; C, EE &gt;::front</referencedby>
+        <referencedby refid="structmathic_1_1_pair_queue_namespace_1_1_construct_pair_data_function_a63b7fe91aded8fa65f7619f331232f19_1a63b7fe91aded8fa65f7619f331232f19" compoundref="_pair_queue_8h" startline="79" endline="84">mathic::PairQueueNamespace::ConstructPairDataFunction&lt; Configuration &gt;::function</referencedby>
+        <referencedby refid="structmathic_1_1_pair_queue_namespace_1_1_destruct_pair_data_function_a86cb640d2718eb412063e191e67efd2b_1a86cb640d2718eb412063e191e67efd2b" compoundref="_pair_queue_8h" startline="114" endline="118">mathic::PairQueueNamespace::DestructPairDataFunction&lt; Configuration &gt;::function</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_adf81b3fe4e26c372b7d34ef35448ebaf_1adf81b3fe4e26c372b7d34ef35448ebaf" compoundref="_geobucket_8h" startline="313" endline="324">mathic::Geobucket&lt; C &gt;::Geobucket</referencedby>
+        <referencedby refid="classmathic_1_1_geo_front_3_01_c_00_01_bucket_00_01false_01_4_ab1802eed1e3b24f454edaf0419b748ac_1ab1802eed1e3b24f454edaf0419b748ac" compoundref="_geo_front_8h" startline="40" endline="43">mathic::GeoFront&lt; C, Bucket, false &gt;::GeoFront</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a7f6d6b3516a218e63bac9aa7be43b815_1a7f6d6b3516a218e63bac9aa7be43b815" compoundref="_div_mask_8h" startline="388" endline="388">mathic::DivMask::HasDivMask&lt; false &gt;::getDivMask</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a4767d78ce1584763080d0f436fbdceb1_1a4767d78ce1584763080d0f436fbdceb1" compoundref="_geobucket_8h" startline="225" endline="228">mathic::Geobucket&lt; C &gt;::Bucket::getOtherBuffer</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a094d127e831cb5cebf1b293278f74c1a_1a094d127e831cb5cebf1b293278f74c1a" compoundref="_com_tree_8h" startline="321" endline="331">mathic::ComTree&lt; Entry, FastIndex &gt;::increaseCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_1_1_column_a2f4200caf4588209cb3c6cde8ed39e6d_1a2f4200caf4588209cb3c6cde8ed39e6d" compoundref="_pair_queue_8h" startline="470" endline="494">mathic::PairQueue&lt; C &gt;::Column::incrementRowIndex</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_ab0669068e5b551773a4f2645e87d5fa2_1ab0669068e5b551773a4f2645e87d5fa2" compoundref="_binary_k_d_tree_8h" startline="302" endline="327">mathic::BinaryKDTree&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5dacfcdefe66e4a0bec733890fefe07b_1a5dacfcdefe66e4a0bec733890fefe07b" compoundref="_geobucket_8h" startline="706" endline="739">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a13df25cad452ae6a6ac1f0152d3e28bb_1a13df25cad452ae6a6ac1f0152d3e28bb" compoundref="_k_d_entry_array_8h" startline="268" endline="276">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a871d5f4bb45a50748e4cfcb559ba2d85_1a871d5f4bb45a50748e4cfcb559ba2d85" compoundref="_k_d_entry_array_8h" startline="253" endline="265">mathic::KDEntryArray&lt; C, EE &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a420b0a24e7e45b9eb78c0ecdff6a6893_1a420b0a24e7e45b9eb78c0ecdff6a6893" compoundref="_packed_k_d_tree_8h" startline="266" endline="296">mathic::PackedKDTree&lt; C &gt;::insert</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_ab92fae00c637979ad9cdf57ffc8947a5_1ab92fae00c637979ad9cdf57ffc8947a5" compoundref="_geobucket_8h" startline="204" endline="210">mathic::Geobucket&lt; C &gt;::Bucket::insertAtNotEnd</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a3a7440df23fd647510c68994ffa73c69_1a3a7440df23fd647510c68994ffa73c69" compoundref="_com_tree_8h" startline="293" endline="312">mathic::ComTree&lt; Entry, FastIndex &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a82c808e173e3c70b0c0e53cce649ec9a_1a82c808e173e3c70b0c0e53cce649ec9a" compoundref="_geobucket_8h" startline="794" endline="817">mathic::Geobucket&lt; C &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_heap_ac584fabb94ea34bbb5580d335e72f1b7_1ac584fabb94ea34bbb5580d335e72f1b7" compoundref="_heap_8h" startline="195" endline="205">mathic::Heap&lt; C &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a88a9065bf66b14930fcb395f1a731d51_1a88a9065bf66b14930fcb395f1a731d51" compoundref="_tour_tree_8h" startline="239" endline="272">mathic::TourTree&lt; C &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa91ad5a523579e1d3265ef08abf7d900_1aa91ad5a523579e1d3265ef08abf7d900" compoundref="_k_d_entry_array_8h" startline="218" endline="235">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a11955927aedcdec2eb81a2d0c8ceddd0_1a11955927aedcdec2eb81a2d0c8ceddd0" compoundref="_k_d_entry_array_8h" startline="196" endline="214">mathic::KDEntryArray&lt; C, EE &gt;::KDEntryArray</referencedby>
+        <referencedby refid="classmathic_1_1_geo_front_3_01_c_00_01_bucket_00_01false_01_4_a9b6dec9a844d6b68d63472d2fd00f0d0_1a9b6dec9a844d6b68d63472d2fd00f0d0" compoundref="_geo_front_8h" startline="60" endline="63">mathic::GeoFront&lt; C, Bucket, false &gt;::larger</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0e9f02203210a8a9dbb4d6a4c62aa73_1aa0e9f02203210a8a9dbb4d6a4c62aa73" compoundref="_hash_table_8h" startline="224" endline="235">mathic::HashTable&lt; C &gt;::lookup</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5df953315a6b918cc667649cecc751e6_1a5df953315a6b918cc667649cecc751e6" compoundref="_geobucket_8h" startline="566" endline="576">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a334182a6f44ae5c137750fbc3c4ae9f5_1a334182a6f44ae5c137750fbc3c4ae9f5" compoundref="_geobucket_8h" startline="617" endline="632">mathic::Geobucket&lt; C &gt;::moveToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_column_printer_a6755976a20051688683fcc308ebb74b5_1a6755976a20051688683fcc308ebb74b5" compoundref="_column_printer_8cpp" startline="49" endline="52">mathic::ColumnPrinter::operator[]</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a8c29437bc8f83fe95ee5d4c1949f4f77_1a8c29437bc8f83fe95ee5d4c1949f4f77" compoundref="_com_tree_8h" startline="191" endline="199">mathic::ComTree&lt; Entry, FastIndex &gt;::operator[]</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8e4a9d80f5df7dc8e01cda617c7925e7_1a8e4a9d80f5df7dc8e01cda617c7925e7" compoundref="_geobucket_8h" startline="188" endline="191">mathic::Geobucket&lt; C &gt;::Bucket::operator[]</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a3cd57b5690976cf588f03e367c61b805_1a3cd57b5690976cf588f03e367c61b805" compoundref="_packed_k_d_tree_8h" startline="173" endline="177">mathic::PackedKDTree&lt; C &gt;::PackedKDTree</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_1_1_column_a95a3e92d4e95316b42a26cd9153564ce_1a95a3e92d4e95316b42a26cd9153564ce" compoundref="_pair_queue_8h" startline="283" endline="283">mathic::PairQueue&lt; C &gt;::Column::pairData</referencedby>
+        <referencedby refid="classmathic_1_1_column_printer_a58749c1260bebc75ba16e83ceac01fbb_1a58749c1260bebc75ba16e83ceac01fbb" compoundref="_column_printer_8cpp" startline="187" endline="198">mathic::ColumnPrinter::percentIntegerFixed</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_a2ff33c5635c03e804c423ce9a3a902eb_1a2ff33c5635c03e804c423ce9a3a902eb" compoundref="_pair_queue_8h" startline="582" endline="612">mathic::PairQueue&lt; C &gt;::pop</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a0a6aef84e683d835dd5d99d08485820d_1a0a6aef84e683d835dd5d99d08485820d" compoundref="_tour_tree_8h" startline="167" endline="208">mathic::TourTree&lt; C &gt;::pop</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8c62deb681fb900de5c08924d14dd034_1a8c62deb681fb900de5c08924d14dd034" compoundref="_geobucket_8h" startline="192" endline="197">mathic::Geobucket&lt; C &gt;::Bucket::pop_back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a2dcac48b2713ff353bce23b178236096_1a2dcac48b2713ff353bce23b178236096" compoundref="_k_d_entry_array_8h" startline="246" endline="250">mathic::KDEntryArray&lt; C, EE &gt;::pop_back</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a5c11bf8c79e76df99b3a62413a2d7a27_1a5c11bf8c79e76df99b3a62413a2d7a27" compoundref="_com_tree_8h" startline="222" endline="225">mathic::ComTree&lt; Entry, FastIndex &gt;::popBack</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_a910f56e46918dcb2552935a3f7da8088_1a910f56e46918dcb2552935a3f7da8088" compoundref="_binary_k_d_tree_8h" startline="587" endline="619">mathic::BinaryKDTree&lt; C &gt;::print</referencedby>
+        <referencedby refid="classmathic_1_1_column_printer_a8274b1a0e3b12ea1a6cf4f16a5c123da_1a8274b1a0e3b12ea1a6cf4f16a5c123da" compoundref="_column_printer_8cpp" startline="65" endline="158">mathic::ColumnPrinter::print</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a56b99ee980f8ccf5c47cacb2ee704367_1a56b99ee980f8ccf5c47cacb2ee704367" compoundref="_packed_k_d_tree_8h" startline="548" endline="574">mathic::PackedKDTree&lt; C &gt;::print</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_aa98e5ab99841dd85808c0ce4b3cfdbef_1aa98e5ab99841dd85808c0ce4b3cfdbef" compoundref="_geobucket_8h" startline="404" endline="434">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a973e3120d6e9b027b33ec0858bc9fa82_1a973e3120d6e9b027b33ec0858bc9fa82" compoundref="_tour_tree_8h" startline="108" endline="143">mathic::TourTree&lt; C &gt;::push</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8d4ce4d5df08d62ada92e357b7c004ba_1a8d4ce4d5df08d62ada92e357b7c004ba" compoundref="_geobucket_8h" startline="254" endline="260">mathic::Geobucket&lt; C &gt;::Bucket::push_back</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_aa35f227492610e5856b85f9a79af806f_1aa35f227492610e5856b85f9a79af806f" compoundref="_k_d_entry_array_8h" startline="238" endline="243">mathic::KDEntryArray&lt; C, EE &gt;::push_back</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a611a07554af867e8cfaa6a7ef0eb6e8a_1a611a07554af867e8cfaa6a7ef0eb6e8a" compoundref="_com_tree_8h" startline="215" endline="219">mathic::ComTree&lt; Entry, FastIndex &gt;::pushBackWithCapacity</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_af8d3a6a864b9588a57a9f6b535485a3c_1af8d3a6a864b9588a57a9f6b535485a3c" compoundref="_tour_tree_8h" startline="222" endline="236">mathic::TourTree&lt; C &gt;::reallocate</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_aa68b3910ce9898ff1a4a116b80e29130_1aa68b3910ce9898ff1a4a116b80e29130" compoundref="_div_mask_8h" startline="207" endline="310">mathic::DivMask::Calculator&lt; C, true &gt;::rebuild</referencedby>
+        <referencedby refid="classmathic_1_1_name_factory_a3e58486c3d12b70e4697c0c52c235071_1a3e58486c3d12b70e4697c0c52c235071" compoundref="_name_factory_8h" startline="119" endline="122">mathic::NameFactory&lt; AbstractProduct &gt;::registerProduct</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a24d5832edabe491df62a0eca23dc9f4b_1a24d5832edabe491df62a0eca23dc9f4b" compoundref="_hash_table_8h" startline="238" endline="261">mathic::HashTable&lt; C &gt;::remove</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_a3d3f1be55d3712e58e32e8fde27ef155_1a3d3f1be55d3712e58e32e8fde27ef155" compoundref="_binary_k_d_tree_8h" startline="288" endline="299">mathic::BinaryKDTree&lt; C &gt;::removeElement</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_aa3e0ce62a5d039897e9b6e429d4433e4_1aa3e0ce62a5d039897e9b6e429d4433e4" compoundref="_k_d_tree_8h" startline="171" endline="176">mathic::KDTree&lt; C &gt;::removeElement</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a87b7d112f847054e929701663279ff3f_1a87b7d112f847054e929701663279ff3f" compoundref="_packed_k_d_tree_8h" startline="246" endline="263">mathic::PackedKDTree&lt; C &gt;::removeElement</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_a63dd00047dd4855d9cb9e533538f48ed_1a63dd00047dd4855d9cb9e533538f48ed" compoundref="_binary_k_d_tree_8h" startline="261" endline="285">mathic::BinaryKDTree&lt; C &gt;::removeMultiples</referencedby>
+        <referencedby refid="namespacemathic_1_1_div_list_helper_ad443f31842f854df7fdfacf653019ebe_1ad443f31842f854df7fdfacf653019ebe" compoundref="_div_list_8h" startline="269" endline="290">mathic::DivListHelper::removeMultiples</referencedby>
+        <referencedby refid="namespacemathic_1_1_div_list_helper_af0ea7d425adc06c688e205f4c54430ba_1af0ea7d425adc06c688e205f4c54430ba" compoundref="_div_list_8h" startline="241" endline="266">mathic::DivListHelper::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_ae32765702543c2bd92aa99d7f69cb8d8_1ae32765702543c2bd92aa99d7f69cb8d8" compoundref="_k_d_entry_array_8h" startline="287" endline="325">mathic::KDEntryArray&lt; C, EE &gt;::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_a337f2911e3dc18e204a7b2ecc5b02bfc_1a337f2911e3dc18e204a7b2ecc5b02bfc" compoundref="_k_d_tree_8h" startline="97" endline="103">mathic::KDTree&lt; C &gt;::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_a64d5bf22feb412698fb692fb7af9dea1_1a64d5bf22feb412698fb692fb7af9dea1" compoundref="_k_d_tree_8h" startline="109" endline="117">mathic::KDTree&lt; C &gt;::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a9d06e806221fdab14234218789f11404_1a9d06e806221fdab14234218789f11404" compoundref="_packed_k_d_tree_8h" startline="217" endline="243">mathic::PackedKDTree&lt; C &gt;::removeMultiples</referencedby>
+        <referencedby refid="classmathic_1_1_column_printer_ac5bc16eea4a4665db5357566be760f64_1ac5bc16eea4a4665db5357566be760f64" compoundref="_column_printer_8cpp" startline="59" endline="63">mathic::ColumnPrinter::repeatToEndOfLine</referencedby>
+        <referencedby refid="classmathic_1_1_column_printer_ad9c65f61636a26267756e604312868e5_1ad9c65f61636a26267756e604312868e5" compoundref="_column_printer_8cpp" startline="54" endline="57">mathic::ColumnPrinter::repeatToEndOfLine</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_ada15984a9d4b90a42ac693a68beb6cb3_1ada15984a9d4b90a42ac693a68beb6cb3" compoundref="_k_d_tree_8h" startline="350" endline="363">mathic::KDTree&lt; C &gt;::reportChangesRebuild</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_a43a014e569dff853b424e9e309eea137_1a43a014e569dff853b424e9e309eea137" compoundref="_binary_k_d_tree_8h" startline="331" endline="421">mathic::BinaryKDTree&lt; C &gt;::reset</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_a51c5ba9765d667c15d2221e35f1871c6_1a51c5ba9765d667c15d2221e35f1871c6" compoundref="_packed_k_d_tree_8h" startline="300" endline="394">mathic::PackedKDTree&lt; C &gt;::reset</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_adc1db10bffd3e288418e85d394811882_1adc1db10bffd3e288418e85d394811882" compoundref="_div_mask_8h" startline="387" endline="387">mathic::DivMask::HasDivMask&lt; false &gt;::resetDivMask</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_ad76150aaaa2197ce078fecf088bcb83a_1ad76150aaaa2197ce078fecf088bcb83a" compoundref="_div_list_8h" startline="604" endline="611">mathic::DivList&lt; C &gt;::resetNumberOfChangesTillRebuild</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_a2e3edaeaf2ea19ec5698d95e8754ec05_1a2e3edaeaf2ea19ec5698d95e8754ec05" compoundref="_k_d_tree_8h" startline="329" endline="339">mathic::KDTree&lt; C &gt;::resetNumberOfChangesTillRebuild</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_a57f41725c2179ef2edcbc24b75715216_1a57f41725c2179ef2edcbc24b75715216" compoundref="_pair_queue_8h" startline="637" endline="640">mathic::PairQueue&lt; C &gt;::retired</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_internal_1_1_support_retirement_a16c9e4335b36addc4e2f934dc7239309_1a16c9e4335b36addc4e2f934dc7239309" compoundref="_pair_queue_8h" startline="163" endline="169">mathic::PairQueueInternal::SupportRetirement&lt; SupportRetirement &gt;::retired</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_a523eb6f8ae5ed7c2dfa7050255cb8898_1a523eb6f8ae5ed7c2dfa7050255cb8898" compoundref="_pair_queue_8h" startline="625" endline="634">mathic::PairQueue&lt; C &gt;::retireIndex</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_internal_1_1_support_retirement_3_01false_01_4_a23a1b2718d9f032c12f209eb0454a8a2_1a23a1b2718d9f032c12f209eb0454a8a2" compoundref="_pair_queue_8h" startline="183" endline="186">mathic::PairQueueInternal::SupportRetirement&lt; false &gt;::retireIndex</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_internal_1_1_support_retirement_a708ee2ce2ca8d7cb15eb39536f70f41d_1a708ee2ce2ca8d7cb15eb39536f70f41d" compoundref="_pair_queue_8h" startline="158" endline="161">mathic::PairQueueInternal::SupportRetirement&lt; SupportRetirement &gt;::retireIndex</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_1_1_column_a482fd8c54633e98fe4a2c1be17b5cfb5_1a482fd8c54633e98fe4a2c1be17b5cfb5" compoundref="_pair_queue_8h" startline="461" endline="467">mathic::PairQueue&lt; C &gt;::Column::rowIndex</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_a18937b535f197da47bba2abff34d9c56_1a18937b535f197da47bba2abff34d9c56" compoundref="_bit_triangle_8h" startline="60" endline="64">mathic::BitTriangle::setBit</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_a37ca2f28d529a4d1c88060324899a3e1_1a37ca2f28d529a4d1c88060324899a3e1" compoundref="_bit_triangle_8h" startline="68" endline="75">mathic::BitTriangle::setBitUnordered</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a29cf8b74413bffe2666438f6c96547c3_1a29cf8b74413bffe2666438f6c96547c3" compoundref="_geobucket_8h" startline="198" endline="203">mathic::Geobucket&lt; C &gt;::Bucket::setEntry</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_ab83c921c743890d7f1c80c38035f3ce8_1ab83c921c743890d7f1c80c38035f3ce8" compoundref="_geobucket_8h" startline="221" endline="224">mathic::Geobucket&lt; C &gt;::Bucket::setOtherBuffer</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a8f916a358e03a0c764e909da71b45cf8_1a8f916a358e03a0c764e909da71b45cf8" compoundref="_geobucket_8h" startline="472" endline="480">mathic::Geobucket&lt; C &gt;::size</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_entry_array_a98b543308dfe36a6be460f25100ee4a4_1a98b543308dfe36a6be460f25100ee4a4" compoundref="_k_d_entry_array_8h" startline="148" endline="183">mathic::KDEntryArray&lt; C, EE &gt;::split</referencedby>
+        <referencedby refid="classmathic_1_1_binary_k_d_tree_1_1_k_d_tree_leaf_a7082692d7014869174eb8089463e426a_1a7082692d7014869174eb8089463e426a" compoundref="_binary_k_d_tree_8h" startline="742" endline="778">mathic::BinaryKDTree&lt; C &gt;::KDTreeLeaf::splitInsert</referencedby>
+        <referencedby refid="classmathic_1_1_packed_k_d_tree_1_1_node_ae5445475364f298ae09f98b0ae1fc427_1ae5445475364f298ae09f98b0ae1fc427" compoundref="_packed_k_d_tree_8h" startline="672" endline="735">mathic::PackedKDTree&lt; C &gt;::Node::splitInsert</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_a2570538f22249b1a87d7c2dcefde3bed_1a2570538f22249b1a87d7c2dcefde3bed" compoundref="_com_tree_8h" startline="228" endline="239">mathic::ComTree&lt; Entry, FastIndex &gt;::swap</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a2629db8f5ca39efd8dc8a7828a414e04_1a2629db8f5ca39efd8dc8a7828a414e04" compoundref="_geobucket_8h" startline="229" endline="235">mathic::Geobucket&lt; C &gt;::Bucket::switchToOtherBuffer</referencedby>
+        <referencedby refid="_pair_queue_8cpp_a349db025fcd83d409e957323ab66e442_1a349db025fcd83d409e957323ab66e442" compoundref="_pair_queue_8cpp" startline="207" endline="227">TEST</referencedby>
+        <referencedby refid="_pair_queue_8cpp_a8e1d916141e7747b824a083c2ca4498e_1a8e1d916141e7747b824a083c2ca4498e" compoundref="_pair_queue_8cpp" startline="109" endline="204">TEST</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_af88696f5b722b37efde57fcbbb384fc9_1af88696f5b722b37efde57fcbbb384fc9" compoundref="_geobucket_8h" startline="459" endline="462">mathic::Geobucket&lt; C &gt;::top</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_ae25b7ed17761bed53ed6fe43a75e6acd_1ae25b7ed17761bed53ed6fe43a75e6acd" compoundref="_tour_tree_8h" startline="211" endline="214">mathic::TourTree&lt; C &gt;::top</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_ac3b504c4ade2892436655b45b9261578_1ac3b504c4ade2892436655b45b9261578" compoundref="_pair_queue_8h" startline="643" endline="649">mathic::PairQueue&lt; C &gt;::topPair</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_ad7f648481d2809042f3158a4f6cff4b2_1ad7f648481d2809042f3158a4f6cff4b2" compoundref="_pair_queue_8h" startline="652" endline="658">mathic::PairQueue&lt; C &gt;::topPairData</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_internal_1_1_support_retirement_a6f4155d3297c4a6a82ab50ef7eead7ab_1a6f4155d3297c4a6a82ab50ef7eead7ab" compoundref="_pair_queue_8h" startline="153" endline="156">mathic::PairQueueInternal::SupportRetirement&lt; SupportRetirement &gt;::undoAdd</referencedby>
+        <referencedby refid="namespacemathic_a8bc76a489da03be98d7c5d602cfa30d1_1a8bc76a489da03be98d7c5d602cfa30d1" compoundref="_name_factory_8h" startline="171" endline="198">mathic::uniqueNameWithPrefix</referencedby>
+        <referencedby refid="classmathic_1_1_com_tree_acceb69e04d1de047c90a9c38827c6bc8_1acceb69e04d1de047c90a9c38827c6bc8" compoundref="_com_tree_8h" startline="37" endline="40">mathic::ComTree&lt; Entry, Configuration::fastIndex &gt;::~ComTree</referencedby>
+      </memberdef>
+      <memberdef kind="define" id="mathic_2src_2mathic_2stdinc_8h_a2d87e5d88d7ca350c555835a7819aee5_1a2d87e5d88d7ca350c555835a7819aee5" prot="public" static="no">
+        <name>MATHIC_ASSERT_NO_ASSUME</name>
+        <param><defname>X</defname></param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/stdinc.h" line="90" column="9" bodyfile="submodules/mathic/src/mathic/stdinc.h" bodystart="90" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_geobucket_adf81b3fe4e26c372b7d34ef35448ebaf_1adf81b3fe4e26c372b7d34ef35448ebaf" compoundref="_geobucket_8h" startline="313" endline="324">mathic::Geobucket&lt; C &gt;::Geobucket</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_ac030439cb30f196b5154f298ebf748c3_1ac030439cb30f196b5154f298ebf748c3" compoundref="_div_list_8h" startline="446" endline="456">mathic::DivList&lt; C &gt;::removeMultiples</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>MATHIC_STDINC_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_STDINC_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>_MSC_VER<sp/></highlight><highlight class="comment">//<sp/>For<sp/>Microsoft<sp/>Compiler<sp/>in<sp/>Visual<sp/>Studio<sp/>C++.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Sometimes<sp/>you<sp/>know<sp/>that<sp/>a<sp/>function<sp/>will<sp/>be<sp/>called<sp/>very<sp/>rarely<sp/>so<sp/>you<sp/>want<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//<sp/>tell<sp/>the<sp/>compiler<sp/>not<sp/>to<sp/>inline<sp/>it<sp/>even<sp/>if<sp/>it<sp/>could<sp/>be<sp/>inlined<sp/>at<sp/>only<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//<sp/>modest<sp/>increase<sp/>in<sp/>code<sp/>size.<sp/>That<sp/>is<sp/>what<sp/>MATHIC_NO_INLINE<sp/>does.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_NO_INLINE<sp/>__declspec(noinline)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Sometimes<sp/>the<sp/>compiler<sp/>just<sp/>will<sp/>not<sp/>inline<sp/>functions<sp/>that<sp/>should</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">//<sp/>be<sp/>inlined.<sp/>Use<sp/>sparingly<sp/>---<sp/>preferably<sp/>only<sp/>if<sp/>a<sp/>profiler<sp/>says</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">//<sp/>that<sp/>a<sp/>tiny<sp/>often-called<sp/>function<sp/>consumes<sp/>a<sp/>significant<sp/>amount<sp/>of<sp/>time.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_INLINE<sp/>__forceinline</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Tells<sp/>the<sp/>compiler<sp/>to<sp/>always<sp/>assume<sp/>that<sp/>the<sp/>expression<sp/>X<sp/>is<sp/>true.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSUME(X)<sp/>__assume(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/>As<sp/>MATHIC_ASSUME,<sp/>but<sp/>might<sp/>actually<sp/>evaluate<sp/>X<sp/>at<sp/>run-time<sp/>if<sp/>it<sp/>has</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//<sp/>side-effects.<sp/>The<sp/>point<sp/>is<sp/>that<sp/>this<sp/>can<sp/>be<sp/>used<sp/>on<sp/>compilers<sp/>with<sp/>no<sp/>other</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">//<sp/>support<sp/>for<sp/>assuming<sp/>things.<sp/>So<sp/>there<sp/>is<sp/>no<sp/>difference<sp/>on<sp/>MS<sp/>VC++.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSUME_AND_MAY_EVALUATE(X)<sp/>__assume(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Tells<sp/>the<sp/>compiler<sp/>that<sp/>this<sp/>function<sp/>returns<sp/>a<sp/>pointer<sp/>that<sp/>is<sp/>not<sp/>an<sp/>alias</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//<sp/>for<sp/>any<sp/>other<sp/>point<sp/>that<sp/>is<sp/>currently<sp/>valid<sp/>in<sp/>the<sp/>program<sp/>-<sp/>like<sp/>malloc.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_RETURN_NO_ALIAS<sp/>__declspec(restrict)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Tells<sp/>the<sp/>compiler<sp/>that<sp/>this<sp/>function<sp/>will<sp/>never<sp/>throw<sp/>an<sp/>exception.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_NOTHROW<sp/>__declspec(nothrow)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Tells<sp/>the<sp/>compiler<sp/>that<sp/>this<sp/>function<sp/>has<sp/>no<sp/>effects<sp/>except<sp/>the<sp/>return<sp/>value</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/>and<sp/>the<sp/>return<sp/>value<sp/>depends<sp/>only<sp/>on<sp/>the<sp/>arguments<sp/>and<sp/>first-level</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indirections<sp/>of<sp/>the<sp/>arguments.<sp/>(this<sp/>is<sp/>the<sp/>common<sp/>denominator<sp/>of<sp/>GCC</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//<sp/>and<sp/>MS<sp/>VC++<sp/>capabilities)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_PURE<sp/>__declspec(noalias)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Tells<sp/>the<sp/>compiler<sp/>that<sp/>the<sp/>return<sp/>value<sp/>of<sp/>this<sp/>function<sp/>must<sp/>be<sp/>looked</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/>at<sp/>by<sp/>the<sp/>caller.<sp/>For<sp/>example<sp/>this<sp/>is<sp/>appropriate<sp/>for<sp/>realloc.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_MUST_CHECK_RETURN_VALUE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Tells<sp/>the<sp/>compiler<sp/>that<sp/>the<sp/>current<sp/>line<sp/>of<sp/>code<sp/>cannot<sp/>be<sp/>reached.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_UNREACHABLE<sp/>__assume(false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Tells<sp/>the<sp/>compiler<sp/>that<sp/>a<sp/>variable<sp/>that<sp/>is<sp/>a<sp/>pointer<sp/>(not<sp/>a<sp/>reference)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//<sp/>does<sp/>not<sp/>alias<sp/>any<sp/>other<sp/>pointer<sp/>that<sp/>is<sp/>used<sp/>in<sp/>the<sp/>current<sp/>scope.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_RESTRICT<sp/>__restrict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>defined<sp/>(__GNUC__)<sp/></highlight><highlight class="comment">//<sp/>GCC<sp/>compiler</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_NO_INLINE<sp/>__attribute__((noinline))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_INLINE<sp/>__attribute__((always_inline))<sp/>inline</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSUME(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSUME_AND_MAY_EVALUATE(X)<sp/>do<sp/>{if(!(X)){MATHIC_UNREACHABLE;}while(0)}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_RETURN_NO_ALIAS<sp/>__attribute__(malloc)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_NOTHROW<sp/>__attribute__(nothrow)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_PURE<sp/>__attribute__(pure)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_MUST_CHECK_RETURN_VALUE<sp/>__attribute__(warn_unused_result)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_UNREACHABLE<sp/>__builtin_unreachable()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="mathic_2src_2mathic_2stdinc_8h_a4ce27060203c10a724cddcfd3809dbfe_1a4ce27060203c10a724cddcfd3809dbfe" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_NO_INLINE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="mathic_2src_2mathic_2stdinc_8h_ae2036df0f75d42d6498411a4d23cc4da_1ae2036df0f75d42d6498411a4d23cc4da" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_INLINE<sp/>inline</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="mathic_2src_2mathic_2stdinc_8h_a514a893d8a96c29bbed9f4b0fcceb029_1a514a893d8a96c29bbed9f4b0fcceb029" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSUME(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="mathic_2src_2mathic_2stdinc_8h_a355d88cb3fb1e226b53e3bf37ea0afea_1a355d88cb3fb1e226b53e3bf37ea0afea" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSUME_AND_MAY_EVALUATE(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="mathic_2src_2mathic_2stdinc_8h_a1be3cd9ca3c989f8d5d088e42d879fd9_1a1be3cd9ca3c989f8d5d088e42d879fd9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_RETURN_NO_ALIAS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="mathic_2src_2mathic_2stdinc_8h_a209329cc7f99bdc08cd3bd50448cb7c9_1a209329cc7f99bdc08cd3bd50448cb7c9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_NOTHROW</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="mathic_2src_2mathic_2stdinc_8h_abbae6d69dd643e3e5e831000f8c028c6_1abbae6d69dd643e3e5e831000f8c028c6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_PURE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="mathic_2src_2mathic_2stdinc_8h_a0fd29092969ac246dd156a78bcc0ad23_1a0fd29092969ac246dd156a78bcc0ad23" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_MUST_CHECK_RETURN_VALUE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="mathic_2src_2mathic_2stdinc_8h_a5fe460cbc27b6c357e6c64bf64248fba_1a5fe460cbc27b6c357e6c64bf64248fba" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_UNREACHABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>MATHIC_SLOW_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="comment">//<sp/>for<sp/>asserts<sp/>that<sp/>take<sp/>a<sp/>long<sp/>time.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_SLOW_ASSERT(X)<sp/>MATHIC_ASSERT(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHIC_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="mathic_2src_2mathic_2stdinc_8h_ab04f34a08bd958c4e2e59b64f1d49780_1ab04f34a08bd958c4e2e59b64f1d49780" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_SLOW_ASSERT(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>MATHIC_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cassert&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSERT(X)<sp/>do{assert(X);}while(0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSERT_NO_ASSUME(X)<sp/>MATHIC_ASSERT(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSERT(X)<sp/>MATHIC_ASSUME(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="mathic_2src_2mathic_2stdinc_8h_a2d87e5d88d7ca350c555835a7819aee5_1a2d87e5d88d7ca350c555835a7819aee5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHIC_ASSERT_NO_ASSUME(X)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemathic" kindref="compound">mathic</ref><sp/>{</highlight></codeline>
+<codeline lineno="94" refid="namespacemathic_aecb317110595cb0a869c9c19c7be0f50_1aecb317110595cb0a869c9c19c7be0f50" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacemathic_aecb317110595cb0a869c9c19c7be0f50_1aecb317110595cb0a869c9c19c7be0f50" kindref="member">BitsPerByte</ref><sp/>=<sp/>8;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHIC_NO_MIC_NAMESPACE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="namespacemic" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemic" kindref="compound">mic</ref><sp/>{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemathic" kindref="compound">mathic</ref>;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/mathic/stdinc.h"/>
+  </compounddef>
+</doxygen>

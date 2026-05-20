@@ -1,0 +1,747 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_mono_arena" kind="class" language="C++" prot="public">
+    <compoundname>MonoArena</compoundname>
+    <includes refid="_mono_arena_8hpp" local="no">MonoArena.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class M</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_mono_arena_ad24e9e939867295bbb55b4ebf32d0a64_1ad24e9e939867295bbb55b4ebf32d0a64" prot="public" static="no">
+        <type>M</type>
+        <definition>typedef M MonoArena&lt; M &gt;::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>MonoArena::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="23" column="13" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_arena_a6522d79e0bbf8714fb7667ca719e202b_1a6522d79e0bbf8714fb7667ca719e202b" prot="public" static="no">
+        <type>Monoid::Mono</type>
+        <definition>typedef Monoid::Mono MonoArena&lt; M &gt;::Mono</definition>
+        <argsstring></argsstring>
+        <name>Mono</name>
+        <qualifiedname>MonoArena::Mono</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="24" column="33" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_arena_a7c3251675650169f74ef63667edf2c90_1a7c3251675650169f74ef63667edf2c90" prot="public" static="no">
+        <type>Monoid::MonoRef</type>
+        <definition>typedef Monoid::MonoRef MonoArena&lt; M &gt;::MonoRef</definition>
+        <argsstring></argsstring>
+        <name>MonoRef</name>
+        <qualifiedname>MonoArena::MonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="25" column="36" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_arena_a6d75dcce1df1544dde23d592c3f2afe8_1a6d75dcce1df1544dde23d592c3f2afe8" prot="public" static="no">
+        <type>Monoid::ConstMonoRef</type>
+        <definition>typedef Monoid::ConstMonoRef MonoArena&lt; M &gt;::ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>MonoArena::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="26" column="41" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_arena_a35da15a937255bddc409cd27de54b6c2_1a35da15a937255bddc409cd27de54b6c2" prot="public" static="no">
+        <type>Monoid::MonoPtr</type>
+        <definition>typedef Monoid::MonoPtr MonoArena&lt; M &gt;::MonoPtr</definition>
+        <argsstring></argsstring>
+        <name>MonoPtr</name>
+        <qualifiedname>MonoArena::MonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="27" column="36" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_arena_a38b88cd6fc7746e3be6343ae5604b2db_1a38b88cd6fc7746e3be6343ae5604b2db" prot="public" static="no">
+        <type>Monoid::ConstMonoPtr</type>
+        <definition>typedef Monoid::ConstMonoPtr MonoArena&lt; M &gt;::ConstMonoPtr</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoPtr</name>
+        <qualifiedname>MonoArena::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="28" column="41" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_arena_aeb7fffb301e0deee0dda806aff475bca_1aeb7fffb301e0deee0dda806aff475bca" prot="public" static="no">
+        <type>Monoid::MonoVector</type>
+        <definition>typedef Monoid::MonoVector MonoArena&lt; M &gt;::MonoVector</definition>
+        <argsstring></argsstring>
+        <name>MonoVector</name>
+        <qualifiedname>MonoArena::MonoVector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="29" column="39" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_arena_a726fe21e1ddd67cf62dc100acfbfcf1a_1a726fe21e1ddd67cf62dc100acfbfcf1a" prot="public" static="no">
+        <type><ref refid="class_flatten" kindref="compound">Flatten</ref>&lt; typename std::vector&lt; <ref refid="class_mono_arena_aeb7fffb301e0deee0dda806aff475bca_1aeb7fffb301e0deee0dda806aff475bca" kindref="member">MonoVector</ref> &gt;::const_iterator &gt;</type>
+        <definition>typedef Flatten&lt;typename std::vector&lt;MonoVector&gt;::const_iterator&gt; MonoArena&lt; M &gt;::const_iterator</definition>
+        <argsstring></argsstring>
+        <name>const_iterator</name>
+        <qualifiedname>MonoArena::const_iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="31" column="20" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_mono_arena_aeb7fffb301e0deee0dda806aff475bca_1aeb7fffb301e0deee0dda806aff475bca" kindref="member">MonoVector</ref> &gt;</type>
+        <definition>std::vector&lt;MonoVector&gt; MonoArena&lt; M &gt;::mVectors</definition>
+        <argsstring></argsstring>
+        <name>mVectors</name>
+        <qualifiedname>MonoArena::mVectors</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="227" column="15" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="227" bodyend="-1"/>
+        <referencedby refid="class_mono_arena_ab49b0a852f622b3fe2e1690b993f8ad2_1ab49b0a852f622b3fe2e1690b993f8ad2" compoundref="_mono_arena_8hpp" startline="217" endline="220">MonoArena&lt; M &gt;::backVector</referencedby>
+        <referencedby refid="class_mono_arena_a9d73a3a8e8765210bd2940ad71e0c9ea_1a9d73a3a8e8765210bd2940ad71e0c9ea" compoundref="_mono_arena_8hpp" startline="222" endline="225">MonoArena&lt; M &gt;::backVector</referencedby>
+        <referencedby refid="class_mono_arena_aa7f311819aab1f82a18b58dff4298d58_1aa7f311819aab1f82a18b58dff4298d58" compoundref="_mono_arena_8hpp" startline="57" endline="59">MonoArena&lt; M &gt;::begin</referencedby>
+        <referencedby refid="class_mono_arena_ae5c5454039edd7a5e7a8d4c6925fb5f8_1ae5c5454039edd7a5e7a8d4c6925fb5f8" compoundref="_mono_arena_8hpp" startline="156" endline="165">MonoArena&lt; M &gt;::clear</referencedby>
+        <referencedby refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" compoundref="_mono_arena_8hpp" startline="179" endline="188">MonoArena&lt; M &gt;::debugAssertValid</referencedby>
+        <referencedby refid="class_mono_arena_ac144c87a48b1b331d3e8e4ccc9f9f13f_1ac144c87a48b1b331d3e8e4ccc9f9f13f" compoundref="_mono_arena_8hpp" startline="78" endline="81">MonoArena&lt; M &gt;::empty</referencedby>
+        <referencedby refid="class_mono_arena_a2e61a780b1b14ff3adc12cb005e2f247_1a2e61a780b1b14ff3adc12cb005e2f247" compoundref="_mono_arena_8hpp" startline="61" endline="63">MonoArena&lt; M &gt;::end</referencedby>
+        <referencedby refid="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" compoundref="_mono_arena_8hpp" startline="200" endline="215">MonoArena&lt; M &gt;::ensureSpace</referencedby>
+        <referencedby refid="class_mono_arena_a772c0c21c479c9391543a8c4f0a81076_1a772c0c21c479c9391543a8c4f0a81076" compoundref="_mono_arena_8hpp" startline="86" endline="90">MonoArena&lt; M &gt;::front</referencedby>
+        <referencedby refid="class_mono_arena_a44e902ae08a6ef5ef739f7cefe1507d6_1a44e902ae08a6ef5ef739f7cefe1507d6" compoundref="_mono_arena_8hpp" startline="170" endline="175">MonoArena&lt; M &gt;::memoryBytesUsed</referencedby>
+        <referencedby refid="class_mono_arena_a63feefaf4b4ab92f48a27735c6ec577f_1a63feefaf4b4ab92f48a27735c6ec577f" compoundref="_mono_arena_8hpp" startline="39" endline="39">MonoArena&lt; M &gt;::MonoArena</referencedby>
+        <referencedby refid="class_mono_arena_a19a1546542555489b61f96f5982caecc_1a19a1546542555489b61f96f5982caecc" compoundref="_mono_arena_8hpp" startline="35" endline="37">MonoArena&lt; M &gt;::MonoArena</referencedby>
+        <referencedby refid="class_mono_arena_acf59db745209ab995c737c9016ebceed_1acf59db745209ab995c737c9016ebceed" compoundref="_mono_arena_8hpp" startline="40" endline="40">MonoArena&lt; M &gt;::MonoArena</referencedby>
+        <referencedby refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" compoundref="_mono_arena_8hpp" startline="177" endline="177">MonoArena&lt; M &gt;::monoid</referencedby>
+        <referencedby refid="class_mono_arena_a0a06c5ccf1732f292170cfad062f5b1e_1a0a06c5ccf1732f292170cfad062f5b1e" compoundref="_mono_arena_8hpp" startline="42" endline="46">MonoArena&lt; M &gt;::operator=</referencedby>
+        <referencedby refid="class_mono_arena_a958f5de3e6a94f795c07759bc5714d3e_1a958f5de3e6a94f795c07759bc5714d3e" compoundref="_mono_arena_8hpp" startline="48" endline="52">MonoArena&lt; M &gt;::operator=</referencedby>
+        <referencedby refid="class_mono_arena_a15a020402d9569d7fd418608976005f8_1a15a020402d9569d7fd418608976005f8" compoundref="_mono_arena_8hpp" startline="71" endline="76">MonoArena&lt; M &gt;::size</referencedby>
+        <referencedby refid="class_mono_arena_ac92f5017166a3707b6f0b149b10512bd_1ac92f5017166a3707b6f0b149b10512bd" compoundref="_mono_arena_8hpp" startline="145" endline="154">MonoArena&lt; M &gt;::swap</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_mono_arena_a19a1546542555489b61f96f5982caecc_1a19a1546542555489b61f96f5982caecc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonoArena&lt; M &gt;::MonoArena</definition>
+        <argsstring>(const Monoid &amp;monoid)</argsstring>
+        <name>MonoArena</name>
+        <qualifiedname>MonoArena::MonoArena</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mono_arena_ad24e9e939867295bbb55b4ebf32d0a64_1ad24e9e939867295bbb55b4ebf32d0a64" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+          <declname>monoid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="35" column="3" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="35" bodyend="37"/>
+        <references refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" compoundref="_mono_arena_8hpp" startline="177" endline="177">MonoArena&lt; M &gt;::monoid</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <referencedby refid="class_mono_arena_a63feefaf4b4ab92f48a27735c6ec577f_1a63feefaf4b4ab92f48a27735c6ec577f" compoundref="_mono_arena_8hpp" startline="39" endline="39">MonoArena&lt; M &gt;::MonoArena</referencedby>
+        <referencedby refid="class_mono_arena_acf59db745209ab995c737c9016ebceed_1acf59db745209ab995c737c9016ebceed" compoundref="_mono_arena_8hpp" startline="40" endline="40">MonoArena&lt; M &gt;::MonoArena</referencedby>
+        <referencedby refid="class_mono_arena_a0a06c5ccf1732f292170cfad062f5b1e_1a0a06c5ccf1732f292170cfad062f5b1e" compoundref="_mono_arena_8hpp" startline="42" endline="46">MonoArena&lt; M &gt;::operator=</referencedby>
+        <referencedby refid="class_mono_arena_a958f5de3e6a94f795c07759bc5714d3e_1a958f5de3e6a94f795c07759bc5714d3e" compoundref="_mono_arena_8hpp" startline="48" endline="52">MonoArena&lt; M &gt;::operator=</referencedby>
+        <referencedby refid="class_mono_arena_ac92f5017166a3707b6f0b149b10512bd_1ac92f5017166a3707b6f0b149b10512bd" compoundref="_mono_arena_8hpp" startline="145" endline="154">MonoArena&lt; M &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a63feefaf4b4ab92f48a27735c6ec577f_1a63feefaf4b4ab92f48a27735c6ec577f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonoArena&lt; M &gt;::MonoArena</definition>
+        <argsstring>(const MonoArena &amp;a)</argsstring>
+        <name>MonoArena</name>
+        <qualifiedname>MonoArena::MonoArena</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mono_arena" kindref="compound">MonoArena</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="39" column="3" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="39" bodyend="39"/>
+        <references refid="class_mono_arena_a19a1546542555489b61f96f5982caecc_1a19a1546542555489b61f96f5982caecc" compoundref="_mono_arena_8hpp" startline="35" endline="37">MonoArena&lt; M &gt;::MonoArena</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_acf59db745209ab995c737c9016ebceed_1acf59db745209ab995c737c9016ebceed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonoArena&lt; M &gt;::MonoArena</definition>
+        <argsstring>(MonoArena &amp;&amp;a)</argsstring>
+        <name>MonoArena</name>
+        <qualifiedname>MonoArena::MonoArena</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_arena" kindref="compound">MonoArena</ref> &amp;&amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="40" column="3" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="40" bodyend="40"/>
+        <references refid="class_mono_arena_a19a1546542555489b61f96f5982caecc_1a19a1546542555489b61f96f5982caecc" compoundref="_mono_arena_8hpp" startline="35" endline="37">MonoArena&lt; M &gt;::MonoArena</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a0a06c5ccf1732f292170cfad062f5b1e_1a0a06c5ccf1732f292170cfad062f5b1e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena" kindref="compound">MonoArena</ref> &amp;</type>
+        <definition>MonoArena &amp; MonoArena&lt; M &gt;::operator=</definition>
+        <argsstring>(const MonoArena &amp;a)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>MonoArena::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mono_arena" kindref="compound">MonoArena</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="42" column="13" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="42" bodyend="46"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a19a1546542555489b61f96f5982caecc_1a19a1546542555489b61f96f5982caecc" compoundref="_mono_arena_8hpp" startline="35" endline="37">MonoArena&lt; M &gt;::MonoArena</references>
+        <references refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" compoundref="_mono_arena_8hpp" startline="177" endline="177">MonoArena&lt; M &gt;::monoid</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a958f5de3e6a94f795c07759bc5714d3e_1a958f5de3e6a94f795c07759bc5714d3e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena" kindref="compound">MonoArena</ref> &amp;</type>
+        <definition>MonoArena &amp; MonoArena&lt; M &gt;::operator=</definition>
+        <argsstring>(MonoArena &amp;&amp;a)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>MonoArena::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_arena" kindref="compound">MonoArena</ref> &amp;&amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="48" column="13" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="48" bodyend="52"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a19a1546542555489b61f96f5982caecc_1a19a1546542555489b61f96f5982caecc" compoundref="_mono_arena_8hpp" startline="35" endline="37">MonoArena&lt; M &gt;::MonoArena</references>
+        <references refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" compoundref="_mono_arena_8hpp" startline="177" endline="177">MonoArena&lt; M &gt;::monoid</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_aa7f311819aab1f82a18b58dff4298d58_1aa7f311819aab1f82a18b58dff4298d58" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena_a726fe21e1ddd67cf62dc100acfbfcf1a_1a726fe21e1ddd67cf62dc100acfbfcf1a" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator MonoArena&lt; M &gt;::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>MonoArena::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="57" column="18" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="57" bodyend="59"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_adaeea0a0b7b95964908f585a13564439_1adaeea0a0b7b95964908f585a13564439" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="506" endline="511">makeFlatten</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <referencedby refid="class_mono_arena_a07ba99f036ad1ed212d13f569720fdd1_1a07ba99f036ad1ed212d13f569720fdd1" compoundref="_mono_arena_8hpp" startline="65" endline="65">MonoArena&lt; M &gt;::cbegin</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a2e61a780b1b14ff3adc12cb005e2f247_1a2e61a780b1b14ff3adc12cb005e2f247" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena_a726fe21e1ddd67cf62dc100acfbfcf1a_1a726fe21e1ddd67cf62dc100acfbfcf1a" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator MonoArena&lt; M &gt;::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>MonoArena::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="61" column="18" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="61" bodyend="63"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_adaeea0a0b7b95964908f585a13564439_1adaeea0a0b7b95964908f585a13564439" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="506" endline="511">makeFlatten</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <referencedby refid="class_mono_arena_acc8e2a7beb9194a04474ebaa222dcc3b_1acc8e2a7beb9194a04474ebaa222dcc3b" compoundref="_mono_arena_8hpp" startline="66" endline="66">MonoArena&lt; M &gt;::cend</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a07ba99f036ad1ed212d13f569720fdd1_1a07ba99f036ad1ed212d13f569720fdd1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena_a726fe21e1ddd67cf62dc100acfbfcf1a_1a726fe21e1ddd67cf62dc100acfbfcf1a" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator MonoArena&lt; M &gt;::cbegin</definition>
+        <argsstring>() const</argsstring>
+        <name>cbegin</name>
+        <qualifiedname>MonoArena::cbegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="65" column="18" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="65" bodyend="65"/>
+        <references refid="class_mono_arena_aa7f311819aab1f82a18b58dff4298d58_1aa7f311819aab1f82a18b58dff4298d58" compoundref="_mono_arena_8hpp" startline="57" endline="59">MonoArena&lt; M &gt;::begin</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_acc8e2a7beb9194a04474ebaa222dcc3b_1acc8e2a7beb9194a04474ebaa222dcc3b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena_a726fe21e1ddd67cf62dc100acfbfcf1a_1a726fe21e1ddd67cf62dc100acfbfcf1a" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator MonoArena&lt; M &gt;::cend</definition>
+        <argsstring>() const</argsstring>
+        <name>cend</name>
+        <qualifiedname>MonoArena::cend</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="66" column="18" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="66" bodyend="66"/>
+        <references refid="class_mono_arena_a2e61a780b1b14ff3adc12cb005e2f247_1a2e61a780b1b14ff3adc12cb005e2f247" compoundref="_mono_arena_8hpp" startline="61" endline="63">MonoArena&lt; M &gt;::end</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a15a020402d9569d7fd418608976005f8_1a15a020402d9569d7fd418608976005f8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t MonoArena&lt; M &gt;::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>MonoArena::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="71" column="10" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="71" bodyend="76"/>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <references refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" compoundref="m2-mem_8h" startline="112">size_t</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_ac144c87a48b1b331d3e8e4ccc9f9f13f_1ac144c87a48b1b331d3e8e4ccc9f9f13f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoArena&lt; M &gt;::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>MonoArena::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="78" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="78" bodyend="81"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <referencedby refid="class_mono_arena_ad101bb55c029ba49b7ed7c05f9df0c84_1ad101bb55c029ba49b7ed7c05f9df0c84" compoundref="_mono_arena_8hpp" startline="92" endline="96">MonoArena&lt; M &gt;::back</referencedby>
+        <referencedby refid="class_mono_arena_a7d199f9c66c7c1f5f4102c40b0996dda_1a7d199f9c66c7c1f5f4102c40b0996dda" compoundref="_mono_arena_8hpp" startline="98" endline="102">MonoArena&lt; M &gt;::back</referencedby>
+        <referencedby refid="class_mono_arena_a772c0c21c479c9391543a8c4f0a81076_1a772c0c21c479c9391543a8c4f0a81076" compoundref="_mono_arena_8hpp" startline="86" endline="90">MonoArena&lt; M &gt;::front</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a772c0c21c479c9391543a8c4f0a81076_1a772c0c21c479c9391543a8c4f0a81076" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena_a6d75dcce1df1544dde23d592c3f2afe8_1a6d75dcce1df1544dde23d592c3f2afe8" kindref="member">ConstMonoRef</ref></type>
+        <definition>ConstMonoRef MonoArena&lt; M &gt;::front</definition>
+        <argsstring>() const</argsstring>
+        <name>front</name>
+        <qualifiedname>MonoArena::front</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="86" column="16" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="86" bodyend="90"/>
+        <references refid="class_mono_arena_ac144c87a48b1b331d3e8e4ccc9f9f13f_1ac144c87a48b1b331d3e8e4ccc9f9f13f" compoundref="_mono_arena_8hpp" startline="78" endline="81">MonoArena&lt; M &gt;::empty</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_ad101bb55c029ba49b7ed7c05f9df0c84_1ad101bb55c029ba49b7ed7c05f9df0c84" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena_a7c3251675650169f74ef63667edf2c90_1a7c3251675650169f74ef63667edf2c90" kindref="member">MonoRef</ref></type>
+        <definition>MonoRef MonoArena&lt; M &gt;::back</definition>
+        <argsstring>()</argsstring>
+        <name>back</name>
+        <qualifiedname>MonoArena::back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="92" column="11" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="92" bodyend="96"/>
+        <references refid="class_mono_arena_ab49b0a852f622b3fe2e1690b993f8ad2_1ab49b0a852f622b3fe2e1690b993f8ad2" compoundref="_mono_arena_8hpp" startline="217" endline="220">MonoArena&lt; M &gt;::backVector</references>
+        <references refid="class_mono_arena_ac144c87a48b1b331d3e8e4ccc9f9f13f_1ac144c87a48b1b331d3e8e4ccc9f9f13f" compoundref="_mono_arena_8hpp" startline="78" endline="81">MonoArena&lt; M &gt;::empty</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <referencedby refid="class_mono_arena_a6d659c3f14d67cef148a39aa9c0eb9fe_1a6d659c3f14d67cef148a39aa9c0eb9fe" compoundref="_mono_arena_8hpp" startline="108" endline="117">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a8284f3de8f50b3bd1b9fd2134608aecc_1a8284f3de8f50b3bd1b9fd2134608aecc" compoundref="_mono_arena_8hpp" startline="131" endline="143">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a89c1bd6dac59141bb31330e36670876a_1a89c1bd6dac59141bb31330e36670876a" compoundref="_mono_arena_8hpp" startline="119" endline="128">MonoArena&lt; M &gt;::push_back</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a7d199f9c66c7c1f5f4102c40b0996dda_1a7d199f9c66c7c1f5f4102c40b0996dda" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena_a6d75dcce1df1544dde23d592c3f2afe8_1a6d75dcce1df1544dde23d592c3f2afe8" kindref="member">ConstMonoRef</ref></type>
+        <definition>ConstMonoRef MonoArena&lt; M &gt;::back</definition>
+        <argsstring>() const</argsstring>
+        <name>back</name>
+        <qualifiedname>MonoArena::back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="98" column="16" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="98" bodyend="102"/>
+        <references refid="class_mono_arena_ab49b0a852f622b3fe2e1690b993f8ad2_1ab49b0a852f622b3fe2e1690b993f8ad2" compoundref="_mono_arena_8hpp" startline="217" endline="220">MonoArena&lt; M &gt;::backVector</references>
+        <references refid="class_mono_arena_ac144c87a48b1b331d3e8e4ccc9f9f13f_1ac144c87a48b1b331d3e8e4ccc9f9f13f" compoundref="_mono_arena_8hpp" startline="78" endline="81">MonoArena&lt; M &gt;::empty</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a6d659c3f14d67cef148a39aa9c0eb9fe_1a6d659c3f14d67cef148a39aa9c0eb9fe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoArena&lt; M &gt;::push_back</definition>
+        <argsstring>()</argsstring>
+        <name>push_back</name>
+        <qualifiedname>MonoArena::push_back</qualifiedname>
+        <briefdescription>
+<para>Appends the identity. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="108" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="108" bodyend="117"/>
+        <references refid="class_mono_arena_ad101bb55c029ba49b7ed7c05f9df0c84_1ad101bb55c029ba49b7ed7c05f9df0c84" compoundref="_mono_arena_8hpp" startline="92" endline="96">MonoArena&lt; M &gt;::back</references>
+        <references refid="class_mono_arena_ab49b0a852f622b3fe2e1690b993f8ad2_1ab49b0a852f622b3fe2e1690b993f8ad2" compoundref="_mono_arena_8hpp" startline="217" endline="220">MonoArena&lt; M &gt;::backVector</references>
+        <references refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" compoundref="_mono_arena_8hpp" startline="179" endline="188">MonoArena&lt; M &gt;::debugAssertValid</references>
+        <references refid="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" compoundref="_mono_arena_8hpp" startline="200" endline="215">MonoArena&lt; M &gt;::ensureSpace</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" compoundref="_mono_arena_8hpp" startline="177" endline="177">MonoArena&lt; M &gt;::monoid</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a89c1bd6dac59141bb31330e36670876a_1a89c1bd6dac59141bb31330e36670876a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoArena&lt; M &gt;::push_back</definition>
+        <argsstring>(ConstMonoRef mono)</argsstring>
+        <name>push_back</name>
+        <qualifiedname>MonoArena::push_back</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_arena_a6d75dcce1df1544dde23d592c3f2afe8_1a6d75dcce1df1544dde23d592c3f2afe8" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="119" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="119" bodyend="128"/>
+        <references refid="class_mono_arena_ad101bb55c029ba49b7ed7c05f9df0c84_1ad101bb55c029ba49b7ed7c05f9df0c84" compoundref="_mono_arena_8hpp" startline="92" endline="96">MonoArena&lt; M &gt;::back</references>
+        <references refid="class_mono_arena_ab49b0a852f622b3fe2e1690b993f8ad2_1ab49b0a852f622b3fe2e1690b993f8ad2" compoundref="_mono_arena_8hpp" startline="217" endline="220">MonoArena&lt; M &gt;::backVector</references>
+        <references refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" compoundref="_mono_arena_8hpp" startline="179" endline="188">MonoArena&lt; M &gt;::debugAssertValid</references>
+        <references refid="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" compoundref="_mono_arena_8hpp" startline="200" endline="215">MonoArena&lt; M &gt;::ensureSpace</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" compoundref="_mono_arena_8hpp" startline="177" endline="177">MonoArena&lt; M &gt;::monoid</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a8284f3de8f50b3bd1b9fd2134608aecc_1a8284f3de8f50b3bd1b9fd2134608aecc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="class_mono_arena_ad24e9e939867295bbb55b4ebf32d0a64_1ad24e9e939867295bbb55b4ebf32d0a64" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void MonoArena&lt; M &gt;::push_back</definition>
+        <argsstring>(const Monoid &amp;monoidMono, typename Monoid::ConstMonoRef mono)</argsstring>
+        <name>push_back</name>
+        <qualifiedname>MonoArena::push_back</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mono_arena_ad24e9e939867295bbb55b4ebf32d0a64_1ad24e9e939867295bbb55b4ebf32d0a64" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+          <declname>monoidMono</declname>
+        </param>
+        <param>
+          <type>typename Monoid::ConstMonoRef</type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="131" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="131" bodyend="143"/>
+        <references refid="class_mono_arena_ad101bb55c029ba49b7ed7c05f9df0c84_1ad101bb55c029ba49b7ed7c05f9df0c84" compoundref="_mono_arena_8hpp" startline="92" endline="96">MonoArena&lt; M &gt;::back</references>
+        <references refid="class_mono_arena_ab49b0a852f622b3fe2e1690b993f8ad2_1ab49b0a852f622b3fe2e1690b993f8ad2" compoundref="_mono_arena_8hpp" startline="217" endline="220">MonoArena&lt; M &gt;::backVector</references>
+        <references refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" compoundref="_mono_arena_8hpp" startline="179" endline="188">MonoArena&lt; M &gt;::debugAssertValid</references>
+        <references refid="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" compoundref="_mono_arena_8hpp" startline="200" endline="215">MonoArena&lt; M &gt;::ensureSpace</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" compoundref="_mono_arena_8hpp" startline="177" endline="177">MonoArena&lt; M &gt;::monoid</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_ac92f5017166a3707b6f0b149b10512bd_1ac92f5017166a3707b6f0b149b10512bd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoArena&lt; M &gt;::swap</definition>
+        <argsstring>(MonoArena &amp;a)</argsstring>
+        <name>swap</name>
+        <qualifiedname>MonoArena::swap</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_arena" kindref="compound">MonoArena</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="145" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="145" bodyend="154"/>
+        <references refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" compoundref="_mono_arena_8hpp" startline="179" endline="188">MonoArena&lt; M &gt;::debugAssertValid</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a19a1546542555489b61f96f5982caecc_1a19a1546542555489b61f96f5982caecc" compoundref="_mono_arena_8hpp" startline="35" endline="37">MonoArena&lt; M &gt;::MonoArena</references>
+        <references refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" compoundref="_mono_arena_8hpp" startline="177" endline="177">MonoArena&lt; M &gt;::monoid</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_ae5c5454039edd7a5e7a8d4c6925fb5f8_1ae5c5454039edd7a5e7a8d4c6925fb5f8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoArena&lt; M &gt;::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>MonoArena::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="156" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="156" bodyend="165"/>
+        <references refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" compoundref="_mono_arena_8hpp" startline="179" endline="188">MonoArena&lt; M &gt;::debugAssertValid</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a44e902ae08a6ef5ef739f7cefe1507d6_1a44e902ae08a6ef5ef739f7cefe1507d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t MonoArena&lt; M &gt;::memoryBytesUsed</definition>
+        <argsstring>() const</argsstring>
+        <name>memoryBytesUsed</name>
+        <qualifiedname>MonoArena::memoryBytesUsed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="170" column="10" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="170" bodyend="175"/>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <references refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" compoundref="m2-mem_8h" startline="112">size_t</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_mono_arena_ad24e9e939867295bbb55b4ebf32d0a64_1ad24e9e939867295bbb55b4ebf32d0a64" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+        <definition>const Monoid &amp; MonoArena&lt; M &gt;::monoid</definition>
+        <argsstring>() const</argsstring>
+        <name>monoid</name>
+        <qualifiedname>MonoArena::monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="177" column="16" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="177" bodyend="177"/>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <referencedby refid="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" compoundref="_mono_arena_8hpp" startline="200" endline="215">MonoArena&lt; M &gt;::ensureSpace</referencedby>
+        <referencedby refid="class_mono_arena_a19a1546542555489b61f96f5982caecc_1a19a1546542555489b61f96f5982caecc" compoundref="_mono_arena_8hpp" startline="35" endline="37">MonoArena&lt; M &gt;::MonoArena</referencedby>
+        <referencedby refid="_mono_arena_8hpp_a49e7992dd4dae2a833aca6217ec3e298_1a49e7992dd4dae2a833aca6217ec3e298" compoundref="_mono_arena_8hpp" startline="247" endline="250">operator!=</referencedby>
+        <referencedby refid="class_mono_arena_a0a06c5ccf1732f292170cfad062f5b1e_1a0a06c5ccf1732f292170cfad062f5b1e" compoundref="_mono_arena_8hpp" startline="42" endline="46">MonoArena&lt; M &gt;::operator=</referencedby>
+        <referencedby refid="class_mono_arena_a958f5de3e6a94f795c07759bc5714d3e_1a958f5de3e6a94f795c07759bc5714d3e" compoundref="_mono_arena_8hpp" startline="48" endline="52">MonoArena&lt; M &gt;::operator=</referencedby>
+        <referencedby refid="_mono_arena_8hpp_aed08a140a7e77ca0a50e861736953772_1aed08a140a7e77ca0a50e861736953772" compoundref="_mono_arena_8hpp" startline="232" endline="243">operator==</referencedby>
+        <referencedby refid="class_mono_arena_a6d659c3f14d67cef148a39aa9c0eb9fe_1a6d659c3f14d67cef148a39aa9c0eb9fe" compoundref="_mono_arena_8hpp" startline="108" endline="117">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a8284f3de8f50b3bd1b9fd2134608aecc_1a8284f3de8f50b3bd1b9fd2134608aecc" compoundref="_mono_arena_8hpp" startline="131" endline="143">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a89c1bd6dac59141bb31330e36670876a_1a89c1bd6dac59141bb31330e36670876a" compoundref="_mono_arena_8hpp" startline="119" endline="128">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_ac92f5017166a3707b6f0b149b10512bd_1ac92f5017166a3707b6f0b149b10512bd" compoundref="_mono_arena_8hpp" startline="145" endline="154">MonoArena&lt; M &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoArena&lt; M &gt;::debugAssertValid</definition>
+        <argsstring>() const</argsstring>
+        <name>debugAssertValid</name>
+        <qualifiedname>MonoArena::debugAssertValid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="179" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="179" bodyend="188"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="361" endline="382">adjPairRange</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <referencedby refid="class_mono_arena_ae5c5454039edd7a5e7a8d4c6925fb5f8_1ae5c5454039edd7a5e7a8d4c6925fb5f8" compoundref="_mono_arena_8hpp" startline="156" endline="165">MonoArena&lt; M &gt;::clear</referencedby>
+        <referencedby refid="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" compoundref="_mono_arena_8hpp" startline="200" endline="215">MonoArena&lt; M &gt;::ensureSpace</referencedby>
+        <referencedby refid="_mono_arena_8hpp_aed08a140a7e77ca0a50e861736953772_1aed08a140a7e77ca0a50e861736953772" compoundref="_mono_arena_8hpp" startline="232" endline="243">operator==</referencedby>
+        <referencedby refid="class_mono_arena_a6d659c3f14d67cef148a39aa9c0eb9fe_1a6d659c3f14d67cef148a39aa9c0eb9fe" compoundref="_mono_arena_8hpp" startline="108" endline="117">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a8284f3de8f50b3bd1b9fd2134608aecc_1a8284f3de8f50b3bd1b9fd2134608aecc" compoundref="_mono_arena_8hpp" startline="131" endline="143">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a89c1bd6dac59141bb31330e36670876a_1a89c1bd6dac59141bb31330e36670876a" compoundref="_mono_arena_8hpp" startline="119" endline="128">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_ac92f5017166a3707b6f0b149b10512bd_1ac92f5017166a3707b6f0b149b10512bd" compoundref="_mono_arena_8hpp" startline="145" endline="154">MonoArena&lt; M &gt;::swap</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoArena&lt; M &gt;::ensureSpace</definition>
+        <argsstring>()</argsstring>
+        <name>ensureSpace</name>
+        <qualifiedname>MonoArena::ensureSpace</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Ensures that there is space for at least one more monomial.</para>
+<para><xrefsect id="todo_1_todo000015"><xreftitle>Todo</xreftitle><xrefdescription><para>: if monomials ever become variable-size, then this might allocate far more than double the memory of the previous vector. The problem is that they might actually take up, say, 128 bytes but the worst case is 1024k. Then if 1000 monomials fit in the previous vector, the next vector will allocate 2 * 1000 * 1024k bytes, which is far more than double what the previous vector did. Make it actually double the bytes. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="200" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="200" bodyend="215"/>
+        <references refid="class_mono_arena_ab49b0a852f622b3fe2e1690b993f8ad2_1ab49b0a852f622b3fe2e1690b993f8ad2" compoundref="_mono_arena_8hpp" startline="217" endline="220">MonoArena&lt; M &gt;::backVector</references>
+        <references refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" compoundref="_mono_arena_8hpp" startline="179" endline="188">MonoArena&lt; M &gt;::debugAssertValid</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" compoundref="polyroots_8cpp" startline="50">max</references>
+        <references refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" compoundref="_mono_arena_8hpp" startline="177" endline="177">MonoArena&lt; M &gt;::monoid</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <referencedby refid="class_mono_arena_a6d659c3f14d67cef148a39aa9c0eb9fe_1a6d659c3f14d67cef148a39aa9c0eb9fe" compoundref="_mono_arena_8hpp" startline="108" endline="117">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a8284f3de8f50b3bd1b9fd2134608aecc_1a8284f3de8f50b3bd1b9fd2134608aecc" compoundref="_mono_arena_8hpp" startline="131" endline="143">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a89c1bd6dac59141bb31330e36670876a_1a89c1bd6dac59141bb31330e36670876a" compoundref="_mono_arena_8hpp" startline="119" endline="128">MonoArena&lt; M &gt;::push_back</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_ab49b0a852f622b3fe2e1690b993f8ad2_1ab49b0a852f622b3fe2e1690b993f8ad2" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_arena_aeb7fffb301e0deee0dda806aff475bca_1aeb7fffb301e0deee0dda806aff475bca" kindref="member">MonoVector</ref> &amp;</type>
+        <definition>MonoVector &amp; MonoArena&lt; M &gt;::backVector</definition>
+        <argsstring>()</argsstring>
+        <name>backVector</name>
+        <qualifiedname>MonoArena::backVector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="217" column="14" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="217" bodyend="220"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+        <referencedby refid="class_mono_arena_ad101bb55c029ba49b7ed7c05f9df0c84_1ad101bb55c029ba49b7ed7c05f9df0c84" compoundref="_mono_arena_8hpp" startline="92" endline="96">MonoArena&lt; M &gt;::back</referencedby>
+        <referencedby refid="class_mono_arena_a7d199f9c66c7c1f5f4102c40b0996dda_1a7d199f9c66c7c1f5f4102c40b0996dda" compoundref="_mono_arena_8hpp" startline="98" endline="102">MonoArena&lt; M &gt;::back</referencedby>
+        <referencedby refid="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" compoundref="_mono_arena_8hpp" startline="200" endline="215">MonoArena&lt; M &gt;::ensureSpace</referencedby>
+        <referencedby refid="class_mono_arena_a6d659c3f14d67cef148a39aa9c0eb9fe_1a6d659c3f14d67cef148a39aa9c0eb9fe" compoundref="_mono_arena_8hpp" startline="108" endline="117">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a8284f3de8f50b3bd1b9fd2134608aecc_1a8284f3de8f50b3bd1b9fd2134608aecc" compoundref="_mono_arena_8hpp" startline="131" endline="143">MonoArena&lt; M &gt;::push_back</referencedby>
+        <referencedby refid="class_mono_arena_a89c1bd6dac59141bb31330e36670876a_1a89c1bd6dac59141bb31330e36670876a" compoundref="_mono_arena_8hpp" startline="119" endline="128">MonoArena&lt; M &gt;::push_back</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_arena_a9d73a3a8e8765210bd2940ad71e0c9ea_1a9d73a3a8e8765210bd2940ad71e0c9ea" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_mono_arena_aeb7fffb301e0deee0dda806aff475bca_1aeb7fffb301e0deee0dda806aff475bca" kindref="member">MonoVector</ref> &amp;</type>
+        <definition>const MonoVector &amp; MonoArena&lt; M &gt;::backVector</definition>
+        <argsstring>() const</argsstring>
+        <name>backVector</name>
+        <qualifiedname>MonoArena::backVector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="222" column="20" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="222" bodyend="225"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" compoundref="_mono_arena_8hpp" startline="227">MonoArena&lt; M &gt;::mVectors</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Like a Monoid::MonoVector, except that references are not invalidated when additional memory must be allocated.</para>
+<para>Todo: Think of a better name. We can&apos;t deallocate at the end, so <ref refid="class_mono_arena" kindref="compound">MonoArena</ref> is not really an Arena. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>MonoArena&lt; M &gt;</label>
+        <link refid="class_mono_arena"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mVectors</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MonoMonoid&lt; exponent &gt;::MonoVector</label>
+      </node>
+      <node id="5">
+        <label>T</label>
+      </node>
+      <node id="4">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; MonoVector &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; MonoVector &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/MonoArena.hpp" line="21" column="1" bodyfile="submodules/mathicgb/src/mathicgb/MonoArena.hpp" bodystart="21" bodyend="228"/>
+    <listofallmembers>
+      <member refid="class_mono_arena_ad101bb55c029ba49b7ed7c05f9df0c84_1ad101bb55c029ba49b7ed7c05f9df0c84" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>back</name></member>
+      <member refid="class_mono_arena_a7d199f9c66c7c1f5f4102c40b0996dda_1a7d199f9c66c7c1f5f4102c40b0996dda" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>back</name></member>
+      <member refid="class_mono_arena_ab49b0a852f622b3fe2e1690b993f8ad2_1ab49b0a852f622b3fe2e1690b993f8ad2" prot="private" virt="non-virtual"><scope>MonoArena</scope><name>backVector</name></member>
+      <member refid="class_mono_arena_a9d73a3a8e8765210bd2940ad71e0c9ea_1a9d73a3a8e8765210bd2940ad71e0c9ea" prot="private" virt="non-virtual"><scope>MonoArena</scope><name>backVector</name></member>
+      <member refid="class_mono_arena_aa7f311819aab1f82a18b58dff4298d58_1aa7f311819aab1f82a18b58dff4298d58" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>begin</name></member>
+      <member refid="class_mono_arena_a07ba99f036ad1ed212d13f569720fdd1_1a07ba99f036ad1ed212d13f569720fdd1" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>cbegin</name></member>
+      <member refid="class_mono_arena_acc8e2a7beb9194a04474ebaa222dcc3b_1acc8e2a7beb9194a04474ebaa222dcc3b" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>cend</name></member>
+      <member refid="class_mono_arena_ae5c5454039edd7a5e7a8d4c6925fb5f8_1ae5c5454039edd7a5e7a8d4c6925fb5f8" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>clear</name></member>
+      <member refid="class_mono_arena_a726fe21e1ddd67cf62dc100acfbfcf1a_1a726fe21e1ddd67cf62dc100acfbfcf1a" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>const_iterator</name></member>
+      <member refid="class_mono_arena_a38b88cd6fc7746e3be6343ae5604b2db_1a38b88cd6fc7746e3be6343ae5604b2db" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_mono_arena_a6d75dcce1df1544dde23d592c3f2afe8_1a6d75dcce1df1544dde23d592c3f2afe8" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>ConstMonoRef</name></member>
+      <member refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>debugAssertValid</name></member>
+      <member refid="class_mono_arena_ac144c87a48b1b331d3e8e4ccc9f9f13f_1ac144c87a48b1b331d3e8e4ccc9f9f13f" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>empty</name></member>
+      <member refid="class_mono_arena_a2e61a780b1b14ff3adc12cb005e2f247_1a2e61a780b1b14ff3adc12cb005e2f247" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>end</name></member>
+      <member refid="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" prot="private" virt="non-virtual"><scope>MonoArena</scope><name>ensureSpace</name></member>
+      <member refid="class_mono_arena_a772c0c21c479c9391543a8c4f0a81076_1a772c0c21c479c9391543a8c4f0a81076" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>front</name></member>
+      <member refid="class_mono_arena_a44e902ae08a6ef5ef739f7cefe1507d6_1a44e902ae08a6ef5ef739f7cefe1507d6" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>memoryBytesUsed</name></member>
+      <member refid="class_mono_arena_a6522d79e0bbf8714fb7667ca719e202b_1a6522d79e0bbf8714fb7667ca719e202b" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>Mono</name></member>
+      <member refid="class_mono_arena_a19a1546542555489b61f96f5982caecc_1a19a1546542555489b61f96f5982caecc" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>MonoArena</name></member>
+      <member refid="class_mono_arena_a63feefaf4b4ab92f48a27735c6ec577f_1a63feefaf4b4ab92f48a27735c6ec577f" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>MonoArena</name></member>
+      <member refid="class_mono_arena_acf59db745209ab995c737c9016ebceed_1acf59db745209ab995c737c9016ebceed" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>MonoArena</name></member>
+      <member refid="class_mono_arena_ad24e9e939867295bbb55b4ebf32d0a64_1ad24e9e939867295bbb55b4ebf32d0a64" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>Monoid</name></member>
+      <member refid="class_mono_arena_a5a26af3e4edf8653c67273db306eecfa_1a5a26af3e4edf8653c67273db306eecfa" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>monoid</name></member>
+      <member refid="class_mono_arena_a35da15a937255bddc409cd27de54b6c2_1a35da15a937255bddc409cd27de54b6c2" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>MonoPtr</name></member>
+      <member refid="class_mono_arena_a7c3251675650169f74ef63667edf2c90_1a7c3251675650169f74ef63667edf2c90" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>MonoRef</name></member>
+      <member refid="class_mono_arena_aeb7fffb301e0deee0dda806aff475bca_1aeb7fffb301e0deee0dda806aff475bca" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>MonoVector</name></member>
+      <member refid="class_mono_arena_a100b1b0a3b27a86ec2c64cd692f9fec0_1a100b1b0a3b27a86ec2c64cd692f9fec0" prot="private" virt="non-virtual"><scope>MonoArena</scope><name>mVectors</name></member>
+      <member refid="class_mono_arena_a0a06c5ccf1732f292170cfad062f5b1e_1a0a06c5ccf1732f292170cfad062f5b1e" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>operator=</name></member>
+      <member refid="class_mono_arena_a958f5de3e6a94f795c07759bc5714d3e_1a958f5de3e6a94f795c07759bc5714d3e" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>operator=</name></member>
+      <member refid="class_mono_arena_a6d659c3f14d67cef148a39aa9c0eb9fe_1a6d659c3f14d67cef148a39aa9c0eb9fe" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>push_back</name></member>
+      <member refid="class_mono_arena_a89c1bd6dac59141bb31330e36670876a_1a89c1bd6dac59141bb31330e36670876a" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>push_back</name></member>
+      <member refid="class_mono_arena_a8284f3de8f50b3bd1b9fd2134608aecc_1a8284f3de8f50b3bd1b9fd2134608aecc" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>push_back</name></member>
+      <member refid="class_mono_arena_a15a020402d9569d7fd418608976005f8_1a15a020402d9569d7fd418608976005f8" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>size</name></member>
+      <member refid="class_mono_arena_ac92f5017166a3707b6f0b149b10512bd_1ac92f5017166a3707b6f0b149b10512bd" prot="public" virt="non-virtual"><scope>MonoArena</scope><name>swap</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

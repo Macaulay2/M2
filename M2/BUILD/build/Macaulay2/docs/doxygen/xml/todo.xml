@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="todo" kind="page">
+    <compoundname>todo</compoundname>
+    <title>Todo List</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><variablelist>
+<varlistentry><term>Class <ref refid="class_basis" kindref="compound">Basis</ref>  </term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000010"/>: replace with just std::vector&lt;Poly&gt;.  </para>
+</listitem>
+<varlistentry><term>Class <ref refid="class_f4_matrix_builder" kindref="compound">F4MatrixBuilder</ref>  </term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000011"/>: this class does not offer exception guarantees. It&apos;s just not very workable without an RAII monomial handle, so add one of those before fixing this.  </para>
+</listitem>
+<varlistentry><term>Class <ref refid="class_f4_matrix_builder2" kindref="compound">F4MatrixBuilder2</ref>  </term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000012"/>: this class does not offer exception guarantees. It&apos;s just not very workable without an RAII monomial handle or a scope exit functionality, so add one of those before fixing this.  </para>
+</listitem>
+<varlistentry><term>Class <ref refid="class_log_domain" kindref="compound">LogDomain&lt; CompileTimeEnabled &gt;</ref>  </term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000013"/>: support turning all loggers off globally with a macro, regardless of their individual compile-time on/off setting.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_a1dd8b3322b3b1437a1b030f819ece1d3_1a1dd8b3322b3b1437a1b030f819ece1d3" kindref="member">M2::ARingZZpFFPACK::computeGenerator</ref>  () const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000001"/>Remove this function? IE: rewrite it? <ulink url="http://www.johnkerl.org/doc/ffcomp.pdf">http://www.johnkerl.org/doc/ffcomp.pdf</ulink> </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_a1cc1c9f9ac8b5a11715cdba162735ece_1a1cc1c9f9ac8b5a11715cdba162735ece" kindref="member">M2::ARingZZpFFPACK::set_from_long</ref>  (<ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_accaf1bd40bf4c6970206a8c1a4a71047_1accaf1bd40bf4c6970206a8c1a4a71047" kindref="member">ElementType</ref> &amp;result, long a) const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000002"/>possible problem if type <ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_a2749ab91c1852aa81ba0d0794b22d095_1a2749ab91c1852aa81ba0d0794b22d095" kindref="member">UTT</ref> is smaller than an int?  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mathic_i_o_a469ce45a33fe72f7aee59d3af6499268_1a469ce45a33fe72f7aee59d3af6499268" kindref="member">MathicIO&lt; M, BF &gt;::readMonomial</ref>  (const <ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;monoid, const bool readComponent, <ref refid="class_mathic_i_o_a42ad52aae14af85584f4fa9d97c0f052_1a42ad52aae14af85584f4fa9d97c0f052" kindref="member">MonoRef</ref> mono, <ref refid="class_scanner" kindref="compound">Scanner</ref> &amp;in)</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000014"/>: Eventually, pick up readComponent from <ref refid="class_mono_monoid_aaf85077b6bd935de637dab13e33aca29_1aaf85077b6bd935de637dab13e33aca29" kindref="member">Monoid::HasComponent</ref>.  </para>
+</listitem>
+<varlistentry><term>Class <ref refid="classmgb_1_1_groebner_configuration" kindref="compound">mgb::GroebnerConfiguration</ref>  </term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000008"/>: expose more of the available functionality.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="classmgb_1_1_groebner_configuration_a6b9cf7f308721fb01e0c5ae8725723a2_1a6b9cf7f308721fb01e0c5ae8725723a2" kindref="member">mgb::GroebnerConfiguration::setLogging</ref>  (const char *logging)</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000009"/>: describe the format in more detail.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="namespacemgbi_af970d110dada095ad24cff59b827553c_1af970d110dada095ad24cff59b827553c" kindref="member">mgbi::internalComputeGroebnerBasis</ref>  (GroebnerInputIdealStream &amp;inputWhichWillBeCleared, IdealAdapter &amp;output)</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000007"/>: make a scheme where the output Groebner basis is freed polynomial-by-polynomial as data is transferred to out. Also make it so that ideal is not copied.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_arena_a53390763c5a5b5bc159138e98cae0d7a_1a53390763c5a5b5bc159138e98cae0d7a" kindref="member">MonoArena&lt; M &gt;::ensureSpace</ref>  ()</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000015"/>: if monomials ever become variable-size, then this might allocate far more than double the memory of the previous vector. The problem is that they might actually take up, say, 128 bytes but the worst case is 1024k. Then if 1000 monomials fit in the previous vector, the next vector will allocate 2 * 1000 * 1024k bytes, which is far more than double what the previous vector did. Make it actually double the bytes.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_ad187d98947541d1d63bb8a27a2b58726_1ad187d98947541d1d63bb8a27a2b58726" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::colonMultiply</ref>  (<ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> colonBy, <ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> colonNum, <ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> mult, <ref refid="class_mono_monoid_1_1_mono_ref" kindref="compound">MonoRef</ref> out) const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000021"/>: test  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_a3922deb6a1d70ff37305426ced2e862f_1a3922deb6a1d70ff37305426ced2e862f" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::compare</ref>  (<ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> a, <ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> b1, <ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> b2) const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000020"/>: Test this method. Also, is this method actually useful, or could it just as well be replaced by a multiplication and a comparison?  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_ac05d1b7142f0937bc860b22d56cac1e0_1ac05d1b7142f0937bc860b22d56cac1e0" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::component</ref>  (<ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> mono) const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000017"/>: Have different monoids for module monomials and monomials and only offer this method for the module monomials.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_1_1_const_mono_ptr_a6ccb219d2f42829465ca37c86199ea21_1a6ccb219d2f42829465ca37c86199ea21" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::ConstMonoPtr::operator ConstMonoRef</ref>  () const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000023"/>: Get rid of this as soon as all code has been migrated to observe the ptr/ref distinction. Kill it with fire!  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_1_1_const_mono_ref_a326522165afc11555cabd8fd4631f81d_1a326522165afc11555cabd8fd4631f81d" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::ConstMonoRef::operator ConstMonoPtr</ref>  () const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000028"/>: Get rid of this as soon as all code has been migrated to observe the ptr/ref distinction. Kill it with fire!  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_a899375964ec076a0e17b3132a698ff35_1a899375964ec076a0e17b3132a698ff35" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::dividesWithComponent</ref>  (<ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> div, <ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> into) const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000018"/>: get rid of this method.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_a0de3174d0764b995f7613caf27924a41_1a0de3174d0764b995f7613caf27924a41" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::dividesWithComponent</ref>  (const MonoidA &amp;monoidA, typename MonoidA::ConstMonoRef a, <ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> b) const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000019"/>: get rid of this <ndash/> see other overload.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_1_1_mono_aed701be02514b2d9974133f2fe8b916f_1aed701be02514b2d9974133f2fe8b916f" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::Mono::operator ConstMonoRef</ref>  () const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000026"/>: Get rid of this as soon as all code has been migrated to observe the ptr/ref distinction. Kill it with fire!  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_1_1_mono_a2e64e33a1f4b49f16ad236dcc3e6c479_1a2e64e33a1f4b49f16ad236dcc3e6c479" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::Mono::operator MonoRef</ref>  () const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000025"/>: Get rid of this as soon as all code has been migrated to observe the ptr/ref distinction. Kill it with fire!  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_1_1_mono_ptr_a93723d1aa84e1b6c23ba7f74d622d64f_1a93723d1aa84e1b6c23ba7f74d622d64f" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPtr::operator MonoRef</ref>  () const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000024"/>: Get rid of this as soon as all code has been migrated to observe the ptr/ref distinction. Kill it with fire!  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_1_1_mono_ref_a05dbf50546be1d53c7a9304a1958532d_1a05dbf50546be1d53c7a9304a1958532d" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::operator MonoPtr</ref>  () const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000027"/>: Get rid of this as soon as all code has been migrated to observe the ptr/ref distinction. Kill it with fire!  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_mono_monoid_aad5eaf32c22b749c242932e1188f4889_1aad5eaf32c22b749c242932e1188f4889" kindref="member">MonoMonoid&lt; E, HC, SH, SO &gt;::sizeOfSupport</ref>  (<ref refid="class_mono_monoid_1_1_const_mono_ref" kindref="compound">ConstMonoRef</ref> mono) const</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000022"/>: test  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_poly_a70682d7f33f8d45a6699524f07239e1f_1a70682d7f33f8d45a6699524f07239e1f" kindref="member">Poly::polyWithTermsDescending</ref>  ()</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000029"/>: make a separate TermSorter object that allows the temporary vector to be reused between sorts. This should matter for sorting input ideals where there might be a lot of polynomials to go through.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_poly_ring_a7c371e6baacea200cdb26418012b483c_1a7c371e6baacea200cdb26418012b483c" kindref="member">PolyRing::Term</ref>  </term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000030"/>: make this dependent on the monoid and field once all code has been migrated from <ref refid="structterm" kindref="compound">term</ref> to <ref refid="class_poly_ring_a7c371e6baacea200cdb26418012b483c_1a7c371e6baacea200cdb26418012b483c" kindref="member">PolyRing::Term</ref>.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="aring_8h_a40418e40ffb8a725b9127e44fa9b0dea_1a40418e40ffb8a725b9127e44fa9b0dea" kindref="member">rawARingGaloisField</ref>  (int p, int n)</term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000003"/>why parameters are ints and not longs or mpz&apos;s? is an overflow possible? </para>
+<para></para>
+<para>check prime for primality (probably at top of Macaulay2) </para>
+<para></para>
+<para>ARingGFGivaro uses tables and may consume a huge amount of memory - pass therefore a &apos;MaxMemoryConsumption&apos; parameter and if the value is overstepped by ARingGFGivaro, create polynomial representation? </para>
+<para></para>
+<para>the check if in general polynomial representation is needed cost some additional work, similar to linbox/field/givaro-gfq.h. Use GivaroGfq instead of Givaro::GFqDom in ARingGFGivaro? </para>
+<para><anchor id="todo_1_todo000004"/>return Macaulay Galois field in some cases.  </para>
+</listitem>
+<varlistentry><term>Class <ref refid="class_reducer" kindref="compound">Reducer</ref>  </term></varlistentry>
+<listitem><para><anchor id="todo_1_todo000031"/>: consider changing name of findLeadTerm to leadTerm. </para>
+</listitem>
+</variablelist>
+</para>
+    </detaileddescription>
+    <location file="todo"/>
+  </compounddef>
+</doxygen>

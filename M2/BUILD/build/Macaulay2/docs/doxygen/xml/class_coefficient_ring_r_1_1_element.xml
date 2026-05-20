@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_coefficient_ring_r_1_1_element" kind="class" language="C++" prot="public">
+    <compoundname>CoefficientRingR::Element</compoundname>
+    <basecompoundref refid="class_m2_1_1_element_impl" prot="public" virt="non-virtual">M2::ElementImpl&lt; ElementType &gt;</basecompoundref>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="coeffrings_8hpp" local="no">coeffrings.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_coefficient_ring_r_1_1_element_a3dd2a90800051dc3631f149b618f0a14_1a3dd2a90800051dc3631f149b618f0a14" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>CoefficientRingR::Element::Element</definition>
+        <argsstring>(const CoefficientRingR &amp;ring)</argsstring>
+        <name>Element</name>
+        <qualifiedname>CoefficientRingR::Element::Element</qualifiedname>
+        <param>
+          <type>const <ref refid="class_coefficient_ring_r" kindref="compound">CoefficientRingR</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="272" column="14" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="272" bodyend="272"/>
+        <references refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" compoundref="coeffrings_8hpp" startline="304" endline="304">CoefficientRingR::CoefficientRingR</references>
+        <references refid="class_coefficient_ring_r_af9205fc585fe72e91eea2a427d851843_1af9205fc585fe72e91eea2a427d851843" compoundref="coeffrings_8hpp" startline="306" endline="306">CoefficientRingR::init</references>
+        <references refid="class_m2_1_1_element_impl_ad27575a45232e01307ad52b61a1bed61_1ad27575a45232e01307ad52b61a1bed61" compoundref="aring_8hpp" startline="117">M2::ElementImpl&lt; ElementType &gt;::mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="class_coefficient_ring_r_1_1_element_a1ecd1179cdbd97775ccc341acbbc98ac_1a1ecd1179cdbd97775ccc341acbbc98ac" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>CoefficientRingR::Element::Element</definition>
+        <argsstring>(const CoefficientRingR &amp;ring, const ElementType &amp;value)</argsstring>
+        <name>Element</name>
+        <qualifiedname>CoefficientRingR::Element::Element</qualifiedname>
+        <param>
+          <type>const <ref refid="class_coefficient_ring_r" kindref="compound">CoefficientRingR</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref> &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/coeffrings.hpp" line="273" column="5" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="273" bodyend="276"/>
+        <references refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" compoundref="coeffrings_8hpp" startline="304" endline="304">CoefficientRingR::CoefficientRingR</references>
+        <references refid="class_coefficient_ring_r_a36d1f7295817c94ceb7d7125fc810d2e_1a36d1f7295817c94ceb7d7125fc810d2e" compoundref="coeffrings_8hpp" startline="305" endline="305">CoefficientRingR::init_set</references>
+        <references refid="class_m2_1_1_element_impl_ad27575a45232e01307ad52b61a1bed61_1ad27575a45232e01307ad52b61a1bed61" compoundref="aring_8hpp" startline="117">M2::ElementImpl&lt; ElementType &gt;::mValue</references>
+        <references refid="class_m2_1_1_element_impl_a114e53625b3801500bf26a30eb10d856_1a114e53625b3801500bf26a30eb10d856" compoundref="aring_8hpp" startline="130" endline="130">M2::ElementImpl&lt; ElementType &gt;::value</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Managed scalar value: an <computeroutput><ref refid="class_m2_1_1_element_impl" kindref="compound">M2::ElementImpl</ref>&lt;<ref refid="unionring__elem" kindref="compound">ring_elem</ref>&gt;</computeroutput> that initialises itself through the parent <computeroutput><ref refid="class_coefficient_ring_r" kindref="compound">CoefficientRingR</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds the wrapped <computeroutput><ref refid="unionring__elem" kindref="compound">ring_elem</ref></computeroutput> so callers do not have to call <computeroutput><ref refid="class_coefficient_ring_r_af9205fc585fe72e91eea2a427d851843_1af9205fc585fe72e91eea2a427d851843" kindref="member">init</ref></computeroutput> / <computeroutput><ref refid="class_coefficient_ring_r_a63b417ef02718d6363198e7a83ea71e8_1a63b417ef02718d6363198e7a83ea71e8" kindref="member">clear</ref></computeroutput> by hand. Constructors initialise to zero or copy from an existing element via the ring. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>CoefficientRingR::Element</label>
+        <link refid="class_coefficient_ring_r_1_1_element"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>M2::ElementImpl&lt; ElementType &gt;</label>
+        <link refid="class_m2_1_1_element_impl"/>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>CoefficientRingR::Element</label>
+        <link refid="class_coefficient_ring_r_1_1_element"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ElementType</label>
+      </node>
+      <node id="2">
+        <label>M2::ElementImpl&lt; ElementType &gt;</label>
+        <link refid="class_m2_1_1_element_impl"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/coeffrings.hpp" line="269" column="3" bodyfile="Macaulay2/e/coeffrings.hpp" bodystart="270" bodyend="277"/>
+    <listofallmembers>
+      <member refid="class_coefficient_ring_r_1_1_element_a3dd2a90800051dc3631f149b618f0a14_1a3dd2a90800051dc3631f149b618f0a14" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>Element</name></member>
+      <member refid="class_coefficient_ring_r_1_1_element_a1ecd1179cdbd97775ccc341acbbc98ac_1a1ecd1179cdbd97775ccc341acbbc98ac" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>Element</name></member>
+      <member refid="class_m2_1_1_element_impl_a82ecb671917487995f45cd715c603e84_1a82ecb671917487995f45cd715c603e84" prot="protected" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>ElementImpl</name></member>
+      <member refid="class_m2_1_1_element_impl_a130d818f9cc871522a8edd865fbd5e57_1a130d818f9cc871522a8edd865fbd5e57" prot="protected" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>ElementImpl</name></member>
+      <member refid="class_m2_1_1_element_impl_a5f182a2456a45580dedaaad2ea9d8fac_1a5f182a2456a45580dedaaad2ea9d8fac" prot="protected" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>ElementImpl</name></member>
+      <member refid="class_m2_1_1_element_impl_ae6c733fb339a8923075c438454780906_1ae6c733fb339a8923075c438454780906" prot="protected" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>ElementImpl</name></member>
+      <member refid="class_m2_1_1_element_impl_a813e69907909e31ae97e3c3f20d8fc55_1a813e69907909e31ae97e3c3f20d8fc55" prot="protected" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>ElementImpl</name></member>
+      <member refid="class_m2_1_1_element_impl_ad27575a45232e01307ad52b61a1bed61_1ad27575a45232e01307ad52b61a1bed61" prot="protected" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>mValue</name></member>
+      <member refid="class_m2_1_1_element_impl_abcd20949d46dabb8ffac940cc236b6dd_1abcd20949d46dabb8ffac940cc236b6dd" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator const ElementType &amp;</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator delete[]</name></member>
+      <member refid="class_m2_1_1_element_impl_ac71bed284b0c2494e6d53975808b7755_1ac71bed284b0c2494e6d53975808b7755" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator ElementType &amp;</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator new[]</name></member>
+      <member refid="class_m2_1_1_element_impl_adcec2611060003f70c4875ca7e71c1cb_1adcec2611060003f70c4875ca7e71c1cb" prot="protected" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator=</name></member>
+      <member refid="class_m2_1_1_element_impl_ada257568708403d7445b5721e72ee70d_1ada257568708403d7445b5721e72ee70d" prot="protected" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>operator=</name></member>
+      <member refid="class_m2_1_1_element_impl_a114e53625b3801500bf26a30eb10d856_1a114e53625b3801500bf26a30eb10d856" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>value</name></member>
+      <member refid="class_m2_1_1_element_impl_ae2eb510fd82be33c29df39b35d4b6343_1ae2eb510fd82be33c29df39b35d4b6343" prot="public" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>value</name></member>
+      <member refid="class_m2_1_1_element_impl_a51f0e8cebad2dd2a7cb7903ca04a6985_1a51f0e8cebad2dd2a7cb7903ca04a6985" prot="protected" virt="non-virtual"><scope>CoefficientRingR::Element</scope><name>~ElementImpl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

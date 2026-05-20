@@ -1,0 +1,353 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_b_i_basis_1_1_janet_tree_1_1_iterator" kind="class" language="C++" prot="private">
+    <compoundname>BIBasis::JanetTree::Iterator</compoundname>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_ab0bba6f5764173d12dd0deb4fc38e265_1ab0bba6f5764173d12dd0deb4fc38e265" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_b_i_basis_1_1_janet_tree_1_1_node" kindref="compound">Node</ref> **</type>
+        <definition>Node** BIBasis::JanetTree&lt; MonomType &gt;::Iterator::CurrentNode</definition>
+        <argsstring></argsstring>
+        <name>CurrentNode</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::CurrentNode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="83" column="18" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="83" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a90124afd2787a8f635ed68a9a4450503_1a90124afd2787a8f635ed68a9a4450503" compoundref="janettree_8hpp" startline="270" endline="290">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Build</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a2944f63a276095cedddc57e9c42f425b_1a2944f63a276095cedddc57e9c42f425b" compoundref="janettree_8hpp" startline="293" endline="301">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Delete</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a8707cbb4fc6d8f8ce899b2312e6907bb_1a8707cbb4fc6d8f8ce899b2312e6907bb" compoundref="janettree_8hpp" startline="199" endline="202">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Iterator</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a70c922e26480bea5cc921647eb7981a2_1a70c922e26480bea5cc921647eb7981a2" compoundref="janettree_8hpp" startline="222" endline="225">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::operator bool</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a3beb7640ffa1e3bc33a43b48ab13a1d3_1a3beb7640ffa1e3bc33a43b48ab13a1d3" compoundref="janettree_8hpp" startline="210" endline="213">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::StepNextDegree</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_aa4e021645b2f11a34672c38fd1119e63_1aa4e021645b2f11a34672c38fd1119e63" compoundref="janettree_8hpp" startline="216" endline="219">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::StepNextVariable</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a8707cbb4fc6d8f8ce899b2312e6907bb_1a8707cbb4fc6d8f8ce899b2312e6907bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Iterator</definition>
+        <argsstring>(Node *&amp;node)</argsstring>
+        <name>Iterator</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::Iterator</qualifiedname>
+        <param>
+          <type><ref refid="struct_b_i_basis_1_1_janet_tree_1_1_node" kindref="compound">Node</ref> *&amp;</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="86" column="13" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="199" bodyend="202"/>
+        <references refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_ab0bba6f5764173d12dd0deb4fc38e265_1ab0bba6f5764173d12dd0deb4fc38e265" compoundref="janettree_8hpp" startline="83">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::CurrentNode</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a86a6b4dfa371d39829f974897c09df34_1a86a6b4dfa371d39829f974897c09df34" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::JanetTree&lt; MonomType &gt;::Iterator::~Iterator</definition>
+        <argsstring>()</argsstring>
+        <name>~Iterator</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::~Iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="87" column="13" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="205" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a3beb7640ffa1e3bc33a43b48ab13a1d3_1a3beb7640ffa1e3bc33a43b48ab13a1d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::JanetTree&lt; MonomType &gt;::Iterator::StepNextDegree</definition>
+        <argsstring>()</argsstring>
+        <name>StepNextDegree</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::StepNextDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="89" column="18" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="210" bodyend="213"/>
+        <references refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_ab0bba6f5764173d12dd0deb4fc38e265_1ab0bba6f5764173d12dd0deb4fc38e265" compoundref="janettree_8hpp" startline="83">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::CurrentNode</references>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_ad5306251ee13a8f954ae9ae21c67ec76_1ad5306251ee13a8f954ae9ae21c67ec76" compoundref="janettree_8hpp" startline="418" endline="539">BIBasis::JanetTree&lt; MonomType &gt;::Delete</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_a253cb722111eb529002ad0a5f8042cff_1a253cb722111eb529002ad0a5f8042cff" compoundref="janettree_8hpp" startline="372" endline="415">BIBasis::JanetTree&lt; MonomType &gt;::Insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_aa4e021645b2f11a34672c38fd1119e63_1aa4e021645b2f11a34672c38fd1119e63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::JanetTree&lt; MonomType &gt;::Iterator::StepNextVariable</definition>
+        <argsstring>()</argsstring>
+        <name>StepNextVariable</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::StepNextVariable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="90" column="18" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="216" bodyend="219"/>
+        <references refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_ab0bba6f5764173d12dd0deb4fc38e265_1ab0bba6f5764173d12dd0deb4fc38e265" compoundref="janettree_8hpp" startline="83">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::CurrentNode</references>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_ad5306251ee13a8f954ae9ae21c67ec76_1ad5306251ee13a8f954ae9ae21c67ec76" compoundref="janettree_8hpp" startline="418" endline="539">BIBasis::JanetTree&lt; MonomType &gt;::Delete</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_a253cb722111eb529002ad0a5f8042cff_1a253cb722111eb529002ad0a5f8042cff" compoundref="janettree_8hpp" startline="372" endline="415">BIBasis::JanetTree&lt; MonomType &gt;::Insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a70c922e26480bea5cc921647eb7981a2_1a70c922e26480bea5cc921647eb7981a2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::JanetTree&lt; MonomType &gt;::Iterator::operator bool</definition>
+        <argsstring>() const</argsstring>
+        <name>operator bool</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::operator bool</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="91" column="13" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="222" bodyend="225"/>
+        <references refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_ab0bba6f5764173d12dd0deb4fc38e265_1ab0bba6f5764173d12dd0deb4fc38e265" compoundref="janettree_8hpp" startline="83">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::CurrentNode</references>
+        <references refid="class_b_i_basis_1_1_janet_tree_a104f9d340719181d8eb27f9e70bd195b_1a104f9d340719181d8eb27f9e70bd195b" compoundref="janettree_8hpp" startline="318" endline="321">BIBasis::JanetTree&lt; MonomType &gt;::JanetTree</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a7cac49114da284ebfaa2e9d79afe8884_1a7cac49114da284ebfaa2e9d79afe8884" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_janet_tree_1_1_const_iterator" kindref="compound">ConstIterator</ref></type>
+        <definition>JanetTree&lt; MonomType &gt;::ConstIterator BIBasis::JanetTree&lt; MonomType &gt;::Iterator::GetNextDegree</definition>
+        <argsstring>() const</argsstring>
+        <name>GetNextDegree</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::GetNextDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="92" column="27" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="228" bodyend="231"/>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a532469d905721cbd03bfe20bbf70c506_1a532469d905721cbd03bfe20bbf70c506" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_janet_tree_1_1_const_iterator" kindref="compound">ConstIterator</ref></type>
+        <definition>JanetTree&lt; MonomType &gt;::ConstIterator BIBasis::JanetTree&lt; MonomType &gt;::Iterator::GetNextVariable</definition>
+        <argsstring>() const</argsstring>
+        <name>GetNextVariable</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::GetNextVariable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="93" column="27" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="234" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_ad0b071dc1c1539e4760ce92f921613f1_1ad0b071dc1c1539e4760ce92f921613f1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::JanetTree&lt; MonomType &gt;::Iterator::HasNextDegree</definition>
+        <argsstring>() const</argsstring>
+        <name>HasNextDegree</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::HasNextDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="94" column="18" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="240" bodyend="243"/>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_accabffb159a1139908ab9f77cf8ab7ed_1accabffb159a1139908ab9f77cf8ab7ed" compoundref="janettree_8hpp" startline="304" endline="315">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Clear</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_ad5306251ee13a8f954ae9ae21c67ec76_1ad5306251ee13a8f954ae9ae21c67ec76" compoundref="janettree_8hpp" startline="418" endline="539">BIBasis::JanetTree&lt; MonomType &gt;::Delete</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_a253cb722111eb529002ad0a5f8042cff_1a253cb722111eb529002ad0a5f8042cff" compoundref="janettree_8hpp" startline="372" endline="415">BIBasis::JanetTree&lt; MonomType &gt;::Insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a9ea307d8eda28603fb1e0057a81ee061_1a9ea307d8eda28603fb1e0057a81ee061" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::JanetTree&lt; MonomType &gt;::Iterator::HasNextVariable</definition>
+        <argsstring>() const</argsstring>
+        <name>HasNextVariable</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::HasNextVariable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="95" column="18" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="246" bodyend="249"/>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_ad5306251ee13a8f954ae9ae21c67ec76_1ad5306251ee13a8f954ae9ae21c67ec76" compoundref="janettree_8hpp" startline="418" endline="539">BIBasis::JanetTree&lt; MonomType &gt;::Delete</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a7533f28bd075d85e19e549884bbdb2ec_1a7533f28bd075d85e19e549884bbdb2ec" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::JanetTree&lt; MonomType &gt;::Iterator::operator ConstIterator</definition>
+        <argsstring>() const</argsstring>
+        <name>operator ConstIterator</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::operator ConstIterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="96" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_acc85454fa0e1bf7864208d11d5516f9a_1acc85454fa0e1bf7864208d11d5516f9a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; *&amp;</type>
+        <definition>Triple&lt; MonomType &gt; *&amp; BIBasis::JanetTree&lt; MonomType &gt;::Iterator::GetTriple</definition>
+        <argsstring>() const</argsstring>
+        <name>GetTriple</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::GetTriple</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="97" column="20" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="258" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_abbaf262aad0177f13f24f23aaf4ee055_1abbaf262aad0177f13f24f23aaf4ee055" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>MonomType::Integer</type>
+        <definition>MonomType::Integer BIBasis::JanetTree&lt; MonomType &gt;::Iterator::GetDegree</definition>
+        <argsstring>() const</argsstring>
+        <name>GetDegree</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::GetDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="98" column="41" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="264" bodyend="267"/>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_ad5306251ee13a8f954ae9ae21c67ec76_1ad5306251ee13a8f954ae9ae21c67ec76" compoundref="janettree_8hpp" startline="418" endline="539">BIBasis::JanetTree&lt; MonomType &gt;::Delete</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_a253cb722111eb529002ad0a5f8042cff_1a253cb722111eb529002ad0a5f8042cff" compoundref="janettree_8hpp" startline="372" endline="415">BIBasis::JanetTree&lt; MonomType &gt;::Insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a90124afd2787a8f635ed68a9a4450503_1a90124afd2787a8f635ed68a9a4450503" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Build</definition>
+        <argsstring>(typename MonomType::Integer degree, typename MonomType::Integer var, Triple&lt; MonomType &gt; *triple)</argsstring>
+        <name>Build</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::Build</qualifiedname>
+        <param>
+          <type>typename MonomType::Integer</type>
+          <declname>degree</declname>
+        </param>
+        <param>
+          <type>typename MonomType::Integer</type>
+          <declname>var</declname>
+        </param>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; *</type>
+          <declname>triple</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="99" column="18" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="270" bodyend="290"/>
+        <references refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_ab0bba6f5764173d12dd0deb4fc38e265_1ab0bba6f5764173d12dd0deb4fc38e265" compoundref="janettree_8hpp" startline="83">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::CurrentNode</references>
+        <references refid="struct_b_i_basis_1_1_janet_tree_1_1_node_a1a4733d3db2e6986dbf95652ebdcd7f0_1a1a4733d3db2e6986dbf95652ebdcd7f0" compoundref="janettree_8hpp" startline="52">BIBasis::JanetTree&lt; MonomType &gt;::Node::CurrentTriple</references>
+        <references refid="class_b_i_basis_1_1_triple_af48b57c12a175c35d6d1bde3d88c4325_1af48b57c12a175c35d6d1bde3d88c4325" compoundref="triple_8hpp" startline="159" endline="162">BIBasis::Triple&lt; MonomType &gt;::GetPolynomLm</references>
+        <references refid="struct_b_i_basis_1_1_janet_tree_1_1_node_a9f1d5d353efcf3483f98409d28702622_1a9f1d5d353efcf3483f98409d28702622" compoundref="janettree_8hpp" startline="53">BIBasis::JanetTree&lt; MonomType &gt;::Node::NextDegree</references>
+        <references refid="struct_b_i_basis_1_1_janet_tree_1_1_node_abffd3c2dcf5990b4571c74be641832bd_1abffd3c2dcf5990b4571c74be641832bd" compoundref="janettree_8hpp" startline="54">BIBasis::JanetTree&lt; MonomType &gt;::Node::NextVariable</references>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_a253cb722111eb529002ad0a5f8042cff_1a253cb722111eb529002ad0a5f8042cff" compoundref="janettree_8hpp" startline="372" endline="415">BIBasis::JanetTree&lt; MonomType &gt;::Insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a2944f63a276095cedddc57e9c42f425b_1a2944f63a276095cedddc57e9c42f425b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Delete</definition>
+        <argsstring>()</argsstring>
+        <name>Delete</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::Delete</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="100" column="18" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="293" bodyend="301"/>
+        <references refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_ab0bba6f5764173d12dd0deb4fc38e265_1ab0bba6f5764173d12dd0deb4fc38e265" compoundref="janettree_8hpp" startline="83">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::CurrentNode</references>
+        <references refid="struct_b_i_basis_1_1_janet_tree_1_1_node_a9f1d5d353efcf3483f98409d28702622_1a9f1d5d353efcf3483f98409d28702622" compoundref="janettree_8hpp" startline="53">BIBasis::JanetTree&lt; MonomType &gt;::Node::NextDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_ad5306251ee13a8f954ae9ae21c67ec76_1ad5306251ee13a8f954ae9ae21c67ec76" compoundref="janettree_8hpp" startline="418" endline="539">BIBasis::JanetTree&lt; MonomType &gt;::Delete</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_a57c3afb70b21961589d04009bf21ffcf_1a57c3afb70b21961589d04009bf21ffcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Exclude</definition>
+        <argsstring>()</argsstring>
+        <name>Exclude</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::Exclude</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="101" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_janet_tree_1_1_iterator_accabffb159a1139908ab9f77cf8ab7ed_1accabffb159a1139908ab9f77cf8ab7ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Clear</definition>
+        <argsstring>()</argsstring>
+        <name>Clear</name>
+        <qualifiedname>BIBasis::JanetTree::Iterator::Clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/janettree.hpp" line="102" column="18" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="304" bodyend="315"/>
+        <references refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_accabffb159a1139908ab9f77cf8ab7ed_1accabffb159a1139908ab9f77cf8ab7ed" compoundref="janettree_8hpp" startline="304" endline="315">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Clear</references>
+        <references refid="class_b_i_basis_1_1_janet_tree_ad5306251ee13a8f954ae9ae21c67ec76_1ad5306251ee13a8f954ae9ae21c67ec76" compoundref="janettree_8hpp" startline="418" endline="539">BIBasis::JanetTree&lt; MonomType &gt;::Delete</references>
+        <references refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_ad0b071dc1c1539e4760ce92f921613f1_1ad0b071dc1c1539e4760ce92f921613f1" compoundref="janettree_8hpp" startline="240" endline="243">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::HasNextDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_a07594e495f4747db9ff4da9ab14b256c_1a07594e495f4747db9ff4da9ab14b256c" compoundref="janettree_8hpp" startline="542" endline="549">BIBasis::JanetTree&lt; MonomType &gt;::Clear</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_accabffb159a1139908ab9f77cf8ab7ed_1accabffb159a1139908ab9f77cf8ab7ed" compoundref="janettree_8hpp" startline="304" endline="315">BIBasis::JanetTree&lt; MonomType &gt;::Iterator::Clear</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_janet_tree_ad5306251ee13a8f954ae9ae21c67ec76_1ad5306251ee13a8f954ae9ae21c67ec76" compoundref="janettree_8hpp" startline="418" endline="539">BIBasis::JanetTree&lt; MonomType &gt;::Delete</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>BIBasis::JanetTree&lt; MonomType &gt;::Node</label>
+        <link refid="struct_b_i_basis_1_1_janet_tree_1_1_node"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Degree</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>CurrentTriple</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>NextDegree</edgelabel>
+          <edgelabel>NextVariable</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>BIBasis::JanetTree&lt; MonomType &gt;::Iterator</label>
+        <link refid="class_b_i_basis_1_1_janet_tree_1_1_iterator"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>CurrentNode</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Integer</label>
+      </node>
+      <node id="4">
+        <label>Triple&lt; MonomType &gt; *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/bibasis/janettree.hpp" line="80" column="9" bodyfile="Macaulay2/e/bibasis/janettree.hpp" bodystart="81" bodyend="103"/>
+    <listofallmembers>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a90124afd2787a8f635ed68a9a4450503_1a90124afd2787a8f635ed68a9a4450503" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>Build</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_accabffb159a1139908ab9f77cf8ab7ed_1accabffb159a1139908ab9f77cf8ab7ed" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>Clear</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_ab0bba6f5764173d12dd0deb4fc38e265_1ab0bba6f5764173d12dd0deb4fc38e265" prot="private" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>CurrentNode</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a2944f63a276095cedddc57e9c42f425b_1a2944f63a276095cedddc57e9c42f425b" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>Delete</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a57c3afb70b21961589d04009bf21ffcf_1a57c3afb70b21961589d04009bf21ffcf" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>Exclude</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_abbaf262aad0177f13f24f23aaf4ee055_1abbaf262aad0177f13f24f23aaf4ee055" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>GetDegree</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a7cac49114da284ebfaa2e9d79afe8884_1a7cac49114da284ebfaa2e9d79afe8884" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>GetNextDegree</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a532469d905721cbd03bfe20bbf70c506_1a532469d905721cbd03bfe20bbf70c506" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>GetNextVariable</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_acc85454fa0e1bf7864208d11d5516f9a_1acc85454fa0e1bf7864208d11d5516f9a" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>GetTriple</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_ad0b071dc1c1539e4760ce92f921613f1_1ad0b071dc1c1539e4760ce92f921613f1" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>HasNextDegree</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a9ea307d8eda28603fb1e0057a81ee061_1a9ea307d8eda28603fb1e0057a81ee061" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>HasNextVariable</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a8707cbb4fc6d8f8ce899b2312e6907bb_1a8707cbb4fc6d8f8ce899b2312e6907bb" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>Iterator</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a70c922e26480bea5cc921647eb7981a2_1a70c922e26480bea5cc921647eb7981a2" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>operator bool</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a7533f28bd075d85e19e549884bbdb2ec_1a7533f28bd075d85e19e549884bbdb2ec" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>operator ConstIterator</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a3beb7640ffa1e3bc33a43b48ab13a1d3_1a3beb7640ffa1e3bc33a43b48ab13a1d3" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>StepNextDegree</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_aa4e021645b2f11a34672c38fd1119e63_1aa4e021645b2f11a34672c38fd1119e63" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>StepNextVariable</name></member>
+      <member refid="class_b_i_basis_1_1_janet_tree_1_1_iterator_a86a6b4dfa371d39829f974897c09df34_1a86a6b4dfa371d39829f974897c09df34" prot="public" virt="non-virtual"><scope>BIBasis::JanetTree::Iterator</scope><name>~Iterator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

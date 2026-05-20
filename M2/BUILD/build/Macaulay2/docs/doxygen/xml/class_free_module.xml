@@ -1,0 +1,1891 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_free_module" kind="class" language="C++" prot="public">
+    <compoundname>FreeModule</compoundname>
+    <basecompoundref refid="class_engine_object" prot="public" virt="non-virtual">EngineObject</basecompoundref>
+    <includes refid="freemod_8hpp" local="no">freemod.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_free_module_ae584f38322b79ed1f388b946b198b56e_1ae584f38322b79ed1f388b946b198b56e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Ring</definition>
+        <argsstring></argsstring>
+        <name>Ring</name>
+        <qualifiedname>FreeModule::Ring</qualifiedname>
+        <param>
+          <type><ref refid="class_ring" kindref="compound">Ring</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="63" column="16" bodyfile="Macaulay2/e/freemod.hpp" bodystart="63" bodyend="-1"/>
+        <references refid="class_free_module_ae584f38322b79ed1f388b946b198b56e_1ae584f38322b79ed1f388b946b198b56e" compoundref="freemod_8hpp" startline="63">Ring</references>
+        <referencedby refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</referencedby>
+        <referencedby refid="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" compoundref="freemod_8hpp" startline="98" endline="98">get_ring</referencedby>
+        <referencedby refid="class_free_module_a68503ea604a0c35d56d9bed7c0b17d34_1a68503ea604a0c35d56d9bed7c0b17d34" compoundref="freemod_8cpp" startline="16" endline="20">initialize</referencedby>
+        <referencedby refid="class_free_module_ac2642399f770aa366803c7b60210853f_1ac2642399f770aa366803c7b60210853f" compoundref="freemod_8hpp" startline="64">ResF4toM2Interface</referencedby>
+        <referencedby refid="class_free_module_ae584f38322b79ed1f388b946b198b56e_1ae584f38322b79ed1f388b946b198b56e" compoundref="freemod_8hpp" startline="63">Ring</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_free_module_ac2642399f770aa366803c7b60210853f_1ac2642399f770aa366803c7b60210853f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class ResF4toM2Interface</definition>
+        <argsstring></argsstring>
+        <name>ResF4toM2Interface</name>
+        <qualifiedname>FreeModule::ResF4toM2Interface</qualifiedname>
+        <param>
+          <type><ref refid="class_res_f4to_m2_interface" kindref="compound">ResF4toM2Interface</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="64" column="16" bodyfile="Macaulay2/e/freemod.hpp" bodystart="64" bodyend="-1"/>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_ac2642399f770aa366803c7b60210853f_1ac2642399f770aa366803c7b60210853f" compoundref="freemod_8hpp" startline="64">ResF4toM2Interface</references>
+        <references refid="class_free_module_ae584f38322b79ed1f388b946b198b56e_1ae584f38322b79ed1f388b946b198b56e" compoundref="freemod_8hpp" startline="63">Ring</references>
+        <referencedby refid="class_free_module_ac2642399f770aa366803c7b60210853f_1ac2642399f770aa366803c7b60210853f" compoundref="freemod_8hpp" startline="64">ResF4toM2Interface</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="class_free_module_a61d30064a9a71aad7d4ab73bdd85b770_1a61d30064a9a71aad7d4ab73bdd85b770" prot="protected" static="no" mutable="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="gbring_8hpp_a4b3f8e88af1cc26075f7af0f961adb96_1a4b3f8e88af1cc26075f7af0f961adb96" kindref="member">monomial</ref> &gt;</type>
+        <definition>gc_vector&lt;monomial&gt; FreeModule::components</definition>
+        <argsstring></argsstring>
+        <name>components</name>
+        <qualifiedname>FreeModule::components</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="68" column="13" bodyfile="Macaulay2/e/freemod.hpp" bodystart="68" bodyend="-1"/>
+        <referencedby refid="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" compoundref="freemod_8cpp" startline="130" endline="135">append</referencedby>
+        <referencedby refid="class_free_module_acbdf43ecae68513fd8b6403174782502_1acbdf43ecae68513fd8b6403174782502" compoundref="freemod_8cpp" startline="137" endline="143">append_schreyer</referencedby>
+        <referencedby refid="class_free_module_a699a12b4d0cb0a986dd91c4205d22e99_1a699a12b4d0cb0a986dd91c4205d22e99" compoundref="freemod_8cpp" startline="145" endline="152">change_degree</referencedby>
+        <referencedby refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</referencedby>
+        <referencedby refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" prot="protected" static="no" mutable="no">
+        <type><ref refid="class_schreyer_order" kindref="compound">SchreyerOrder</ref> *</type>
+        <definition>SchreyerOrder* FreeModule::schreyer</definition>
+        <argsstring></argsstring>
+        <name>schreyer</name>
+        <qualifiedname>FreeModule::schreyer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="69" column="17" bodyfile="Macaulay2/e/freemod.hpp" bodystart="69" bodyend="-1"/>
+        <referencedby refid="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" compoundref="freemod_8cpp" startline="130" endline="135">append</referencedby>
+        <referencedby refid="class_free_module_acbdf43ecae68513fd8b6403174782502_1acbdf43ecae68513fd8b6403174782502" compoundref="freemod_8cpp" startline="137" endline="143">append_schreyer</referencedby>
+        <referencedby refid="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" compoundref="freemod_8cpp" startline="296" endline="330">exterior</referencedby>
+        <referencedby refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</referencedby>
+        <referencedby refid="class_free_module_abe948d3c41021e794e83c3f1080f828e_1abe948d3c41021e794e83c3f1080f828e" compoundref="freemod_8cpp" startline="100" endline="118">get_induced_order</referencedby>
+        <referencedby refid="class_free_module_aefd1c1ac1a19459c6cd8fdbfb3b528d7_1aefd1c1ac1a19459c6cd8fdbfb3b528d7" compoundref="freemod_8hpp" startline="99" endline="99">get_schreyer_order</referencedby>
+        <referencedby refid="class_free_module_a68503ea604a0c35d56d9bed7c0b17d34_1a68503ea604a0c35d56d9bed7c0b17d34" compoundref="freemod_8cpp" startline="16" endline="20">initialize</referencedby>
+        <referencedby refid="class_free_module_af87653ed4a51630daac57b958b818197_1af87653ed4a51630daac57b958b818197" compoundref="freemod_8cpp" startline="53" endline="71">make_schreyer</referencedby>
+        <referencedby refid="class_free_module_a933a80de9596f9de723678f079f6fd5d_1a933a80de9596f9de723678f079f6fd5d" compoundref="freemod_8cpp" startline="178" endline="195">shift</referencedby>
+        <referencedby refid="class_free_module_ac284d81e9e059f250499a1045fda03b9_1ac284d81e9e059f250499a1045fda03b9" compoundref="freemod_8cpp" startline="197" endline="209">sub_space</referencedby>
+        <referencedby refid="class_free_module_afa64ce9e1cd6568bbf292cd2557d8fd8_1afa64ce9e1cd6568bbf292cd2557d8fd8" compoundref="freemod_8cpp" startline="211" endline="225">sub_space</referencedby>
+        <referencedby refid="class_free_module_a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4_1a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4" compoundref="freemod_8cpp" startline="393" endline="400">symm</referencedby>
+        <referencedby refid="class_free_module_a4ba7445417116df56e618d2124543e97_1a4ba7445417116df56e618d2124543e97" compoundref="freemod_8cpp" startline="271" endline="294">tensor</referencedby>
+        <referencedby refid="class_free_module_afd1ae0d00811e854aaeedace86331209_1afd1ae0d00811e854aaeedace86331209" compoundref="freemod_8cpp" startline="469" endline="483">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" prot="protected" static="no" mutable="no">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>const Ring* FreeModule::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>FreeModule::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="71" column="14" bodyfile="Macaulay2/e/freemod.hpp" bodystart="71" bodyend="-1"/>
+        <referencedby refid="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" compoundref="freemod_8cpp" startline="130" endline="135">append</referencedby>
+        <referencedby refid="class_free_module_acbdf43ecae68513fd8b6403174782502_1acbdf43ecae68513fd8b6403174782502" compoundref="freemod_8cpp" startline="137" endline="143">append_schreyer</referencedby>
+        <referencedby refid="class_free_module_a699a12b4d0cb0a986dd91c4205d22e99_1a699a12b4d0cb0a986dd91c4205d22e99" compoundref="freemod_8cpp" startline="145" endline="152">change_degree</referencedby>
+        <referencedby refid="class_free_module_a9ff8bbf58e3ac2d95316667d690bf6f9_1a9ff8bbf58e3ac2d95316667d690bf6f9" compoundref="freemod_8cpp" startline="22" endline="30">computeHashValue</referencedby>
+        <referencedby refid="_n_a_g_8cpp_aa49ea4bd7747cc3dc1c587fca105f763_1aa49ea4bd7747cc3dc1c587fca105f763" compoundref="_n_a_g_8cpp" startline="2196" endline="2203">degree_ring_elem</referencedby>
+        <referencedby refid="class_free_module_aeaa0657e0acc01d349c4db33d6ccb382_1aeaa0657e0acc01d349c4db33d6ccb382" compoundref="freemod_8cpp" startline="244" endline="261">direct_sum</referencedby>
+        <referencedby refid="class_s_l_p_aef30843dbfa25598d8f01f2bd748e6df_1aef30843dbfa25598d8f01f2bd748e6df" compoundref="_n_a_g_8cpp" startline="805" endline="911">SLP&lt; Field &gt;::evaluate</referencedby>
+        <referencedby refid="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" compoundref="freemod_8cpp" startline="296" endline="330">exterior</referencedby>
+        <referencedby refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</referencedby>
+        <referencedby refid="class_free_module_abe948d3c41021e794e83c3f1080f828e_1abe948d3c41021e794e83c3f1080f828e" compoundref="freemod_8cpp" startline="100" endline="118">get_induced_order</referencedby>
+        <referencedby refid="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" compoundref="freemod_8hpp" startline="98" endline="98">get_ring</referencedby>
+        <referencedby refid="class_free_module_a68503ea604a0c35d56d9bed7c0b17d34_1a68503ea604a0c35d56d9bed7c0b17d34" compoundref="freemod_8cpp" startline="16" endline="20">initialize</referencedby>
+        <referencedby refid="class_free_module_a91966e5bad28bd403bdb2ee6983a8798_1a91966e5bad28bd403bdb2ee6983a8798" compoundref="freemod_8cpp" startline="154" endline="172">is_equal</referencedby>
+        <referencedby refid="class_s_l_p_a7d8e446160835a7b359f57014acf513b_1a7d8e446160835a7b359f57014acf513b" compoundref="_n_a_g_8cpp" startline="289" endline="350">SLP&lt; Field &gt;::make</referencedby>
+        <referencedby refid="class_free_module_aba946f61514783c0a42e221134172fff_1aba946f61514783c0a42e221134172fff" compoundref="freemod_8cpp" startline="73" endline="98">make_schreyer</referencedby>
+        <referencedby refid="class_free_module_af87653ed4a51630daac57b958b818197_1af87653ed4a51630daac57b958b818197" compoundref="freemod_8cpp" startline="53" endline="71">make_schreyer</referencedby>
+        <referencedby refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" compoundref="freemod_8cpp" startline="125" endline="125">new_free</referencedby>
+        <referencedby refid="class_free_module_aa751493c08cb49dafb6e1b27a84f1b33_1aa751493c08cb49dafb6e1b27a84f1b33" compoundref="freemod_8cpp" startline="438" endline="443">primary_degree</referencedby>
+        <referencedby refid="class_free_module_ac2642399f770aa366803c7b60210853f_1ac2642399f770aa366803c7b60210853f" compoundref="freemod_8hpp" startline="64">ResF4toM2Interface</referencedby>
+        <referencedby refid="class_free_module_a2e1ac36741b96a7c3a2350da9ba84918_1a2e1ac36741b96a7c3a2350da9ba84918" compoundref="freemod_8cpp" startline="413" endline="436">select_by_degrees</referencedby>
+        <referencedby refid="class_free_module_a933a80de9596f9de723678f079f6fd5d_1a933a80de9596f9de723678f079f6fd5d" compoundref="freemod_8cpp" startline="178" endline="195">shift</referencedby>
+        <referencedby refid="class_free_module_a4ba7445417116df56e618d2124543e97_1a4ba7445417116df56e618d2124543e97" compoundref="freemod_8cpp" startline="271" endline="294">tensor</referencedby>
+        <referencedby refid="class_free_module_afd1ae0d00811e854aaeedace86331209_1afd1ae0d00811e854aaeedace86331209" compoundref="freemod_8cpp" startline="469" endline="483">text_out</referencedby>
+        <referencedby refid="class_free_module_a1f5078a18a9521f0e85159928f239c6e_1a1f5078a18a9521f0e85159928f239c6e" compoundref="freemod_8cpp" startline="227" endline="242">transpose</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FreeModule::FreeModule</definition>
+        <argsstring>(const Ring *R, int n, bool has_schreyer_order)</argsstring>
+        <name>FreeModule</name>
+        <qualifiedname>FreeModule::FreeModule</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>has_schreyer_order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="65" column="3" bodyfile="Macaulay2/e/freemod.cpp" bodystart="32" bodyend="51"/>
+        <references refid="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" compoundref="freemod_8cpp" startline="130" endline="135">append</references>
+        <references refid="class_schreyer_order_a617f135fc25e9f7bf57615a4d5ce7c22_1a617f135fc25e9f7bf57615a4d5ce7c22" compoundref="schorder_8cpp" startline="11" endline="16">SchreyerOrder::create</references>
+        <references refid="class_polynomial_ring_a6cf397b11498a6d0cd65d20898bd697c_1a6cf397b11498a6d0cd65d20898bd697c" compoundref="_macaulay2_2e_2polyring_8hpp" startline="278" endline="278">PolynomialRing::getMonoid</references>
+        <references refid="class_free_module_a68503ea604a0c35d56d9bed7c0b17d34_1a68503ea604a0c35d56d9bed7c0b17d34" compoundref="freemod_8cpp" startline="16" endline="20">initialize</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_ae584f38322b79ed1f388b946b198b56e_1ae584f38322b79ed1f388b946b198b56e" compoundref="freemod_8hpp" startline="63">Ring</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="class_free_module_aeaa0657e0acc01d349c4db33d6ccb382_1aeaa0657e0acc01d349c4db33d6ccb382" compoundref="freemod_8cpp" startline="244" endline="261">direct_sum</referencedby>
+        <referencedby refid="class_free_module_a789de5a06757f51e7e945a445e410a50_1a789de5a06757f51e7e945a445e410a50" compoundref="freemod_8cpp" startline="263" endline="269">direct_sum_to</referencedby>
+        <referencedby refid="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" compoundref="freemod_8cpp" startline="296" endline="330">exterior</referencedby>
+        <referencedby refid="class_free_module_abe948d3c41021e794e83c3f1080f828e_1abe948d3c41021e794e83c3f1080f828e" compoundref="freemod_8cpp" startline="100" endline="118">get_induced_order</referencedby>
+        <referencedby refid="class_free_module_a91966e5bad28bd403bdb2ee6983a8798_1a91966e5bad28bd403bdb2ee6983a8798" compoundref="freemod_8cpp" startline="154" endline="172">is_equal</referencedby>
+        <referencedby refid="class_free_module_aba946f61514783c0a42e221134172fff_1aba946f61514783c0a42e221134172fff" compoundref="freemod_8cpp" startline="73" endline="98">make_schreyer</referencedby>
+        <referencedby refid="class_free_module_af87653ed4a51630daac57b958b818197_1af87653ed4a51630daac57b958b818197" compoundref="freemod_8cpp" startline="53" endline="71">make_schreyer</referencedby>
+        <referencedby refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" compoundref="freemod_8cpp" startline="125" endline="125">new_free</referencedby>
+        <referencedby refid="class_free_module_adb9058114cf8321f7c64b29395f6c921_1adb9058114cf8321f7c64b29395f6c921">schur</referencedby>
+        <referencedby refid="class_free_module_a933a80de9596f9de723678f079f6fd5d_1a933a80de9596f9de723678f079f6fd5d" compoundref="freemod_8cpp" startline="178" endline="195">shift</referencedby>
+        <referencedby refid="class_free_module_ac284d81e9e059f250499a1045fda03b9_1ac284d81e9e059f250499a1045fda03b9" compoundref="freemod_8cpp" startline="197" endline="209">sub_space</referencedby>
+        <referencedby refid="class_free_module_afa64ce9e1cd6568bbf292cd2557d8fd8_1afa64ce9e1cd6568bbf292cd2557d8fd8" compoundref="freemod_8cpp" startline="211" endline="225">sub_space</referencedby>
+        <referencedby refid="class_free_module_a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4_1a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4" compoundref="freemod_8cpp" startline="393" endline="400">symm</referencedby>
+        <referencedby refid="class_free_module_a4ba7445417116df56e618d2124543e97_1a4ba7445417116df56e618d2124543e97" compoundref="freemod_8cpp" startline="271" endline="294">tensor</referencedby>
+        <referencedby refid="class_free_module_a1f5078a18a9521f0e85159928f239c6e_1a1f5078a18a9521f0e85159928f239c6e" compoundref="freemod_8cpp" startline="227" endline="242">transpose</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_free_module_a9ff8bbf58e3ac2d95316667d690bf6f9_1a9ff8bbf58e3ac2d95316667d690bf6f9" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int FreeModule::computeHashValue</definition>
+        <argsstring>() const</argsstring>
+        <name>computeHashValue</name>
+        <qualifiedname>FreeModule::computeHashValue</qualifiedname>
+        <reimplements refid="class_engine_object_a5d41cd24b788df6502ef4359593fd046_1a5d41cd24b788df6502ef4359593fd046">computeHashValue</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="74" column="24" bodyfile="Macaulay2/e/freemod.cpp" bodystart="22" bodyend="30"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a68503ea604a0c35d56d9bed7c0b17d34_1a68503ea604a0c35d56d9bed7c0b17d34" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void FreeModule::initialize</definition>
+        <argsstring>(const Ring *RR)</argsstring>
+        <name>initialize</name>
+        <qualifiedname>FreeModule::initialize</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>RR</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="76" column="8" bodyfile="Macaulay2/e/freemod.cpp" bodystart="16" bodyend="20"/>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_ae584f38322b79ed1f388b946b198b56e_1ae584f38322b79ed1f388b946b198b56e" compoundref="freemod_8hpp" startline="63">Ring</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::new_free</definition>
+        <argsstring>() const</argsstring>
+        <name>new_free</name>
+        <qualifiedname>FreeModule::new_free</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="78" column="22" bodyfile="Macaulay2/e/freemod.cpp" bodystart="125" bodyend="125"/>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <referencedby refid="class_free_module_aeaa0657e0acc01d349c4db33d6ccb382_1aeaa0657e0acc01d349c4db33d6ccb382" compoundref="freemod_8cpp" startline="244" endline="261">direct_sum</referencedby>
+        <referencedby refid="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" compoundref="freemod_8cpp" startline="296" endline="330">exterior</referencedby>
+        <referencedby refid="class_free_module_a933a80de9596f9de723678f079f6fd5d_1a933a80de9596f9de723678f079f6fd5d" compoundref="freemod_8cpp" startline="178" endline="195">shift</referencedby>
+        <referencedby refid="class_free_module_ac284d81e9e059f250499a1045fda03b9_1ac284d81e9e059f250499a1045fda03b9" compoundref="freemod_8cpp" startline="197" endline="209">sub_space</referencedby>
+        <referencedby refid="class_free_module_afa64ce9e1cd6568bbf292cd2557d8fd8_1afa64ce9e1cd6568bbf292cd2557d8fd8" compoundref="freemod_8cpp" startline="211" endline="225">sub_space</referencedby>
+        <referencedby refid="class_free_module_a4ba7445417116df56e618d2124543e97_1a4ba7445417116df56e618d2124543e97" compoundref="freemod_8cpp" startline="271" endline="294">tensor</referencedby>
+        <referencedby refid="class_free_module_a1f5078a18a9521f0e85159928f239c6e_1a1f5078a18a9521f0e85159928f239c6e" compoundref="freemod_8cpp" startline="227" endline="242">transpose</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_free_module_af87653ed4a51630daac57b958b818197_1af87653ed4a51630daac57b958b818197" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::make_schreyer</definition>
+        <argsstring>(const Matrix *m)</argsstring>
+        <name>make_schreyer</name>
+        <qualifiedname>FreeModule::make_schreyer</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="81" column="21" bodyfile="Macaulay2/e/freemod.cpp" bodystart="53" bodyend="71"/>
+        <references refid="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" compoundref="freemod_8cpp" startline="130" endline="135">append</references>
+        <references refid="class_ring_a73bec90f6a8598b3c5cdc201b068589a_1a73bec90f6a8598b3c5cdc201b068589a" compoundref="ring_8hpp" startline="241" endline="241">Ring::cast_to_PolynomialRing</references>
+        <references refid="class_matrix_aba7778b059d190d32428a475ef5abd47_1aba7778b059d190d32428a475ef5abd47" compoundref="matrix_8hpp" startline="141" endline="141">Matrix::cols</references>
+        <references refid="class_schreyer_order_a617f135fc25e9f7bf57615a4d5ce7c22_1a617f135fc25e9f7bf57615a4d5ce7c22" compoundref="schorder_8cpp" startline="11" endline="16">SchreyerOrder::create</references>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="class_matrix_a0bceb9b9d23e40a81ac64f6c112ef441_1a0bceb9b9d23e40a81ac64f6c112ef441" compoundref="matrix_8hpp" startline="130" endline="130">Matrix::get_ring</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="class_g_b_kernel_computation_ad0faf7331099e1ae097bac885025cc2e_1ad0faf7331099e1ae097bac885025cc2e" compoundref="_eschreyer_8cpp" startline="67" endline="89">GBKernelComputation::GBKernelComputation</referencedby>
+        <referencedby refid="freemodule_8cpp_ade4313686fc113911c0bcd844ef8bcab_1ade4313686fc113911c0bcd844ef8bcab" compoundref="freemodule_8cpp" startline="75" endline="85">IM2_FreeModule_make_schreyer</referencedby>
+        <referencedby refid="struct_g_b_matrix_a23b2b9f6d947a4cad8d133a130dc9074_1a23b2b9f6d947a4cad8d133a130dc9074" compoundref="_eschreyer_8cpp" startline="53" endline="65">GBMatrix::to_matrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_aba946f61514783c0a42e221134172fff_1aba946f61514783c0a42e221134172fff" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::make_schreyer</definition>
+        <argsstring>(const GBMatrix *m)</argsstring>
+        <name>make_schreyer</name>
+        <qualifiedname>FreeModule::make_schreyer</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_g_b_matrix" kindref="compound">GBMatrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="82" column="21" bodyfile="Macaulay2/e/freemod.cpp" bodystart="73" bodyend="98"/>
+        <references refid="class_ring_a73bec90f6a8598b3c5cdc201b068589a_1a73bec90f6a8598b3c5cdc201b068589a" compoundref="ring_8hpp" startline="241" endline="241">Ring::cast_to_PolynomialRing</references>
+        <references refid="class_schreyer_order_a617f135fc25e9f7bf57615a4d5ce7c22_1a617f135fc25e9f7bf57615a4d5ce7c22" compoundref="schorder_8cpp" startline="11" endline="16">SchreyerOrder::create</references>
+        <references refid="struct_g_b_matrix_a9c32aada63157ee3f787e6c0f9bcdbd8_1a9c32aada63157ee3f787e6c0f9bcdbd8" compoundref="_eschreyer_8hpp" startline="52">GBMatrix::elems</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="struct_g_b_matrix_a9515fc0ed27ea3e51e9072bef3c3381b_1a9515fc0ed27ea3e51e9072bef3c3381b" compoundref="_eschreyer_8hpp" startline="57" endline="57">GBMatrix::get_free_module</references>
+        <references refid="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" compoundref="freemod_8hpp" startline="98" endline="98">get_ring</references>
+        <references refid="style_8hpp_ae9befcbff10f3a4ff986f206da609a90_1ae9befcbff10f3a4ff986f206da609a90" compoundref="style_8hpp" startline="35">INTSIZE</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_free_module_abe948d3c41021e794e83c3f1080f828e_1abe948d3c41021e794e83c3f1080f828e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>Matrix * FreeModule::get_induced_order</definition>
+        <argsstring>() const</argsstring>
+        <name>get_induced_order</name>
+        <qualifiedname>FreeModule::get_induced_order</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="84" column="10" bodyfile="Macaulay2/e/freemod.cpp" bodystart="100" bodyend="118"/>
+        <references refid="class_schreyer_order_ae87b390dc5085de0fa8241bd4d3d56e6_1ae87b390dc5085de0fa8241bd4d3d56e6" compoundref="schorder_8hpp" startline="87" endline="87">SchreyerOrder::base_monom</references>
+        <references refid="class_schreyer_order_ae7370d5ac9ae569ae3cba24c3c63cdc9_1ae7370d5ac9ae569ae3cba24c3c63cdc9" compoundref="schorder_8hpp" startline="86" endline="86">SchreyerOrder::compare_num</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="class_ring_a6f6b08df2379200116484876c4fd2d87_1a6f6b08df2379200116484876c4fd2d87">Ring::from_long</references>
+        <references refid="class_polynomial_ring_ab1df58ad0edec3c434ad9bdd193a1d9e_1ab1df58ad0edec3c434ad9bdd193a1d9e" compoundref="_macaulay2_2e_2polyring_8hpp" startline="273" endline="273">PolynomialRing::getCoefficients</references>
+        <references refid="class_polynomial_ring_a98b2e44941716f33a2f2f2d9e2344983_1a98b2e44941716f33a2f2f2d9e2344983">PolynomialRing::make_flat_term</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <references refid="class_matrix_constructor_a719118a871e65c356db8ea6ce844d6ce_1a719118a871e65c356db8ea6ce844d6ce" compoundref="matrix-con_8cpp" startline="54" endline="57">MatrixConstructor::set_entry</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+        <referencedby refid="freemodule_8cpp_a41d7b8e1ab1ab1c8aa71d57809bce5a9_1a41d7b8e1ab1ab1c8aa71d57809bce5a9" compoundref="freemodule_8cpp" startline="98" endline="101">IM2_FreeModule_get_schreyer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a08d253105b71777344b5a0c557f79cfe_1a08d253105b71777344b5a0c557f79cfe" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>FreeModule::~FreeModule</definition>
+        <argsstring>()</argsstring>
+        <name>~FreeModule</name>
+        <qualifiedname>FreeModule::~FreeModule</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="86" column="11" bodyfile="Macaulay2/e/freemod.cpp" bodystart="120" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void FreeModule::append</definition>
+        <argsstring>(const_monomial d)</argsstring>
+        <name>append</name>
+        <qualifiedname>FreeModule::append</qualifiedname>
+        <param>
+          <type><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref></type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="89" column="8" bodyfile="Macaulay2/e/freemod.cpp" bodystart="130" bodyend="135"/>
+        <references refid="class_free_module_a61d30064a9a71aad7d4ab73bdd85b770_1a61d30064a9a71aad7d4ab73bdd85b770" compoundref="freemod_8hpp" startline="68">components</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="class_matrix_constructor_a82cd5af150336ac9a4cb9c5670e4c0ea_1a82cd5af150336ac9a4cb9c5670e4c0ea" compoundref="matrix-con_8cpp" startline="43" endline="52">MatrixConstructor::append</referencedby>
+        <referencedby refid="class_free_module_a789de5a06757f51e7e945a445e410a50_1a789de5a06757f51e7e945a445e410a50" compoundref="freemod_8cpp" startline="263" endline="269">direct_sum_to</referencedby>
+        <referencedby refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</referencedby>
+        <referencedby refid="freemodule_8cpp_abf7ca14483cb39bcd62d8c5ce58a959e_1abf7ca14483cb39bcd62d8c5ce58a959e" compoundref="freemodule_8cpp" startline="42" endline="73">IM2_FreeModule_make_degs</referencedby>
+        <referencedby refid="class_free_module_af87653ed4a51630daac57b958b818197_1af87653ed4a51630daac57b958b818197" compoundref="freemod_8cpp" startline="53" endline="71">make_schreyer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_acbdf43ecae68513fd8b6403174782502_1acbdf43ecae68513fd8b6403174782502" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void FreeModule::append_schreyer</definition>
+        <argsstring>(const_monomial d, const_monomial base_monom, int compare_num)</argsstring>
+        <name>append_schreyer</name>
+        <qualifiedname>FreeModule::append_schreyer</qualifiedname>
+        <param>
+          <type><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref></type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref></type>
+          <declname>base_monom</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>compare_num</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="90" column="8" bodyfile="Macaulay2/e/freemod.cpp" bodystart="137" bodyend="143"/>
+        <references refid="factory_8cpp_a4f4813fca034f6aee039295c5e1f4d48_1a4f4813fca034f6aee039295c5e1f4d48" compoundref="factory_8cpp" startline="289">base</references>
+        <references refid="class_free_module_a61d30064a9a71aad7d4ab73bdd85b770_1a61d30064a9a71aad7d4ab73bdd85b770" compoundref="freemod_8hpp" startline="68">components</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="classgbres__comp_a9b87f27dd19d3bc5a1c91ed230e80dfc_1a9b87f27dd19d3bc5a1c91ed230e80dfc" compoundref="res-a2_8cpp" startline="79" endline="150">gbres_comp::setup</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a699a12b4d0cb0a986dd91c4205d22e99_1a699a12b4d0cb0a986dd91c4205d22e99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void FreeModule::change_degree</definition>
+        <argsstring>(int i, const_monomial deg)</argsstring>
+        <name>change_degree</name>
+        <qualifiedname>FreeModule::change_degree</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref></type>
+          <declname>deg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="95" column="8" bodyfile="Macaulay2/e/freemod.cpp" bodystart="145" bodyend="152"/>
+        <references refid="class_free_module_a61d30064a9a71aad7d4ab73bdd85b770_1a61d30064a9a71aad7d4ab73bdd85b770" compoundref="freemod_8hpp" startline="68">components</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <referencedby refid="class_matrix_constructor_a1122ebc8257b13640765fc82c123cfc0_1a1122ebc8257b13640765fc82c123cfc0" compoundref="matrix-con_8cpp" startline="79" endline="91">MatrixConstructor::compute_column_degree</referencedby>
+        <referencedby refid="class_matrix_constructor_a66338637400fc34b573d35d09649ba86_1a66338637400fc34b573d35d09649ba86" compoundref="matrix-con_8cpp" startline="69" endline="77">MatrixConstructor::set_column_degree</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>const Ring * FreeModule::get_ring</definition>
+        <argsstring>() const</argsstring>
+        <name>get_ring</name>
+        <qualifiedname>FreeModule::get_ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="98" column="14" bodyfile="Macaulay2/e/freemod.hpp" bodystart="98" bodyend="98"/>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_ae584f38322b79ed1f388b946b198b56e_1ae584f38322b79ed1f388b946b198b56e" compoundref="freemod_8hpp" startline="63">Ring</references>
+        <referencedby refid="matrix_8cpp_a5a9bc857316007ad2dc636ed01e6f224_1a5a9bc857316007ad2dc636ed01e6f224" compoundref="matrix_8cpp" startline="1807" endline="1850">coeffs_of_vec</referencedby>
+        <referencedby refid="class_schreyer_order_a3208fb78670aa565bdb57b28a3d36c2c_1a3208fb78670aa565bdb57b28a3d36c2c" compoundref="schorder_8cpp" startline="80" endline="131">SchreyerOrder::create</referencedby>
+        <referencedby refid="class_matrix_a07365f871f81379e105eb23dd87e6ddf_1a07365f871f81379e105eb23dd87e6ddf" compoundref="matrix_8cpp" startline="547" endline="564">Matrix::flip</referencedby>
+        <referencedby refid="class_f4to_m2_interface_a033aaf936047f35de1074ebf222882b4_1a033aaf936047f35de1074ebf222882b4" compoundref="f4-m2-interface_8cpp" startline="19" endline="56">F4toM2Interface::from_M2_vec</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_acc204e41c5b849dbddd230a5c121f070_1acc204e41c5b849dbddd230a5c121f070" compoundref="res-f4-m2-interface_8cpp" startline="42" endline="92">ResF4toM2Interface::from_M2_vec</referencedby>
+        <referencedby refid="class_g_b_weight_acfa66e43cc0b933f248623934fb5843e_1acfa66e43cc0b933f248623934fb5843e" compoundref="gbweight_8cpp" startline="7" endline="56">GBWeight::GBWeight</referencedby>
+        <referencedby refid="class_matrix_a4d3557e66979bf54c98290b74720522b_1a4d3557e66979bf54c98290b74720522b" compoundref="matrix_8cpp" startline="380" endline="387">Matrix::identity</referencedby>
+        <referencedby refid="freemodule_8cpp_ad863e2d26329acf6fb844e5df2b8e17b_1ad863e2d26329acf6fb844e5df2b8e17b" compoundref="freemodule_8cpp" startline="87" endline="96">IM2_FreeModule_get_degrees</referencedby>
+        <referencedby refid="freemodule_8cpp_a0155b380ddfe3c30b0ec590cff658795_1a0155b380ddfe3c30b0ec590cff658795" compoundref="freemodule_8cpp" startline="15" endline="15">IM2_FreeModule_ring</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a42f21e69bac4621c18d9e7e1c1b0672b_1a42f21e69bac4621c18d9e7e1c1b0672b" compoundref="interface_2matrix_8cpp" startline="328" endline="367">IM2_Matrix_concat</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_aedbcae08b1e63e63178cc13a8b124f9e_1aedbcae08b1e63e63178cc13a8b124f9e" compoundref="interface_2matrix_8cpp" startline="792" endline="820">IM2_Matrix_lift</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_ad14051ecc7f0f16e8253832d9678a503_1ad14051ecc7f0f16e8253832d9678a503" compoundref="interface_2matrix_8cpp" startline="764" endline="790">IM2_Matrix_promote</referencedby>
+        <referencedby refid="class_free_module_a91966e5bad28bd403bdb2ee6983a8798_1a91966e5bad28bd403bdb2ee6983a8798" compoundref="freemod_8cpp" startline="154" endline="172">is_equal</referencedby>
+        <referencedby refid="class_matrix_ac14605e67146c78ef9de97294001f254_1ac14605e67146c78ef9de97294001f254" compoundref="matrix_8cpp" startline="1225" endline="1270">Matrix::koszul</referencedby>
+        <referencedby refid="class_matrix_a8168177053a192daeebb81a8027c0fec_1a8168177053a192daeebb81a8027c0fec" compoundref="matrix_8cpp" startline="1162" endline="1223">Matrix::koszul_monomials</referencedby>
+        <referencedby refid="class_matrix_a01a6aa156b0b72f71215f85afa104a5e_1a01a6aa156b0b72f71215f85afa104a5e" compoundref="matrix_8cpp" startline="93" endline="141">Matrix::make</referencedby>
+        <referencedby refid="class_matrix_a5928ddd99cca58612541637d050d5eb1_1a5928ddd99cca58612541637d050d5eb1" compoundref="matrix_8cpp" startline="60" endline="92">Matrix::make</referencedby>
+        <referencedby refid="class_free_module_aba946f61514783c0a42e221134172fff_1aba946f61514783c0a42e221134172fff" compoundref="freemod_8cpp" startline="73" endline="98">make_schreyer</referencedby>
+        <referencedby refid="class_matrix_a735b4ef23f1399f0851899d885d1132f_1a735b4ef23f1399f0851899d885d1132f" compoundref="matrix_8cpp" startline="205" endline="226">Matrix::make_sparse</referencedby>
+        <referencedby refid="class_matrix_afdc3a703f952f81f361f170d561ad297_1afdc3a703f952f81f361f170d561ad297" compoundref="matrix_8cpp" startline="143" endline="189">Matrix::make_sparse_vecs</referencedby>
+        <referencedby refid="class_matrix_stream_adac9ba46e35a0102872b65634ab14c21_1adac9ba46e35a0102872b65634ab14c21" compoundref="matrix-stream_8cpp" startline="3" endline="11">MatrixStream::MatrixStream</referencedby>
+        <referencedby refid="matrix_8cpp_a4f13d3c8e74445cda518d947eae7032f_1a4f13d3c8e74445cda518d947eae7032f" compoundref="matrix_8cpp" startline="1615" endline="1637">NCMonomialMatrix</referencedby>
+        <referencedby refid="class_matrix_a8df44b36d8956478a1cb1c88aed9a3d5_1a8df44b36d8956478a1cb1c88aed9a3d5" compoundref="matrix_8cpp" startline="260" endline="279">Matrix::remake</referencedby>
+        <referencedby refid="class_matrix_a61fbe430ff761fffc77382fe3ed60e34_1a61fbe430ff761fffc77382fe3ed60e34" compoundref="matrix_8cpp" startline="228" endline="258">Matrix::remake</referencedby>
+        <referencedby refid="classgb2__comp_a20af8990a8b4adc14304e48b9cb4ff5c_1a20af8990a8b4adc14304e48b9cb4ff5c" compoundref="res-a2-gb_8cpp" startline="11" endline="73">gb2_comp::setup</referencedby>
+        <referencedby refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" compoundref="f4-m2-interface_8cpp" startline="72" endline="128">F4toM2Interface::to_M2_vec</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a415999e709aee01dbad7f071b9f0a00f_1a415999e709aee01dbad7f071b9f0a00f" compoundref="res-f4-m2-interface_8cpp" startline="94" endline="149">ResF4toM2Interface::to_M2_vec</referencedby>
+        <referencedby refid="class_matrix_ab92f19b1b737cf400e6345a29ec407ec_1ab92f19b1b737cf400e6345a29ec407ec" compoundref="matrix_8cpp" startline="566" endline="586">Matrix::transpose</referencedby>
+        <referencedby refid="class_matrix_a4810c746604ea9b7aad22672388e0817_1a4810c746604ea9b7aad22672388e0817" compoundref="matrix_8cpp" startline="1272" endline="1314">Matrix::wedge_product</referencedby>
+        <referencedby refid="class_matrix_a7d3c5f5d258025df9b8f1513a2373611_1a7d3c5f5d258025df9b8f1513a2373611" compoundref="matrix_8cpp" startline="369" endline="378">Matrix::zero</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_aefd1c1ac1a19459c6cd8fdbfb3b528d7_1aefd1c1ac1a19459c6cd8fdbfb3b528d7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_schreyer_order" kindref="compound">SchreyerOrder</ref> *</type>
+        <definition>const SchreyerOrder * FreeModule::get_schreyer_order</definition>
+        <argsstring>() const</argsstring>
+        <name>get_schreyer_order</name>
+        <qualifiedname>FreeModule::get_schreyer_order</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="99" column="23" bodyfile="Macaulay2/e/freemod.hpp" bodystart="99" bodyend="99"/>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="class_schreyer_order_a3208fb78670aa565bdb57b28a3d36c2c_1a3208fb78670aa565bdb57b28a3d36c2c" compoundref="schorder_8cpp" startline="80" endline="131">SchreyerOrder::create</referencedby>
+        <referencedby refid="class_schreyer_order_ae27a0c303cdaee837b034b6d5a71cea5_1ae27a0c303cdaee837b034b6d5a71cea5" compoundref="schorder_8cpp" startline="29" endline="78">SchreyerOrder::create</referencedby>
+        <referencedby refid="class_g_b_ring_a905b35d3951130dfa1a1a4f1c2451934_1a905b35d3951130dfa1a1a4f1c2451934" compoundref="gbring_8cpp" startline="922" endline="942">GBRing::find_reduction_monomial</referencedby>
+        <referencedby refid="class_g_b_ring_aeb6e7165284697483910f5c635b6389c_1aeb6e7165284697483910f5c635b6389c" compoundref="gbring_8cpp" startline="541" endline="555">GBRing::gbvector_get_lead_exponents</referencedby>
+        <referencedby refid="class_g_b_ring_a2c8da52ae046ea9ed0fa12cb77d78412_1a2c8da52ae046ea9ed0fa12cb77d78412" compoundref="gbring_8cpp" startline="528" endline="539">GBRing::gbvector_get_lead_monomial</referencedby>
+        <referencedby refid="class_g_b_ring_aa773f8670bdf4385326634e96f661bc6_1aa773f8670bdf4385326634e96f661bc6" compoundref="gbring_8cpp" startline="329" endline="343">GBRing::gbvector_term</referencedby>
+        <referencedby refid="class_g_b_ring_a868fb80c116b163e82cd604d5c2d94fb_1a868fb80c116b163e82cd604d5c2d94fb" compoundref="gbring_8cpp" startline="300" endline="314">GBRing::gbvector_term</referencedby>
+        <referencedby refid="class_g_b_ring_aef4ad183dcbea0c44fda44d421acff12_1aef4ad183dcbea0c44fda44d421acff12" compoundref="gbring_8cpp" startline="345" endline="364">GBRing::gbvector_term_exponents</referencedby>
+        <referencedby refid="classres__comp_ae108ff4a215d6b7df2674cccfec1652c_1ae108ff4a215d6b7df2674cccfec1652c" compoundref="res-a1_8cpp" startline="14" endline="115">res_comp::initialize</referencedby>
+        <referencedby refid="class_g_b_ring_a11b185a808d5cf7c23ef7ef1d0365e9a_1a11b185a808d5cf7c23ef7ef1d0365e9a" compoundref="gbring_8cpp" startline="839" endline="853">GBRing::mult_by_term</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref></type>
+        <definition>const_monomial FreeModule::degree</definition>
+        <argsstring>(int i) const</argsstring>
+        <name>degree</name>
+        <qualifiedname>FreeModule::degree</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="100" column="18" bodyfile="Macaulay2/e/freemod.hpp" bodystart="100" bodyend="100"/>
+        <references refid="class_free_module_a61d30064a9a71aad7d4ab73bdd85b770_1a61d30064a9a71aad7d4ab73bdd85b770" compoundref="freemod_8hpp" startline="68">components</references>
+        <referencedby refid="class_free_module_a9ff8bbf58e3ac2d95316667d690bf6f9_1a9ff8bbf58e3ac2d95316667d690bf6f9" compoundref="freemod_8cpp" startline="22" endline="30">computeHashValue</referencedby>
+        <referencedby refid="class_free_module_aeaa0657e0acc01d349c4db33d6ccb382_1aeaa0657e0acc01d349c4db33d6ccb382" compoundref="freemod_8cpp" startline="244" endline="261">direct_sum</referencedby>
+        <referencedby refid="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" compoundref="freemod_8cpp" startline="296" endline="330">exterior</referencedby>
+        <referencedby refid="class_g_b_ring_add4ac00b67f4b9173f987f9feba981ab_1add4ac00b67f4b9173f987f9feba981ab" compoundref="gbring_8cpp" startline="399" endline="411">GBRing::gbvector_multidegree</referencedby>
+        <referencedby refid="freemodule_8cpp_ad863e2d26329acf6fb844e5df2b8e17b_1ad863e2d26329acf6fb844e5df2b8e17b" compoundref="freemodule_8cpp" startline="87" endline="96">IM2_FreeModule_get_degrees</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a42f21e69bac4621c18d9e7e1c1b0672b_1a42f21e69bac4621c18d9e7e1c1b0672b" compoundref="interface_2matrix_8cpp" startline="328" endline="367">IM2_Matrix_concat</referencedby>
+        <referencedby refid="class_free_module_a91966e5bad28bd403bdb2ee6983a8798_1a91966e5bad28bd403bdb2ee6983a8798" compoundref="freemod_8cpp" startline="154" endline="172">is_equal</referencedby>
+        <referencedby refid="class_free_module_af87653ed4a51630daac57b958b818197_1af87653ed4a51630daac57b958b818197" compoundref="freemod_8cpp" startline="53" endline="71">make_schreyer</referencedby>
+        <referencedby refid="class_free_module_aa751493c08cb49dafb6e1b27a84f1b33_1aa751493c08cb49dafb6e1b27a84f1b33" compoundref="freemod_8cpp" startline="438" endline="443">primary_degree</referencedby>
+        <referencedby refid="class_free_module_a2e1ac36741b96a7c3a2350da9ba84918_1a2e1ac36741b96a7c3a2350da9ba84918" compoundref="freemod_8cpp" startline="413" endline="436">select_by_degrees</referencedby>
+        <referencedby refid="classgbres__comp_a9b87f27dd19d3bc5a1c91ed230e80dfc_1a9b87f27dd19d3bc5a1c91ed230e80dfc" compoundref="res-a2_8cpp" startline="79" endline="150">gbres_comp::setup</referencedby>
+        <referencedby refid="class_free_module_a933a80de9596f9de723678f079f6fd5d_1a933a80de9596f9de723678f079f6fd5d" compoundref="freemod_8cpp" startline="178" endline="195">shift</referencedby>
+        <referencedby refid="class_free_module_ac284d81e9e059f250499a1045fda03b9_1ac284d81e9e059f250499a1045fda03b9" compoundref="freemod_8cpp" startline="197" endline="209">sub_space</referencedby>
+        <referencedby refid="class_free_module_afa64ce9e1cd6568bbf292cd2557d8fd8_1afa64ce9e1cd6568bbf292cd2557d8fd8" compoundref="freemod_8cpp" startline="211" endline="225">sub_space</referencedby>
+        <referencedby refid="class_free_module_a4ba7445417116df56e618d2124543e97_1a4ba7445417116df56e618d2124543e97" compoundref="freemod_8cpp" startline="271" endline="294">tensor</referencedby>
+        <referencedby refid="class_free_module_afd1ae0d00811e854aaeedace86331209_1afd1ae0d00811e854aaeedace86331209" compoundref="freemod_8cpp" startline="469" endline="483">text_out</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_abdfd511871a11dc2bca02e3177e81035_1abdfd511871a11dc2bca02e3177e81035" compoundref="res-f4-m2-interface_8cpp" startline="183" endline="218">ResF4toM2Interface::to_M2_freemodule</referencedby>
+        <referencedby refid="class_free_module_a1f5078a18a9521f0e85159928f239c6e_1a1f5078a18a9521f0e85159928f239c6e" compoundref="freemod_8cpp" startline="227" endline="242">transpose</referencedby>
+        <referencedby refid="class_ring_a9636ecda53db3a0e2be48df5db565a12_1a9636ecda53db3a0e2be48df5db565a12" compoundref="ring-vecs_8cpp" startline="828" endline="852">Ring::vec_is_homogeneous</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int FreeModule::rank</definition>
+        <argsstring>() const</argsstring>
+        <name>rank</name>
+        <qualifiedname>FreeModule::rank</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="101" column="7" bodyfile="Macaulay2/e/freemod.hpp" bodystart="101" bodyend="101"/>
+        <references refid="class_free_module_a61d30064a9a71aad7d4ab73bdd85b770_1a61d30064a9a71aad7d4ab73bdd85b770" compoundref="freemod_8hpp" startline="68">components</references>
+        <referencedby refid="classgbres__comp_ae191368d68b8fa3d4cc412754274027e_1ae191368d68b8fa3d4cc412754274027e" compoundref="res-a2_8cpp" startline="326" endline="373">gbres_comp::betti_minimal</referencedby>
+        <referencedby refid="class_free_module_a699a12b4d0cb0a986dd91c4205d22e99_1a699a12b4d0cb0a986dd91c4205d22e99" compoundref="freemod_8cpp" startline="145" endline="152">change_degree</referencedby>
+        <referencedby refid="class_free_module_a9ff8bbf58e3ac2d95316667d690bf6f9_1a9ff8bbf58e3ac2d95316667d690bf6f9" compoundref="freemod_8cpp" startline="22" endline="30">computeHashValue</referencedby>
+        <referencedby refid="class_chinese_remainder_a84d808af77ab9a8363adcc078a57eaf8_1a84d808af77ab9a8363adcc078a57eaf8" compoundref="cra_8cpp" startline="252" endline="298">ChineseRemainder::CRA</referencedby>
+        <referencedby refid="class_matrix_aa04ee98d7117c97bd611b4c11f5f0859_1aa04ee98d7117c97bd611b4c11f5f0859" compoundref="matrix_8cpp" startline="805" endline="838">Matrix::diff</referencedby>
+        <referencedby refid="class_free_module_aeaa0657e0acc01d349c4db33d6ccb382_1aeaa0657e0acc01d349c4db33d6ccb382" compoundref="freemod_8cpp" startline="244" endline="261">direct_sum</referencedby>
+        <referencedby refid="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" compoundref="freemod_8cpp" startline="296" endline="330">exterior</referencedby>
+        <referencedby refid="class_matrix_a07365f871f81379e105eb23dd87e6ddf_1a07365f871f81379e105eb23dd87e6ddf" compoundref="matrix_8cpp" startline="547" endline="564">Matrix::flip</referencedby>
+        <referencedby refid="class_g_b_weight_acfa66e43cc0b933f248623934fb5843e_1acfa66e43cc0b933f248623934fb5843e" compoundref="gbweight_8cpp" startline="7" endline="56">GBWeight::GBWeight</referencedby>
+        <referencedby refid="class_free_module_abe948d3c41021e794e83c3f1080f828e_1abe948d3c41021e794e83c3f1080f828e" compoundref="freemod_8cpp" startline="100" endline="118">get_induced_order</referencedby>
+        <referencedby refid="class_free_module_af20904d512b2c3626d027366464896c6_1af20904d512b2c3626d027366464896c6" compoundref="freemod_8cpp" startline="457" endline="467">highest_primary_degree</referencedby>
+        <referencedby refid="class_matrix_a4d3557e66979bf54c98290b74720522b_1a4d3557e66979bf54c98290b74720522b" compoundref="matrix_8cpp" startline="380" endline="387">Matrix::identity</referencedby>
+        <referencedby refid="freemodule_8cpp_ad863e2d26329acf6fb844e5df2b8e17b_1ad863e2d26329acf6fb844e5df2b8e17b" compoundref="freemodule_8cpp" startline="87" endline="96">IM2_FreeModule_get_degrees</referencedby>
+        <referencedby refid="freemodule_8cpp_a928ff5ceb166d149d0c03eb7ebd0cce1_1a928ff5ceb166d149d0c03eb7ebd0cce1" compoundref="freemodule_8cpp" startline="16" endline="16">IM2_FreeModule_rank</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a42f21e69bac4621c18d9e7e1c1b0672b_1a42f21e69bac4621c18d9e7e1c1b0672b" compoundref="interface_2matrix_8cpp" startline="328" endline="367">IM2_Matrix_concat</referencedby>
+        <referencedby refid="interface_2ringmap_8cpp_a85ec1d629b49d142cbfbc28fee23f48a_1a85ec1d629b49d142cbfbc28fee23f48a" compoundref="interface_2ringmap_8cpp" startline="51" endline="68">IM2_RingMap_eval_matrix</referencedby>
+        <referencedby refid="class_free_module_a91966e5bad28bd403bdb2ee6983a8798_1a91966e5bad28bd403bdb2ee6983a8798" compoundref="freemod_8cpp" startline="154" endline="172">is_equal</referencedby>
+        <referencedby refid="class_free_module_ac5c87227d9f56f925a53ab2661b654f6_1ac5c87227d9f56f925a53ab2661b654f6" compoundref="freemod_8cpp" startline="445" endline="455">lowest_primary_degree</referencedby>
+        <referencedby refid="class_matrix_a01a6aa156b0b72f71215f85afa104a5e_1a01a6aa156b0b72f71215f85afa104a5e" compoundref="matrix_8cpp" startline="93" endline="141">Matrix::make</referencedby>
+        <referencedby refid="class_matrix_a5928ddd99cca58612541637d050d5eb1_1a5928ddd99cca58612541637d050d5eb1" compoundref="matrix_8cpp" startline="60" endline="92">Matrix::make</referencedby>
+        <referencedby refid="class_matrix_a735b4ef23f1399f0851899d885d1132f_1a735b4ef23f1399f0851899d885d1132f" compoundref="matrix_8cpp" startline="205" endline="226">Matrix::make_sparse</referencedby>
+        <referencedby refid="class_matrix_afdc3a703f952f81f361f170d561ad297_1afdc3a703f952f81f361f170d561ad297" compoundref="matrix_8cpp" startline="143" endline="189">Matrix::make_sparse_vecs</referencedby>
+        <referencedby refid="class_matrix_a6d2f108b075f1abe1c9e17a9057636e6_1a6d2f108b075f1abe1c9e17a9057636e6" compoundref="matrix_8cpp" startline="32" endline="41">Matrix::Matrix</referencedby>
+        <referencedby refid="class_matrix_constructor_a418a0d0eb18db95c00be9bf1999fdedc_1a418a0d0eb18db95c00be9bf1999fdedc" compoundref="matrix-con_8cpp" startline="23" endline="33">MatrixConstructor::MatrixConstructor</referencedby>
+        <referencedby refid="class_matrix_stream_adac9ba46e35a0102872b65634ab14c21_1adac9ba46e35a0102872b65634ab14c21" compoundref="matrix-stream_8cpp" startline="3" endline="11">MatrixStream::MatrixStream</referencedby>
+        <referencedby refid="class_matrix_a8eb1afa2f293676b7fe16ffe6ccfaa52_1a8eb1afa2f293676b7fe16ffe6ccfaa52" compoundref="matrix_8cpp" startline="389" endline="426">Matrix::operator+</referencedby>
+        <referencedby refid="class_matrix_ab70138c0a6fb33666ffcb9d2c8ff7b46_1ab70138c0a6fb33666ffcb9d2c8ff7b46" compoundref="matrix_8cpp" startline="428" endline="460">Matrix::operator-</referencedby>
+        <referencedby refid="interface_2cra_8cpp_af191e53206907c91e484720af0cf1086_1af191e53206907c91e484720af0cf1086" compoundref="interface_2cra_8cpp" startline="61" endline="92">rawMatrixCRA</referencedby>
+        <referencedby refid="interface_2cra_8cpp_a967f03939281af0574fb1be295c76f2a_1a967f03939281af0574fb1be295c76f2a" compoundref="interface_2cra_8cpp" startline="135" endline="163">rawMatrixRatConversion</referencedby>
+        <referencedby refid="classgbres__comp_ac00b61d5d136aeb0506e97b9b0915ec5_1ac00b61d5d136aeb0506e97b9b0915ec5" compoundref="res-a2_8cpp" startline="239" endline="268">gbres_comp::reduce</referencedby>
+        <referencedby refid="class_matrix_a8df44b36d8956478a1cb1c88aed9a3d5_1a8df44b36d8956478a1cb1c88aed9a3d5" compoundref="matrix_8cpp" startline="260" endline="279">Matrix::remake</referencedby>
+        <referencedby refid="class_matrix_a61fbe430ff761fffc77382fe3ed60e34_1a61fbe430ff761fffc77382fe3ed60e34" compoundref="matrix_8cpp" startline="228" endline="258">Matrix::remake</referencedby>
+        <referencedby refid="class_free_module_a2e1ac36741b96a7c3a2350da9ba84918_1a2e1ac36741b96a7c3a2350da9ba84918" compoundref="freemod_8cpp" startline="413" endline="436">select_by_degrees</referencedby>
+        <referencedby refid="class_free_module_a933a80de9596f9de723678f079f6fd5d_1a933a80de9596f9de723678f079f6fd5d" compoundref="freemod_8cpp" startline="178" endline="195">shift</referencedby>
+        <referencedby refid="class_free_module_ac284d81e9e059f250499a1045fda03b9_1ac284d81e9e059f250499a1045fda03b9" compoundref="freemod_8cpp" startline="197" endline="209">sub_space</referencedby>
+        <referencedby refid="class_free_module_afa64ce9e1cd6568bbf292cd2557d8fd8_1afa64ce9e1cd6568bbf292cd2557d8fd8" compoundref="freemod_8cpp" startline="211" endline="225">sub_space</referencedby>
+        <referencedby refid="class_free_module_a4ba7445417116df56e618d2124543e97_1a4ba7445417116df56e618d2124543e97" compoundref="freemod_8cpp" startline="271" endline="294">tensor</referencedby>
+        <referencedby refid="class_free_module_afd1ae0d00811e854aaeedace86331209_1afd1ae0d00811e854aaeedace86331209" compoundref="freemod_8cpp" startline="469" endline="483">text_out</referencedby>
+        <referencedby refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" compoundref="f4-m2-interface_8cpp" startline="72" endline="128">F4toM2Interface::to_M2_vec</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a415999e709aee01dbad7f071b9f0a00f_1a415999e709aee01dbad7f071b9f0a00f" compoundref="res-f4-m2-interface_8cpp" startline="94" endline="149">ResF4toM2Interface::to_M2_vec</referencedby>
+        <referencedby refid="class_free_module_a1f5078a18a9521f0e85159928f239c6e_1a1f5078a18a9521f0e85159928f239c6e" compoundref="freemod_8cpp" startline="227" endline="242">transpose</referencedby>
+        <referencedby refid="class_matrix_a4810c746604ea9b7aad22672388e0817_1a4810c746604ea9b7aad22672388e0817" compoundref="matrix_8cpp" startline="1272" endline="1314">Matrix::wedge_product</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_aa751493c08cb49dafb6e1b27a84f1b33_1aa751493c08cb49dafb6e1b27a84f1b33" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int FreeModule::primary_degree</definition>
+        <argsstring>(int i) const</argsstring>
+        <name>primary_degree</name>
+        <qualifiedname>FreeModule::primary_degree</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="102" column="7" bodyfile="Macaulay2/e/freemod.cpp" bodystart="438" bodyend="443"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="classgbres__comp_ae191368d68b8fa3d4cc412754274027e_1ae191368d68b8fa3d4cc412754274027e" compoundref="res-a2_8cpp" startline="326" endline="373">gbres_comp::betti_minimal</referencedby>
+        <referencedby refid="class_g_b_weight_acfa66e43cc0b933f248623934fb5843e_1acfa66e43cc0b933f248623934fb5843e" compoundref="gbweight_8cpp" startline="7" endline="56">GBWeight::GBWeight</referencedby>
+        <referencedby refid="class_free_module_af20904d512b2c3626d027366464896c6_1af20904d512b2c3626d027366464896c6" compoundref="freemod_8cpp" startline="457" endline="467">highest_primary_degree</referencedby>
+        <referencedby refid="classres2__comp_a893620d9087a9c6307043b62b4bc53a4_1a893620d9087a9c6307043b62b4bc53a4" compoundref="res-a0_8cpp" startline="420" endline="528">res2_comp::initialize</referencedby>
+        <referencedby refid="classres__comp_ae108ff4a215d6b7df2674cccfec1652c_1ae108ff4a215d6b7df2674cccfec1652c" compoundref="res-a1_8cpp" startline="14" endline="115">res_comp::initialize</referencedby>
+        <referencedby refid="class_free_module_ac5c87227d9f56f925a53ab2661b654f6_1ac5c87227d9f56f925a53ab2661b654f6" compoundref="freemod_8cpp" startline="445" endline="455">lowest_primary_degree</referencedby>
+        <referencedby refid="class_matrix_sorter_ac7f6b3cbd1f4e2b3c274c4052cdd1fbe_1ac7f6b3cbd1f4e2b3c274c4052cdd1fbe" compoundref="matrix-sort_8cpp" startline="119" endline="140">MatrixSorter::MatrixSorter</referencedby>
+        <referencedby refid="class_ring_ab87f80ce23664fb2f9ceff5e0cf2b413_1ab87f80ce23664fb2f9ceff5e0cf2b413" compoundref="ring-vecs_8cpp" startline="854" endline="878">Ring::vec_degree_weights</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a91966e5bad28bd403bdb2ee6983a8798_1a91966e5bad28bd403bdb2ee6983a8798" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool FreeModule::is_equal</definition>
+        <argsstring>(const FreeModule *F) const</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>FreeModule::is_equal</qualifiedname>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="104" column="8" bodyfile="Macaulay2/e/freemod.cpp" bodystart="154" bodyend="172"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" compoundref="freemod_8hpp" startline="98" endline="98">get_ring</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <referencedby refid="class_chinese_remainder_a84d808af77ab9a8363adcc078a57eaf8_1a84d808af77ab9a8363adcc078a57eaf8" compoundref="cra_8cpp" startline="252" endline="298">ChineseRemainder::CRA</referencedby>
+        <referencedby refid="freemodule_8cpp_a1e019580392f0d193a42577dc1ae9712_1a1e019580392f0d193a42577dc1ae9712" compoundref="freemodule_8cpp" startline="103" endline="109">IM2_FreeModule_is_equal</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_ac284d81e9e059f250499a1045fda03b9_1ac284d81e9e059f250499a1045fda03b9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::sub_space</definition>
+        <argsstring>(int n) const</argsstring>
+        <name>sub_space</name>
+        <qualifiedname>FreeModule::sub_space</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="106" column="14" bodyfile="Macaulay2/e/freemod.cpp" bodystart="197" bodyend="209"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" compoundref="freemod_8cpp" startline="125" endline="125">new_free</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="class_gauss_elim_computation_ab92358de6dfd12c613245238bffba901_1ab92358de6dfd12c613245238bffba901" compoundref="gauss_8cpp" startline="69" endline="101">GaussElimComputation::GaussElimComputation</referencedby>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation::HermiteComputation</referencedby>
+        <referencedby refid="freemodule_8cpp_a6132d6f253a167d914c807320832e841_1a6132d6f253a167d914c807320832e841" compoundref="freemodule_8cpp" startline="166" endline="177">IM2_FreeModule_submodule</referencedby>
+        <referencedby refid="class_g_b__comp_ab0799b08f34c7b42457fe8ef7e067f2b_1ab0799b08f34c7b42457fe8ef7e067f2b" compoundref="gb-homog2_8cpp" startline="84" endline="110">GB_comp::initialize</referencedby>
+        <referencedby refid="classgb_a_a73821a3ec777b0edfabef3b1ebe87f6f_1a73821a3ec777b0edfabef3b1ebe87f6f" compoundref="gb-default_8cpp" startline="99" endline="224">gbA::initialize</referencedby>
+        <referencedby refid="class_g_binhom__comp_a7a1f7b5f6e1c4cb763104a144286d37e_1a7a1f7b5f6e1c4cb763104a144286d37e" compoundref="gb-sugarless_8cpp" startline="62" endline="79">GBinhom_comp::set_up</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_afa64ce9e1cd6568bbf292cd2557d8fd8_1afa64ce9e1cd6568bbf292cd2557d8fd8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::sub_space</definition>
+        <argsstring>(M2_arrayint a) const</argsstring>
+        <name>sub_space</name>
+        <qualifiedname>FreeModule::sub_space</qualifiedname>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="107" column="14" bodyfile="Macaulay2/e/freemod.cpp" bodystart="211" bodyend="225"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" compoundref="freemod_8cpp" startline="125" endline="125">new_free</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a1f5078a18a9521f0e85159928f239c6e_1a1f5078a18a9521f0e85159928f239c6e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::transpose</definition>
+        <argsstring>() const</argsstring>
+        <name>transpose</name>
+        <qualifiedname>FreeModule::transpose</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="108" column="14" bodyfile="Macaulay2/e/freemod.cpp" bodystart="227" bodyend="242"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" compoundref="freemod_8cpp" startline="125" endline="125">new_free</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="freemodule_8cpp_a62edc71c7910e9820a34992f83f5267e_1a62edc71c7910e9820a34992f83f5267e" compoundref="freemodule_8cpp" startline="130" endline="140">IM2_FreeModule_dual</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_aeaa0657e0acc01d349c4db33d6ccb382_1aeaa0657e0acc01d349c4db33d6ccb382" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::direct_sum</definition>
+        <argsstring>(const FreeModule *G) const</argsstring>
+        <name>direct_sum</name>
+        <qualifiedname>FreeModule::direct_sum</qualifiedname>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="109" column="14" bodyfile="Macaulay2/e/freemod.cpp" bodystart="244" bodyend="261"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" compoundref="freemod_8cpp" startline="125" endline="125">new_free</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="freemodule_8cpp_a62e98dbfc03f80da058ab6f1d7a37d26_1a62e98dbfc03f80da058ab6f1d7a37d26" compoundref="freemodule_8cpp" startline="111" endline="115">IM2_FreeModule_sum</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a933a80de9596f9de723678f079f6fd5d_1a933a80de9596f9de723678f079f6fd5d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::shift</definition>
+        <argsstring>(const_monomial d) const</argsstring>
+        <name>shift</name>
+        <qualifiedname>FreeModule::shift</qualifiedname>
+        <param>
+          <type><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref></type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="110" column="14" bodyfile="Macaulay2/e/freemod.cpp" bodystart="178" bodyend="195"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" compoundref="freemod_8cpp" startline="125" endline="125">new_free</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a4ba7445417116df56e618d2124543e97_1a4ba7445417116df56e618d2124543e97" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::tensor</definition>
+        <argsstring>(const FreeModule *G) const</argsstring>
+        <name>tensor</name>
+        <qualifiedname>FreeModule::tensor</qualifiedname>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="111" column="14" bodyfile="Macaulay2/e/freemod.cpp" bodystart="271" bodyend="294"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" compoundref="freemod_8cpp" startline="125" endline="125">new_free</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="class_matrix_aa04ee98d7117c97bd611b4c11f5f0859_1aa04ee98d7117c97bd611b4c11f5f0859" compoundref="matrix_8cpp" startline="805" endline="838">Matrix::diff</referencedby>
+        <referencedby refid="class_matrix_a07365f871f81379e105eb23dd87e6ddf_1a07365f871f81379e105eb23dd87e6ddf" compoundref="matrix_8cpp" startline="547" endline="564">Matrix::flip</referencedby>
+        <referencedby refid="freemodule_8cpp_a27e9c183e5e8c60d8c937d0f5f89bf3b_1a27e9c183e5e8c60d8c937d0f5f89bf3b" compoundref="freemodule_8cpp" startline="117" endline="128">IM2_FreeModule_tensor</referencedby>
+        <referencedby refid="class_matrix_a6aca02285e5cf80bc7ed195667e1723d_1a6aca02285e5cf80bc7ed195667e1723d" compoundref="matrix_8cpp" startline="686" endline="712">Matrix::module_tensor</referencedby>
+        <referencedby refid="class_matrix_a4810c746604ea9b7aad22672388e0817_1a4810c746604ea9b7aad22672388e0817" compoundref="matrix_8cpp" startline="1272" endline="1314">Matrix::wedge_product</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_adb9058114cf8321f7c64b29395f6c921_1adb9058114cf8321f7c64b29395f6c921" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::schur</definition>
+        <argsstring>(const_monomial m) const</argsstring>
+        <name>schur</name>
+        <qualifiedname>FreeModule::schur</qualifiedname>
+        <param>
+          <type><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="112" column="14"/>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::exterior</definition>
+        <argsstring>(int p) const</argsstring>
+        <name>exterior</name>
+        <qualifiedname>FreeModule::exterior</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="113" column="14" bodyfile="Macaulay2/e/freemod.cpp" bodystart="296" bodyend="330"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="class_subsets_a0fa6840b17ab300a5bf015458b20e302_1a0fa6840b17ab300a5bf015458b20e302" compoundref="comb_8cpp" startline="124" endline="144">Subsets::increment</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" compoundref="freemod_8cpp" startline="125" endline="125">new_free</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="freemodule_8cpp_a60fb5f8006e80082cadcb8b8d9c494d1_1a60fb5f8006e80082cadcb8b8d9c494d1" compoundref="freemodule_8cpp" startline="154" endline="164">IM2_FreeModule_exterior</referencedby>
+        <referencedby refid="class_matrix_a4810c746604ea9b7aad22672388e0817_1a4810c746604ea9b7aad22672388e0817" compoundref="matrix_8cpp" startline="1272" endline="1314">Matrix::wedge_product</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4_1a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>FreeModule * FreeModule::symm</definition>
+        <argsstring>(int p) const</argsstring>
+        <name>symm</name>
+        <qualifiedname>FreeModule::symm</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="114" column="14" bodyfile="Macaulay2/e/freemod.cpp" bodystart="393" bodyend="400"/>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <references refid="struct_free_module__symm_a4f0a426c982e0078bb6fac50e58e3c3b_1a4f0a426c982e0078bb6fac50e58e3c3b" compoundref="freemod_8cpp" startline="377" endline="390">FreeModule_symm::value</references>
+        <referencedby refid="freemodule_8cpp_a3d9a4afd513459347ce39deed6c96a1c_1a3d9a4afd513459347ce39deed6c96a1c" compoundref="freemodule_8cpp" startline="142" endline="152">IM2_FreeModule_symm</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a2e1ac36741b96a7c3a2350da9ba84918_1a2e1ac36741b96a7c3a2350da9ba84918" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a071c143092bff3ecfb25de7581dfba58_1a071c143092bff3ecfb25de7581dfba58" kindref="member">M2_arrayintOrNull</ref></type>
+        <definition>M2_arrayintOrNull FreeModule::select_by_degrees</definition>
+        <argsstring>(M2_arrayintOrNull lo, M2_arrayintOrNull hi) const</argsstring>
+        <name>select_by_degrees</name>
+        <qualifiedname>FreeModule::select_by_degrees</qualifiedname>
+        <param>
+          <type><ref refid="m2-types_8h_a071c143092bff3ecfb25de7581dfba58_1a071c143092bff3ecfb25de7581dfba58" kindref="member">M2_arrayintOrNull</ref></type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a071c143092bff3ecfb25de7581dfba58_1a071c143092bff3ecfb25de7581dfba58" kindref="member">M2_arrayintOrNull</ref></type>
+          <declname>hi</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="116" column="21" bodyfile="Macaulay2/e/freemod.cpp" bodystart="413" bodyend="436"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="freemod_8cpp_a78e1abcb3029ae14baafb98897a1abfd_1a78e1abcb3029ae14baafb98897a1abfd" compoundref="freemod_8cpp" startline="402" endline="411">degree_in_box</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="util_8hpp_a30cf035ffee78e13404b2ee33a431597_1a30cf035ffee78e13404b2ee33a431597" compoundref="util_8hpp" startline="77" endline="82">stdvector_to_M2_arrayint</references>
+        <referencedby refid="freemodule_8cpp_a9affbd8fd470e4a6a9460bb99f72ea5b_1a9affbd8fd470e4a6a9460bb99f72ea5b" compoundref="freemodule_8cpp" startline="179" endline="191">rawFreeModuleSelectByDegrees</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_a789de5a06757f51e7e945a445e410a50_1a789de5a06757f51e7e945a445e410a50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void FreeModule::direct_sum_to</definition>
+        <argsstring>(const FreeModule *G)</argsstring>
+        <name>direct_sum_to</name>
+        <qualifiedname>FreeModule::direct_sum_to</qualifiedname>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="119" column="8" bodyfile="Macaulay2/e/freemod.cpp" bodystart="263" bodyend="269"/>
+        <references refid="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" compoundref="freemod_8cpp" startline="130" endline="135">append</references>
+        <references refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" compoundref="freemod_8cpp" startline="32" endline="51">FreeModule</references>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_ac5c87227d9f56f925a53ab2661b654f6_1ac5c87227d9f56f925a53ab2661b654f6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int FreeModule::lowest_primary_degree</definition>
+        <argsstring>() const</argsstring>
+        <name>lowest_primary_degree</name>
+        <qualifiedname>FreeModule::lowest_primary_degree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="120" column="7" bodyfile="Macaulay2/e/freemod.cpp" bodystart="445" bodyend="455"/>
+        <references refid="class_free_module_aa751493c08cb49dafb6e1b27a84f1b33_1aa751493c08cb49dafb6e1b27a84f1b33" compoundref="freemod_8cpp" startline="438" endline="443">primary_degree</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="classgb__emitter_a6f67ba0377d0eaedb29ad67a9b2daa4a_1a6f67ba0377d0eaedb29ad67a9b2daa4a" compoundref="res-a2_8cpp" startline="10" endline="19">gb_emitter::gb_emitter</referencedby>
+        <referencedby refid="classgbres__comp_a9b87f27dd19d3bc5a1c91ed230e80dfc_1a9b87f27dd19d3bc5a1c91ed230e80dfc" compoundref="res-a2_8cpp" startline="79" endline="150">gbres_comp::setup</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_af20904d512b2c3626d027366464896c6_1af20904d512b2c3626d027366464896c6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int FreeModule::highest_primary_degree</definition>
+        <argsstring>() const</argsstring>
+        <name>highest_primary_degree</name>
+        <qualifiedname>FreeModule::highest_primary_degree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="121" column="7" bodyfile="Macaulay2/e/freemod.cpp" bodystart="457" bodyend="467"/>
+        <references refid="class_free_module_aa751493c08cb49dafb6e1b27a84f1b33_1aa751493c08cb49dafb6e1b27a84f1b33" compoundref="freemod_8cpp" startline="438" endline="443">primary_degree</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_free_module_afd1ae0d00811e854aaeedace86331209_1afd1ae0d00811e854aaeedace86331209" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void FreeModule::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>FreeModule::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/freemod.hpp" line="123" column="8" bodyfile="Macaulay2/e/freemod.cpp" bodystart="469" bodyend="483"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">degree</references>
+        <references refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" compoundref="freemod_8hpp" startline="71">R</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">rank</references>
+        <references refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" compoundref="freemod_8hpp" startline="69">schreyer</references>
+        <referencedby refid="debug_8cpp_ad8342a9e164b714b8c72a3fcd4052655_1ad8342a9e164b714b8c72a3fcd4052655" compoundref="debug_8cpp" startline="66" endline="71">dfree</referencedby>
+        <referencedby refid="freemodule_8cpp_ad66e5988b7e67d5feded9ce6239818b8_1ad66e5988b7e67d5feded9ce6239818b8" compoundref="freemodule_8cpp" startline="17" endline="22">IM2_FreeModule_to_string</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Engine-side free module <computeroutput>R^n</computeroutput> over a <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds the underlying <computeroutput>Ring*</computeroutput> plus a <computeroutput><ref refid="class_free_module_a61d30064a9a71aad7d4ab73bdd85b770_1a61d30064a9a71aad7d4ab73bdd85b770" kindref="member">components</ref></computeroutput> vector with the multi-degree of each generator; optionally carries a <computeroutput>SchreyerOrder*</computeroutput> that pins the per-component tie-breaker data used when the free module participates in a Schreyer resolution. Constructed only through <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput>-side factory paths (the constructor is private) so the engine can guarantee the ring / degree pair is consistent before any vectors live in it. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="17">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="57" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="58" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="58" relation="public-inheritance">
+        </childnode>
+        <childnode refid="59" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="66">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="46" relation="private-inheritance">
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="48" relation="public-inheritance">
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="42" relation="private-inheritance">
+        </childnode>
+        <childnode refid="45" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="33" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="33" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="68">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="48">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="49" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="38" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="40" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>CoefficientType</label>
+      </node>
+      <node id="6">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="37" relation="public-inheritance">
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>T</label>
+      </node>
+      <node id="64">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="37" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="31">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="29">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="33">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="27">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="22" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="29" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>char</label>
+      </node>
+      <node id="16">
+        <label>const ARing *</label>
+      </node>
+      <node id="32">
+        <label>const void *</label>
+      </node>
+      <node id="22">
+        <label>double</label>
+      </node>
+      <node id="76">
+        <label>overflow_type *</label>
+      </node>
+      <node id="74">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="5">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="67">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="21">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>long</label>
+      </node>
+      <node id="50">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="43" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="53" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="54" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>mon_part</label>
+      </node>
+      <node id="26">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="25">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="23">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="24">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="9">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="18">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>size_t</label>
+      </node>
+      <node id="61">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>spinLock</label>
+      </node>
+      <node id="60">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="72">
+        <label>std::string</label>
+        <childnode refid="73" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="15" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="33" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="72" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/freemod.hpp" line="61" column="1" bodyfile="Macaulay2/e/freemod.hpp" bodystart="62" bodyend="124"/>
+    <listofallmembers>
+      <member refid="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>append</name></member>
+      <member refid="class_free_module_acbdf43ecae68513fd8b6403174782502_1acbdf43ecae68513fd8b6403174782502" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>append_schreyer</name></member>
+      <member refid="class_free_module_a699a12b4d0cb0a986dd91c4205d22e99_1a699a12b4d0cb0a986dd91c4205d22e99" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>change_degree</name></member>
+      <member refid="class_free_module_a61d30064a9a71aad7d4ab73bdd85b770_1a61d30064a9a71aad7d4ab73bdd85b770" prot="protected" virt="non-virtual"><scope>FreeModule</scope><name>components</name></member>
+      <member refid="class_free_module_a9ff8bbf58e3ac2d95316667d690bf6f9_1a9ff8bbf58e3ac2d95316667d690bf6f9" prot="protected" virt="virtual"><scope>FreeModule</scope><name>computeHashValue</name></member>
+      <member refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>degree</name></member>
+      <member refid="class_free_module_aeaa0657e0acc01d349c4db33d6ccb382_1aeaa0657e0acc01d349c4db33d6ccb382" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>direct_sum</name></member>
+      <member refid="class_free_module_a789de5a06757f51e7e945a445e410a50_1a789de5a06757f51e7e945a445e410a50" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>direct_sum_to</name></member>
+      <member refid="class_engine_object_a185a3226f366bf527283905e9478614f_1a185a3226f366bf527283905e9478614f" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>EngineObject</name></member>
+      <member refid="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>exterior</name></member>
+      <member refid="class_free_module_a8dbf22f1b72e985da06f146e9f0eaebc_1a8dbf22f1b72e985da06f146e9f0eaebc" prot="private" virt="non-virtual"><scope>FreeModule</scope><name>FreeModule</name></member>
+      <member refid="class_free_module_abe948d3c41021e794e83c3f1080f828e_1abe948d3c41021e794e83c3f1080f828e" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>get_induced_order</name></member>
+      <member refid="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>get_ring</name></member>
+      <member refid="class_free_module_aefd1c1ac1a19459c6cd8fdbfb3b528d7_1aefd1c1ac1a19459c6cd8fdbfb3b528d7" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>get_schreyer_order</name></member>
+      <member refid="class_engine_object_a633723c198b26de8f513e91c4bf3120a_1a633723c198b26de8f513e91c4bf3120a" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>hash</name></member>
+      <member refid="class_free_module_af20904d512b2c3626d027366464896c6_1af20904d512b2c3626d027366464896c6" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>highest_primary_degree</name></member>
+      <member refid="class_free_module_a68503ea604a0c35d56d9bed7c0b17d34_1a68503ea604a0c35d56d9bed7c0b17d34" prot="protected" virt="non-virtual"><scope>FreeModule</scope><name>initialize</name></member>
+      <member refid="class_free_module_a91966e5bad28bd403bdb2ee6983a8798_1a91966e5bad28bd403bdb2ee6983a8798" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>is_equal</name></member>
+      <member refid="class_free_module_ac5c87227d9f56f925a53ab2661b654f6_1ac5c87227d9f56f925a53ab2661b654f6" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>lowest_primary_degree</name></member>
+      <member refid="class_free_module_af87653ed4a51630daac57b958b818197_1af87653ed4a51630daac57b958b818197" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>make_schreyer</name></member>
+      <member refid="class_free_module_aba946f61514783c0a42e221134172fff_1aba946f61514783c0a42e221134172fff" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>make_schreyer</name></member>
+      <member refid="class_engine_object_a86178bff24d1f06ec3eba664501bd839_1a86178bff24d1f06ec3eba664501bd839" prot="private" virt="non-virtual"><scope>FreeModule</scope><name>mHashValue</name></member>
+      <member refid="class_free_module_a3a07f6157d2726a5dad2785fa0a126b8_1a3a07f6157d2726a5dad2785fa0a126b8" prot="protected" virt="virtual"><scope>FreeModule</scope><name>new_free</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>operator new[]</name></member>
+      <member refid="class_free_module_aa751493c08cb49dafb6e1b27a84f1b33_1aa751493c08cb49dafb6e1b27a84f1b33" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>primary_degree</name></member>
+      <member refid="class_free_module_ab235794215e6cad6d3f0b002ccc0d4f6_1ab235794215e6cad6d3f0b002ccc0d4f6" prot="protected" virt="non-virtual"><scope>FreeModule</scope><name>R</name></member>
+      <member refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>rank</name></member>
+      <member refid="class_free_module_ac2642399f770aa366803c7b60210853f_1ac2642399f770aa366803c7b60210853f" prot="private" virt="non-virtual"><scope>FreeModule</scope><name>ResF4toM2Interface</name></member>
+      <member refid="class_free_module_ae584f38322b79ed1f388b946b198b56e_1ae584f38322b79ed1f388b946b198b56e" prot="private" virt="non-virtual"><scope>FreeModule</scope><name>Ring</name></member>
+      <member refid="class_free_module_a56db415d96a3918f59b71083da5fca17_1a56db415d96a3918f59b71083da5fca17" prot="protected" virt="non-virtual"><scope>FreeModule</scope><name>schreyer</name></member>
+      <member refid="class_free_module_adb9058114cf8321f7c64b29395f6c921_1adb9058114cf8321f7c64b29395f6c921" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>schur</name></member>
+      <member refid="class_free_module_a2e1ac36741b96a7c3a2350da9ba84918_1a2e1ac36741b96a7c3a2350da9ba84918" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>select_by_degrees</name></member>
+      <member refid="class_free_module_a933a80de9596f9de723678f079f6fd5d_1a933a80de9596f9de723678f079f6fd5d" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>shift</name></member>
+      <member refid="class_free_module_ac284d81e9e059f250499a1045fda03b9_1ac284d81e9e059f250499a1045fda03b9" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>sub_space</name></member>
+      <member refid="class_free_module_afa64ce9e1cd6568bbf292cd2557d8fd8_1afa64ce9e1cd6568bbf292cd2557d8fd8" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>sub_space</name></member>
+      <member refid="class_free_module_a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4_1a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>symm</name></member>
+      <member refid="class_free_module_a4ba7445417116df56e618d2124543e97_1a4ba7445417116df56e618d2124543e97" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>tensor</name></member>
+      <member refid="class_free_module_afd1ae0d00811e854aaeedace86331209_1afd1ae0d00811e854aaeedace86331209" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>text_out</name></member>
+      <member refid="class_free_module_a1f5078a18a9521f0e85159928f239c6e_1a1f5078a18a9521f0e85159928f239c6e" prot="public" virt="non-virtual"><scope>FreeModule</scope><name>transpose</name></member>
+      <member refid="class_engine_object_aa11464cbf65ef39203feda038521e700_1aa11464cbf65ef39203feda038521e700" prot="public" virt="virtual"><scope>FreeModule</scope><name>~EngineObject</name></member>
+      <member refid="class_free_module_a08d253105b71777344b5a0c557f79cfe_1a08d253105b71777344b5a0c557f79cfe" prot="public" virt="virtual"><scope>FreeModule</scope><name>~FreeModule</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

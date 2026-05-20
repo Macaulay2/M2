@@ -1,0 +1,232 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_monomial_types_8hpp" kind="file" language="C++">
+    <compoundname>MonomialTypes.hpp</compoundname>
+    <includes local="no">cstdint</includes>
+    <includedby refid="_monomial_hash_table_8hpp" local="yes">Macaulay2/e/gb-f4/MonomialHashTable.hpp</includedby>
+    <includedby refid="_monomial_lookup_table_8hpp" local="yes">Macaulay2/e/gb-f4/MonomialLookupTable.hpp</includedby>
+    <includedby refid="_monomial_view_8hpp" local="yes">Macaulay2/e/gb-f4/MonomialView.hpp</includedby>
+    <includedby refid="_polynomial_list_8hpp" local="yes">Macaulay2/e/gb-f4/PolynomialList.hpp</includedby>
+    <includedby refid="_macaulay2_2e_2gb-f4_2_s_pairs_8hpp" local="yes">Macaulay2/e/gb-f4/SPairs.hpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>Macaulay2/e/gb-f4/MonomialTypes.hpp</label>
+        <link refid="_monomial_types_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cstdint</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="19">
+        <label>Macaulay2/e/BasicPoly.cpp</label>
+        <link refid="_basic_poly_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/gb-f4/Basis.cpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/gb-f4/Basis.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.cpp</label>
+        <link refid="_g_b_f4_computation_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.hpp</label>
+        <link refid="_g_b_f4_computation_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.cpp</label>
+        <link refid="_g_b_f4_interface_8cpp"/>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.hpp</label>
+        <link refid="_g_b_f4_interface_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Macaulay2/e/gb-f4/MacaulayMatrix.hpp</label>
+        <link refid="_macaulay_matrix_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Macaulay2/e/gb-f4/MonomialHashTable.cpp</label>
+        <link refid="_monomial_hash_table_8cpp"/>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/gb-f4/MonomialHashTable.hpp</label>
+        <link refid="_monomial_hash_table_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Macaulay2/e/gb-f4/MonomialLookupTable.cpp</label>
+        <link refid="_monomial_lookup_table_8cpp"/>
+      </node>
+      <node id="16">
+        <label>Macaulay2/e/gb-f4/MonomialLookupTable.hpp</label>
+        <link refid="_monomial_lookup_table_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/gb-f4/MonomialTypes.hpp</label>
+        <link refid="_monomial_types_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Macaulay2/e/gb-f4/MonomialView.cpp</label>
+        <link refid="_monomial_view_8cpp"/>
+      </node>
+      <node id="18">
+        <label>Macaulay2/e/gb-f4/MonomialView.hpp</label>
+        <link refid="_monomial_view_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Macaulay2/e/gb-f4/PolynomialList.cpp</label>
+        <link refid="_polynomial_list_8cpp"/>
+      </node>
+      <node id="13">
+        <label>Macaulay2/e/gb-f4/PolynomialList.hpp</label>
+        <link refid="_polynomial_list_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Macaulay2/e/gb-f4/SPairs.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_s_pairs_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Macaulay2/e/unit-tests/MatrixIOTest.cpp</label>
+        <link refid="_matrix_i_o_test_8cpp"/>
+      </node>
+      <node id="15">
+        <label>Macaulay2/e/unit-tests/NewF4Test.cpp</label>
+        <link refid="_new_f4_test_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacenewf4">newf4</innernamespace>
+    <briefdescription>
+<para>Typed integer vocabulary for <computeroutput>namespace <ref refid="namespacenewf4" kindref="compound">newf4</ref></computeroutput> (indices, monomial words, hashes, masks). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares the strongly-named integer aliases the rest of <computeroutput>gb-f4/</computeroutput> uses in place of bare <computeroutput><ref refid="classint" kindref="compound">int</ref></computeroutput>: <computeroutput>Index</computeroutput> numbers GB basis elements; <computeroutput>MonomialIndex</computeroutput> keys into the <computeroutput><ref refid="class_monomial_hash_table" kindref="compound">MonomialHashTable</ref></computeroutput> with <computeroutput>0</computeroutput> reserved as the &quot;undefined&quot; sentinel; <computeroutput>MonomialInt</computeroutput> is one word of the encoded monomial stream and also the type used for cached degrees; <computeroutput><ref refid="res-schreyer-frame_8hpp_a46aff60fe9e7b02cb075b491f6e3af7b_1a46aff60fe9e7b02cb075b491f6e3af7b" kindref="member">ComponentIndex</ref></computeroutput> numbers free-module components; <computeroutput>HashInt</computeroutput> is the 64-bit hash returned by <computeroutput>MonomialHashFunction</computeroutput>; and <computeroutput>MonomialMask</computeroutput> is the 64-bit bitset <computeroutput><ref refid="f4-types_8hpp_a26f8bf3ae452faf485404829038ffe26_1a26f8bf3ae452faf485404829038ffe26" kindref="member">MonomialLookupTable</ref></computeroutput> uses for cheap divisibility pre-tests.</para>
+<para>All six aliases compile to <computeroutput>int32_t</computeroutput> or <computeroutput>uint64_t</computeroutput>, but the distinct C++ names let the compiler reject calls that mix a <computeroutput>MonomialIndex</computeroutput> with an <computeroutput>Index</computeroutput> <mdash/> bugs that would silently misbehave with raw ints. Every other header in <computeroutput>gb-f4/</computeroutput> ultimately includes this one.</para>
+<para><simplesect kind="see"><para><ref refid="_monomial_hash_table_8hpp" kindref="compound">MonomialHashTable.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_monomial_lookup_table_8hpp" kindref="compound">MonomialLookupTable.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_monomial_view_8hpp" kindref="compound">MonomialView.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_polynomial_list_8hpp" kindref="compound">PolynomialList.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdint&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenewf4" kindref="compound">newf4</ref><sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Index<sp/>of<sp/>a<sp/>GB<sp/>element</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="namespacenewf4_a365f1a6336bfa6a997de0b85c2e3e195_1a365f1a6336bfa6a997de0b85c2e3e195" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal"><ref refid="namespacenewf4_a365f1a6336bfa6a997de0b85c2e3e195_1a365f1a6336bfa6a997de0b85c2e3e195" kindref="member">Index</ref><sp/>=<sp/>int32_t;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Index<sp/>of<sp/>a<sp/>monomial<sp/>in<sp/>a<sp/>monomial<sp/>hash<sp/>table.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/>0<sp/>is<sp/>a<sp/>sentinel,<sp/>meaning<sp/>that<sp/>something<sp/>that<sp/>usually<sp/>would</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="comment">//<sp/>point<sp/>to<sp/>a<sp/>monomial<sp/>is<sp/>currently<sp/>undefined.<sp/><sp/>Valid<sp/>values<sp/>are<sp/>&gt;<sp/>0.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="namespacenewf4_aba19c95e568814516ee6fac87ffeaee2_1aba19c95e568814516ee6fac87ffeaee2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal"><ref refid="namespacenewf4_aba19c95e568814516ee6fac87ffeaee2_1aba19c95e568814516ee6fac87ffeaee2" kindref="member">MonomialIndex</ref><sp/>=<sp/>int32_t;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Data<sp/>type<sp/>of<sp/>the<sp/>underlying<sp/>monomial<sp/>store.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/>A<sp/>monomial<sp/>is<sp/>a<sp/>sequence<sp/>of<sp/>MonomialInts</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Also<sp/>used<sp/>to<sp/>store<sp/>degree<sp/>of<sp/>a<sp/>monomial.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal"><ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref><sp/>=<sp/>int32_t;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Number<sp/>indicating<sp/>the<sp/>free<sp/>module<sp/>component</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="namespacenewf4_a7d1132cbbbc46ccb470b32940b1ed4fa_1a7d1132cbbbc46ccb470b32940b1ed4fa" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal"><ref refid="namespacenewf4_a7d1132cbbbc46ccb470b32940b1ed4fa_1a7d1132cbbbc46ccb470b32940b1ed4fa" kindref="member">ComponentIndex</ref><sp/>=<sp/>int32_t;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Value<sp/>of<sp/>hashing<sp/>a<sp/>monomial<sp/>(which<sp/>may<sp/>or<sp/>may<sp/>not<sp/>include<sp/>the<sp/>component)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="namespacenewf4_a31d40ce79f2399c9bf4f0c3846f6e04a_1a31d40ce79f2399c9bf4f0c3846f6e04a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal"><ref refid="namespacenewf4_a31d40ce79f2399c9bf4f0c3846f6e04a_1a31d40ce79f2399c9bf4f0c3846f6e04a" kindref="member">HashInt</ref><sp/>=<sp/>uint64_t;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Used<sp/>for<sp/>divisibility<sp/>masks<sp/>in<sp/>MonomialLookupTable</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="namespacenewf4_afd3339ebe18e9dc2d4e025b6ca053ec6_1afd3339ebe18e9dc2d4e025b6ca053ec6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using<sp/></highlight><highlight class="normal"><ref refid="namespacenewf4_afd3339ebe18e9dc2d4e025b6ca053ec6_1afd3339ebe18e9dc2d4e025b6ca053ec6" kindref="member">MonomialMask</ref><sp/>=<sp/>uint64_t;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal">}</highlight><highlight class="comment">//<sp/>end<sp/>namespace<sp/>f4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/gb-f4/MonomialTypes.hpp"/>
+  </compounddef>
+</doxygen>

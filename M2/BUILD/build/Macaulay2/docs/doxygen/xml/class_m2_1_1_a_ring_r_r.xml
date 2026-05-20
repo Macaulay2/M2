@@ -1,0 +1,1270 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m2_1_1_a_ring_r_r" kind="class" language="C++" prot="public">
+    <compoundname>M2::ARingRR</compoundname>
+    <basecompoundref refid="class_m2_1_1_simple_a_ring" prot="public" virt="non-virtual">M2::SimpleARing&lt; ARingRR &gt;</basecompoundref>
+    <includes refid="aring-_r_r_8hpp" local="no">aring-RR.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_m2_1_1_a_ring_r_r_a0e575857df394a0057f05ddcaaae92f1_1a0e575857df394a0057f05ddcaaae92f1" prot="public" static="no">
+        <type>double</type>
+        <definition>typedef double M2::ARingRR::elem</definition>
+        <argsstring></argsstring>
+        <name>elem</name>
+        <qualifiedname>M2::ARingRR::elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="63" column="18" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" prot="public" static="no">
+        <type><ref refid="class_m2_1_1_a_ring_r_r_a0e575857df394a0057f05ddcaaae92f1_1a0e575857df394a0057f05ddcaaae92f1" kindref="member">elem</ref></type>
+        <definition>typedef elem M2::ARingRR::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>M2::ARingRR::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="64" column="16" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_r_r_ab65c60daffb6d850453f309e5a4bdf01_1ab65c60daffb6d850453f309e5a4bdf01" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="group__rings_ga7579b18152595d75b0bce712fbd605df_1ga7579b18152595d75b0bce712fbd605df" kindref="member">RingID</ref></type>
+        <definition>const RingID M2::ARingRR::ringID</definition>
+        <argsstring></argsstring>
+        <name>ringID</name>
+        <qualifiedname>M2::ARingRR::ringID</qualifiedname>
+        <initializer>= <ref refid="group__rings_ga7579b18152595d75b0bce712fbd605df_1gga7579b18152595d75b0bce712fbd605dfa3e42af1fd103e1b4e061d1aac25b9123" kindref="member">ring_RR</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="61" column="23" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="61" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a7a10f32985321d33099b3905b5e9c713_1a7a10f32985321d33099b3905b5e9c713" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2::ARingRR::ARingRR</definition>
+        <argsstring>()</argsstring>
+        <name>ARingRR</name>
+        <qualifiedname>M2::ARingRR::ARingRR</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="66" column="3" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="66" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a5f50f747bc0752b1e1e23a646f61b8e7_1a5f50f747bc0752b1e1e23a646f61b8e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t M2::ARingRR::characteristic</definition>
+        <argsstring>() const</argsstring>
+        <name>characteristic</name>
+        <qualifiedname>M2::ARingRR::characteristic</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="68" column="10" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="68" bodyend="68"/>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a461cd6bb3552cb270603c9d75e750c43_1a461cd6bb3552cb270603c9d75e750c43" compoundref="_a_ring_r_r_test_8cpp" startline="77" endline="82">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a74dddd7b6174b05611b7164dfe23088d_1a74dddd7b6174b05611b7164dfe23088d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long M2::ARingRR::get_precision</definition>
+        <argsstring>() const</argsstring>
+        <name>get_precision</name>
+        <qualifiedname>M2::ARingRR::get_precision</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="69" column="17" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="69" bodyend="69"/>
+        <referencedby refid="_a_ring_r_r_test_8cpp_aa6972267cabc98dd7eb781386d1fe060_1aa6972267cabc98dd7eb781386d1fe060" compoundref="_a_ring_r_r_test_8cpp" startline="110" endline="135">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a2aed381ca7c6f0fc98da2ee5ce2bfc8d_1a2aed381ca7c6f0fc98da2ee5ce2bfc8d" compoundref="_a_ring_r_r_test_8cpp" startline="201" endline="255">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1fad277ea19889f7e361f1ce99c7e1e_1ad1fad277ea19889f7e361f1ce99c7e1e" compoundref="_a_ring_r_r_test_8cpp" startline="168" endline="199">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a54ff7f8d2578e5ece15c02966843ee9d_1a54ff7f8d2578e5ece15c02966843ee9d" compoundref="_a_ring_r_r_test_8cpp" startline="257" endline="295">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a185a9eaeceacc3357af113dd60851f91_1a185a9eaeceacc3357af113dd60851f91" compoundref="_a_ring_r_r_test_8cpp" startline="137" endline="166">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a2cf7b4f2af73b3be05268813dc046208_1a2cf7b4f2af73b3be05268813dc046208" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>M2::ARingRR::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="70" column="8" bodyfile="Macaulay2/e/aring-RR.cpp" bodystart="5" bodyend="5"/>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a94006770ed5caf8d109ada9b5887c7e4_1a94006770ed5caf8d109ada9b5887c7e4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int M2::ARingRR::computeHashValue</definition>
+        <argsstring>(const elem &amp;a) const</argsstring>
+        <name>computeHashValue</name>
+        <qualifiedname>M2::ARingRR::computeHashValue</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a0e575857df394a0057f05ddcaaae92f1_1a0e575857df394a0057f05ddcaaae92f1" kindref="member">elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="72" column="16" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="72" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a54511f4a512152bc738467587030498c_1a54511f4a512152bc738467587030498c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingRR::is_unit</definition>
+        <argsstring>(const ElementType &amp;f) const</argsstring>
+        <name>is_unit</name>
+        <qualifiedname>M2::ARingRR::is_unit</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="81" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="81" bodyend="81"/>
+        <references refid="class_m2_1_1_a_ring_r_r_a2b7e6233b5bd6e86f3c0e6a44af7a7f5_1a2b7e6233b5bd6e86f3c0e6a44af7a7f5" compoundref="aring-_r_r_8hpp" startline="82" endline="82">is_zero</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a2b7e6233b5bd6e86f3c0e6a44af7a7f5_1a2b7e6233b5bd6e86f3c0e6a44af7a7f5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingRR::is_zero</definition>
+        <argsstring>(const ElementType &amp;f) const</argsstring>
+        <name>is_zero</name>
+        <qualifiedname>M2::ARingRR::is_zero</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="82" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="82" bodyend="82"/>
+        <referencedby refid="class_m2_1_1_a_ring_r_r_a54511f4a512152bc738467587030498c_1a54511f4a512152bc738467587030498c" compoundref="aring-_r_r_8hpp" startline="81" endline="81">is_unit</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_r_r_ae3c5d1e15b99f019428246bcf3f73609_1ae3c5d1e15b99f019428246bcf3f73609" compoundref="aring-_r_r_8hpp" startline="244" endline="260">syzygy</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1fad277ea19889f7e361f1ce99c7e1e_1ad1fad277ea19889f7e361f1ce99c7e1e" compoundref="_a_ring_r_r_test_8cpp" startline="168" endline="199">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a6733d61c2c84e47d3186c5f58783b20a_1a6733d61c2c84e47d3186c5f58783b20a" compoundref="_a_ring_r_r_test_8cpp" startline="84" endline="102">testRingNegateRR</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_aff263745ffae4a6da32ae3f1de9be510_1aff263745ffae4a6da32ae3f1de9be510" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingRR::is_equal</definition>
+        <argsstring>(const ElementType &amp;f, const ElementType &amp;g) const</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>M2::ARingRR::is_equal</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="83" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="83" bodyend="86"/>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a54ff7f8d2578e5ece15c02966843ee9d_1a54ff7f8d2578e5ece15c02966843ee9d" compoundref="_a_ring_r_r_test_8cpp" startline="257" endline="295">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a107bdbda2ee42a8cee3453a858162c96_1a107bdbda2ee42a8cee3453a858162c96" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int M2::ARingRR::compare_elems</definition>
+        <argsstring>(const ElementType &amp;f, const ElementType &amp;g) const</argsstring>
+        <name>compare_elems</name>
+        <qualifiedname>M2::ARingRR::compare_elems</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="88" column="7" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="88" bodyend="94"/>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1cf9162bfe62ab64076983d4ac6375d_1ad1cf9162bfe62ab64076983d4ac6375d" compoundref="_a_ring_r_r_test_8cpp" startline="44" endline="57">almostEqual</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a0c89a6dd9da43fc38088ef2c9d82aea1_1a0c89a6dd9da43fc38088ef2c9d82aea1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::to_ring_elem</definition>
+        <argsstring>(ring_elem &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>to_ring_elem</name>
+        <qualifiedname>M2::ARingRR::to_ring_elem</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="103" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="103" bodyend="106"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a8fa4446e9d0c63859c4d3f291184740c_1a8fa4446e9d0c63859c4d3f291184740c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::from_ring_elem</definition>
+        <argsstring>(ElementType &amp;result, const ring_elem &amp;a) const</argsstring>
+        <name>from_ring_elem</name>
+        <qualifiedname>M2::ARingRR::from_ring_elem</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="108" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="108" bodyend="111"/>
+        <references refid="unionring__elem_a5b813e124607155d87d11e4ace2496fb_1a5b813e124607155d87d11e4ace2496fb" compoundref="ringelem_8hpp" startline="124" endline="124">ring_elem::get_double</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a14607ff1d9666cb0230909fb479e21b5_1a14607ff1d9666cb0230909fb479e21b5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref></type>
+        <definition>ElementType M2::ARingRR::from_ring_elem_const</definition>
+        <argsstring>(const ring_elem &amp;a) const</argsstring>
+        <name>from_ring_elem_const</name>
+        <qualifiedname>M2::ARingRR::from_ring_elem_const</qualifiedname>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="113" column="15" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="113" bodyend="116"/>
+        <references refid="unionring__elem_a5b813e124607155d87d11e4ace2496fb_1a5b813e124607155d87d11e4ace2496fb" compoundref="ringelem_8hpp" startline="124" endline="124">ring_elem::get_double</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a09873039a3df18d72659f9f4c37a9b74_1a09873039a3df18d72659f9f4c37a9b74" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::init</definition>
+        <argsstring>(ElementType &amp;result) const</argsstring>
+        <name>init</name>
+        <qualifiedname>M2::ARingRR::init</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="120" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="120" bodyend="120"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_aa6972267cabc98dd7eb781386d1fe060_1aa6972267cabc98dd7eb781386d1fe060" compoundref="_a_ring_r_r_test_8cpp" startline="110" endline="135">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a2aed381ca7c6f0fc98da2ee5ce2bfc8d_1a2aed381ca7c6f0fc98da2ee5ce2bfc8d" compoundref="_a_ring_r_r_test_8cpp" startline="201" endline="255">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1fad277ea19889f7e361f1ce99c7e1e_1ad1fad277ea19889f7e361f1ce99c7e1e" compoundref="_a_ring_r_r_test_8cpp" startline="168" endline="199">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a54ff7f8d2578e5ece15c02966843ee9d_1a54ff7f8d2578e5ece15c02966843ee9d" compoundref="_a_ring_r_r_test_8cpp" startline="257" endline="295">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a185a9eaeceacc3357af113dd60851f91_1a185a9eaeceacc3357af113dd60851f91" compoundref="_a_ring_r_r_test_8cpp" startline="137" endline="166">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a6733d61c2c84e47d3186c5f58783b20a_1a6733d61c2c84e47d3186c5f58783b20a" compoundref="_a_ring_r_r_test_8cpp" startline="84" endline="102">testRingNegateRR</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a1a7511978559b3d9b2f202ee2c042f77_1a1a7511978559b3d9b2f202ee2c042f77" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::init_set</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>init_set</name>
+        <qualifiedname>M2::ARingRR::init_set</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="121" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="121" bodyend="121"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a5bf14a43d1618ec8e5b35cc3423b5e4e_1a5bf14a43d1618ec8e5b35cc3423b5e4e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::set</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>set</name>
+        <qualifiedname>M2::ARingRR::set</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="122" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="122" bodyend="122"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_r_r_a1c84b6edda0f32cc91cef1e51a68b1f2_1a1c84b6edda0f32cc91cef1e51a68b1f2" compoundref="aring-_r_r_8hpp" startline="129" endline="129">copy</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_r_r_ae3c5d1e15b99f019428246bcf3f73609_1ae3c5d1e15b99f019428246bcf3f73609" compoundref="aring-_r_r_8hpp" startline="244" endline="260">syzygy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a0b6d392503910191f5b81452b4e65069_1a0b6d392503910191f5b81452b4e65069" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::set_zero</definition>
+        <argsstring>(ElementType &amp;result) const</argsstring>
+        <name>set_zero</name>
+        <qualifiedname>M2::ARingRR::set_zero</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="123" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="123" bodyend="123"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_r_r_ac746efa3f2066a93c68f4653446a2328_1ac746efa3f2066a93c68f4653446a2328" compoundref="aring-_r_r_8hpp" startline="280" endline="283">zeroize_tiny</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a1c84b6edda0f32cc91cef1e51a68b1f2_1a1c84b6edda0f32cc91cef1e51a68b1f2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::copy</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>copy</name>
+        <qualifiedname>M2::ARingRR::copy</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="129" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="129" bodyend="129"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_m2_1_1_a_ring_r_r_a5bf14a43d1618ec8e5b35cc3423b5e4e_1a5bf14a43d1618ec8e5b35cc3423b5e4e" compoundref="aring-_r_r_8hpp" startline="122" endline="122">set</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a9d023a93fcb84639c7555fdd1cfebc10_1a9d023a93fcb84639c7555fdd1cfebc10" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::set_from_long</definition>
+        <argsstring>(ElementType &amp;result, long a) const</argsstring>
+        <name>set_from_long</name>
+        <qualifiedname>M2::ARingRR::set_from_long</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="130" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="130" bodyend="133"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_aa0c7d7f1b507697faa92c060772e64cd_1aa0c7d7f1b507697faa92c060772e64cd" compoundref="_a_ring_r_r_test_8cpp" startline="60" endline="68">getElement&lt; M2::ARingRR &gt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a8681c45906462dafaa4caf49b84a0000_1a8681c45906462dafaa4caf49b84a0000" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::set_var</definition>
+        <argsstring>(ElementType &amp;result, int v) const</argsstring>
+        <name>set_var</name>
+        <qualifiedname>M2::ARingRR::set_var</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="135" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="135" bodyend="139"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_r_r_ae3c5d1e15b99f019428246bcf3f73609_1ae3c5d1e15b99f019428246bcf3f73609" compoundref="aring-_r_r_8hpp" startline="244" endline="260">syzygy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_afbee1e424614932a7b0c7aaa66b109f3_1afbee1e424614932a7b0c7aaa66b109f3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::set_from_mpz</definition>
+        <argsstring>(ElementType &amp;result, mpz_srcptr a) const</argsstring>
+        <name>set_from_mpz</name>
+        <qualifiedname>M2::ARingRR::set_from_mpz</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="141" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="141" bodyend="144"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a0c51f9c30eef235916b5533c26a1f581_1a0c51f9c30eef235916b5533c26a1f581" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingRR::set_from_mpq</definition>
+        <argsstring>(ElementType &amp;result, mpq_srcptr a) const</argsstring>
+        <name>set_from_mpq</name>
+        <qualifiedname>M2::ARingRR::set_from_mpq</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>mpq_srcptr</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="146" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="146" bodyend="150"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="namespace_m2_a4874eaf412009e96172af70dfef5fb36_1a4874eaf412009e96172af70dfef5fb36" compoundref="aring-translate_8hpp" startline="296" endline="303">M2::mypromote</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a4e12848d31d635ab07bde9922d7ea4cb_1a4e12848d31d635ab07bde9922d7ea4cb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingRR::set_from_BigReal</definition>
+        <argsstring>(ElementType &amp;result, gmp_RR a) const</argsstring>
+        <name>set_from_BigReal</name>
+        <qualifiedname>M2::ARingRR::set_from_BigReal</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="152" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="152" bodyend="156"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="namespace_m2_a62c1d4f81b6874878820082fb55a2a8b_1a62c1d4f81b6874878820082fb55a2a8b" compoundref="aring-translate_8hpp" startline="119" endline="124">M2::get_from_BigReal</referencedby>
+        <referencedby refid="namespace_m2_a1b43dca7195a837ca70d044148412096_1a1b43dca7195a837ca70d044148412096" compoundref="aring-translate_8hpp" startline="588" endline="596">M2::mylift</referencedby>
+        <referencedby refid="namespace_m2_ad39a7b70a87faa0e9cda79f47c588989_1ad39a7b70a87faa0e9cda79f47c588989" compoundref="aring-translate_8hpp" startline="578" endline="587">M2::mylift</referencedby>
+        <referencedby refid="namespace_m2_a7a7b6fd47d93c4bc423d84cc0fc71ac8_1a7a7b6fd47d93c4bc423d84cc0fc71ac8" compoundref="aring-translate_8hpp" startline="383" endline="392">M2::mypromote</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a67c2cb1ff50db93b5f1fdcb8139257d6_1a67c2cb1ff50db93b5f1fdcb8139257d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingRR::set_from_double</definition>
+        <argsstring>(ElementType &amp;result, double a) const</argsstring>
+        <name>set_from_double</name>
+        <qualifiedname>M2::ARingRR::set_from_double</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="157" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="157" bodyend="161"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="namespace_m2_a63935fb4fd87c308abd2efe7bdff10be_1a63935fb4fd87c308abd2efe7bdff10be" compoundref="aring-translate_8hpp" startline="225" endline="228">M2::get_from_double</referencedby>
+        <referencedby refid="namespace_m2_af7f5ce6ff91adcb21f2efddce8dfb583_1af7f5ce6ff91adcb21f2efddce8dfb583" compoundref="aring-translate_8hpp" startline="597" endline="605">M2::mylift</referencedby>
+        <referencedby refid="namespace_m2_a53efb7c794d419d55678af3ef07dbd97_1a53efb7c794d419d55678af3ef07dbd97" compoundref="aring-translate_8hpp" startline="569" endline="577">M2::mylift</referencedby>
+        <referencedby refid="namespace_m2_aab50f51e9eeb4086eac1740abe715c5e_1aab50f51e9eeb4086eac1740abe715c5e" compoundref="aring-translate_8hpp" startline="337" endline="345">M2::mypromote</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a452a04c444327a8fcc6d6cebe4520b04_1a452a04c444327a8fcc6d6cebe4520b04" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::negate</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>negate</name>
+        <qualifiedname>M2::ARingRR::negate</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="164" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="164" bodyend="164"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_r_r_ae3c5d1e15b99f019428246bcf3f73609_1ae3c5d1e15b99f019428246bcf3f73609" compoundref="aring-_r_r_8hpp" startline="244" endline="260">syzygy</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_aa6972267cabc98dd7eb781386d1fe060_1aa6972267cabc98dd7eb781386d1fe060" compoundref="_a_ring_r_r_test_8cpp" startline="110" endline="135">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a6733d61c2c84e47d3186c5f58783b20a_1a6733d61c2c84e47d3186c5f58783b20a" compoundref="_a_ring_r_r_test_8cpp" startline="84" endline="102">testRingNegateRR</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_ab2fbe5a5e369eaa231aec2cdd21e223d_1ab2fbe5a5e369eaa231aec2cdd21e223d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::invert</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>invert</name>
+        <qualifiedname>M2::ARingRR::invert</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="165" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="165" bodyend="169"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_ab855d5dbbfc45208708a90c88ccf2fe5_1ab855d5dbbfc45208708a90c88ccf2fe5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::add</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>add</name>
+        <qualifiedname>M2::ARingRR::add</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="171" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="171" bodyend="176"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_aa6972267cabc98dd7eb781386d1fe060_1aa6972267cabc98dd7eb781386d1fe060" compoundref="_a_ring_r_r_test_8cpp" startline="110" endline="135">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a2aed381ca7c6f0fc98da2ee5ce2bfc8d_1a2aed381ca7c6f0fc98da2ee5ce2bfc8d" compoundref="_a_ring_r_r_test_8cpp" startline="201" endline="255">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a185a9eaeceacc3357af113dd60851f91_1a185a9eaeceacc3357af113dd60851f91" compoundref="_a_ring_r_r_test_8cpp" startline="137" endline="166">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a6733d61c2c84e47d3186c5f58783b20a_1a6733d61c2c84e47d3186c5f58783b20a" compoundref="_a_ring_r_r_test_8cpp" startline="84" endline="102">testRingNegateRR</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_aceb17afe3da5137f59621b470bc07d12_1aceb17afe3da5137f59621b470bc07d12" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::addMultipleTo</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>addMultipleTo</name>
+        <qualifiedname>M2::ARingRR::addMultipleTo</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="178" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="178" bodyend="183"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_abd1b3f9027b430308a76f2c2586253da_1abd1b3f9027b430308a76f2c2586253da" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::subtract</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>subtract</name>
+        <qualifiedname>M2::ARingRR::subtract</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="185" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="185" bodyend="190"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1cf9162bfe62ab64076983d4ac6375d_1ad1cf9162bfe62ab64076983d4ac6375d" compoundref="_a_ring_r_r_test_8cpp" startline="44" endline="57">almostEqual</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a185a9eaeceacc3357af113dd60851f91_1a185a9eaeceacc3357af113dd60851f91" compoundref="_a_ring_r_r_test_8cpp" startline="137" endline="166">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a71f12a492fb51d593c7fdc0a1b81371a_1a71f12a492fb51d593c7fdc0a1b81371a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::subtract_multiple</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>subtract_multiple</name>
+        <qualifiedname>M2::ARingRR::subtract_multiple</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="192" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="192" bodyend="197"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a185a9eaeceacc3357af113dd60851f91_1a185a9eaeceacc3357af113dd60851f91" compoundref="_a_ring_r_r_test_8cpp" startline="137" endline="166">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a179848af3836b9154e2e9e07338b78f7_1a179848af3836b9154e2e9e07338b78f7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::mult</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>mult</name>
+        <qualifiedname>M2::ARingRR::mult</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="199" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="199" bodyend="204"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a2aed381ca7c6f0fc98da2ee5ce2bfc8d_1a2aed381ca7c6f0fc98da2ee5ce2bfc8d" compoundref="_a_ring_r_r_test_8cpp" startline="201" endline="255">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1fad277ea19889f7e361f1ce99c7e1e_1ad1fad277ea19889f7e361f1ce99c7e1e" compoundref="_a_ring_r_r_test_8cpp" startline="168" endline="199">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a54ff7f8d2578e5ece15c02966843ee9d_1a54ff7f8d2578e5ece15c02966843ee9d" compoundref="_a_ring_r_r_test_8cpp" startline="257" endline="295">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a185a9eaeceacc3357af113dd60851f91_1a185a9eaeceacc3357af113dd60851f91" compoundref="_a_ring_r_r_test_8cpp" startline="137" endline="166">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a1bfb3e5c851c9dbc18599e379bc6621a_1a1bfb3e5c851c9dbc18599e379bc6621a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::divide</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>divide</name>
+        <qualifiedname>M2::ARingRR::divide</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="206" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="206" bodyend="211"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_r_r_ae3c5d1e15b99f019428246bcf3f73609_1ae3c5d1e15b99f019428246bcf3f73609" compoundref="aring-_r_r_8hpp" startline="244" endline="260">syzygy</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1fad277ea19889f7e361f1ce99c7e1e_1ad1fad277ea19889f7e361f1ce99c7e1e" compoundref="_a_ring_r_r_test_8cpp" startline="168" endline="199">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_aa2758f65d7cb638db580104ddc388077_1aa2758f65d7cb638db580104ddc388077" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::abs_squared</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>abs_squared</name>
+        <qualifiedname>M2::ARingRR::abs_squared</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="213" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="213" bodyend="216"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a7d375fc3717761822cf7ccf74604d337_1a7d375fc3717761822cf7ccf74604d337" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::abs</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>abs</name>
+        <qualifiedname>M2::ARingRR::abs</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="218" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="218" bodyend="221"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1cf9162bfe62ab64076983d4ac6375d_1ad1cf9162bfe62ab64076983d4ac6375d" compoundref="_a_ring_r_r_test_8cpp" startline="44" endline="57">almostEqual</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a8b0e0f67d0831c613788bce363d942bf_1a8b0e0f67d0831c613788bce363d942bf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::power</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, int n) const</argsstring>
+        <name>power</name>
+        <qualifiedname>M2::ARingRR::power</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="223" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="223" bodyend="226"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_r_r_aaaedb422fcef3f6c04086470db71e413_1aaaedb422fcef3f6c04086470db71e413" compoundref="aring-_r_r_8hpp" startline="228" endline="235">power_mpz</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a54ff7f8d2578e5ece15c02966843ee9d_1a54ff7f8d2578e5ece15c02966843ee9d" compoundref="_a_ring_r_r_test_8cpp" startline="257" endline="295">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_aaaedb422fcef3f6c04086470db71e413_1aaaedb422fcef3f6c04086470db71e413" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::power_mpz</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, mpz_srcptr n) const</argsstring>
+        <name>power_mpz</name>
+        <qualifiedname>M2::ARingRR::power_mpz</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="228" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="228" bodyend="235"/>
+        <references refid="class_ring_z_z_a93f60c7348caad7f332820b455fb3735_1a93f60c7348caad7f332820b455fb3735" compoundref="_z_z_8cpp" startline="46" endline="53">RingZZ::get_si</references>
+        <references refid="class_m2_1_1_a_ring_r_r_a8b0e0f67d0831c613788bce363d942bf_1a8b0e0f67d0831c613788bce363d942bf" compoundref="aring-_r_r_8hpp" startline="223" endline="226">power</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a54ff7f8d2578e5ece15c02966843ee9d_1a54ff7f8d2578e5ece15c02966843ee9d" compoundref="_a_ring_r_r_test_8cpp" startline="257" endline="295">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a2d4be52271cc349904ecedaafd4676f2_1a2d4be52271cc349904ecedaafd4676f2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::swap</definition>
+        <argsstring>(ElementType &amp;a, ElementType &amp;b) const</argsstring>
+        <name>swap</name>
+        <qualifiedname>M2::ARingRR::swap</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="237" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="237" bodyend="237"/>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a2f58fd8217d10c5f274983951e935df2_1a2f58fd8217d10c5f274983951e935df2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::elem_text_out</definition>
+        <argsstring>(buffer &amp;o, const ElementType &amp;a, bool p_one=true, bool p_plus=false, bool p_parens=false) const</argsstring>
+        <name>elem_text_out</name>
+        <qualifiedname>M2::ARingRR::elem_text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_one</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_plus</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_parens</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="238" column="8" bodyfile="Macaulay2/e/aring-RR.cpp" bodystart="6" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_ae3c5d1e15b99f019428246bcf3f73609_1ae3c5d1e15b99f019428246bcf3f73609" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::syzygy</definition>
+        <argsstring>(const ElementType &amp;a, const ElementType &amp;b, ElementType &amp;x, ElementType &amp;y) const</argsstring>
+        <name>syzygy</name>
+        <qualifiedname>M2::ARingRR::syzygy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="244" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="244" bodyend="260"/>
+        <references refid="class_m2_1_1_a_ring_r_r_a1bfb3e5c851c9dbc18599e379bc6621a_1a1bfb3e5c851c9dbc18599e379bc6621a" compoundref="aring-_r_r_8hpp" startline="206" endline="211">divide</references>
+        <references refid="class_m2_1_1_a_ring_r_r_a2b7e6233b5bd6e86f3c0e6a44af7a7f5_1a2b7e6233b5bd6e86f3c0e6a44af7a7f5" compoundref="aring-_r_r_8hpp" startline="82" endline="82">is_zero</references>
+        <references refid="class_m2_1_1_a_ring_r_r_a452a04c444327a8fcc6d6cebe4520b04_1a452a04c444327a8fcc6d6cebe4520b04" compoundref="aring-_r_r_8hpp" startline="164" endline="164">negate</references>
+        <references refid="class_m2_1_1_a_ring_r_r_a5bf14a43d1618ec8e5b35cc3423b5e4e_1a5bf14a43d1618ec8e5b35cc3423b5e4e" compoundref="aring-_r_r_8hpp" startline="122" endline="122">set</references>
+        <references refid="class_m2_1_1_a_ring_r_r_a8681c45906462dafaa4caf49b84a0000_1a8681c45906462dafaa4caf49b84a0000" compoundref="aring-_r_r_8hpp" startline="135" endline="139">set_var</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_acf61a21bedfb644b70bd47968b9629cf_1acf61a21bedfb644b70bd47968b9629cf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::random</definition>
+        <argsstring>(ElementType &amp;result) const</argsstring>
+        <name>random</name>
+        <qualifiedname>M2::ARingRR::random</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="262" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="262" bodyend="265"/>
+        <references refid="random_8cpp_a3e66b87ab993025e0246b1b05932064a_1a3e66b87ab993025e0246b1b05932064a" compoundref="random_8cpp" startline="248" endline="256">randomDouble</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_aa0c7d7f1b507697faa92c060772e64cd_1aa0c7d7f1b507697faa92c060772e64cd" compoundref="_a_ring_r_r_test_8cpp" startline="60" endline="68">getElement&lt; M2::ARingRR &gt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_ae86f715e1eddae7581222fd9edc557d4_1ae86f715e1eddae7581222fd9edc557d4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::eval</definition>
+        <argsstring>(const RingMap *map, ElementType &amp;f, int first_var, ring_elem &amp;result) const</argsstring>
+        <name>eval</name>
+        <qualifiedname>M2::ARingRR::eval</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring_map" kindref="compound">RingMap</ref> *</type>
+          <declname>map</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>first_var</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="267" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="267" bodyend="278"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_ring_a94e77fa14d8cfeef323da02290cb4448_1a94e77fa14d8cfeef323da02290cb4448" compoundref="ring_8cpp" startline="270" endline="275">Ring::from_double</references>
+        <references refid="class_ring_a6f6b08df2379200116484876c4fd2d87_1a6f6b08df2379200116484876c4fd2d87">Ring::from_long</references>
+        <references refid="class_ring_map_aa041dd8442eeac3e1fdf75e6e4d32bf8_1aa041dd8442eeac3e1fdf75e6e4d32bf8" compoundref="ringmap_8hpp" startline="105" endline="105">RingMap::get_ring</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_ac746efa3f2066a93c68f4653446a2328_1ac746efa3f2066a93c68f4653446a2328" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::zeroize_tiny</definition>
+        <argsstring>(gmp_RR epsilon, ElementType &amp;a) const</argsstring>
+        <name>zeroize_tiny</name>
+        <qualifiedname>M2::ARingRR::zeroize_tiny</qualifiedname>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>epsilon</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="280" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="280" bodyend="283"/>
+        <references refid="class_m2_1_1_a_ring_r_r_a0b6d392503910191f5b81452b4e65069_1a0b6d392503910191f5b81452b4e65069" compoundref="aring-_r_r_8hpp" startline="123" endline="123">set_zero</references>
+        <referencedby refid="namespace_matrix_ops_a121c3014d3fd5dc02fd64d6ab80c0776_1a121c3014d3fd5dc02fd64d6ab80c0776" compoundref="mat-linalg_8hpp" startline="1281" endline="1288">MatrixOps::clean</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a5fd1f29dc2753566bf3e6e28f2eb7c3f_1a5fd1f29dc2753566bf3e6e28f2eb7c3f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingRR::increase_norm</definition>
+        <argsstring>(mpfr_ptr norm, const ElementType &amp;a) const</argsstring>
+        <name>increase_norm</name>
+        <qualifiedname>M2::ARingRR::increase_norm</qualifiedname>
+        <param>
+          <type>mpfr_ptr</type>
+          <declname>norm</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="285" column="8" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="285" bodyend="289"/>
+        <referencedby refid="namespace_matrix_ops_aa631e25f3ce5427bc185afb13f7ba36f_1aa631e25f3ce5427bc185afb13f7ba36f" compoundref="mat-linalg_8hpp" startline="1290" endline="1297">MatrixOps::increase_norm</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a2df6fddd6de711ea2044ed2a8626fea3_1a2df6fddd6de711ea2044ed2a8626fea3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double M2::ARingRR::coerceToDouble</definition>
+        <argsstring>(const ElementType &amp;a) const</argsstring>
+        <name>coerceToDouble</name>
+        <qualifiedname>M2::ARingRR::coerceToDouble</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="291" column="10" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="291" bodyend="291"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_m2_1_1_a_ring_r_r_a720cb45bbd76d9ab901406f01988010e_1a720cb45bbd76d9ab901406f01988010e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void M2::ARingRR::clear</definition>
+        <argsstring>(ElementType &amp;result)</argsstring>
+        <name>clear</name>
+        <qualifiedname>M2::ARingRR::clear</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-RR.hpp" line="124" column="15" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="124" bodyend="127"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_r_r_test_8cpp_aa6972267cabc98dd7eb781386d1fe060_1aa6972267cabc98dd7eb781386d1fe060" compoundref="_a_ring_r_r_test_8cpp" startline="110" endline="135">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a2aed381ca7c6f0fc98da2ee5ce2bfc8d_1a2aed381ca7c6f0fc98da2ee5ce2bfc8d" compoundref="_a_ring_r_r_test_8cpp" startline="201" endline="255">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1fad277ea19889f7e361f1ce99c7e1e_1ad1fad277ea19889f7e361f1ce99c7e1e" compoundref="_a_ring_r_r_test_8cpp" startline="168" endline="199">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a54ff7f8d2578e5ece15c02966843ee9d_1a54ff7f8d2578e5ece15c02966843ee9d" compoundref="_a_ring_r_r_test_8cpp" startline="257" endline="295">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a185a9eaeceacc3357af113dd60851f91_1a185a9eaeceacc3357af113dd60851f91" compoundref="_a_ring_r_r_test_8cpp" startline="137" endline="166">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a6733d61c2c84e47d3186c5f58783b20a_1a6733d61c2c84e47d3186c5f58783b20a" compoundref="_a_ring_r_r_test_8cpp" startline="84" endline="102">testRingNegateRR</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput>aring</computeroutput>-style adapter for double-precision real numbers. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" kindref="member">ElementType</ref></computeroutput> is a plain <computeroutput>double</computeroutput>. Fixed precision (53 bits per <computeroutput><ref refid="class_m2_1_1_a_ring_r_r_a74dddd7b6174b05611b7164dfe23088d_1a74dddd7b6174b05611b7164dfe23088d" kindref="member">get_precision()</ref></computeroutput>), characteristic 0. <computeroutput><ref refid="class_m2_1_1_a_ring_r_r_ab65c60daffb6d850453f309e5a4bdf01_1ab65c60daffb6d850453f309e5a4bdf01" kindref="member">ringID</ref> = <ref refid="group__rings_ga7579b18152595d75b0bce712fbd605df_1gga7579b18152595d75b0bce712fbd605dfa3e42af1fd103e1b4e061d1aac25b9123" kindref="member">ring_RR</ref></computeroutput>. Hash values are derived from the double cast to <computeroutput>unsigned <ref refid="classint" kindref="compound">int</ref></computeroutput>. Use <computeroutput><ref refid="class_m2_1_1_a_ring_r_r_r" kindref="compound">ARingRRR</ref></computeroutput> instead when arbitrary precision is needed. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>M2::ARingRR</label>
+        <link refid="class_m2_1_1_a_ring_r_r"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>M2::SimpleARing&lt; ARingRR &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; ARingRR &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>M2::ARingRR</label>
+        <link refid="class_m2_1_1_a_ring_r_r"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>ringID</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>M2::SimpleARing&lt; ARingRR &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; ARingRR &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="6">
+        <label>static const RingID</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/aring-RR.hpp" line="57" column="1" bodyfile="Macaulay2/e/aring-RR.hpp" bodystart="58" bodyend="292"/>
+    <listofallmembers>
+      <member refid="class_m2_1_1_a_ring_r_r_a7d375fc3717761822cf7ccf74604d337_1a7d375fc3717761822cf7ccf74604d337" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>abs</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_aa2758f65d7cb638db580104ddc388077_1aa2758f65d7cb638db580104ddc388077" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>abs_squared</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_ab855d5dbbfc45208708a90c88ccf2fe5_1ab855d5dbbfc45208708a90c88ccf2fe5" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>add</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_aceb17afe3da5137f59621b470bc07d12_1aceb17afe3da5137f59621b470bc07d12" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>addMultipleTo</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a7a10f32985321d33099b3905b5e9c713_1a7a10f32985321d33099b3905b5e9c713" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>ARingRR</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a5f50f747bc0752b1e1e23a646f61b8e7_1a5f50f747bc0752b1e1e23a646f61b8e7" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>characteristic</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a720cb45bbd76d9ab901406f01988010e_1a720cb45bbd76d9ab901406f01988010e" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>clear</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a2df6fddd6de711ea2044ed2a8626fea3_1a2df6fddd6de711ea2044ed2a8626fea3" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>coerceToDouble</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a107bdbda2ee42a8cee3453a858162c96_1a107bdbda2ee42a8cee3453a858162c96" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>compare_elems</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a94006770ed5caf8d109ada9b5887c7e4_1a94006770ed5caf8d109ada9b5887c7e4" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>computeHashValue</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a1c84b6edda0f32cc91cef1e51a68b1f2_1a1c84b6edda0f32cc91cef1e51a68b1f2" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>copy</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a1bfb3e5c851c9dbc18599e379bc6621a_1a1bfb3e5c851c9dbc18599e379bc6621a" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>divide</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a0e575857df394a0057f05ddcaaae92f1_1a0e575857df394a0057f05ddcaaae92f1" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>elem</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a2f58fd8217d10c5f274983951e935df2_1a2f58fd8217d10c5f274983951e935df2" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>elem_text_out</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a28386725cf648d83d17c1b4d980654cb_1a28386725cf648d83d17c1b4d980654cb" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>ElementType</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_ae86f715e1eddae7581222fd9edc557d4_1ae86f715e1eddae7581222fd9edc557d4" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>eval</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a8fa4446e9d0c63859c4d3f291184740c_1a8fa4446e9d0c63859c4d3f291184740c" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>from_ring_elem</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a14607ff1d9666cb0230909fb479e21b5_1a14607ff1d9666cb0230909fb479e21b5" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>from_ring_elem_const</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a74dddd7b6174b05611b7164dfe23088d_1a74dddd7b6174b05611b7164dfe23088d" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>get_precision</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a5fd1f29dc2753566bf3e6e28f2eb7c3f_1a5fd1f29dc2753566bf3e6e28f2eb7c3f" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>increase_norm</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a09873039a3df18d72659f9f4c37a9b74_1a09873039a3df18d72659f9f4c37a9b74" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>init</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a1a7511978559b3d9b2f202ee2c042f77_1a1a7511978559b3d9b2f202ee2c042f77" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>init_set</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_ab2fbe5a5e369eaa231aec2cdd21e223d_1ab2fbe5a5e369eaa231aec2cdd21e223d" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>invert</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_aff263745ffae4a6da32ae3f1de9be510_1aff263745ffae4a6da32ae3f1de9be510" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>is_equal</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a54511f4a512152bc738467587030498c_1a54511f4a512152bc738467587030498c" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>is_unit</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a2b7e6233b5bd6e86f3c0e6a44af7a7f5_1a2b7e6233b5bd6e86f3c0e6a44af7a7f5" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>is_zero</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a179848af3836b9154e2e9e07338b78f7_1a179848af3836b9154e2e9e07338b78f7" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>mult</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a452a04c444327a8fcc6d6cebe4520b04_1a452a04c444327a8fcc6d6cebe4520b04" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>negate</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>operator new[]</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a8b0e0f67d0831c613788bce363d942bf_1a8b0e0f67d0831c613788bce363d942bf" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>power</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_aaaedb422fcef3f6c04086470db71e413_1aaaedb422fcef3f6c04086470db71e413" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>power_mpz</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_acf61a21bedfb644b70bd47968b9629cf_1acf61a21bedfb644b70bd47968b9629cf" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>random</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_ab65c60daffb6d850453f309e5a4bdf01_1ab65c60daffb6d850453f309e5a4bdf01" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>ringID</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a5bf14a43d1618ec8e5b35cc3423b5e4e_1a5bf14a43d1618ec8e5b35cc3423b5e4e" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>set</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a4e12848d31d635ab07bde9922d7ea4cb_1a4e12848d31d635ab07bde9922d7ea4cb" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>set_from_BigReal</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a67c2cb1ff50db93b5f1fdcb8139257d6_1a67c2cb1ff50db93b5f1fdcb8139257d6" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>set_from_double</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a9d023a93fcb84639c7555fdd1cfebc10_1a9d023a93fcb84639c7555fdd1cfebc10" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>set_from_long</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a0c51f9c30eef235916b5533c26a1f581_1a0c51f9c30eef235916b5533c26a1f581" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>set_from_mpq</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_afbee1e424614932a7b0c7aaa66b109f3_1afbee1e424614932a7b0c7aaa66b109f3" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>set_from_mpz</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a8681c45906462dafaa4caf49b84a0000_1a8681c45906462dafaa4caf49b84a0000" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>set_var</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a0b6d392503910191f5b81452b4e65069_1a0b6d392503910191f5b81452b4e65069" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>set_zero</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_abd1b3f9027b430308a76f2c2586253da_1abd1b3f9027b430308a76f2c2586253da" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>subtract</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a71f12a492fb51d593c7fdc0a1b81371a_1a71f12a492fb51d593c7fdc0a1b81371a" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>subtract_multiple</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a2d4be52271cc349904ecedaafd4676f2_1a2d4be52271cc349904ecedaafd4676f2" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>swap</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_ae3c5d1e15b99f019428246bcf3f73609_1ae3c5d1e15b99f019428246bcf3f73609" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>syzygy</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a2cf7b4f2af73b3be05268813dc046208_1a2cf7b4f2af73b3be05268813dc046208" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>text_out</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_a0c89a6dd9da43fc38088ef2c9d82aea1_1a0c89a6dd9da43fc38088ef2c9d82aea1" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>to_ring_elem</name></member>
+      <member refid="class_m2_1_1_a_ring_r_r_ac746efa3f2066a93c68f4653446a2328_1ac746efa3f2066a93c68f4653446a2328" prot="public" virt="non-virtual"><scope>M2::ARingRR</scope><name>zeroize_tiny</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

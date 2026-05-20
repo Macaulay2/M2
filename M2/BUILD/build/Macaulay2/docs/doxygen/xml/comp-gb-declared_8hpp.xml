@@ -1,0 +1,623 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="comp-gb-declared_8hpp" kind="file" language="C++">
+    <compoundname>comp-gb-declared.hpp</compoundname>
+    <includes refid="comp-gb_8hpp" local="yes">comp-gb.hpp</includes>
+    <includes refid="reducedgb_8hpp" local="yes">reducedgb.hpp</includes>
+    <includedby refid="comp-gb-declared_8cpp" local="yes">Macaulay2/e/comp-gb-declared.cpp</includedby>
+    <includedby refid="gb-walk_8cpp" local="yes">Macaulay2/e/gb-walk.cpp</includedby>
+    <includedby refid="groebner_8cpp" local="yes">Macaulay2/e/interface/groebner.cpp</includedby>
+    <incdepgraph>
+      <node id="43">
+        <label>../system/mutex.h</label>
+      </node>
+      <node id="26">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/comp-gb-declared.hpp</label>
+        <link refid="comp-gb-declared_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>comp-gb.hpp</label>
+        <link refid="comp-gb_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>comp.hpp</label>
+        <link refid="comp_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="33">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>gbring.hpp</label>
+        <link refid="gbring_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>gbweight.hpp</label>
+        <link refid="gbweight_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>interface/computation.h</label>
+        <link refid="computation_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>mem.hpp</label>
+        <link refid="mem_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>montable.hpp</label>
+        <link refid="montable_8hpp"/>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>montableZZ.hpp</label>
+        <link refid="montable_z_z_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>qring.hpp</label>
+        <link refid="qring_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>reducedgb.hpp</label>
+        <link refid="reducedgb_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="35">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>M2/config.h</label>
+      </node>
+      <node id="10">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="9">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="45">
+        <label>algorithm</label>
+      </node>
+      <node id="29">
+        <label>assert.h</label>
+      </node>
+      <node id="18">
+        <label>cassert</label>
+      </node>
+      <node id="55">
+        <label>cstddef</label>
+      </node>
+      <node id="27">
+        <label>cstdio</label>
+      </node>
+      <node id="16">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="21">
+        <label>iostream</label>
+      </node>
+      <node id="44">
+        <label>memory</label>
+      </node>
+      <node id="25">
+        <label>stddef.h</label>
+      </node>
+      <node id="34">
+        <label>stdexcept</label>
+      </node>
+      <node id="8">
+        <label>stdint.h</label>
+      </node>
+      <node id="46">
+        <label>stdio.h</label>
+      </node>
+      <node id="14">
+        <label>stdlib.h</label>
+      </node>
+      <node id="22">
+        <label>string</label>
+      </node>
+      <node id="30">
+        <label>string.h</label>
+      </node>
+      <node id="31">
+        <label>type_traits</label>
+      </node>
+      <node id="51">
+        <label>utility</label>
+      </node>
+      <node id="15">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="17">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/comp-gb-declared.cpp</label>
+        <link refid="comp-gb-declared_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/comp-gb-declared.hpp</label>
+        <link refid="comp-gb-declared_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/gb-walk.cpp</label>
+        <link refid="gb-walk_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/interface/groebner.cpp</label>
+        <link refid="groebner_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_g_b_declared" prot="public">GBDeclared</innerclass>
+    <briefdescription>
+<para><computeroutput><ref refid="class_g_b_declared" kindref="compound">GBDeclared</ref></computeroutput> <mdash/> a user-asserted Groebner basis the engine accepts without computing. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="class_g_b_declared" kindref="compound">GBDeclared</ref></computeroutput> is the <computeroutput><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref></computeroutput> subclass produced by <ref refid="namespace_m2" kindref="compound">M2</ref>&apos;s <computeroutput>forceGB</computeroutput>. Two constructors (and matching static <computeroutput>create</computeroutput> factories) cover the two declaration flavours: <computeroutput>(m0, <ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref>, change, syz0)</computeroutput> takes the original generators <computeroutput>m0</computeroutput>, a claimed reduced GB <computeroutput><ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref></computeroutput>, the change-of-basis matrix expressing <computeroutput><ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref></computeroutput> in terms of <computeroutput>m0</computeroutput>, and a claimed syzygy module <computeroutput>syz0</computeroutput>; the <computeroutput>(leadterms, m0, <ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref>, change, syz0)</computeroutput> variant additionally lets the caller declare the leading-term matrix explicitly rather than letting the engine derive it from <computeroutput><ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref></computeroutput>. The engine stores the inputs and treats <computeroutput><ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref></computeroutput> as the GB without verification <mdash/> a wrong declaration produces wrong downstream answers; the point of <computeroutput>forceGB</computeroutput> is exactly to skip the check. Every subsequent <computeroutput>%</computeroutput>, <computeroutput>//</computeroutput>, or <computeroutput>quotient</computeroutput> runs against the declared basis at the speed of an already-computed GB.</para>
+<para>Typical uses are GBs imported from external solvers (msolve, OSCAR, Singular) when the user does not want to recompute, theoretically known bases where the proof is on paper, and caching long GB runs to disk for later reload. The internal <computeroutput>ReducedGB* <ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref></computeroutput> keeps the trusted basis in the engine&apos;s standard reduced-GB form and most accessors (<computeroutput>get_gb</computeroutput>, <computeroutput>get_change</computeroutput>, <computeroutput>get_initial</computeroutput>, <computeroutput>matrix_remainder</computeroutput>, <computeroutput>matrix_lift</computeroutput>, ...) forward straight to <computeroutput><ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref></computeroutput>; <computeroutput>get_mingens</computeroutput> returns the declared <computeroutput>trimmed_gens</computeroutput> and <computeroutput>get_syzygies</computeroutput> returns the declared <computeroutput>syz</computeroutput>. <computeroutput>start_computation</computeroutput> is a no-op since there is nothing to compute.</para>
+<para><simplesect kind="see"><para><ref refid="comp-gb_8hpp" kindref="compound">comp-gb.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="comp-gb-proxy_8hpp" kindref="compound">comp-gb-proxy.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="reducedgb_8hpp" kindref="compound">reducedgb.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>2004<sp/>Michael<sp/>E.<sp/>Stillman.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_comp_gb_declared_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_comp_gb_declared_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="comp-gb_8hpp" kindref="compound">comp-gb.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="reducedgb_8hpp" kindref="compound">reducedgb.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="class_g_b_declared" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_g_b_declared_af0018cd7db9cea6dc0f1934f76b281ac_1af0018cd7db9cea6dc0f1934f76b281ac" kindref="member">GBDeclared</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_g_b_computation_a79fd4b4b3d036051a3b6b08ab15c6e5f_1a79fd4b4b3d036051a3b6b08ab15c6e5f" kindref="member">GBComputation</ref></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>contains<sp/>a<sp/>GBComputation,<sp/>which<sp/>can<sp/>be<sp/>changed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="comment">//<sp/>For<sp/>example,<sp/>we<sp/>can<sp/>start<sp/>with<sp/>a<sp/>computation,<sp/>and<sp/>then</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="comment">//<sp/>after<sp/>it<sp/>is<sp/>done,<sp/>we<sp/>can<sp/>jettison<sp/>it,<sp/>and<sp/>consider<sp/>only</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>GB<sp/>object<sp/>itself.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56" refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_reduced_g_b" kindref="compound">ReducedGB</ref><sp/>*<ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>;</highlight></codeline>
+<codeline lineno="57" refid="class_g_b_declared_a3f4bf044d5d1213db54f1dd95d7ce876_1a3f4bf044d5d1213db54f1dd95d7ce876" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="class_g_b_declared_a3f4bf044d5d1213db54f1dd95d7ce876_1a3f4bf044d5d1213db54f1dd95d7ce876" kindref="member">trimmed_gens</ref>;</highlight></codeline>
+<codeline lineno="58" refid="class_g_b_declared_add56ebabdf11dd45875a11ca9f7b0222_1add56ebabdf11dd45875a11ca9f7b0222" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="class_g_b_declared_add56ebabdf11dd45875a11ca9f7b0222_1add56ebabdf11dd45875a11ca9f7b0222" kindref="member">syz</ref>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="61" refid="class_g_b_declared_addbf34b2a31d841e063e73b758a73b5b_1addbf34b2a31d841e063e73b758a73b5b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_addbf34b2a31d841e063e73b758a73b5b_1addbf34b2a31d841e063e73b758a73b5b" kindref="member">stop_conditions_ok</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>stop<sp/>conditions<sp/>in<sp/>_Stop<sp/>are<sp/>inappropriate,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>return<sp/>false,<sp/>and<sp/>use<sp/>ERROR(...)<sp/>to<sp/>provide<sp/>an<sp/>error<sp/>message.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><ref refid="class_g_b_declared_af0018cd7db9cea6dc0f1934f76b281ac_1af0018cd7db9cea6dc0f1934f76b281ac" kindref="member">GBDeclared</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m0,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref>,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*change,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*syz0);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><ref refid="class_g_b_declared_af0018cd7db9cea6dc0f1934f76b281ac_1af0018cd7db9cea6dc0f1934f76b281ac" kindref="member">GBDeclared</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*leadterms,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m0,</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref>,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*change,</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*syz0);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref><sp/>*<ref refid="class_g_b_declared_aea432b33354c0a6452749a5614060e24_1aea432b33354c0a6452749a5614060e24" kindref="member">create</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref>,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*change,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="class_g_b_declared_add56ebabdf11dd45875a11ca9f7b0222_1add56ebabdf11dd45875a11ca9f7b0222" kindref="member">syz</ref>);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Possibly<sp/>returns<sp/>NULL,<sp/>if<sp/>an<sp/>error<sp/>message<sp/>is<sp/>reported</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref><sp/>*<ref refid="class_g_b_declared_aea432b33354c0a6452749a5614060e24_1aea432b33354c0a6452749a5614060e24" kindref="member">create</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*leadterms,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" kindref="member">gb</ref>,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*change,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="class_g_b_declared_add56ebabdf11dd45875a11ca9f7b0222_1add56ebabdf11dd45875a11ca9f7b0222" kindref="member">syz</ref>);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Possibly<sp/>returns<sp/>NULL,<sp/>if<sp/>an<sp/>error<sp/>message<sp/>is<sp/>reported</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="class_g_b_declared_a9dc575a7c76fefad3dfa3042d798cccb_1a9dc575a7c76fefad3dfa3042d798cccb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a9dc575a7c76fefad3dfa3042d798cccb_1a9dc575a7c76fefad3dfa3042d798cccb" kindref="member">~GBDeclared</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="91" refid="class_g_b_declared_a95f66c152a6a7fea1dd25ed681bebc06_1a95f66c152a6a7fea1dd25ed681bebc06" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a95f66c152a6a7fea1dd25ed681bebc06_1a95f66c152a6a7fea1dd25ed681bebc06" kindref="member">remove_gb</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="92" refid="class_g_b_declared_acee028df5368e06b3df6e083719d899b_1acee028df5368e06b3df6e083719d899b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_g_b_computation_a79fd4b4b3d036051a3b6b08ab15c6e5f_1a79fd4b4b3d036051a3b6b08ab15c6e5f" kindref="member">GBComputation</ref><sp/>*<ref refid="class_g_b_declared_acee028df5368e06b3df6e083719d899b_1acee028df5368e06b3df6e083719d899b" kindref="member">cast_to_GBComputation</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="93" refid="class_g_b_declared_ade6d85098add04603862116aee6a0ec7_1ade6d85098add04603862116aee6a0ec7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_ade6d85098add04603862116aee6a0ec7_1ade6d85098add04603862116aee6a0ec7" kindref="member">start_computation</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="94" refid="class_g_b_declared_a0c44eca671fa707ba30ea59e07c245e6_1a0c44eca671fa707ba30ea59e07c245e6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a0c44eca671fa707ba30ea59e07c245e6_1a0c44eca671fa707ba30ea59e07c245e6" kindref="member">complete_thru_degree</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>-&gt;complete_thru_degree();<sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>computation<sp/>is<sp/>complete<sp/>up<sp/>through<sp/>this<sp/>degree.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Recall<sp/>that<sp/>the<sp/>status<sp/>of<sp/>the<sp/>computation<sp/>is<sp/>maintained<sp/>by<sp/>the<sp/>Computation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>class,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="class_g_b_declared_af12aec54a28bdbc03760393d29374804_1af12aec54a28bdbc03760393d29374804" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*<ref refid="class_g_b_declared_af12aec54a28bdbc03760393d29374804_1af12aec54a28bdbc03760393d29374804" kindref="member">get_ring</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>-&gt;get_ring();<sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Results<sp/>of<sp/>the<sp/>computation<sp/>//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="class_g_b_declared_af030d228c2ef5030430908688f870ebf_1af030d228c2ef5030430908688f870ebf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_g_b_declared_af030d228c2ef5030430908688f870ebf_1af030d228c2ef5030430908688f870ebf" kindref="member">get_gb</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>-&gt;get_gb();<sp/>}</highlight></codeline>
+<codeline lineno="105" refid="class_g_b_declared_a649317309bc747c599c09e6659414771_1a649317309bc747c599c09e6659414771" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_g_b_declared_a649317309bc747c599c09e6659414771_1a649317309bc747c599c09e6659414771" kindref="member">get_mingens</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a3f4bf044d5d1213db54f1dd95d7ce876_1a3f4bf044d5d1213db54f1dd95d7ce876" kindref="member">trimmed_gens</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="106" refid="class_g_b_declared_a4e8b5a50609ae3e6f58ce07669a0625d_1a4e8b5a50609ae3e6f58ce07669a0625d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_g_b_declared_a4e8b5a50609ae3e6f58ce07669a0625d_1a4e8b5a50609ae3e6f58ce07669a0625d" kindref="member">get_change</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>-&gt;get_change();<sp/>}</highlight></codeline>
+<codeline lineno="107" refid="class_g_b_declared_a42b1d60bf08e362e93ed329cf85d4be5_1a42b1d60bf08e362e93ed329cf85d4be5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_g_b_declared_a42b1d60bf08e362e93ed329cf85d4be5_1a42b1d60bf08e362e93ed329cf85d4be5" kindref="member">get_syzygies</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_add56ebabdf11dd45875a11ca9f7b0222_1add56ebabdf11dd45875a11ca9f7b0222" kindref="member">syz</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="108" refid="class_g_b_declared_a6ff1aabc4125b40af0b617cac608a0e6_1a6ff1aabc4125b40af0b617cac608a0e6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_g_b_declared_a6ff1aabc4125b40af0b617cac608a0e6_1a6ff1aabc4125b40af0b617cac608a0e6" kindref="member">get_initial</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nparts)</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>-&gt;get_initial(nparts);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="class_g_b_declared_a8d5eb1a10fc0efa16687fb5f802cfcce_1a8d5eb1a10fc0efa16687fb5f802cfcce" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_g_b_declared_a8d5eb1a10fc0efa16687fb5f802cfcce_1a8d5eb1a10fc0efa16687fb5f802cfcce" kindref="member">get_parallel_lead_terms</ref>(<ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/>w)</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>-&gt;get_parallel_lead_terms(w);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Normal<sp/>forms<sp/>and<sp/>lifting<sp/>////</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="class_g_b_declared_aa5f77d5259956f039f53eda111c4a71e_1aa5f77d5259956f039f53eda111c4a71e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="class_g_b_declared_aa5f77d5259956f039f53eda111c4a71e_1aa5f77d5259956f039f53eda111c4a71e" kindref="member">matrix_remainder</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>-&gt;matrix_remainder(m);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="class_g_b_declared_a2251d618c13ff22769a8e5066969fcea_1a2251d618c13ff22769a8e5066969fcea" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref><sp/><ref refid="class_g_b_declared_a2251d618c13ff22769a8e5066969fcea_1a2251d618c13ff22769a8e5066969fcea" kindref="member">matrix_lift</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m,</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>**result_remainder,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>**result_quotient)</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>-&gt;matrix_lift(m,<sp/>result_remainder,<sp/>result_quotient);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="class_g_b_declared_a3f66fcdb2664511a4465e866dd8be6ca_1a3f66fcdb2664511a4465e866dd8be6ca" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a3f66fcdb2664511a4465e866dd8be6ca_1a3f66fcdb2664511a4465e866dd8be6ca" kindref="member">contains</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a44ee4b78787b776b80a13b283469140c_1a44ee4b78787b776b80a13b283469140c" kindref="member">G</ref>-&gt;contains(m);<sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Statistics<sp/>and<sp/>spair<sp/>information<sp/>//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139" refid="class_g_b_declared_a55c1e3888c34c3dd0abbd9a13b257064_1a55c1e3888c34c3dd0abbd9a13b257064" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_g_b_declared_a55c1e3888c34c3dd0abbd9a13b257064_1a55c1e3888c34c3dd0abbd9a13b257064" kindref="member">text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/>o<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;declared<sp/>GB&quot;</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>displays<sp/>statistical<sp/>information,<sp/>and<sp/>depends<sp/>on<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>M2_gbTrace<sp/>value.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/comp-gb-declared.hpp"/>
+  </compounddef>
+</doxygen>

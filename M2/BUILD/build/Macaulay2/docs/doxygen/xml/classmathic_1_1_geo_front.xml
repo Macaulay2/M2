@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_geo_front" kind="class" language="C++" prot="public">
+    <compoundname>mathic::GeoFront</compoundname>
+    <templateparamlist>
+      <param>
+        <type>class Configuration</type>
+      </param>
+      <param>
+        <type>class Bucket</type>
+        <defval>typename <ref refid="classmathic_1_1_geobucket" kindref="compound">Geobucket</ref>&lt;Configuration&gt;::Bucket</defval>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>Order</declname>
+        <defname>Order</defname>
+        <defval>Configuration::trackFront</defval>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>mathic::GeoFront&lt; C, Bucket, false &gt;</label>
+        <link refid="classmathic_1_1_geo_front_3_01_c_00_01_bucket_00_01false_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; C, Bucket, false &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mathic::GeoFront&lt; C, Bucket, true &gt;</label>
+        <link refid="classmathic_1_1_geo_front_3_01_c_00_01_bucket_00_01true_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; C, Bucket, true &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::GeoFront&lt; Configuration, Bucket, Order &gt;</label>
+        <link refid="classmathic_1_1_geo_front"/>
+      </node>
+    </inheritancegraph>
+    <location file="submodules/mathic/src/mathic/GeoFront.h" line="31" column="1" bodyfile="submodules/mathic/src/mathic/GeoFront.h" bodystart="31" bodyend="-1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

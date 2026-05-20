@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_s_pair_compare" kind="class" language="C++" prot="public">
+    <compoundname>SPairCompare</compoundname>
+    <includes refid="f4-types_8hpp" local="no">f4-types.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_s_pair_compare_a6bb2d238580f20b8f8285203d974301c_1a6bb2d238580f20b8f8285203d974301c" prot="private" static="no" mutable="no">
+        <type>const std::vector&lt; <ref refid="structspair" kindref="compound">spair</ref> &gt; &amp;</type>
+        <definition>const std::vector&lt;spair&gt;&amp; SPairCompare::mSPairs</definition>
+        <argsstring></argsstring>
+        <name>mSPairs</name>
+        <qualifiedname>SPairCompare::mSPairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="342" column="21" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="342" bodyend="-1"/>
+        <referencedby refid="class_s_pair_compare_ad700bbd0b06c2cdbd271f98034de801a_1ad700bbd0b06c2cdbd271f98034de801a" compoundref="f4-types_8hpp" startline="331" endline="339">operator()</referencedby>
+        <referencedby refid="class_s_pair_compare_a45f3180a2585420a7d43471176052b1e_1a45f3180a2585420a7d43471176052b1e" compoundref="f4-types_8hpp" startline="328" endline="328">SPairCompare</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_s_pair_compare_a45f3180a2585420a7d43471176052b1e_1a45f3180a2585420a7d43471176052b1e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SPairCompare::SPairCompare</definition>
+        <argsstring>(const std::vector&lt; spair &gt; &amp;spairs)</argsstring>
+        <name>SPairCompare</name>
+        <qualifiedname>SPairCompare::SPairCompare</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="structspair" kindref="compound">spair</ref> &gt; &amp;</type>
+          <declname>spairs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="328" column="3" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="328" bodyend="328"/>
+        <references refid="class_s_pair_compare_a6bb2d238580f20b8f8285203d974301c_1a6bb2d238580f20b8f8285203d974301c" compoundref="f4-types_8hpp" startline="342">mSPairs</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_pair_compare_ad700bbd0b06c2cdbd271f98034de801a_1ad700bbd0b06c2cdbd271f98034de801a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SPairCompare::operator()</definition>
+        <argsstring>(size_t s, size_t t) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>SPairCompare::operator()</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="331" column="8" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="331" bodyend="339"/>
+        <references refid="structspair_ab2110251754ccb047f0a71b2200c30e8_1ab2110251754ccb047f0a71b2200c30e8" compoundref="f4-types_8hpp" startline="123">spair::deg</references>
+        <references refid="structspair_aab0f7ee3d8a7c5add822fe1ca98bc987_1aab0f7ee3d8a7c5add822fe1ca98bc987" compoundref="f4-types_8hpp" startline="124">spair::i</references>
+        <references refid="class_s_pair_compare_a6bb2d238580f20b8f8285203d974301c_1a6bb2d238580f20b8f8285203d974301c" compoundref="f4-types_8hpp" startline="342">mSPairs</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Comparator on indices into an <computeroutput><ref refid="structspair" kindref="compound">spair</ref></computeroutput> table, ordering by sugar degree then by the larger of the two parent indices. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Drives the S-pair queue inside the F4 algorithm: largest sugar degree first, then largest <computeroutput>i</computeroutput>. <computeroutput>operator()(s, t)</computeroutput> returns true when <computeroutput><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref></computeroutput> should come before <computeroutput>t</computeroutput> under that order, so it&apos;s wired straight into <computeroutput>std::priority_queue</computeroutput> and friends. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>SPairCompare</label>
+        <link refid="class_s_pair_compare"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mSPairs</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>SPairType</label>
+      </node>
+      <node id="8">
+        <label>T</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="6">
+        <label>long</label>
+      </node>
+      <node id="3">
+        <label>spair</label>
+        <link refid="structspair"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>deg</edgelabel>
+          <edgelabel>i</edgelabel>
+          <edgelabel>j</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>lcm</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; spair &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; spair &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/f4-types.hpp" line="325" column="1" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="326" bodyend="343"/>
+    <listofallmembers>
+      <member refid="class_s_pair_compare_a6bb2d238580f20b8f8285203d974301c_1a6bb2d238580f20b8f8285203d974301c" prot="private" virt="non-virtual"><scope>SPairCompare</scope><name>mSPairs</name></member>
+      <member refid="class_s_pair_compare_ad700bbd0b06c2cdbd271f98034de801a_1ad700bbd0b06c2cdbd271f98034de801a" prot="public" virt="non-virtual"><scope>SPairCompare</scope><name>operator()</name></member>
+      <member refid="class_s_pair_compare_a45f3180a2585420a7d43471176052b1e_1a45f3180a2585420a7d43471176052b1e" prot="public" virt="non-virtual"><scope>SPairCompare</scope><name>SPairCompare</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

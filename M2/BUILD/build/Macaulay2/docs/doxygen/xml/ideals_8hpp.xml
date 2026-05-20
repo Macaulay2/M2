@@ -1,0 +1,692 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="ideals_8hpp" kind="file" language="C++">
+    <compoundname>ideals.hpp</compoundname>
+    <includes local="no">string</includes>
+    <includedby refid="gb-test_8cpp" local="yes">submodules/mathicgb/src/test/gb-test.cpp</includedby>
+    <includedby refid="ideals_8cpp" local="yes">submodules/mathicgb/src/test/ideals.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathicgb/src/test/ideals.hpp</label>
+        <link refid="ideals_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>string</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>submodules/mathicgb/src/test/gb-test.cpp</label>
+        <link refid="gb-test_8cpp"/>
+      </node>
+      <node id="3">
+        <label>submodules/mathicgb/src/test/ideals.cpp</label>
+        <link refid="ideals_8cpp"/>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/test/ideals.hpp</label>
+        <link refid="ideals_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemgb">mgb</innernamespace>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="ideals_8hpp_afbb0e0a9739d7d4f52507388462adb60_1afbb0e0a9739d7d4f52507388462adb60" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* idealSmallBasis</definition>
+        <argsstring></argsstring>
+        <name>idealSmallBasis</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="13" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="21" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="13" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a6d382ccd88d8a15d1660b7b50821ec04_1a6d382ccd88d8a15d1660b7b50821ec04" compoundref="gb-test_8cpp" startline="329" endline="332">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a2a737c155e0e2a54a3d84c29e44958ba_1a2a737c155e0e2a54a3d84c29e44958ba" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* idealSmallSyzygies</definition>
+        <argsstring></argsstring>
+        <name>idealSmallSyzygies</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="14" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="33" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="14" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a6d382ccd88d8a15d1660b7b50821ec04_1a6d382ccd88d8a15d1660b7b50821ec04" compoundref="gb-test_8cpp" startline="329" endline="332">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a71ea3397ff3a7e8f36278b64b8699ea1_1a71ea3397ff3a7e8f36278b64b8699ea1" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* idealSmallInitial</definition>
+        <argsstring></argsstring>
+        <name>idealSmallInitial</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="15" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="36" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="15" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a6d382ccd88d8a15d1660b7b50821ec04_1a6d382ccd88d8a15d1660b7b50821ec04" compoundref="gb-test_8cpp" startline="329" endline="332">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a07990cb8414be0e8cfcf0273f16afd40_1a07990cb8414be0e8cfcf0273f16afd40" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* liu_gb_strat0_free1</definition>
+        <argsstring></argsstring>
+        <name>liu_gb_strat0_free1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="20" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="51" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="20" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a5ab67696e876acf99e93a4ead04ae707_1a5ab67696e876acf99e93a4ead04ae707" compoundref="gb-test_8cpp" startline="334" endline="337">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_aa0e20a81255e7dcc3434116ec5583f46_1aa0e20a81255e7dcc3434116ec5583f46" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* liu_syzygies_strat0_free1</definition>
+        <argsstring></argsstring>
+        <name>liu_syzygies_strat0_free1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="21" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="71" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="21" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a5ab67696e876acf99e93a4ead04ae707_1a5ab67696e876acf99e93a4ead04ae707" compoundref="gb-test_8cpp" startline="334" endline="337">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_ab9d62a242b639a80484b3fc3546c5db1_1ab9d62a242b639a80484b3fc3546c5db1" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* liu_initial_strat0_free1</definition>
+        <argsstring></argsstring>
+        <name>liu_initial_strat0_free1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="22" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="74" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="22" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a5ab67696e876acf99e93a4ead04ae707_1a5ab67696e876acf99e93a4ead04ae707" compoundref="gb-test_8cpp" startline="334" endline="337">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a5d9fd4c352b6edc06d38a805fbe73145_1a5d9fd4c352b6edc06d38a805fbe73145" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* weispfennig97_gb_strat0_free4</definition>
+        <argsstring></argsstring>
+        <name>weispfennig97_gb_strat0_free4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="27" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="93" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="27" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a94a7fed9b8e8ea812d455688595d6adc_1a94a7fed9b8e8ea812d455688595d6adc" compoundref="gb-test_8cpp" startline="339" endline="343">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a5cf659e4b61924a90997663b2def751a_1a5cf659e4b61924a90997663b2def751a" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* weispfennig97_syzygies_strat0_free4</definition>
+        <argsstring></argsstring>
+        <name>weispfennig97_syzygies_strat0_free4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="28" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="127" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="28" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a94a7fed9b8e8ea812d455688595d6adc_1a94a7fed9b8e8ea812d455688595d6adc" compoundref="gb-test_8cpp" startline="339" endline="343">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_ac749b8365003246736ece03360cf47d7_1ac749b8365003246736ece03360cf47d7" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* weispfennig97_initial_strat0_free4</definition>
+        <argsstring></argsstring>
+        <name>weispfennig97_initial_strat0_free4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="29" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="130" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="29" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a94a7fed9b8e8ea812d455688595d6adc_1a94a7fed9b8e8ea812d455688595d6adc" compoundref="gb-test_8cpp" startline="339" endline="343">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_aa7081f8bb3f3b3c38611de1a86d0c928_1aa7081f8bb3f3b3c38611de1a86d0c928" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* weispfennig97_gb_strat0_free5</definition>
+        <argsstring></argsstring>
+        <name>weispfennig97_gb_strat0_free5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="31" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="133" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="31" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_aeb2877d8d7d4eea47ae08aca3608771e_1aeb2877d8d7d4eea47ae08aca3608771e" compoundref="gb-test_8cpp" startline="345" endline="349">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_aa74cccdb31129c743bde2508b4ae0897_1aa74cccdb31129c743bde2508b4ae0897" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* weispfennig97_syzygies_strat0_free5</definition>
+        <argsstring></argsstring>
+        <name>weispfennig97_syzygies_strat0_free5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="32" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="164" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="32" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_aeb2877d8d7d4eea47ae08aca3608771e_1aeb2877d8d7d4eea47ae08aca3608771e" compoundref="gb-test_8cpp" startline="345" endline="349">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_af7fbf10f6bf49058d00022b7e3d805f1_1af7fbf10f6bf49058d00022b7e3d805f1" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* weispfennig97_initial_strat0_free5</definition>
+        <argsstring></argsstring>
+        <name>weispfennig97_initial_strat0_free5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="33" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="167" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="33" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_aeb2877d8d7d4eea47ae08aca3608771e_1aeb2877d8d7d4eea47ae08aca3608771e" compoundref="gb-test_8cpp" startline="345" endline="349">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_aa152281f87cfe5ddb2ee71a1a5cdb29c_1aa152281f87cfe5ddb2ee71a1a5cdb29c" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_gb_strat0_free1</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_gb_strat0_free1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="40" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="213" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="40" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a23eafdd73bb9daece6d89b942e1d17fc_1a23eafdd73bb9daece6d89b942e1d17fc" compoundref="gb-test_8cpp" startline="351" endline="354">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a81023c3f3330addd184126ccad291654_1a81023c3f3330addd184126ccad291654" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_syzygies_strat0_free1</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_syzygies_strat0_free1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="41" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="227" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="41" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a23eafdd73bb9daece6d89b942e1d17fc_1a23eafdd73bb9daece6d89b942e1d17fc" compoundref="gb-test_8cpp" startline="351" endline="354">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_ab85c429d3c13707fca6dd3ac966d64e5_1ab85c429d3c13707fca6dd3ac966d64e5" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_initial_strat0_free1</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_initial_strat0_free1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="42" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="232" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="42" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a23eafdd73bb9daece6d89b942e1d17fc_1a23eafdd73bb9daece6d89b942e1d17fc" compoundref="gb-test_8cpp" startline="351" endline="354">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a917b0e6dc8af05b53989e3c6cb96b452_1a917b0e6dc8af05b53989e3c6cb96b452" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_gb_strat0_free2</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_gb_strat0_free2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="44" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="235" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="44" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a01bfad6650457a6fee4359c72a8e999b_1a01bfad6650457a6fee4359c72a8e999b" compoundref="gb-test_8cpp" startline="356" endline="359">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a9cca69b62f02ee962369dd9179f96bcf_1a9cca69b62f02ee962369dd9179f96bcf" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_syzygies_strat0_free2</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_syzygies_strat0_free2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="45" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="247" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="45" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a01bfad6650457a6fee4359c72a8e999b_1a01bfad6650457a6fee4359c72a8e999b" compoundref="gb-test_8cpp" startline="356" endline="359">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a02c99bbd042638a36383326191662d22_1a02c99bbd042638a36383326191662d22" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_initial_strat0_free2</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_initial_strat0_free2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="46" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="252" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="46" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a01bfad6650457a6fee4359c72a8e999b_1a01bfad6650457a6fee4359c72a8e999b" compoundref="gb-test_8cpp" startline="356" endline="359">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a8ec47b5b131102d7d29341c4bd9ad94c_1a8ec47b5b131102d7d29341c4bd9ad94c" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_gb_strat0_free3</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_gb_strat0_free3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="48" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="255" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="48" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a49bd57a9b0788af141589e76461283f0_1a49bd57a9b0788af141589e76461283f0" compoundref="gb-test_8cpp" startline="361" endline="364">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_aa7e3e07f14c9ebba5596c5bd1d9fe00e_1aa7e3e07f14c9ebba5596c5bd1d9fe00e" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_syzygies_strat0_free3</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_syzygies_strat0_free3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="49" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="269" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="49" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a49bd57a9b0788af141589e76461283f0_1a49bd57a9b0788af141589e76461283f0" compoundref="gb-test_8cpp" startline="361" endline="364">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_af67990862190436fd1fa8646a93f76ad_1af67990862190436fd1fa8646a93f76ad" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_initial_strat0_free3</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_initial_strat0_free3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="50" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="274" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="50" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a49bd57a9b0788af141589e76461283f0_1a49bd57a9b0788af141589e76461283f0" compoundref="gb-test_8cpp" startline="361" endline="364">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_aa6a733d31ad8bdd53e0ea8d96f1ef719_1aa6a733d31ad8bdd53e0ea8d96f1ef719" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_gb_strat0_free4</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_gb_strat0_free4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="52" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="277" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="52" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_af0e831a003f93b839ae396b964cf1b1f_1af0e831a003f93b839ae396b964cf1b1f" compoundref="gb-test_8cpp" startline="366" endline="369">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a15cfe38b96c9d3bab71f0406b401c695_1a15cfe38b96c9d3bab71f0406b401c695" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_syzygies_strat0_free4</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_syzygies_strat0_free4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="53" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="289" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="53" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_af0e831a003f93b839ae396b964cf1b1f_1af0e831a003f93b839ae396b964cf1b1f" compoundref="gb-test_8cpp" startline="366" endline="369">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_aa2c673d4252fbaa71c3156b2f7141753_1aa2c673d4252fbaa71c3156b2f7141753" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_initial_strat0_free4</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_initial_strat0_free4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="54" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="294" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="54" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_af0e831a003f93b839ae396b964cf1b1f_1af0e831a003f93b839ae396b964cf1b1f" compoundref="gb-test_8cpp" startline="366" endline="369">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_abd0e98cba42f086acc6ff490e65da242_1abd0e98cba42f086acc6ff490e65da242" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_gb_strat0_free5</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_gb_strat0_free5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="56" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="297" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="56" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a8d893512316b6cdd94ef991906f21ad7_1a8d893512316b6cdd94ef991906f21ad7" compoundref="gb-test_8cpp" startline="371" endline="374">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a2a279903c7908c81e8b1b09679714fe6_1a2a279903c7908c81e8b1b09679714fe6" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_syzygies_strat0_free5</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_syzygies_strat0_free5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="57" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="309" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="57" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a8d893512316b6cdd94ef991906f21ad7_1a8d893512316b6cdd94ef991906f21ad7" compoundref="gb-test_8cpp" startline="371" endline="374">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a1f5cb38ba70213f07acc5404fc438f2e_1a1f5cb38ba70213f07acc5404fc438f2e" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_initial_strat0_free5</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_initial_strat0_free5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="58" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="313" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="58" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_a8d893512316b6cdd94ef991906f21ad7_1a8d893512316b6cdd94ef991906f21ad7" compoundref="gb-test_8cpp" startline="371" endline="374">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_aa1f3876512ef10d5208e433c48cfb16c_1aa1f3876512ef10d5208e433c48cfb16c" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_gb_strat0_free6</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_gb_strat0_free6</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="60" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="316" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="60" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_acc62751fef0818715c5bbc98808a45e9_1acc62751fef0818715c5bbc98808a45e9" compoundref="gb-test_8cpp" startline="376" endline="379">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a9f419af5d7915e45f38cc722d8812b03_1a9f419af5d7915e45f38cc722d8812b03" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_syzygies_strat0_free6</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_syzygies_strat0_free6</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="61" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="317" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="61" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_acc62751fef0818715c5bbc98808a45e9_1acc62751fef0818715c5bbc98808a45e9" compoundref="gb-test_8cpp" startline="376" endline="379">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a618dfbfd50dff9cef83be7a1321eefbf_1a618dfbfd50dff9cef83be7a1321eefbf" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_initial_strat0_free6</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_initial_strat0_free6</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="62" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="319" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="62" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_acc62751fef0818715c5bbc98808a45e9_1acc62751fef0818715c5bbc98808a45e9" compoundref="gb-test_8cpp" startline="376" endline="379">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a698216ed6d734858372e4497e11dd74d_1a698216ed6d734858372e4497e11dd74d" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_gb_strat0_free7</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_gb_strat0_free7</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="64" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="322" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="64" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_ac98463db27f1dd905092c9ff8f30df90_1ac98463db27f1dd905092c9ff8f30df90" compoundref="gb-test_8cpp" startline="381" endline="384">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a3e442159b82f8def5d8ec629c6fa0815_1a3e442159b82f8def5d8ec629c6fa0815" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_syzygies_strat0_free7</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_syzygies_strat0_free7</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="65" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="336" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="65" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_ac98463db27f1dd905092c9ff8f30df90_1ac98463db27f1dd905092c9ff8f30df90" compoundref="gb-test_8cpp" startline="381" endline="384">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="ideals_8hpp_a9c84818db0e853e838f7ca76dcc734b8_1a9c84818db0e853e838f7ca76dcc734b8" prot="public" static="no" extern="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* gerdt93_initial_strat0_free7</definition>
+        <argsstring></argsstring>
+        <name>gerdt93_initial_strat0_free7</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="66" column="19" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="338" bodyend="-1" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="66" declcolumn="19"/>
+        <referencedby refid="gb-test_8cpp_ac98463db27f1dd905092c9ff8f30df90_1ac98463db27f1dd905092c9ff8f30df90" compoundref="gb-test_8cpp" startline="381" endline="384">TEST</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="ideals_8hpp_a170347f43ed2b847293a7494f11a8f29_1a170347f43ed2b847293a7494f11a8f29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string smallIdealComponentLastDescending</definition>
+        <argsstring>()</argsstring>
+        <name>smallIdealComponentLastDescending</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="11" column="13" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="10" bodyend="19" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="11" declcolumn="13"/>
+        <referencedby refid="gb-test_8cpp_a6d382ccd88d8a15d1660b7b50821ec04_1a6d382ccd88d8a15d1660b7b50821ec04" compoundref="gb-test_8cpp" startline="329" endline="332">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="ideals_8hpp_a4bc74d84698cc5e5cdb655c5dc8cc8cd_1a4bc74d84698cc5e5cdb655c5dc8cc8cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string liuIdealComponentLastDescending</definition>
+        <argsstring>()</argsstring>
+        <name>liuIdealComponentLastDescending</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="18" column="13" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="39" bodyend="49" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="18" declcolumn="13"/>
+        <referencedby refid="gb-test_8cpp_a5ab67696e876acf99e93a4ead04ae707_1a5ab67696e876acf99e93a4ead04ae707" compoundref="gb-test_8cpp" startline="334" endline="337">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="ideals_8hpp_a480f5e8d27d0a1a232552b529e6f4f18_1a480f5e8d27d0a1a232552b529e6f4f18" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string weispfennig97IdealComponentLast</definition>
+        <argsstring>(bool componentsAscending)</argsstring>
+        <name>weispfennig97IdealComponentLast</name>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>componentsAscending</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="25" column="13" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="77" bodyend="90" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="25" declcolumn="13"/>
+        <referencedby refid="gb-test_8cpp_a94a7fed9b8e8ea812d455688595d6adc_1a94a7fed9b8e8ea812d455688595d6adc" compoundref="gb-test_8cpp" startline="339" endline="343">TEST</referencedby>
+        <referencedby refid="gb-test_8cpp_aeb2877d8d7d4eea47ae08aca3608771e_1aeb2877d8d7d4eea47ae08aca3608771e" compoundref="gb-test_8cpp" startline="345" endline="349">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="ideals_8hpp_aee71bbca54bb872c75c96262fdcc5d19_1aee71bbca54bb872c75c96262fdcc5d19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string gerdt93IdealComponentFirst</definition>
+        <argsstring>(bool componentsAscending)</argsstring>
+        <name>gerdt93IdealComponentFirst</name>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>componentsAscending</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="36" column="13" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="191" bodyend="200" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="36" declcolumn="13"/>
+        <references refid="ideals_8cpp_a8261af2409835de5de11f42ae149c3b8_1a8261af2409835de5de11f42ae149c3b8" compoundref="ideals_8cpp" startline="170">Gert93RawIdeal</references>
+        <referencedby refid="gb-test_8cpp_acc62751fef0818715c5bbc98808a45e9_1acc62751fef0818715c5bbc98808a45e9" compoundref="gb-test_8cpp" startline="376" endline="379">TEST</referencedby>
+        <referencedby refid="gb-test_8cpp_ac98463db27f1dd905092c9ff8f30df90_1ac98463db27f1dd905092c9ff8f30df90" compoundref="gb-test_8cpp" startline="381" endline="384">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="ideals_8hpp_a9833b2851af80cefd8c41c8dfc7cf7b5_1a9833b2851af80cefd8c41c8dfc7cf7b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string gerdt93IdealComponentMiddle</definition>
+        <argsstring>(bool componentsAscending)</argsstring>
+        <name>gerdt93IdealComponentMiddle</name>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>componentsAscending</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="37" column="13" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="202" bodyend="211" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="37" declcolumn="13"/>
+        <references refid="ideals_8cpp_a8261af2409835de5de11f42ae149c3b8_1a8261af2409835de5de11f42ae149c3b8" compoundref="ideals_8cpp" startline="170">Gert93RawIdeal</references>
+        <referencedby refid="gb-test_8cpp_a01bfad6650457a6fee4359c72a8e999b_1a01bfad6650457a6fee4359c72a8e999b" compoundref="gb-test_8cpp" startline="356" endline="359">TEST</referencedby>
+        <referencedby refid="gb-test_8cpp_a49bd57a9b0788af141589e76461283f0_1a49bd57a9b0788af141589e76461283f0" compoundref="gb-test_8cpp" startline="361" endline="364">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="ideals_8hpp_ac283f658c4ada2bbb8dac18e29f02abc_1ac283f658c4ada2bbb8dac18e29f02abc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string gerdt93IdealComponentLast</definition>
+        <argsstring>(bool componentsAscending, bool schreyer)</argsstring>
+        <name>gerdt93IdealComponentLast</name>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>componentsAscending</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>schreyer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/ideals.hpp" line="38" column="13" bodyfile="submodules/mathicgb/src/test/ideals.cpp" bodystart="177" bodyend="189" declfile="submodules/mathicgb/src/test/ideals.hpp" declline="38" declcolumn="13"/>
+        <references refid="ideals_8cpp_a8261af2409835de5de11f42ae149c3b8_1a8261af2409835de5de11f42ae149c3b8" compoundref="ideals_8cpp" startline="170">Gert93RawIdeal</references>
+        <referencedby refid="gb-test_8cpp_a23eafdd73bb9daece6d89b942e1d17fc_1a23eafdd73bb9daece6d89b942e1d17fc" compoundref="gb-test_8cpp" startline="351" endline="354">TEST</referencedby>
+        <referencedby refid="gb-test_8cpp_af0e831a003f93b839ae396b964cf1b1f_1af0e831a003f93b839ae396b964cf1b1f" compoundref="gb-test_8cpp" startline="366" endline="369">TEST</referencedby>
+        <referencedby refid="gb-test_8cpp_a8d893512316b6cdd94ef991906f21ad7_1a8d893512316b6cdd94ef991906f21ad7" compoundref="gb-test_8cpp" startline="371" endline="374">TEST</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>MathicGB<sp/>copyright<sp/>2012<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHICGB_IDEALS_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_IDEALS_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemgb" kindref="compound">mgb</ref><sp/>{}</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">//<sp/>small</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal">std::string<sp/><ref refid="ideals_8hpp_a170347f43ed2b847293a7494f11a8f29_1a170347f43ed2b847293a7494f11a8f29" kindref="member">smallIdealComponentLastDescending</ref>();</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_afbb0e0a9739d7d4f52507388462adb60_1afbb0e0a9739d7d4f52507388462adb60" kindref="member">idealSmallBasis</ref>;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a2a737c155e0e2a54a3d84c29e44958ba_1a2a737c155e0e2a54a3d84c29e44958ba" kindref="member">idealSmallSyzygies</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a71ea3397ff3a7e8f36278b64b8699ea1_1a71ea3397ff3a7e8f36278b64b8699ea1" kindref="member">idealSmallInitial</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">//<sp/>liu</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">std::string<sp/><ref refid="ideals_8hpp_a4bc74d84698cc5e5cdb655c5dc8cc8cd_1a4bc74d84698cc5e5cdb655c5dc8cc8cd" kindref="member">liuIdealComponentLastDescending</ref>();</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a07990cb8414be0e8cfcf0273f16afd40_1a07990cb8414be0e8cfcf0273f16afd40" kindref="member">liu_gb_strat0_free1</ref>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_aa0e20a81255e7dcc3434116ec5583f46_1aa0e20a81255e7dcc3434116ec5583f46" kindref="member">liu_syzygies_strat0_free1</ref>;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_ab9d62a242b639a80484b3fc3546c5db1_1ab9d62a242b639a80484b3fc3546c5db1" kindref="member">liu_initial_strat0_free1</ref>;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//<sp/>weispfennig97</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal">std::string<sp/><ref refid="ideals_8hpp_a480f5e8d27d0a1a232552b529e6f4f18_1a480f5e8d27d0a1a232552b529e6f4f18" kindref="member">weispfennig97IdealComponentLast</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>componentsAscending);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a5d9fd4c352b6edc06d38a805fbe73145_1a5d9fd4c352b6edc06d38a805fbe73145" kindref="member">weispfennig97_gb_strat0_free4</ref>;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a5cf659e4b61924a90997663b2def751a_1a5cf659e4b61924a90997663b2def751a" kindref="member">weispfennig97_syzygies_strat0_free4</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_ac749b8365003246736ece03360cf47d7_1ac749b8365003246736ece03360cf47d7" kindref="member">weispfennig97_initial_strat0_free4</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_aa7081f8bb3f3b3c38611de1a86d0c928_1aa7081f8bb3f3b3c38611de1a86d0c928" kindref="member">weispfennig97_gb_strat0_free5</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_aa74cccdb31129c743bde2508b4ae0897_1aa74cccdb31129c743bde2508b4ae0897" kindref="member">weispfennig97_syzygies_strat0_free5</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_af7fbf10f6bf49058d00022b7e3d805f1_1af7fbf10f6bf49058d00022b7e3d805f1" kindref="member">weispfennig97_initial_strat0_free5</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/>gerdt93</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal">std::string<sp/><ref refid="ideals_8hpp_aee71bbca54bb872c75c96262fdcc5d19_1aee71bbca54bb872c75c96262fdcc5d19" kindref="member">gerdt93IdealComponentFirst</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>componentsAscending);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">std::string<sp/><ref refid="ideals_8hpp_a9833b2851af80cefd8c41c8dfc7cf7b5_1a9833b2851af80cefd8c41c8dfc7cf7b5" kindref="member">gerdt93IdealComponentMiddle</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>componentsAscending);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">std::string<sp/><ref refid="ideals_8hpp_ac283f658c4ada2bbb8dac18e29f02abc_1ac283f658c4ada2bbb8dac18e29f02abc" kindref="member">gerdt93IdealComponentLast</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>componentsAscending,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>schreyer);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_aa152281f87cfe5ddb2ee71a1a5cdb29c_1aa152281f87cfe5ddb2ee71a1a5cdb29c" kindref="member">gerdt93_gb_strat0_free1</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a81023c3f3330addd184126ccad291654_1a81023c3f3330addd184126ccad291654" kindref="member">gerdt93_syzygies_strat0_free1</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_ab85c429d3c13707fca6dd3ac966d64e5_1ab85c429d3c13707fca6dd3ac966d64e5" kindref="member">gerdt93_initial_strat0_free1</ref>;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a917b0e6dc8af05b53989e3c6cb96b452_1a917b0e6dc8af05b53989e3c6cb96b452" kindref="member">gerdt93_gb_strat0_free2</ref>;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a9cca69b62f02ee962369dd9179f96bcf_1a9cca69b62f02ee962369dd9179f96bcf" kindref="member">gerdt93_syzygies_strat0_free2</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a02c99bbd042638a36383326191662d22_1a02c99bbd042638a36383326191662d22" kindref="member">gerdt93_initial_strat0_free2</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a8ec47b5b131102d7d29341c4bd9ad94c_1a8ec47b5b131102d7d29341c4bd9ad94c" kindref="member">gerdt93_gb_strat0_free3</ref>;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_aa7e3e07f14c9ebba5596c5bd1d9fe00e_1aa7e3e07f14c9ebba5596c5bd1d9fe00e" kindref="member">gerdt93_syzygies_strat0_free3</ref>;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_af67990862190436fd1fa8646a93f76ad_1af67990862190436fd1fa8646a93f76ad" kindref="member">gerdt93_initial_strat0_free3</ref>;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_aa6a733d31ad8bdd53e0ea8d96f1ef719_1aa6a733d31ad8bdd53e0ea8d96f1ef719" kindref="member">gerdt93_gb_strat0_free4</ref>;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a15cfe38b96c9d3bab71f0406b401c695_1a15cfe38b96c9d3bab71f0406b401c695" kindref="member">gerdt93_syzygies_strat0_free4</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_aa2c673d4252fbaa71c3156b2f7141753_1aa2c673d4252fbaa71c3156b2f7141753" kindref="member">gerdt93_initial_strat0_free4</ref>;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_abd0e98cba42f086acc6ff490e65da242_1abd0e98cba42f086acc6ff490e65da242" kindref="member">gerdt93_gb_strat0_free5</ref>;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a2a279903c7908c81e8b1b09679714fe6_1a2a279903c7908c81e8b1b09679714fe6" kindref="member">gerdt93_syzygies_strat0_free5</ref>;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a1f5cb38ba70213f07acc5404fc438f2e_1a1f5cb38ba70213f07acc5404fc438f2e" kindref="member">gerdt93_initial_strat0_free5</ref>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_aa1f3876512ef10d5208e433c48cfb16c_1aa1f3876512ef10d5208e433c48cfb16c" kindref="member">gerdt93_gb_strat0_free6</ref>;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a9f419af5d7915e45f38cc722d8812b03_1a9f419af5d7915e45f38cc722d8812b03" kindref="member">gerdt93_syzygies_strat0_free6</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a618dfbfd50dff9cef83be7a1321eefbf_1a618dfbfd50dff9cef83be7a1321eefbf" kindref="member">gerdt93_initial_strat0_free6</ref>;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a698216ed6d734858372e4497e11dd74d_1a698216ed6d734858372e4497e11dd74d" kindref="member">gerdt93_gb_strat0_free7</ref>;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a3e442159b82f8def5d8ec629c6fa0815_1a3e442159b82f8def5d8ec629c6fa0815" kindref="member">gerdt93_syzygies_strat0_free7</ref>;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="ideals_8cpp_a9c84818db0e853e838f7ca76dcc734b8_1a9c84818db0e853e838f7ca76dcc734b8" kindref="member">gerdt93_initial_strat0_free7</ref>;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/test/ideals.hpp"/>
+  </compounddef>
+</doxygen>

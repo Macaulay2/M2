@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_k_d_tree_1_1_entry_recorder" kind="class" language="C++" prot="private">
+    <compoundname>mathic::KDTree::EntryRecorder</compoundname>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_k_d_tree_1_1_entry_recorder_ab47d0d28cb349703708abc64c32a2d58_1ab47d0d28cb349703708abc64c32a2d58" prot="private" static="no" mutable="no">
+        <type><ref refid="classmemt_1_1_arena_vector" kindref="compound">memt::ArenaVector</ref>&lt; <ref refid="classmathic_1_1_k_d_tree_a95ffb11a0a7bbbd785e402cdf7bccef0_1a95ffb11a0a7bbbd785e402cdf7bccef0" kindref="member">Entry</ref>, true &gt;</type>
+        <definition>memt::ArenaVector&lt;Entry, true&gt; mathic::KDTree&lt; C &gt;::EntryRecorder::_entries</definition>
+        <argsstring></argsstring>
+        <name>_entries</name>
+        <qualifiedname>mathic::KDTree::EntryRecorder::_entries</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDTree.h" line="278" column="25" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="278" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_a2debc841b386b66d748996aee4f19079_1a2debc841b386b66d748996aee4f19079" compoundref="_k_d_tree_8h" startline="274" endline="274">mathic::KDTree&lt; C &gt;::EntryRecorder::begin</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_af1cacfcba786f64b9c3044c30626e4b1_1af1cacfcba786f64b9c3044c30626e4b1" compoundref="_k_d_tree_8h" startline="275" endline="275">mathic::KDTree&lt; C &gt;::EntryRecorder::end</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_a02c0dbb281c64291ab918feb82acb7df_1a02c0dbb281c64291ab918feb82acb7df" compoundref="_k_d_tree_8h" startline="268" endline="269">mathic::KDTree&lt; C &gt;::EntryRecorder::EntryRecorder</referencedby>
+        <referencedby refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_aecc00b8453b5d9b3e4697d7c1512bb2a_1aecc00b8453b5d9b3e4697d7c1512bb2a" compoundref="_k_d_tree_8h" startline="270" endline="273">mathic::KDTree&lt; C &gt;::EntryRecorder::proceed</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_k_d_tree_1_1_entry_recorder_a02c0dbb281c64291ab918feb82acb7df_1a02c0dbb281c64291ab918feb82acb7df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::KDTree&lt; C &gt;::EntryRecorder::EntryRecorder</definition>
+        <argsstring>(memt::Arena &amp;arena, size_t capacity)</argsstring>
+        <name>EntryRecorder</name>
+        <qualifiedname>mathic::KDTree::EntryRecorder::EntryRecorder</qualifiedname>
+        <param>
+          <type><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref> &amp;</type>
+          <declname>arena</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>capacity</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDTree.h" line="268" column="7" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="268" bodyend="269"/>
+        <references refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_ab47d0d28cb349703708abc64c32a2d58_1ab47d0d28cb349703708abc64c32a2d58" compoundref="_k_d_tree_8h" startline="278">mathic::KDTree&lt; C &gt;::EntryRecorder::_entries</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_tree_1_1_entry_recorder_aecc00b8453b5d9b3e4697d7c1512bb2a_1aecc00b8453b5d9b3e4697d7c1512bb2a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::KDTree&lt; C &gt;::EntryRecorder::proceed</definition>
+        <argsstring>(const Entry &amp;entry)</argsstring>
+        <name>proceed</name>
+        <qualifiedname>mathic::KDTree::EntryRecorder::proceed</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_k_d_tree_a95ffb11a0a7bbbd785e402cdf7bccef0_1a95ffb11a0a7bbbd785e402cdf7bccef0" kindref="member">Entry</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDTree.h" line="270" column="12" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="270" bodyend="273"/>
+        <references refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_ab47d0d28cb349703708abc64c32a2d58_1ab47d0d28cb349703708abc64c32a2d58" compoundref="_k_d_tree_8h" startline="278">mathic::KDTree&lt; C &gt;::EntryRecorder::_entries</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_tree_1_1_entry_recorder_a2debc841b386b66d748996aee4f19079_1a2debc841b386b66d748996aee4f19079" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_k_d_tree_a95ffb11a0a7bbbd785e402cdf7bccef0_1a95ffb11a0a7bbbd785e402cdf7bccef0" kindref="member">Entry</ref> *</type>
+        <definition>Entry * mathic::KDTree&lt; C &gt;::EntryRecorder::begin</definition>
+        <argsstring>()</argsstring>
+        <name>begin</name>
+        <qualifiedname>mathic::KDTree::EntryRecorder::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDTree.h" line="274" column="13" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="274" bodyend="274"/>
+        <references refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_ab47d0d28cb349703708abc64c32a2d58_1ab47d0d28cb349703708abc64c32a2d58" compoundref="_k_d_tree_8h" startline="278">mathic::KDTree&lt; C &gt;::EntryRecorder::_entries</references>
+        <referencedby refid="classmathic_1_1_k_d_tree_a9d4aec7953fd227097fc34cac47e612b_1a9d4aec7953fd227097fc34cac47e612b" compoundref="_k_d_tree_8h" startline="244" endline="251">mathic::KDTree&lt; C &gt;::rebuild</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_k_d_tree_1_1_entry_recorder_af1cacfcba786f64b9c3044c30626e4b1_1af1cacfcba786f64b9c3044c30626e4b1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_k_d_tree_a95ffb11a0a7bbbd785e402cdf7bccef0_1a95ffb11a0a7bbbd785e402cdf7bccef0" kindref="member">Entry</ref> *</type>
+        <definition>Entry * mathic::KDTree&lt; C &gt;::EntryRecorder::end</definition>
+        <argsstring>()</argsstring>
+        <name>end</name>
+        <qualifiedname>mathic::KDTree::EntryRecorder::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/KDTree.h" line="275" column="13" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="275" bodyend="275"/>
+        <references refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_ab47d0d28cb349703708abc64c32a2d58_1ab47d0d28cb349703708abc64c32a2d58" compoundref="_k_d_tree_8h" startline="278">mathic::KDTree&lt; C &gt;::EntryRecorder::_entries</references>
+        <referencedby refid="classmathic_1_1_k_d_tree_a9d4aec7953fd227097fc34cac47e612b_1a9d4aec7953fd227097fc34cac47e612b" compoundref="_k_d_tree_8h" startline="244" endline="251">mathic::KDTree&lt; C &gt;::rebuild</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>ItemOrValue&lt; bool &gt;</label>
+        <link refid="struct_item_or_value"/>
+      </node>
+      <node id="3">
+        <label>Entry&lt; OnSpans &gt;</label>
+        <link refid="struct_item_or_value"/>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; OnSpans &gt;::Entry</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>char</label>
+      </node>
+      <node id="15">
+        <label>const void *</label>
+      </node>
+      <node id="11">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="1">
+        <label>mathic::KDTree&lt; C &gt;::EntryRecorder</label>
+        <link refid="classmathic_1_1_k_d_tree_1_1_entry_recorder"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_entries</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>memt::Arena</label>
+        <link refid="classmemt_1_1_arena"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_scratchArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>memt::ArenaVector&lt; T, FreeMemory &gt;</label>
+        <link refid="classmemt_1_1_arena_vector"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_arena</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>memt::ArenaVector&lt; Entry, true &gt;</label>
+        <link refid="classmemt_1_1_arena_vector"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_arena</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="template-instance">
+          <edgelabel>&lt; Entry, true &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>unsigned</label>
+      </node>
+      <node id="12">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="16">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/KDTree.h" line="266" column="5" bodyfile="submodules/mathic/src/mathic/KDTree.h" bodystart="266" bodyend="279"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_ab47d0d28cb349703708abc64c32a2d58_1ab47d0d28cb349703708abc64c32a2d58" prot="private" virt="non-virtual"><scope>mathic::KDTree::EntryRecorder</scope><name>_entries</name></member>
+      <member refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_a2debc841b386b66d748996aee4f19079_1a2debc841b386b66d748996aee4f19079" prot="public" virt="non-virtual"><scope>mathic::KDTree::EntryRecorder</scope><name>begin</name></member>
+      <member refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_af1cacfcba786f64b9c3044c30626e4b1_1af1cacfcba786f64b9c3044c30626e4b1" prot="public" virt="non-virtual"><scope>mathic::KDTree::EntryRecorder</scope><name>end</name></member>
+      <member refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_a02c0dbb281c64291ab918feb82acb7df_1a02c0dbb281c64291ab918feb82acb7df" prot="public" virt="non-virtual"><scope>mathic::KDTree::EntryRecorder</scope><name>EntryRecorder</name></member>
+      <member refid="classmathic_1_1_k_d_tree_1_1_entry_recorder_aecc00b8453b5d9b3e4697d7c1512bb2a_1aecc00b8453b5d9b3e4697d7c1512bb2a" prot="public" virt="non-virtual"><scope>mathic::KDTree::EntryRecorder</scope><name>proceed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

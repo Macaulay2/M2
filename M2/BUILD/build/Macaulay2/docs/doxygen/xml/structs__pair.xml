@@ -1,0 +1,420 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structs__pair" kind="struct" language="C++" prot="public">
+    <compoundname>s_pair</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="spair_8hpp" local="no">spair.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structs__pair_a5844565e9742d4d95b8394efed1bdf97_1a5844565e9742d4d95b8394efed1bdf97" prot="public" static="no" mutable="no">
+        <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+        <definition>s_pair* s_pair::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>s_pair::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="88" column="10" bodyfile="Macaulay2/e/spair.hpp" bodystart="88" bodyend="-1"/>
+        <referencedby refid="class_g_binhom__comp_ab435b437e85d996f8f3ec5cc04a1a408_1ab435b437e85d996f8f3ec5cc04a1a408" compoundref="gb-sugarless_8cpp" startline="1006" endline="1025">GBinhom_comp::debug_pairs</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0722f6d2a763f199d00dfc295ca6bcc9_1a0722f6d2a763f199d00dfc295ca6bcc9" compoundref="gb-sugarless_8cpp" startline="277" endline="443">GBinhom_comp::find_pairs</referencedby>
+        <referencedby refid="classgb2__comp_a579cc23dd01969b211522c3d1fb3842d_1a579cc23dd01969b211522c3d1fb3842d" compoundref="res-a2-gb_8cpp" startline="530" endline="556">gb2_comp::get_pairs</referencedby>
+        <referencedby refid="classs__pair__heap_aa07184937b76a304c19bcbf88a278050_1aa07184937b76a304c19bcbf88a278050" compoundref="spair_8cpp" startline="31" endline="42">s_pair_heap::grab_remaining_pairs</referencedby>
+        <referencedby refid="classs__pair__heap_a95450142dd345e94b35caa138609aa3b_1a95450142dd345e94b35caa138609aa3b" compoundref="spair_8cpp" startline="123" endline="154">s_pair_heap::merge</referencedby>
+        <referencedby refid="classs__pair__heap_a0d63e7ffa0167aa7b57f77222e20ff58_1a0d63e7ffa0167aa7b57f77222e20ff58" compoundref="spair_8cpp" startline="225" endline="261">s_pair_heap::remove</referencedby>
+        <referencedby refid="classs__pair__heap_a1850658b903c728ae8e933b3ff45bf12_1a1850658b903c728ae8e933b3ff45bf12" compoundref="spair_8cpp" startline="156" endline="178">s_pair_heap::sort_list</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structs__pair_ad613e20bc57f38a2c4f84ca22f555720_1ad613e20bc57f38a2c4f84ca22f555720" prot="public" static="no" mutable="no">
+        <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+        <definition>s_pair* s_pair::next_same</definition>
+        <argsstring></argsstring>
+        <name>next_same</name>
+        <qualifiedname>s_pair::next_same</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="89" column="10" bodyfile="Macaulay2/e/spair.hpp" bodystart="89" bodyend="-1"/>
+        <referencedby refid="class_g_binhom__comp_a94d88ff7f314610d65e6c8ebb9ba9912_1a94d88ff7f314610d65e6c8ebb9ba9912" compoundref="gb-sugarless_8cpp" startline="987" endline="998">GBinhom_comp::debug_pairs_out</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0722f6d2a763f199d00dfc295ca6bcc9_1a0722f6d2a763f199d00dfc295ca6bcc9" compoundref="gb-sugarless_8cpp" startline="277" endline="443">GBinhom_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_binhom__comp_a24914a3ba9db697bf7206d594a88a9ae_1a24914a3ba9db697bf7206d594a88a9ae" compoundref="gb-sugarless_8cpp" startline="236" endline="276">GBinhom_comp::mark_pair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structs__pair_a4993446f29ebec9909f3e0811222c287_1a4993446f29ebec9909f3e0811222c287" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int s_pair::syz_type</definition>
+        <argsstring></argsstring>
+        <name>syz_type</name>
+        <qualifiedname>s_pair::syz_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="90" column="7" bodyfile="Macaulay2/e/spair.hpp" bodystart="90" bodyend="-1"/>
+        <referencedby refid="classgb2__comp_a7acfed66bb7daa507f03c1685d42f14a_1a7acfed66bb7daa507f03c1685d42f14a" compoundref="res-a2-gb_8cpp" startline="195" endline="309">gb2_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_b__comp_a4ce6b24952442c3f141b7fbc75f16139_1a4ce6b24952442c3f141b7fbc75f16139" compoundref="gb-homog2_8cpp" startline="265" endline="373">GB_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0722f6d2a763f199d00dfc295ca6bcc9_1a0722f6d2a763f199d00dfc295ca6bcc9" compoundref="gb-sugarless_8cpp" startline="277" endline="443">GBinhom_comp::find_pairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structs__pair_a9ff5e72510a87e938dd7588b86007c36_1a9ff5e72510a87e938dd7588b86007c36" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int s_pair::compare_num</definition>
+        <argsstring></argsstring>
+        <name>compare_num</name>
+        <qualifiedname>s_pair::compare_num</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="91" column="7" bodyfile="Macaulay2/e/spair.hpp" bodystart="91" bodyend="-1"/>
+        <referencedby refid="classgb2__comp_a20a06d6dd3c925c5f6226204e76b5ac2_1a20a06d6dd3c925c5f6226204e76b5ac2" compoundref="res-a2-gb_8cpp" startline="917" endline="933">gb2_comp::debug_out</referencedby>
+        <referencedby refid="class_g_b__comp_af7d8d8130e8e1bd44ecc20f7580801ff_1af7d8d8130e8e1bd44ecc20f7580801ff" compoundref="gb-homog2_8cpp" startline="965" endline="983">GB_comp::debug_out</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0f922c618a0db71ae8d3b49f242e9375_1a0f922c618a0db71ae8d3b49f242e9375" compoundref="gb-sugarless_8cpp" startline="948" endline="979">GBinhom_comp::debug_out</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0722f6d2a763f199d00dfc295ca6bcc9_1a0722f6d2a763f199d00dfc295ca6bcc9" compoundref="gb-sugarless_8cpp" startline="277" endline="443">GBinhom_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_binhom__comp_a24914a3ba9db697bf7206d594a88a9ae_1a24914a3ba9db697bf7206d594a88a9ae" compoundref="gb-sugarless_8cpp" startline="236" endline="276">GBinhom_comp::mark_pair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structs__pair_a1b72cee4a6487abea0ce0c0576fdc721_1a1b72cee4a6487abea0ce0c0576fdc721" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int s_pair::degree</definition>
+        <argsstring></argsstring>
+        <name>degree</name>
+        <qualifiedname>s_pair::degree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="92" column="7" bodyfile="Macaulay2/e/spair.hpp" bodystart="92" bodyend="-1"/>
+        <referencedby refid="classs__pair__heap_a6e7211f1f4d2134ac9b3389b393d5600_1a6e7211f1f4d2134ac9b3389b393d5600" compoundref="spair_8cpp" startline="66" endline="121">s_pair_heap::compare</referencedby>
+        <referencedby refid="class_g_b__comp_ab15e1049e91b71e56f0852c17c8aa5f6_1ab15e1049e91b71e56f0852c17c8aa5f6" compoundref="gb-homog2_8cpp" startline="762" endline="780">GB_comp::next_degree</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structs__pair_a0428aff0ecbcecf6188933f0f104fd2a_1a0428aff0ecbcecf6188933f0f104fd2a" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* s_pair::lcm</definition>
+        <argsstring></argsstring>
+        <name>lcm</name>
+        <qualifiedname>s_pair::lcm</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="93" column="7" bodyfile="Macaulay2/e/spair.hpp" bodystart="93" bodyend="-1"/>
+        <referencedby refid="classs__pair__heap_a6e7211f1f4d2134ac9b3389b393d5600_1a6e7211f1f4d2134ac9b3389b393d5600" compoundref="spair_8cpp" startline="66" endline="121">s_pair_heap::compare</referencedby>
+        <referencedby refid="classgb2__comp_a20a06d6dd3c925c5f6226204e76b5ac2_1a20a06d6dd3c925c5f6226204e76b5ac2" compoundref="res-a2-gb_8cpp" startline="917" endline="933">gb2_comp::debug_out</referencedby>
+        <referencedby refid="class_g_b__comp_af7d8d8130e8e1bd44ecc20f7580801ff_1af7d8d8130e8e1bd44ecc20f7580801ff" compoundref="gb-homog2_8cpp" startline="965" endline="983">GB_comp::debug_out</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0f922c618a0db71ae8d3b49f242e9375_1a0f922c618a0db71ae8d3b49f242e9375" compoundref="gb-sugarless_8cpp" startline="948" endline="979">GBinhom_comp::debug_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structs__pair_a7eff2724d6c06dc138fbf271fd823c63_1a7eff2724d6c06dc138fbf271fd823c63" prot="public" static="no" mutable="no">
+        <type><ref refid="structgb__elem" kindref="compound">gb_elem</ref> *</type>
+        <definition>gb_elem* s_pair::first</definition>
+        <argsstring></argsstring>
+        <name>first</name>
+        <qualifiedname>s_pair::first</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="94" column="11" bodyfile="Macaulay2/e/spair.hpp" bodystart="94" bodyend="-1"/>
+        <referencedby refid="classs__pair__heap_a6e7211f1f4d2134ac9b3389b393d5600_1a6e7211f1f4d2134ac9b3389b393d5600" compoundref="spair_8cpp" startline="66" endline="121">s_pair_heap::compare</referencedby>
+        <referencedby refid="classgb2__comp_a20a06d6dd3c925c5f6226204e76b5ac2_1a20a06d6dd3c925c5f6226204e76b5ac2" compoundref="res-a2-gb_8cpp" startline="917" endline="933">gb2_comp::debug_out</referencedby>
+        <referencedby refid="class_g_b__comp_af7d8d8130e8e1bd44ecc20f7580801ff_1af7d8d8130e8e1bd44ecc20f7580801ff" compoundref="gb-homog2_8cpp" startline="965" endline="983">GB_comp::debug_out</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0f922c618a0db71ae8d3b49f242e9375_1a0f922c618a0db71ae8d3b49f242e9375" compoundref="gb-sugarless_8cpp" startline="948" endline="979">GBinhom_comp::debug_out</referencedby>
+        <referencedby refid="classgb2__comp_a7acfed66bb7daa507f03c1685d42f14a_1a7acfed66bb7daa507f03c1685d42f14a" compoundref="res-a2-gb_8cpp" startline="195" endline="309">gb2_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_b__comp_a4ce6b24952442c3f141b7fbc75f16139_1a4ce6b24952442c3f141b7fbc75f16139" compoundref="gb-homog2_8cpp" startline="265" endline="373">GB_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0722f6d2a763f199d00dfc295ca6bcc9_1a0722f6d2a763f199d00dfc295ca6bcc9" compoundref="gb-sugarless_8cpp" startline="277" endline="443">GBinhom_comp::find_pairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structs__pair_a33b137e3b5d1d54134a128ee0b92d0f8_1a33b137e3b5d1d54134a128ee0b92d0f8" prot="public" static="no" mutable="no">
+        <type><ref refid="structgb__elem" kindref="compound">gb_elem</ref> *</type>
+        <definition>gb_elem* s_pair::second</definition>
+        <argsstring></argsstring>
+        <name>second</name>
+        <qualifiedname>s_pair::second</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="95" column="11" bodyfile="Macaulay2/e/spair.hpp" bodystart="95" bodyend="-1"/>
+        <referencedby refid="classs__pair__heap_a6e7211f1f4d2134ac9b3389b393d5600_1a6e7211f1f4d2134ac9b3389b393d5600" compoundref="spair_8cpp" startline="66" endline="121">s_pair_heap::compare</referencedby>
+        <referencedby refid="classgb2__comp_a20a06d6dd3c925c5f6226204e76b5ac2_1a20a06d6dd3c925c5f6226204e76b5ac2" compoundref="res-a2-gb_8cpp" startline="917" endline="933">gb2_comp::debug_out</referencedby>
+        <referencedby refid="class_g_b__comp_af7d8d8130e8e1bd44ecc20f7580801ff_1af7d8d8130e8e1bd44ecc20f7580801ff" compoundref="gb-homog2_8cpp" startline="965" endline="983">GB_comp::debug_out</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0f922c618a0db71ae8d3b49f242e9375_1a0f922c618a0db71ae8d3b49f242e9375" compoundref="gb-sugarless_8cpp" startline="948" endline="979">GBinhom_comp::debug_out</referencedby>
+        <referencedby refid="classgb2__comp_a7acfed66bb7daa507f03c1685d42f14a_1a7acfed66bb7daa507f03c1685d42f14a" compoundref="res-a2-gb_8cpp" startline="195" endline="309">gb2_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_b__comp_a4ce6b24952442c3f141b7fbc75f16139_1a4ce6b24952442c3f141b7fbc75f16139" compoundref="gb-homog2_8cpp" startline="265" endline="373">GB_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0722f6d2a763f199d00dfc295ca6bcc9_1a0722f6d2a763f199d00dfc295ca6bcc9" compoundref="gb-sugarless_8cpp" startline="277" endline="443">GBinhom_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_binhom__comp_a24914a3ba9db697bf7206d594a88a9ae_1a24914a3ba9db697bf7206d594a88a9ae" compoundref="gb-sugarless_8cpp" startline="236" endline="276">GBinhom_comp::mark_pair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structs__pair_a5598076ab78b239012fb48eafd184ce2_1a5598076ab78b239012fb48eafd184ce2" prot="public" static="no" mutable="no">
+        <type><ref refid="structgbvector" kindref="compound">gbvector</ref> *</type>
+        <definition>gbvector* s_pair::f</definition>
+        <argsstring></argsstring>
+        <name>f</name>
+        <qualifiedname>s_pair::f</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="96" column="12" bodyfile="Macaulay2/e/spair.hpp" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structs__pair_a7a5066681252aecf1a94ea45a106ab2e_1a7a5066681252aecf1a94ea45a106ab2e" prot="public" static="no" mutable="no">
+        <type><ref refid="structgbvector" kindref="compound">gbvector</ref> *</type>
+        <definition>gbvector* s_pair::fsyz</definition>
+        <argsstring></argsstring>
+        <name>fsyz</name>
+        <qualifiedname>s_pair::fsyz</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="97" column="12" bodyfile="Macaulay2/e/spair.hpp" bodystart="97" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="1">
+        <label>s_pair</label>
+        <link refid="structs__pair"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="7">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="18">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="16">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>const void *</label>
+      </node>
+      <node id="11">
+        <label>double</label>
+      </node>
+      <node id="4">
+        <label>gb_elem</label>
+        <link refid="structgb__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>next</edgelabel>
+          <edgelabel>next_min</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>pair_list</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fsyz</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>is_min</edgelabel>
+          <edgelabel>lead_exp</edgelabel>
+          <edgelabel>me</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>gbvector</label>
+        <link refid="structgbvector"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>comp</edgelabel>
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="9">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>long</label>
+      </node>
+      <node id="15">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="14">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="12">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="13">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="6">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>s_pair</label>
+        <link refid="structs__pair"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>next</edgelabel>
+          <edgelabel>next_same</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>compare_num</edgelabel>
+          <edgelabel>degree</edgelabel>
+          <edgelabel>lcm</edgelabel>
+          <edgelabel>syz_type</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>first</edgelabel>
+          <edgelabel>second</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/spair.hpp" line="86" column="1" bodyfile="Macaulay2/e/spair.hpp" bodystart="87" bodyend="98"/>
+    <listofallmembers>
+      <member refid="structs__pair_a9ff5e72510a87e938dd7588b86007c36_1a9ff5e72510a87e938dd7588b86007c36" prot="public" virt="non-virtual"><scope>s_pair</scope><name>compare_num</name></member>
+      <member refid="structs__pair_a1b72cee4a6487abea0ce0c0576fdc721_1a1b72cee4a6487abea0ce0c0576fdc721" prot="public" virt="non-virtual"><scope>s_pair</scope><name>degree</name></member>
+      <member refid="structs__pair_a5598076ab78b239012fb48eafd184ce2_1a5598076ab78b239012fb48eafd184ce2" prot="public" virt="non-virtual"><scope>s_pair</scope><name>f</name></member>
+      <member refid="structs__pair_a7eff2724d6c06dc138fbf271fd823c63_1a7eff2724d6c06dc138fbf271fd823c63" prot="public" virt="non-virtual"><scope>s_pair</scope><name>first</name></member>
+      <member refid="structs__pair_a7a5066681252aecf1a94ea45a106ab2e_1a7a5066681252aecf1a94ea45a106ab2e" prot="public" virt="non-virtual"><scope>s_pair</scope><name>fsyz</name></member>
+      <member refid="structs__pair_a0428aff0ecbcecf6188933f0f104fd2a_1a0428aff0ecbcecf6188933f0f104fd2a" prot="public" virt="non-virtual"><scope>s_pair</scope><name>lcm</name></member>
+      <member refid="structs__pair_a5844565e9742d4d95b8394efed1bdf97_1a5844565e9742d4d95b8394efed1bdf97" prot="public" virt="non-virtual"><scope>s_pair</scope><name>next</name></member>
+      <member refid="structs__pair_ad613e20bc57f38a2c4f84ca22f555720_1ad613e20bc57f38a2c4f84ca22f555720" prot="public" virt="non-virtual"><scope>s_pair</scope><name>next_same</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>s_pair</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>s_pair</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>s_pair</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>s_pair</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>s_pair</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>s_pair</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>s_pair</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>s_pair</scope><name>operator new[]</name></member>
+      <member refid="structs__pair_a33b137e3b5d1d54134a128ee0b92d0f8_1a33b137e3b5d1d54134a128ee0b92d0f8" prot="public" virt="non-virtual"><scope>s_pair</scope><name>second</name></member>
+      <member refid="structs__pair_a4993446f29ebec9909f3e0811222c287_1a4993446f29ebec9909f3e0811222c287" prot="public" virt="non-virtual"><scope>s_pair</scope><name>syz_type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

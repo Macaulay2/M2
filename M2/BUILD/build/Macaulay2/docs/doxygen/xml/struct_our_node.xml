@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_our_node" kind="struct" language="C++" prot="public">
+    <compoundname>OurNode</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_our_node_a512a5fb274a5da16da02095bc40e1f4f_1a512a5fb274a5da16da02095bc40e1f4f" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int OurNode::lev</definition>
+        <argsstring></argsstring>
+        <name>lev</name>
+        <qualifiedname>OurNode::lev</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" line="59" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_our_node_a7142a34bfebfd0f096fed986ed55f790_1a7142a34bfebfd0f096fed986ed55f790" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int OurNode::sldeg</definition>
+        <argsstring></argsstring>
+        <name>sldeg</name>
+        <qualifiedname>OurNode::sldeg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" line="60" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_our_node_a26fc911f648d5347277725195812e168_1a26fc911f648d5347277725195812e168" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int OurNode::firstDependency</definition>
+        <argsstring></argsstring>
+        <name>firstDependency</name>
+        <qualifiedname>OurNode::firstDependency</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" line="61" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_our_node_a18a11304c767424cccf715d9d2a54327_1a18a11304c767424cccf715d9d2a54327" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int OurNode::lastDependency</definition>
+        <argsstring></argsstring>
+        <name>lastDependency</name>
+        <qualifiedname>OurNode::lastDependency</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" line="62" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_our_node_a5ee3562ebf415d37402751f321d0cb63_1a5ee3562ebf415d37402751f321d0cb63" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int OurNode::computationStatus</definition>
+        <argsstring></argsstring>
+        <name>computationStatus</name>
+        <qualifiedname>OurNode::computationStatus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" line="63" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Scratch task descriptor used by the standalone TBB dependency-graph example. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="franzi-gb_8cpp_a8818ff25e637ee7d384c122f52a46d62_1a8818ff25e637ee7d384c122f52a46d62" kindref="member">Pairs</ref> a <computeroutput>(level, slanted_degree)</computeroutput> cell with the half-open range of cells it depends on (<computeroutput><ref refid="struct_our_node_a26fc911f648d5347277725195812e168_1a26fc911f648d5347277725195812e168" kindref="member">firstDependency</ref></computeroutput> .. <computeroutput><ref refid="struct_our_node_a18a11304c767424cccf715d9d2a54327_1a18a11304c767424cccf715d9d2a54327" kindref="member">lastDependency</ref></computeroutput>) plus a <computeroutput><ref refid="struct_our_node_a5ee3562ebf415d37402751f321d0cb63_1a5ee3562ebf415d37402751f321d0cb63" kindref="member">computationStatus</ref></computeroutput> slot the example sets when the cell fires. The file is illustrative scaffolding for the parallel Schreyer-resolution scheduler, not part of the live engine code path. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>OurNode</label>
+        <link refid="struct_our_node"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>computationStatus</edgelabel>
+          <edgelabel>firstDependency</edgelabel>
+          <edgelabel>lastDependency</edgelabel>
+          <edgelabel>lev</edgelabel>
+          <edgelabel>sldeg</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" line="58" column="1" bodyfile="Macaulay2/e/schreyer-resolution/res-tasking-example.cpp" bodystart="58" bodyend="64"/>
+    <listofallmembers>
+      <member refid="struct_our_node_a5ee3562ebf415d37402751f321d0cb63_1a5ee3562ebf415d37402751f321d0cb63" prot="public" virt="non-virtual"><scope>OurNode</scope><name>computationStatus</name></member>
+      <member refid="struct_our_node_a26fc911f648d5347277725195812e168_1a26fc911f648d5347277725195812e168" prot="public" virt="non-virtual"><scope>OurNode</scope><name>firstDependency</name></member>
+      <member refid="struct_our_node_a18a11304c767424cccf715d9d2a54327_1a18a11304c767424cccf715d9d2a54327" prot="public" virt="non-virtual"><scope>OurNode</scope><name>lastDependency</name></member>
+      <member refid="struct_our_node_a512a5fb274a5da16da02095bc40e1f4f_1a512a5fb274a5da16da02095bc40e1f4f" prot="public" virt="non-virtual"><scope>OurNode</scope><name>lev</name></member>
+      <member refid="struct_our_node_a7142a34bfebfd0f096fed986ed55f790_1a7142a34bfebfd0f096fed986ed55f790" prot="public" virt="non-virtual"><scope>OurNode</scope><name>sldeg</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

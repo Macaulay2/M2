@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structgbelem" kind="struct" language="C++" prot="public">
+    <compoundname>gbelem</compoundname>
+    <includes refid="f4-types_8hpp" local="no">f4-types.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgbelem_a1e82e2ea3d0a30a26fdf7786818a54b3_1a1e82e2ea3d0a30a26fdf7786818a54b3" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_g_b_f4_polynomial" kindref="compound">GBF4Polynomial</ref></type>
+        <definition>GBF4Polynomial gbelem::f</definition>
+        <argsstring></argsstring>
+        <name>f</name>
+        <qualifiedname>gbelem::f</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="135" column="18" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="135" bodyend="-1"/>
+        <referencedby refid="class_f4_s_pair_set_a013c0429f3ad8bc8a44d86a0e29a8e76_1a013c0429f3ad8bc8a44d86a0e29a8e76" compoundref="f4-spairs_8cpp" startline="246" endline="321">F4SPairSet::construct_pairs</referencedby>
+        <referencedby refid="class_f4to_m2_interface_ae0554d8051387c4c81a5b5cfffb68b47_1ae0554d8051387c4c81a5b5cfffb68b47" compoundref="f4-m2-interface_8cpp" startline="58" endline="70">F4toM2Interface::from_M2_matrix</referencedby>
+        <referencedby refid="class_f4_g_b_a443809bfacccd069074892d330247edb_1a443809bfacccd069074892d330247edb" compoundref="f4_8cpp" startline="139" endline="148">F4GB::new_generators</referencedby>
+        <referencedby refid="class_f4_s_pair_set_acb9c47f568cbe6feb75935ccaa74f7e4_1acb9c47f568cbe6feb75935ccaa74f7e4" compoundref="f4-spairs_8cpp" startline="81" endline="88">F4SPairSet::pair_not_needed</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structgbelem_a2be12b66aa4a4709b1f2cac53e03e899_1a2be12b66aa4a4709b1f2cac53e03e899" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int gbelem::deg</definition>
+        <argsstring></argsstring>
+        <name>deg</name>
+        <qualifiedname>gbelem::deg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="136" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="136" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a443809bfacccd069074892d330247edb_1a443809bfacccd069074892d330247edb" compoundref="f4_8cpp" startline="139" endline="148">F4GB::new_generators</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structgbelem_a149ca1040934ef9048d5c0896d0c70e5_1a149ca1040934ef9048d5c0896d0c70e5" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int gbelem::alpha</definition>
+        <argsstring></argsstring>
+        <name>alpha</name>
+        <qualifiedname>gbelem::alpha</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="137" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="137" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a443809bfacccd069074892d330247edb_1a443809bfacccd069074892d330247edb" compoundref="f4_8cpp" startline="139" endline="148">F4GB::new_generators</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structgbelem_aa707449be179bd5739f88054d8d77e37_1aa707449be179bd5739f88054d8d77e37" prot="public" static="no" mutable="no">
+        <type><ref refid="f4-types_8hpp_aba9e0150a71986fe2ea6878f577268c1_1aba9e0150a71986fe2ea6878f577268c1" kindref="member">gbelem_type</ref></type>
+        <definition>gbelem_type gbelem::minlevel</definition>
+        <argsstring></argsstring>
+        <name>minlevel</name>
+        <qualifiedname>gbelem::minlevel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="138" column="15" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="138" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GBF4Polynomial</label>
+        <link refid="struct_g_b_f4_polynomial"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>coeffs</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>monoms</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>gbelem</label>
+        <link refid="structgbelem"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>f</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>alpha</edgelabel>
+          <edgelabel>deg</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>minlevel</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>gbelem_type</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="6">
+        <label>long</label>
+      </node>
+      <node id="5">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/f4-types.hpp" line="133" column="1" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="134" bodyend="139"/>
+    <listofallmembers>
+      <member refid="structgbelem_a149ca1040934ef9048d5c0896d0c70e5_1a149ca1040934ef9048d5c0896d0c70e5" prot="public" virt="non-virtual"><scope>gbelem</scope><name>alpha</name></member>
+      <member refid="structgbelem_a2be12b66aa4a4709b1f2cac53e03e899_1a2be12b66aa4a4709b1f2cac53e03e899" prot="public" virt="non-virtual"><scope>gbelem</scope><name>deg</name></member>
+      <member refid="structgbelem_a1e82e2ea3d0a30a26fdf7786818a54b3_1a1e82e2ea3d0a30a26fdf7786818a54b3" prot="public" virt="non-virtual"><scope>gbelem</scope><name>f</name></member>
+      <member refid="structgbelem_aa707449be179bd5739f88054d8d77e37_1aa707449be179bd5739f88054d8d77e37" prot="public" virt="non-virtual"><scope>gbelem</scope><name>minlevel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

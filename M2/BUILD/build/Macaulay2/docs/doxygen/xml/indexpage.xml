@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="indexpage" kind="page">
+    <compoundname>index</compoundname>
+    <title>Macaulay2 C++ engine documentation</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>The Macaulay2 engine implements rings, elements in these rings, matrices over these rings, mutable matrices, ring maps, and computations including</para>
+<para><itemizedlist>
+<listitem><para>Groebner bases</para>
+</listitem><listitem><para>Hilbert functions</para>
+</listitem><listitem><para>free resolutions</para>
+</listitem></itemizedlist>
+</para>
+<para>The engine is written in C++ over a long period of time, some of it before the c++ standard library was available or robust. The engine is being updated to c++17, and eventually to c++20.</para>
+<para><simplesect kind="see"><para><ref refid="group__rings" kindref="compound">Rings</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__matrices" kindref="compound">Matrices</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__comp" kindref="compound">Computations</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="Macaulay2/e/defgroups.h"/>
+  </compounddef>
+</doxygen>

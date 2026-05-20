@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_help_action" kind="class" language="C++" prot="public">
+    <compoundname>HelpAction</compoundname>
+    <basecompoundref refid="classmathic_1_1_help_action" prot="public" virt="non-virtual">mathic::HelpAction</basecompoundref>
+    <includes refid="_help_action_8hpp" local="no">HelpAction.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_help_action_aa60a78713473d6c92a8dc4d390fc8521_1aa60a78713473d6c92a8dc4d390fc8521" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>MATHICGB_NAMESPACE_BEGIN void HelpAction::performAction</definition>
+        <argsstring>()</argsstring>
+        <name>performAction</name>
+        <qualifiedname>HelpAction::performAction</qualifiedname>
+        <reimplements refid="classmathic_1_1_help_action_ad1d32eed6ea295d17ac62fa584b35743_1ad1d32eed6ea295d17ac62fa584b35743">performAction</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/HelpAction.hpp" line="12" column="16" bodyfile="submodules/mathicgb/src/cli/HelpAction.cpp" bodystart="12" bodyend="83"/>
+        <references refid="class_log_domain_set_ae2d5c4bd636553a8cf265d87cb8837cb_1ae2d5c4bd636553a8cf265d87cb8837cb" compoundref="_log_domain_set_8hpp" startline="65" endline="66">LogDomainSet::aliases</references>
+        <references refid="namespacemathic_aa0a90bd228458c0cbad2e032bfe60f72_1aa0a90bd228458c0cbad2e032bfe60f72" compoundref="display_8cpp" startline="115" endline="117">mathic::display</references>
+        <references refid="class_log_domain_set_aecf6613460aa7ffbc1eba09023f76dc0_1aecf6613460aa7ffbc1eba09023f76dc0" compoundref="_log_domain_set_8hpp" startline="64" endline="64">LogDomainSet::logDomains</references>
+        <references refid="classmathic_1_1_help_action_ad1d32eed6ea295d17ac62fa584b35743_1ad1d32eed6ea295d17ac62fa584b35743" compoundref="src_2mathic_2_help_action_8cpp" startline="81" endline="106">mathic::HelpAction::performAction</references>
+        <references refid="class_log_domain_set_acfc9e89f4e07efeec159424bc10931f1_1acfc9e89f4e07efeec159424bc10931f1" compoundref="_log_domain_set_8cpp" startline="211" endline="214">LogDomainSet::singleton</references>
+        <references refid="classmathic_1_1_help_action_a556e926e5493b60917297d3f69948920_1a556e926e5493b60917297d3f69948920" compoundref="src_2mathic_2_help_action_8cpp" startline="112" endline="114">mathic::HelpAction::topic</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>HelpAction</label>
+        <link refid="class_help_action"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mathic::Action</label>
+        <link refid="classmathic_1_1_action"/>
+      </node>
+      <node id="2">
+        <label>mathic::HelpAction</label>
+        <link refid="classmathic_1_1_help_action"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>HelpAction</label>
+        <link refid="class_help_action"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>T</label>
+      </node>
+      <node id="3">
+        <label>mathic::Action</label>
+        <link refid="classmathic_1_1_action"/>
+      </node>
+      <node id="4">
+        <label>mathic::CliParser</label>
+        <link refid="classmathic_1_1_cli_parser"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_actions</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_helpPostMessage</edgelabel>
+          <edgelabel>_helpPreMessage</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mathic::HelpAction</label>
+        <link refid="classmathic_1_1_help_action"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_parser</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_topic</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>mathic::NameFactory&lt; AbstractProduct &gt;</label>
+        <link refid="classmathic_1_1_name_factory"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_pairs</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_abstractName</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>mathic::NameFactory&lt; mathic::Action &gt;</label>
+        <link refid="classmathic_1_1_name_factory"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_pairs</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_abstractName</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; mathic::Action &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="9">
+        <label>std::string</label>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; Pair &gt;</label>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; Pair &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/cli/HelpAction.hpp" line="10" column="1" bodyfile="submodules/mathicgb/src/cli/HelpAction.hpp" bodystart="10" bodyend="13"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_help_action_ab13c4433f0174eedd6cfeb08772915a6_1ab13c4433f0174eedd6cfeb08772915a6" prot="private" virt="non-virtual"><scope>HelpAction</scope><name>_parser</name></member>
+      <member refid="classmathic_1_1_help_action_a53741f7678ec3802dc1a5ffa919fcf7f_1a53741f7678ec3802dc1a5ffa919fcf7f" prot="private" virt="non-virtual"><scope>HelpAction</scope><name>_topic</name></member>
+      <member refid="classmathic_1_1_help_action_a8263b39c2357db6b405b4de0bc4a6ce1_1a8263b39c2357db6b405b4de0bc4a6ce1" prot="public" virt="virtual"><scope>HelpAction</scope><name>description</name></member>
+      <member refid="classmathic_1_1_help_action_aa8661c945a05b4528edace0fa6cd8660_1aa8661c945a05b4528edace0fa6cd8660" prot="public" virt="virtual"><scope>HelpAction</scope><name>directOptions</name></member>
+      <member refid="classmathic_1_1_help_action_ad106dceb559d984a831569eac67f640a_1ad106dceb559d984a831569eac67f640a" prot="private" virt="non-virtual"><scope>HelpAction</scope><name>displayActionHelp</name></member>
+      <member refid="classmathic_1_1_help_action_a459652f1d572178e5c441f13f8f9ecf1_1a459652f1d572178e5c441f13f8f9ecf1" prot="public" virt="non-virtual"><scope>HelpAction</scope><name>HelpAction</name></member>
+      <member refid="classmathic_1_1_help_action_a4bf158fe979e168553cd94a9ab8eb606_1a4bf158fe979e168553cd94a9ab8eb606" prot="public" virt="virtual"><scope>HelpAction</scope><name>isHelpAction</name></member>
+      <member refid="classmathic_1_1_help_action_a67e0c19659248437e2619d09d6c478ea_1a67e0c19659248437e2619d09d6c478ea" prot="public" virt="virtual"><scope>HelpAction</scope><name>name</name></member>
+      <member refid="class_help_action_aa60a78713473d6c92a8dc4d390fc8521_1aa60a78713473d6c92a8dc4d390fc8521" prot="public" virt="virtual"><scope>HelpAction</scope><name>performAction</name></member>
+      <member refid="classmathic_1_1_help_action_a8e7019bb31b610c96891495ac72ff1af_1a8e7019bb31b610c96891495ac72ff1af" prot="public" virt="virtual"><scope>HelpAction</scope><name>pushBackParameters</name></member>
+      <member refid="classmathic_1_1_help_action_ade23b3566f223d9bb4ab114e2b69836a_1ade23b3566f223d9bb4ab114e2b69836a" prot="public" virt="virtual"><scope>HelpAction</scope><name>shortDescription</name></member>
+      <member refid="classmathic_1_1_help_action_aa388d9953a7b8a88fd7bb852568e8d72_1aa388d9953a7b8a88fd7bb852568e8d72" prot="public" virt="non-virtual"><scope>HelpAction</scope><name>staticName</name></member>
+      <member refid="classmathic_1_1_help_action_a556e926e5493b60917297d3f69948920_1a556e926e5493b60917297d3f69948920" prot="protected" virt="non-virtual"><scope>HelpAction</scope><name>topic</name></member>
+      <member refid="classmathic_1_1_action_a1df019d99d092e2ca328a4ff65c71c0b_1a1df019d99d092e2ca328a4ff65c71c0b" prot="public" virt="virtual"><scope>HelpAction</scope><name>~Action</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

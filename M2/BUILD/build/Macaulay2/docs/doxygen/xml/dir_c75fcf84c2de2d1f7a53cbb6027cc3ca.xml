@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_c75fcf84c2de2d1f7a53cbb6027cc3ca" kind="dir">
+    <compoundname>/home/ubuntu/M2-docs/M2</compoundname>
+    <innerdir refid="dir_fcc487e91d82658d3f23189046243b87">/home/ubuntu/M2-docs/M2/Macaulay2</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/ubuntu/M2-docs/M2/"/>
+  </compounddef>
+</doxygen>

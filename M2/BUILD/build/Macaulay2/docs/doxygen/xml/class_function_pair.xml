@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_function_pair" kind="class" language="C++" prot="public">
+    <compoundname>FunctionPair</compoundname>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_function_pair_abb918352e86f7f3c48f3391d02f43b06_1abb918352e86f7f3c48f3391d02f43b06" prot="private" static="no" mutable="no">
+        <type><ref refid="class_b_r_p" kindref="compound">BRP</ref></type>
+        <definition>BRP FunctionPair::fieldpolynomial</definition>
+        <argsstring></argsstring>
+        <name>fieldpolynomial</name>
+        <qualifiedname>FunctionPair::fieldpolynomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="116" column="7" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="116" bodyend="-1"/>
+        <referencedby refid="class_function_pair_a649c913ae338ba76e99db1ea7e11a5d6_1a649c913ae338ba76e99db1ea7e11a5d6" compoundref="franzi-gb_8cpp" startline="124" endline="149">FunctionPair</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_function_pair_a4781d195fee734abf08f7e65d3e50a38_1a4781d195fee734abf08f7e65d3e50a38" prot="public" static="no" mutable="no">
+        <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> *</type>
+        <definition>const BRP* FunctionPair::f</definition>
+        <argsstring></argsstring>
+        <name>f</name>
+        <qualifiedname>FunctionPair::f</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="119" column="13" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="119" bodyend="-1"/>
+        <referencedby refid="class_function_pair_a649c913ae338ba76e99db1ea7e11a5d6_1a649c913ae338ba76e99db1ea7e11a5d6" compoundref="franzi-gb_8cpp" startline="124" endline="149">FunctionPair</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a8089e5515ec6e0c72b5ced95a06e5a98_1a8089e5515ec6e0c72b5ced95a06e5a98" compoundref="franzi-gb_8cpp" startline="213" endline="257">isGoodPair</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a3594684979fc905c97144b6eb7d3caf9_1a3594684979fc905c97144b6eb7d3caf9" compoundref="franzi-gb_8cpp" startline="260" endline="279">sPolynomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_function_pair_a362657a78c0393cb4619e4aeef60bc83_1a362657a78c0393cb4619e4aeef60bc83" prot="public" static="no" mutable="no">
+        <type>const <ref refid="class_b_r_p" kindref="compound">BRP</ref> *</type>
+        <definition>const BRP* FunctionPair::g</definition>
+        <argsstring></argsstring>
+        <name>g</name>
+        <qualifiedname>FunctionPair::g</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="120" column="13" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="120" bodyend="-1"/>
+        <referencedby refid="class_function_pair_a649c913ae338ba76e99db1ea7e11a5d6_1a649c913ae338ba76e99db1ea7e11a5d6" compoundref="franzi-gb_8cpp" startline="124" endline="149">FunctionPair</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a8089e5515ec6e0c72b5ced95a06e5a98_1a8089e5515ec6e0c72b5ced95a06e5a98" compoundref="franzi-gb_8cpp" startline="213" endline="257">isGoodPair</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a3594684979fc905c97144b6eb7d3caf9_1a3594684979fc905c97144b6eb7d3caf9" compoundref="franzi-gb_8cpp" startline="260" endline="279">sPolynomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_function_pair_a9eab2ec1d0151fbd4f608c7d455590f3_1a9eab2ec1d0151fbd4f608c7d455590f3" prot="public" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool FunctionPair::good</definition>
+        <argsstring></argsstring>
+        <name>good</name>
+        <qualifiedname>FunctionPair::good</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="121" column="8" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="121" bodyend="-1"/>
+        <referencedby refid="class_function_pair_a649c913ae338ba76e99db1ea7e11a5d6_1a649c913ae338ba76e99db1ea7e11a5d6" compoundref="franzi-gb_8cpp" startline="124" endline="149">FunctionPair</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a8089e5515ec6e0c72b5ced95a06e5a98_1a8089e5515ec6e0c72b5ced95a06e5a98" compoundref="franzi-gb_8cpp" startline="213" endline="257">isGoodPair</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a3594684979fc905c97144b6eb7d3caf9_1a3594684979fc905c97144b6eb7d3caf9" compoundref="franzi-gb_8cpp" startline="260" endline="279">sPolynomial</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_function_pair_a649c913ae338ba76e99db1ea7e11a5d6_1a649c913ae338ba76e99db1ea7e11a5d6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>FunctionPair::FunctionPair</definition>
+        <argsstring>(const Pair &amp;pair, const IntermediateBasis &amp;F, int n)</argsstring>
+        <name>FunctionPair</name>
+        <qualifiedname>FunctionPair::FunctionPair</qualifiedname>
+        <param>
+          <type>const <ref refid="class_pair" kindref="compound">Pair</ref> &amp;</type>
+          <declname>pair</declname>
+        </param>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_ab757760310571764b5752f09c0e29abc_1ab757760310571764b5752f09c0e29abc" kindref="member">IntermediateBasis</ref> &amp;</type>
+          <declname>F</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="124" column="3" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="124" bodyend="149"/>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_function_pair_a4781d195fee734abf08f7e65d3e50a38_1a4781d195fee734abf08f7e65d3e50a38" compoundref="franzi-gb_8cpp" startline="119">f</references>
+        <references refid="class_function_pair_abb918352e86f7f3c48f3391d02f43b06_1abb918352e86f7f3c48f3391d02f43b06" compoundref="franzi-gb_8cpp" startline="116">fieldpolynomial</references>
+        <references refid="class_function_pair_a362657a78c0393cb4619e4aeef60bc83_1a362657a78c0393cb4619e4aeef60bc83" compoundref="franzi-gb_8cpp" startline="120">g</references>
+        <references refid="class_function_pair_a9eab2ec1d0151fbd4f608c7d455590f3_1a9eab2ec1d0151fbd4f608c7d455590f3" compoundref="franzi-gb_8cpp" startline="121">good</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Materialised <computeroutput>(<ref refid="class_function_pair_a4781d195fee734abf08f7e65d3e50a38_1a4781d195fee734abf08f7e65d3e50a38" kindref="member">f</ref>, <ref refid="class_function_pair_a362657a78c0393cb4619e4aeef60bc83_1a362657a78c0393cb4619e4aeef60bc83" kindref="member">g</ref>)</computeroutput> pair of <computeroutput><ref refid="class_b_r_p" kindref="compound">BRP</ref></computeroutput> polynomials referenced by a <computeroutput><ref refid="class_pair" kindref="compound">Pair</ref></computeroutput> index record. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Resolves the symbolic <computeroutput><ref refid="class_pair" kindref="compound">Pair</ref></computeroutput> into pointers to the actual basis elements (<computeroutput><ref refid="class_function_pair_a4781d195fee734abf08f7e65d3e50a38_1a4781d195fee734abf08f7e65d3e50a38" kindref="member">f</ref> = F[j]</computeroutput>, <computeroutput><ref refid="class_function_pair_a362657a78c0393cb4619e4aeef60bc83_1a362657a78c0393cb4619e4aeef60bc83" kindref="member">g</ref> = F[i]</computeroutput>) or, when <computeroutput>i &lt; 0</computeroutput>, into the synthetic field polynomial <computeroutput>x_k^2 + x_k</computeroutput> stored in <computeroutput><ref refid="class_function_pair_abb918352e86f7f3c48f3391d02f43b06_1abb918352e86f7f3c48f3391d02f43b06" kindref="member">fieldpolynomial</ref></computeroutput>. <computeroutput><ref refid="class_function_pair_a9eab2ec1d0151fbd4f608c7d455590f3_1a9eab2ec1d0151fbd4f608c7d455590f3" kindref="member">good</ref></computeroutput> mirrors <computeroutput><ref refid="class_pair_a55959c06cfec0d4141a7ddb2f4893354_1a55959c06cfec0d4141a7ddb2f4893354" kindref="member">Pair::good</ref></computeroutput> but rechecks against the current <computeroutput>F</computeroutput>. The S-polynomial reducer then operates on the resolved pointers directly. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>BRP</label>
+        <link refid="class_b_r_p"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>m</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>FunctionPair</label>
+        <link refid="class_function_pair"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fieldpolynomial</edgelabel>
+          <edgelabel>g</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>good</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>T</label>
+      </node>
+      <node id="6">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="4">
+        <label>std::list&lt; T &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::list&lt; brMonomial &gt;</label>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; brMonomial &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/franzi-gb.cpp" line="114" column="1" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="115" bodyend="150"/>
+    <listofallmembers>
+      <member refid="class_function_pair_a4781d195fee734abf08f7e65d3e50a38_1a4781d195fee734abf08f7e65d3e50a38" prot="public" virt="non-virtual"><scope>FunctionPair</scope><name>f</name></member>
+      <member refid="class_function_pair_abb918352e86f7f3c48f3391d02f43b06_1abb918352e86f7f3c48f3391d02f43b06" prot="private" virt="non-virtual"><scope>FunctionPair</scope><name>fieldpolynomial</name></member>
+      <member refid="class_function_pair_a649c913ae338ba76e99db1ea7e11a5d6_1a649c913ae338ba76e99db1ea7e11a5d6" prot="public" virt="non-virtual"><scope>FunctionPair</scope><name>FunctionPair</name></member>
+      <member refid="class_function_pair_a362657a78c0393cb4619e4aeef60bc83_1a362657a78c0393cb4619e4aeef60bc83" prot="public" virt="non-virtual"><scope>FunctionPair</scope><name>g</name></member>
+      <member refid="class_function_pair_a9eab2ec1d0151fbd4f608c7d455590f3_1a9eab2ec1d0151fbd4f608c7d455590f3" prot="public" virt="non-virtual"><scope>FunctionPair</scope><name>good</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

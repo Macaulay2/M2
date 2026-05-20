@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_vector_arithmetic_stats" kind="class" language="C++" prot="public">
+    <compoundname>VectorArithmeticStats</compoundname>
+    <includes refid="_vector_arithmetic_8hpp" local="no">VectorArithmetic.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_vector_arithmetic_stats_a503dec8bdd70431022f762098f5c1aa2_1a503dec8bdd70431022f762098f5c1aa2" prot="private" static="no" mutable="yes">
+        <type>long</type>
+        <definition>long VectorArithmeticStats::mNumAdditions</definition>
+        <argsstring></argsstring>
+        <name>mNumAdditions</name>
+        <qualifiedname>VectorArithmeticStats::mNumAdditions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="126" column="16" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="126" bodyend="-1"/>
+        <referencedby refid="class_vector_arithmetic_stats_aa3f1a6b18bd3125916ffd19a99e8cca6_1aa3f1a6b18bd3125916ffd19a99e8cca6" compoundref="_vector_arithmetic_8hpp" startline="130" endline="130">incrementNumAdditions</referencedby>
+        <referencedby refid="class_vector_arithmetic_stats_a5d0444d9756ec843543f39b07c1bf7c4_1a5d0444d9756ec843543f39b07c1bf7c4" compoundref="_vector_arithmetic_8hpp" startline="131" endline="131">numAdditions</referencedby>
+        <referencedby refid="class_vector_arithmetic_stats_a109cb40644926d0c195031f5f7438374_1a109cb40644926d0c195031f5f7438374" compoundref="_vector_arithmetic_8hpp" startline="128" endline="128">VectorArithmeticStats</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_vector_arithmetic_stats_a109cb40644926d0c195031f5f7438374_1a109cb40644926d0c195031f5f7438374" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>VectorArithmeticStats::VectorArithmeticStats</definition>
+        <argsstring>()</argsstring>
+        <name>VectorArithmeticStats</name>
+        <qualifiedname>VectorArithmeticStats::VectorArithmeticStats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="128" column="3" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="128" bodyend="128"/>
+        <references refid="class_vector_arithmetic_stats_a503dec8bdd70431022f762098f5c1aa2_1a503dec8bdd70431022f762098f5c1aa2" compoundref="_vector_arithmetic_8hpp" startline="126">mNumAdditions</references>
+      </memberdef>
+      <memberdef kind="function" id="class_vector_arithmetic_stats_aa3f1a6b18bd3125916ffd19a99e8cca6_1aa3f1a6b18bd3125916ffd19a99e8cca6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void VectorArithmeticStats::incrementNumAdditions</definition>
+        <argsstring>() const</argsstring>
+        <name>incrementNumAdditions</name>
+        <qualifiedname>VectorArithmeticStats::incrementNumAdditions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="130" column="8" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="130" bodyend="130"/>
+        <references refid="class_vector_arithmetic_stats_a503dec8bdd70431022f762098f5c1aa2_1a503dec8bdd70431022f762098f5c1aa2" compoundref="_vector_arithmetic_8hpp" startline="126">mNumAdditions</references>
+      </memberdef>
+      <memberdef kind="function" id="class_vector_arithmetic_stats_a5d0444d9756ec843543f39b07c1bf7c4_1a5d0444d9756ec843543f39b07c1bf7c4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long VectorArithmeticStats::numAdditions</definition>
+        <argsstring>() const</argsstring>
+        <name>numAdditions</name>
+        <qualifiedname>VectorArithmeticStats::numAdditions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="131" column="8" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="131" bodyend="131"/>
+        <references refid="class_vector_arithmetic_stats_a503dec8bdd70431022f762098f5c1aa2_1a503dec8bdd70431022f762098f5c1aa2" compoundref="_vector_arithmetic_8hpp" startline="126">mNumAdditions</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Lightweight counter attached to a <computeroutput><ref refid="class_concrete_vector_arithmetic" kindref="compound">ConcreteVectorArithmetic</ref>&lt;<ref refid="class_ring" kindref="compound">Ring</ref>&gt;</computeroutput> for tracking how many coefficient additions a reduction performed. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The <computeroutput><ref refid="class_vector_arithmetic_stats_a503dec8bdd70431022f762098f5c1aa2_1a503dec8bdd70431022f762098f5c1aa2" kindref="member">mNumAdditions</ref></computeroutput> counter is <computeroutput>mutable</computeroutput> so that it can be incremented from within <computeroutput>const</computeroutput> arithmetic methods. <computeroutput><ref refid="class_vector_arithmetic_stats_a5d0444d9756ec843543f39b07c1bf7c4_1a5d0444d9756ec843543f39b07c1bf7c4" kindref="member">numAdditions()</ref></computeroutput> reports the running total. Plugged into the F4 / GB code paths via <computeroutput>VectorArithmetic::numAdditions()</computeroutput> for profiling. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>VectorArithmeticStats</label>
+        <link refid="class_vector_arithmetic_stats"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mNumAdditions</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/VectorArithmetic.hpp" line="124" column="1" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="125" bodyend="132"/>
+    <listofallmembers>
+      <member refid="class_vector_arithmetic_stats_aa3f1a6b18bd3125916ffd19a99e8cca6_1aa3f1a6b18bd3125916ffd19a99e8cca6" prot="public" virt="non-virtual"><scope>VectorArithmeticStats</scope><name>incrementNumAdditions</name></member>
+      <member refid="class_vector_arithmetic_stats_a503dec8bdd70431022f762098f5c1aa2_1a503dec8bdd70431022f762098f5c1aa2" prot="private" virt="non-virtual"><scope>VectorArithmeticStats</scope><name>mNumAdditions</name></member>
+      <member refid="class_vector_arithmetic_stats_a5d0444d9756ec843543f39b07c1bf7c4_1a5d0444d9756ec843543f39b07c1bf7c4" prot="public" virt="non-virtual"><scope>VectorArithmeticStats</scope><name>numAdditions</name></member>
+      <member refid="class_vector_arithmetic_stats_a109cb40644926d0c195031f5f7438374_1a109cb40644926d0c195031f5f7438374" prot="public" virt="non-virtual"><scope>VectorArithmeticStats</scope><name>VectorArithmeticStats</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

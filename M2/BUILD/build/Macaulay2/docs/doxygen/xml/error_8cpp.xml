@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="error_8cpp" kind="file" language="C++">
+    <compoundname>error.cpp</compoundname>
+    <includes refid="submodules_2mathic_2src_2mathic_2error_8h" local="yes">error.h</includes>
+    <includes local="no">sstream</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathic/src/mathic/error.cpp</label>
+        <link refid="error_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>error.h</label>
+        <link refid="submodules_2mathic_2src_2mathic_2error_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>sstream</label>
+      </node>
+      <node id="3">
+        <label>stdexcept</label>
+      </node>
+      <node id="4">
+        <label>string</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacemathic">mathic</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="submodules_2mathic_2src_2mathic_2error_8h" kindref="compound">error.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemathic" kindref="compound">mathic</ref><sp/>{</highlight></codeline>
+<codeline lineno="5" refid="namespacemathic_aba2df5396ea54101a096481c819534dc_1aba2df5396ea54101a096481c819534dc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemathic_aba2df5396ea54101a096481c819534dc_1aba2df5396ea54101a096481c819534dc" kindref="member">reportError</ref><sp/>[[noreturn]]<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>errorMsg)<sp/>{</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classmathic_1_1_mathic_exception" kindref="compound">MathicException</ref>(</highlight><highlight class="stringliteral">&quot;ERROR:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>errorMsg);</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="namespacemathic_a6870238a4090a0cc546241d8c6b3b283_1a6870238a4090a0cc546241d8c6b3b283" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemathic_a6870238a4090a0cc546241d8c6b3b283_1a6870238a4090a0cc546241d8c6b3b283" kindref="member">reportInternalError</ref><sp/>[[noreturn]]<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>errorMsg)<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classmathic_1_1_internal_mathic_exception" kindref="compound">InternalMathicException</ref>(</highlight><highlight class="stringliteral">&quot;INTERNAL<sp/>ERROR:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>errorMsg);</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="namespacemathic_a661dff3debb74d36017845d6662098d5_1a661dff3debb74d36017845d6662098d5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemathic_a6870238a4090a0cc546241d8c6b3b283_1a6870238a4090a0cc546241d8c6b3b283" kindref="member">reportInternalError</ref><sp/>[[noreturn]]</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>errorMsg,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>file,<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lineNumber)<sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>std::ostringstream<sp/>err;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>err<sp/>&lt;&lt;<sp/>errorMsg<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;The<sp/>internal<sp/>error<sp/>occurred<sp/>in<sp/>file<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>file</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>on<sp/>line<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>lineNumber<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;.&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacemathic_a6870238a4090a0cc546241d8c6b3b283_1a6870238a4090a0cc546241d8c6b3b283" kindref="member">reportInternalError</ref>(err.str());</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/mathic/error.cpp"/>
+  </compounddef>
+</doxygen>

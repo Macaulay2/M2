@@ -1,0 +1,1608 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classres__poly" kind="class" language="C++" prot="public">
+    <compoundname>res_poly</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="res-a1-poly_8hpp" local="no">res-a1-poly.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classres__poly_a196d26da1c82d87adf84ddb2355107bb_1a196d26da1c82d87adf84ddb2355107bb" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+        <definition>const PolynomialRing* res_poly::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>res_poly::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="71" column="24" bodyfile="Macaulay2/e/res-a1-poly.hpp" bodystart="71" bodyend="-1"/>
+        <referencedby refid="classres__poly_a72838cc49dc021f147fdff4b2e9d671a_1a72838cc49dc021f147fdff4b2e9d671a" compoundref="res-a1-poly_8cpp" startline="9" endline="15">res_poly</referencedby>
+        <referencedby refid="classres__poly_a837b5a653df2fe8bb2f65f03c3d6437f_1a837b5a653df2fe8bb2f65f03c3d6437f" compoundref="res-a1-poly_8cpp" startline="257" endline="277">to_vector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_monoid" kindref="compound">Monoid</ref> *</type>
+        <definition>const Monoid* res_poly::M</definition>
+        <argsstring></argsstring>
+        <name>M</name>
+        <qualifiedname>res_poly::M</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="72" column="16" bodyfile="Macaulay2/e/res-a1-poly.hpp" bodystart="72" bodyend="-1"/>
+        <referencedby refid="classres__poly_a40bde8022c14722a250aa7bf3ea65470_1a40bde8022c14722a250aa7bf3ea65470" compoundref="res-a1-poly_8cpp" startline="18" endline="26">compare</referencedby>
+        <referencedby refid="classres__poly_a1b2444cf0ce4c1b392242af25f2cf9a8_1a1b2444cf0ce4c1b392242af25f2cf9a8" compoundref="res-a1-poly_8cpp" startline="60" endline="74">copy</referencedby>
+        <referencedby refid="classres__poly_a1380dad30c0b60123ae7ca4746c415b9_1a1380dad30c0b60123ae7ca4746c415b9" compoundref="res-a1-poly_8cpp" startline="236" endline="255">elem_text_out</referencedby>
+        <referencedby refid="classres__poly_a4d76d31e3698b7018dc265d0f5159ddf_1a4d76d31e3698b7018dc265d0f5159ddf" compoundref="res-a1-poly_8cpp" startline="279" endline="297">from_vector</referencedby>
+        <referencedby refid="classres__poly_a37f1181b1f9f2ef5b5f6a40e0a34bd9a_1a37f1181b1f9f2ef5b5f6a40e0a34bd9a" compoundref="res-a1-poly_8cpp" startline="44" endline="58">mult_by_monomial</referencedby>
+        <referencedby refid="classres__poly_a19f8513e1503aaebbbc0e2cec1d69418_1a19f8513e1503aaebbbc0e2cec1d69418" compoundref="res-a1-poly_8cpp" startline="86" endline="102">mult_by_term</referencedby>
+        <referencedby refid="classres__poly_a8bb77752be9580d091aaa9a4fc60aec3_1a8bb77752be9580d091aaa9a4fc60aec3" compoundref="res-a1-poly_8cpp" startline="34" endline="42">new_term</referencedby>
+        <referencedby refid="classres__poly_a72838cc49dc021f147fdff4b2e9d671a_1a72838cc49dc021f147fdff4b2e9d671a" compoundref="res-a1-poly_8cpp" startline="9" endline="15">res_poly</referencedby>
+        <referencedby refid="classres__poly_a8650fc774958aed506b692f3b5e492ac_1a8650fc774958aed506b692f3b5e492ac" compoundref="res-a1-poly_8cpp" startline="103" endline="120">ring_mult_by_term</referencedby>
+        <referencedby refid="classres__poly_a84d39ed861919ebb175921527fb8e003_1a84d39ed861919ebb175921527fb8e003" compoundref="res-a1-poly_8cpp" startline="299" endline="314">strip</referencedby>
+        <referencedby refid="classres__poly_a837b5a653df2fe8bb2f65f03c3d6437f_1a837b5a653df2fe8bb2f65f03c3d6437f" compoundref="res-a1-poly_8cpp" startline="257" endline="277">to_vector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>const Ring* res_poly::K</definition>
+        <argsstring></argsstring>
+        <name>K</name>
+        <qualifiedname>res_poly::K</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="73" column="14" bodyfile="Macaulay2/e/res-a1-poly.hpp" bodystart="73" bodyend="-1"/>
+        <referencedby refid="classres__poly_ab7c5d46de8f795976666267c7ce4a901_1ab7c5d46de8f795976666267c7ce4a901" compoundref="res-a1-poly_8cpp" startline="132" endline="197">add_to</referencedby>
+        <referencedby refid="classres__poly_a1b2444cf0ce4c1b392242af25f2cf9a8_1a1b2444cf0ce4c1b392242af25f2cf9a8" compoundref="res-a1-poly_8cpp" startline="60" endline="74">copy</referencedby>
+        <referencedby refid="classres__poly_a1380dad30c0b60123ae7ca4746c415b9_1a1380dad30c0b60123ae7ca4746c415b9" compoundref="res-a1-poly_8cpp" startline="236" endline="255">elem_text_out</referencedby>
+        <referencedby refid="classres__poly_a8d673d957e850961ec9ee0d7bfbe2b14_1a8d673d957e850961ec9ee0d7bfbe2b14" compoundref="res-a1-poly_8cpp" startline="122" endline="130">make_monic</referencedby>
+        <referencedby refid="classres__poly_a37f1181b1f9f2ef5b5f6a40e0a34bd9a_1a37f1181b1f9f2ef5b5f6a40e0a34bd9a" compoundref="res-a1-poly_8cpp" startline="44" endline="58">mult_by_monomial</referencedby>
+        <referencedby refid="classres__poly_a19f8513e1503aaebbbc0e2cec1d69418_1a19f8513e1503aaebbbc0e2cec1d69418" compoundref="res-a1-poly_8cpp" startline="86" endline="102">mult_by_term</referencedby>
+        <referencedby refid="classres__poly_a5e05ff33da812d64961e6e8cfe65401c_1a5e05ff33da812d64961e6e8cfe65401c" compoundref="res-a1-poly_8cpp" startline="75" endline="84">remove</referencedby>
+        <referencedby refid="classres__poly_a72838cc49dc021f147fdff4b2e9d671a_1a72838cc49dc021f147fdff4b2e9d671a" compoundref="res-a1-poly_8cpp" startline="9" endline="15">res_poly</referencedby>
+        <referencedby refid="classres__poly_a8650fc774958aed506b692f3b5e492ac_1a8650fc774958aed506b692f3b5e492ac" compoundref="res-a1-poly_8cpp" startline="103" endline="120">ring_mult_by_term</referencedby>
+        <referencedby refid="classres__poly_a7a25593ce119eb7530f44f41db5c6e4c_1a7a25593ce119eb7530f44f41db5c6e4c" compoundref="res-a1-poly_8cpp" startline="210" endline="221">ring_subtract_multiple_to</referencedby>
+        <referencedby refid="classres__poly_a84d39ed861919ebb175921527fb8e003_1a84d39ed861919ebb175921527fb8e003" compoundref="res-a1-poly_8cpp" startline="299" endline="314">strip</referencedby>
+        <referencedby refid="classres__poly_ac55132ba0cd61ffa1f05648c885d6473_1ac55132ba0cd61ffa1f05648c885d6473" compoundref="res-a1-poly_8cpp" startline="199" endline="209">subtract_multiple_to</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classres__poly_a2f6599d5483aecb14ed3360287c1161b_1a2f6599d5483aecb14ed3360287c1161b" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t res_poly::element_size</definition>
+        <argsstring></argsstring>
+        <name>element_size</name>
+        <qualifiedname>res_poly::element_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="74" column="10" bodyfile="Macaulay2/e/res-a1-poly.hpp" bodystart="74" bodyend="-1"/>
+        <referencedby refid="classres__poly_a72838cc49dc021f147fdff4b2e9d671a_1a72838cc49dc021f147fdff4b2e9d671a" compoundref="res-a1-poly_8cpp" startline="9" endline="15">res_poly</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classres__poly_a44397b73efec4b964faedd8c5ad40485_1a44397b73efec4b964faedd8c5ad40485" prot="private" static="no" mutable="no">
+        <type><ref refid="classstash" kindref="compound">stash</ref> *</type>
+        <definition>stash* res_poly::resterm_stash</definition>
+        <argsstring></argsstring>
+        <name>resterm_stash</name>
+        <qualifiedname>res_poly::resterm_stash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="75" column="9" bodyfile="Macaulay2/e/res-a1-poly.hpp" bodystart="75" bodyend="-1"/>
+        <referencedby refid="classres__poly_ab7c5d46de8f795976666267c7ce4a901_1ab7c5d46de8f795976666267c7ce4a901" compoundref="res-a1-poly_8cpp" startline="132" endline="197">add_to</referencedby>
+        <referencedby refid="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" compoundref="res-a1-poly_8cpp" startline="28" endline="33">new_term</referencedby>
+        <referencedby refid="classres__poly_a5e05ff33da812d64961e6e8cfe65401c_1a5e05ff33da812d64961e6e8cfe65401c" compoundref="res-a1-poly_8cpp" startline="75" endline="84">remove</referencedby>
+        <referencedby refid="classres__poly_a72838cc49dc021f147fdff4b2e9d671a_1a72838cc49dc021f147fdff4b2e9d671a" compoundref="res-a1-poly_8cpp" startline="9" endline="15">res_poly</referencedby>
+        <referencedby refid="classres__poly_a4ebc6c1afb59a7f4ef1550d65374a952_1a4ebc6c1afb59a7f4ef1550d65374a952" compoundref="res-a1-poly_8cpp" startline="17" endline="17">~res_poly</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+        <definition>resterm * res_poly::new_term</definition>
+        <argsstring>() const</argsstring>
+        <name>new_term</name>
+        <qualifiedname>res_poly::new_term</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="77" column="11" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="28" bodyend="33"/>
+        <references refid="classres__poly_a44397b73efec4b964faedd8c5ad40485_1a44397b73efec4b964faedd8c5ad40485" compoundref="res-a1-poly_8hpp" startline="75">resterm_stash</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="classres__poly_a1b2444cf0ce4c1b392242af25f2cf9a8_1a1b2444cf0ce4c1b392242af25f2cf9a8" compoundref="res-a1-poly_8cpp" startline="60" endline="74">copy</referencedby>
+        <referencedby refid="classres__poly_a4d76d31e3698b7018dc265d0f5159ddf_1a4d76d31e3698b7018dc265d0f5159ddf" compoundref="res-a1-poly_8cpp" startline="279" endline="297">from_vector</referencedby>
+        <referencedby refid="classres__poly_a37f1181b1f9f2ef5b5f6a40e0a34bd9a_1a37f1181b1f9f2ef5b5f6a40e0a34bd9a" compoundref="res-a1-poly_8cpp" startline="44" endline="58">mult_by_monomial</referencedby>
+        <referencedby refid="classres__poly_a19f8513e1503aaebbbc0e2cec1d69418_1a19f8513e1503aaebbbc0e2cec1d69418" compoundref="res-a1-poly_8cpp" startline="86" endline="102">mult_by_term</referencedby>
+        <referencedby refid="classres__poly_a8bb77752be9580d091aaa9a4fc60aec3_1a8bb77752be9580d091aaa9a4fc60aec3" compoundref="res-a1-poly_8cpp" startline="34" endline="42">new_term</referencedby>
+        <referencedby refid="classres__poly_a8650fc774958aed506b692f3b5e492ac_1a8650fc774958aed506b692f3b5e492ac" compoundref="res-a1-poly_8cpp" startline="103" endline="120">ring_mult_by_term</referencedby>
+        <referencedby refid="classres__poly_a84d39ed861919ebb175921527fb8e003_1a84d39ed861919ebb175921527fb8e003" compoundref="res-a1-poly_8cpp" startline="299" endline="314">strip</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a6db86825d940a12d0025a644a4931460_1a6db86825d940a12d0025a644a4931460" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void res_poly::sort</definition>
+        <argsstring>(resterm *&amp;f) const</argsstring>
+        <name>sort</name>
+        <qualifiedname>res_poly::sort</qualifiedname>
+        <param>
+          <type><ref refid="structresterm" kindref="compound">resterm</ref> *&amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="79" column="8" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="324" bodyend="351"/>
+        <references refid="classres__poly_ab7c5d46de8f795976666267c7ce4a901_1ab7c5d46de8f795976666267c7ce4a901" compoundref="res-a1-poly_8cpp" startline="132" endline="197">add_to</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="classres__poly_a6db86825d940a12d0025a644a4931460_1a6db86825d940a12d0025a644a4931460" compoundref="res-a1-poly_8cpp" startline="324" endline="351">sort</references>
+        <referencedby refid="classres__poly_a4d76d31e3698b7018dc265d0f5159ddf_1a4d76d31e3698b7018dc265d0f5159ddf" compoundref="res-a1-poly_8cpp" startline="279" endline="297">from_vector</referencedby>
+        <referencedby refid="classres__poly_a6db86825d940a12d0025a644a4931460_1a6db86825d940a12d0025a644a4931460" compoundref="res-a1-poly_8cpp" startline="324" endline="351">sort</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classres__poly_a72838cc49dc021f147fdff4b2e9d671a_1a72838cc49dc021f147fdff4b2e9d671a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>res_poly::res_poly</definition>
+        <argsstring>(PolynomialRing *R)</argsstring>
+        <name>res_poly</name>
+        <qualifiedname>res_poly::res_poly</qualifiedname>
+        <param>
+          <type><ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="82" column="3" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="9" bodyend="15"/>
+        <references refid="classres__poly_a2f6599d5483aecb14ed3360287c1161b_1a2f6599d5483aecb14ed3360287c1161b" compoundref="res-a1-poly_8hpp" startline="74">element_size</references>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="classres__poly_a196d26da1c82d87adf84ddb2355107bb_1a196d26da1c82d87adf84ddb2355107bb" compoundref="res-a1-poly_8hpp" startline="71">R</references>
+        <references refid="classres__poly_a44397b73efec4b964faedd8c5ad40485_1a44397b73efec4b964faedd8c5ad40485" compoundref="res-a1-poly_8hpp" startline="75">resterm_stash</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a4ebc6c1afb59a7f4ef1550d65374a952_1a4ebc6c1afb59a7f4ef1550d65374a952" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>res_poly::~res_poly</definition>
+        <argsstring>()</argsstring>
+        <name>~res_poly</name>
+        <qualifiedname>res_poly::~res_poly</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="83" column="3" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="17" bodyend="17"/>
+        <references refid="classres__poly_a44397b73efec4b964faedd8c5ad40485_1a44397b73efec4b964faedd8c5ad40485" compoundref="res-a1-poly_8hpp" startline="75">resterm_stash</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a86237d5ac29868e7c4bf79c9a985a49b_1a86237d5ac29868e7c4bf79c9a985a49b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classres__pair" kindref="compound">res_pair</ref> *</type>
+        <definition>const res_pair * res_poly::lead_component</definition>
+        <argsstring>(const resterm *f) const</argsstring>
+        <name>lead_component</name>
+        <qualifiedname>res_poly::lead_component</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="85" column="18" bodyfile="Macaulay2/e/res-a1-poly.hpp" bodystart="127" bodyend="130"/>
+        <references refid="structresterm_a32958eeb6f5d2dff972195055469e2f0_1a32958eeb6f5d2dff972195055469e2f0" compoundref="res-a1-poly_8hpp" startline="64">resterm::comp</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a04621317e0fa0817f3268e876a3f1736_1a04621317e0fa0817f3268e876a3f1736" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>const int * res_poly::lead_monomial</definition>
+        <argsstring>(const resterm *f) const</argsstring>
+        <name>lead_monomial</name>
+        <qualifiedname>res_poly::lead_monomial</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="87" column="13" bodyfile="Macaulay2/e/res-a1-poly.hpp" bodystart="133" bodyend="136"/>
+        <references refid="structresterm_a8728662faef6d050f6f2e2d0acb35155_1a8728662faef6d050f6f2e2d0acb35155" compoundref="res-a1-poly_8hpp" startline="66">resterm::monom</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a8bb77752be9580d091aaa9a4fc60aec3_1a8bb77752be9580d091aaa9a4fc60aec3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+        <definition>resterm * res_poly::new_term</definition>
+        <argsstring>(ring_elem c, const int *m, res_pair *comp) const</argsstring>
+        <name>new_term</name>
+        <qualifiedname>res_poly::new_term</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="classres__pair" kindref="compound">res_pair</ref> *</type>
+          <declname>comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="89" column="11" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="34" bodyend="42"/>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" compoundref="res-a1-poly_8cpp" startline="28" endline="33">new_term</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a37f1181b1f9f2ef5b5f6a40e0a34bd9a_1a37f1181b1f9f2ef5b5f6a40e0a34bd9a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+        <definition>resterm * res_poly::mult_by_monomial</definition>
+        <argsstring>(const resterm *f, const int *m) const</argsstring>
+        <name>mult_by_monomial</name>
+        <qualifiedname>res_poly::mult_by_monomial</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="90" column="11" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="44" bodyend="58"/>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" compoundref="res-a1-poly_8cpp" startline="28" endline="33">new_term</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a8d673d957e850961ec9ee0d7bfbe2b14_1a8d673d957e850961ec9ee0d7bfbe2b14" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void res_poly::make_monic</definition>
+        <argsstring>(resterm *&amp;f) const</argsstring>
+        <name>make_monic</name>
+        <qualifiedname>res_poly::make_monic</qualifiedname>
+        <param>
+          <type><ref refid="structresterm" kindref="compound">resterm</ref> *&amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="91" column="8" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="122" bodyend="130"/>
+        <references refid="structresterm_a34796788a6394a6a715a05ff0e48fb77_1a34796788a6394a6a715a05ff0e48fb77" compoundref="res-a1-poly_8hpp" startline="65">resterm::coeff</references>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a19f8513e1503aaebbbc0e2cec1d69418_1a19f8513e1503aaebbbc0e2cec1d69418" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+        <definition>resterm * res_poly::mult_by_term</definition>
+        <argsstring>(const resterm *f, ring_elem c, const int *m) const</argsstring>
+        <name>mult_by_term</name>
+        <qualifiedname>res_poly::mult_by_term</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="92" column="11" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="86" bodyend="102"/>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" compoundref="res-a1-poly_8cpp" startline="28" endline="33">new_term</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="classres__poly_ac55132ba0cd61ffa1f05648c885d6473_1ac55132ba0cd61ffa1f05648c885d6473" compoundref="res-a1-poly_8cpp" startline="199" endline="209">subtract_multiple_to</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a8650fc774958aed506b692f3b5e492ac_1a8650fc774958aed506b692f3b5e492ac" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+        <definition>resterm * res_poly::ring_mult_by_term</definition>
+        <argsstring>(const ring_elem f, ring_elem c, const int *m, res_pair *x) const</argsstring>
+        <name>ring_mult_by_term</name>
+        <qualifiedname>res_poly::ring_mult_by_term</qualifiedname>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="classres__pair" kindref="compound">res_pair</ref> *</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="93" column="11" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="103" bodyend="120"/>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" compoundref="res-a1-poly_8cpp" startline="28" endline="33">new_term</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="classres__poly_a7a25593ce119eb7530f44f41db5c6e4c_1a7a25593ce119eb7530f44f41db5c6e4c" compoundref="res-a1-poly_8cpp" startline="210" endline="221">ring_subtract_multiple_to</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_ab7c5d46de8f795976666267c7ce4a901_1ab7c5d46de8f795976666267c7ce4a901" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void res_poly::add_to</definition>
+        <argsstring>(resterm *&amp;f, resterm *&amp;g) const</argsstring>
+        <name>add_to</name>
+        <qualifiedname>res_poly::add_to</qualifiedname>
+        <param>
+          <type><ref refid="structresterm" kindref="compound">resterm</ref> *&amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="structresterm" kindref="compound">resterm</ref> *&amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="97" column="8" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="132" bodyend="197"/>
+        <references refid="structresterm_a34796788a6394a6a715a05ff0e48fb77_1a34796788a6394a6a715a05ff0e48fb77" compoundref="res-a1-poly_8hpp" startline="65">resterm::coeff</references>
+        <references refid="classres__poly_a40bde8022c14722a250aa7bf3ea65470_1a40bde8022c14722a250aa7bf3ea65470" compoundref="res-a1-poly_8cpp" startline="18" endline="26">compare</references>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="classres__poly_a44397b73efec4b964faedd8c5ad40485_1a44397b73efec4b964faedd8c5ad40485" compoundref="res-a1-poly_8hpp" startline="75">resterm_stash</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="classres__poly_a7a25593ce119eb7530f44f41db5c6e4c_1a7a25593ce119eb7530f44f41db5c6e4c" compoundref="res-a1-poly_8cpp" startline="210" endline="221">ring_subtract_multiple_to</referencedby>
+        <referencedby refid="classres__poly_a6db86825d940a12d0025a644a4931460_1a6db86825d940a12d0025a644a4931460" compoundref="res-a1-poly_8cpp" startline="324" endline="351">sort</referencedby>
+        <referencedby refid="classres__poly_ac55132ba0cd61ffa1f05648c885d6473_1ac55132ba0cd61ffa1f05648c885d6473" compoundref="res-a1-poly_8cpp" startline="199" endline="209">subtract_multiple_to</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_ac55132ba0cd61ffa1f05648c885d6473_1ac55132ba0cd61ffa1f05648c885d6473" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void res_poly::subtract_multiple_to</definition>
+        <argsstring>(resterm *&amp;f, ring_elem c, const int *m, const resterm *g) const</argsstring>
+        <name>subtract_multiple_to</name>
+        <qualifiedname>res_poly::subtract_multiple_to</qualifiedname>
+        <param>
+          <type><ref refid="structresterm" kindref="compound">resterm</ref> *&amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="98" column="8" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="199" bodyend="209"/>
+        <references refid="classres__poly_ab7c5d46de8f795976666267c7ce4a901_1ab7c5d46de8f795976666267c7ce4a901" compoundref="res-a1-poly_8cpp" startline="132" endline="197">add_to</references>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="classres__poly_a19f8513e1503aaebbbc0e2cec1d69418_1a19f8513e1503aaebbbc0e2cec1d69418" compoundref="res-a1-poly_8cpp" startline="86" endline="102">mult_by_term</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a7a25593ce119eb7530f44f41db5c6e4c_1a7a25593ce119eb7530f44f41db5c6e4c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void res_poly::ring_subtract_multiple_to</definition>
+        <argsstring>(resterm *&amp;f, ring_elem c, const int *m, res_pair *x, const ring_elem g) const</argsstring>
+        <name>ring_subtract_multiple_to</name>
+        <qualifiedname>res_poly::ring_subtract_multiple_to</qualifiedname>
+        <param>
+          <type><ref refid="structresterm" kindref="compound">resterm</ref> *&amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="classres__pair" kindref="compound">res_pair</ref> *</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="102" column="8" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="210" bodyend="221"/>
+        <references refid="classres__poly_ab7c5d46de8f795976666267c7ce4a901_1ab7c5d46de8f795976666267c7ce4a901" compoundref="res-a1-poly_8cpp" startline="132" endline="197">add_to</references>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="classres__poly_a8650fc774958aed506b692f3b5e492ac_1a8650fc774958aed506b692f3b5e492ac" compoundref="res-a1-poly_8cpp" startline="103" endline="120">ring_mult_by_term</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a40bde8022c14722a250aa7bf3ea65470_1a40bde8022c14722a250aa7bf3ea65470" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int res_poly::compare</definition>
+        <argsstring>(const resterm *a, const resterm *b) const</argsstring>
+        <name>compare</name>
+        <qualifiedname>res_poly::compare</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="108" column="7" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="18" bodyend="26"/>
+        <references refid="structresterm_a32958eeb6f5d2dff972195055469e2f0_1a32958eeb6f5d2dff972195055469e2f0" compoundref="res-a1-poly_8hpp" startline="64">resterm::comp</references>
+        <references refid="classres__pair_a2da5b4bb0c9f6b06e6decee1b37e3437_1a2da5b4bb0c9f6b06e6decee1b37e3437" compoundref="res-a1-poly_8hpp" startline="34">res_pair::compare_num</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="structresterm_a8728662faef6d050f6f2e2d0acb35155_1a8728662faef6d050f6f2e2d0acb35155" compoundref="res-a1-poly_8hpp" startline="66">resterm::monom</references>
+        <referencedby refid="classres__poly_ab7c5d46de8f795976666267c7ce4a901_1ab7c5d46de8f795976666267c7ce4a901" compoundref="res-a1-poly_8cpp" startline="132" endline="197">add_to</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a84d39ed861919ebb175921527fb8e003_1a84d39ed861919ebb175921527fb8e003" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+        <definition>resterm * res_poly::strip</definition>
+        <argsstring>(const resterm *f) const</argsstring>
+        <name>strip</name>
+        <qualifiedname>res_poly::strip</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="110" column="11" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="299" bodyend="314"/>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" compoundref="res-a1-poly_8cpp" startline="28" endline="33">new_term</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="res-a1-poly_8hpp_a328f4bf3af4b7e13b7bdcb036a203674_1a328f4bf3af4b7e13b7bdcb036a203674a13751d049bef280d856489529b1a3ea9" compoundref="res-a1-poly_8hpp" startline="23">SYZ_NOT_MINIMAL</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a8a5e885ae60fb51f8832fa7b81854c70_1a8a5e885ae60fb51f8832fa7b81854c70" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+        <definition>const resterm * res_poly::component_occurs_in</definition>
+        <argsstring>(const res_pair *x, const resterm *f) const</argsstring>
+        <name>component_occurs_in</name>
+        <qualifiedname>res_poly::component_occurs_in</qualifiedname>
+        <param>
+          <type>const <ref refid="classres__pair" kindref="compound">res_pair</ref> *</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="111" column="17" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="316" bodyend="322"/>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a1b2444cf0ce4c1b392242af25f2cf9a8_1a1b2444cf0ce4c1b392242af25f2cf9a8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+        <definition>resterm * res_poly::copy</definition>
+        <argsstring>(const resterm *f) const</argsstring>
+        <name>copy</name>
+        <qualifiedname>res_poly::copy</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="113" column="11" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="60" bodyend="74"/>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" compoundref="res-a1-poly_8cpp" startline="28" endline="33">new_term</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a5e05ff33da812d64961e6e8cfe65401c_1a5e05ff33da812d64961e6e8cfe65401c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void res_poly::remove</definition>
+        <argsstring>(resterm *&amp;f) const</argsstring>
+        <name>remove</name>
+        <qualifiedname>res_poly::remove</qualifiedname>
+        <param>
+          <type><ref refid="structresterm" kindref="compound">resterm</ref> *&amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="114" column="8" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="75" bodyend="84"/>
+        <references refid="structresterm_a34796788a6394a6a715a05ff0e48fb77_1a34796788a6394a6a715a05ff0e48fb77" compoundref="res-a1-poly_8hpp" startline="65">resterm::coeff</references>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="classres__poly_a44397b73efec4b964faedd8c5ad40485_1a44397b73efec4b964faedd8c5ad40485" compoundref="res-a1-poly_8hpp" startline="75">resterm_stash</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a837b5a653df2fe8bb2f65f03c3d6437f_1a837b5a653df2fe8bb2f65f03c3d6437f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>vec</type>
+        <definition>vec res_poly::to_vector</definition>
+        <argsstring>(const resterm *f, const FreeModule *F, int to_minimal=0) const</argsstring>
+        <name>to_vector</name>
+        <qualifiedname>res_poly::to_vector</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>to_minimal</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="116" column="7" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="257" bodyend="277"/>
+        <references refid="classvec_heap_aee39d6db6094683f5687bb3b7b575c9c_1aee39d6db6094683f5687bb3b7b575c9c" compoundref="geovec_8hpp" startline="91" endline="108">vecHeap::add</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="classres__poly_a196d26da1c82d87adf84ddb2355107bb_1a196d26da1c82d87adf84ddb2355107bb" compoundref="res-a1-poly_8hpp" startline="71">R</references>
+        <references refid="classvec_heap_a33fb553adf26e9a4040e45a7a62ca842_1a33fb553adf26e9a4040e45a7a62ca842" compoundref="geovec_8hpp" startline="170" endline="181">vecHeap::value</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a4d76d31e3698b7018dc265d0f5159ddf_1a4d76d31e3698b7018dc265d0f5159ddf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+        <definition>resterm * res_poly::from_vector</definition>
+        <argsstring>(const VECTOR(res_pair *)&amp;base, const vec v) const</argsstring>
+        <name>from_vector</name>
+        <qualifiedname>res_poly::from_vector</qualifiedname>
+        <param>
+          <type>const <ref refid="newdelete_8hpp_a5eb7456054852de52b377090e128822e_1a5eb7456054852de52b377090e128822e" kindref="member">VECTOR</ref>(<ref refid="classres__pair" kindref="compound">res_pair</ref> *)&amp;</type>
+          <declname>base</declname>
+        </param>
+        <param>
+          <type>const vec</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="119" column="11" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="279" bodyend="297"/>
+        <references refid="factory_8cpp_a4f4813fca034f6aee039295c5e1f4d48_1a4f4813fca034f6aee039295c5e1f4d48" compoundref="factory_8cpp" startline="289">base</references>
+        <references refid="struct_nterm_a3eb9c9daff3bb4f2a8052be2bfea895a_1a3eb9c9daff3bb4f2a8052be2bfea895a" compoundref="ringelem_8hpp" startline="154">Nterm::coeff</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="struct_nterm_a7d8ae0809fcf1cf7cdb9aa339538e6e7_1a7d8ae0809fcf1cf7cdb9aa339538e6e7" compoundref="ringelem_8hpp" startline="156">Nterm::monom</references>
+        <references refid="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" compoundref="res-a1-poly_8cpp" startline="28" endline="33">new_term</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="classres__poly_a6db86825d940a12d0025a644a4931460_1a6db86825d940a12d0025a644a4931460" compoundref="res-a1-poly_8cpp" startline="324" endline="351">sort</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a3b0dc16cb8fae8a06e9fb7c0d1a231c6_1a3b0dc16cb8fae8a06e9fb7c0d1a231c6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int res_poly::n_terms</definition>
+        <argsstring>(const resterm *f) const</argsstring>
+        <name>n_terms</name>
+        <qualifiedname>res_poly::n_terms</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="121" column="7" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="223" bodyend="228"/>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a1380dad30c0b60123ae7ca4746c415b9_1a1380dad30c0b60123ae7ca4746c415b9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void res_poly::elem_text_out</definition>
+        <argsstring>(buffer &amp;o, const resterm *f) const</argsstring>
+        <name>elem_text_out</name>
+        <qualifiedname>res_poly::elem_text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="122" column="8" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="236" bodyend="255"/>
+        <references refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" compoundref="res-a1-poly_8hpp" startline="73">K</references>
+        <references refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" compoundref="res-a1-poly_8hpp" startline="72">M</references>
+        <references refid="structresterm_afd51a10339309dd1e7b60e185ef8caf5_1afd51a10339309dd1e7b60e185ef8caf5" compoundref="res-a1-poly_8hpp" startline="63">resterm::next</references>
+        <referencedby refid="debug_8cpp_adf453586526c0dc8fb5083ca27db7a6d_1adf453586526c0dc8fb5083ca27db7a6d" compoundref="debug_8cpp" startline="103" endline="108">drespoly</referencedby>
+        <referencedby refid="classres__poly_a9d2d5006c54d14f7c57732f5821503fb_1a9d2d5006c54d14f7c57732f5821503fb" compoundref="res-a1-poly_8cpp" startline="230" endline="235">elem_text_out</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classres__poly_a9d2d5006c54d14f7c57732f5821503fb_1a9d2d5006c54d14f7c57732f5821503fb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void res_poly::elem_text_out</definition>
+        <argsstring>(const resterm *f) const</argsstring>
+        <name>elem_text_out</name>
+        <qualifiedname>res_poly::elem_text_out</qualifiedname>
+        <param>
+          <type>const <ref refid="structresterm" kindref="compound">resterm</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/res-a1-poly.hpp" line="124" column="8" bodyfile="Macaulay2/e/res-a1-poly.cpp" bodystart="230" bodyend="235"/>
+        <references refid="classres__poly_a1380dad30c0b60123ae7ca4746c415b9_1a1380dad30c0b60123ae7ca4746c415b9" compoundref="res-a1-poly_8cpp" startline="236" endline="255">elem_text_out</references>
+        <references refid="text-io_8cpp_a5bd0b57b7653fb12e1dcaa8c4d09ce4e_1a5bd0b57b7653fb12e1dcaa8c4d09ce4e" compoundref="text-io_8cpp" startline="41" endline="45">emit</references>
+        <references refid="classbuffer_a39972fb7c929bb9e42ed60cddbc1109f_1a39972fb7c929bb9e42ed60cddbc1109f" compoundref="buffer_8hpp" startline="70" endline="74">buffer::str</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="1">
+        <label>res_poly</label>
+        <link refid="classres__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="13">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+        <childnode refid="66" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="42" relation="private-inheritance">
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="44" relation="public-inheritance">
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="38" relation="private-inheritance">
+        </childnode>
+        <childnode refid="41" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="29" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="29" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="52">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="44">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="45" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="36" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="31">
+        <label>CoefficientType</label>
+      </node>
+      <node id="76">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="33" relation="public-inheritance">
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>T</label>
+      </node>
+      <node id="71">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="33" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="25">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="29">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="23">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="27" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>char</label>
+      </node>
+      <node id="12">
+        <label>const ARing *</label>
+      </node>
+      <node id="28">
+        <label>const void *</label>
+      </node>
+      <node id="18">
+        <label>double</label>
+      </node>
+      <node id="61">
+        <label>overflow_type *</label>
+      </node>
+      <node id="58">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="60">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="77">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="7">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="17">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>long</label>
+      </node>
+      <node id="46">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="47" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="50" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>mon_part</label>
+      </node>
+      <node id="22">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="21">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="19">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="20">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="6">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="1">
+        <label>res_poly</label>
+        <link refid="classres__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>element_size</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>resterm_stash</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>size_t</label>
+      </node>
+      <node id="68">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>spinLock</label>
+      </node>
+      <node id="67">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="56">
+        <label>std::string</label>
+        <childnode refid="57" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="29" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="56" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/res-a1-poly.hpp" line="69" column="1" bodyfile="Macaulay2/e/res-a1-poly.hpp" bodystart="70" bodyend="125"/>
+    <listofallmembers>
+      <member refid="classres__poly_ab7c5d46de8f795976666267c7ce4a901_1ab7c5d46de8f795976666267c7ce4a901" prot="public" virt="non-virtual"><scope>res_poly</scope><name>add_to</name></member>
+      <member refid="classres__poly_a40bde8022c14722a250aa7bf3ea65470_1a40bde8022c14722a250aa7bf3ea65470" prot="public" virt="non-virtual"><scope>res_poly</scope><name>compare</name></member>
+      <member refid="classres__poly_a8a5e885ae60fb51f8832fa7b81854c70_1a8a5e885ae60fb51f8832fa7b81854c70" prot="public" virt="non-virtual"><scope>res_poly</scope><name>component_occurs_in</name></member>
+      <member refid="classres__poly_a1b2444cf0ce4c1b392242af25f2cf9a8_1a1b2444cf0ce4c1b392242af25f2cf9a8" prot="public" virt="non-virtual"><scope>res_poly</scope><name>copy</name></member>
+      <member refid="classres__poly_a1380dad30c0b60123ae7ca4746c415b9_1a1380dad30c0b60123ae7ca4746c415b9" prot="public" virt="non-virtual"><scope>res_poly</scope><name>elem_text_out</name></member>
+      <member refid="classres__poly_a9d2d5006c54d14f7c57732f5821503fb_1a9d2d5006c54d14f7c57732f5821503fb" prot="public" virt="non-virtual"><scope>res_poly</scope><name>elem_text_out</name></member>
+      <member refid="classres__poly_a2f6599d5483aecb14ed3360287c1161b_1a2f6599d5483aecb14ed3360287c1161b" prot="private" virt="non-virtual"><scope>res_poly</scope><name>element_size</name></member>
+      <member refid="classres__poly_a4d76d31e3698b7018dc265d0f5159ddf_1a4d76d31e3698b7018dc265d0f5159ddf" prot="public" virt="non-virtual"><scope>res_poly</scope><name>from_vector</name></member>
+      <member refid="classres__poly_a9814772af5b8c50d36eca02df7105033_1a9814772af5b8c50d36eca02df7105033" prot="private" virt="non-virtual"><scope>res_poly</scope><name>K</name></member>
+      <member refid="classres__poly_a86237d5ac29868e7c4bf79c9a985a49b_1a86237d5ac29868e7c4bf79c9a985a49b" prot="public" virt="non-virtual"><scope>res_poly</scope><name>lead_component</name></member>
+      <member refid="classres__poly_a04621317e0fa0817f3268e876a3f1736_1a04621317e0fa0817f3268e876a3f1736" prot="public" virt="non-virtual"><scope>res_poly</scope><name>lead_monomial</name></member>
+      <member refid="classres__poly_af68b8c7830107ddb000c36fa4a4dd637_1af68b8c7830107ddb000c36fa4a4dd637" prot="private" virt="non-virtual"><scope>res_poly</scope><name>M</name></member>
+      <member refid="classres__poly_a8d673d957e850961ec9ee0d7bfbe2b14_1a8d673d957e850961ec9ee0d7bfbe2b14" prot="public" virt="non-virtual"><scope>res_poly</scope><name>make_monic</name></member>
+      <member refid="classres__poly_a37f1181b1f9f2ef5b5f6a40e0a34bd9a_1a37f1181b1f9f2ef5b5f6a40e0a34bd9a" prot="public" virt="non-virtual"><scope>res_poly</scope><name>mult_by_monomial</name></member>
+      <member refid="classres__poly_a19f8513e1503aaebbbc0e2cec1d69418_1a19f8513e1503aaebbbc0e2cec1d69418" prot="public" virt="non-virtual"><scope>res_poly</scope><name>mult_by_term</name></member>
+      <member refid="classres__poly_a3b0dc16cb8fae8a06e9fb7c0d1a231c6_1a3b0dc16cb8fae8a06e9fb7c0d1a231c6" prot="public" virt="non-virtual"><scope>res_poly</scope><name>n_terms</name></member>
+      <member refid="classres__poly_adb62516ddca0a3eda3acccb436bd3879_1adb62516ddca0a3eda3acccb436bd3879" prot="private" virt="non-virtual"><scope>res_poly</scope><name>new_term</name></member>
+      <member refid="classres__poly_a8bb77752be9580d091aaa9a4fc60aec3_1a8bb77752be9580d091aaa9a4fc60aec3" prot="public" virt="non-virtual"><scope>res_poly</scope><name>new_term</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>res_poly</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>res_poly</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>res_poly</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>res_poly</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>res_poly</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>res_poly</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>res_poly</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>res_poly</scope><name>operator new[]</name></member>
+      <member refid="classres__poly_a196d26da1c82d87adf84ddb2355107bb_1a196d26da1c82d87adf84ddb2355107bb" prot="private" virt="non-virtual"><scope>res_poly</scope><name>R</name></member>
+      <member refid="classres__poly_a5e05ff33da812d64961e6e8cfe65401c_1a5e05ff33da812d64961e6e8cfe65401c" prot="public" virt="non-virtual"><scope>res_poly</scope><name>remove</name></member>
+      <member refid="classres__poly_a72838cc49dc021f147fdff4b2e9d671a_1a72838cc49dc021f147fdff4b2e9d671a" prot="public" virt="non-virtual"><scope>res_poly</scope><name>res_poly</name></member>
+      <member refid="classres__poly_a44397b73efec4b964faedd8c5ad40485_1a44397b73efec4b964faedd8c5ad40485" prot="private" virt="non-virtual"><scope>res_poly</scope><name>resterm_stash</name></member>
+      <member refid="classres__poly_a8650fc774958aed506b692f3b5e492ac_1a8650fc774958aed506b692f3b5e492ac" prot="public" virt="non-virtual"><scope>res_poly</scope><name>ring_mult_by_term</name></member>
+      <member refid="classres__poly_a7a25593ce119eb7530f44f41db5c6e4c_1a7a25593ce119eb7530f44f41db5c6e4c" prot="public" virt="non-virtual"><scope>res_poly</scope><name>ring_subtract_multiple_to</name></member>
+      <member refid="classres__poly_a6db86825d940a12d0025a644a4931460_1a6db86825d940a12d0025a644a4931460" prot="private" virt="non-virtual"><scope>res_poly</scope><name>sort</name></member>
+      <member refid="classres__poly_a84d39ed861919ebb175921527fb8e003_1a84d39ed861919ebb175921527fb8e003" prot="public" virt="non-virtual"><scope>res_poly</scope><name>strip</name></member>
+      <member refid="classres__poly_ac55132ba0cd61ffa1f05648c885d6473_1ac55132ba0cd61ffa1f05648c885d6473" prot="public" virt="non-virtual"><scope>res_poly</scope><name>subtract_multiple_to</name></member>
+      <member refid="classres__poly_a837b5a653df2fe8bb2f65f03c3d6437f_1a837b5a653df2fe8bb2f65f03c3d6437f" prot="public" virt="non-virtual"><scope>res_poly</scope><name>to_vector</name></member>
+      <member refid="classres__poly_a4ebc6c1afb59a7f4ef1550d65374a952_1a4ebc6c1afb59a7f4ef1550d65374a952" prot="public" virt="non-virtual"><scope>res_poly</scope><name>~res_poly</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4" kind="class" language="C++" prot="public">
+    <compoundname>mathic::DivMask::HasDivMask&lt; false &gt;</compoundname>
+    <derivedcompoundref refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4" prot="public" virt="non-virtual">mathic::DivMask::Extender&lt; T, false &gt;</derivedcompoundref>
+    <includes refid="_div_mask_8h" local="no">DivMask.h</includes>
+    <templateparamlist>
+    </templateparamlist>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_adc1db10bffd3e288418e85d394811882_1adc1db10bffd3e288418e85d394811882" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::DivMask::HasDivMask&lt; false &gt;::resetDivMask</definition>
+        <argsstring>()</argsstring>
+        <name>resetDivMask</name>
+        <qualifiedname>mathic::DivMask::HasDivMask&lt; false &gt;::resetDivMask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="387" column="10" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="387" bodyend="387"/>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a7f6d6b3516a218e63bac9aa7be43b815_1a7f6d6b3516a218e63bac9aa7be43b815" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_mask_a4c63b321a5933d689b2bd0dd55d7af2d_1a4c63b321a5933d689b2bd0dd55d7af2d" kindref="member">DivMask</ref></type>
+        <definition>DivMask mathic::DivMask::HasDivMask&lt; false &gt;::getDivMask</definition>
+        <argsstring>() const</argsstring>
+        <name>getDivMask</name>
+        <qualifiedname>mathic::DivMask::HasDivMask&lt; false &gt;::getDivMask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="388" column="13" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="388" bodyend="388"/>
+        <references refid="classmathic_1_1_div_mask_a4c63b321a5933d689b2bd0dd55d7af2d_1a4c63b321a5933d689b2bd0dd55d7af2d" compoundref="_div_mask_8h" startline="41" endline="41">mathic::DivMask::DivMask</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a788f5b3b0476ea3da7d870b92316c183_1a788f5b3b0476ea3da7d870b92316c183" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::DivMask::HasDivMask&lt; false &gt;::canDivide</definition>
+        <argsstring>(const HasDivMask&lt; false &gt; &amp;t) const</argsstring>
+        <name>canDivide</name>
+        <qualifiedname>mathic::DivMask::HasDivMask&lt; false &gt;::canDivide</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_div_mask_1_1_has_div_mask" kindref="compound">HasDivMask</ref>&lt; false &gt; &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="389" column="10" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="389" bodyend="393"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a50249b685d51535096249d6634f0265d_1a50249b685d51535096249d6634f0265d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="classbool" kindref="compound">bool</ref></type>
+            <declname>B</declname>
+            <defname>B</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mathic::DivMask::HasDivMask&lt; false &gt;::updateToLowerBound</definition>
+        <argsstring>(const HasDivMask&lt; B &gt; &amp;entry)</argsstring>
+        <name>updateToLowerBound</name>
+        <qualifiedname>mathic::DivMask::HasDivMask&lt; false &gt;::updateToLowerBound</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_div_mask_1_1_has_div_mask" kindref="compound">HasDivMask</ref>&lt; B &gt; &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="395" column="10" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="395" bodyend="395"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>mathic::DivMask::Extender&lt; T, false &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_extender_3_01_t_00_01false_01_4"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mathic::DivMask::HasDivMask&lt; UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask"/>
+      </node>
+      <node id="1">
+        <label>mathic::DivMask::HasDivMask&lt; false &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; false &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>mathic::DivMask::HasDivMask&lt; UseDivMask &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask"/>
+      </node>
+      <node id="1">
+        <label>mathic::DivMask::HasDivMask&lt; false &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; false &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/DivMask.h" line="385" column="3" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="385" bodyend="396"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a788f5b3b0476ea3da7d870b92316c183_1a788f5b3b0476ea3da7d870b92316c183" prot="public" virt="non-virtual"><scope>mathic::DivMask::HasDivMask&lt; false &gt;</scope><name>canDivide</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a7f6d6b3516a218e63bac9aa7be43b815_1a7f6d6b3516a218e63bac9aa7be43b815" prot="public" virt="non-virtual"><scope>mathic::DivMask::HasDivMask&lt; false &gt;</scope><name>getDivMask</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_adc1db10bffd3e288418e85d394811882_1adc1db10bffd3e288418e85d394811882" prot="public" virt="non-virtual"><scope>mathic::DivMask::HasDivMask&lt; false &gt;</scope><name>resetDivMask</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_has_div_mask_3_01false_01_4_a50249b685d51535096249d6634f0265d_1a50249b685d51535096249d6634f0265d" prot="public" virt="non-virtual"><scope>mathic::DivMask::HasDivMask&lt; false &gt;</scope><name>updateToLowerBound</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

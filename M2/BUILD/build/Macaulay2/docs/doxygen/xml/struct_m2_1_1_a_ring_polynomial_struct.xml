@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_m2_1_1_a_ring_polynomial_struct" kind="struct" language="C++" prot="public">
+    <compoundname>M2::ARingPolynomialStruct</compoundname>
+    <includes refid="aring-tower_8hpp" local="no">aring-tower.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_m2_1_1_a_ring_polynomial_struct_a552ba3616f5b4a33fa777ade2e344eaa_1a552ba3616f5b4a33fa777ade2e344eaa" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int M2::ARingPolynomialStruct::deg</definition>
+        <argsstring></argsstring>
+        <name>deg</name>
+        <qualifiedname>M2::ARingPolynomialStruct::deg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="74" column="7" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="74" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_tower_abc85aa4c07ff9abf85069ac92cfc4192_1abc85aa4c07ff9abf85069ac92cfc4192" compoundref="aring-tower_8cpp" startline="333" endline="356">M2::ARingTower::add_in_place</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_acb9a1a8669b1f9d18c40e5bcc92d2be3_1acb9a1a8669b1f9d18c40e5bcc92d2be3" compoundref="aring-tower_8hpp" startline="204" endline="204">M2::ARingTower::computeHashValue</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a0e1b3b5a97c05e631761485e3ff44d89_1a0e1b3b5a97c05e631761485e3ff44d89" compoundref="aring-tower_8cpp" startline="132" endline="142">M2::ARingTower::copy</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_aab3092b2353ad497d4cae04b39fc91e2_1aab3092b2353ad497d4cae04b39fc91e2" compoundref="aring-tower_8cpp" startline="215" endline="289">M2::ARingTower::elem_text_out</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a4b212299746082cc1d2d9e06cb024b6a_1a4b212299746082cc1d2d9e06cb024b6a" compoundref="aring-tower_8cpp" startline="145" endline="159">M2::ARingTower::increase_capacity</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a880095da44c7276b5f58452c0d0741d0_1a880095da44c7276b5f58452c0d0741d0" compoundref="aring-tower_8cpp" startline="309" endline="331">M2::ARingTower::is_equal</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a9cdae35bb988b4742633619746565933_1a9cdae35bb988b4742633619746565933" compoundref="aring-tower_8cpp" startline="205" endline="213">M2::ARingTower::is_one</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a901b46866af5e43fbf11fadc029fbfa2_1a901b46866af5e43fbf11fadc029fbfa2" compoundref="aring-tower_8cpp" startline="400" endline="418">M2::ARingTower::mult_by_coeff</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a8739b49c8ed009aaa0146f03710eaa18_1a8739b49c8ed009aaa0146f03710eaa18" compoundref="aring-tower_8cpp" startline="358" endline="372">M2::ARingTower::negate_in_place</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a3ef665836d2e2452a9023fd6c2ab7d91_1a3ef665836d2e2452a9023fd6c2ab7d91" compoundref="aring-tower_8cpp" startline="118" endline="130">M2::ARingTower::reset_degree</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_aee94739203bf872e054ad0595b19c7f4_1aee94739203bf872e054ad0595b19c7f4" compoundref="aring-tower_8cpp" startline="374" endline="398">M2::ARingTower::subtract_in_place</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_m2_1_1_a_ring_polynomial_struct_a8713184b110ed41dc09c92872f37275c_1a8713184b110ed41dc09c92872f37275c" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int M2::ARingPolynomialStruct::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <qualifiedname>M2::ARingPolynomialStruct::len</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="75" column="7" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="75" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a4b212299746082cc1d2d9e06cb024b6a_1a4b212299746082cc1d2d9e06cb024b6a" compoundref="aring-tower_8cpp" startline="145" endline="159">M2::ARingTower::increase_capacity</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_m2_1_1_a_ring_polynomial_struct_ad92345b7b933d2a73d1619ac95c1580b_1ad92345b7b933d2a73d1619ac95c1580b" prot="public" static="no" mutable="no">
+        <type><ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_accaf1bd40bf4c6970206a8c1a4a71047_1accaf1bd40bf4c6970206a8c1a4a71047" kindref="member">ARingZZpFFPACK::ElementType</ref> *</type>
+        <definition>ARingZZpFFPACK::ElementType* M2::ARingPolynomialStruct::coeffs</definition>
+        <argsstring></argsstring>
+        <name>coeffs</name>
+        <qualifiedname>M2::ARingPolynomialStruct::coeffs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="78" column="33" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="78" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_tower_abc85aa4c07ff9abf85069ac92cfc4192_1abc85aa4c07ff9abf85069ac92cfc4192" compoundref="aring-tower_8cpp" startline="333" endline="356">M2::ARingTower::add_in_place</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a0e1b3b5a97c05e631761485e3ff44d89_1a0e1b3b5a97c05e631761485e3ff44d89" compoundref="aring-tower_8cpp" startline="132" endline="142">M2::ARingTower::copy</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_aab3092b2353ad497d4cae04b39fc91e2_1aab3092b2353ad497d4cae04b39fc91e2" compoundref="aring-tower_8cpp" startline="215" endline="289">M2::ARingTower::elem_text_out</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a880095da44c7276b5f58452c0d0741d0_1a880095da44c7276b5f58452c0d0741d0" compoundref="aring-tower_8cpp" startline="309" endline="331">M2::ARingTower::is_equal</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a9cdae35bb988b4742633619746565933_1a9cdae35bb988b4742633619746565933" compoundref="aring-tower_8cpp" startline="205" endline="213">M2::ARingTower::is_one</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a901b46866af5e43fbf11fadc029fbfa2_1a901b46866af5e43fbf11fadc029fbfa2" compoundref="aring-tower_8cpp" startline="400" endline="418">M2::ARingTower::mult_by_coeff</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a8739b49c8ed009aaa0146f03710eaa18_1a8739b49c8ed009aaa0146f03710eaa18" compoundref="aring-tower_8cpp" startline="358" endline="372">M2::ARingTower::negate_in_place</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_aee94739203bf872e054ad0595b19c7f4_1aee94739203bf872e054ad0595b19c7f4" compoundref="aring-tower_8cpp" startline="374" endline="398">M2::ARingTower::subtract_in_place</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_m2_1_1_a_ring_polynomial_struct_aa917f1eab2223cdd8c8bd21fedd58db9_1aa917f1eab2223cdd8c8bd21fedd58db9" prot="public" static="no" mutable="no">
+        <type><ref refid="group__polynomialrings_ga490857490c2a55400c60f9f0ff498f80_1ga490857490c2a55400c60f9f0ff498f80" kindref="member">ARingPolynomial</ref> *</type>
+        <definition>ARingPolynomial* M2::ARingPolynomialStruct::polys</definition>
+        <argsstring></argsstring>
+        <name>polys</name>
+        <qualifiedname>M2::ARingPolynomialStruct::polys</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="80" column="21" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="80" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_tower_abc85aa4c07ff9abf85069ac92cfc4192_1abc85aa4c07ff9abf85069ac92cfc4192" compoundref="aring-tower_8cpp" startline="333" endline="356">M2::ARingTower::add_in_place</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a0e1b3b5a97c05e631761485e3ff44d89_1a0e1b3b5a97c05e631761485e3ff44d89" compoundref="aring-tower_8cpp" startline="132" endline="142">M2::ARingTower::copy</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_aab3092b2353ad497d4cae04b39fc91e2_1aab3092b2353ad497d4cae04b39fc91e2" compoundref="aring-tower_8cpp" startline="215" endline="289">M2::ARingTower::elem_text_out</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a4b212299746082cc1d2d9e06cb024b6a_1a4b212299746082cc1d2d9e06cb024b6a" compoundref="aring-tower_8cpp" startline="145" endline="159">M2::ARingTower::increase_capacity</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a880095da44c7276b5f58452c0d0741d0_1a880095da44c7276b5f58452c0d0741d0" compoundref="aring-tower_8cpp" startline="309" endline="331">M2::ARingTower::is_equal</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a9cdae35bb988b4742633619746565933_1a9cdae35bb988b4742633619746565933" compoundref="aring-tower_8cpp" startline="205" endline="213">M2::ARingTower::is_one</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a901b46866af5e43fbf11fadc029fbfa2_1a901b46866af5e43fbf11fadc029fbfa2" compoundref="aring-tower_8cpp" startline="400" endline="418">M2::ARingTower::mult_by_coeff</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a8739b49c8ed009aaa0146f03710eaa18_1a8739b49c8ed009aaa0146f03710eaa18" compoundref="aring-tower_8cpp" startline="358" endline="372">M2::ARingTower::negate_in_place</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_a3ef665836d2e2452a9023fd6c2ab7d91_1a3ef665836d2e2452a9023fd6c2ab7d91" compoundref="aring-tower_8cpp" startline="118" endline="130">M2::ARingTower::reset_degree</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_tower_aee94739203bf872e054ad0595b19c7f4_1aee94739203bf872e054ad0595b19c7f4" compoundref="aring-tower_8cpp" startline="374" endline="398">M2::ARingTower::subtract_in_place</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_m2_1_1_a_ring_polynomial_struct_acf7311bf24d2395cc8493152adc8d071_1acf7311bf24d2395cc8493152adc8d071" prot="public" static="no" mutable="no">
+        <type>union <ref refid="struct_m2_1_1_a_ring_polynomial_struct" kindref="compound">M2::ARingPolynomialStruct</ref></type>
+        <definition>union M2::ARingPolynomialStruct M2::ARingPolynomialStruct</definition>
+        <argsstring></argsstring>
+        <name></name>
+        <qualifiedname>M2::ARingPolynomialStruct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-tower.hpp" line="81" column="3"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Heap-allocated node of an <computeroutput><ref refid="class_m2_1_1_a_ring_tower" kindref="compound">ARingTower</ref></computeroutput> polynomial: a dense <computeroutput>degree</computeroutput>-indexed coefficient array that recurses through tower levels. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="struct_m2_1_1_a_ring_polynomial_struct_a552ba3616f5b4a33fa777ade2e344eaa_1a552ba3616f5b4a33fa777ade2e344eaa" kindref="member">deg</ref></computeroutput> is the polynomial&apos;s degree in the current top variable and <computeroutput><ref refid="struct_m2_1_1_a_ring_polynomial_struct_a8713184b110ed41dc09c92872f37275c_1a8713184b110ed41dc09c92872f37275c" kindref="member">len</ref></computeroutput> is the allocated capacity. The anonymous union picks the coefficient kind by depth: at the bottom level the coefficients are <computeroutput><ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_accaf1bd40bf4c6970206a8c1a4a71047_1accaf1bd40bf4c6970206a8c1a4a71047" kindref="member">ARingZZpFFPACK::ElementType</ref></computeroutput> values stored in <computeroutput><ref refid="struct_m2_1_1_a_ring_polynomial_struct_ad92345b7b933d2a73d1619ac95c1580b_1ad92345b7b933d2a73d1619ac95c1580b" kindref="member">coeffs</ref></computeroutput>, and at higher levels each &quot;coefficient&quot; is itself an <computeroutput><ref refid="group__polynomialrings_ga490857490c2a55400c60f9f0ff498f80_1ga490857490c2a55400c60f9f0ff498f80" kindref="member">ARingPolynomial</ref></computeroutput> one level down, stored in <computeroutput><ref refid="struct_m2_1_1_a_ring_polynomial_struct_aa917f1eab2223cdd8c8bd21fedd58db9_1aa917f1eab2223cdd8c8bd21fedd58db9" kindref="member">polys</ref></computeroutput>. Accessed through <computeroutput><ref refid="class_m2_1_1_a_ring_tower" kindref="compound">ARingTower</ref></computeroutput> (the <computeroutput>aring</computeroutput>-shaped sibling of <computeroutput><ref refid="class_d_ring" kindref="compound">DRing</ref></computeroutput> in <computeroutput><ref refid="dpoly_8hpp" kindref="compound">dpoly.hpp</ref></computeroutput>), which always carries the current level so the right union arm is consulted. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>ElementType *</label>
+      </node>
+      <node id="1">
+        <label>M2::ARingPolynomialStruct</label>
+        <link refid="struct_m2_1_1_a_ring_polynomial_struct"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>deg</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>coeffs</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>polys</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>@060370062327367274074173270322275033252000311351</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>anonymous:@060370062327367274074173270322275033252000311351</label>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/aring-tower.hpp" line="72" column="1" bodyfile="Macaulay2/e/aring-tower.hpp" bodystart="73" bodyend="82"/>
+    <listofallmembers>
+      <member refid="struct_m2_1_1_a_ring_polynomial_struct_ad92345b7b933d2a73d1619ac95c1580b_1ad92345b7b933d2a73d1619ac95c1580b" prot="public" virt="non-virtual"><scope>M2::ARingPolynomialStruct</scope><name>coeffs</name></member>
+      <member refid="struct_m2_1_1_a_ring_polynomial_struct_a552ba3616f5b4a33fa777ade2e344eaa_1a552ba3616f5b4a33fa777ade2e344eaa" prot="public" virt="non-virtual"><scope>M2::ARingPolynomialStruct</scope><name>deg</name></member>
+      <member refid="struct_m2_1_1_a_ring_polynomial_struct_a8713184b110ed41dc09c92872f37275c_1a8713184b110ed41dc09c92872f37275c" prot="public" virt="non-virtual"><scope>M2::ARingPolynomialStruct</scope><name>len</name></member>
+      <member refid="struct_m2_1_1_a_ring_polynomial_struct_aa917f1eab2223cdd8c8bd21fedd58db9_1aa917f1eab2223cdd8c8bd21fedd58db9" prot="public" virt="non-virtual"><scope>M2::ARingPolynomialStruct</scope><name>polys</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

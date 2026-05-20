@@ -1,0 +1,1744 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="skew_8hpp" kind="file" language="C++">
+    <compoundname>skew.hpp</compoundname>
+    <includedby refid="moninfo_8hpp" local="yes">Macaulay2/e/f4/moninfo.hpp</includedby>
+    <includedby refid="gbring_8hpp" local="yes">Macaulay2/e/gbring.hpp</includedby>
+    <includedby refid="_macaulay2_2e_2poly_8hpp" local="yes">Macaulay2/e/poly.hpp</includedby>
+    <includedby refid="_macaulay2_2e_2polyring_8hpp" local="yes">Macaulay2/e/polyring.hpp</includedby>
+    <includedby refid="res-moninfo-dense_8hpp" local="yes">Macaulay2/e/schreyer-resolution/res-moninfo-dense.hpp</includedby>
+    <includedby refid="res-moninfo-sparse_8hpp" local="yes">Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp</includedby>
+    <includedby refid="skew_8cpp" local="yes">Macaulay2/e/skew.cpp</includedby>
+    <includedby refid="skewpoly_8cpp" local="yes">Macaulay2/e/skewpoly.cpp</includedby>
+    <invincdepgraph>
+      <node id="82">
+        <label>Macaulay2/e/BasicPolyList.cpp</label>
+        <link refid="_basic_poly_list_8cpp"/>
+      </node>
+      <node id="22">
+        <label>Macaulay2/e/Eschreyer.cpp</label>
+        <link refid="_eschreyer_8cpp"/>
+      </node>
+      <node id="23">
+        <label>Macaulay2/e/Eschreyer.hpp</label>
+        <link refid="_eschreyer_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>Macaulay2/e/GF.cpp</label>
+        <link refid="_g_f_8cpp"/>
+      </node>
+      <node id="158">
+        <label>Macaulay2/e/LLL.cpp</label>
+        <link refid="_l_l_l_8cpp"/>
+      </node>
+      <node id="159">
+        <label>Macaulay2/e/M2FreeAlgebraQuotient.cpp</label>
+        <link refid="_m2_free_algebra_quotient_8cpp"/>
+      </node>
+      <node id="72">
+        <label>Macaulay2/e/NAG.cpp</label>
+        <link refid="_n_a_g_8cpp"/>
+      </node>
+      <node id="111">
+        <label>Macaulay2/e/NAG.hpp</label>
+        <link refid="_n_a_g_8hpp"/>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="113" relation="include">
+        </childnode>
+      </node>
+      <node id="117">
+        <label>Macaulay2/e/NCAlgebras/NCF4.cpp</label>
+        <link refid="_n_c_f4_8cpp"/>
+      </node>
+      <node id="118">
+        <label>Macaulay2/e/NCAlgebras/NCF4.hpp</label>
+        <link refid="_n_c_f4_8hpp"/>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="161">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.cpp</label>
+        <link refid="nc-res-computation_8cpp"/>
+      </node>
+      <node id="160">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.hpp</label>
+        <link refid="nc-res-computation_8hpp"/>
+        <childnode refid="161" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+      <node id="115">
+        <label>Macaulay2/e/SLP.cpp</label>
+        <link refid="_s_l_p_8cpp"/>
+      </node>
+      <node id="114">
+        <label>Macaulay2/e/SLP.hpp</label>
+        <link refid="_s_l_p_8hpp"/>
+        <childnode refid="111" relation="include">
+        </childnode>
+        <childnode refid="115" relation="include">
+        </childnode>
+      </node>
+      <node id="116">
+        <label>Macaulay2/e/VectorArithmetic.hpp</label>
+        <link refid="_vector_arithmetic_8hpp"/>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="124" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>Macaulay2/e/ZZ.cpp</label>
+        <link refid="_z_z_8cpp"/>
+      </node>
+      <node id="28">
+        <label>Macaulay2/e/ZZp.cpp</label>
+        <link refid="_z_zp_8cpp"/>
+      </node>
+      <node id="73">
+        <label>Macaulay2/e/aring-gf-flint-big.cpp</label>
+        <link refid="aring-gf-flint-big_8cpp"/>
+      </node>
+      <node id="74">
+        <label>Macaulay2/e/aring-gf-flint.cpp</label>
+        <link refid="aring-gf-flint_8cpp"/>
+      </node>
+      <node id="110">
+        <label>Macaulay2/e/aring-glue.hpp</label>
+        <link refid="aring-glue_8hpp"/>
+        <childnode refid="111" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="131" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+        <childnode refid="133" relation="include">
+        </childnode>
+        <childnode refid="134" relation="include">
+        </childnode>
+        <childnode refid="135" relation="include">
+        </childnode>
+        <childnode refid="136" relation="include">
+        </childnode>
+        <childnode refid="137" relation="include">
+        </childnode>
+      </node>
+      <node id="107">
+        <label>Macaulay2/e/aring-m2-gf.cpp</label>
+        <link refid="aring-m2-gf_8cpp"/>
+      </node>
+      <node id="108">
+        <label>Macaulay2/e/aring-m2-gf.hpp</label>
+        <link refid="aring-m2-gf_8hpp"/>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="138" relation="include">
+        </childnode>
+        <childnode refid="131" relation="include">
+        </childnode>
+      </node>
+      <node id="109">
+        <label>Macaulay2/e/aring-translate.hpp</label>
+        <link refid="aring-translate_8hpp"/>
+        <childnode refid="110" relation="include">
+        </childnode>
+      </node>
+      <node id="154">
+        <label>Macaulay2/e/assprime.cpp</label>
+        <link refid="assprime_8cpp"/>
+      </node>
+      <node id="153">
+        <label>Macaulay2/e/assprime.hpp</label>
+        <link refid="assprime_8hpp"/>
+        <childnode refid="154" relation="include">
+        </childnode>
+        <childnode refid="155" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+      </node>
+      <node id="162">
+        <label>Macaulay2/e/bibasis/bibasis.cpp</label>
+        <link refid="bibasis_8cpp"/>
+      </node>
+      <node id="163">
+        <label>Macaulay2/e/bibasis/involutive.hpp</label>
+        <link refid="involutive_8hpp"/>
+        <childnode refid="164" relation="include">
+        </childnode>
+        <childnode refid="165" relation="include">
+        </childnode>
+      </node>
+      <node id="164">
+        <label>Macaulay2/e/bibasis/launcher.cpp</label>
+        <link refid="launcher_8cpp"/>
+      </node>
+      <node id="165">
+        <label>Macaulay2/e/bibasis/launcher.hpp</label>
+        <link refid="launcher_8hpp"/>
+        <childnode refid="162" relation="include">
+        </childnode>
+        <childnode refid="164" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>Macaulay2/e/comp-gb-declared.cpp</label>
+        <link refid="comp-gb-declared_8cpp"/>
+      </node>
+      <node id="44">
+        <label>Macaulay2/e/comp-gb-declared.hpp</label>
+        <link refid="comp-gb-declared_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>Macaulay2/e/comp-gb.cpp</label>
+        <link refid="comp-gb_8cpp"/>
+      </node>
+      <node id="63">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+      <node id="75">
+        <label>Macaulay2/e/cra.cpp</label>
+        <link refid="cra_8cpp"/>
+      </node>
+      <node id="29">
+        <label>Macaulay2/e/debug.cpp</label>
+        <link refid="debug_8cpp"/>
+      </node>
+      <node id="167">
+        <label>Macaulay2/e/det.cpp</label>
+        <link refid="det_8cpp"/>
+      </node>
+      <node id="166">
+        <label>Macaulay2/e/det.hpp</label>
+        <link refid="det_8hpp"/>
+        <childnode refid="167" relation="include">
+        </childnode>
+      </node>
+      <node id="139">
+        <label>Macaulay2/e/dmat.cpp</label>
+        <link refid="dmat_8cpp"/>
+      </node>
+      <node id="76">
+        <label>Macaulay2/e/engine.cpp</label>
+        <link refid="engine_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/f4/f4-computation.cpp</label>
+        <link refid="f4-computation_8cpp"/>
+      </node>
+      <node id="13">
+        <label>Macaulay2/e/f4/f4-computation.hpp</label>
+        <link refid="f4-computation_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/f4/f4-m2-interface.cpp</label>
+        <link refid="f4-m2-interface_8cpp"/>
+      </node>
+      <node id="8">
+        <label>Macaulay2/e/f4/f4-m2-interface.hpp</label>
+        <link refid="f4-m2-interface_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/f4/f4-monlookup.cpp</label>
+        <link refid="f4-monlookup_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/f4/f4-monlookup.hpp</label>
+        <link refid="f4-monlookup_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Macaulay2/e/f4/f4-spairs.cpp</label>
+        <link refid="f4-spairs_8cpp"/>
+      </node>
+      <node id="10">
+        <label>Macaulay2/e/f4/f4-spairs.hpp</label>
+        <link refid="f4-spairs_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/f4/f4-types.hpp</label>
+        <link refid="f4-types_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Macaulay2/e/f4/f4.cpp</label>
+        <link refid="f4_8cpp"/>
+      </node>
+      <node id="12">
+        <label>Macaulay2/e/f4/f4.hpp</label>
+        <link refid="f4_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Macaulay2/e/f4/monhashtable.cpp</label>
+        <link refid="monhashtable_8cpp"/>
+      </node>
+      <node id="14">
+        <label>Macaulay2/e/f4/monhashtable.hpp</label>
+        <link refid="monhashtable_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Macaulay2/e/f4/moninfo.cpp</label>
+        <link refid="moninfo_8cpp"/>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/f4/moninfo.hpp</label>
+        <link refid="moninfo_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="156">
+        <label>Macaulay2/e/finalize.cpp</label>
+        <link refid="finalize_8cpp"/>
+      </node>
+      <node id="142">
+        <label>Macaulay2/e/fplll-interface.cpp</label>
+        <link refid="fplll-interface_8cpp"/>
+      </node>
+      <node id="30">
+        <label>Macaulay2/e/frac.cpp</label>
+        <link refid="frac_8cpp"/>
+      </node>
+      <node id="143">
+        <label>Macaulay2/e/frac.hpp</label>
+        <link refid="frac_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+      </node>
+      <node id="168">
+        <label>Macaulay2/e/franzi-interface.cpp</label>
+        <link refid="franzi-interface_8cpp"/>
+      </node>
+      <node id="24">
+        <label>Macaulay2/e/freemod.cpp</label>
+        <link refid="freemod_8cpp"/>
+      </node>
+      <node id="145">
+        <label>Macaulay2/e/gauss.cpp</label>
+        <link refid="gauss_8cpp"/>
+      </node>
+      <node id="144">
+        <label>Macaulay2/e/gauss.hpp</label>
+        <link refid="gauss_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="145" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>Macaulay2/e/gb-default.cpp</label>
+        <link refid="gb-default_8cpp"/>
+      </node>
+      <node id="31">
+        <label>Macaulay2/e/gb-default.hpp</label>
+        <link refid="gb-default_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="120">
+        <label>Macaulay2/e/gb-f4/Basis.cpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8cpp"/>
+      </node>
+      <node id="119">
+        <label>Macaulay2/e/gb-f4/Basis.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8hpp"/>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="122" relation="include">
+        </childnode>
+      </node>
+      <node id="83">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.cpp</label>
+        <link refid="_g_b_f4_computation_8cpp"/>
+      </node>
+      <node id="121">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.hpp</label>
+        <link refid="_g_b_f4_computation_8hpp"/>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+      </node>
+      <node id="85">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.cpp</label>
+        <link refid="_g_b_f4_interface_8cpp"/>
+      </node>
+      <node id="84">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.hpp</label>
+        <link refid="_g_b_f4_interface_8hpp"/>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+      </node>
+      <node id="87">
+        <label>Macaulay2/e/gb-f4/PolynomialList.cpp</label>
+        <link refid="_polynomial_list_8cpp"/>
+      </node>
+      <node id="123">
+        <label>Macaulay2/e/gb-f4/PolynomialList.hpp</label>
+        <link refid="_polynomial_list_8hpp"/>
+        <childnode refid="119" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="124" relation="include">
+        </childnode>
+      </node>
+      <node id="122">
+        <label>Macaulay2/e/gb-f4/SPairs.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_s_pairs_8hpp"/>
+        <childnode refid="121" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>Macaulay2/e/gb-homog2.cpp</label>
+        <link refid="gb-homog2_8cpp"/>
+      </node>
+      <node id="60">
+        <label>Macaulay2/e/gb-homog2.hpp</label>
+        <link refid="gb-homog2_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>Macaulay2/e/gb-sugarless.cpp</label>
+        <link refid="gb-sugarless_8cpp"/>
+      </node>
+      <node id="45">
+        <label>Macaulay2/e/gb-sugarless.hpp</label>
+        <link refid="gb-sugarless_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="170">
+        <label>Macaulay2/e/gb-toric.cpp</label>
+        <link refid="gb-toric_8cpp"/>
+      </node>
+      <node id="169">
+        <label>Macaulay2/e/gb-toric.hpp</label>
+        <link refid="gb-toric_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>Macaulay2/e/gb-walk.cpp</label>
+        <link refid="gb-walk_8cpp"/>
+      </node>
+      <node id="146">
+        <label>Macaulay2/e/gb-walk.hpp</label>
+        <link refid="gb-walk_8hpp"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>Macaulay2/e/gbring.cpp</label>
+        <link refid="gbring_8cpp"/>
+      </node>
+      <node id="21">
+        <label>Macaulay2/e/gbring.hpp</label>
+        <link refid="gbring_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>Macaulay2/e/gbweight.cpp</label>
+        <link refid="gbweight_8cpp"/>
+      </node>
+      <node id="148">
+        <label>Macaulay2/e/hermite.cpp</label>
+        <link refid="hermite_8cpp"/>
+      </node>
+      <node id="147">
+        <label>Macaulay2/e/hermite.hpp</label>
+        <link refid="hermite_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="148" relation="include">
+        </childnode>
+      </node>
+      <node id="149">
+        <label>Macaulay2/e/hilb.cpp</label>
+        <link refid="hilb_8cpp"/>
+      </node>
+      <node id="130">
+        <label>Macaulay2/e/interface/aring.cpp</label>
+        <link refid="interface_2aring_8cpp"/>
+      </node>
+      <node id="171">
+        <label>Macaulay2/e/interface/cone.cpp</label>
+        <link refid="cone_8cpp"/>
+      </node>
+      <node id="172">
+        <label>Macaulay2/e/interface/cra.cpp</label>
+        <link refid="interface_2cra_8cpp"/>
+      </node>
+      <node id="173">
+        <label>Macaulay2/e/interface/factory.cpp</label>
+        <link refid="factory_8cpp"/>
+      </node>
+      <node id="25">
+        <label>Macaulay2/e/interface/groebner.cpp</label>
+        <link refid="groebner_8cpp"/>
+      </node>
+      <node id="112">
+        <label>Macaulay2/e/interface/matrix.cpp</label>
+        <link refid="interface_2matrix_8cpp"/>
+      </node>
+      <node id="155">
+        <label>Macaulay2/e/interface/monomial-ideal.cpp</label>
+        <link refid="monomial-ideal_8cpp"/>
+      </node>
+      <node id="174">
+        <label>Macaulay2/e/interface/mutable-matrix.cpp</label>
+        <link refid="mutable-matrix_8cpp"/>
+      </node>
+      <node id="69">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="98">
+        <label>Macaulay2/e/interface/ringelement.cpp</label>
+        <link refid="ringelement_8cpp"/>
+      </node>
+      <node id="175">
+        <label>Macaulay2/e/interface/ringmap.cpp</label>
+        <link refid="interface_2ringmap_8cpp"/>
+      </node>
+      <node id="38">
+        <label>Macaulay2/e/interreduce.cpp</label>
+        <link refid="interreduce_8cpp"/>
+      </node>
+      <node id="37">
+        <label>Macaulay2/e/interreduce.hpp</label>
+        <link refid="interreduce_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>Macaulay2/e/localring.cpp</label>
+        <link refid="localring_8cpp"/>
+      </node>
+      <node id="77">
+        <label>Macaulay2/e/localring.hpp</label>
+        <link refid="localring_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+      </node>
+      <node id="138">
+        <label>Macaulay2/e/mat-linalg.hpp</label>
+        <link refid="mat-linalg_8hpp"/>
+        <childnode refid="139" relation="include">
+        </childnode>
+        <childnode refid="140" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+      </node>
+      <node id="131">
+        <label>Macaulay2/e/mat.cpp</label>
+        <link refid="mat_8cpp"/>
+      </node>
+      <node id="176">
+        <label>Macaulay2/e/matrix-con.cpp</label>
+        <link refid="matrix-con_8cpp"/>
+      </node>
+      <node id="150">
+        <label>Macaulay2/e/matrix-kbasis.cpp</label>
+        <link refid="matrix-kbasis_8cpp"/>
+      </node>
+      <node id="177">
+        <label>Macaulay2/e/matrix-sort.cpp</label>
+        <link refid="matrix-sort_8cpp"/>
+      </node>
+      <node id="88">
+        <label>Macaulay2/e/matrix-stream.cpp</label>
+        <link refid="matrix-stream_8cpp"/>
+      </node>
+      <node id="81">
+        <label>Macaulay2/e/matrix-stream.hpp</label>
+        <link refid="matrix-stream_8hpp"/>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+      </node>
+      <node id="178">
+        <label>Macaulay2/e/matrix-symm.cpp</label>
+        <link refid="matrix-symm_8cpp"/>
+      </node>
+      <node id="151">
+        <label>Macaulay2/e/matrix.cpp</label>
+        <link refid="matrix_8cpp"/>
+      </node>
+      <node id="157">
+        <label>Macaulay2/e/matrix.hpp</label>
+        <link refid="matrix_8hpp"/>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="158" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="111" relation="include">
+        </childnode>
+        <childnode refid="160" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="162" relation="include">
+        </childnode>
+        <childnode refid="163" relation="include">
+        </childnode>
+        <childnode refid="164" relation="include">
+        </childnode>
+        <childnode refid="165" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="166" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="168" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="144" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="169" relation="include">
+        </childnode>
+        <childnode refid="147" relation="include">
+        </childnode>
+        <childnode refid="149" relation="include">
+        </childnode>
+        <childnode refid="171" relation="include">
+        </childnode>
+        <childnode refid="172" relation="include">
+        </childnode>
+        <childnode refid="173" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="155" relation="include">
+        </childnode>
+        <childnode refid="174" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="175" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="131" relation="include">
+        </childnode>
+        <childnode refid="176" relation="include">
+        </childnode>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="177" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="178" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+        <childnode refid="179" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="183" relation="include">
+        </childnode>
+        <childnode refid="184" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+      </node>
+      <node id="186">
+        <label>Macaulay2/e/monideal-minprimes.cpp</label>
+        <link refid="monideal-minprimes_8cpp"/>
+      </node>
+      <node id="185">
+        <label>Macaulay2/e/monideal-minprimes.hpp</label>
+        <link refid="monideal-minprimes_8hpp"/>
+        <childnode refid="155" relation="include">
+        </childnode>
+        <childnode refid="186" relation="include">
+        </childnode>
+      </node>
+      <node id="187">
+        <label>Macaulay2/e/monideal.cpp</label>
+        <link refid="monideal_8cpp"/>
+      </node>
+      <node id="152">
+        <label>Macaulay2/e/monideal.hpp</label>
+        <link refid="monideal_8hpp"/>
+        <childnode refid="153" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="156" relation="include">
+        </childnode>
+        <childnode refid="149" relation="include">
+        </childnode>
+        <childnode refid="155" relation="include">
+        </childnode>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+        <childnode refid="157" relation="include">
+        </childnode>
+        <childnode refid="185" relation="include">
+        </childnode>
+        <childnode refid="187" relation="include">
+        </childnode>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="189" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="192" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+      </node>
+      <node id="194">
+        <label>Macaulay2/e/monoid.cpp</label>
+        <link refid="monoid_8cpp"/>
+      </node>
+      <node id="79">
+        <label>Macaulay2/e/mutablecomplex.cpp</label>
+        <link refid="mutablecomplex_8cpp"/>
+      </node>
+      <node id="78">
+        <label>Macaulay2/e/mutablecomplex.hpp</label>
+        <link refid="mutablecomplex_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+      </node>
+      <node id="140">
+        <label>Macaulay2/e/mutablemat-defs.hpp</label>
+        <link refid="mutablemat-defs_8hpp"/>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="141" relation="include">
+        </childnode>
+      </node>
+      <node id="141">
+        <label>Macaulay2/e/mutablemat.hpp</label>
+        <link refid="mutablemat_8hpp"/>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="142" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="131" relation="include">
+        </childnode>
+      </node>
+      <node id="180">
+        <label>Macaulay2/e/pfaff.cpp</label>
+        <link refid="pfaff_8cpp"/>
+      </node>
+      <node id="179">
+        <label>Macaulay2/e/pfaff.hpp</label>
+        <link refid="pfaff_8hpp"/>
+        <childnode refid="180" relation="include">
+        </childnode>
+      </node>
+      <node id="188">
+        <label>Macaulay2/e/points.cpp</label>
+        <link refid="points_8cpp"/>
+      </node>
+      <node id="40">
+        <label>Macaulay2/e/poly.cpp</label>
+        <link refid="poly_8cpp"/>
+      </node>
+      <node id="70">
+        <label>Macaulay2/e/poly.hpp</label>
+        <link refid="_macaulay2_2e_2poly_8hpp"/>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="90">
+        <label>Macaulay2/e/polyquotient.cpp</label>
+        <link refid="polyquotient_8cpp"/>
+      </node>
+      <node id="89">
+        <label>Macaulay2/e/polyquotient.hpp</label>
+        <link refid="polyquotient_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+      </node>
+      <node id="91">
+        <label>Macaulay2/e/polyring.cpp</label>
+        <link refid="_macaulay2_2e_2polyring_8cpp"/>
+      </node>
+      <node id="106">
+        <label>Macaulay2/e/polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="143" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="144" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="146" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="147" relation="include">
+        </childnode>
+        <childnode refid="149" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="194" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="183" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="195" relation="include">
+        </childnode>
+        <childnode refid="196" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>Macaulay2/e/qring.cpp</label>
+        <link refid="qring_8cpp"/>
+      </node>
+      <node id="48">
+        <label>Macaulay2/e/reducedgb-ZZ.cpp</label>
+        <link refid="reducedgb-_z_z_8cpp"/>
+      </node>
+      <node id="47">
+        <label>Macaulay2/e/reducedgb-ZZ.hpp</label>
+        <link refid="reducedgb-_z_z_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>Macaulay2/e/reducedgb-field-local.cpp</label>
+        <link refid="reducedgb-field-local_8cpp"/>
+      </node>
+      <node id="51">
+        <label>Macaulay2/e/reducedgb-field-local.hpp</label>
+        <link refid="reducedgb-field-local_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>Macaulay2/e/reducedgb-field.cpp</label>
+        <link refid="reducedgb-field_8cpp"/>
+      </node>
+      <node id="50">
+        <label>Macaulay2/e/reducedgb-field.hpp</label>
+        <link refid="reducedgb-field_8hpp"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>Macaulay2/e/reducedgb-marked.cpp</label>
+        <link refid="reducedgb-marked_8cpp"/>
+      </node>
+      <node id="54">
+        <label>Macaulay2/e/reducedgb-marked.hpp</label>
+        <link refid="reducedgb-marked_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>Macaulay2/e/reducedgb.cpp</label>
+        <link refid="reducedgb_8cpp"/>
+      </node>
+      <node id="42">
+        <label>Macaulay2/e/reducedgb.hpp</label>
+        <link refid="reducedgb_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="80">
+        <label>Macaulay2/e/relem.cpp</label>
+        <link refid="relem_8cpp"/>
+      </node>
+      <node id="189">
+        <label>Macaulay2/e/res-a0-pair.hpp</label>
+        <link refid="res-a0-pair_8hpp"/>
+        <childnode refid="190" relation="include">
+        </childnode>
+      </node>
+      <node id="191">
+        <label>Macaulay2/e/res-a0-poly.cpp</label>
+        <link refid="res-a0-poly_8cpp"/>
+      </node>
+      <node id="190">
+        <label>Macaulay2/e/res-a0-poly.hpp</label>
+        <link refid="res-a0-poly_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+      </node>
+      <node id="93">
+        <label>Macaulay2/e/res-a0.cpp</label>
+        <link refid="res-a0_8cpp"/>
+      </node>
+      <node id="92">
+        <label>Macaulay2/e/res-a0.hpp</label>
+        <link refid="res-a0_8hpp"/>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+      </node>
+      <node id="193">
+        <label>Macaulay2/e/res-a1-poly.cpp</label>
+        <link refid="res-a1-poly_8cpp"/>
+      </node>
+      <node id="192">
+        <label>Macaulay2/e/res-a1-poly.hpp</label>
+        <link refid="res-a1-poly_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+        <childnode refid="182" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+      </node>
+      <node id="182">
+        <label>Macaulay2/e/res-a1.cpp</label>
+        <link refid="res-a1_8cpp"/>
+      </node>
+      <node id="181">
+        <label>Macaulay2/e/res-a1.hpp</label>
+        <link refid="res-a1_8hpp"/>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="182" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>Macaulay2/e/res-a2-gb.cpp</label>
+        <link refid="res-a2-gb_8cpp"/>
+      </node>
+      <node id="65">
+        <label>Macaulay2/e/res-a2.cpp</label>
+        <link refid="res-a2_8cpp"/>
+      </node>
+      <node id="62">
+        <label>Macaulay2/e/res-a2.hpp</label>
+        <link refid="res-a2_8hpp"/>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="94">
+        <label>Macaulay2/e/ring-vecs.cpp</label>
+        <link refid="ring-vecs_8cpp"/>
+      </node>
+      <node id="95">
+        <label>Macaulay2/e/ring.cpp</label>
+        <link refid="ring_8cpp"/>
+      </node>
+      <node id="183">
+        <label>Macaulay2/e/ringmap.cpp</label>
+        <link refid="ringmap_8cpp"/>
+      </node>
+      <node id="96">
+        <label>Macaulay2/e/sagbi.cpp</label>
+        <link refid="sagbi_8cpp"/>
+      </node>
+      <node id="184">
+        <label>Macaulay2/e/sagbi.hpp</label>
+        <link refid="sagbi_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>Macaulay2/e/schorder.cpp</label>
+        <link refid="schorder_8cpp"/>
+      </node>
+      <node id="17">
+        <label>Macaulay2/e/schreyer-resolution/res-dep-graph.cpp</label>
+        <link refid="res-dep-graph_8cpp"/>
+      </node>
+      <node id="127">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.cpp</label>
+        <link refid="res-f4-computation_8cpp"/>
+      </node>
+      <node id="126">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.hpp</label>
+        <link refid="res-f4-computation_8hpp"/>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</label>
+        <link refid="res-f4-m2-interface_8cpp"/>
+      </node>
+      <node id="201">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-monlookup.cpp</label>
+        <link refid="res-f4-monlookup_8cpp"/>
+      </node>
+      <node id="200">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-monlookup.hpp</label>
+        <link refid="res-f4-monlookup_8hpp"/>
+        <childnode refid="201" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.cpp</label>
+        <link refid="res-f4_8cpp"/>
+      </node>
+      <node id="16">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.hpp</label>
+        <link refid="res-f4_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="198">
+        <label>Macaulay2/e/schreyer-resolution/res-moninfo-dense.cpp</label>
+        <link refid="res-moninfo-dense_8cpp"/>
+      </node>
+      <node id="197">
+        <label>Macaulay2/e/schreyer-resolution/res-moninfo-dense.hpp</label>
+        <link refid="res-moninfo-dense_8hpp"/>
+        <childnode refid="198" relation="include">
+        </childnode>
+        <childnode refid="199" relation="include">
+        </childnode>
+      </node>
+      <node id="206">
+        <label>Macaulay2/e/schreyer-resolution/res-moninfo-sparse.cpp</label>
+        <link refid="res-moninfo-sparse_8cpp"/>
+      </node>
+      <node id="205">
+        <label>Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp</label>
+        <link refid="res-moninfo-sparse_8hpp"/>
+        <childnode refid="206" relation="include">
+        </childnode>
+        <childnode refid="199" relation="include">
+        </childnode>
+      </node>
+      <node id="199">
+        <label>Macaulay2/e/schreyer-resolution/res-moninfo.hpp</label>
+        <link refid="res-moninfo_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="200" relation="include">
+        </childnode>
+        <childnode refid="202" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="129" relation="include">
+        </childnode>
+        <childnode refid="204" relation="include">
+        </childnode>
+      </node>
+      <node id="203">
+        <label>Macaulay2/e/schreyer-resolution/res-monomial-sorter.cpp</label>
+        <link refid="res-monomial-sorter_8cpp"/>
+      </node>
+      <node id="202">
+        <label>Macaulay2/e/schreyer-resolution/res-monomial-sorter.hpp</label>
+        <link refid="res-monomial-sorter_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="203" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+      </node>
+      <node id="128">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.cpp</label>
+        <link refid="res-poly-ring_8cpp"/>
+      </node>
+      <node id="125">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.hpp</label>
+        <link refid="res-poly-ring_8hpp"/>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+        <childnode refid="129" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.cpp</label>
+        <link refid="res-schreyer-frame_8cpp"/>
+      </node>
+      <node id="129">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp</label>
+        <link refid="res-schreyer-frame_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="99">
+        <label>Macaulay2/e/schur.cpp</label>
+        <link refid="schur_8cpp"/>
+      </node>
+      <node id="97">
+        <label>Macaulay2/e/schur.hpp</label>
+        <link refid="schur_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="99" relation="include">
+        </childnode>
+      </node>
+      <node id="101">
+        <label>Macaulay2/e/schur2.cpp</label>
+        <link refid="schur2_8cpp"/>
+      </node>
+      <node id="100">
+        <label>Macaulay2/e/schur2.hpp</label>
+        <link refid="schur2_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+      </node>
+      <node id="103">
+        <label>Macaulay2/e/schurSn.cpp</label>
+        <link refid="schur_sn_8cpp"/>
+      </node>
+      <node id="102">
+        <label>Macaulay2/e/schurSn.hpp</label>
+        <link refid="schur_sn_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="103" relation="include">
+        </childnode>
+      </node>
+      <node id="207">
+        <label>Macaulay2/e/skew.cpp</label>
+        <link refid="skew_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/skew.hpp</label>
+        <link refid="skew_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="106" relation="include">
+        </childnode>
+        <childnode refid="197" relation="include">
+        </childnode>
+        <childnode refid="205" relation="include">
+        </childnode>
+        <childnode refid="207" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>Macaulay2/e/skewpoly.cpp</label>
+        <link refid="skewpoly_8cpp"/>
+      </node>
+      <node id="104">
+        <label>Macaulay2/e/skewpoly.hpp</label>
+        <link refid="skewpoly_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>Macaulay2/e/solvable.cpp</label>
+        <link refid="solvable_8cpp"/>
+      </node>
+      <node id="105">
+        <label>Macaulay2/e/solvable.hpp</label>
+        <link refid="solvable_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>Macaulay2/e/spair.cpp</label>
+        <link refid="spair_8cpp"/>
+      </node>
+      <node id="59">
+        <label>Macaulay2/e/spair.hpp</label>
+        <link refid="spair_8hpp"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+      </node>
+      <node id="195">
+        <label>Macaulay2/e/tower.cpp</label>
+        <link refid="tower_8cpp"/>
+      </node>
+      <node id="132">
+        <label>Macaulay2/e/unit-tests/ARingRRiTest.cpp</label>
+        <link refid="_a_ring_r_ri_test_8cpp"/>
+      </node>
+      <node id="133">
+        <label>Macaulay2/e/unit-tests/DMatZZpTest.cpp</label>
+        <link refid="_d_mat_z_zp_test_8cpp"/>
+      </node>
+      <node id="86">
+        <label>Macaulay2/e/unit-tests/MatrixIOTest.cpp</label>
+        <link refid="_matrix_i_o_test_8cpp"/>
+      </node>
+      <node id="134">
+        <label>Macaulay2/e/unit-tests/NCGroebnerTest.cpp</label>
+        <link refid="_n_c_groebner_test_8cpp"/>
+      </node>
+      <node id="124">
+        <label>Macaulay2/e/unit-tests/NewF4Test.cpp</label>
+        <link refid="_new_f4_test_8cpp"/>
+      </node>
+      <node id="113">
+        <label>Macaulay2/e/unit-tests/PointArray.cpp</label>
+        <link refid="_point_array_8cpp"/>
+      </node>
+      <node id="196">
+        <label>Macaulay2/e/unit-tests/PolyRingTest.cpp</label>
+        <link refid="_poly_ring_test_8cpp"/>
+      </node>
+      <node id="204">
+        <label>Macaulay2/e/unit-tests/ResTest.cpp</label>
+        <link refid="_res_test_8cpp"/>
+      </node>
+      <node id="135">
+        <label>Macaulay2/e/unit-tests/RingCCCTest.cpp</label>
+        <link refid="_ring_c_c_c_test_8cpp"/>
+      </node>
+      <node id="136">
+        <label>Macaulay2/e/unit-tests/RingQQTest.cpp</label>
+        <link refid="_ring_q_q_test_8cpp"/>
+      </node>
+      <node id="137">
+        <label>Macaulay2/e/unit-tests/RingRRRTest.cpp</label>
+        <link refid="_ring_r_r_r_test_8cpp"/>
+      </node>
+      <node id="67">
+        <label>Macaulay2/e/weylalg.cpp</label>
+        <link refid="weylalg_8cpp"/>
+      </node>
+      <node id="68">
+        <label>Macaulay2/e/weylalg.hpp</label>
+        <link refid="weylalg_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_skew_multiplication" prot="public">SkewMultiplication</innerclass>
+    <briefdescription>
+<para><computeroutput><ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref></computeroutput> <mdash/> configuration object naming the skew-commuting variables of a ring. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares <computeroutput><ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref></computeroutput>, the pure-data record a <computeroutput><ref refid="class_poly_ring" kindref="compound">PolyRing</ref></computeroutput> (and <computeroutput><ref refid="moninfo_8hpp" kindref="compound">f4/moninfo.hpp</ref></computeroutput>&apos;s <computeroutput><ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref></computeroutput>) attaches when the user declares a subset of the variables to skew-commute. The record carries the total variable count <computeroutput>_n_vars</computeroutput>, the skew-variable count <computeroutput>_n_skew</computeroutput>, an ordered <computeroutput>_skew_list</computeroutput> of skew-variable indices for iteration, and a <computeroutput>_skew_exp</computeroutput> boolean bitmap indexed by variable for O(1) lookup <mdash/> the two representations exist for the different hot-loop patterns engine code walks.</para>
+<para>Beyond the lookup helpers <computeroutput>is_skew_var</computeroutput>, <computeroutput>skew_variable</computeroutput>, <computeroutput>skew_degree(exp)</computeroutput> (number of skew variables active in <computeroutput>exp</computeroutput>), and <computeroutput>skew_vars(exp, result)</computeroutput> (their indices), the class also computes <computeroutput>mult_sign(exp1, exp2)</computeroutput> <mdash/> the +/-1 sign produced by the transpositions needed to interleave the skew variables of the two factors <mdash/> plus <computeroutput>diff</computeroutput> / <computeroutput>divide</computeroutput> exponent helpers and <computeroutput>exp_is_zero(exp)</computeroutput>, which detects <computeroutput>x_i^2 = 0</computeroutput> collapses on the skew side. Full polynomial multiplication still lives in <computeroutput><ref refid="skewpoly_8cpp" kindref="compound">skewpoly.cpp</ref></computeroutput>, <computeroutput>f4/</computeroutput>, and the resolution code in <computeroutput>schreyer-resolution/</computeroutput>, which consult <computeroutput><ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref></computeroutput> for these signs and predicates.</para>
+<para><simplesect kind="see"><para>polyring.hpp </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>2010<sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_skew_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_skew_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="class_skew_multiplication" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" kindref="member">SkewMultiplication</ref></highlight></codeline>
+<codeline lineno="50"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="52" refid="class_skew_multiplication_a2fff480f50592edd6ffb5ce9bb6f4d36_1a2fff480f50592edd6ffb5ce9bb6f4d36" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a2fff480f50592edd6ffb5ce9bb6f4d36_1a2fff480f50592edd6ffb5ce9bb6f4d36" kindref="member">_n_vars</ref>;</highlight></codeline>
+<codeline lineno="53" refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" kindref="member">_n_skew</ref>;</highlight></codeline>
+<codeline lineno="54" refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" kindref="member">_skew_list</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>An<sp/>array<sp/>0.._n_skew-1,<sp/>listing<sp/>the<sp/>indices<sp/>of<sp/>the<sp/>skew</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>comm<sp/>variables.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="class_skew_multiplication_a915d319962b73be30f8df764fbc1e2e5_1a915d319962b73be30f8df764fbc1e2e5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>*<ref refid="class_skew_multiplication_a915d319962b73be30f8df764fbc1e2e5_1a915d319962b73be30f8df764fbc1e2e5" kindref="member">_skew_exp</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>0.._n_vars-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="class_skew_multiplication_a3ab09786ff398e5bce21f4f226bc754e_1a3ab09786ff398e5bce21f4f226bc754e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a3ab09786ff398e5bce21f4f226bc754e_1a3ab09786ff398e5bce21f4f226bc754e" kindref="member">skew_byte_size</ref>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><ref refid="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" kindref="member">SkewMultiplication</ref>();</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><ref refid="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" kindref="member">SkewMultiplication</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nvars,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nskew,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*skew_list);</highlight></codeline>
+<codeline lineno="62" refid="class_skew_multiplication_a0a8f70db358e5bbf532ab8f6fb340229_1a0a8f70db358e5bbf532ab8f6fb340229" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_skew_multiplication_a0a8f70db358e5bbf532ab8f6fb340229_1a0a8f70db358e5bbf532ab8f6fb340229" kindref="member">~SkewMultiplication</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="63" refid="class_skew_multiplication_a3bd42eddfb25f5c0a6437dfb892694e5_1a3bd42eddfb25f5c0a6437dfb892694e5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a3bd42eddfb25f5c0a6437dfb892694e5_1a3bd42eddfb25f5c0a6437dfb892694e5" kindref="member">n_skew_vars</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" kindref="member">_n_skew</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="64" refid="class_skew_multiplication_ae3e47a81153fb6b057723ac46900bf40_1ae3e47a81153fb6b057723ac46900bf40" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_ae3e47a81153fb6b057723ac46900bf40_1ae3e47a81153fb6b057723ac46900bf40" kindref="member">is_skew_var</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a915d319962b73be30f8df764fbc1e2e5_1a915d319962b73be30f8df764fbc1e2e5" kindref="member">_skew_exp</ref>[i];<sp/>}</highlight></codeline>
+<codeline lineno="65" refid="class_skew_multiplication_a1229d3f26427a8152b87d4f0e196256e_1a1229d3f26427a8152b87d4f0e196256e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a1229d3f26427a8152b87d4f0e196256e_1a1229d3f26427a8152b87d4f0e196256e" kindref="member">skew_variable</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" kindref="member">_skew_list</ref>[i];<sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>number<sp/>of<sp/>variables<sp/>occurring<sp/>in<sp/>&apos;exp&apos;<sp/>which<sp/>are<sp/>skew<sp/>variables</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a290076ef3e44ee651cd812e5dd89450d_1a290076ef3e44ee651cd812e5dd89450d" kindref="member">skew_degree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" kindref="member">skew_vars</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" kindref="member">skew_vars</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>*exp,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>number<sp/>s<sp/>of<sp/>skew<sp/>variables<sp/>in<sp/>&apos;exp&apos;<sp/>is<sp/>returned,<sp/>and<sp/>their</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>indices<sp/>are<sp/>placed<sp/>in<sp/>result[0],<sp/>...,<sp/>result[s-1].</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>space<sp/>that<sp/>&apos;result&apos;<sp/>points<sp/>to<sp/>MUST<sp/>hold<sp/>at<sp/>least<sp/>&apos;nskew&apos;<sp/>ints.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a869bde7ea8e5d3c68e5a95c25e5c0c26_1a869bde7ea8e5d3c68e5a95c25e5c0c26" kindref="member">mult_sign</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp2)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_a869bde7ea8e5d3c68e5a95c25e5c0c26_1a869bde7ea8e5d3c68e5a95c25e5c0c26" kindref="member">mult_sign</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>*exp1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>*exp2)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_ac884108086e70f05c14158b5b081ee95_1ac884108086e70f05c14158b5b081ee95" kindref="member">diff</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp2,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_af4aaaeb1c5986de7a9ed0ff3d9dabde2_1af4aaaeb1c5986de7a9ed0ff3d9dabde2" kindref="member">divide</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp2,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_skew_multiplication_aa1b5a5dd81bb7a0a596057b97c6bff08_1aa1b5a5dd81bb7a0a596057b97c6bff08" kindref="member">exp_is_zero</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exp)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/skew.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,327 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_s_l_evaluator" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>SLEvaluator</compoundname>
+    <derivedcompoundref refid="class_s_l_evaluator_concrete" prot="public" virt="non-virtual">SLEvaluatorConcrete&lt; RT &gt;</derivedcompoundref>
+    <includes refid="_s_l_p-defs_8hpp" local="no">SLP-defs.hpp</includes>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="class_s_l_evaluator_a2db03270b3afde60ea30c1469aa8a797_1a2db03270b3afde60ea30c1469aa8a797" prot="protected" static="no" mutable="no">
+        <type><ref refid="class_s_l_program" kindref="compound">SLProgram</ref> *</type>
+        <definition>SLProgram* SLEvaluator::slp</definition>
+        <argsstring></argsstring>
+        <name>slp</name>
+        <qualifiedname>SLEvaluator::slp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="258" column="13" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="258" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_a1dd293ca455aa1e890e82c2bacb19709_1a1dd293ca455aa1e890e82c2bacb19709" compoundref="_s_l_p-defs_8hpp" startline="256" endline="256">ap</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a5b298009aa6bfc59368a0b4d73094a87_1a5b298009aa6bfc59368a0b4d73094a87" compoundref="_s_l_p-imp_8hpp" startline="77" endline="97">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_aef6f48f4af3c1333f6fe8fa0edc49326_1aef6f48f4af3c1333f6fe8fa0edc49326" compoundref="_s_l_p-imp_8hpp" startline="302" endline="318">SLEvaluatorConcrete&lt; RT &gt;::text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_a27ad7f6eb7660ada294ce7dd561776a7_1a27ad7f6eb7660ada294ce7dd561776a7" prot="protected" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" kindref="member">SLProgram::GATE_POSITION</ref> &gt;</type>
+        <definition>std::vector&lt;SLProgram::GATE_POSITION&gt; SLEvaluator::varsPos</definition>
+        <argsstring></argsstring>
+        <name>varsPos</name>
+        <qualifiedname>SLEvaluator::varsPos</qualifiedname>
+        <briefdescription>
+<para>!! can we make it a reference??? </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="259" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="259" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_ae63c8f15d47b104c955db3a700089a70_1ae63c8f15d47b104c955db3a700089a70" compoundref="_s_l_p-imp_8hpp" startline="101" endline="114">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adee5c44a88263472d4f0575e957babcd_1adee5c44a88263472d4f0575e957babcd" compoundref="_s_l_p-imp_8hpp" startline="127" endline="146">SLEvaluatorConcrete&lt; RT &gt;::SLEvaluatorConcrete</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_adcfbc8dc0dbf22909a952c83949e961d_1adcfbc8dc0dbf22909a952c83949e961d" compoundref="_s_l_p-imp_8hpp" startline="160" endline="184">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_a03dff7bfa95136aebb6120c7ba3b2e58_1a03dff7bfa95136aebb6120c7ba3b2e58" prot="protected" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8" kindref="member">SLProgram::GATE_TYPE</ref> &gt;::iterator</type>
+        <definition>std::vector&lt;SLProgram::GATE_TYPE&gt;::iterator SLEvaluator::nIt</definition>
+        <argsstring></argsstring>
+        <name>nIt</name>
+        <qualifiedname>SLEvaluator::nIt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="260" column="26" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="260" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a279bad4657d188da2f4e1233cff35223_1a279bad4657d188da2f4e1233cff35223" compoundref="_s_l_p-imp_8hpp" startline="187" endline="222">SLEvaluatorConcrete&lt; RT &gt;::computeNextNode</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_a09b9292cdc9d4bee41493073089a661e_1a09b9292cdc9d4bee41493073089a661e" prot="protected" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_program_af3a62f435c917117d84eb2a3e83eef0b_1af3a62f435c917117d84eb2a3e83eef0b" kindref="member">SLProgram::GATE_SIZE</ref> &gt;::iterator</type>
+        <definition>std::vector&lt;SLProgram::GATE_SIZE&gt;::iterator SLEvaluator::numInputsIt</definition>
+        <argsstring></argsstring>
+        <name>numInputsIt</name>
+        <qualifiedname>SLEvaluator::numInputsIt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="261" column="26" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="261" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a279bad4657d188da2f4e1233cff35223_1a279bad4657d188da2f4e1233cff35223" compoundref="_s_l_p-imp_8hpp" startline="187" endline="222">SLEvaluatorConcrete&lt; RT &gt;::computeNextNode</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_evaluator_a2138e487dccf06404b11ca7ad63eb89f_1a2138e487dccf06404b11ca7ad63eb89f" prot="protected" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" kindref="member">SLProgram::GATE_POSITION</ref> &gt;::iterator</type>
+        <definition>std::vector&lt;SLProgram::GATE_POSITION&gt;::iterator SLEvaluator::inputPositionsIt</definition>
+        <argsstring></argsstring>
+        <name>inputPositionsIt</name>
+        <qualifiedname>SLEvaluator::inputPositionsIt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="262" column="26" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="262" bodyend="-1"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a279bad4657d188da2f4e1233cff35223_1a279bad4657d188da2f4e1233cff35223" compoundref="_s_l_p-imp_8hpp" startline="187" endline="222">SLEvaluatorConcrete&lt; RT &gt;::computeNextNode</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_s_l_evaluator_a8c445f4e0588d2b865dca9ce9d5ae962_1a8c445f4e0588d2b865dca9ce9d5ae962" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual SLEvaluator::~SLEvaluator</definition>
+        <argsstring>()</argsstring>
+        <name>~SLEvaluator</name>
+        <qualifiedname>SLEvaluator::~SLEvaluator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="248" column="11" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="248" bodyend="248"/>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_a4841809208f36e3a4c50bb09b869e6a7_1a4841809208f36e3a4c50bb09b869e6a7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> *</type>
+        <definition>virtual SLEvaluator * SLEvaluator::specialize</definition>
+        <argsstring>(const MutableMatrix *parameters) const =0</argsstring>
+        <name>specialize</name>
+        <qualifiedname>SLEvaluator::specialize</qualifiedname>
+        <reimplementedby refid="class_s_l_evaluator_concrete_a2b49f6a5d39e6c104f4a9e810d328c2f_1a2b49f6a5d39e6c104f4a9e810d328c2f">specialize</reimplementedby>
+        <param>
+          <type>const <ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="249" column="23"/>
+        <referencedby refid="interface_2matrix_8cpp_a33b02407e301b46a7459b631de38a8c1_1a33b02407e301b46a7459b631de38a8c1" compoundref="interface_2matrix_8cpp" startline="894" endline="904">rawSLEvaluatorSpecialize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_a1ba1b2c62ac765657c09e9bab3cc38c2_1a1ba1b2c62ac765657c09e9bab3cc38c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool SLEvaluator::evaluate</definition>
+        <argsstring>(const MutableMatrix *inputs, MutableMatrix *outputs)=0</argsstring>
+        <name>evaluate</name>
+        <qualifiedname>SLEvaluator::evaluate</qualifiedname>
+        <reimplementedby refid="class_s_l_evaluator_concrete_a170c1b3f1ebbf9bec27cb1c180b50129_1a170c1b3f1ebbf9bec27cb1c180b50129">evaluate</reimplementedby>
+        <param>
+          <type>const <ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>inputs</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>outputs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="250" column="16"/>
+        <referencedby refid="interface_2matrix_8cpp_a55ad5ab11336cf2a3d498a27fc868085_1a55ad5ab11336cf2a3d498a27fc868085" compoundref="interface_2matrix_8cpp" startline="906" endline="916">rawSLEvaluatorEvaluate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_aaa10a6eb4df0c5cbaec90f50aa30396e_1aaa10a6eb4df0c5cbaec90f50aa30396e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void SLEvaluator::text_out</definition>
+        <argsstring>(buffer &amp;o) const =0</argsstring>
+        <name>text_out</name>
+        <qualifiedname>SLEvaluator::text_out</qualifiedname>
+        <reimplementedby refid="class_s_l_evaluator_concrete_aef6f48f4af3c1333f6fe8fa0edc49326_1aef6f48f4af3c1333f6fe8fa0edc49326">text_out</reimplementedby>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="252" column="16"/>
+        <referencedby refid="interface_2matrix_8cpp_ac169477b9ebd18487a6e0b1d33273b6a_1ac169477b9ebd18487a6e0b1d33273b6a" compoundref="interface_2matrix_8cpp" startline="918" endline="923">rawSLEvaluatorToString</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_evaluator_a0dff6157c449c84f695e269341997d60_1a0dff6157c449c84f695e269341997d60" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="class_homotopy" kindref="compound">Homotopy</ref> *</type>
+        <definition>virtual Homotopy * SLEvaluator::createHomotopy</definition>
+        <argsstring>(SLEvaluator *Hxt, SLEvaluator *HxH)=0</argsstring>
+        <name>createHomotopy</name>
+        <qualifiedname>SLEvaluator::createHomotopy</qualifiedname>
+        <reimplementedby refid="class_s_l_evaluator_concrete_a06a7a6b549bf69f5c9e4164f0a9bde84_1a06a7a6b549bf69f5c9e4164f0a9bde84">createHomotopy</reimplementedby>
+        <param>
+          <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> *</type>
+          <declname>Hxt</declname>
+        </param>
+        <param>
+          <type><ref refid="class_s_l_evaluator" kindref="compound">SLEvaluator</ref> *</type>
+          <declname>HxH</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="253" column="20"/>
+        <referencedby refid="interface_2matrix_8cpp_ac3db72a9b8a8b83a49bfc791afb1c591_1ac3db72a9b8a8b83a49bfc791afb1c591" compoundref="interface_2matrix_8cpp" startline="831" endline="841">rawHomotopy</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_s_l_evaluator_a1dd293ca455aa1e890e82c2bacb19709_1a1dd293ca455aa1e890e82c2bacb19709" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SLEvaluator::ap</definition>
+        <argsstring>(int rp)</argsstring>
+        <name>ap</name>
+        <qualifiedname>SLEvaluator::ap</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>rp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="256" column="7" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="256" bodyend="256"/>
+        <references refid="class_s_l_evaluator_a2db03270b3afde60ea30c1469aa8a797_1a2db03270b3afde60ea30c1469aa8a797" compoundref="_s_l_p-defs_8hpp" startline="258">slp</references>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Abstract base for the <ref refid="class_s_l_p" kindref="compound">SLP</ref> evaluator hierarchy. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds an <computeroutput>SLProgram*</computeroutput> plus iterators into its gate arrays and declares the pure-virtual interface (<computeroutput><ref refid="class_s_l_evaluator_a1ba1b2c62ac765657c09e9bab3cc38c2_1a1ba1b2c62ac765657c09e9bab3cc38c2" kindref="member">evaluate</ref></computeroutput>, <computeroutput><ref refid="class_s_l_evaluator_a4841809208f36e3a4c50bb09b869e6a7_1a4841809208f36e3a4c50bb09b869e6a7" kindref="member">specialize</ref></computeroutput>, <computeroutput><ref refid="class_s_l_evaluator_a0dff6157c449c84f695e269341997d60_1a0dff6157c449c84f695e269341997d60" kindref="member">createHomotopy</ref></computeroutput>, <computeroutput><ref refid="class_s_l_evaluator_aaa10a6eb4df0c5cbaec90f50aa30396e_1aaa10a6eb4df0c5cbaec90f50aa30396e" kindref="member">text_out</ref></computeroutput>) used by interpreter callers. Concrete arithmetic happens in <computeroutput><ref refid="class_s_l_evaluator_concrete" kindref="compound">SLEvaluatorConcrete</ref>&lt;RT&gt;</computeroutput>, which carries the <computeroutput>std::vector&lt;RT::ElementType&gt;</computeroutput> of node values and (optionally) a compiled function pointer. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>SLEvaluator</label>
+        <link refid="class_s_l_evaluator"/>
+      </node>
+      <node id="2">
+        <label>SLEvaluatorConcrete&lt; RT &gt;</label>
+        <link refid="class_s_l_evaluator_concrete"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>SLEvaluator</label>
+        <link refid="class_s_l_evaluator"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>slp</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>inputPositionsIt</edgelabel>
+          <edgelabel>numInputsIt</edgelabel>
+          <edgelabel>varsPos</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>nIt</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLProgram</label>
+        <link refid="class_s_l_program"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mNodes</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mInputPositions</edgelabel>
+          <edgelabel>mNumInputs</edgelabel>
+          <edgelabel>mOutputPositions</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>inputCounter</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>GATE_TYPE</label>
+      </node>
+      <node id="6">
+        <label>T</label>
+      </node>
+      <node id="8">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::vector&lt; GATE_TYPE &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>std::vector&lt; SLProgram::GATE_TYPE &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; SLProgram::GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/SLP-defs.hpp" line="245" column="1" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="246" bodyend="263"/>
+    <listofallmembers>
+      <member refid="class_s_l_evaluator_a1dd293ca455aa1e890e82c2bacb19709_1a1dd293ca455aa1e890e82c2bacb19709" prot="protected" virt="non-virtual"><scope>SLEvaluator</scope><name>ap</name></member>
+      <member refid="class_s_l_evaluator_a0dff6157c449c84f695e269341997d60_1a0dff6157c449c84f695e269341997d60" prot="public" virt="pure-virtual"><scope>SLEvaluator</scope><name>createHomotopy</name></member>
+      <member refid="class_s_l_evaluator_a1ba1b2c62ac765657c09e9bab3cc38c2_1a1ba1b2c62ac765657c09e9bab3cc38c2" prot="public" virt="pure-virtual"><scope>SLEvaluator</scope><name>evaluate</name></member>
+      <member refid="class_s_l_evaluator_a2138e487dccf06404b11ca7ad63eb89f_1a2138e487dccf06404b11ca7ad63eb89f" prot="protected" virt="non-virtual"><scope>SLEvaluator</scope><name>inputPositionsIt</name></member>
+      <member refid="class_s_l_evaluator_a03dff7bfa95136aebb6120c7ba3b2e58_1a03dff7bfa95136aebb6120c7ba3b2e58" prot="protected" virt="non-virtual"><scope>SLEvaluator</scope><name>nIt</name></member>
+      <member refid="class_s_l_evaluator_a09b9292cdc9d4bee41493073089a661e_1a09b9292cdc9d4bee41493073089a661e" prot="protected" virt="non-virtual"><scope>SLEvaluator</scope><name>numInputsIt</name></member>
+      <member refid="class_s_l_evaluator_a2db03270b3afde60ea30c1469aa8a797_1a2db03270b3afde60ea30c1469aa8a797" prot="protected" virt="non-virtual"><scope>SLEvaluator</scope><name>slp</name></member>
+      <member refid="class_s_l_evaluator_a4841809208f36e3a4c50bb09b869e6a7_1a4841809208f36e3a4c50bb09b869e6a7" prot="public" virt="pure-virtual"><scope>SLEvaluator</scope><name>specialize</name></member>
+      <member refid="class_s_l_evaluator_aaa10a6eb4df0c5cbaec90f50aa30396e_1aaa10a6eb4df0c5cbaec90f50aa30396e" prot="public" virt="pure-virtual"><scope>SLEvaluator</scope><name>text_out</name></member>
+      <member refid="class_s_l_evaluator_a27ad7f6eb7660ada294ce7dd561776a7_1a27ad7f6eb7660ada294ce7dd561776a7" prot="protected" virt="non-virtual"><scope>SLEvaluator</scope><name>varsPos</name></member>
+      <member refid="class_s_l_evaluator_a8c445f4e0588d2b865dca9ce9d5ae962_1a8c445f4e0588d2b865dca9ce9d5ae962" prot="public" virt="virtual"><scope>SLEvaluator</scope><name>~SLEvaluator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

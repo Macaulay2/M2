@@ -1,0 +1,1253 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_d_ring" kind="class" language="C++" prot="public">
+    <compoundname>DRing</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="dpoly_8hpp" local="no">dpoly.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_d_ring_a942714837921731f864fe6fb3fcac7a5_1a942714837921731f864fe6fb3fcac7a5" prot="public" static="no">
+        <type><ref refid="class_tower" kindref="compound">Tower</ref></type>
+        <definition>typedef Tower DRing::ring_type</definition>
+        <argsstring></argsstring>
+        <name>ring_type</name>
+        <qualifiedname>DRing::ring_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="266" column="17" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" prot="public" static="no">
+        <type>TowerPolynomial</type>
+        <definition>typedef TowerPolynomial DRing::elem</definition>
+        <argsstring></argsstring>
+        <name>elem</name>
+        <qualifiedname>DRing::elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="267" column="27" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="267" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int DRing::level</definition>
+        <argsstring></argsstring>
+        <name>level</name>
+        <qualifiedname>DRing::level</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="259" column="7" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="259" bodyend="-1"/>
+        <referencedby refid="class_d_ring_acfd0005cc4b8e77e5b4245fef913de5f_1acfd0005cc4b8e77e5b4245fef913de5f" compoundref="dpoly_8hpp" startline="292" endline="304">add</referencedby>
+        <referencedby refid="class_d_ring_a4413428417792280bf8d0c2cac7417a5_1a4413428417792280bf8d0c2cac7417a5" compoundref="dpoly_8cpp" startline="1556" endline="1562">add_term</referencedby>
+        <referencedby refid="class_d_ring_a2a17c699123225b56ed043c71e08cd39_1a2a17c699123225b56ed043c71e08cd39" compoundref="dpoly_8hpp" startline="372" endline="372">compare</referencedby>
+        <referencedby refid="class_d_ring_a612977f55b31acb97833b4a9bd880d68_1a612977f55b31acb97833b4a9bd880d68" compoundref="dpoly_8hpp" startline="419" endline="419">degree</referencedby>
+        <referencedby refid="class_d_ring_af741f301eecf2ea8323c42a218db323c_1af741f301eecf2ea8323c42a218db323c" compoundref="dpoly_8hpp" startline="431" endline="436">degrees_of_vars</referencedby>
+        <referencedby refid="class_d_ring_ae7c603eda557827353cff8f9b0280924_1ae7c603eda557827353cff8f9b0280924" compoundref="dpoly_8hpp" startline="420" endline="423">diff</referencedby>
+        <referencedby refid="class_d_ring_a75d1f91dd753e1e23c0b01bba7b72545_1a75d1f91dd753e1e23c0b01bba7b72545" compoundref="dpoly_8hpp" startline="328" endline="338">divide</referencedby>
+        <referencedby refid="class_d_ring_ab6546bbd95666686245a62068c979808_1ab6546bbd95666686245a62068c979808" compoundref="dpoly_8cpp" startline="1489" endline="1492">DRing</referencedby>
+        <referencedby refid="class_d_ring_a9c24b019ca6c6b5b62842ac88b32becf_1a9c24b019ca6c6b5b62842ac88b32becf" compoundref="dpoly_8cpp" startline="1546" endline="1554">elem_text_out</referencedby>
+        <referencedby refid="class_d_ring_a6bbd19399442a01935a486b27de05c7d_1a6bbd19399442a01935a486b27de05c7d" compoundref="dpoly_8cpp" startline="1534" endline="1544">extension_degree</referencedby>
+        <referencedby refid="class_d_ring_a45051e25b2ae299910e1fa1738e02c96_1a45051e25b2ae299910e1fa1738e02c96" compoundref="dpoly_8hpp" startline="357" endline="361">from_ring_elem</referencedby>
+        <referencedby refid="class_d_ring_a415d1bd5faa34a8d4234205adb83800e_1a415d1bd5faa34a8d4234205adb83800e" compoundref="dpoly_8hpp" startline="400" endline="403">gcd</referencedby>
+        <referencedby refid="class_d_ring_ace0eef21a0e119af13c2dd3055b91ff7_1ace0eef21a0e119af13c2dd3055b91ff7" compoundref="dpoly_8hpp" startline="405" endline="412">gcd_coefficients</referencedby>
+        <referencedby refid="class_d_ring_affe89bbe5d76dde7e345b76b60f19ac8_1affe89bbe5d76dde7e345b76b60f19ac8" compoundref="dpoly_8hpp" startline="430" endline="430">index_of_var</referencedby>
+        <referencedby refid="class_d_ring_a842f6e84e67f76ef6b0566a81ae38f4f_1a842f6e84e67f76ef6b0566a81ae38f4f" compoundref="dpoly_8hpp" startline="282" endline="288">invert</referencedby>
+        <referencedby refid="class_d_ring_a787b63e51d5601e82b9c543b515dc6c3_1a787b63e51d5601e82b9c543b515dc6c3" compoundref="dpoly_8hpp" startline="371" endline="371">is_equal</referencedby>
+        <referencedby refid="class_d_ring_a4f4debb65b54650da4bd0235e10a8cae_1a4f4debb65b54650da4bd0235e10a8cae" compoundref="dpoly_8hpp" startline="370" endline="370">is_one</referencedby>
+        <referencedby refid="class_d_ring_a4205c4b67dc588d6ddf24a163f83f292_1a4205c4b67dc588d6ddf24a163f83f292" compoundref="dpoly_8hpp" startline="429" endline="429">lowerP</referencedby>
+        <referencedby refid="class_d_ring_af5809d5d4ebf1c24ef214958e425e7bb_1af5809d5d4ebf1c24ef214958e425e7bb" compoundref="dpoly_8hpp" startline="320" endline="326">mult</referencedby>
+        <referencedby refid="class_d_ring_a3ae9918d1f793640a0d19712e16391e7_1a3ae9918d1f793640a0d19712e16391e7" compoundref="dpoly_8hpp" startline="425" endline="428">power_mod</referencedby>
+        <referencedby refid="class_d_ring_a98cef3273adb4d6b637a935c68a2f063_1a98cef3273adb4d6b637a935c68a2f063" compoundref="dpoly_8hpp" startline="340" endline="349">remainder</referencedby>
+        <referencedby refid="class_d_ring_a913de4b9048fe3bfd7f4bdb259c0d511_1a913de4b9048fe3bfd7f4bdb259c0d511" compoundref="dpoly_8hpp" startline="275" endline="279">set</referencedby>
+        <referencedby refid="class_d_ring_a4dbb8c0b3a10f5cacba553ea522283ab_1a4dbb8c0b3a10f5cacba553ea522283ab" compoundref="dpoly_8cpp" startline="1499" endline="1508">set_from_int</referencedby>
+        <referencedby refid="class_d_ring_a9283240f9d9e510c8d1f8f01b4bf72c9_1a9283240f9d9e510c8d1f8f01b4bf72c9" compoundref="dpoly_8hpp" startline="381" endline="386">set_from_long</referencedby>
+        <referencedby refid="class_d_ring_a9c86dc119b210ba069bbcbda3d5091c8_1a9c86dc119b210ba069bbcbda3d5091c8" compoundref="dpoly_8cpp" startline="1510" endline="1532">set_from_mpq</referencedby>
+        <referencedby refid="class_d_ring_a0478530c8e3dc57a53918510fd59d403_1a0478530c8e3dc57a53918510fd59d403" compoundref="dpoly_8hpp" startline="392" endline="392">set_random</referencedby>
+        <referencedby refid="class_d_ring_a280694262e290e0508d6eda49d4661e0_1a280694262e290e0508d6eda49d4661e0" compoundref="dpoly_8hpp" startline="375" endline="379">set_var</referencedby>
+        <referencedby refid="class_d_ring_acfc8c1da6f301e10f35bae5e759c6539_1acfc8c1da6f301e10f35bae5e759c6539" compoundref="dpoly_8hpp" startline="306" endline="311">subtract</referencedby>
+        <referencedby refid="class_d_ring_af88bf3bde2cdd69b90058516d49042ad_1af88bf3bde2cdd69b90058516d49042ad" compoundref="dpoly_8hpp" startline="313" endline="318">subtract_multiple</referencedby>
+        <referencedby refid="class_d_ring_a570c739081e001d4e946e81542788721_1a570c739081e001d4e946e81542788721" compoundref="dpoly_8hpp" startline="351" endline="355">to_ring_elem</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" prot="private" static="no" mutable="yes">
+        <type><ref refid="class_d_poly" kindref="compound">DPoly</ref></type>
+        <definition>DPoly DRing::D</definition>
+        <argsstring></argsstring>
+        <name>D</name>
+        <qualifiedname>DRing::D</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="260" column="17" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="260" bodyend="-1"/>
+        <referencedby refid="class_d_ring_acfd0005cc4b8e77e5b4245fef913de5f_1acfd0005cc4b8e77e5b4245fef913de5f" compoundref="dpoly_8hpp" startline="292" endline="304">add</referencedby>
+        <referencedby refid="class_d_ring_a4413428417792280bf8d0c2cac7417a5_1a4413428417792280bf8d0c2cac7417a5" compoundref="dpoly_8cpp" startline="1556" endline="1562">add_term</referencedby>
+        <referencedby refid="class_d_ring_a2a17c699123225b56ed043c71e08cd39_1a2a17c699123225b56ed043c71e08cd39" compoundref="dpoly_8hpp" startline="372" endline="372">compare</referencedby>
+        <referencedby refid="class_d_ring_a612977f55b31acb97833b4a9bd880d68_1a612977f55b31acb97833b4a9bd880d68" compoundref="dpoly_8hpp" startline="419" endline="419">degree</referencedby>
+        <referencedby refid="class_d_ring_af741f301eecf2ea8323c42a218db323c_1af741f301eecf2ea8323c42a218db323c" compoundref="dpoly_8hpp" startline="431" endline="436">degrees_of_vars</referencedby>
+        <referencedby refid="class_d_ring_ae7c603eda557827353cff8f9b0280924_1ae7c603eda557827353cff8f9b0280924" compoundref="dpoly_8hpp" startline="420" endline="423">diff</referencedby>
+        <referencedby refid="class_d_ring_a75d1f91dd753e1e23c0b01bba7b72545_1a75d1f91dd753e1e23c0b01bba7b72545" compoundref="dpoly_8hpp" startline="328" endline="338">divide</referencedby>
+        <referencedby refid="class_d_ring_ab6546bbd95666686245a62068c979808_1ab6546bbd95666686245a62068c979808" compoundref="dpoly_8cpp" startline="1489" endline="1492">DRing</referencedby>
+        <referencedby refid="class_d_ring_a9c24b019ca6c6b5b62842ac88b32becf_1a9c24b019ca6c6b5b62842ac88b32becf" compoundref="dpoly_8cpp" startline="1546" endline="1554">elem_text_out</referencedby>
+        <referencedby refid="class_d_ring_a6bbd19399442a01935a486b27de05c7d_1a6bbd19399442a01935a486b27de05c7d" compoundref="dpoly_8cpp" startline="1534" endline="1544">extension_degree</referencedby>
+        <referencedby refid="class_d_ring_a5064567cb134dbc7c2ef128294d716b9_1a5064567cb134dbc7c2ef128294d716b9" compoundref="dpoly_8hpp" startline="414" endline="417">extensions_text_out</referencedby>
+        <referencedby refid="class_d_ring_a45051e25b2ae299910e1fa1738e02c96_1a45051e25b2ae299910e1fa1738e02c96" compoundref="dpoly_8hpp" startline="357" endline="361">from_ring_elem</referencedby>
+        <referencedby refid="class_d_ring_a415d1bd5faa34a8d4234205adb83800e_1a415d1bd5faa34a8d4234205adb83800e" compoundref="dpoly_8hpp" startline="400" endline="403">gcd</referencedby>
+        <referencedby refid="class_d_ring_ace0eef21a0e119af13c2dd3055b91ff7_1ace0eef21a0e119af13c2dd3055b91ff7" compoundref="dpoly_8hpp" startline="405" endline="412">gcd_coefficients</referencedby>
+        <referencedby refid="class_d_ring_a23fef8f3d4069ed937910f2324f68f77_1a23fef8f3d4069ed937910f2324f68f77" compoundref="dpoly_8hpp" startline="269" endline="269">getDPoly</referencedby>
+        <referencedby refid="class_d_ring_affe89bbe5d76dde7e345b76b60f19ac8_1affe89bbe5d76dde7e345b76b60f19ac8" compoundref="dpoly_8hpp" startline="430" endline="430">index_of_var</referencedby>
+        <referencedby refid="class_d_ring_a842f6e84e67f76ef6b0566a81ae38f4f_1a842f6e84e67f76ef6b0566a81ae38f4f" compoundref="dpoly_8hpp" startline="282" endline="288">invert</referencedby>
+        <referencedby refid="class_d_ring_a787b63e51d5601e82b9c543b515dc6c3_1a787b63e51d5601e82b9c543b515dc6c3" compoundref="dpoly_8hpp" startline="371" endline="371">is_equal</referencedby>
+        <referencedby refid="class_d_ring_a4f4debb65b54650da4bd0235e10a8cae_1a4f4debb65b54650da4bd0235e10a8cae" compoundref="dpoly_8hpp" startline="370" endline="370">is_one</referencedby>
+        <referencedby refid="class_d_ring_a4205c4b67dc588d6ddf24a163f83f292_1a4205c4b67dc588d6ddf24a163f83f292" compoundref="dpoly_8hpp" startline="429" endline="429">lowerP</referencedby>
+        <referencedby refid="class_d_ring_af5809d5d4ebf1c24ef214958e425e7bb_1af5809d5d4ebf1c24ef214958e425e7bb" compoundref="dpoly_8hpp" startline="320" endline="326">mult</referencedby>
+        <referencedby refid="class_d_ring_a3ae9918d1f793640a0d19712e16391e7_1a3ae9918d1f793640a0d19712e16391e7" compoundref="dpoly_8hpp" startline="425" endline="428">power_mod</referencedby>
+        <referencedby refid="class_d_ring_a98cef3273adb4d6b637a935c68a2f063_1a98cef3273adb4d6b637a935c68a2f063" compoundref="dpoly_8hpp" startline="340" endline="349">remainder</referencedby>
+        <referencedby refid="class_d_ring_a913de4b9048fe3bfd7f4bdb259c0d511_1a913de4b9048fe3bfd7f4bdb259c0d511" compoundref="dpoly_8hpp" startline="275" endline="279">set</referencedby>
+        <referencedby refid="class_d_ring_a4dbb8c0b3a10f5cacba553ea522283ab_1a4dbb8c0b3a10f5cacba553ea522283ab" compoundref="dpoly_8cpp" startline="1499" endline="1508">set_from_int</referencedby>
+        <referencedby refid="class_d_ring_a9283240f9d9e510c8d1f8f01b4bf72c9_1a9283240f9d9e510c8d1f8f01b4bf72c9" compoundref="dpoly_8hpp" startline="381" endline="386">set_from_long</referencedby>
+        <referencedby refid="class_d_ring_a9c86dc119b210ba069bbcbda3d5091c8_1a9c86dc119b210ba069bbcbda3d5091c8" compoundref="dpoly_8cpp" startline="1510" endline="1532">set_from_mpq</referencedby>
+        <referencedby refid="class_d_ring_a0478530c8e3dc57a53918510fd59d403_1a0478530c8e3dc57a53918510fd59d403" compoundref="dpoly_8hpp" startline="392" endline="392">set_random</referencedby>
+        <referencedby refid="class_d_ring_a280694262e290e0508d6eda49d4661e0_1a280694262e290e0508d6eda49d4661e0" compoundref="dpoly_8hpp" startline="375" endline="379">set_var</referencedby>
+        <referencedby refid="class_d_ring_acfc8c1da6f301e10f35bae5e759c6539_1acfc8c1da6f301e10f35bae5e759c6539" compoundref="dpoly_8hpp" startline="306" endline="311">subtract</referencedby>
+        <referencedby refid="class_d_ring_af88bf3bde2cdd69b90058516d49042ad_1af88bf3bde2cdd69b90058516d49042ad" compoundref="dpoly_8hpp" startline="313" endline="318">subtract_multiple</referencedby>
+        <referencedby refid="class_d_ring_a570c739081e001d4e946e81542788721_1a570c739081e001d4e946e81542788721" compoundref="dpoly_8hpp" startline="351" endline="355">to_ring_elem</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_ring_a62ab20b6f5a9fad20be97cca5ea84cd8_1a62ab20b6f5a9fad20be97cca5ea84cd8" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long DRing::P</definition>
+        <argsstring></argsstring>
+        <name>P</name>
+        <qualifiedname>DRing::P</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="261" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="261" bodyend="-1"/>
+        <referencedby refid="class_d_ring_a4413428417792280bf8d0c2cac7417a5_1a4413428417792280bf8d0c2cac7417a5" compoundref="dpoly_8cpp" startline="1556" endline="1562">add_term</referencedby>
+        <referencedby refid="class_d_ring_ab6546bbd95666686245a62068c979808_1ab6546bbd95666686245a62068c979808" compoundref="dpoly_8cpp" startline="1489" endline="1492">DRing</referencedby>
+        <referencedby refid="class_d_ring_a4dbb8c0b3a10f5cacba553ea522283ab_1a4dbb8c0b3a10f5cacba553ea522283ab" compoundref="dpoly_8cpp" startline="1499" endline="1508">set_from_int</referencedby>
+        <referencedby refid="class_d_ring_a9283240f9d9e510c8d1f8f01b4bf72c9_1a9283240f9d9e510c8d1f8f01b4bf72c9" compoundref="dpoly_8hpp" startline="381" endline="386">set_from_long</referencedby>
+        <referencedby refid="class_d_ring_a9c86dc119b210ba069bbcbda3d5091c8_1a9c86dc119b210ba069bbcbda3d5091c8" compoundref="dpoly_8cpp" startline="1510" endline="1532">set_from_mpq</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_d_ring_ab6546bbd95666686245a62068c979808_1ab6546bbd95666686245a62068c979808" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DRing::DRing</definition>
+        <argsstring>(long charac, int nvars, const TowerPolynomial *exts)</argsstring>
+        <name>DRing</name>
+        <qualifiedname>DRing::DRing</qualifiedname>
+        <param>
+          <type>long</type>
+          <declname>charac</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial *</type>
+          <declname>exts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="263" column="3" bodyfile="Macaulay2/e/dpoly.cpp" bodystart="1489" bodyend="1492"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="class_d_ring_a62ab20b6f5a9fad20be97cca5ea84cd8_1a62ab20b6f5a9fad20be97cca5ea84cd8" compoundref="dpoly_8hpp" startline="261">P</references>
+        <referencedby refid="class_d_ring_aa08cb5a54253a90a4af8f81a2b266635_1aa08cb5a54253a90a4af8f81a2b266635" compoundref="dpoly_8cpp" startline="1494" endline="1497">create</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_d_ring_a23fef8f3d4069ed937910f2324f68f77_1a23fef8f3d4069ed937910f2324f68f77" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_d_poly" kindref="compound">DPoly</ref> *</type>
+        <definition>DPoly * DRing::getDPoly</definition>
+        <argsstring>() const</argsstring>
+        <name>getDPoly</name>
+        <qualifiedname>DRing::getDPoly</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="269" column="9" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="269" bodyend="269"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_acefb44436df309c6980e6a9a1932afd4_1acefb44436df309c6980e6a9a1932afd4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::init_set</definition>
+        <argsstring>(elem &amp;result, elem a) const</argsstring>
+        <name>init_set</name>
+        <qualifiedname>DRing::init_set</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="273" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="273" bodyend="273"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_af94339d13bc1ef4ff28409ef9e1c209c_1af94339d13bc1ef4ff28409ef9e1c209c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::set_zero</definition>
+        <argsstring>(elem &amp;result) const</argsstring>
+        <name>set_zero</name>
+        <qualifiedname>DRing::set_zero</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="274" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="274" bodyend="274"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a913de4b9048fe3bfd7f4bdb259c0d511_1a913de4b9048fe3bfd7f4bdb259c0d511" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::set</definition>
+        <argsstring>(elem &amp;result, elem a) const</argsstring>
+        <name>set</name>
+        <qualifiedname>DRing::set</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="275" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="275" bodyend="279"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_aabac0d2230e423f59a62246c74615d59_1aabac0d2230e423f59a62246c74615d59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DRing::is_zero</definition>
+        <argsstring>(elem result) const</argsstring>
+        <name>is_zero</name>
+        <qualifiedname>DRing::is_zero</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="281" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="281" bodyend="281"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a842f6e84e67f76ef6b0566a81ae38f4f_1a842f6e84e67f76ef6b0566a81ae38f4f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DRing::invert</definition>
+        <argsstring>(elem &amp;result, elem a) const</argsstring>
+        <name>invert</name>
+        <qualifiedname>DRing::invert</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="282" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="282" bodyend="288"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a4413428417792280bf8d0c2cac7417a5_1a4413428417792280bf8d0c2cac7417a5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::add_term</definition>
+        <argsstring>(elem &amp;result, long coeff, exponents_t exp) const</argsstring>
+        <name>add_term</name>
+        <qualifiedname>DRing::add_term</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>coeff</declname>
+        </param>
+        <param>
+          <type><ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref></type>
+          <declname>exp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="290" column="8" bodyfile="Macaulay2/e/dpoly.cpp" bodystart="1556" bodyend="1562"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="class_d_ring_a62ab20b6f5a9fad20be97cca5ea84cd8_1a62ab20b6f5a9fad20be97cca5ea84cd8" compoundref="dpoly_8hpp" startline="261">P</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="dpoly_8cpp_ae31797000c42b0f3260afcb54b08e109_1ae31797000c42b0f3260afcb54b08e109" compoundref="dpoly_8cpp" startline="43" endline="47">ZZp_FROM_INT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_acfd0005cc4b8e77e5b4245fef913de5f_1acfd0005cc4b8e77e5b4245fef913de5f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::add</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>add</name>
+        <qualifiedname>DRing::add</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="292" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="292" bodyend="304"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_acfc8c1da6f301e10f35bae5e759c6539_1acfc8c1da6f301e10f35bae5e759c6539" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::subtract</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>subtract</name>
+        <qualifiedname>DRing::subtract</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="306" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="306" bodyend="311"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_af88bf3bde2cdd69b90058516d49042ad_1af88bf3bde2cdd69b90058516d49042ad" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::subtract_multiple</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>subtract_multiple</name>
+        <qualifiedname>DRing::subtract_multiple</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="313" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="313" bodyend="318"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_af5809d5d4ebf1c24ef214958e425e7bb_1af5809d5d4ebf1c24ef214958e425e7bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::mult</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>mult</name>
+        <qualifiedname>DRing::mult</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="320" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="320" bodyend="326"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a75d1f91dd753e1e23c0b01bba7b72545_1a75d1f91dd753e1e23c0b01bba7b72545" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::divide</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>divide</name>
+        <qualifiedname>DRing::divide</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="328" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="328" bodyend="338"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a98cef3273adb4d6b637a935c68a2f063_1a98cef3273adb4d6b637a935c68a2f063" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::remainder</definition>
+        <argsstring>(elem &amp;result, elem a, elem b) const</argsstring>
+        <name>remainder</name>
+        <qualifiedname>DRing::remainder</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="340" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="340" bodyend="349"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a570c739081e001d4e946e81542788721_1a570c739081e001d4e946e81542788721" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::to_ring_elem</definition>
+        <argsstring>(ring_elem &amp;result, const elem a) const</argsstring>
+        <name>to_ring_elem</name>
+        <qualifiedname>DRing::to_ring_elem</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="351" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="351" bodyend="355"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="ringelem_8hpp_a1803b45d6c9cd803ee8f0cd04fbf586a_1a1803b45d6c9cd803ee8f0cd04fbf586a" compoundref="ringelem_8hpp" startline="208">TOWER_RINGELEM</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a45051e25b2ae299910e1fa1738e02c96_1a45051e25b2ae299910e1fa1738e02c96" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::from_ring_elem</definition>
+        <argsstring>(elem &amp;result, const ring_elem &amp;a) const</argsstring>
+        <name>from_ring_elem</name>
+        <qualifiedname>DRing::from_ring_elem</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="357" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="357" bodyend="361"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="unionring__elem_a0c404ff97309917f9b63c4166812923b_1a0c404ff97309917f9b63c4166812923b" compoundref="ringelem_8hpp" startline="84">ring_elem::poly_val</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a355044870eb2b4fa88968923485271e2_1a355044870eb2b4fa88968923485271e2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::swap</definition>
+        <argsstring>(elem &amp;a, elem &amp;b) const</argsstring>
+        <name>swap</name>
+        <qualifiedname>DRing::swap</qualifiedname>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="363" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="363" bodyend="368"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a4f4debb65b54650da4bd0235e10a8cae_1a4f4debb65b54650da4bd0235e10a8cae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DRing::is_one</definition>
+        <argsstring>(const TowerPolynomial f)</argsstring>
+        <name>is_one</name>
+        <qualifiedname>DRing::is_one</qualifiedname>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="370" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="370" bodyend="370"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a787b63e51d5601e82b9c543b515dc6c3_1a787b63e51d5601e82b9c543b515dc6c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DRing::is_equal</definition>
+        <argsstring>(const TowerPolynomial f, const TowerPolynomial g)</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>DRing::is_equal</qualifiedname>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="371" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="371" bodyend="371"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a2a17c699123225b56ed043c71e08cd39_1a2a17c699123225b56ed043c71e08cd39" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DRing::compare</definition>
+        <argsstring>(const TowerPolynomial f, const TowerPolynomial g)</argsstring>
+        <name>compare</name>
+        <qualifiedname>DRing::compare</qualifiedname>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="372" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="372" bodyend="372"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a5a578143988d2b342c404b35fd29b693_1a5a578143988d2b342c404b35fd29b693" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DRing::is_unit</definition>
+        <argsstring>(const TowerPolynomial g)</argsstring>
+        <name>is_unit</name>
+        <qualifiedname>DRing::is_unit</qualifiedname>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="373" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a280694262e290e0508d6eda49d4661e0_1a280694262e290e0508d6eda49d4661e0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::set_var</definition>
+        <argsstring>(TowerPolynomial &amp;result, int n)</argsstring>
+        <name>set_var</name>
+        <qualifiedname>DRing::set_var</qualifiedname>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="375" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="375" bodyend="379"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a9283240f9d9e510c8d1f8f01b4bf72c9_1a9283240f9d9e510c8d1f8f01b4bf72c9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::set_from_long</definition>
+        <argsstring>(TowerPolynomial &amp;result, long r)</argsstring>
+        <name>set_from_long</name>
+        <qualifiedname>DRing::set_from_long</qualifiedname>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="381" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="381" bodyend="386"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="class_d_ring_a62ab20b6f5a9fad20be97cca5ea84cd8_1a62ab20b6f5a9fad20be97cca5ea84cd8" compoundref="dpoly_8hpp" startline="261">P</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a4dbb8c0b3a10f5cacba553ea522283ab_1a4dbb8c0b3a10f5cacba553ea522283ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::set_from_int</definition>
+        <argsstring>(TowerPolynomial &amp;result, mpz_srcptr r)</argsstring>
+        <name>set_from_int</name>
+        <qualifiedname>DRing::set_from_int</qualifiedname>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="388" column="8" bodyfile="Macaulay2/e/dpoly.cpp" bodystart="1499" bodyend="1508"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="class_d_ring_a62ab20b6f5a9fad20be97cca5ea84cd8_1a62ab20b6f5a9fad20be97cca5ea84cd8" compoundref="dpoly_8hpp" startline="261">P</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a9c86dc119b210ba069bbcbda3d5091c8_1a9c86dc119b210ba069bbcbda3d5091c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DRing::set_from_mpq</definition>
+        <argsstring>(TowerPolynomial &amp;result, mpq_srcptr r)</argsstring>
+        <name>set_from_mpq</name>
+        <qualifiedname>DRing::set_from_mpq</qualifiedname>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>mpq_srcptr</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="390" column="8" bodyfile="Macaulay2/e/dpoly.cpp" bodystart="1510" bodyend="1532"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="class_d_ring_a62ab20b6f5a9fad20be97cca5ea84cd8_1a62ab20b6f5a9fad20be97cca5ea84cd8" compoundref="dpoly_8hpp" startline="261">P</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="dpoly_8cpp_a8c4fcaf22837ffd9fee910a19ae9c0d7_1a8c4fcaf22837ffd9fee910a19ae9c0d7" compoundref="dpoly_8cpp" startline="68" endline="74">ZZp_INVERT</references>
+        <references refid="dpoly_8cpp_a11987044555d1530ddbe5e81a94aa94e_1a11987044555d1530ddbe5e81a94aa94e" compoundref="dpoly_8cpp" startline="63" endline="67">ZZp_MULT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a0478530c8e3dc57a53918510fd59d403_1a0478530c8e3dc57a53918510fd59d403" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::set_random</definition>
+        <argsstring>(TowerPolynomial &amp;result)</argsstring>
+        <name>set_random</name>
+        <qualifiedname>DRing::set_random</qualifiedname>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="392" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="392" bodyend="392"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a9c24b019ca6c6b5b62842ac88b32becf_1a9c24b019ca6c6b5b62842ac88b32becf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::elem_text_out</definition>
+        <argsstring>(buffer &amp;o, const TowerPolynomial f, bool p_one, bool p_plus, bool p_parens, M2_ArrayString names) const</argsstring>
+        <name>elem_text_out</name>
+        <qualifiedname>DRing::elem_text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_one</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_plus</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_parens</declname>
+        </param>
+        <param>
+          <type>M2_ArrayString</type>
+          <declname>names</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="393" column="8" bodyfile="Macaulay2/e/dpoly.cpp" bodystart="1546" bodyend="1554"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a415d1bd5faa34a8d4234205adb83800e_1a415d1bd5faa34a8d4234205adb83800e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::gcd</definition>
+        <argsstring>(TowerPolynomial &amp;result, const TowerPolynomial f, const TowerPolynomial g)</argsstring>
+        <name>gcd</name>
+        <qualifiedname>DRing::gcd</qualifiedname>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="400" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="400" bodyend="403"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_ace0eef21a0e119af13c2dd3055b91ff7_1ace0eef21a0e119af13c2dd3055b91ff7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::gcd_coefficients</definition>
+        <argsstring>(TowerPolynomial &amp;result_gcd, TowerPolynomial &amp;result_u, TowerPolynomial &amp;result_v, const TowerPolynomial f, const TowerPolynomial g)</argsstring>
+        <name>gcd_coefficients</name>
+        <qualifiedname>DRing::gcd_coefficients</qualifiedname>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result_gcd</declname>
+        </param>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result_u</declname>
+        </param>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result_v</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="405" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="405" bodyend="412"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a5064567cb134dbc7c2ef128294d716b9_1a5064567cb134dbc7c2ef128294d716b9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::extensions_text_out</definition>
+        <argsstring>(buffer &amp;o, M2_ArrayString names) const</argsstring>
+        <name>extensions_text_out</name>
+        <qualifiedname>DRing::extensions_text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type>M2_ArrayString</type>
+          <declname>names</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="414" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="414" bodyend="417"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a612977f55b31acb97833b4a9bd880d68_1a612977f55b31acb97833b4a9bd880d68" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int DRing::degree</definition>
+        <argsstring>(int var, const TowerPolynomial f) const</argsstring>
+        <name>degree</name>
+        <qualifiedname>DRing::degree</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>var</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="419" column="7" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="419" bodyend="419"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_ae7c603eda557827353cff8f9b0280924_1ae7c603eda557827353cff8f9b0280924" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::diff</definition>
+        <argsstring>(int var, TowerPolynomial &amp;result, const TowerPolynomial f) const</argsstring>
+        <name>diff</name>
+        <qualifiedname>DRing::diff</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>var</declname>
+        </param>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="420" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="420" bodyend="423"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a6bbd19399442a01935a486b27de05c7d_1a6bbd19399442a01935a486b27de05c7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int DRing::extension_degree</definition>
+        <argsstring>(int firstvar)</argsstring>
+        <name>extension_degree</name>
+        <qualifiedname>DRing::extension_degree</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>firstvar</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="424" column="7" bodyfile="Macaulay2/e/dpoly.cpp" bodystart="1534" bodyend="1544"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a3ae9918d1f793640a0d19712e16391e7_1a3ae9918d1f793640a0d19712e16391e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::power_mod</definition>
+        <argsstring>(TowerPolynomial &amp;result, const TowerPolynomial f, mpz_srcptr n, const TowerPolynomial g) const</argsstring>
+        <name>power_mod</name>
+        <qualifiedname>DRing::power_mod</qualifiedname>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="425" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="425" bodyend="428"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_a4205c4b67dc588d6ddf24a163f83f292_1a4205c4b67dc588d6ddf24a163f83f292" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::lowerP</definition>
+        <argsstring>(TowerPolynomial &amp;result, const TowerPolynomial f)</argsstring>
+        <name>lowerP</name>
+        <qualifiedname>DRing::lowerP</qualifiedname>
+        <param>
+          <type>TowerPolynomial &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="429" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="429" bodyend="429"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_affe89bbe5d76dde7e345b76b60f19ac8_1affe89bbe5d76dde7e345b76b60f19ac8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int DRing::index_of_var</definition>
+        <argsstring>(const TowerPolynomial f) const</argsstring>
+        <name>index_of_var</name>
+        <qualifiedname>DRing::index_of_var</qualifiedname>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="430" column="7" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="430" bodyend="430"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_ring_af741f301eecf2ea8323c42a218db323c_1af741f301eecf2ea8323c42a218db323c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DRing::degrees_of_vars</definition>
+        <argsstring>(const TowerPolynomial f, std::vector&lt; int &gt; &amp;result) const</argsstring>
+        <name>degrees_of_vars</name>
+        <qualifiedname>DRing::degrees_of_vars</qualifiedname>
+        <param>
+          <type>const TowerPolynomial</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="431" column="8" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="431" bodyend="436"/>
+        <references refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" compoundref="dpoly_8hpp" startline="260">D</references>
+        <references refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" compoundref="dpoly_8hpp" startline="259">level</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_d_ring_aa08cb5a54253a90a4af8f81a2b266635_1aa08cb5a54253a90a4af8f81a2b266635" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_d_ring" kindref="compound">DRing</ref> *</type>
+        <definition>DRing * DRing::create</definition>
+        <argsstring>(long p, int nvars0, const TowerPolynomial *ext0)</argsstring>
+        <name>create</name>
+        <qualifiedname>DRing::create</qualifiedname>
+        <param>
+          <type>long</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars0</declname>
+        </param>
+        <param>
+          <type>const TowerPolynomial *</type>
+          <declname>ext0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="270" column="16" bodyfile="Macaulay2/e/dpoly.cpp" bodystart="1494" bodyend="1497"/>
+        <references refid="class_d_ring_ab6546bbd95666686245a62068c979808_1ab6546bbd95666686245a62068c979808" compoundref="dpoly_8cpp" startline="1489" endline="1492">DRing</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <referencedby refid="class_tower_a7c37aa23f279bd36a140f982c10bbca0_1a7c37aa23f279bd36a140f982c10bbca0" compoundref="tower_8cpp" startline="15" endline="45">Tower::initialize</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Single-level view of a tower-polynomial ring: a <computeroutput><ref refid="class_d_poly" kindref="compound">DPoly</ref></computeroutput> plus a fixed working <computeroutput><ref refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" kindref="member">level</ref></computeroutput> and a <computeroutput><ref refid="class_tower" kindref="compound">Tower</ref></computeroutput>-flavoured <computeroutput><ref refid="class_d_ring_a942714837921731f864fe6fb3fcac7a5_1a942714837921731f864fe6fb3fcac7a5" kindref="member">ring_type</ref></computeroutput> typedef. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Wraps the <computeroutput><ref refid="class_d_poly" kindref="compound">DPoly</ref></computeroutput> engine so the rest of the engine can treat a particular variable level as an ordinary ring with operations <computeroutput><ref refid="class_d_ring_acfd0005cc4b8e77e5b4245fef913de5f_1acfd0005cc4b8e77e5b4245fef913de5f" kindref="member">add</ref></computeroutput> / <computeroutput><ref refid="class_d_ring_af5809d5d4ebf1c24ef214958e425e7bb_1af5809d5d4ebf1c24ef214958e425e7bb" kindref="member">mult</ref></computeroutput> / <computeroutput><ref refid="class_d_ring_a842f6e84e67f76ef6b0566a81ae38f4f_1a842f6e84e67f76ef6b0566a81ae38f4f" kindref="member">invert</ref></computeroutput> / ... on <computeroutput><ref refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" kindref="member">elem</ref> = TowerPolynomial</computeroutput>. <computeroutput><ref refid="class_d_ring_aa08cb5a54253a90a4af8f81a2b266635_1aa08cb5a54253a90a4af8f81a2b266635" kindref="member">create()</ref></computeroutput> is the factory that bundles characteristic, variable count, and extension chain into a fresh <computeroutput><ref refid="class_d_ring" kindref="compound">DRing</ref></computeroutput>. Used as the coefficient ring of the higher-level <computeroutput><ref refid="class_tower" kindref="compound">Tower</ref></computeroutput> class. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>DRing</label>
+        <link refid="class_d_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>DPoly</label>
+        <link refid="class_d_poly"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>nlevels</edgelabel>
+          <edgelabel>nvars</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>extensions</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>charac</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>DRing</label>
+        <link refid="class_d_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>level</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>D</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>P</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>TowerPolynomial *</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="6">
+        <label>long</label>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/dpoly.hpp" line="257" column="1" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="258" bodyend="437"/>
+    <listofallmembers>
+      <member refid="class_d_ring_acfd0005cc4b8e77e5b4245fef913de5f_1acfd0005cc4b8e77e5b4245fef913de5f" prot="public" virt="non-virtual"><scope>DRing</scope><name>add</name></member>
+      <member refid="class_d_ring_a4413428417792280bf8d0c2cac7417a5_1a4413428417792280bf8d0c2cac7417a5" prot="public" virt="non-virtual"><scope>DRing</scope><name>add_term</name></member>
+      <member refid="class_d_ring_a2a17c699123225b56ed043c71e08cd39_1a2a17c699123225b56ed043c71e08cd39" prot="public" virt="non-virtual"><scope>DRing</scope><name>compare</name></member>
+      <member refid="class_d_ring_aa08cb5a54253a90a4af8f81a2b266635_1aa08cb5a54253a90a4af8f81a2b266635" prot="public" virt="non-virtual"><scope>DRing</scope><name>create</name></member>
+      <member refid="class_d_ring_af65ba4e65d5e002289f517ba5a7e8442_1af65ba4e65d5e002289f517ba5a7e8442" prot="private" virt="non-virtual"><scope>DRing</scope><name>D</name></member>
+      <member refid="class_d_ring_a612977f55b31acb97833b4a9bd880d68_1a612977f55b31acb97833b4a9bd880d68" prot="public" virt="non-virtual"><scope>DRing</scope><name>degree</name></member>
+      <member refid="class_d_ring_af741f301eecf2ea8323c42a218db323c_1af741f301eecf2ea8323c42a218db323c" prot="public" virt="non-virtual"><scope>DRing</scope><name>degrees_of_vars</name></member>
+      <member refid="class_d_ring_ae7c603eda557827353cff8f9b0280924_1ae7c603eda557827353cff8f9b0280924" prot="public" virt="non-virtual"><scope>DRing</scope><name>diff</name></member>
+      <member refid="class_d_ring_a75d1f91dd753e1e23c0b01bba7b72545_1a75d1f91dd753e1e23c0b01bba7b72545" prot="public" virt="non-virtual"><scope>DRing</scope><name>divide</name></member>
+      <member refid="class_d_ring_ab6546bbd95666686245a62068c979808_1ab6546bbd95666686245a62068c979808" prot="private" virt="non-virtual"><scope>DRing</scope><name>DRing</name></member>
+      <member refid="class_d_ring_ab9fcd4b7844548399b086dc6570500e7_1ab9fcd4b7844548399b086dc6570500e7" prot="public" virt="non-virtual"><scope>DRing</scope><name>elem</name></member>
+      <member refid="class_d_ring_a9c24b019ca6c6b5b62842ac88b32becf_1a9c24b019ca6c6b5b62842ac88b32becf" prot="public" virt="non-virtual"><scope>DRing</scope><name>elem_text_out</name></member>
+      <member refid="class_d_ring_a6bbd19399442a01935a486b27de05c7d_1a6bbd19399442a01935a486b27de05c7d" prot="public" virt="non-virtual"><scope>DRing</scope><name>extension_degree</name></member>
+      <member refid="class_d_ring_a5064567cb134dbc7c2ef128294d716b9_1a5064567cb134dbc7c2ef128294d716b9" prot="public" virt="non-virtual"><scope>DRing</scope><name>extensions_text_out</name></member>
+      <member refid="class_d_ring_a45051e25b2ae299910e1fa1738e02c96_1a45051e25b2ae299910e1fa1738e02c96" prot="public" virt="non-virtual"><scope>DRing</scope><name>from_ring_elem</name></member>
+      <member refid="class_d_ring_a415d1bd5faa34a8d4234205adb83800e_1a415d1bd5faa34a8d4234205adb83800e" prot="public" virt="non-virtual"><scope>DRing</scope><name>gcd</name></member>
+      <member refid="class_d_ring_ace0eef21a0e119af13c2dd3055b91ff7_1ace0eef21a0e119af13c2dd3055b91ff7" prot="public" virt="non-virtual"><scope>DRing</scope><name>gcd_coefficients</name></member>
+      <member refid="class_d_ring_a23fef8f3d4069ed937910f2324f68f77_1a23fef8f3d4069ed937910f2324f68f77" prot="public" virt="non-virtual"><scope>DRing</scope><name>getDPoly</name></member>
+      <member refid="class_d_ring_affe89bbe5d76dde7e345b76b60f19ac8_1affe89bbe5d76dde7e345b76b60f19ac8" prot="public" virt="non-virtual"><scope>DRing</scope><name>index_of_var</name></member>
+      <member refid="class_d_ring_acefb44436df309c6980e6a9a1932afd4_1acefb44436df309c6980e6a9a1932afd4" prot="public" virt="non-virtual"><scope>DRing</scope><name>init_set</name></member>
+      <member refid="class_d_ring_a842f6e84e67f76ef6b0566a81ae38f4f_1a842f6e84e67f76ef6b0566a81ae38f4f" prot="public" virt="non-virtual"><scope>DRing</scope><name>invert</name></member>
+      <member refid="class_d_ring_a787b63e51d5601e82b9c543b515dc6c3_1a787b63e51d5601e82b9c543b515dc6c3" prot="public" virt="non-virtual"><scope>DRing</scope><name>is_equal</name></member>
+      <member refid="class_d_ring_a4f4debb65b54650da4bd0235e10a8cae_1a4f4debb65b54650da4bd0235e10a8cae" prot="public" virt="non-virtual"><scope>DRing</scope><name>is_one</name></member>
+      <member refid="class_d_ring_a5a578143988d2b342c404b35fd29b693_1a5a578143988d2b342c404b35fd29b693" prot="public" virt="non-virtual"><scope>DRing</scope><name>is_unit</name></member>
+      <member refid="class_d_ring_aabac0d2230e423f59a62246c74615d59_1aabac0d2230e423f59a62246c74615d59" prot="public" virt="non-virtual"><scope>DRing</scope><name>is_zero</name></member>
+      <member refid="class_d_ring_aa3cdd6c6fdfd4f8764be73e0be764196_1aa3cdd6c6fdfd4f8764be73e0be764196" prot="private" virt="non-virtual"><scope>DRing</scope><name>level</name></member>
+      <member refid="class_d_ring_a4205c4b67dc588d6ddf24a163f83f292_1a4205c4b67dc588d6ddf24a163f83f292" prot="public" virt="non-virtual"><scope>DRing</scope><name>lowerP</name></member>
+      <member refid="class_d_ring_af5809d5d4ebf1c24ef214958e425e7bb_1af5809d5d4ebf1c24ef214958e425e7bb" prot="public" virt="non-virtual"><scope>DRing</scope><name>mult</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>DRing</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>DRing</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>DRing</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>DRing</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>DRing</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>DRing</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>DRing</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>DRing</scope><name>operator new[]</name></member>
+      <member refid="class_d_ring_a62ab20b6f5a9fad20be97cca5ea84cd8_1a62ab20b6f5a9fad20be97cca5ea84cd8" prot="private" virt="non-virtual"><scope>DRing</scope><name>P</name></member>
+      <member refid="class_d_ring_a3ae9918d1f793640a0d19712e16391e7_1a3ae9918d1f793640a0d19712e16391e7" prot="public" virt="non-virtual"><scope>DRing</scope><name>power_mod</name></member>
+      <member refid="class_d_ring_a98cef3273adb4d6b637a935c68a2f063_1a98cef3273adb4d6b637a935c68a2f063" prot="public" virt="non-virtual"><scope>DRing</scope><name>remainder</name></member>
+      <member refid="class_d_ring_a942714837921731f864fe6fb3fcac7a5_1a942714837921731f864fe6fb3fcac7a5" prot="public" virt="non-virtual"><scope>DRing</scope><name>ring_type</name></member>
+      <member refid="class_d_ring_a913de4b9048fe3bfd7f4bdb259c0d511_1a913de4b9048fe3bfd7f4bdb259c0d511" prot="public" virt="non-virtual"><scope>DRing</scope><name>set</name></member>
+      <member refid="class_d_ring_a4dbb8c0b3a10f5cacba553ea522283ab_1a4dbb8c0b3a10f5cacba553ea522283ab" prot="public" virt="non-virtual"><scope>DRing</scope><name>set_from_int</name></member>
+      <member refid="class_d_ring_a9283240f9d9e510c8d1f8f01b4bf72c9_1a9283240f9d9e510c8d1f8f01b4bf72c9" prot="public" virt="non-virtual"><scope>DRing</scope><name>set_from_long</name></member>
+      <member refid="class_d_ring_a9c86dc119b210ba069bbcbda3d5091c8_1a9c86dc119b210ba069bbcbda3d5091c8" prot="public" virt="non-virtual"><scope>DRing</scope><name>set_from_mpq</name></member>
+      <member refid="class_d_ring_a0478530c8e3dc57a53918510fd59d403_1a0478530c8e3dc57a53918510fd59d403" prot="public" virt="non-virtual"><scope>DRing</scope><name>set_random</name></member>
+      <member refid="class_d_ring_a280694262e290e0508d6eda49d4661e0_1a280694262e290e0508d6eda49d4661e0" prot="public" virt="non-virtual"><scope>DRing</scope><name>set_var</name></member>
+      <member refid="class_d_ring_af94339d13bc1ef4ff28409ef9e1c209c_1af94339d13bc1ef4ff28409ef9e1c209c" prot="public" virt="non-virtual"><scope>DRing</scope><name>set_zero</name></member>
+      <member refid="class_d_ring_acfc8c1da6f301e10f35bae5e759c6539_1acfc8c1da6f301e10f35bae5e759c6539" prot="public" virt="non-virtual"><scope>DRing</scope><name>subtract</name></member>
+      <member refid="class_d_ring_af88bf3bde2cdd69b90058516d49042ad_1af88bf3bde2cdd69b90058516d49042ad" prot="public" virt="non-virtual"><scope>DRing</scope><name>subtract_multiple</name></member>
+      <member refid="class_d_ring_a355044870eb2b4fa88968923485271e2_1a355044870eb2b4fa88968923485271e2" prot="public" virt="non-virtual"><scope>DRing</scope><name>swap</name></member>
+      <member refid="class_d_ring_a570c739081e001d4e946e81542788721_1a570c739081e001d4e946e81542788721" prot="public" virt="non-virtual"><scope>DRing</scope><name>to_ring_elem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,722 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_b_i_basis_1_1_monom_d_r_l" kind="class" language="C++" prot="public">
+    <compoundname>BIBasis::MonomDRL</compoundname>
+    <basecompoundref refid="class_b_i_basis_1_1_monom" prot="public" virt="non-virtual">BIBasis::Monom</basecompoundref>
+    <includes refid="monom_d_r_l_8hpp" local="no">monomDRL.hpp</includes>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="class_b_i_basis_1_1_monom_d_r_l_a8e53371a9c1095aea455e37b42353a49_1a8e53371a9c1095aea455e37b42353a49" prot="private" static="yes" mutable="no">
+        <type><ref refid="class_b_i_basis_1_1_fast_allocator" kindref="compound">FastAllocator</ref></type>
+        <definition>FastAllocator BIBasis::MonomDRL::Allocator</definition>
+        <argsstring></argsstring>
+        <name>Allocator</name>
+        <qualifiedname>BIBasis::MonomDRL::Allocator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="58" column="30" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a089dfd9a8897a76184bed8987e292b46_1a089dfd9a8897a76184bed8987e292b46" compoundref="monom_d_r_l_8hpp" startline="140" endline="143">operator delete</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a3b70fb6e59f5f39403c5aa1a8f5ed1d7_1a3b70fb6e59f5f39403c5aa1a8f5ed1d7" compoundref="monom_d_r_l_8hpp" startline="135" endline="138">operator new</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_b_i_basis_1_1_monom_d_r_l_a0e8f6cb5d6bd190e1646180f47640deb_1a0e8f6cb5d6bd190e1646180f47640deb" prot="public" static="no" mutable="no">
+        <type><ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> *</type>
+        <definition>MonomDRL* BIBasis::MonomDRL::Next</definition>
+        <argsstring></argsstring>
+        <name>Next</name>
+        <qualifiedname>BIBasis::MonomDRL::Next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="61" column="18" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a56787154657b7bb118aef7826ba2079e_1a56787154657b7bb118aef7826ba2079e" compoundref="monom_d_r_l_8hpp" startline="106" endline="128">MonomDRL</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::MonomDRL::MonomDRL</definition>
+        <argsstring>()</argsstring>
+        <name>MonomDRL</name>
+        <qualifiedname>BIBasis::MonomDRL::MonomDRL</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="64" column="9" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="100" bodyend="104"/>
+        <references refid="class_b_i_basis_1_1_monom_ae4db8accaeb4423c9f821182ab068b56_1ae4db8accaeb4423c9f821182ab068b56" compoundref="monom_8hpp" startline="143" endline="147">BIBasis::Monom::Monom</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a0e8f6cb5d6bd190e1646180f47640deb_1a0e8f6cb5d6bd190e1646180f47640deb" compoundref="monom_d_r_l_8hpp" startline="61">Next</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a539ccedf1b4c2ff20b1d489ea49e4248_1a539ccedf1b4c2ff20b1d489ea49e4248" compoundref="monom_d_r_l_8cpp" startline="18" endline="47">Compare</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_ae339e9448e2bb069b3940ea3e40055cf_1ae339e9448e2bb069b3940ea3e40055cf" compoundref="monom_d_r_l_8hpp" startline="488" endline="510">IsDivisibleBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a2b9c98cfabcd157f2e4985e840ef8c42_1a2b9c98cfabcd157f2e4985e840ef8c42" compoundref="monom_d_r_l_8hpp" startline="541" endline="570">IsPommaretDivisibleBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_aa4cd3360f078f7ebc25fc4bd68c4baae_1aa4cd3360f078f7ebc25fc4bd68c4baae" compoundref="monom_d_r_l_8hpp" startline="512" endline="539">IsTrueDivisibleBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a56787154657b7bb118aef7826ba2079e_1a56787154657b7bb118aef7826ba2079e" compoundref="monom_d_r_l_8hpp" startline="106" endline="128">MonomDRL</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a06d2a716d022fe09d1a2ffcaebb5d223_1a06d2a716d022fe09d1a2ffcaebb5d223" compoundref="monom_d_r_l_8hpp" startline="403" endline="424">operator!=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a17cdc778015875a4e3563308507b41d7_1a17cdc778015875a4e3563308507b41d7" compoundref="monom_d_r_l_8hpp" startline="267" endline="317">operator*=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a15d8d2bb97dc4881a8a13137b7c2dc73_1a15d8d2bb97dc4881a8a13137b7c2dc73" compoundref="monom_d_r_l_8hpp" startline="261" endline="265">operator*=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a5ba712b0149d14f5b00d356840a07953_1a5ba712b0149d14f5b00d356840a07953" compoundref="monom_d_r_l_8hpp" startline="319" endline="341">operator/=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a4481a2d541a590619702bcf5878429c1_1a4481a2d541a590619702bcf5878429c1" compoundref="monom_d_r_l_8hpp" startline="426" endline="455">operator&lt;</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_ae2d3fc801535f24e257b377eb17a523c_1ae2d3fc801535f24e257b377eb17a523c" compoundref="monom_d_r_l_8hpp" startline="181" endline="226">operator=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a64577d1dd0ae0f4a98cd2cfcf6b42e74_1a64577d1dd0ae0f4a98cd2cfcf6b42e74" compoundref="monom_d_r_l_8hpp" startline="380" endline="401">operator==</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a62da1a9d575bf906e01d84b8cd463a9a_1a62da1a9d575bf906e01d84b8cd463a9a" compoundref="monom_d_r_l_8hpp" startline="457" endline="486">operator&gt;</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_aed2e3c32d13fded97a49fbd0f1f58884_1aed2e3c32d13fded97a49fbd0f1f58884" compoundref="monom_d_r_l_8hpp" startline="343" endline="378">SetQuotientOf</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a56787154657b7bb118aef7826ba2079e_1a56787154657b7bb118aef7826ba2079e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::MonomDRL::MonomDRL</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom)</argsstring>
+        <name>MonomDRL</name>
+        <qualifiedname>BIBasis::MonomDRL::MonomDRL</qualifiedname>
+        <param>
+          <type>const MonomDRL &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="65" column="9" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="106" bodyend="128"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_ae4db8accaeb4423c9f821182ab068b56_1ae4db8accaeb4423c9f821182ab068b56" compoundref="monom_8hpp" startline="143" endline="147">BIBasis::Monom::Monom</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a0e8f6cb5d6bd190e1646180f47640deb_1a0e8f6cb5d6bd190e1646180f47640deb" compoundref="monom_d_r_l_8hpp" startline="61">Next</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a552d80461439774ffe093432d7ef8a45_1a552d80461439774ffe093432d7ef8a45" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::MonomDRL::~MonomDRL</definition>
+        <argsstring>()</argsstring>
+        <name>~MonomDRL</name>
+        <qualifiedname>BIBasis::MonomDRL::~MonomDRL</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="66" column="9" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="130" bodyend="133"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ab4dc70ea8b3ad188bf466e9e8bbc47a2_1ab4dc70ea8b3ad188bf466e9e8bbc47a2" compoundref="monom_d_r_l_8hpp" startline="160" endline="173">SetOne</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a552d80461439774ffe093432d7ef8a45_1a552d80461439774ffe093432d7ef8a45" compoundref="monom_d_r_l_8hpp" startline="130" endline="133">~MonomDRL</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a552d80461439774ffe093432d7ef8a45_1a552d80461439774ffe093432d7ef8a45" compoundref="monom_d_r_l_8hpp" startline="130" endline="133">~MonomDRL</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a3b70fb6e59f5f39403c5aa1a8f5ed1d7_1a3b70fb6e59f5f39403c5aa1a8f5ed1d7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * BIBasis::MonomDRL::operator new</definition>
+        <argsstring>(std::size_t)</argsstring>
+        <name>operator new</name>
+        <qualifiedname>BIBasis::MonomDRL::operator new</qualifiedname>
+        <param>
+          <type>std::size_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="68" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="135" bodyend="138"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a8e53371a9c1095aea455e37b42353a49_1a8e53371a9c1095aea455e37b42353a49" compoundref="monom_d_r_l_8hpp" startline="58">Allocator</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a089dfd9a8897a76184bed8987e292b46_1a089dfd9a8897a76184bed8987e292b46" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::MonomDRL::operator delete</definition>
+        <argsstring>(void *ptr)</argsstring>
+        <name>operator delete</name>
+        <qualifiedname>BIBasis::MonomDRL::operator delete</qualifiedname>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="69" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="140" bodyend="143"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a8e53371a9c1095aea455e37b42353a49_1a8e53371a9c1095aea455e37b42353a49" compoundref="monom_d_r_l_8hpp" startline="58">Allocator</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_ab4dc70ea8b3ad188bf466e9e8bbc47a2_1ab4dc70ea8b3ad188bf466e9e8bbc47a2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void BIBasis::MonomDRL::SetOne</definition>
+        <argsstring>()</argsstring>
+        <name>SetOne</name>
+        <qualifiedname>BIBasis::MonomDRL::SetOne</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_adcdcb9d656c139149a3ef585d95dddc5_1adcdcb9d656c139149a3ef585d95dddc5">SetOne</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="71" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="160" bodyend="173"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ab4dc70ea8b3ad188bf466e9e8bbc47a2_1ab4dc70ea8b3ad188bf466e9e8bbc47a2" compoundref="monom_d_r_l_8hpp" startline="160" endline="173">SetOne</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_ae2d3fc801535f24e257b377eb17a523c_1ae2d3fc801535f24e257b377eb17a523c" compoundref="monom_d_r_l_8hpp" startline="181" endline="226">operator=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_ab4dc70ea8b3ad188bf466e9e8bbc47a2_1ab4dc70ea8b3ad188bf466e9e8bbc47a2" compoundref="monom_d_r_l_8hpp" startline="160" endline="173">SetOne</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_aed2e3c32d13fded97a49fbd0f1f58884_1aed2e3c32d13fded97a49fbd0f1f58884" compoundref="monom_d_r_l_8hpp" startline="343" endline="378">SetQuotientOf</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a552d80461439774ffe093432d7ef8a45_1a552d80461439774ffe093432d7ef8a45" compoundref="monom_d_r_l_8hpp" startline="130" endline="133">~MonomDRL</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a0ba04c8ac7e561741d7843d09291a1a3_1a0ba04c8ac7e561741d7843d09291a1a3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+        <definition>MonomDRL::Integer BIBasis::MonomDRL::operator[]</definition>
+        <argsstring>(const Integer var) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>BIBasis::MonomDRL::operator[]</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a0333e97c9f153f66dda24ecc461cbe63_1a0333e97c9f153f66dda24ecc461cbe63">operator[]</reimplements>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+          <declname>var</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="72" column="17" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="175" bodyend="179"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a9edbd0d97bfc3f28378b231d1005c6e4_1a9edbd0d97bfc3f28378b231d1005c6e4" compoundref="monom_d_r_l_8hpp" startline="145" endline="158">Find</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a0ba04c8ac7e561741d7843d09291a1a3_1a0ba04c8ac7e561741d7843d09291a1a3" compoundref="monom_d_r_l_8hpp" startline="175" endline="179">operator[]</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a0ba04c8ac7e561741d7843d09291a1a3_1a0ba04c8ac7e561741d7843d09291a1a3" compoundref="monom_d_r_l_8hpp" startline="175" endline="179">operator[]</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_ae2d3fc801535f24e257b377eb17a523c_1ae2d3fc801535f24e257b377eb17a523c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+        <definition>const MonomDRL &amp; BIBasis::MonomDRL::operator=</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>BIBasis::MonomDRL::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="74" column="24" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="181" bodyend="226"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2d3fc801535f24e257b377eb17a523c_1ae2d3fc801535f24e257b377eb17a523c" compoundref="monom_d_r_l_8hpp" startline="181" endline="226">operator=</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ab4dc70ea8b3ad188bf466e9e8bbc47a2_1ab4dc70ea8b3ad188bf466e9e8bbc47a2" compoundref="monom_d_r_l_8hpp" startline="160" endline="173">SetOne</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_ae2d3fc801535f24e257b377eb17a523c_1ae2d3fc801535f24e257b377eb17a523c" compoundref="monom_d_r_l_8hpp" startline="181" endline="226">operator=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a15d8d2bb97dc4881a8a13137b7c2dc73_1a15d8d2bb97dc4881a8a13137b7c2dc73" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+        <definition>const MonomDRL &amp; BIBasis::MonomDRL::operator*=</definition>
+        <argsstring>(Integer var)</argsstring>
+        <name>operator*=</name>
+        <qualifiedname>BIBasis::MonomDRL::operator*=</qualifiedname>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+          <declname>var</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="75" column="24" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="261" bodyend="265"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a6b482b2666ef32c4a17f8bfbaabe8aa6_1a6b482b2666ef32c4a17f8bfbaabe8aa6" compoundref="monom_d_r_l_8hpp" startline="228" endline="259">MultiplyBy</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a15d8d2bb97dc4881a8a13137b7c2dc73_1a15d8d2bb97dc4881a8a13137b7c2dc73" compoundref="monom_d_r_l_8hpp" startline="261" endline="265">operator*=</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a17cdc778015875a4e3563308507b41d7_1a17cdc778015875a4e3563308507b41d7" compoundref="monom_d_r_l_8hpp" startline="267" endline="317">operator*=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a15d8d2bb97dc4881a8a13137b7c2dc73_1a15d8d2bb97dc4881a8a13137b7c2dc73" compoundref="monom_d_r_l_8hpp" startline="261" endline="265">operator*=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a17cdc778015875a4e3563308507b41d7_1a17cdc778015875a4e3563308507b41d7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+        <definition>const MonomDRL &amp; BIBasis::MonomDRL::operator*=</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom)</argsstring>
+        <name>operator*=</name>
+        <qualifiedname>BIBasis::MonomDRL::operator*=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="76" column="24" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="267" bodyend="317"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a15d8d2bb97dc4881a8a13137b7c2dc73_1a15d8d2bb97dc4881a8a13137b7c2dc73" compoundref="monom_d_r_l_8hpp" startline="261" endline="265">operator*=</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a5ba712b0149d14f5b00d356840a07953_1a5ba712b0149d14f5b00d356840a07953" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+        <definition>const MonomDRL &amp; BIBasis::MonomDRL::operator/=</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom)</argsstring>
+        <name>operator/=</name>
+        <qualifiedname>BIBasis::MonomDRL::operator/=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="77" column="24" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="319" bodyend="341"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a5ba712b0149d14f5b00d356840a07953_1a5ba712b0149d14f5b00d356840a07953" compoundref="monom_d_r_l_8hpp" startline="319" endline="341">operator/=</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a5ba712b0149d14f5b00d356840a07953_1a5ba712b0149d14f5b00d356840a07953" compoundref="monom_d_r_l_8hpp" startline="319" endline="341">operator/=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_aed2e3c32d13fded97a49fbd0f1f58884_1aed2e3c32d13fded97a49fbd0f1f58884" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::MonomDRL::SetQuotientOf</definition>
+        <argsstring>(const MonomDRL &amp;monomA, const MonomDRL &amp;monomB)</argsstring>
+        <name>SetQuotientOf</name>
+        <qualifiedname>BIBasis::MonomDRL::SetQuotientOf</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>monomA</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>monomB</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="78" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="343" bodyend="378"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ab4dc70ea8b3ad188bf466e9e8bbc47a2_1ab4dc70ea8b3ad188bf466e9e8bbc47a2" compoundref="monom_d_r_l_8hpp" startline="160" endline="173">SetOne</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_aed2e3c32d13fded97a49fbd0f1f58884_1aed2e3c32d13fded97a49fbd0f1f58884" compoundref="monom_d_r_l_8hpp" startline="343" endline="378">SetQuotientOf</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_aed2e3c32d13fded97a49fbd0f1f58884_1aed2e3c32d13fded97a49fbd0f1f58884" compoundref="monom_d_r_l_8hpp" startline="343" endline="378">SetQuotientOf</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a64577d1dd0ae0f4a98cd2cfcf6b42e74_1a64577d1dd0ae0f4a98cd2cfcf6b42e74" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomDRL::operator==</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>BIBasis::MonomDRL::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="80" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="380" bodyend="401"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a64577d1dd0ae0f4a98cd2cfcf6b42e74_1a64577d1dd0ae0f4a98cd2cfcf6b42e74" compoundref="monom_d_r_l_8hpp" startline="380" endline="401">operator==</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a64577d1dd0ae0f4a98cd2cfcf6b42e74_1a64577d1dd0ae0f4a98cd2cfcf6b42e74" compoundref="monom_d_r_l_8hpp" startline="380" endline="401">operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a06d2a716d022fe09d1a2ffcaebb5d223_1a06d2a716d022fe09d1a2ffcaebb5d223" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomDRL::operator!=</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>BIBasis::MonomDRL::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="81" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="403" bodyend="424"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a06d2a716d022fe09d1a2ffcaebb5d223_1a06d2a716d022fe09d1a2ffcaebb5d223" compoundref="monom_d_r_l_8hpp" startline="403" endline="424">operator!=</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a06d2a716d022fe09d1a2ffcaebb5d223_1a06d2a716d022fe09d1a2ffcaebb5d223" compoundref="monom_d_r_l_8hpp" startline="403" endline="424">operator!=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a4481a2d541a590619702bcf5878429c1_1a4481a2d541a590619702bcf5878429c1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomDRL::operator&lt;</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom) const</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>BIBasis::MonomDRL::operator&lt;</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="83" column="9" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="426" bodyend="455"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a4481a2d541a590619702bcf5878429c1_1a4481a2d541a590619702bcf5878429c1" compoundref="monom_d_r_l_8hpp" startline="426" endline="455">operator&lt;</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a4481a2d541a590619702bcf5878429c1_1a4481a2d541a590619702bcf5878429c1" compoundref="monom_d_r_l_8hpp" startline="426" endline="455">operator&lt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a62da1a9d575bf906e01d84b8cd463a9a_1a62da1a9d575bf906e01d84b8cd463a9a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomDRL::operator&gt;</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom) const</argsstring>
+        <name>operator&gt;</name>
+        <qualifiedname>BIBasis::MonomDRL::operator&gt;</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="84" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="457" bodyend="486"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a62da1a9d575bf906e01d84b8cd463a9a_1a62da1a9d575bf906e01d84b8cd463a9a" compoundref="monom_d_r_l_8hpp" startline="457" endline="486">operator&gt;</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a62da1a9d575bf906e01d84b8cd463a9a_1a62da1a9d575bf906e01d84b8cd463a9a" compoundref="monom_d_r_l_8hpp" startline="457" endline="486">operator&gt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a539ccedf1b4c2ff20b1d489ea49e4248_1a539ccedf1b4c2ff20b1d489ea49e4248" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int BIBasis::MonomDRL::Compare</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom)</argsstring>
+        <name>Compare</name>
+        <qualifiedname>BIBasis::MonomDRL::Compare</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="85" column="13" bodyfile="Macaulay2/e/bibasis/monomDRL.cpp" bodystart="18" bodyend="47"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_ae339e9448e2bb069b3940ea3e40055cf_1ae339e9448e2bb069b3940ea3e40055cf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomDRL::IsDivisibleBy</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom) const</argsstring>
+        <name>IsDivisibleBy</name>
+        <qualifiedname>BIBasis::MonomDRL::IsDivisibleBy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="87" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="488" bodyend="510"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae339e9448e2bb069b3940ea3e40055cf_1ae339e9448e2bb069b3940ea3e40055cf" compoundref="monom_d_r_l_8hpp" startline="488" endline="510">IsDivisibleBy</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_ae339e9448e2bb069b3940ea3e40055cf_1ae339e9448e2bb069b3940ea3e40055cf" compoundref="monom_d_r_l_8hpp" startline="488" endline="510">IsDivisibleBy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_aa4cd3360f078f7ebc25fc4bd68c4baae_1aa4cd3360f078f7ebc25fc4bd68c4baae" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomDRL::IsTrueDivisibleBy</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom) const</argsstring>
+        <name>IsTrueDivisibleBy</name>
+        <qualifiedname>BIBasis::MonomDRL::IsTrueDivisibleBy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="88" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="512" bodyend="539"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_aa4cd3360f078f7ebc25fc4bd68c4baae_1aa4cd3360f078f7ebc25fc4bd68c4baae" compoundref="monom_d_r_l_8hpp" startline="512" endline="539">IsTrueDivisibleBy</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_aa4cd3360f078f7ebc25fc4bd68c4baae_1aa4cd3360f078f7ebc25fc4bd68c4baae" compoundref="monom_d_r_l_8hpp" startline="512" endline="539">IsTrueDivisibleBy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a2b9c98cfabcd157f2e4985e840ef8c42_1a2b9c98cfabcd157f2e4985e840ef8c42" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomDRL::IsPommaretDivisibleBy</definition>
+        <argsstring>(const MonomDRL &amp;anotherMonom) const</argsstring>
+        <name>IsPommaretDivisibleBy</name>
+        <qualifiedname>BIBasis::MonomDRL::IsPommaretDivisibleBy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" kindref="member">MonomDRL</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="89" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="541" bodyend="570"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a2b9c98cfabcd157f2e4985e840ef8c42_1a2b9c98cfabcd157f2e4985e840ef8c42" compoundref="monom_d_r_l_8hpp" startline="541" endline="570">IsPommaretDivisibleBy</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" compoundref="monom_d_r_l_8hpp" startline="100" endline="104">MonomDRL</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a2b9c98cfabcd157f2e4985e840ef8c42_1a2b9c98cfabcd157f2e4985e840ef8c42" compoundref="monom_d_r_l_8hpp" startline="541" endline="570">IsPommaretDivisibleBy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a7835873f02349c49e88f8811344018a9_1a7835873f02349c49e88f8811344018a9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+        <definition>MonomDRL::Integer BIBasis::MonomDRL::FirstMultiVar</definition>
+        <argsstring>() const</argsstring>
+        <name>FirstMultiVar</name>
+        <qualifiedname>BIBasis::MonomDRL::FirstMultiVar</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a5624067db84a8869418fa673b1481b1f_1a5624067db84a8869418fa673b1481b1f">FirstMultiVar</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="91" column="17" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="572" bodyend="582"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a7835873f02349c49e88f8811344018a9_1a7835873f02349c49e88f8811344018a9" compoundref="monom_d_r_l_8hpp" startline="572" endline="582">FirstMultiVar</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a7835873f02349c49e88f8811344018a9_1a7835873f02349c49e88f8811344018a9" compoundref="monom_d_r_l_8hpp" startline="572" endline="582">FirstMultiVar</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_adbc7de787a025b32a63f5a0423ea6d5d_1adbc7de787a025b32a63f5a0423ea6d5d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::set&lt; <ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref> &gt;</type>
+        <definition>std::set&lt; MonomDRL::Integer &gt; BIBasis::MonomDRL::GetVariablesSet</definition>
+        <argsstring>() const</argsstring>
+        <name>GetVariablesSet</name>
+        <qualifiedname>BIBasis::MonomDRL::GetVariablesSet</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a3ad7dd1f884869f6b6c9b39fa83182dc_1a3ad7dd1f884869f6b6c9b39fa83182dc">GetVariablesSet</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="92" column="18" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="584" bodyend="594"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_adbc7de787a025b32a63f5a0423ea6d5d_1adbc7de787a025b32a63f5a0423ea6d5d" compoundref="monom_d_r_l_8hpp" startline="584" endline="594">GetVariablesSet</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_adbc7de787a025b32a63f5a0423ea6d5d_1adbc7de787a025b32a63f5a0423ea6d5d" compoundref="monom_d_r_l_8hpp" startline="584" endline="594">GetVariablesSet</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a6b482b2666ef32c4a17f8bfbaabe8aa6_1a6b482b2666ef32c4a17f8bfbaabe8aa6" prot="private" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void BIBasis::MonomDRL::MultiplyBy</definition>
+        <argsstring>(Integer var)</argsstring>
+        <name>MultiplyBy</name>
+        <qualifiedname>BIBasis::MonomDRL::MultiplyBy</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a1ffd80b92a44ecfcc14202685397ee08_1a1ffd80b92a44ecfcc14202685397ee08">MultiplyBy</reimplements>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+          <declname>var</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="95" column="14" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="228" bodyend="259"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a9edbd0d97bfc3f28378b231d1005c6e4_1a9edbd0d97bfc3f28378b231d1005c6e4" compoundref="monom_d_r_l_8hpp" startline="145" endline="158">Find</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a6b482b2666ef32c4a17f8bfbaabe8aa6_1a6b482b2666ef32c4a17f8bfbaabe8aa6" compoundref="monom_d_r_l_8hpp" startline="228" endline="259">MultiplyBy</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a6b482b2666ef32c4a17f8bfbaabe8aa6_1a6b482b2666ef32c4a17f8bfbaabe8aa6" compoundref="monom_d_r_l_8hpp" startline="228" endline="259">MultiplyBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a15d8d2bb97dc4881a8a13137b7c2dc73_1a15d8d2bb97dc4881a8a13137b7c2dc73" compoundref="monom_d_r_l_8hpp" startline="261" endline="265">operator*=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_d_r_l_a9edbd0d97bfc3f28378b231d1005c6e4_1a9edbd0d97bfc3f28378b231d1005c6e4" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node" kindref="compound">VarsListNode</ref> *</type>
+        <definition>MonomDRL::VarsListNode * BIBasis::MonomDRL::Find</definition>
+        <argsstring>(const Integer var) const</argsstring>
+        <name>Find</name>
+        <qualifiedname>BIBasis::MonomDRL::Find</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a039844b31928cbee6dc33e4681f394b9_1a039844b31928cbee6dc33e4681f394b9">Find</reimplements>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+          <declname>var</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="96" column="22" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="145" bodyend="158"/>
+        <references refid="class_b_i_basis_1_1_monom_d_r_l_a9edbd0d97bfc3f28378b231d1005c6e4_1a9edbd0d97bfc3f28378b231d1005c6e4" compoundref="monom_d_r_l_8hpp" startline="145" endline="158">Find</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a9edbd0d97bfc3f28378b231d1005c6e4_1a9edbd0d97bfc3f28378b231d1005c6e4" compoundref="monom_d_r_l_8hpp" startline="145" endline="158">Find</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a6b482b2666ef32c4a17f8bfbaabe8aa6_1a6b482b2666ef32c4a17f8bfbaabe8aa6" compoundref="monom_d_r_l_8hpp" startline="228" endline="259">MultiplyBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_d_r_l_a0ba04c8ac7e561741d7843d09291a1a3_1a0ba04c8ac7e561741d7843d09291a1a3" compoundref="monom_d_r_l_8hpp" startline="175" endline="179">operator[]</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_b_i_basis_1_1_monom" kindref="compound">Monom</ref></computeroutput> specialisation that orders monomials by degree, then by reverse-lex on the variable list (DegRevLex). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Same layout as <computeroutput><ref refid="class_b_i_basis_1_1_monom_d_l" kindref="compound">MonomDL</ref></computeroutput> <mdash/> a <computeroutput><ref refid="class_b_i_basis_1_1_monom" kindref="compound">Monom</ref></computeroutput> plus a per-class <computeroutput><ref refid="class_b_i_basis_1_1_fast_allocator" kindref="compound">FastAllocator</ref></computeroutput> and a <computeroutput><ref refid="class_b_i_basis_1_1_monom_d_r_l_a0e8f6cb5d6bd190e1646180f47640deb_1a0e8f6cb5d6bd190e1646180f47640deb" kindref="member">Next</ref></computeroutput> chaining pointer <mdash/> but with the comparison overloads implementing DegRevLex instead of DegLex. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>BIBasis::Monom</label>
+        <link refid="class_b_i_basis_1_1_monom"/>
+      </node>
+      <node id="1">
+        <label>BIBasis::MonomDRL</label>
+        <link refid="class_b_i_basis_1_1_monom_d_r_l"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="5">
+        <label>BIBasis::FastAllocator</label>
+        <link refid="class_b_i_basis_1_1_fast_allocator"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>MemoryPageSize</edgelabel>
+          <edgelabel>PageSize</edgelabel>
+          <edgelabel>TSize</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>FreeBlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>BIBasis::Monom</label>
+        <link refid="class_b_i_basis_1_1_monom"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>ListHead</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>TotalDegree</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>DimIndepend</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>BIBasis::Monom::VarsListNode</label>
+        <link refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>Value</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Next</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>Allocator</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>BIBasis::MonomDRL</label>
+        <link refid="class_b_i_basis_1_1_monom_d_r_l"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>Allocator</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Next</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="6">
+        <label>size_t</label>
+      </node>
+      <node id="8">
+        <label>static Integer</label>
+      </node>
+      <node id="7">
+        <label>void **</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/bibasis/monomDRL.hpp" line="55" column="5" bodyfile="Macaulay2/e/bibasis/monomDRL.hpp" bodystart="56" bodyend="97"/>
+    <listofallmembers>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a8e53371a9c1095aea455e37b42353a49_1a8e53371a9c1095aea455e37b42353a49" prot="private" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>Allocator</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a539ccedf1b4c2ff20b1d489ea49e4248_1a539ccedf1b4c2ff20b1d489ea49e4248" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>Compare</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50bccef8e8655afbc0508ce7efbf4064_1a50bccef8e8655afbc0508ce7efbf4064ac965ad2249630fb85984a6caba9f0086" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>DegLex</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50dc54b38edf474f91ac492635ac4a51_1a50dc54b38edf474f91ac492635ac4a51" prot="public" virt="virtual"><scope>BIBasis::MonomDRL</scope><name>Degree</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50bccef8e8655afbc0508ce7efbf4064_1a50bccef8e8655afbc0508ce7efbf4064a24553d6076cdcb4053884ab1c355588d" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>DegRevLex</name></member>
+      <member refid="class_b_i_basis_1_1_monom_acff85e49a80fdf847a56b998c04e99b7_1acff85e49a80fdf847a56b998c04e99b7" prot="protected" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>DimIndepend</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a9edbd0d97bfc3f28378b231d1005c6e4_1a9edbd0d97bfc3f28378b231d1005c6e4" prot="private" virt="virtual"><scope>BIBasis::MonomDRL</scope><name>Find</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a7835873f02349c49e88f8811344018a9_1a7835873f02349c49e88f8811344018a9" prot="public" virt="virtual"><scope>BIBasis::MonomDRL</scope><name>FirstMultiVar</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a294b5e2f6b15acb33cdbd788f3307100_1a294b5e2f6b15acb33cdbd788f3307100" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>GetDimIndepend</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_adbc7de787a025b32a63f5a0423ea6d5d_1adbc7de787a025b32a63f5a0423ea6d5d" prot="public" virt="virtual"><scope>BIBasis::MonomDRL</scope><name>GetVariablesSet</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>Integer</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_ae339e9448e2bb069b3940ea3e40055cf_1ae339e9448e2bb069b3940ea3e40055cf" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>IsDivisibleBy</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a2b9c98cfabcd157f2e4985e840ef8c42_1a2b9c98cfabcd157f2e4985e840ef8c42" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>IsPommaretDivisibleBy</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_aa4cd3360f078f7ebc25fc4bd68c4baae_1aa4cd3360f078f7ebc25fc4bd68c4baae" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>IsTrueDivisibleBy</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50bccef8e8655afbc0508ce7efbf4064_1a50bccef8e8655afbc0508ce7efbf4064adbd8be8c18a7c037d140c2d372652898" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>Lex</name></member>
+      <member refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" prot="protected" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>ListHead</name></member>
+      <member refid="class_b_i_basis_1_1_monom_ae4db8accaeb4423c9f821182ab068b56_1ae4db8accaeb4423c9f821182ab068b56" prot="protected" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>Monom</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_ae2c087191b646ab785ca4bd92cc0798f_1ae2c087191b646ab785ca4bd92cc0798f" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>MonomDRL</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a56787154657b7bb118aef7826ba2079e_1a56787154657b7bb118aef7826ba2079e" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>MonomDRL</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a6b482b2666ef32c4a17f8bfbaabe8aa6_1a6b482b2666ef32c4a17f8bfbaabe8aa6" prot="private" virt="virtual"><scope>BIBasis::MonomDRL</scope><name>MultiplyBy</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a0e8f6cb5d6bd190e1646180f47640deb_1a0e8f6cb5d6bd190e1646180f47640deb" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>Next</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a089dfd9a8897a76184bed8987e292b46_1a089dfd9a8897a76184bed8987e292b46" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator delete</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a3b70fb6e59f5f39403c5aa1a8f5ed1d7_1a3b70fb6e59f5f39403c5aa1a8f5ed1d7" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator new</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a06d2a716d022fe09d1a2ffcaebb5d223_1a06d2a716d022fe09d1a2ffcaebb5d223" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator!=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a15d8d2bb97dc4881a8a13137b7c2dc73_1a15d8d2bb97dc4881a8a13137b7c2dc73" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator*=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a17cdc778015875a4e3563308507b41d7_1a17cdc778015875a4e3563308507b41d7" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator*=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a5ba712b0149d14f5b00d356840a07953_1a5ba712b0149d14f5b00d356840a07953" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator/=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a4481a2d541a590619702bcf5878429c1_1a4481a2d541a590619702bcf5878429c1" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator&lt;</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_ae2d3fc801535f24e257b377eb17a523c_1ae2d3fc801535f24e257b377eb17a523c" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a64577d1dd0ae0f4a98cd2cfcf6b42e74_1a64577d1dd0ae0f4a98cd2cfcf6b42e74" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator==</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a62da1a9d575bf906e01d84b8cd463a9a_1a62da1a9d575bf906e01d84b8cd463a9a" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>operator&gt;</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a0ba04c8ac7e561741d7843d09291a1a3_1a0ba04c8ac7e561741d7843d09291a1a3" prot="public" virt="virtual"><scope>BIBasis::MonomDRL</scope><name>operator[]</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50bccef8e8655afbc0508ce7efbf4064_1a50bccef8e8655afbc0508ce7efbf4064" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>Order</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a425d5018b5a6ce90f0941744d158f046_1a425d5018b5a6ce90f0941744d158f046" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>SetDimIndepend</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_ab4dc70ea8b3ad188bf466e9e8bbc47a2_1ab4dc70ea8b3ad188bf466e9e8bbc47a2" prot="public" virt="virtual"><scope>BIBasis::MonomDRL</scope><name>SetOne</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_aed2e3c32d13fded97a49fbd0f1f58884_1aed2e3c32d13fded97a49fbd0f1f58884" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>SetQuotientOf</name></member>
+      <member refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" prot="protected" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>TotalDegree</name></member>
+      <member refid="class_b_i_basis_1_1_monom_ade13f8a64ba1849999636556a5090630_1ade13f8a64ba1849999636556a5090630" prot="public" virt="virtual"><scope>BIBasis::MonomDRL</scope><name>~Monom</name></member>
+      <member refid="class_b_i_basis_1_1_monom_d_r_l_a552d80461439774ffe093432d7ef8a45_1a552d80461439774ffe093432d7ef8a45" prot="public" virt="non-virtual"><scope>BIBasis::MonomDRL</scope><name>~MonomDRL</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

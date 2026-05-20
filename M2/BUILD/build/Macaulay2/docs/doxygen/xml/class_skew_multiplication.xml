@@ -1,0 +1,496 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_skew_multiplication" kind="class" language="C++" prot="public">
+    <compoundname>SkewMultiplication</compoundname>
+    <includes refid="skew_8hpp" local="no">skew.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_skew_multiplication_a2fff480f50592edd6ffb5ce9bb6f4d36_1a2fff480f50592edd6ffb5ce9bb6f4d36" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::_n_vars</definition>
+        <argsstring></argsstring>
+        <name>_n_vars</name>
+        <qualifiedname>SkewMultiplication::_n_vars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="52" column="7" bodyfile="Macaulay2/e/skew.hpp" bodystart="52" bodyend="-1"/>
+        <referencedby refid="class_skew_multiplication_ac884108086e70f05c14158b5b081ee95_1ac884108086e70f05c14158b5b081ee95" compoundref="skew_8cpp" startline="109" endline="129">diff</referencedby>
+        <referencedby refid="class_skew_multiplication_af4aaaeb1c5986de7a9ed0ff3d9dabde2_1af4aaaeb1c5986de7a9ed0ff3d9dabde2" compoundref="skew_8cpp" startline="131" endline="144">divide</referencedby>
+        <referencedby refid="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" compoundref="skew_8cpp" startline="5" endline="8">SkewMultiplication</referencedby>
+        <referencedby refid="class_skew_multiplication_a68b986e1737c5d40f9cf9cc3ee665fc1_1a68b986e1737c5d40f9cf9cc3ee665fc1" compoundref="skew_8cpp" startline="10" endline="17">SkewMultiplication</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::_n_skew</definition>
+        <argsstring></argsstring>
+        <name>_n_skew</name>
+        <qualifiedname>SkewMultiplication::_n_skew</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="53" column="7" bodyfile="Macaulay2/e/skew.hpp" bodystart="53" bodyend="-1"/>
+        <referencedby refid="class_skew_multiplication_aa1b5a5dd81bb7a0a596057b97c6bff08_1aa1b5a5dd81bb7a0a596057b97c6bff08" compoundref="skew_8cpp" startline="146" endline="155">exp_is_zero</referencedby>
+        <referencedby refid="class_skew_multiplication_a3bd42eddfb25f5c0a6437dfb892694e5_1a3bd42eddfb25f5c0a6437dfb892694e5" compoundref="skew_8hpp" startline="63" endline="63">n_skew_vars</referencedby>
+        <referencedby refid="class_skew_multiplication_a290076ef3e44ee651cd812e5dd89450d_1a290076ef3e44ee651cd812e5dd89450d" compoundref="skew_8cpp" startline="49" endline="59">skew_degree</referencedby>
+        <referencedby refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" compoundref="skew_8cpp" startline="61" endline="74">skew_vars</referencedby>
+        <referencedby refid="class_skew_multiplication_a0b349ef14722af2f918f1458c2a91f77_1a0b349ef14722af2f918f1458c2a91f77" compoundref="skew_8cpp" startline="76" endline="89">skew_vars</referencedby>
+        <referencedby refid="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" compoundref="skew_8cpp" startline="5" endline="8">SkewMultiplication</referencedby>
+        <referencedby refid="class_skew_multiplication_a68b986e1737c5d40f9cf9cc3ee665fc1_1a68b986e1737c5d40f9cf9cc3ee665fc1" compoundref="skew_8cpp" startline="10" endline="17">SkewMultiplication</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* SkewMultiplication::_skew_list</definition>
+        <argsstring></argsstring>
+        <name>_skew_list</name>
+        <qualifiedname>SkewMultiplication::_skew_list</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="54" column="7" bodyfile="Macaulay2/e/skew.hpp" bodystart="54" bodyend="-1"/>
+        <referencedby refid="class_skew_multiplication_aa1b5a5dd81bb7a0a596057b97c6bff08_1aa1b5a5dd81bb7a0a596057b97c6bff08" compoundref="skew_8cpp" startline="146" endline="155">exp_is_zero</referencedby>
+        <referencedby refid="class_skew_multiplication_a290076ef3e44ee651cd812e5dd89450d_1a290076ef3e44ee651cd812e5dd89450d" compoundref="skew_8cpp" startline="49" endline="59">skew_degree</referencedby>
+        <referencedby refid="class_skew_multiplication_a1229d3f26427a8152b87d4f0e196256e_1a1229d3f26427a8152b87d4f0e196256e" compoundref="skew_8hpp" startline="65" endline="65">skew_variable</referencedby>
+        <referencedby refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" compoundref="skew_8cpp" startline="61" endline="74">skew_vars</referencedby>
+        <referencedby refid="class_skew_multiplication_a0b349ef14722af2f918f1458c2a91f77_1a0b349ef14722af2f918f1458c2a91f77" compoundref="skew_8cpp" startline="76" endline="89">skew_vars</referencedby>
+        <referencedby refid="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" compoundref="skew_8cpp" startline="5" endline="8">SkewMultiplication</referencedby>
+        <referencedby refid="class_skew_multiplication_a68b986e1737c5d40f9cf9cc3ee665fc1_1a68b986e1737c5d40f9cf9cc3ee665fc1" compoundref="skew_8cpp" startline="10" endline="17">SkewMultiplication</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_skew_multiplication_a915d319962b73be30f8df764fbc1e2e5_1a915d319962b73be30f8df764fbc1e2e5" prot="public" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref> *</type>
+        <definition>bool* SkewMultiplication::_skew_exp</definition>
+        <argsstring></argsstring>
+        <name>_skew_exp</name>
+        <qualifiedname>SkewMultiplication::_skew_exp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="56" column="8" bodyfile="Macaulay2/e/skew.hpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="class_skew_multiplication_ae3e47a81153fb6b057723ac46900bf40_1ae3e47a81153fb6b057723ac46900bf40" compoundref="skew_8hpp" startline="64" endline="64">is_skew_var</referencedby>
+        <referencedby refid="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" compoundref="skew_8cpp" startline="5" endline="8">SkewMultiplication</referencedby>
+        <referencedby refid="class_skew_multiplication_a68b986e1737c5d40f9cf9cc3ee665fc1_1a68b986e1737c5d40f9cf9cc3ee665fc1" compoundref="skew_8cpp" startline="10" endline="17">SkewMultiplication</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_skew_multiplication_a3ab09786ff398e5bce21f4f226bc754e_1a3ab09786ff398e5bce21f4f226bc754e" prot="public" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long SkewMultiplication::skew_byte_size</definition>
+        <argsstring></argsstring>
+        <name>skew_byte_size</name>
+        <qualifiedname>SkewMultiplication::skew_byte_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="58" column="17" bodyfile="Macaulay2/e/skew.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="class_skew_multiplication_ac884108086e70f05c14158b5b081ee95_1ac884108086e70f05c14158b5b081ee95" compoundref="skew_8cpp" startline="109" endline="129">diff</referencedby>
+        <referencedby refid="class_skew_multiplication_a869bde7ea8e5d3c68e5a95c25e5c0c26_1a869bde7ea8e5d3c68e5a95c25e5c0c26" compoundref="skew_8cpp" startline="91" endline="98">mult_sign</referencedby>
+        <referencedby refid="class_skew_multiplication_a31a48285e182065e908250d975d99fa3_1a31a48285e182065e908250d975d99fa3" compoundref="skew_8cpp" startline="100" endline="107">mult_sign</referencedby>
+        <referencedby refid="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" compoundref="skew_8cpp" startline="5" endline="8">SkewMultiplication</referencedby>
+        <referencedby refid="class_skew_multiplication_a68b986e1737c5d40f9cf9cc3ee665fc1_1a68b986e1737c5d40f9cf9cc3ee665fc1" compoundref="skew_8cpp" startline="10" endline="17">SkewMultiplication</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SkewMultiplication::SkewMultiplication</definition>
+        <argsstring>()</argsstring>
+        <name>SkewMultiplication</name>
+        <qualifiedname>SkewMultiplication::SkewMultiplication</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="60" column="3" bodyfile="Macaulay2/e/skew.cpp" bodystart="5" bodyend="8"/>
+        <references refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" compoundref="skew_8hpp" startline="53">_n_skew</references>
+        <references refid="class_skew_multiplication_a2fff480f50592edd6ffb5ce9bb6f4d36_1a2fff480f50592edd6ffb5ce9bb6f4d36" compoundref="skew_8hpp" startline="52">_n_vars</references>
+        <references refid="class_skew_multiplication_a915d319962b73be30f8df764fbc1e2e5_1a915d319962b73be30f8df764fbc1e2e5" compoundref="skew_8hpp" startline="56">_skew_exp</references>
+        <references refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" compoundref="skew_8hpp" startline="54">_skew_list</references>
+        <references refid="class_skew_multiplication_a3ab09786ff398e5bce21f4f226bc754e_1a3ab09786ff398e5bce21f4f226bc754e" compoundref="skew_8hpp" startline="58">skew_byte_size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_a68b986e1737c5d40f9cf9cc3ee665fc1_1a68b986e1737c5d40f9cf9cc3ee665fc1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SkewMultiplication::SkewMultiplication</definition>
+        <argsstring>(int nvars, int nskew, int *skew_list)</argsstring>
+        <name>SkewMultiplication</name>
+        <qualifiedname>SkewMultiplication::SkewMultiplication</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nskew</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>skew_list</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="61" column="3" bodyfile="Macaulay2/e/skew.cpp" bodystart="10" bodyend="17"/>
+        <references refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" compoundref="skew_8hpp" startline="53">_n_skew</references>
+        <references refid="class_skew_multiplication_a2fff480f50592edd6ffb5ce9bb6f4d36_1a2fff480f50592edd6ffb5ce9bb6f4d36" compoundref="skew_8hpp" startline="52">_n_vars</references>
+        <references refid="class_skew_multiplication_a915d319962b73be30f8df764fbc1e2e5_1a915d319962b73be30f8df764fbc1e2e5" compoundref="skew_8hpp" startline="56">_skew_exp</references>
+        <references refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" compoundref="skew_8hpp" startline="54">_skew_list</references>
+        <references refid="monoid_8hpp_a5921edf169b8ef4def00cef434057648_1a5921edf169b8ef4def00cef434057648" compoundref="monoid_8hpp" startline="61">EXPONENT_BYTE_SIZE</references>
+        <references refid="newdelete_8hpp_a2b649d56ac729e3aeea956a89d0c03ea_1a2b649d56ac729e3aeea956a89d0c03ea" compoundref="newdelete_8hpp" startline="91" endline="92">newarray_atomic_clear</references>
+        <references refid="class_skew_multiplication_a3ab09786ff398e5bce21f4f226bc754e_1a3ab09786ff398e5bce21f4f226bc754e" compoundref="skew_8hpp" startline="58">skew_byte_size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_a0a8f70db358e5bbf532ab8f6fb340229_1a0a8f70db358e5bbf532ab8f6fb340229" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SkewMultiplication::~SkewMultiplication</definition>
+        <argsstring>()</argsstring>
+        <name>~SkewMultiplication</name>
+        <qualifiedname>SkewMultiplication::~SkewMultiplication</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="62" column="3" bodyfile="Macaulay2/e/skew.hpp" bodystart="62" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_a3bd42eddfb25f5c0a6437dfb892694e5_1a3bd42eddfb25f5c0a6437dfb892694e5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::n_skew_vars</definition>
+        <argsstring>() const</argsstring>
+        <name>n_skew_vars</name>
+        <qualifiedname>SkewMultiplication::n_skew_vars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="63" column="7" bodyfile="Macaulay2/e/skew.hpp" bodystart="63" bodyend="63"/>
+        <references refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" compoundref="skew_8hpp" startline="53">_n_skew</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_ae3e47a81153fb6b057723ac46900bf40_1ae3e47a81153fb6b057723ac46900bf40" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SkewMultiplication::is_skew_var</definition>
+        <argsstring>(int i) const</argsstring>
+        <name>is_skew_var</name>
+        <qualifiedname>SkewMultiplication::is_skew_var</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="64" column="8" bodyfile="Macaulay2/e/skew.hpp" bodystart="64" bodyend="64"/>
+        <references refid="class_skew_multiplication_a915d319962b73be30f8df764fbc1e2e5_1a915d319962b73be30f8df764fbc1e2e5" compoundref="skew_8hpp" startline="56">_skew_exp</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_a1229d3f26427a8152b87d4f0e196256e_1a1229d3f26427a8152b87d4f0e196256e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::skew_variable</definition>
+        <argsstring>(int i) const</argsstring>
+        <name>skew_variable</name>
+        <qualifiedname>SkewMultiplication::skew_variable</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="65" column="7" bodyfile="Macaulay2/e/skew.hpp" bodystart="65" bodyend="65"/>
+        <references refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" compoundref="skew_8hpp" startline="54">_skew_list</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_a290076ef3e44ee651cd812e5dd89450d_1a290076ef3e44ee651cd812e5dd89450d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::skew_degree</definition>
+        <argsstring>(const int *exp) const</argsstring>
+        <name>skew_degree</name>
+        <qualifiedname>SkewMultiplication::skew_degree</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>exp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="67" column="7" bodyfile="Macaulay2/e/skew.cpp" bodystart="49" bodyend="59"/>
+        <references refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" compoundref="skew_8hpp" startline="53">_n_skew</references>
+        <references refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" compoundref="skew_8hpp" startline="54">_skew_list</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::skew_vars</definition>
+        <argsstring>(const int *exp, int *result) const</argsstring>
+        <name>skew_vars</name>
+        <qualifiedname>SkewMultiplication::skew_vars</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>exp</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="69" column="7" bodyfile="Macaulay2/e/skew.cpp" bodystart="61" bodyend="74"/>
+        <references refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" compoundref="skew_8hpp" startline="53">_n_skew</references>
+        <references refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" compoundref="skew_8hpp" startline="54">_skew_list</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_skew_multiplication_ac884108086e70f05c14158b5b081ee95_1ac884108086e70f05c14158b5b081ee95" compoundref="skew_8cpp" startline="109" endline="129">diff</referencedby>
+        <referencedby refid="class_skew_multiplication_a869bde7ea8e5d3c68e5a95c25e5c0c26_1a869bde7ea8e5d3c68e5a95c25e5c0c26" compoundref="skew_8cpp" startline="91" endline="98">mult_sign</referencedby>
+        <referencedby refid="class_skew_multiplication_a31a48285e182065e908250d975d99fa3_1a31a48285e182065e908250d975d99fa3" compoundref="skew_8cpp" startline="100" endline="107">mult_sign</referencedby>
+        <referencedby refid="class_monomial_info_a12e90ac52fa4532654c0047c0a367f4d_1a12e90ac52fa4532654c0047c0a367f4d" compoundref="moninfo_8hpp" startline="217" endline="222">MonomialInfo::skew_vars</referencedby>
+        <referencedby refid="class_res_monoid_dense_a9dac72b2f26f52021df8a68ba0b285a7_1a9dac72b2f26f52021df8a68ba0b285a7" compoundref="res-moninfo-dense_8hpp" startline="185" endline="190">ResMonoidDense::skew_vars</referencedby>
+        <referencedby refid="class_res_monoid_sparse_abaffbb4017bbde349b1c6e04b786b4c0_1abaffbb4017bbde349b1c6e04b786b4c0" compoundref="res-moninfo-sparse_8hpp" startline="209" endline="214">ResMonoidSparse::skew_vars</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_a0b349ef14722af2f918f1458c2a91f77_1a0b349ef14722af2f918f1458c2a91f77" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::skew_vars</definition>
+        <argsstring>(const long *exp, int *result) const</argsstring>
+        <name>skew_vars</name>
+        <qualifiedname>SkewMultiplication::skew_vars</qualifiedname>
+        <param>
+          <type>const long *</type>
+          <declname>exp</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="70" column="7" bodyfile="Macaulay2/e/skew.cpp" bodystart="76" bodyend="89"/>
+        <references refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" compoundref="skew_8hpp" startline="53">_n_skew</references>
+        <references refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" compoundref="skew_8hpp" startline="54">_skew_list</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_a869bde7ea8e5d3c68e5a95c25e5c0c26_1a869bde7ea8e5d3c68e5a95c25e5c0c26" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::mult_sign</definition>
+        <argsstring>(const int *exp1, const int *exp2) const</argsstring>
+        <name>mult_sign</name>
+        <qualifiedname>SkewMultiplication::mult_sign</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>exp1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>exp2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="75" column="7" bodyfile="Macaulay2/e/skew.cpp" bodystart="91" bodyend="98"/>
+        <references refid="monoid_8hpp_a337de43f0792d2f0364a64ba9905116d_1a337de43f0792d2f0364a64ba9905116d" compoundref="monoid_8hpp" startline="60">ALLOCATE_EXPONENTS</references>
+        <references refid="class_skew_multiplication_a3ab09786ff398e5bce21f4f226bc754e_1a3ab09786ff398e5bce21f4f226bc754e" compoundref="skew_8hpp" startline="58">skew_byte_size</references>
+        <references refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" compoundref="skew_8cpp" startline="61" endline="74">skew_vars</references>
+        <references refid="skew_8cpp_ae765c06faa41dd2b62a73c883be74098_1ae765c06faa41dd2b62a73c883be74098" compoundref="skew_8cpp" startline="19" endline="47">sort_sign</references>
+        <referencedby refid="class_skew_multiplication_af4aaaeb1c5986de7a9ed0ff3d9dabde2_1af4aaaeb1c5986de7a9ed0ff3d9dabde2" compoundref="skew_8cpp" startline="131" endline="144">divide</referencedby>
+        <referencedby refid="class_matrix_a8168177053a192daeebb81a8027c0fec_1a8168177053a192daeebb81a8027c0fec" compoundref="matrix_8cpp" startline="1162" endline="1223">Matrix::koszul_monomials</referencedby>
+        <referencedby refid="class_monomial_info_a751e692b8d03a82606a01ec457f52ea4_1a751e692b8d03a82606a01ec457f52ea4" compoundref="moninfo_8hpp" startline="224" endline="229">MonomialInfo::skew_mult_sign</referencedby>
+        <referencedby refid="class_res_monoid_dense_adb8a85427e09b6a9e6e6248257c0f8ee_1adb8a85427e09b6a9e6e6248257c0f8ee" compoundref="res-moninfo-dense_8hpp" startline="192" endline="197">ResMonoidDense::skew_mult_sign</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a7d9e6b90d2e8bde0a0aaa7de5b17a8dd_1a7d9e6b90d2e8bde0a0aaa7de5b17a8dd" compoundref="res-moninfo-sparse_8hpp" startline="216" endline="221">ResMonoidSparse::skew_mult_sign</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_a31a48285e182065e908250d975d99fa3_1a31a48285e182065e908250d975d99fa3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::mult_sign</definition>
+        <argsstring>(const long *exp1, const long *exp2) const</argsstring>
+        <name>mult_sign</name>
+        <qualifiedname>SkewMultiplication::mult_sign</qualifiedname>
+        <param>
+          <type>const long *</type>
+          <declname>exp1</declname>
+        </param>
+        <param>
+          <type>const long *</type>
+          <declname>exp2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="76" column="7" bodyfile="Macaulay2/e/skew.cpp" bodystart="100" bodyend="107"/>
+        <references refid="monoid_8hpp_a337de43f0792d2f0364a64ba9905116d_1a337de43f0792d2f0364a64ba9905116d" compoundref="monoid_8hpp" startline="60">ALLOCATE_EXPONENTS</references>
+        <references refid="class_skew_multiplication_a3ab09786ff398e5bce21f4f226bc754e_1a3ab09786ff398e5bce21f4f226bc754e" compoundref="skew_8hpp" startline="58">skew_byte_size</references>
+        <references refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" compoundref="skew_8cpp" startline="61" endline="74">skew_vars</references>
+        <references refid="skew_8cpp_ae765c06faa41dd2b62a73c883be74098_1ae765c06faa41dd2b62a73c883be74098" compoundref="skew_8cpp" startline="19" endline="47">sort_sign</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_ac884108086e70f05c14158b5b081ee95_1ac884108086e70f05c14158b5b081ee95" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::diff</definition>
+        <argsstring>(const int *exp1, const int *exp2, int *result) const</argsstring>
+        <name>diff</name>
+        <qualifiedname>SkewMultiplication::diff</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>exp1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>exp2</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="78" column="7" bodyfile="Macaulay2/e/skew.cpp" bodystart="109" bodyend="129"/>
+        <references refid="class_skew_multiplication_a2fff480f50592edd6ffb5ce9bb6f4d36_1a2fff480f50592edd6ffb5ce9bb6f4d36" compoundref="skew_8hpp" startline="52">_n_vars</references>
+        <references refid="monoid_8hpp_a337de43f0792d2f0364a64ba9905116d_1a337de43f0792d2f0364a64ba9905116d" compoundref="monoid_8hpp" startline="60">ALLOCATE_EXPONENTS</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_skew_multiplication_a3ab09786ff398e5bce21f4f226bc754e_1a3ab09786ff398e5bce21f4f226bc754e" compoundref="skew_8hpp" startline="58">skew_byte_size</references>
+        <references refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" compoundref="skew_8cpp" startline="61" endline="74">skew_vars</references>
+        <references refid="skew_8cpp_ae765c06faa41dd2b62a73c883be74098_1ae765c06faa41dd2b62a73c883be74098" compoundref="skew_8cpp" startline="19" endline="47">sort_sign</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_af4aaaeb1c5986de7a9ed0ff3d9dabde2_1af4aaaeb1c5986de7a9ed0ff3d9dabde2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SkewMultiplication::divide</definition>
+        <argsstring>(const int *exp1, const int *exp2, int *result) const</argsstring>
+        <name>divide</name>
+        <qualifiedname>SkewMultiplication::divide</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>exp1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>exp2</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="79" column="7" bodyfile="Macaulay2/e/skew.cpp" bodystart="131" bodyend="144"/>
+        <references refid="class_skew_multiplication_a2fff480f50592edd6ffb5ce9bb6f4d36_1a2fff480f50592edd6ffb5ce9bb6f4d36" compoundref="skew_8hpp" startline="52">_n_vars</references>
+        <references refid="class_skew_multiplication_a869bde7ea8e5d3c68e5a95c25e5c0c26_1a869bde7ea8e5d3c68e5a95c25e5c0c26" compoundref="skew_8cpp" startline="91" endline="98">mult_sign</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_skew_multiplication_aa1b5a5dd81bb7a0a596057b97c6bff08_1aa1b5a5dd81bb7a0a596057b97c6bff08" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SkewMultiplication::exp_is_zero</definition>
+        <argsstring>(const int *exp) const</argsstring>
+        <name>exp_is_zero</name>
+        <qualifiedname>SkewMultiplication::exp_is_zero</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>exp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/skew.hpp" line="80" column="8" bodyfile="Macaulay2/e/skew.cpp" bodystart="146" bodyend="155"/>
+        <references refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" compoundref="skew_8hpp" startline="53">_n_skew</references>
+        <references refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" compoundref="skew_8hpp" startline="54">_skew_list</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Sign-rule helper used by every ring that has a skew-commutative subset of variables (exterior factor, full skew ring, ...). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Stores which of the <computeroutput><ref refid="class_skew_multiplication_a2fff480f50592edd6ffb5ce9bb6f4d36_1a2fff480f50592edd6ffb5ce9bb6f4d36" kindref="member">_n_vars</ref></computeroutput> variables are skew (<computeroutput><ref refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" kindref="member">_skew_list</ref>[0.._n_skew-1]</computeroutput>, with <computeroutput><ref refid="class_skew_multiplication_a915d319962b73be30f8df764fbc1e2e5_1a915d319962b73be30f8df764fbc1e2e5" kindref="member">_skew_exp</ref>[i]</computeroutput> a fast &quot;is variable `i` skew?&quot; lookup), plus the byte size used to cache exponent vectors. Hands out the inversion count needed by the wrapping ring&apos;s <computeroutput>mult_by_term1</computeroutput> to decide the sign of a product, and detects <computeroutput>x_i^2 = 0</computeroutput> collapses on the skew side. Full polynomial multiplication still lives in the rings that embed this helper (<computeroutput><ref refid="class_skew_polynomial_ring" kindref="compound">SkewPolynomialRing</ref></computeroutput>, <computeroutput><ref refid="class_poly_ring" kindref="compound">PolyRing</ref></computeroutput> with skew factors, F4 / resolution code). </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/skew.hpp" line="49" column="1" bodyfile="Macaulay2/e/skew.hpp" bodystart="50" bodyend="81"/>
+    <listofallmembers>
+      <member refid="class_skew_multiplication_a06f65dbe2a99473d33d198f2b11ee843_1a06f65dbe2a99473d33d198f2b11ee843" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>_n_skew</name></member>
+      <member refid="class_skew_multiplication_a2fff480f50592edd6ffb5ce9bb6f4d36_1a2fff480f50592edd6ffb5ce9bb6f4d36" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>_n_vars</name></member>
+      <member refid="class_skew_multiplication_a915d319962b73be30f8df764fbc1e2e5_1a915d319962b73be30f8df764fbc1e2e5" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>_skew_exp</name></member>
+      <member refid="class_skew_multiplication_a8d9a78b2d80731f3085f8a13da39d3d5_1a8d9a78b2d80731f3085f8a13da39d3d5" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>_skew_list</name></member>
+      <member refid="class_skew_multiplication_ac884108086e70f05c14158b5b081ee95_1ac884108086e70f05c14158b5b081ee95" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>diff</name></member>
+      <member refid="class_skew_multiplication_af4aaaeb1c5986de7a9ed0ff3d9dabde2_1af4aaaeb1c5986de7a9ed0ff3d9dabde2" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>divide</name></member>
+      <member refid="class_skew_multiplication_aa1b5a5dd81bb7a0a596057b97c6bff08_1aa1b5a5dd81bb7a0a596057b97c6bff08" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>exp_is_zero</name></member>
+      <member refid="class_skew_multiplication_ae3e47a81153fb6b057723ac46900bf40_1ae3e47a81153fb6b057723ac46900bf40" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>is_skew_var</name></member>
+      <member refid="class_skew_multiplication_a869bde7ea8e5d3c68e5a95c25e5c0c26_1a869bde7ea8e5d3c68e5a95c25e5c0c26" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>mult_sign</name></member>
+      <member refid="class_skew_multiplication_a31a48285e182065e908250d975d99fa3_1a31a48285e182065e908250d975d99fa3" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>mult_sign</name></member>
+      <member refid="class_skew_multiplication_a3bd42eddfb25f5c0a6437dfb892694e5_1a3bd42eddfb25f5c0a6437dfb892694e5" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>n_skew_vars</name></member>
+      <member refid="class_skew_multiplication_a3ab09786ff398e5bce21f4f226bc754e_1a3ab09786ff398e5bce21f4f226bc754e" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>skew_byte_size</name></member>
+      <member refid="class_skew_multiplication_a290076ef3e44ee651cd812e5dd89450d_1a290076ef3e44ee651cd812e5dd89450d" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>skew_degree</name></member>
+      <member refid="class_skew_multiplication_a1229d3f26427a8152b87d4f0e196256e_1a1229d3f26427a8152b87d4f0e196256e" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>skew_variable</name></member>
+      <member refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>skew_vars</name></member>
+      <member refid="class_skew_multiplication_a0b349ef14722af2f918f1458c2a91f77_1a0b349ef14722af2f918f1458c2a91f77" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>skew_vars</name></member>
+      <member refid="class_skew_multiplication_af2086af46668eb06ee4d5b96c69f3611_1af2086af46668eb06ee4d5b96c69f3611" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>SkewMultiplication</name></member>
+      <member refid="class_skew_multiplication_a68b986e1737c5d40f9cf9cc3ee665fc1_1a68b986e1737c5d40f9cf9cc3ee665fc1" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>SkewMultiplication</name></member>
+      <member refid="class_skew_multiplication_a0a8f70db358e5bbf532ab8f6fb340229_1a0a8f70db358e5bbf532ab8f6fb340229" prot="public" virt="non-virtual"><scope>SkewMultiplication</scope><name>~SkewMultiplication</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

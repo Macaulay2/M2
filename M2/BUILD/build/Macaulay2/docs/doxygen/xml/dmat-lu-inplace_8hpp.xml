@@ -1,0 +1,1649 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dmat-lu-inplace_8hpp" kind="file" language="C++">
+    <compoundname>dmat-lu-inplace.hpp</compoundname>
+    <includes refid="dmat_8hpp" local="yes">dmat.hpp</includes>
+    <includes refid="mat-elem-ops_8hpp" local="yes">mat-elem-ops.hpp</includes>
+    <includes refid="mat-util_8hpp" local="yes">mat-util.hpp</includes>
+    <includes local="no">M2/gc-include.h</includes>
+    <includes local="no">flint/fq_nmod_mat.h</includes>
+    <includes local="no">flint/perm.h</includes>
+    <includedby refid="dmat-lu_8hpp" local="yes">Macaulay2/e/dmat-lu.hpp</includedby>
+    <incdepgraph>
+      <node id="31">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>aring-gf-flint-big.hpp</label>
+        <link refid="aring-gf-flint-big_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>aring-gf-flint.hpp</label>
+        <link refid="aring-gf-flint_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>aring-qq-flint.hpp</label>
+        <link refid="aring-qq-flint_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>aring-zz-flint.hpp</label>
+        <link refid="aring-zz-flint_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>aring-zzp-flint.hpp</label>
+        <link refid="aring-zzp-flint_8hpp"/>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>dmat-gf-flint-big.hpp</label>
+        <link refid="dmat-gf-flint-big_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>dmat-gf-flint.hpp</label>
+        <link refid="dmat-gf-flint_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/dmat-lu-inplace.hpp</label>
+        <link refid="dmat-lu-inplace_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>dmat-qq-flint.hpp</label>
+        <link refid="dmat-qq-flint_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>dmat-zz-flint.hpp</label>
+        <link refid="dmat-zz-flint_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>dmat-zzp-flint.hpp</label>
+        <link refid="dmat-zzp-flint_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>dmat.hpp</label>
+        <link refid="dmat_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="37">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>interface/gmp-util.h</label>
+        <link refid="gmp-util_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>interface/random.h</label>
+        <link refid="random_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>mat-elem-ops.hpp</label>
+        <link refid="mat-elem-ops_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>mat-util.hpp</label>
+        <link refid="mat-util_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>text-io.hpp</label>
+        <link refid="text-io_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>M2/config.h</label>
+      </node>
+      <node id="8">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="7">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="20">
+        <label>algorithm</label>
+      </node>
+      <node id="10">
+        <label>assert.h</label>
+      </node>
+      <node id="26">
+        <label>cassert</label>
+      </node>
+      <node id="48">
+        <label>cstddef</label>
+      </node>
+      <node id="32">
+        <label>cstdio</label>
+      </node>
+      <node id="49">
+        <label>flint/flint.h</label>
+      </node>
+      <node id="54">
+        <label>flint/fmpq.h</label>
+      </node>
+      <node id="55">
+        <label>flint/fmpq_mat.h</label>
+      </node>
+      <node id="50">
+        <label>flint/fmpz.h</label>
+      </node>
+      <node id="51">
+        <label>flint/fmpz_mat.h</label>
+      </node>
+      <node id="62">
+        <label>flint/fq_nmod.h</label>
+      </node>
+      <node id="64">
+        <label>flint/fq_nmod_mat.h</label>
+      </node>
+      <node id="67">
+        <label>flint/fq_zech.h</label>
+      </node>
+      <node id="68">
+        <label>flint/fq_zech_mat.h</label>
+      </node>
+      <node id="59">
+        <label>flint/nmod_mat.h</label>
+      </node>
+      <node id="63">
+        <label>flint/nmod_poly.h</label>
+      </node>
+      <node id="70">
+        <label>flint/perm.h</label>
+      </node>
+      <node id="16">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="41">
+        <label>iostream</label>
+      </node>
+      <node id="27">
+        <label>memory</label>
+      </node>
+      <node id="30">
+        <label>stddef.h</label>
+      </node>
+      <node id="38">
+        <label>stdexcept</label>
+      </node>
+      <node id="6">
+        <label>stdint.h</label>
+      </node>
+      <node id="14">
+        <label>stdlib.h</label>
+      </node>
+      <node id="18">
+        <label>string</label>
+      </node>
+      <node id="34">
+        <label>string.h</label>
+      </node>
+      <node id="35">
+        <label>type_traits</label>
+      </node>
+      <node id="21">
+        <label>utility</label>
+      </node>
+      <node id="15">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="17">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="8">
+        <label>Macaulay2/e/NAG.cpp</label>
+        <link refid="_n_a_g_8cpp"/>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/NAG.hpp</label>
+        <link refid="_n_a_g_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Macaulay2/e/NCAlgebras/NCF4.cpp</label>
+        <link refid="_n_c_f4_8cpp"/>
+      </node>
+      <node id="16">
+        <label>Macaulay2/e/NCAlgebras/NCF4.hpp</label>
+        <link refid="_n_c_f4_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Macaulay2/e/SLP.cpp</label>
+        <link refid="_s_l_p_8cpp"/>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/SLP.hpp</label>
+        <link refid="_s_l_p_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Macaulay2/e/VectorArithmetic.hpp</label>
+        <link refid="_vector_arithmetic_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Macaulay2/e/aring-glue.hpp</label>
+        <link refid="aring-glue_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/dmat-lu-inplace.hpp</label>
+        <link refid="dmat-lu-inplace_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/dmat-lu.hpp</label>
+        <link refid="dmat-lu_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/dmat.cpp</label>
+        <link refid="dmat_8cpp"/>
+      </node>
+      <node id="49">
+        <label>Macaulay2/e/engine.cpp</label>
+        <link refid="engine_8cpp"/>
+      </node>
+      <node id="18">
+        <label>Macaulay2/e/f4/f4-computation.cpp</label>
+        <link refid="f4-computation_8cpp"/>
+      </node>
+      <node id="26">
+        <label>Macaulay2/e/f4/f4-computation.hpp</label>
+        <link refid="f4-computation_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Macaulay2/e/f4/f4-m2-interface.cpp</label>
+        <link refid="f4-m2-interface_8cpp"/>
+      </node>
+      <node id="21">
+        <label>Macaulay2/e/f4/f4-m2-interface.hpp</label>
+        <link refid="f4-m2-interface_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>Macaulay2/e/f4/f4-spairs.cpp</label>
+        <link refid="f4-spairs_8cpp"/>
+      </node>
+      <node id="23">
+        <label>Macaulay2/e/f4/f4-spairs.hpp</label>
+        <link refid="f4-spairs_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Macaulay2/e/f4/f4-types.hpp</label>
+        <link refid="f4-types_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>Macaulay2/e/f4/f4.cpp</label>
+        <link refid="f4_8cpp"/>
+      </node>
+      <node id="25">
+        <label>Macaulay2/e/f4/f4.hpp</label>
+        <link refid="f4_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>Macaulay2/e/fplll-interface.cpp</label>
+        <link refid="fplll-interface_8cpp"/>
+      </node>
+      <node id="28">
+        <label>Macaulay2/e/gb-f4/Basis.cpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8cpp"/>
+      </node>
+      <node id="27">
+        <label>Macaulay2/e/gb-f4/Basis.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.cpp</label>
+        <link refid="_g_b_f4_computation_8cpp"/>
+      </node>
+      <node id="29">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.hpp</label>
+        <link refid="_g_b_f4_computation_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.cpp</label>
+        <link refid="_g_b_f4_interface_8cpp"/>
+      </node>
+      <node id="31">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.hpp</label>
+        <link refid="_g_b_f4_interface_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>Macaulay2/e/gb-f4/PolynomialList.cpp</label>
+        <link refid="_polynomial_list_8cpp"/>
+      </node>
+      <node id="35">
+        <label>Macaulay2/e/gb-f4/PolynomialList.hpp</label>
+        <link refid="_polynomial_list_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>Macaulay2/e/gb-f4/SPairs.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_s_pairs_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>Macaulay2/e/gbring.cpp</label>
+        <link refid="gbring_8cpp"/>
+      </node>
+      <node id="51">
+        <label>Macaulay2/e/interface/aring.cpp</label>
+        <link refid="interface_2aring_8cpp"/>
+      </node>
+      <node id="17">
+        <label>Macaulay2/e/interface/groebner.cpp</label>
+        <link refid="groebner_8cpp"/>
+      </node>
+      <node id="9">
+        <label>Macaulay2/e/interface/matrix.cpp</label>
+        <link refid="interface_2matrix_8cpp"/>
+      </node>
+      <node id="52">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="53">
+        <label>Macaulay2/e/interface/ringelement.cpp</label>
+        <link refid="ringelement_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/mat-linalg.hpp</label>
+        <link refid="mat-linalg_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>Macaulay2/e/mat.cpp</label>
+        <link refid="mat_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/mutablemat-defs.hpp</label>
+        <link refid="mutablemat-defs_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Macaulay2/e/mutablemat.hpp</label>
+        <link refid="mutablemat_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>Macaulay2/e/poly.cpp</label>
+        <link refid="poly_8cpp"/>
+      </node>
+      <node id="56">
+        <label>Macaulay2/e/qring.cpp</label>
+        <link refid="qring_8cpp"/>
+      </node>
+      <node id="57">
+        <label>Macaulay2/e/relem.cpp</label>
+        <link refid="relem_8cpp"/>
+      </node>
+      <node id="39">
+        <label>Macaulay2/e/schreyer-resolution/res-dep-graph.cpp</label>
+        <link refid="res-dep-graph_8cpp"/>
+      </node>
+      <node id="45">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.cpp</label>
+        <link refid="res-f4-computation_8cpp"/>
+      </node>
+      <node id="43">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.hpp</label>
+        <link refid="res-f4-computation_8hpp"/>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</label>
+        <link refid="res-f4-m2-interface_8cpp"/>
+      </node>
+      <node id="40">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.cpp</label>
+        <link refid="res-f4_8cpp"/>
+      </node>
+      <node id="38">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.hpp</label>
+        <link refid="res-f4_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.cpp</label>
+        <link refid="res-poly-ring_8cpp"/>
+      </node>
+      <node id="42">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.hpp</label>
+        <link refid="res-poly-ring_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.cpp</label>
+        <link refid="res-schreyer-frame_8cpp"/>
+      </node>
+      <node id="48">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp</label>
+        <link refid="res-schreyer-frame_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>Macaulay2/e/unit-tests/ARingRRiTest.cpp</label>
+        <link refid="_a_ring_r_ri_test_8cpp"/>
+      </node>
+      <node id="59">
+        <label>Macaulay2/e/unit-tests/DMatZZpTest.cpp</label>
+        <link refid="_d_mat_z_zp_test_8cpp"/>
+      </node>
+      <node id="33">
+        <label>Macaulay2/e/unit-tests/MatrixIOTest.cpp</label>
+        <link refid="_matrix_i_o_test_8cpp"/>
+      </node>
+      <node id="60">
+        <label>Macaulay2/e/unit-tests/NCGroebnerTest.cpp</label>
+        <link refid="_n_c_groebner_test_8cpp"/>
+      </node>
+      <node id="37">
+        <label>Macaulay2/e/unit-tests/NewF4Test.cpp</label>
+        <link refid="_new_f4_test_8cpp"/>
+      </node>
+      <node id="10">
+        <label>Macaulay2/e/unit-tests/PointArray.cpp</label>
+        <link refid="_point_array_8cpp"/>
+      </node>
+      <node id="61">
+        <label>Macaulay2/e/unit-tests/RingCCCTest.cpp</label>
+        <link refid="_ring_c_c_c_test_8cpp"/>
+      </node>
+      <node id="62">
+        <label>Macaulay2/e/unit-tests/RingQQTest.cpp</label>
+        <link refid="_ring_q_q_test_8cpp"/>
+      </node>
+      <node id="63">
+        <label>Macaulay2/e/unit-tests/RingRRRTest.cpp</label>
+        <link refid="_ring_r_r_r_test_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_l_u_util" prot="public">LUUtil</innerclass>
+    <innerclass refid="class_d_mat_l_uin_place" prot="public">DMatLUinPlace</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="dmat-lu-inplace_8hpp_a1d9fe790cb0cb4f0fe5ec99737d82ed4_1a1d9fe790cb0cb4f0fe5ec99737d82ed4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt; double &gt; make_lapack_array</definition>
+        <argsstring>(const DMatRR &amp;mat)</argsstring>
+        <name>make_lapack_array</name>
+        <param>
+          <type>const <ref refid="lapack_8hpp_af08ee838e04db100344bab171255dbdc_1af08ee838e04db100344bab171255dbdc" kindref="member">DMatRR</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="52" column="13" bodyfile="Macaulay2/e/lapack.cpp" bodystart="20" bodyend="29" declfile="Macaulay2/e/dmat-lu-inplace.hpp" declline="52" declcolumn="13"/>
+        <references refid="mem_8cpp_a05e4d9829321b3db5b3dced46a697515_1a05e4d9829321b3db5b3dced46a697515" compoundref="mem_8cpp" startline="14">doubles</references>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <referencedby refid="class_d_mat_l_uin_place_af139e186af976f4233e19a671fe53238_1af139e186af976f4233e19a671fe53238" compoundref="dmat-lu-inplace_8hpp" startline="317" endline="362">DMatLUinPlace&lt; RingType &gt;::computeLU</referencedby>
+        <referencedby refid="class_lapack_aa41a859a5de966143e215300d34c440c_1aa41a859a5de966143e215300d34c440c" compoundref="lapack_8cpp" startline="1233" endline="1294">Lapack::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_a4578deee6ac6c59c7ea5a2b1feab788b_1a4578deee6ac6c59c7ea5a2b1feab788b" compoundref="lapack_8cpp" startline="302" endline="363">Lapack::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_adc2348c6514e02299fc7a4430f82650b_1adc2348c6514e02299fc7a4430f82650b" compoundref="lapack_8cpp" startline="1366" endline="1424">Lapack::eigenvalues_hermitian</referencedby>
+        <referencedby refid="class_lapack_a5f84114301e0a8f7f9d287df0c961a64_1a5f84114301e0a8f7f9d287df0c961a64" compoundref="lapack_8cpp" startline="462" endline="511">Lapack::eigenvalues_symmetric</referencedby>
+        <referencedby refid="class_lapack_a7097bdedbf71052dd9cae3b2263a0082_1a7097bdedbf71052dd9cae3b2263a0082" compoundref="lapack_8cpp" startline="1296" endline="1364">Lapack::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a8e878b74dee60db22d6c749ae5f7ae2f_1a8e878b74dee60db22d6c749ae5f7ae2f" compoundref="lapack_8cpp" startline="365" endline="460">Lapack::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a189ac4cb184bd7b67206841b0536a022_1a189ac4cb184bd7b67206841b0536a022" compoundref="lapack_8cpp" startline="1426" endline="1489">Lapack::eigenvectors_hermitian</referencedby>
+        <referencedby refid="class_lapack_ac7e7472d7c89089f39193a6ab1711661_1ac7e7472d7c89089f39193a6ab1711661" compoundref="lapack_8cpp" startline="513" endline="567">Lapack::eigenvectors_symmetric</referencedby>
+        <referencedby refid="class_lapack_a537f0551ffb9d5ce33d5c8b371e8f020_1a537f0551ffb9d5ce33d5c8b371e8f020" compoundref="lapack_8cpp" startline="1634" endline="1726">Lapack::least_squares</referencedby>
+        <referencedby refid="class_lapack_a5f9cdd430cbbf708083522c35932e27c_1a5f9cdd430cbbf708083522c35932e27c" compoundref="lapack_8cpp" startline="707" endline="797">Lapack::least_squares</referencedby>
+        <referencedby refid="class_lapack_a688c41597b335f56d7912c031b8cb37c_1a688c41597b335f56d7912c031b8cb37c" compoundref="lapack_8cpp" startline="1728" endline="1829">Lapack::least_squares_deficient</referencedby>
+        <referencedby refid="class_lapack_a5fc7e282c98db00c325b0dea5e8f7ec2_1a5fc7e282c98db00c325b0dea5e8f7ec2" compoundref="lapack_8cpp" startline="799" endline="896">Lapack::least_squares_deficient</referencedby>
+        <referencedby refid="class_lapack_a6da0099b62fc850acad1f28e965bd345_1a6da0099b62fc850acad1f28e965bd345" compoundref="lapack_8cpp" startline="1117" endline="1178">Lapack::LU</referencedby>
+        <referencedby refid="class_lapack_a4661a514f8ce88bea22fcad2839a56cc_1a4661a514f8ce88bea22fcad2839a56cc" compoundref="lapack_8cpp" startline="195" endline="238">Lapack::LU</referencedby>
+        <referencedby refid="class_lapack_ab287c83bc72e11782ce3553dd8a8f471_1ab287c83bc72e11782ce3553dd8a8f471" compoundref="lapack_8cpp" startline="1009" endline="1115">Lapack::QR</referencedby>
+        <referencedby refid="class_lapack_a5b5ced881564f3e639f5990b066f0e6e_1a5b5ced881564f3e639f5990b066f0e6e" compoundref="lapack_8cpp" startline="898" endline="1007">Lapack::QR</referencedby>
+        <referencedby refid="class_lapack_ac6c3c642267d23f995fc5a84d246426e_1ac6c3c642267d23f995fc5a84d246426e" compoundref="lapack_8cpp" startline="1180" endline="1231">Lapack::solve</referencedby>
+        <referencedby refid="class_lapack_afdd7668545160c61895bc35b9fc24605_1afdd7668545160c61895bc35b9fc24605" compoundref="lapack_8cpp" startline="240" endline="300">Lapack::solve</referencedby>
+        <referencedby refid="class_lapack_adfab11e25aa4e836ab1ac234fcb05e18_1adfab11e25aa4e836ab1ac234fcb05e18" compoundref="lapack_8cpp" startline="1491" endline="1559">Lapack::SVD</referencedby>
+        <referencedby refid="class_lapack_a12b7cd295a64e4aa51332f12f89f47cc_1a12b7cd295a64e4aa51332f12f89f47cc" compoundref="lapack_8cpp" startline="569" endline="634">Lapack::SVD</referencedby>
+        <referencedby refid="class_lapack_ad9e115c33301489852608fe584598bc5_1ad9e115c33301489852608fe584598bc5" compoundref="lapack_8cpp" startline="1561" endline="1632">Lapack::SVD_divide_conquer</referencedby>
+        <referencedby refid="class_lapack_a839e03b3ed6262f11f89ab27a850e6e0_1a839e03b3ed6262f11f89ab27a850e6e0" compoundref="lapack_8cpp" startline="636" endline="704">Lapack::SVD_divide_conquer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="dmat-lu-inplace_8hpp_a4fb05baef8ff7f8ecdd0f05cbce2b31e_1a4fb05baef8ff7f8ecdd0f05cbce2b31e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt; double &gt; make_lapack_array</definition>
+        <argsstring>(const DMatCC &amp;mat)</argsstring>
+        <name>make_lapack_array</name>
+        <param>
+          <type>const <ref refid="lapack_8hpp_a88a894ae4db001572530f62898cd39f0_1a88a894ae4db001572530f62898cd39f0" kindref="member">DMatCC</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="53" column="13" bodyfile="Macaulay2/e/lapack.cpp" bodystart="31" bodyend="43" declfile="Macaulay2/e/dmat-lu-inplace.hpp" declline="53" declcolumn="13"/>
+        <references refid="mem_8cpp_a05e4d9829321b3db5b3dced46a697515_1a05e4d9829321b3db5b3dced46a697515" compoundref="mem_8cpp" startline="14">doubles</references>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="structcc__doubles__struct_a286b2f5e1536bd98466a4ee0124f4025_1a286b2f5e1536bd98466a4ee0124f4025" compoundref="ringelem_8hpp" startline="64">cc_doubles_struct::im</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="structcc__doubles__struct_a2f569ccf956f3b6ab7353348affd9239_1a2f569ccf956f3b6ab7353348affd9239" compoundref="ringelem_8hpp" startline="63">cc_doubles_struct::re</references>
+      </memberdef>
+      <memberdef kind="function" id="dmat-lu-inplace_8hpp_a480bc96c84fc68bf689e889b1f65ae70_1a480bc96c84fc68bf689e889b1f65ae70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void fill_from_lapack_array</definition>
+        <argsstring>(const std::vector&lt; double &gt; &amp;doubles, DMatRR &amp;mat)</argsstring>
+        <name>fill_from_lapack_array</name>
+        <param>
+          <type>const std::vector&lt; double &gt; &amp;</type>
+          <declname>doubles</declname>
+        </param>
+        <param>
+          <type><ref refid="lapack_8hpp_af08ee838e04db100344bab171255dbdc_1af08ee838e04db100344bab171255dbdc" kindref="member">DMatRR</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="54" column="6" bodyfile="Macaulay2/e/lapack.cpp" bodystart="45" bodyend="56" declfile="Macaulay2/e/dmat-lu-inplace.hpp" declline="54" declcolumn="6"/>
+        <references refid="mem_8cpp_a05e4d9829321b3db5b3dced46a697515_1a05e4d9829321b3db5b3dced46a697515" compoundref="mem_8cpp" startline="14">doubles</references>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <referencedby refid="class_d_mat_l_uin_place_af139e186af976f4233e19a671fe53238_1af139e186af976f4233e19a671fe53238" compoundref="dmat-lu-inplace_8hpp" startline="317" endline="362">DMatLUinPlace&lt; RingType &gt;::computeLU</referencedby>
+        <referencedby refid="class_lapack_aa41a859a5de966143e215300d34c440c_1aa41a859a5de966143e215300d34c440c" compoundref="lapack_8cpp" startline="1233" endline="1294">Lapack::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_adc2348c6514e02299fc7a4430f82650b_1adc2348c6514e02299fc7a4430f82650b" compoundref="lapack_8cpp" startline="1366" endline="1424">Lapack::eigenvalues_hermitian</referencedby>
+        <referencedby refid="class_lapack_a5f84114301e0a8f7f9d287df0c961a64_1a5f84114301e0a8f7f9d287df0c961a64" compoundref="lapack_8cpp" startline="462" endline="511">Lapack::eigenvalues_symmetric</referencedby>
+        <referencedby refid="class_lapack_a7097bdedbf71052dd9cae3b2263a0082_1a7097bdedbf71052dd9cae3b2263a0082" compoundref="lapack_8cpp" startline="1296" endline="1364">Lapack::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a189ac4cb184bd7b67206841b0536a022_1a189ac4cb184bd7b67206841b0536a022" compoundref="lapack_8cpp" startline="1426" endline="1489">Lapack::eigenvectors_hermitian</referencedby>
+        <referencedby refid="class_lapack_ac7e7472d7c89089f39193a6ab1711661_1ac7e7472d7c89089f39193a6ab1711661" compoundref="lapack_8cpp" startline="513" endline="567">Lapack::eigenvectors_symmetric</referencedby>
+        <referencedby refid="class_lapack_a537f0551ffb9d5ce33d5c8b371e8f020_1a537f0551ffb9d5ce33d5c8b371e8f020" compoundref="lapack_8cpp" startline="1634" endline="1726">Lapack::least_squares</referencedby>
+        <referencedby refid="class_lapack_a5f9cdd430cbbf708083522c35932e27c_1a5f9cdd430cbbf708083522c35932e27c" compoundref="lapack_8cpp" startline="707" endline="797">Lapack::least_squares</referencedby>
+        <referencedby refid="class_lapack_a688c41597b335f56d7912c031b8cb37c_1a688c41597b335f56d7912c031b8cb37c" compoundref="lapack_8cpp" startline="1728" endline="1829">Lapack::least_squares_deficient</referencedby>
+        <referencedby refid="class_lapack_a5fc7e282c98db00c325b0dea5e8f7ec2_1a5fc7e282c98db00c325b0dea5e8f7ec2" compoundref="lapack_8cpp" startline="799" endline="896">Lapack::least_squares_deficient</referencedby>
+        <referencedby refid="class_lapack_ab287c83bc72e11782ce3553dd8a8f471_1ab287c83bc72e11782ce3553dd8a8f471" compoundref="lapack_8cpp" startline="1009" endline="1115">Lapack::QR</referencedby>
+        <referencedby refid="class_lapack_a5b5ced881564f3e639f5990b066f0e6e_1a5b5ced881564f3e639f5990b066f0e6e" compoundref="lapack_8cpp" startline="898" endline="1007">Lapack::QR</referencedby>
+        <referencedby refid="class_lapack_ac6c3c642267d23f995fc5a84d246426e_1ac6c3c642267d23f995fc5a84d246426e" compoundref="lapack_8cpp" startline="1180" endline="1231">Lapack::solve</referencedby>
+        <referencedby refid="class_lapack_afdd7668545160c61895bc35b9fc24605_1afdd7668545160c61895bc35b9fc24605" compoundref="lapack_8cpp" startline="240" endline="300">Lapack::solve</referencedby>
+        <referencedby refid="class_lapack_adfab11e25aa4e836ab1ac234fcb05e18_1adfab11e25aa4e836ab1ac234fcb05e18" compoundref="lapack_8cpp" startline="1491" endline="1559">Lapack::SVD</referencedby>
+        <referencedby refid="class_lapack_a12b7cd295a64e4aa51332f12f89f47cc_1a12b7cd295a64e4aa51332f12f89f47cc" compoundref="lapack_8cpp" startline="569" endline="634">Lapack::SVD</referencedby>
+        <referencedby refid="class_lapack_ad9e115c33301489852608fe584598bc5_1ad9e115c33301489852608fe584598bc5" compoundref="lapack_8cpp" startline="1561" endline="1632">Lapack::SVD_divide_conquer</referencedby>
+        <referencedby refid="class_lapack_a839e03b3ed6262f11f89ab27a850e6e0_1a839e03b3ed6262f11f89ab27a850e6e0" compoundref="lapack_8cpp" startline="636" endline="704">Lapack::SVD_divide_conquer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="dmat-lu-inplace_8hpp_ae48c10b495ee0250224ba9fc8741fde2_1ae48c10b495ee0250224ba9fc8741fde2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void fill_from_lapack_array</definition>
+        <argsstring>(const std::vector&lt; double &gt; &amp;doubles, DMatCC &amp;mat)</argsstring>
+        <name>fill_from_lapack_array</name>
+        <param>
+          <type>const std::vector&lt; double &gt; &amp;</type>
+          <declname>doubles</declname>
+        </param>
+        <param>
+          <type><ref refid="lapack_8hpp_a88a894ae4db001572530f62898cd39f0_1a88a894ae4db001572530f62898cd39f0" kindref="member">DMatCC</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="55" column="6" bodyfile="Macaulay2/e/lapack.cpp" bodystart="58" bodyend="72" declfile="Macaulay2/e/dmat-lu-inplace.hpp" declline="55" declcolumn="6"/>
+        <references refid="mem_8cpp_a05e4d9829321b3db5b3dced46a697515_1a05e4d9829321b3db5b3dced46a697515" compoundref="mem_8cpp" startline="14">doubles</references>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="structcc__doubles__struct_a286b2f5e1536bd98466a4ee0124f4025_1a286b2f5e1536bd98466a4ee0124f4025" compoundref="ringelem_8hpp" startline="64">cc_doubles_struct::im</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="structcc__doubles__struct_a2f569ccf956f3b6ab7353348affd9239_1a2f569ccf956f3b6ab7353348affd9239" compoundref="ringelem_8hpp" startline="63">cc_doubles_struct::re</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_d_mat_l_uin_place" kindref="compound">DMatLUinPlace</ref>&lt;RT&gt;</computeroutput> <mdash/> the LU worker that <computeroutput><ref refid="class_d_mat_lin_alg" kindref="compound">DMatLinAlg</ref>&lt;RT&gt;</computeroutput> delegates to, with <computeroutput>RR</computeroutput> / <computeroutput>CC</computeroutput> / <ref refid="class_g_f" kindref="compound">GF</ref> specialisations. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares <computeroutput><ref refid="class_d_mat_l_uin_place" kindref="compound">DMatLUinPlace</ref>&lt;RingType&gt;</computeroutput>, the worker class <computeroutput><ref refid="class_d_mat_lin_alg" kindref="compound">DMatLinAlg</ref>&lt;RingType&gt;::mLUObject</computeroutput> is built from. Its constructor copies the caller&apos;s matrix into the private <computeroutput>mLU</computeroutput> field (FLINT&apos;s &quot;in-place&quot; routines and the LAPACK routines below mutate that internal copy, <emphasis>not</emphasis> the user&apos;s original), runs <computeroutput>computeLU()</computeroutput> lazily on first access via <computeroutput>LUinPlace()</computeroutput>, and exposes <computeroutput>permutation()</computeroutput>, <computeroutput>pivotColumns()</computeroutput>, and <computeroutput>signOfPermutation()</computeroutput>. The generic <computeroutput>computeLU()</computeroutput> body in this file implements partial-pivot LU using <computeroutput><ref refid="class_mat_elementary_ops" kindref="compound">MatElementaryOps</ref>&lt;Mat&gt;::interchange_rows</computeroutput> and <computeroutput>findPivot</computeroutput> (with absolute-value-pivot <computeroutput>findPivot</computeroutput> specialisations for <computeroutput>ARingRRR</computeroutput> / <computeroutput>ARingCCC</computeroutput>).</para>
+<para>Four <computeroutput>computeLU</computeroutput> specialisations route to native back ends: <computeroutput>ARingGFFlintBig</computeroutput> via <computeroutput>fq_nmod_mat_lu</computeroutput>, <computeroutput>ARingGFFlint</computeroutput> via <computeroutput>fq_zech_mat_lu</computeroutput> (<computeroutput>&lt;flint/perm.h&gt;::_perm_parity</computeroutput> reads off the sign), and <computeroutput>ARingRR</computeroutput> / <computeroutput>ARingCC</computeroutput> via LAPACK&apos;s <computeroutput><ref refid="lapack_8hpp_ac4044d6db62bcdfdcff80617986e3401_1ac4044d6db62bcdfdcff80617986e3401" kindref="member">dgetrf_</ref></computeroutput> / <computeroutput><ref refid="lapack_8hpp_a54d41435f16c12a4b245af603aeb9667_1a54d41435f16c12a4b245af603aeb9667" kindref="member">zgetrf_</ref></computeroutput> <mdash/> marshalled in and out by the free helpers <computeroutput><ref refid="dmat-lu-inplace_8hpp_a1d9fe790cb0cb4f0fe5ec99737d82ed4_1a1d9fe790cb0cb4f0fe5ec99737d82ed4" kindref="member">make_lapack_array</ref></computeroutput> / <computeroutput><ref refid="dmat-lu-inplace_8hpp_a480bc96c84fc68bf689e889b1f65ae70_1a480bc96c84fc68bf689e889b1f65ae70" kindref="member">fill_from_lapack_array</ref></computeroutput> declared at the top of the header. The shared <computeroutput><ref refid="class_l_u_util" kindref="compound">LUUtil</ref>&lt;RT&gt;</computeroutput> template carries <computeroutput>setUpperLower</computeroutput> (splits an in-place LU back into separate L / U) and <computeroutput>computePivotColumns</computeroutput>.</para>
+<para><simplesect kind="see"><para><ref refid="dmat-lu_8hpp" kindref="compound">dmat-lu.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="dmat_8hpp" kindref="compound">dmat.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="aring-gf-flint_8hpp" kindref="compound">aring-gf-flint.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="aring-gf-flint-big_8hpp" kindref="compound">aring-gf-flint-big.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>2014<sp/><sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_dmat_lu_inplace_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_dmat_lu_inplace_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="dmat_8hpp" kindref="compound">dmat.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mat-elem-ops_8hpp" kindref="compound">mat-elem-ops.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mat-util_8hpp" kindref="compound">mat-util.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>needs<sp/>to<sp/>be<sp/>included<sp/>before<sp/>any<sp/>flint<sp/>files<sp/>are<sp/>included.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;M2/gc-include.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>GCC<sp/>diagnostic<sp/>push</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>GCC<sp/>diagnostic<sp/>ignored<sp/>&quot;-Wconversion&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;flint/fq_nmod_mat.h&gt;</highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>fq_nmod_mat_lu,<sp/>fq_zech_mat_lu</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;flint/perm.h&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>_perm_parity</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>GCC<sp/>diagnostic<sp/>pop</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">std::vector&lt;double&gt;<sp/><ref refid="dmat-lu-inplace_8hpp_a1d9fe790cb0cb4f0fe5ec99737d82ed4_1a1d9fe790cb0cb4f0fe5ec99737d82ed4" kindref="member">make_lapack_array</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="lapack_8hpp_af08ee838e04db100344bab171255dbdc_1af08ee838e04db100344bab171255dbdc" kindref="member">DMatRR</ref>&amp;<sp/>mat);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">std::vector&lt;double&gt;<sp/><ref refid="dmat-lu-inplace_8hpp_a1d9fe790cb0cb4f0fe5ec99737d82ed4_1a1d9fe790cb0cb4f0fe5ec99737d82ed4" kindref="member">make_lapack_array</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="lapack_8hpp_a88a894ae4db001572530f62898cd39f0_1a88a894ae4db001572530f62898cd39f0" kindref="member">DMatCC</ref>&amp;<sp/>mat);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="dmat-lu-inplace_8hpp_a480bc96c84fc68bf689e889b1f65ae70_1a480bc96c84fc68bf689e889b1f65ae70" kindref="member">fill_from_lapack_array</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector<sp/>&lt;double&gt;<sp/>&amp;<sp/><ref refid="mem_8cpp_a05e4d9829321b3db5b3dced46a697515_1a05e4d9829321b3db5b3dced46a697515" kindref="member">doubles</ref>,<sp/><ref refid="lapack_8hpp_af08ee838e04db100344bab171255dbdc_1af08ee838e04db100344bab171255dbdc" kindref="member">DMatRR</ref>&amp;<sp/>mat);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="dmat-lu-inplace_8hpp_a480bc96c84fc68bf689e889b1f65ae70_1a480bc96c84fc68bf689e889b1f65ae70" kindref="member">fill_from_lapack_array</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector<sp/>&lt;double&gt;<sp/>&amp;<sp/><ref refid="mem_8cpp_a05e4d9829321b3db5b3dced46a697515_1a05e4d9829321b3db5b3dced46a697515" kindref="member">doubles</ref>,<sp/><ref refid="lapack_8hpp_a88a894ae4db001572530f62898cd39f0_1a88a894ae4db001572530f62898cd39f0" kindref="member">DMatCC</ref>&amp;<sp/>mat);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RT&gt;</highlight></codeline>
+<codeline lineno="58" refid="class_l_u_util" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_l_u_util" kindref="compound">LUUtil</ref></highlight></codeline>
+<codeline lineno="59"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="61" refid="class_l_u_util_a146b080d865ee903448d25bde77905ea_1a146b080d865ee903448d25bde77905ea" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>RT<sp/><ref refid="class_l_u_util_a146b080d865ee903448d25bde77905ea_1a146b080d865ee903448d25bde77905ea" kindref="member">RingType</ref>;</highlight></codeline>
+<codeline lineno="62" refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_d_mat" kindref="compound">DMat&lt;RingType&gt;</ref><sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_a1838ec98f16e5635a493dc4c1b1d09f7_1a1838ec98f16e5635a493dc4c1b1d09f7" kindref="member">setUpperLower</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>&amp;<sp/>LU,<sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>&amp;<sp/>lower,<sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>&amp;<sp/>upper);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_a764edee21874621097db46be749d5873_1a764edee21874621097db46be749d5873" kindref="member">computePivotColumns</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>&amp;<sp/>LU,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>result_columns);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>not<sp/>written<sp/>yet:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>static<sp/>bool<sp/>computeSign(const<sp/>std::vector&lt;size_t&gt;&amp;<sp/>perm);<sp/><sp/>//<sp/>true:<sp/>1,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>false:<sp/>-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="class_l_u_util_a46833b05495dc26446876f482419781a_1a46833b05495dc26446876f482419781a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_a46833b05495dc26446876f482419781a_1a46833b05495dc26446876f482419781a" kindref="member">debug_out</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>&amp;<sp/>M)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classbuffer" kindref="compound">buffer</ref><sp/>o;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mat-util_8hpp_a1109fbe3c04d038304324bcb8a66d8c4_1a1109fbe3c04d038304324bcb8a66d8c4" kindref="member">displayMat</ref>(o,<sp/>M);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>o.<ref refid="classbuffer_a39972fb7c929bb9e42ed60cddbc1109f_1a39972fb7c929bb9e42ed60cddbc1109f" kindref="member">str</ref>()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RT&gt;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_d_mat_l_uin_place" kindref="compound">DMatLUinPlace</ref>;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RT&gt;</highlight></codeline>
+<codeline lineno="83" refid="class_d_mat_l_uin_place" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" kindref="member">DMatLUinPlace</ref></highlight></codeline>
+<codeline lineno="84"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="86" refid="class_d_mat_l_uin_place_ae67bd07187516fd9ff4817a0813ea955_1ae67bd07187516fd9ff4817a0813ea955" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>RT<sp/><ref refid="class_d_mat_l_uin_place_ae67bd07187516fd9ff4817a0813ea955_1ae67bd07187516fd9ff4817a0813ea955" kindref="member">RingType</ref>;</highlight></codeline>
+<codeline lineno="87" refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_d_mat" kindref="compound">DMat&lt;RingType&gt;</ref><sp/><ref refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" kindref="member">Mat</ref>;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="90" refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" kindref="member">DMatLUinPlace</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" kindref="member">Mat</ref>&amp;<sp/>A);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_ae67bd07187516fd9ff4817a0813ea955_1ae67bd07187516fd9ff4817a0813ea955" kindref="member">RingType</ref>&amp;<sp/><ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.ring();<sp/>}</highlight></codeline>
+<codeline lineno="93" refid="class_d_mat_l_uin_place_a18e991408885191019388dffc94d19b1_1a18e991408885191019388dffc94d19b1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a18e991408885191019388dffc94d19b1_1a18e991408885191019388dffc94d19b1" kindref="member">numRows</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows();<sp/>}</highlight></codeline>
+<codeline lineno="94" refid="class_d_mat_l_uin_place_afe096c511c4b0cc949c80b6e329d5ff1_1afe096c511c4b0cc949c80b6e329d5ff1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_afe096c511c4b0cc949c80b6e329d5ff1_1afe096c511c4b0cc949c80b6e329d5ff1" kindref="member">numColumns</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numColumns();<sp/>}</highlight></codeline>
+<codeline lineno="95" refid="class_d_mat_l_uin_place_a1108ce384e2f788405d754ad7189506e_1a1108ce384e2f788405d754ad7189506e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" kindref="member">Mat</ref>&amp;<sp/><ref refid="class_d_mat_l_uin_place_a1108ce384e2f788405d754ad7189506e_1a1108ce384e2f788405d754ad7189506e" kindref="member">LUinPlace</ref>()</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" kindref="member">computeLU</ref>();</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>}<sp/><sp/></highlight><highlight class="comment">//<sp/>raises<sp/>an<sp/>exception<sp/>if<sp/>there<sp/>is<sp/>an<sp/>error</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Can<sp/>be<sp/>called<sp/>repeatedly:<sp/>the<sp/>result<sp/>is<sp/>remembered<sp/>once<sp/>done.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Returns<sp/>a<sp/>constant<sp/>ref<sp/>to<sp/>the<sp/>internal<sp/>&quot;in<sp/>place&quot;<sp/>LU.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="class_d_mat_l_uin_place_ad861cd6fabca55a6672c41d9c414085d_1ad861cd6fabca55a6672c41d9c414085d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_ad861cd6fabca55a6672c41d9c414085d_1ad861cd6fabca55a6672c41d9c414085d" kindref="member">signOfPermutation</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="104" refid="class_d_mat_l_uin_place_a9739210c858cf973d9982958559667df_1a9739210c858cf973d9982958559667df" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/><ref refid="class_d_mat_l_uin_place_a9739210c858cf973d9982958559667df_1a9739210c858cf973d9982958559667df" kindref="member">permutation</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="105" refid="class_d_mat_l_uin_place_ae704fca6d777b82b03b6a7419fd5298c_1ae704fca6d777b82b03b6a7419fd5298c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;size_t&gt;&amp;<sp/><ref refid="class_d_mat_l_uin_place_ae704fca6d777b82b03b6a7419fd5298c_1ae704fca6d777b82b03b6a7419fd5298c" kindref="member">pivotColumns</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" kindref="member">mPivotColumns</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="107" refid="class_d_mat_l_uin_place_a6686191719c3c1dd5847834af770afcc_1a6686191719c3c1dd5847834af770afcc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RingType::ElementType<sp/><ref refid="class_d_mat_l_uin_place_a6686191719c3c1dd5847834af770afcc_1a6686191719c3c1dd5847834af770afcc" kindref="member">ElementType</ref>;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" kindref="member">computeLU</ref>();</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" kindref="member">findPivot</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>row,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="113" refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" kindref="member">Mat</ref><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>;</highlight></codeline>
+<codeline lineno="114" refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;size_t&gt;<sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>;</highlight></codeline>
+<codeline lineno="115" refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref>;</highlight></codeline>
+<codeline lineno="116" refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref>;</highlight></codeline>
+<codeline lineno="117" refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;size_t&gt;<sp/><ref refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" kindref="member">mPivotColumns</ref>;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="121" refid="class_d_mat_l_uin_place_a9bd09bd2be7a2af9a8e4eec91195fc80_1a9bd09bd2be7a2af9a8e4eec91195fc80" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" kindref="member">DMatLUinPlace&lt;M2::ARingGFFlintBig&gt;::computeLU</ref>()</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref>)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//std::cout<sp/>&lt;&lt;<sp/>&quot;computing<sp/>LU<sp/>decomposition<sp/>GFFlintBig&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>mp_limb_signed_t*<sp/>perm<sp/>=<sp/><ref refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" kindref="member">newarray_atomic</ref>(mp_limb_signed_t,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows());</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/>fq_nmod_mat_lu(perm,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.fq_nmod_mat(),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/><ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().flintContext());</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>we<sp/>set<sp/>mPerm:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>.clear();</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows();<sp/>i++)<sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>.push_back(perm[i]);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref><sp/>=<sp/>(_perm_parity(perm,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows())<sp/>==<sp/>0);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><ref refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" kindref="member">freemem</ref>(perm);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>we<sp/>set<sp/>mPivotColumns</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><ref refid="class_l_u_util_a764edee21874621097db46be749d5873_1a764edee21874621097db46be749d5873" kindref="member">LUUtil&lt;RingType&gt;::computePivotColumns</ref>(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>,<sp/><ref refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" kindref="member">mPivotColumns</ref>);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="141" refid="class_d_mat_l_uin_place_a4293afe3468041af1449b6004b020443_1a4293afe3468041af1449b6004b020443" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" kindref="member">DMatLUinPlace&lt;M2::ARingGFFlint&gt;::computeLU</ref>()</highlight></codeline>
+<codeline lineno="142"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref>)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;computing<sp/>LU<sp/>decomposition<sp/>GFFlint&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/>mp_limb_signed_t*<sp/>perm<sp/>=<sp/><ref refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" kindref="member">newarray_atomic</ref>(mp_limb_signed_t,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows());</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>fq_zech_mat_lu(perm,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.fq_zech_mat(),<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/><ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().flintContext());</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>we<sp/>set<sp/>mPerm:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>.clear();</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows();<sp/>i++)<sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>.push_back(perm[i]);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref><sp/>=<sp/>(_perm_parity(perm,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows())<sp/>==<sp/>0);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><ref refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" kindref="member">freemem</ref>(perm);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>we<sp/>set<sp/>mPivotColumns</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><ref refid="class_l_u_util_a764edee21874621097db46be749d5873_1a764edee21874621097db46be749d5873" kindref="member">LUUtil&lt;RingType&gt;::computePivotColumns</ref>(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>,<sp/><ref refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" kindref="member">mPivotColumns</ref>);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>RingType&gt;</highlight></codeline>
+<codeline lineno="160" refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" refkind="member"><highlight class="normal"><ref refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" kindref="member">DMatLUinPlace&lt;RingType&gt;::DMatLUinPlace</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" kindref="member">Mat</ref>&amp;<sp/>A)</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>(A),<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>copies<sp/>A</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref>(true),<sp/><sp/></highlight><highlight class="comment">//<sp/>sign<sp/>=<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref>(false)</highlight></codeline>
+<codeline lineno="164"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>A.<ref refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" kindref="member">numRows</ref>();<sp/>i++)<sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>.push_back(i);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>RingType&gt;</highlight></codeline>
+<codeline lineno="169" refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" kindref="member">DMatLUinPlace&lt;RingType&gt;::findPivot</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>row,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col)</highlight></codeline>
+<codeline lineno="170"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Look<sp/>at<sp/>elements<sp/>A[row,col],<sp/>A[row+1,col],<sp/>...,<sp/>A[nrows-1,<sp/>col]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Return<sp/>the<sp/>index<sp/>r<sp/>s.y.<sp/>abs(A[r,col])<sp/>is<sp/>maximum<sp/>over<sp/>all<sp/>of<sp/>these</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>row;<sp/>i<sp/>&lt;<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows();<sp/>i++)</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().is_zero(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(i,<sp/>col)))<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>i;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">size_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(-1);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="182" refid="class_d_mat_l_uin_place_ac304ff8b097568a9d40f527baed211c8_1ac304ff8b097568a9d40f527baed211c8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" kindref="member">DMatLUinPlace&lt;M2::ARingRRR&gt;::findPivot</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>row,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col)</highlight></codeline>
+<codeline lineno="183"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Look<sp/>at<sp/>elements<sp/>A[row,col],<sp/>A[row+1,col],<sp/>...,<sp/>A[nrows-1,<sp/>col]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Return<sp/>the<sp/>index<sp/>r<sp/>s.y.<sp/>abs(A[r,col])<sp/>is<sp/>maximum<sp/>over<sp/>all<sp/>of<sp/>these</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/>M2::ARingRRR::Element<sp/>largest(<ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>()),<sp/><ref refid="polyroots_8cpp_a3aa069ac3980707dae1e0530f50d59e4_1a3aa069ac3980707dae1e0530f50d59e4" kindref="member">abs</ref>(<ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>());</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>best_row_so_far<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">size_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(-1);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().set_zero(largest);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>row;<sp/>i<sp/>&lt;<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows();<sp/>i++)</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().abs(<ref refid="polyroots_8cpp_a3aa069ac3980707dae1e0530f50d59e4_1a3aa069ac3980707dae1e0530f50d59e4" kindref="member">abs</ref>,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(i,<sp/>col));</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().compare_elems(<ref refid="polyroots_8cpp_a3aa069ac3980707dae1e0530f50d59e4_1a3aa069ac3980707dae1e0530f50d59e4" kindref="member">abs</ref>,<sp/>largest)<sp/>&gt;<sp/>0)</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>best_row_so_far<sp/>=<sp/>i;</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().set(largest,<sp/><ref refid="polyroots_8cpp_a3aa069ac3980707dae1e0530f50d59e4_1a3aa069ac3980707dae1e0530f50d59e4" kindref="member">abs</ref>);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>best_row_so_far;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="204" refid="class_d_mat_l_uin_place_aecd1bc6d3a814713b4850f6ddb334018_1aecd1bc6d3a814713b4850f6ddb334018" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" kindref="member">DMatLUinPlace&lt;M2::ARingCCC&gt;::findPivot</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>row,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col)</highlight></codeline>
+<codeline lineno="205"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Look<sp/>at<sp/>elements<sp/>A[row,col],<sp/>A[row+1,col],<sp/>...,<sp/>A[nrows-1,<sp/>col]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Return<sp/>the<sp/>index<sp/>r<sp/>s.y.<sp/>abs(A[r,col])<sp/>is<sp/>maximum<sp/>over<sp/>all<sp/>of<sp/>these</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_m2_1_1_a_ring_r_r_r" kindref="compound">M2::ARingRRR</ref>&amp;<sp/>RR<sp/>=<sp/><ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().real_ring();</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/>M2::ARingRRR::Element<sp/>largest(RR),<sp/><ref refid="polyroots_8cpp_a3aa069ac3980707dae1e0530f50d59e4_1a3aa069ac3980707dae1e0530f50d59e4" kindref="member">abs</ref>(RR);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>best_row_so_far<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">size_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(-1);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/>RR.<ref refid="class_m2_1_1_a_ring_r_r_r_ab40170dfb59003f6a6dcc529cb9e1fe9_1ab40170dfb59003f6a6dcc529cb9e1fe9" kindref="member">set_zero</ref>(largest);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>row;<sp/>i<sp/>&lt;<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows();<sp/>i++)</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().abs(<ref refid="polyroots_8cpp_a3aa069ac3980707dae1e0530f50d59e4_1a3aa069ac3980707dae1e0530f50d59e4" kindref="member">abs</ref>,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(i,<sp/>col));</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(RR.<ref refid="class_m2_1_1_a_ring_r_r_r_a67937a97bf25a85de9ea7b3a638c7c7b_1a67937a97bf25a85de9ea7b3a638c7c7b" kindref="member">compare_elems</ref>(<ref refid="polyroots_8cpp_a3aa069ac3980707dae1e0530f50d59e4_1a3aa069ac3980707dae1e0530f50d59e4" kindref="member">abs</ref>,<sp/>largest)<sp/>&gt;<sp/>0)</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>best_row_so_far<sp/>=<sp/>i;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RR.<ref refid="class_m2_1_1_a_ring_r_r_r_a4373dac87e71f92e824c18b4765e91e2_1a4373dac87e71f92e824c18b4765e91e2" kindref="member">set</ref>(largest,<sp/><ref refid="polyroots_8cpp_a3aa069ac3980707dae1e0530f50d59e4_1a3aa069ac3980707dae1e0530f50d59e4" kindref="member">abs</ref>);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>best_row_so_far;</highlight></codeline>
+<codeline lineno="225"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>RingType&gt;</highlight></codeline>
+<codeline lineno="228" refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" kindref="member">DMatLUinPlace&lt;RingType&gt;::computeLU</ref>()</highlight></codeline>
+<codeline lineno="229"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref>)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;computing<sp/>LU<sp/>decomposition<sp/>generic<sp/>version&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RingType::Element<sp/>tmp(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.ring());</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col<sp/>=<sp/>0;<sp/><sp/></highlight><highlight class="comment">//<sp/>current<sp/>column<sp/>we<sp/>are<sp/>working<sp/>on</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>row<sp/>=<sp/>0;<sp/><sp/></highlight><highlight class="comment">//<sp/>current<sp/>row<sp/>we<sp/>are<sp/>working<sp/>on</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nrows<sp/>=<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows();</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>ncols<sp/>=<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numColumns();</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(col<sp/>&lt;<sp/>ncols<sp/>&amp;&amp;<sp/>row<sp/>&lt;<sp/>nrows)</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>printf(&quot;***<sp/>in<sp/>naive<sp/>row,col<sp/>=<sp/>(%ld,<sp/>%ld)<sp/>***\n&quot;,<sp/>row,<sp/>col);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>debug_out();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Step<sp/>1:<sp/>Set<sp/>the<sp/>&apos;upper&apos;<sp/>values:<sp/>(row,col)..(nrows-1,col)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>row;<sp/>r<sp/>&lt;<sp/>nrows;<sp/>r++)</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>row;<sp/>i++)</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.ring().mult(tmp,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(r,<sp/>i),<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(i,<sp/>col));</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.ring().subtract(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(r,<sp/>col),<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(r,<sp/>col),<sp/>tmp);</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>printf(&quot;after<sp/>step<sp/>1\n&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>debug_out();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Step<sp/>2:<sp/>Find<sp/>a<sp/>pivot<sp/>among<sp/>the<sp/>elements<sp/>in<sp/>step<sp/>1.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>If<sp/>one:<sp/>swap<sp/>rows<sp/>if<sp/>needed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>If<sp/>none,<sp/>increment<sp/>&apos;col&apos;,<sp/>and<sp/>continue<sp/>at<sp/>start<sp/>of<sp/>loop</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>k<sp/>=<sp/><ref refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" kindref="member">findPivot</ref>(row,<sp/>col);</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(k<sp/>==<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">size_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(-1))</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>col<sp/>=<sp/>col<sp/>+<sp/>1;</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>printf(&quot;pivot<sp/>is<sp/>in<sp/>row<sp/>%ld\n&quot;,<sp/>k);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" kindref="member">std::swap</ref>(<ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[row],<sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[k]);</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(k<sp/>!=<sp/>row)</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_mat_elementary_ops" kindref="compound">MatElementaryOps&lt;Mat&gt;::interchange_rows</ref>(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>,<sp/>k,<sp/>row);</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref><sp/>=<sp/>!<ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref>;</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" kindref="member">mPivotColumns</ref>.push_back(col);</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_a6686191719c3c1dd5847834af770afcc_1a6686191719c3c1dd5847834af770afcc" kindref="member">ElementType</ref>&amp;<sp/>pivot<sp/>=<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(row,<sp/>col);</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>printf(&quot;after<sp/>step<sp/>2:\n&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>debug_out();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Step<sp/>3A:<sp/>Set<sp/>the<sp/>&apos;upper&apos;<sp/>elements<sp/>in<sp/>(row,col+1),<sp/>...,<sp/>(row,ncols-1).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>col<sp/>+<sp/>1;<sp/>c<sp/>&lt;<sp/>ncols;<sp/>c++)</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>row;<sp/>i++)</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.ring().mult(tmp,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(row,<sp/>i),<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(i,<sp/>c));</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.ring().subtract(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(row,<sp/>c),<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(row,<sp/>c),<sp/>tmp);</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>printf(&quot;after<sp/>step<sp/>3A:\n&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>debug_out();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Step<sp/>3B:<sp/>Set<sp/>the<sp/>&apos;lower&apos;<sp/>elements<sp/>in<sp/>(row+1,row),<sp/>...,<sp/>(nrows-1,row)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>from<sp/>(row+1,col),<sp/>...,<sp/>(nrows-1,col)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>just<sp/>means<sp/>dividing<sp/>then<sp/>by<sp/>the<sp/>pivot</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>except,<sp/>if<sp/>we<sp/>have<sp/>skipped<sp/>columns<sp/>for<sp/>pivots,<sp/>we<sp/>must<sp/>set<sp/>these</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>elements</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>in<sp/>column<sp/>&apos;row&apos;,<sp/>not<sp/>&apos;col&apos;...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Step<sp/>3C:<sp/>if<sp/>row<sp/>!=<sp/>col,<sp/>then<sp/>set<sp/>these<sp/>elements<sp/>to<sp/>0:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>(row+1,col),<sp/>...,<sp/>(nrows-1,col)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>row<sp/>+<sp/>1;<sp/>r<sp/>&lt;<sp/>nrows;<sp/>r++)</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.ring().divide(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(r,<sp/>row),<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(r,<sp/>col),<sp/>pivot);</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(row<sp/>&lt;<sp/>col)<sp/><ref refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" kindref="member">ring</ref>().set_zero(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.entry(r,<sp/>col));</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>printf(&quot;after<sp/>step<sp/>3B:\n&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>debug_out();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>row++;</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>col++;</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="314"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="317" refid="class_d_mat_l_uin_place_af139e186af976f4233e19a671fe53238_1af139e186af976f4233e19a671fe53238" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" kindref="member">DMatLUinPlace&lt;M2::ARingRR&gt;::computeLU</ref>()</highlight></codeline>
+<codeline lineno="318"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref>)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;computing<sp/>LU<sp/>decomposition<sp/>ARingRR&quot;<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rows<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows());</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cols<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numColumns());</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>min<sp/>=<sp/>(rows<sp/>&lt;=<sp/>cols)<sp/>?<sp/>rows<sp/>:<sp/>cols;</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"></highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(min<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"></highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>perm<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">[min];</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/>std::vector&lt;double&gt;<sp/>copyA<sp/>=<sp/><ref refid="dmat-lu-inplace_8hpp_a1d9fe790cb0cb4f0fe5ec99737d82ed4_1a1d9fe790cb0cb4f0fe5ec99737d82ed4" kindref="member">make_lapack_array</ref>(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>);</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="333"><highlight class="normal"><sp/><sp/><ref refid="lapack_8hpp_ac4044d6db62bcdfdcff80617986e3401_1ac4044d6db62bcdfdcff80617986e3401" kindref="member">dgetrf_</ref>(&amp;rows,<sp/>&amp;cols,<sp/>copyA.data(),<sp/>&amp;rows,<sp/>perm,<sp/>&amp;info);</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(info<sp/>&lt;<sp/>0)</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>First,<sp/>clean<sp/>up,<sp/>then<sp/>throw<sp/>an<sp/>exception</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/>[]<sp/>perm;</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="structexc_1_1engine__error" kindref="compound">exc::engine_error</ref>(</highlight><highlight class="stringliteral">&quot;argument<sp/>passed<sp/>to<sp/>dgetrf<sp/>had<sp/>an<sp/>illegal<sp/>value&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"></highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>copy<sp/>back<sp/>to<sp/>row<sp/>major<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/><ref refid="dmat-lu-inplace_8hpp_a480bc96c84fc68bf689e889b1f65ae70_1a480bc96c84fc68bf689e889b1f65ae70" kindref="member">fill_from_lapack_array</ref>(copyA,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>);</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>place<sp/>the<sp/>correct<sp/>permutation<sp/>into<sp/>mPerm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>min;<sp/>i++)</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>thisloc<sp/>=<sp/>perm[i]<sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i<sp/>!=<sp/>thisloc)</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="351"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref><sp/>=<sp/>not<sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref>;</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>tmp<sp/>=<sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[thisloc];</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[thisloc]<sp/>=<sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[i];</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[i]<sp/>=<sp/>tmp;</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/><ref refid="class_l_u_util_a764edee21874621097db46be749d5873_1a764edee21874621097db46be749d5873" kindref="member">LUUtil&lt;RingType&gt;::computePivotColumns</ref>(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>,<sp/><ref refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" kindref="member">mPivotColumns</ref>);</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/>[]<sp/>perm;</highlight></codeline>
+<codeline lineno="362"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"></highlight></codeline>
+<codeline lineno="364"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="365" refid="class_d_mat_l_uin_place_a01177f299858dbeff74e5bc1afc6fa6f_1a01177f299858dbeff74e5bc1afc6fa6f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" kindref="member">DMatLUinPlace&lt;M2::ARingCC&gt;::computeLU</ref>()</highlight></codeline>
+<codeline lineno="366"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref>)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"></highlight></codeline>
+<codeline lineno="369"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;computing<sp/>LU<sp/>decomposition<sp/>ARingCC&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rows<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numRows());</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cols<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>.numColumns());</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>min<sp/>=<sp/>(rows<sp/>&lt;=<sp/>cols)<sp/>?<sp/>rows<sp/>:<sp/>cols;</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"></highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(min<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"></highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>perm<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">[min];</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>copyA<sp/>=<sp/><ref refid="dmat-lu-inplace_8hpp_a1d9fe790cb0cb4f0fe5ec99737d82ed4_1a1d9fe790cb0cb4f0fe5ec99737d82ed4" kindref="member">make_lapack_array</ref>(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>);</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"></highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><ref refid="lapack_8hpp_a54d41435f16c12a4b245af603aeb9667_1a54d41435f16c12a4b245af603aeb9667" kindref="member">zgetrf_</ref>(&amp;rows,<sp/>&amp;cols,<sp/>copyA.data(),<sp/>&amp;rows,<sp/>perm,<sp/>&amp;info);</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"></highlight></codeline>
+<codeline lineno="383"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(info<sp/>&lt;<sp/>0)</highlight></codeline>
+<codeline lineno="384"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="385"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">[]<sp/>perm;</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="structexc_1_1engine__error" kindref="compound">exc::engine_error</ref>(</highlight><highlight class="stringliteral">&quot;argument<sp/>passed<sp/>to<sp/>zgetrf<sp/>had<sp/>an<sp/>illegal<sp/>value&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"></highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>copy<sp/>back<sp/>to<sp/>row<sp/>major<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/><ref refid="dmat-lu-inplace_8hpp_a480bc96c84fc68bf689e889b1f65ae70_1a480bc96c84fc68bf689e889b1f65ae70" kindref="member">fill_from_lapack_array</ref>(copyA,<sp/><ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>);</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>place<sp/>the<sp/>correct<sp/>permutation<sp/>into<sp/>mPerm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>min;<sp/>i++)</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>thisloc<sp/>=<sp/>perm[i]<sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="396"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i<sp/>!=<sp/>thisloc)</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref><sp/>=<sp/>not<sp/><ref refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" kindref="member">mSign</ref>;</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>tmp<sp/>=<sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[thisloc];</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[thisloc]<sp/>=<sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[i];</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" kindref="member">mPerm</ref>[i]<sp/>=<sp/>tmp;</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="403"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="404"><highlight class="normal"></highlight></codeline>
+<codeline lineno="405"><highlight class="normal"><sp/><sp/><ref refid="class_l_u_util_a764edee21874621097db46be749d5873_1a764edee21874621097db46be749d5873" kindref="member">LUUtil&lt;RingType&gt;::computePivotColumns</ref>(<ref refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" kindref="member">mLU</ref>,<sp/><ref refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" kindref="member">mPivotColumns</ref>);</highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/><ref refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" kindref="member">mIsDone</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"></highlight></codeline>
+<codeline lineno="408"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">[]<sp/>perm;</highlight></codeline>
+<codeline lineno="409"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"></highlight></codeline>
+<codeline lineno="411"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>RingType&gt;</highlight></codeline>
+<codeline lineno="412" refid="class_l_u_util_a1838ec98f16e5635a493dc4c1b1d09f7_1a1838ec98f16e5635a493dc4c1b1d09f7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_a1838ec98f16e5635a493dc4c1b1d09f7_1a1838ec98f16e5635a493dc4c1b1d09f7" kindref="member">LUUtil&lt;RingType&gt;::setUpperLower</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>&amp;<sp/>LU,<sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>&amp;<sp/>lower,<sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>&amp;<sp/>upper)</highlight></codeline>
+<codeline lineno="413"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="414"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>min<sp/>=<sp/>std::min(LU.numRows(),<sp/>LU.numColumns());</highlight></codeline>
+<codeline lineno="415"><highlight class="normal"><sp/><sp/>lower.<ref refid="class_d_mat_a88d2a242efc934b17d6cc94851000627_1a88d2a242efc934b17d6cc94851000627" kindref="member">resize</ref>(LU.numRows(),<sp/>min);</highlight></codeline>
+<codeline lineno="416"><highlight class="normal"><sp/><sp/>upper.<ref refid="class_d_mat_a88d2a242efc934b17d6cc94851000627_1a88d2a242efc934b17d6cc94851000627" kindref="member">resize</ref>(min,<sp/>LU.numColumns());</highlight></codeline>
+<codeline lineno="417"><highlight class="normal"></highlight></codeline>
+<codeline lineno="418"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>At<sp/>this<sp/>point,<sp/>lower<sp/>and<sp/>upper<sp/>should<sp/>be<sp/>zero<sp/>matrices.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="419"><highlight class="normal"><sp/><sp/>assert(<ref refid="namespace_matrix_ops_a37882f800102bd2b037f51de5e0211e0_1a37882f800102bd2b037f51de5e0211e0" kindref="member">MatrixOps::isZero</ref>(lower));</highlight></codeline>
+<codeline lineno="420"><highlight class="normal"><sp/><sp/>assert(<ref refid="namespace_matrix_ops_a37882f800102bd2b037f51de5e0211e0_1a37882f800102bd2b037f51de5e0211e0" kindref="member">MatrixOps::isZero</ref>(upper));</highlight></codeline>
+<codeline lineno="421"><highlight class="normal"></highlight></codeline>
+<codeline lineno="422"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/>LU.numColumns();<sp/>c++)</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="424"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(c<sp/>&lt;<sp/>min)<sp/>LU.ring().set_from_long(lower.<ref refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" kindref="member">entry</ref>(c,<sp/>c),<sp/>1);</highlight></codeline>
+<codeline lineno="425"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>0;<sp/>r<sp/>&lt;<sp/>LU.numRows();<sp/>r++)</highlight></codeline>
+<codeline lineno="426"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="427"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r<sp/>&lt;=<sp/>c)</highlight></codeline>
+<codeline lineno="428"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LU.ring().set(upper.<ref refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" kindref="member">entry</ref>(r,<sp/>c),<sp/>LU.entry(r,<sp/>c));</highlight></codeline>
+<codeline lineno="429"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(c<sp/>&lt;<sp/>lower.<ref refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" kindref="member">numRows</ref>())</highlight></codeline>
+<codeline lineno="430"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="431"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LU.ring().set(lower.<ref refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" kindref="member">entry</ref>(r,<sp/>c),<sp/>LU.entry(r,<sp/>c));</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="433"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="434"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="435"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="436"><highlight class="normal"></highlight></codeline>
+<codeline lineno="437"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>RingType&gt;</highlight></codeline>
+<codeline lineno="438" refid="class_l_u_util_a764edee21874621097db46be749d5873_1a764edee21874621097db46be749d5873" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_a764edee21874621097db46be749d5873_1a764edee21874621097db46be749d5873" kindref="member">LUUtil&lt;RingType&gt;::computePivotColumns</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_l_u_util_ae340785cc0ca330978321e751c6abc43_1ae340785cc0ca330978321e751c6abc43" kindref="member">Mat</ref>&amp;<sp/>LU,</highlight></codeline>
+<codeline lineno="439"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;size_t&gt;&amp;<sp/>result_columns)</highlight></codeline>
+<codeline lineno="440"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="441"><highlight class="normal"><sp/><sp/>result_columns.clear();</highlight></codeline>
+<codeline lineno="442"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>thiscol<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="443"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>thisrow<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="444"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(thisrow<sp/>&lt;<sp/>LU.numRows()<sp/>and<sp/>thiscol<sp/>&lt;<sp/>LU.numColumns())</highlight></codeline>
+<codeline lineno="445"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="446"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>LU.ring().is_zero(LU.entry(thisrow,<sp/>thiscol)))</highlight></codeline>
+<codeline lineno="447"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="448"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>result_columns.push_back(thiscol);</highlight></codeline>
+<codeline lineno="449"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>thisrow++;</highlight></codeline>
+<codeline lineno="450"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>thiscol++;</highlight></codeline>
+<codeline lineno="452"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="453"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="454"><highlight class="normal"></highlight></codeline>
+<codeline lineno="455"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="456"><highlight class="normal"></highlight></codeline>
+<codeline lineno="457"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="458"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="459"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="460"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/dmat-lu-inplace.hpp"/>
+  </compounddef>
+</doxygen>

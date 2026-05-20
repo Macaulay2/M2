@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structmathic_1_1_tour_tree_1_1_player" kind="struct" language="C++" prot="private">
+    <compoundname>mathic::TourTree::Player</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmathic_1_1_tour_tree_1_1_player_a8b7c90ba5cceb04a36f59fd3ccacf25f_1a8b7c90ba5cceb04a36f59fd3ccacf25f" prot="public" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_tour_tree_a1f7a047455b4c40f72bc65f764eecaba_1a1f7a047455b4c40f72bc65f764eecaba" kindref="member">Entry</ref></type>
+        <definition>Entry mathic::TourTree&lt; C &gt;::Player::entry</definition>
+        <argsstring></argsstring>
+        <name>entry</name>
+        <qualifiedname>mathic::TourTree::Player::entry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/TourTree.h" line="67" column="9" bodyfile="submodules/mathic/src/mathic/TourTree.h" bodystart="67" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_tour_tree_a991ef898fe64b138bd4590a7ce228444_1a991ef898fe64b138bd4590a7ce228444" compoundref="_tour_tree_8h" startline="153" endline="164">mathic::TourTree&lt; C &gt;::decreaseTop</referencedby>
+        <referencedby refid="structmathic_1_1_tour_tree_1_1_player_a8993ed569114cda947df2eae50cc7fbe_1a8993ed569114cda947df2eae50cc7fbe" compoundref="_tour_tree_8h" startline="66" endline="66">mathic::TourTree&lt; C &gt;::Player::Player</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a0a6aef84e683d835dd5d99d08485820d_1a0a6aef84e683d835dd5d99d08485820d" compoundref="_tour_tree_8h" startline="167" endline="208">mathic::TourTree&lt; C &gt;::pop</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmathic_1_1_tour_tree_1_1_player_ad66957c2c20db978ac7cf4c6dca7a4cd_1ad66957c2c20db978ac7cf4c6dca7a4cd" prot="public" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_tour_tree_affbfea4fedb5e7ebe50c303586805899_1affbfea4fedb5e7ebe50c303586805899" kindref="member">Node</ref></type>
+        <definition>Node mathic::TourTree&lt; C &gt;::Player::leaf</definition>
+        <argsstring></argsstring>
+        <name>leaf</name>
+        <qualifiedname>mathic::TourTree::Player::leaf</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/TourTree.h" line="68" column="8" bodyfile="submodules/mathic/src/mathic/TourTree.h" bodystart="68" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_tour_tree_a991ef898fe64b138bd4590a7ce228444_1a991ef898fe64b138bd4590a7ce228444" compoundref="_tour_tree_8h" startline="153" endline="164">mathic::TourTree&lt; C &gt;::decreaseTop</referencedby>
+        <referencedby refid="structmathic_1_1_tour_tree_1_1_player_a8993ed569114cda947df2eae50cc7fbe_1a8993ed569114cda947df2eae50cc7fbe" compoundref="_tour_tree_8h" startline="66" endline="66">mathic::TourTree&lt; C &gt;::Player::Player</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a0a6aef84e683d835dd5d99d08485820d_1a0a6aef84e683d835dd5d99d08485820d" compoundref="_tour_tree_8h" startline="167" endline="208">mathic::TourTree&lt; C &gt;::pop</referencedby>
+        <referencedby refid="classmathic_1_1_tour_tree_a973e3120d6e9b027b33ec0858bc9fa82_1a973e3120d6e9b027b33ec0858bc9fa82" compoundref="_tour_tree_8h" startline="108" endline="143">mathic::TourTree&lt; C &gt;::push</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structmathic_1_1_tour_tree_1_1_player_a8993ed569114cda947df2eae50cc7fbe_1a8993ed569114cda947df2eae50cc7fbe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::TourTree&lt; C &gt;::Player::Player</definition>
+        <argsstring>(const Entry &amp;entry, Node leaf)</argsstring>
+        <name>Player</name>
+        <qualifiedname>mathic::TourTree::Player::Player</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_tour_tree_a1f7a047455b4c40f72bc65f764eecaba_1a1f7a047455b4c40f72bc65f764eecaba" kindref="member">Entry</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_tour_tree_affbfea4fedb5e7ebe50c303586805899_1affbfea4fedb5e7ebe50c303586805899" kindref="member">Node</ref></type>
+          <declname>leaf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/TourTree.h" line="66" column="7" bodyfile="submodules/mathic/src/mathic/TourTree.h" bodystart="66" bodyend="66"/>
+        <references refid="structmathic_1_1_tour_tree_1_1_player_a8b7c90ba5cceb04a36f59fd3ccacf25f_1a8b7c90ba5cceb04a36f59fd3ccacf25f" compoundref="_tour_tree_8h" startline="67">mathic::TourTree&lt; C &gt;::Player::entry</references>
+        <references refid="structmathic_1_1_tour_tree_1_1_player_ad66957c2c20db978ac7cf4c6dca7a4cd_1ad66957c2c20db978ac7cf4c6dca7a4cd" compoundref="_tour_tree_8h" startline="68">mathic::TourTree&lt; C &gt;::Player::leaf</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Entry</label>
+      </node>
+      <node id="3">
+        <label>mathic::ComTree&lt; Player *, false &gt;::Node</label>
+      </node>
+      <node id="1">
+        <label>mathic::TourTree&lt; C &gt;::Player</label>
+        <link refid="structmathic_1_1_tour_tree_1_1_player"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>entry</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>leaf</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/TourTree.h" line="65" column="1" bodyfile="submodules/mathic/src/mathic/TourTree.h" bodystart="65" bodyend="69"/>
+    <listofallmembers>
+      <member refid="structmathic_1_1_tour_tree_1_1_player_a8b7c90ba5cceb04a36f59fd3ccacf25f_1a8b7c90ba5cceb04a36f59fd3ccacf25f" prot="public" virt="non-virtual"><scope>mathic::TourTree::Player</scope><name>entry</name></member>
+      <member refid="structmathic_1_1_tour_tree_1_1_player_ad66957c2c20db978ac7cf4c6dca7a4cd_1ad66957c2c20db978ac7cf4c6dca7a4cd" prot="public" virt="non-virtual"><scope>mathic::TourTree::Player</scope><name>leaf</name></member>
+      <member refid="structmathic_1_1_tour_tree_1_1_player_a8993ed569114cda947df2eae50cc7fbe_1a8993ed569114cda947df2eae50cc7fbe" prot="public" virt="non-virtual"><scope>mathic::TourTree::Player</scope><name>Player</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

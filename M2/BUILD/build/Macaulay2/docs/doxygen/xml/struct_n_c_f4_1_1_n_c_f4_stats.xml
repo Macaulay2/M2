@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_n_c_f4_1_1_n_c_f4_stats" kind="struct" language="C++" prot="private">
+    <compoundname>NCF4::NCF4Stats</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_n_c_f4_1_1_n_c_f4_stats_a2bf044b7bab2d8905f26886e5ff757af_1a2bf044b7bab2d8905f26886e5ff757af" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long NCF4::NCF4Stats::numCancellations</definition>
+        <argsstring></argsstring>
+        <name>numCancellations</name>
+        <qualifiedname>NCF4::NCF4Stats::numCancellations</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCF4.hpp" line="199" column="10" bodyfile="Macaulay2/e/NCAlgebras/NCF4.hpp" bodystart="199" bodyend="-1"/>
+        <referencedby refid="class_n_c_f4_a3b18b77182a8875e17395153176d38ff_1a3b18b77182a8875e17395153176d38ff" compoundref="_n_c_f4_8cpp" startline="906" endline="959">NCF4::generalReduceF4Row</referencedby>
+        <referencedby refid="struct_n_c_f4_1_1_n_c_f4_stats_a631079a3515f380d136f78f6a1f9bd37_1a631079a3515f380d136f78f6a1f9bd37" compoundref="_n_c_f4_8hpp" startline="198" endline="198">NCF4Stats</referencedby>
+        <referencedby refid="class_n_c_f4_a201dd700147455609caf480af4c73f38_1a201dd700147455609caf480af4c73f38" compoundref="_n_c_f4_8cpp" startline="961" endline="1037">NCF4::parallelReduceF4Matrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_n_c_f4_1_1_n_c_f4_stats_a06500bfdefd3591e70bf09aff711a09a_1a06500bfdefd3591e70bf09aff711a09a" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long NCF4::NCF4Stats::numRows</definition>
+        <argsstring></argsstring>
+        <name>numRows</name>
+        <qualifiedname>NCF4::NCF4Stats::numRows</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCF4.hpp" line="200" column="10" bodyfile="Macaulay2/e/NCAlgebras/NCF4.hpp" bodystart="200" bodyend="-1"/>
+        <referencedby refid="struct_n_c_f4_1_1_n_c_f4_stats_a631079a3515f380d136f78f6a1f9bd37_1a631079a3515f380d136f78f6a1f9bd37" compoundref="_n_c_f4_8hpp" startline="198" endline="198">NCF4Stats</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_n_c_f4_1_1_n_c_f4_stats_a631079a3515f380d136f78f6a1f9bd37_1a631079a3515f380d136f78f6a1f9bd37" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NCF4::NCF4Stats::NCF4Stats</definition>
+        <argsstring>()</argsstring>
+        <name>NCF4Stats</name>
+        <qualifiedname>NCF4::NCF4Stats::NCF4Stats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/NCF4.hpp" line="198" column="5" bodyfile="Macaulay2/e/NCAlgebras/NCF4.hpp" bodystart="198" bodyend="198"/>
+        <references refid="struct_n_c_f4_1_1_n_c_f4_stats_a2bf044b7bab2d8905f26886e5ff757af_1a2bf044b7bab2d8905f26886e5ff757af" compoundref="_n_c_f4_8hpp" startline="199">numCancellations</references>
+        <references refid="struct_n_c_f4_1_1_n_c_f4_stats_a06500bfdefd3591e70bf09aff711a09a_1a06500bfdefd3591e70bf09aff711a09a" compoundref="_n_c_f4_8hpp" startline="200">numRows</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Per-thread counters tracking how much work the F4 reduction did. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="struct_n_c_f4_1_1_n_c_f4_stats_a2bf044b7bab2d8905f26886e5ff757af_1a2bf044b7bab2d8905f26886e5ff757af" kindref="member">numCancellations</ref></computeroutput> is the number of coefficient cancellations the reducer applied, and <computeroutput><ref refid="struct_n_c_f4_1_1_n_c_f4_stats_a06500bfdefd3591e70bf09aff711a09a_1a06500bfdefd3591e70bf09aff711a09a" kindref="member">numRows</ref></computeroutput> is the number of rows it processed. Stored thread-locally so the parallel build path can tally without contention. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>NCF4::NCF4Stats</label>
+        <link refid="struct_n_c_f4_1_1_n_c_f4_stats"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>numCancellations</edgelabel>
+          <edgelabel>numRows</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/NCAlgebras/NCF4.hpp" line="197" column="3" bodyfile="Macaulay2/e/NCAlgebras/NCF4.hpp" bodystart="197" bodyend="201"/>
+    <listofallmembers>
+      <member refid="struct_n_c_f4_1_1_n_c_f4_stats_a631079a3515f380d136f78f6a1f9bd37_1a631079a3515f380d136f78f6a1f9bd37" prot="public" virt="non-virtual"><scope>NCF4::NCF4Stats</scope><name>NCF4Stats</name></member>
+      <member refid="struct_n_c_f4_1_1_n_c_f4_stats_a2bf044b7bab2d8905f26886e5ff757af_1a2bf044b7bab2d8905f26886e5ff757af" prot="public" virt="non-virtual"><scope>NCF4::NCF4Stats</scope><name>numCancellations</name></member>
+      <member refid="struct_n_c_f4_1_1_n_c_f4_stats_a06500bfdefd3591e70bf09aff711a09a_1a06500bfdefd3591e70bf09aff711a09a" prot="public" virt="non-virtual"><scope>NCF4::NCF4Stats</scope><name>numRows</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

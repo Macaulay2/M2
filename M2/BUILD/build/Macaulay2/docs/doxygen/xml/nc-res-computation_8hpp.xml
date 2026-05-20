@@ -1,0 +1,945 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="nc-res-computation_8hpp" kind="file" language="C++">
+    <compoundname>nc-res-computation.hpp</compoundname>
+    <includes refid="comp-res_8hpp" local="yes">comp-res.hpp</includes>
+    <includes refid="_free_algebra_quotient_8hpp" local="yes">NCAlgebras/FreeAlgebraQuotient.hpp</includes>
+    <includes refid="matrix_8hpp" local="yes">matrix.hpp</includes>
+    <includes refid="matrix-con_8hpp" local="yes">matrix-con.hpp</includes>
+    <includedby refid="nc-res-computation_8cpp" local="yes">Macaulay2/e/NCResolutions/nc-res-computation.cpp</includedby>
+    <includedby refid="comp-res_8cpp" local="yes">Macaulay2/e/comp-res.cpp</includedby>
+    <incdepgraph>
+      <node id="77">
+        <label>../system/mutex.h</label>
+      </node>
+      <node id="26">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>MemoryBlock.hpp</label>
+        <link refid="_memory_block_8hpp"/>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>NCAlgebras/FreeAlgebra.hpp</label>
+        <link refid="_free_algebra_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>NCAlgebras/FreeAlgebraQuotient.hpp</label>
+        <link refid="_free_algebra_quotient_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>NCAlgebras/FreeMonoid.hpp</label>
+        <link refid="_free_monoid_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>NCAlgebras/NCGroebner.hpp</label>
+        <link refid="_n_c_groebner_8hpp"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>NCAlgebras/NCReduction.hpp</label>
+        <link refid="_n_c_reduction_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>NCAlgebras/OverlapTable.hpp</label>
+        <link refid="_overlap_table_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>NCAlgebras/SuffixTree.hpp</label>
+        <link refid="_suffix_tree_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>NCAlgebras/Word.hpp</label>
+        <link refid="_word_8hpp"/>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>NCAlgebras/WordTable.hpp</label>
+        <link refid="_word_table_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.hpp</label>
+        <link refid="nc-res-computation_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Polynomial.hpp</label>
+        <link refid="_polynomial_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>comp-res.hpp</label>
+        <link refid="comp-res_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>comp.hpp</label>
+        <link refid="comp_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="33">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>freemod.hpp</label>
+        <link refid="freemod_8hpp"/>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>int-bag.hpp</label>
+        <link refid="int-bag_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>interface/computation.h</label>
+        <link refid="computation_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="78">
+        <label>matrix-con.hpp</label>
+        <link refid="matrix-con_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>matrix.hpp</label>
+        <link refid="matrix_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="76">
+        <label>mem.hpp</label>
+        <link refid="mem_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>monideal.hpp</label>
+        <link refid="monideal_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="73">
+        <label>polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+      </node>
+      <node id="75">
+        <label>qring.hpp</label>
+        <link refid="qring_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>schorder.hpp</label>
+        <link refid="schorder_8hpp"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="74">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="35">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>memtailor/Arena.h</label>
+        <link refid="_arena_8h"/>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>MemoryBlocks.h</label>
+        <link refid="_memory_blocks_8h"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>stdinc.h</label>
+        <link refid="memtailor_2src_2memtailor_2stdinc_8h"/>
+      </node>
+      <node id="6">
+        <label>M2/config.h</label>
+      </node>
+      <node id="10">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="9">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="41">
+        <label>algorithm</label>
+      </node>
+      <node id="29">
+        <label>assert.h</label>
+      </node>
+      <node id="18">
+        <label>cassert</label>
+      </node>
+      <node id="52">
+        <label>cstddef</label>
+      </node>
+      <node id="27">
+        <label>cstdio</label>
+      </node>
+      <node id="62">
+        <label>deque</label>
+      </node>
+      <node id="16">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="47">
+        <label>iosfwd</label>
+      </node>
+      <node id="38">
+        <label>iostream</label>
+      </node>
+      <node id="42">
+        <label>iterator</label>
+      </node>
+      <node id="63">
+        <label>map</label>
+      </node>
+      <node id="53">
+        <label>memory</label>
+      </node>
+      <node id="54">
+        <label>new</label>
+      </node>
+      <node id="64">
+        <label>ostream</label>
+      </node>
+      <node id="45">
+        <label>polyring.hpp</label>
+      </node>
+      <node id="24">
+        <label>stddef.h</label>
+      </node>
+      <node id="34">
+        <label>stdexcept</label>
+      </node>
+      <node id="8">
+        <label>stdint.h</label>
+      </node>
+      <node id="14">
+        <label>stdlib.h</label>
+      </node>
+      <node id="25">
+        <label>string</label>
+      </node>
+      <node id="30">
+        <label>string.h</label>
+      </node>
+      <node id="65">
+        <label>tuple</label>
+      </node>
+      <node id="31">
+        <label>type_traits</label>
+      </node>
+      <node id="43">
+        <label>utility</label>
+      </node>
+      <node id="15">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="17">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.cpp</label>
+        <link refid="nc-res-computation_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.hpp</label>
+        <link refid="nc-res-computation_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_n_c_res_computation" prot="public">NCResComputation</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="nc-res-computation_8hpp_a3bc5710b3c92daa99accb62d40ee61db_1a3bc5710b3c92daa99accb62d40ee61db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_resolution_computation" kindref="compound">ResolutionComputation</ref> *</type>
+        <definition>ResolutionComputation * createNCRes</definition>
+        <argsstring>(const Matrix *m, int max_level, int strategy)</argsstring>
+        <name>createNCRes</name>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>max_level</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>strategy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCResolutions/nc-res-computation.hpp" line="246" column="23" bodyfile="Macaulay2/e/NCResolutions/nc-res-computation.cpp" bodystart="15" bodyend="25" declfile="Macaulay2/e/NCResolutions/nc-res-computation.hpp" declline="246" declcolumn="23"/>
+        <referencedby refid="class_resolution_computation_a82fed2e40d74698d0de21c9237e64c9e_1a82fed2e40d74698d0de21c9237e64c9e" compoundref="comp-res_8cpp" startline="16" endline="149">ResolutionComputation::choose_res</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_n_c_res_computation" kindref="compound">NCResComputation</ref></computeroutput> <mdash/> placeholder free-resolution driver for modules over a <computeroutput><ref refid="class_free_algebra_quotient" kindref="compound">FreeAlgebraQuotient</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares the intended non-commutative counterpart of <computeroutput><ref refid="class_f4_res_computation" kindref="compound">F4ResComputation</ref></computeroutput>: a <computeroutput><ref refid="class_resolution_computation" kindref="compound">ResolutionComputation</ref></computeroutput> subclass that <bold>will</bold> compute a free resolution of a right module presented by its Gröbner basis over a <computeroutput><ref refid="class_free_algebra_quotient" kindref="compound">FreeAlgebraQuotient</ref></computeroutput> ring. The constructor is private; the friend factory <computeroutput>createNCRes(groebnerBasisMatrix, max_level, strategy)</computeroutput> is the only entry point, and the input matrix is expected to be a (partial) GB of the module being resolved.</para>
+<para>This adapter is currently a <bold>non-functional placeholder</bold>. <computeroutput>stop_conditions_ok()</computeroutput> unconditionally returns <computeroutput>true</computeroutput>, <computeroutput>start_computation()</computeroutput> just prints &quot;Starting computation.&quot; to <computeroutput>std::cout</computeroutput>, <computeroutput>complete_thru_degree()</computeroutput> returns <computeroutput>0</computeroutput>, <computeroutput>get_betti</computeroutput> and the <computeroutput><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref></computeroutput>-shaped <computeroutput>get_matrix</computeroutput> return <computeroutput>nullptr</computeroutput>, the <computeroutput><ref refid="class_matrix" kindref="compound">Matrix</ref></computeroutput>-shaped <computeroutput>get_matrix(level)</computeroutput> returns either the input module&apos;s GB at level 1 or an empty <computeroutput><ref refid="class_matrix_constructor" kindref="compound">MatrixConstructor</ref></computeroutput> matrix elsewhere, <computeroutput>text_out</computeroutput> emits the fixed string &quot;Noncommutative resolution&quot;, and even the stored fields (<computeroutput>mInputModuleGB</computeroutput>; commented-out <computeroutput>mRing</computeroutput> / <computeroutput>mMaxLevel</computeroutput>) reflect the unfinished plumbing. The companion <computeroutput><ref refid="nc-res-computation_8cpp" kindref="compound">nc-res-computation.cpp</ref></computeroutput> is 30 lines and only defines the constructor plus <computeroutput><ref refid="nc-res-computation_8hpp_a3bc5710b3c92daa99accb62d40ee61db_1a3bc5710b3c92daa99accb62d40ee61db" kindref="member">createNCRes</ref></computeroutput>.</para>
+<para>The expected per-level loop is sketched in the long comment block at the bottom of the header: build levels 0 / 1 from the input module, fill in syzygies degree-by-degree using F4-style overlap reduction against both the ring&apos;s GB and the earlier-level frame, and store each <computeroutput>(free module, differential)</computeroutput> pair as the resolution grows. The <computeroutput>#if 0</computeroutput> block sketches <computeroutput>NCSchreyerResolution</computeroutput> / <computeroutput>Level</computeroutput> / <computeroutput>Element</computeroutput> / <computeroutput>ModulePoly</computeroutput> types the implementation is expected to grow into; <computeroutput>NCResolutions/notes.txt</computeroutput> tracks the still-open design questions.</para>
+<para><simplesect kind="see"><para><ref refid="comp-res_8hpp" kindref="compound">comp-res.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_free_algebra_quotient_8hpp" kindref="compound">FreeAlgebraQuotient.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_n_c_groebner_8hpp" kindref="compound">NCGroebner.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="res-f4-computation_8hpp" kindref="compound">schreyer-resolution/res-f4-computation.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*<sp/>Copyright<sp/>2014-2021,<sp/>Michael<sp/>E.<sp/>Stillman<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_nc_res_computation_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_nc_res_computation_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="comp-res_8hpp" kindref="compound">comp-res.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_free_algebra_quotient_8hpp" kindref="compound">NCAlgebras/FreeAlgebraQuotient.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix_8hpp" kindref="compound">matrix.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix-con_8hpp" kindref="compound">matrix-con.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="class_n_c_res_computation" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_n_c_res_computation_accef5b314d652cd0198b0d7fd65a24c3_1accef5b314d652cd0198b0d7fd65a24c3" kindref="member">NCResComputation</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_resolution_computation_a969ab63ee520c5b56ae56ab61b12e677_1a969ab63ee520c5b56ae56ab61b12e677" kindref="member">ResolutionComputation</ref></highlight></codeline>
+<codeline lineno="68"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><ref refid="class_n_c_res_computation_accef5b314d652cd0198b0d7fd65a24c3_1accef5b314d652cd0198b0d7fd65a24c3" kindref="member">NCResComputation</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_algebra_quotient" kindref="compound">FreeAlgebraQuotient</ref>&amp;<sp/>ring,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref>&amp;<sp/>gbIdealMatrix,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>max_level);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/><ref refid="class_resolution_computation_a969ab63ee520c5b56ae56ab61b12e677_1a969ab63ee520c5b56ae56ab61b12e677" kindref="member">ResolutionComputation</ref>*<sp/><ref refid="class_n_c_res_computation_aa7f3fe8975d89da55a633e8072fdd7b1_1aa7f3fe8975d89da55a633e8072fdd7b1" kindref="member">createNCRes</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref>*<sp/>groebnerBasisMatrix,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>max_level,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>strategy);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="class_n_c_res_computation_aea5e69763c1958ab9f3736a281d7985f_1aea5e69763c1958ab9f3736a281d7985f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_n_c_res_computation_aea5e69763c1958ab9f3736a281d7985f_1aea5e69763c1958ab9f3736a281d7985f" kindref="member">~NCResComputation</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>These<sp/>functions<sp/>override<sp/>those<sp/>in<sp/>ResolutionComputation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="class_n_c_res_computation_ab00a29e9d36e4c4dd5ee0fbe0e8984b3_1ab00a29e9d36e4c4dd5ee0fbe0e8984b3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_n_c_res_computation_ab00a29e9d36e4c4dd5ee0fbe0e8984b3_1ab00a29e9d36e4c4dd5ee0fbe0e8984b3" kindref="member">stop_conditions_ok</ref>()</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>ignore<sp/>all<sp/>stopping<sp/>conditions<sp/>except<sp/>length_limit,<sp/>degree_limit</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="class_n_c_res_computation_aa500dad1e29dd8bdf70a2fd49cf12331_1aa500dad1e29dd8bdf70a2fd49cf12331" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_n_c_res_computation_aa500dad1e29dd8bdf70a2fd49cf12331_1aa500dad1e29dd8bdf70a2fd49cf12331" kindref="member">start_computation</ref>()<sp/>{<sp/></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Starting<sp/>computation.&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="class_n_c_res_computation_a563c6861b19d4f72763e662ee1d9765d_1a563c6861b19d4f72763e662ee1d9765d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_n_c_res_computation_a563c6861b19d4f72763e662ee1d9765d_1a563c6861b19d4f72763e662ee1d9765d" kindref="member">complete_thru_degree</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;<sp/>}</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>computation<sp/>is<sp/>complete<sp/>up<sp/>through<sp/>this<sp/>slanted<sp/>degree.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="class_n_c_res_computation_a716b4726afa84768d4609a31d9a2a935_1a716b4726afa84768d4609a31d9a2a935" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal">*<sp/><ref refid="class_n_c_res_computation_a716b4726afa84768d4609a31d9a2a935_1a716b4726afa84768d4609a31d9a2a935" kindref="member">get_matrix</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>level)<sp/>{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(level<sp/>==<sp/>1)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>&amp;<ref refid="class_n_c_res_computation_a5cc902a490a669e5fd137ba482370996_1a5cc902a490a669e5fd137ba482370996" kindref="member">mInputModuleGB</ref>;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_matrix_constructor" kindref="compound">MatrixConstructor</ref><sp/>matCon(<ref refid="class_n_c_res_computation_a929ffa38ebda4c8ee448f283067d507c_1a929ffa38ebda4c8ee448f283067d507c" kindref="member">get_free</ref>(level-1),<sp/><ref refid="class_n_c_res_computation_a929ffa38ebda4c8ee448f283067d507c_1a929ffa38ebda4c8ee448f283067d507c" kindref="member">get_free</ref>(level));</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>matCon.<ref refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" kindref="member">to_matrix</ref>();</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="class_n_c_res_computation_a9442cdda62f6442802c78b7b95466b35_1a9442cdda62f6442802c78b7b95466b35" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal">*<sp/><ref refid="class_n_c_res_computation_a9442cdda62f6442802c78b7b95466b35_1a9442cdda62f6442802c78b7b95466b35" kindref="member">get_matrix</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>slanted_degree,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>level)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)<sp/>slanted_degree;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)<sp/>level;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="class_n_c_res_computation_a929ffa38ebda4c8ee448f283067d507c_1a929ffa38ebda4c8ee448f283067d507c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal">*<sp/><ref refid="class_n_c_res_computation_a929ffa38ebda4c8ee448f283067d507c_1a929ffa38ebda4c8ee448f283067d507c" kindref="member">get_free</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>level)<sp/>{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(level<sp/>==<sp/>0)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_n_c_res_computation_a5cc902a490a669e5fd137ba482370996_1a5cc902a490a669e5fd137ba482370996" kindref="member">mInputModuleGB</ref>.rows();</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(level<sp/>==<sp/>1)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_n_c_res_computation_a5cc902a490a669e5fd137ba482370996_1a5cc902a490a669e5fd137ba482370996" kindref="member">mInputModuleGB</ref>.cols();</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_n_c_res_computation_a5cc902a490a669e5fd137ba482370996_1a5cc902a490a669e5fd137ba482370996" kindref="member">mInputModuleGB</ref>.get_ring()-&gt;make_FreeModule(0);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="class_n_c_res_computation_aafe650473922dab350c540632fe59143_1aafe650473922dab350c540632fe59143" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/><ref refid="class_n_c_res_computation_aafe650473922dab350c540632fe59143_1aafe650473922dab350c540632fe59143" kindref="member">get_betti</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>type)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="116"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)<sp/>type;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>type<sp/>is<sp/>documented<sp/>under<sp/>rawResolutionBetti,<sp/>in<sp/>engine.h</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="class_n_c_res_computation_a56db279f215ea6f0f7b4c8e42b7733da_1a56db279f215ea6f0f7b4c8e42b7733da" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_n_c_res_computation_a56db279f215ea6f0f7b4c8e42b7733da_1a56db279f215ea6f0f7b4c8e42b7733da" kindref="member">text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref>&amp;<sp/>o)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>o<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Noncommutative<sp/>resolution&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>input<sp/>information<sp/>coming<sp/>from<sp/>M2<sp/>objects</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//const<sp/>Matrix&amp;<sp/>mInputIdealGB;<sp/>//<sp/>probably<sp/>a<sp/>computation<sp/>type<sp/>from<sp/>a<sp/>partial<sp/>GB.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="class_n_c_res_computation_a5cc902a490a669e5fd137ba482370996_1a5cc902a490a669e5fd137ba482370996" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref>&amp;<sp/><ref refid="class_n_c_res_computation_a5cc902a490a669e5fd137ba482370996_1a5cc902a490a669e5fd137ba482370996" kindref="member">mInputModuleGB</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>maybe<sp/>not<sp/>a<sp/>GB<sp/>of<sp/>the<sp/>module<sp/>either...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>Data<sp/>Types</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">NCSchreyerResolution</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>internal<sp/>information<sp/>for<sp/>this<sp/>resolution<sp/>computation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/>std::vector&lt;Level&gt;<sp/>mLevels;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref><sp/>mMemoryBlock;<sp/></highlight><highlight class="comment">//<sp/>where<sp/>all<sp/>the<sp/>monomials<sp/>are<sp/>stored</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/>std::unordered_set&lt;Monom&gt;<sp/>mAllMonomials;<sp/></highlight><highlight class="comment">//<sp/>or<sp/>&lt;int*&gt;?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Level</highlight></codeline>
+<codeline lineno="145"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>std::vector&lt;Element&gt;<sp/>mElements;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>SchreyerOrder<sp/>at<sp/>this<sp/>level</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Element</highlight></codeline>
+<codeline lineno="151"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/>ModulePoly<sp/>mPoly;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>degree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>component<sp/>of<sp/>previous<sp/>step</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>bool<sp/>indicating<sp/>that<sp/>the<sp/>element<sp/>has<sp/>been<sp/>computed<sp/>entirely?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">ModulePoly</highlight></codeline>
+<codeline lineno="159"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/>ElementArray<sp/>mElementArray;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/>std::vector&lt;int&gt;<sp/>mComponents;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/>std::vector&lt;int&gt;<sp/>mMonomials;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>above<sp/>could<sp/>be<sp/>std::vector<sp/>of<sp/>Monoms,<sp/>or<sp/>maybe<sp/>even<sp/>together</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>a<sp/>std::vector<sp/>of<sp/>a<sp/>struct.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight><highlight class="comment">//<sp/>to<sp/>create<sp/>the<sp/>frame:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="comment">//<sp/>1.<sp/>Fill<sp/>in<sp/>level<sp/>0<sp/>-<sp/>(Take<sp/>the<sp/>degree<sp/>information<sp/>from<sp/>the<sp/>target<sp/>mInputModGB)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight><highlight class="comment">//<sp/>2.<sp/>Fill<sp/>in<sp/>level<sp/>1<sp/>-<sp/>(This<sp/>is<sp/>really<sp/>just<sp/>the<sp/>info<sp/>on<sp/>the<sp/>entries<sp/>of<sp/>mInputModGB)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>This<sp/>is<sp/>more<sp/>difficult<sp/>the<sp/>GB<sp/>is<sp/>not<sp/>known<sp/>out<sp/>to<sp/>that<sp/>point<sp/>yet.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="comment">//<sp/>3.<sp/>Fill<sp/>in<sp/>level<sp/>2<sp/>-<sp/>This<sp/>requires<sp/>us<sp/>to<sp/>find<sp/>all<sp/>the<sp/>spairs<sp/>on<sp/>module<sp/>elements<sp/>vs</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>elements<sp/>of<sp/>the<sp/>ring<sp/>Groebner<sp/>basis</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//<sp/>4.<sp/>Rinse<sp/>and<sp/>repeat.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="comment">//<sp/>detailed<sp/>notes<sp/>on<sp/>a<sp/>basic<sp/>example</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight><highlight class="comment">//<sp/>consider<sp/>the<sp/>right<sp/>ideal<sp/>(yyx,yxx)R<sp/>with<sp/>R<sp/>=<sp/>QQ&lt;|x,y|&gt;/(x*y<sp/>-<sp/>y*x)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Step<sp/>1:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight><highlight class="comment">//<sp/>level<sp/>0:<sp/>right<sp/>module<sp/>generated<sp/>by<sp/>e_1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Step<sp/>2:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight><highlight class="comment">//<sp/>level<sp/>1:<sp/>f_1<sp/>--&gt;<sp/>e_1yyx,<sp/>f_2<sp/>--&gt;<sp/>e_1yxx</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight><highlight class="comment">//<sp/>other<sp/>gb<sp/>elements?<sp/>(e_1yyx)<sp/>*<sp/>y<sp/>-<sp/>(e_1<sp/>yy)*(x*y<sp/>-<sp/>y*x)<sp/>=<sp/>e_1<sp/>yyyx</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(e_1yxx)<sp/>*<sp/>y<sp/>-<sp/>(e_1<sp/>yx)*(x*y<sp/>-<sp/>y*x)<sp/>=<sp/>e_1<sp/>yxyx<sp/>~&gt;<sp/>e_1yyxx<sp/>-<sp/>(e_1yyx)*x<sp/>=<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="comment">//<sp/>f_3<sp/>--&gt;<sp/>e_1<sp/>yyyx,<sp/>etc<sp/>(another<sp/>f_j<sp/>for<sp/>each<sp/>e_i<sp/>y^j<sp/>x<sp/>for<sp/>j<sp/>&gt;=<sp/>3)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Level<sp/>2:<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="comment">//<sp/>g_1<sp/>--&gt;<sp/>f_1.y<sp/>=<sp/>e_1.yyx.y<sp/><sp/>&lt;~~&gt;<sp/>e_1.yyxy<sp/>=<sp/>e_1.yyyx,<sp/>now<sp/>have<sp/>to<sp/>add<sp/>f_3<sp/>to<sp/>level<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="comment">//<sp/>g_1<sp/>--&gt;<sp/>f_1.y<sp/>=<sp/>e_1.yyx.y<sp/><sp/>&lt;~~&gt;<sp/>f_1.y<sp/>-<sp/>f_3<sp/><sp/><sp/>Claim:<sp/>this<sp/>element<sp/>maps<sp/>to<sp/>zero<sp/>under<sp/>the<sp/>previous<sp/>map</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="comment">//<sp/>g_1<sp/>will<sp/>have<sp/>label:<sp/>e_1.yyx.y<sp/><sp/><sp/><sp/><sp/><sp/>e_1yyxy<sp/>-<sp/>e_1yyyx<sp/>=<sp/>e_1yy.(xy<sp/>-<sp/>yx)<sp/>=<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight><highlight class="comment">//<sp/>g_2<sp/>--&gt;<sp/>f_2.y<sp/>=<sp/>e_1.yxx.y<sp/><sp/>&lt;~~&gt;<sp/>f_2.y<sp/>-<sp/>f_1.x<sp/><sp/><sp/><sp/>e_1yxxy<sp/>-<sp/>e1yyxx<sp/>=<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="comment">//<sp/>g_2<sp/>will<sp/>have<sp/>label:<sp/>e_1.yxx.y</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="comment">//<sp/>g_3<sp/>--&gt;<sp/>f_3.y<sp/>=<sp/>e_1.yyyx.y<sp/>&lt;~~&gt;<sp/>f_3.y<sp/>-<sp/>f_4<sp/><sp/>(etc)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="comment">//<sp/>g_3<sp/>will<sp/>have<sp/>label:<sp/>e_1.yyyx.y</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="comment">//<sp/>for<sp/>a<sp/>term,<sp/>we<sp/>have:<sp/><sp/>label<sp/>-<sp/>product<sp/>of<sp/>all<sp/>leadTerms<sp/>all<sp/>the<sp/>way<sp/>back<sp/>to<sp/>level<sp/>0,<sp/>e.g.<sp/>e_1.yyyx.y<sp/>(without<sp/>the<sp/>dots)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="comment">//<sp/>to<sp/>compare</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="comment">//<sp/>g_1.m_1;<sp/>g_1<sp/>=<sp/>f_1.v_1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="comment">//<sp/>g_2.m_2;<sp/>g_2<sp/>=<sp/>f_2.v_2,<sp/>f_1<sp/>and<sp/>f_2<sp/>are<sp/>further<sp/>back<sp/>etc</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="comment">//<sp/>first<sp/>compare<sp/>total<sp/>monomials<sp/>of<sp/>g_1.m_1<sp/>and<sp/>g_2.m_2.<sp/>if<sp/>there<sp/>is<sp/>a<sp/>winner,<sp/>take<sp/>that<sp/>term.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="comment">//<sp/>if<sp/>there<sp/>is<sp/>a<sp/>tie<sp/>at<sp/>this<sp/>stage,<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight><highlight class="comment">//<sp/>example:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight><highlight class="comment">//<sp/>level<sp/>0:<sp/>e_1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight><highlight class="comment">//<sp/>level<sp/>1:<sp/>f_1<sp/>=<sp/>e_1.xy,<sp/>f_2<sp/>=<sp/>e_1.y^3,<sp/>f_3<sp/>=<sp/>e_1.yx</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight><highlight class="comment">//<sp/>level<sp/>2:<sp/>g_1<sp/>=<sp/>f_1.xyy<sp/>g_2<sp/>=<sp/>f_1.xxy,<sp/>g_3<sp/>=<sp/>f_2.x</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight><highlight class="comment">//<sp/>How<sp/>to<sp/>compare<sp/>f_i.m<sp/>and<sp/>f_j.n:<sp/><sp/>f_1.xxx<sp/>vs<sp/>f_2.xy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>labels<sp/>are<sp/>e_1.xyxxx<sp/><sp/>e_1.yyyxy<sp/>(compare<sp/>here).<sp/><sp/>One<sp/>is<sp/>a<sp/>winner.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Level<sp/>3:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>are<sp/>done,<sp/>because:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>1.<sp/>All<sp/>lead<sp/>terms<sp/>of<sp/>images<sp/>of<sp/>g&apos;s<sp/>are<sp/>in<sp/>different<sp/>f<sp/>components,<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>2.<sp/>There<sp/>are<sp/>no<sp/>overlaps<sp/>with<sp/>these<sp/>lead<sp/>terms<sp/>with<sp/>the<sp/>ring.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight><highlight class="comment">//<sp/>level<sp/>degree<sp/>table:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight><highlight class="comment">//<sp/>degrees<sp/>rows,<sp/>levels<sp/>columns<sp/>(betti<sp/>diagram<sp/>in<sp/>M2)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(entries<sp/>indicate<sp/>order<sp/>of<sp/>computation)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight><highlight class="comment">//<sp/>entries<sp/>with<sp/>the<sp/>same<sp/>letter<sp/>may<sp/>be<sp/>computed<sp/>at<sp/>the<sp/>same<sp/>time</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="234"><highlight class="comment"><sp/><sp/><sp/><sp/>0<sp/><sp/><sp/><sp/><sp/>1<sp/><sp/><sp/><sp/><sp/>2<sp/><sp/><sp/><sp/><sp/>3<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0<sp/><sp/><sp/><sp/>1<sp/><sp/><sp/><sp/>2<sp/><sp/><sp/><sp/>3</highlight></codeline>
+<codeline lineno="235"><highlight class="comment">0<sp/><sp/><sp/>a<sp/><sp/><sp/><sp/><sp/>.<sp/><sp/><sp/><sp/><sp/>.<sp/><sp/><sp/><sp/><sp/>.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pb<sp/><sp/><sp/>pc<sp/>(or<sp/>*during*)</highlight></codeline>
+<codeline lineno="236"><highlight class="comment">1<sp/><sp/><sp/>.<sp/><sp/><sp/><sp/><sp/>b<sp/><sp/><sp/><sp/><sp/>c<sp/><sp/><sp/><sp/><sp/>d</highlight></codeline>
+<codeline lineno="237"><highlight class="comment">2<sp/><sp/><sp/>.<sp/><sp/><sp/><sp/><sp/>c<sp/><sp/><sp/><sp/><sp/>d</highlight></codeline>
+<codeline lineno="238"><highlight class="comment">3<sp/><sp/><sp/>.<sp/><sp/><sp/><sp/><sp/>d</highlight></codeline>
+<codeline lineno="239"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight><highlight class="comment">//<sp/>creation<sp/>of<sp/>the<sp/>frame</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight><highlight class="comment">//<sp/>creation<sp/>of<sp/>level0and1<sp/>(translation<sp/>of<sp/>matrix<sp/>to<sp/>our<sp/>information)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight><highlight class="comment">//<sp/>fillInSyzygies<sp/>-<sp/>fill<sp/>in<sp/>a<sp/>level<sp/>and<sp/>degree<sp/>of<sp/>the<sp/>frame.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight><highlight class="comment">//<sp/>F4<sp/>matrix<sp/>creation<sp/>and<sp/>reduction<sp/>code</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight><highlight class="comment">//<sp/>take<sp/>result<sp/>in<sp/>the<sp/>frame<sp/>and<sp/>translate<sp/>back</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><ref refid="class_resolution_computation" kindref="compound">ResolutionComputation</ref>*<sp/><ref refid="nc-res-computation_8hpp_a3bc5710b3c92daa99accb62d40ee61db_1a3bc5710b3c92daa99accb62d40ee61db" kindref="member">createNCRes</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref>*<sp/>m,</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>max_level,</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>strategy);</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/NCResolutions/nc-res-computation.hpp"/>
+  </compounddef>
+</doxygen>

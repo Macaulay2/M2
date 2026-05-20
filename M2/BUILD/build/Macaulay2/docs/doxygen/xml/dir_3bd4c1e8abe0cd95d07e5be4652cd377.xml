@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_3bd4c1e8abe0cd95d07e5be4652cd377" kind="dir">
+    <compoundname>Macaulay2/e/NCAlgebras</compoundname>
+    <innerfile refid="_free_algebra_8cpp">FreeAlgebra.cpp</innerfile>
+    <innerfile refid="_free_algebra_8hpp">FreeAlgebra.hpp</innerfile>
+    <innerfile refid="_free_algebra_quotient_8cpp">FreeAlgebraQuotient.cpp</innerfile>
+    <innerfile refid="_free_algebra_quotient_8hpp">FreeAlgebraQuotient.hpp</innerfile>
+    <innerfile refid="_free_monoid_8cpp">FreeMonoid.cpp</innerfile>
+    <innerfile refid="_free_monoid_8hpp">FreeMonoid.hpp</innerfile>
+    <innerfile refid="_n_c_f4_8cpp">NCF4.cpp</innerfile>
+    <innerfile refid="_n_c_f4_8hpp">NCF4.hpp</innerfile>
+    <innerfile refid="_n_c_groebner_8cpp">NCGroebner.cpp</innerfile>
+    <innerfile refid="_n_c_groebner_8hpp">NCGroebner.hpp</innerfile>
+    <innerfile refid="_n_c_reduction_8cpp">NCReduction.cpp</innerfile>
+    <innerfile refid="_n_c_reduction_8hpp">NCReduction.hpp</innerfile>
+    <innerfile refid="_overlap_table_8cpp">OverlapTable.cpp</innerfile>
+    <innerfile refid="_overlap_table_8hpp">OverlapTable.hpp</innerfile>
+    <innerfile refid="_macaulay2_2e_2_n_c_algebras_2_range_8hpp">Range.hpp</innerfile>
+    <innerfile refid="_suffix_tree_8cpp">SuffixTree.cpp</innerfile>
+    <innerfile refid="_suffix_tree_8hpp">SuffixTree.hpp</innerfile>
+    <innerfile refid="_word_8cpp">Word.cpp</innerfile>
+    <innerfile refid="_word_8hpp">Word.hpp</innerfile>
+    <innerfile refid="_word_table_8cpp">WordTable.cpp</innerfile>
+    <innerfile refid="_word_table_8hpp">WordTable.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/NCAlgebras/"/>
+  </compounddef>
+</doxygen>

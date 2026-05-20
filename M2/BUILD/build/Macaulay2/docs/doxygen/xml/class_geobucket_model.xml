@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_geobucket_model" kind="class" language="C++" prot="public">
+    <compoundname>GeobucketModel</compoundname>
+    <basecompoundref refid="class_model" prot="public" virt="non-virtual">Model&lt; OnSpans, Deduplicate, false, mathic::Geobucket, GeobucketModelBase&lt; TrackFront, MinBucketBinarySearch, Premerge, CollectMax, BucketStorage, 1 &gt; &gt;</basecompoundref>
+    <includes refid="_geobucket_model_8h" local="no">GeobucketModel.h</includes>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>OnSpans</declname>
+        <defname>OnSpans</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>TrackFront</declname>
+        <defname>TrackFront</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>MinBucketBinarySearch</declname>
+        <defname>MinBucketBinarySearch</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>Deduplicate</declname>
+        <defname>Deduplicate</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>Premerge</declname>
+        <defname>Premerge</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>CollectMax</declname>
+        <defname>CollectMax</defname>
+      </param>
+      <param>
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <declname>BucketStorage</declname>
+        <defname>BucketStorage</defname>
+      </param>
+      <param>
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <declname>InsertFactor</declname>
+        <defname>InsertFactor</defname>
+        <defval>1</defval>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_geobucket_model_a595ee3b9d1c1ab0fe6c537baf0b0d6db_1a595ee3b9d1c1ab0fe6c537baf0b0d6db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>GeobucketModel&lt; OnSpans, TrackFront, MinBucketBinarySearch, Deduplicate, Premerge, CollectMax, BucketStorage, InsertFactor &gt;::GeobucketModel</definition>
+        <argsstring>(size_t geoBase, size_t minBucketSize)</argsstring>
+        <name>GeobucketModel</name>
+        <qualifiedname>GeobucketModel::GeobucketModel</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>geoBase</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>minBucketSize</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/GeobucketModel.h" line="53" column="3" bodyfile="submodules/mathic/src/pqsim/GeobucketModel.h" bodystart="53" bodyend="65"/>
+        <references refid="class_model_a697344cf9875b241b32b97ab67fdc58a_1a697344cf9875b241b32b97ab67fdc58a" compoundref="_model_8h" startline="38" endline="38">Model&lt; OnSpans, Deduplicate, false, mathic::Geobucket, GeobucketModelBase&lt; TrackFront, MinBucketBinarySearch, Premerge, CollectMax, BucketStorage, 1 &gt; &gt;::Model</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>GeobucketModel&lt; OnSpans, TrackFront, MinBucketBinarySearch, Deduplicate, Premerge, CollectMax, BucketStorage, InsertFactor &gt;</label>
+        <link refid="class_geobucket_model"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;</label>
+        <link refid="class_model"/>
+      </node>
+      <node id="2">
+        <label>Model&lt; OnSpans, Deduplicate, false, mathic::Geobucket, GeobucketModelBase&lt; TrackFront, MinBucketBinarySearch, Premerge, CollectMax, BucketStorage, 1 &gt; &gt;</label>
+        <link refid="class_model"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; OnSpans, Deduplicate, false, mathic::Geobucket, GeobucketModelBase&lt; TrackFront, MinBucketBinarySearch, Premerge, CollectMax, BucketStorage, 1 &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="19">
+        <label>C</label>
+      </node>
+      <node id="8">
+        <label>Entry</label>
+      </node>
+      <node id="15">
+        <label>ConfigurationBase</label>
+        <link refid="class_configuration_base"/>
+      </node>
+      <node id="21">
+        <label>DataStructure&lt; Model::Configuration &gt;</label>
+      </node>
+      <node id="7">
+        <label>Entry *</label>
+      </node>
+      <node id="17">
+        <label>GeoFront&lt; Configuration &gt;</label>
+      </node>
+      <node id="1">
+        <label>GeobucketModel&lt; OnSpans, TrackFront, MinBucketBinarySearch, Deduplicate, Premerge, CollectMax, BucketStorage, InsertFactor &gt;</label>
+        <link refid="class_geobucket_model"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>ItemOrValue&lt; bool &gt;</label>
+        <link refid="struct_item_or_value"/>
+      </node>
+      <node id="12">
+        <label>Entry&lt; OnSpans &gt;</label>
+        <link refid="struct_item_or_value"/>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; OnSpans &gt;::Entry</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;</label>
+        <link refid="class_model"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>_ds</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration</label>
+        <link refid="class_model_1_1_configuration"/>
+        <childnode refid="15" relation="public-inheritance">
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>supportDeduplication</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_comparisons</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_pending</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Model&lt; OnSpans, Deduplicate, false, mathic::Geobucket, GeobucketModelBase&lt; TrackFront, MinBucketBinarySearch, Premerge, CollectMax, BucketStorage, 1 &gt; &gt;</label>
+        <link refid="class_model"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_ds</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="template-instance">
+          <edgelabel>&lt; OnSpans, Deduplicate, false, mathic::Geobucket, GeobucketModelBase&lt; TrackFront, MinBucketBinarySearch, Premerge, CollectMax, BucketStorage, 1 &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>T</label>
+      </node>
+      <node id="16">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="18">
+        <label>mathic::Geobucket&lt; C &gt;</label>
+        <link refid="classmathic_1_1_geobucket"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_entryCount</edgelabel>
+          <edgelabel>_geoBase</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_buckets</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_bucketBegin</edgelabel>
+          <edgelabel>_bucketEnd</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_mem</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_tmp</edgelabel>
+          <edgelabel>_tmpForNoPremerge</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_conf</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_front</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>mathic::Geobucket&lt; C &gt;::Bucket</label>
+        <link refid="structmathic_1_1_geobucket_1_1_bucket"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_frontPos</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_otherBuffer</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_back</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_capacity</edgelabel>
+          <edgelabel>_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mathic::Geobucket&lt; Model::Configuration &gt;</label>
+        <link refid="classmathic_1_1_geobucket"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_entryCount</edgelabel>
+          <edgelabel>_geoBase</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_buckets</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_bucketBegin</edgelabel>
+          <edgelabel>_bucketEnd</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_mem</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_tmp</edgelabel>
+          <edgelabel>_tmpForNoPremerge</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_conf</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_front</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; Model::Configuration &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>size_t</label>
+      </node>
+      <node id="9">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="10" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>std::vector&lt; Entry &gt;</label>
+        <childnode refid="9" relation="template-instance">
+          <edgelabel>&lt; Entry &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; mathic::Geobucket::Bucket &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="template-instance">
+          <edgelabel>&lt; mathic::Geobucket::Bucket &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/pqsim/GeobucketModel.h" line="39" column="1" bodyfile="submodules/mathic/src/pqsim/GeobucketModel.h" bodystart="51" bodyend="66"/>
+    <listofallmembers>
+      <member refid="class_model_a0af2bc9bdc2222c7c3354a85b271dddb_1a0af2bc9bdc2222c7c3354a85b271dddb" prot="private" virt="non-virtual"><scope>GeobucketModel</scope><name>_ds</name></member>
+      <member refid="class_model_a345c032d0f403c78b7c522880ba9d75b_1a345c032d0f403c78b7c522880ba9d75b" prot="public" virt="non-virtual"><scope>GeobucketModel</scope><name>empty</name></member>
+      <member refid="class_geobucket_model_a595ee3b9d1c1ab0fe6c537baf0b0d6db_1a595ee3b9d1c1ab0fe6c537baf0b0d6db" prot="public" virt="non-virtual"><scope>GeobucketModel</scope><name>GeobucketModel</name></member>
+      <member refid="class_model_aee4b75b2dc8bcb8abfeef4a4eab81a7e_1aee4b75b2dc8bcb8abfeef4a4eab81a7e" prot="public" virt="non-virtual"><scope>GeobucketModel</scope><name>getComparisons</name></member>
+      <member refid="class_model_ab239c68d29a5bb434057ee10b88ed5ff_1ab239c68d29a5bb434057ee10b88ed5ff" prot="public" virt="non-virtual"><scope>GeobucketModel</scope><name>getMemoryUse</name></member>
+      <member refid="class_model_acfd121c3e84288efda3f89d8717649b5_1acfd121c3e84288efda3f89d8717649b5" prot="public" virt="non-virtual"><scope>GeobucketModel</scope><name>getName</name></member>
+      <member refid="class_model_a697344cf9875b241b32b97ab67fdc58a_1a697344cf9875b241b32b97ab67fdc58a" prot="public" virt="non-virtual"><scope>GeobucketModel</scope><name>Model</name></member>
+      <member refid="class_model_a7384b2cd71eb2823eb18e2b884c50e22_1a7384b2cd71eb2823eb18e2b884c50e22" prot="public" virt="non-virtual"><scope>GeobucketModel</scope><name>pop</name></member>
+      <member refid="class_model_a262ee084561d9d63220286b730ce2609_1a262ee084561d9d63220286b730ce2609" prot="public" virt="non-virtual"><scope>GeobucketModel</scope><name>print</name></member>
+      <member refid="class_model_adffc7a83fbda6d0ecc662ab1d8aae529_1adffc7a83fbda6d0ecc662ab1d8aae529" prot="public" virt="non-virtual"><scope>GeobucketModel</scope><name>push</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

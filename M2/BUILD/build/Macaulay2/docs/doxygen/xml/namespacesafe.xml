@@ -1,0 +1,971 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespacesafe" kind="namespace" language="C++">
+    <compoundname>safe</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void safe::ov</definition>
+        <argsstring>(const char *msg)</argsstring>
+        <name>ov</name>
+        <qualifiedname>safe::ov</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.cpp" line="5" column="6" bodyfile="Macaulay2/e/overflow.cpp" bodystart="5" bodyend="9" declfile="Macaulay2/e/overflow.hpp" declline="70" declcolumn="6"/>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <referencedby refid="namespacesafe_a33c6936227918d3d2d0706c2b33e67e6_1a33c6936227918d3d2d0706c2b33e67e6" compoundref="overflow_8hpp" startline="114" endline="121">add</referencedby>
+        <referencedby refid="namespacesafe_a66eea95e6062395bfb26838596c44783_1a66eea95e6062395bfb26838596c44783" compoundref="overflow_8hpp" startline="128" endline="135">add_to</referencedby>
+        <referencedby refid="namespacesafe_a4218c3f5f8449654f457f1c2971f7a8f_1a4218c3f5f8449654f457f1c2971f7a8f" compoundref="overflow_8hpp" startline="261" endline="266">div</referencedby>
+        <referencedby refid="namespacesafe_a1c08ea468d7a7e5dd9fc45897a3fb167_1a1c08ea468d7a7e5dd9fc45897a3fb167" compoundref="overflow_8hpp" startline="272" endline="277">div_by</referencedby>
+        <referencedby refid="namespacesafe_aa7b8cae7dc6b4cdc50c9ebd70979b114_1aa7b8cae7dc6b4cdc50c9ebd70979b114" compoundref="overflow_8hpp" startline="78" endline="83">fits_15</referencedby>
+        <referencedby refid="namespacesafe_a04894238f455f7b5276c5c87300ff976_1a04894238f455f7b5276c5c87300ff976" compoundref="overflow_8hpp" startline="84" endline="89">fits_31</referencedby>
+        <referencedby refid="namespacesafe_a5c49e5c2dd699ef91ee5edcab3f576a1_1a5c49e5c2dd699ef91ee5edcab3f576a1" compoundref="overflow_8hpp" startline="72" endline="77">fits_7</referencedby>
+        <referencedby refid="overflow-test_8cpp_a3c04138a5bfe5d72780bb7e82a18e627_1a3c04138a5bfe5d72780bb7e82a18e627" compoundref="overflow-test_8cpp" startline="68" endline="245">main</referencedby>
+        <referencedby refid="namespacesafe_af45cf8f47dc141fe72db241a972ed246_1af45cf8f47dc141fe72db241a972ed246" compoundref="overflow_8hpp" startline="183" endline="189">minus</referencedby>
+        <referencedby refid="namespacesafe_a145feb05f9904060dc91bef00892b0b4_1a145feb05f9904060dc91bef00892b0b4" compoundref="overflow_8hpp" startline="234" endline="241">mult</referencedby>
+        <referencedby refid="namespacesafe_a266b8dbfb13223a2251d084fb851566a_1a266b8dbfb13223a2251d084fb851566a" compoundref="overflow_8hpp" startline="247" endline="254">mult_by</referencedby>
+        <referencedby refid="namespacesafe_a32c5688e26a10560340967f20c5b44d3_1a32c5688e26a10560340967f20c5b44d3" compoundref="overflow_8hpp" startline="195" endline="202">pos_add</referencedby>
+        <referencedby refid="namespacesafe_aa343f8acd87377835aebf9be1c38376b_1aa343f8acd87377835aebf9be1c38376b" compoundref="overflow_8hpp" startline="207" endline="214">pos_add_2</referencedby>
+        <referencedby refid="namespacesafe_a5a60829273ea9f73e74ad145e75e5488_1a5a60829273ea9f73e74ad145e75e5488" compoundref="overflow_8hpp" startline="220" endline="227">pos_add_4</referencedby>
+        <referencedby refid="namespacesafe_a85ee3289833734b3062569f03fe090a6_1a85ee3289833734b3062569f03fe090a6" compoundref="overflow_8hpp" startline="142" endline="149">sub</referencedby>
+        <referencedby refid="namespacesafe_a2a1c27f47016a1c86386adeeae1ecfd4_1a2a1c27f47016a1c86386adeeae1ecfd4" compoundref="overflow_8hpp" startline="156" endline="163">sub_from</referencedby>
+        <referencedby refid="namespacesafe_ac74cdc0abe5f4c77f8e576037840a8b6_1ac74cdc0abe5f4c77f8e576037840a8b6" compoundref="overflow_8hpp" startline="170" endline="177">sub_pos</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a5c49e5c2dd699ef91ee5edcab3f576a1_1a5c49e5c2dd699ef91ee5edcab3f576a1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::fits_7</definition>
+        <argsstring>(int32_t x, const char *msg)</argsstring>
+        <name>fits_7</name>
+        <qualifiedname>safe::fits_7</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="72" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="72" bodyend="77"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_a5e4bd00daf1c908a8cba97db5ebc79dc_1a5e4bd00daf1c908a8cba97db5ebc79dc" compoundref="overflow_8hpp" startline="91" endline="94">fits_7</referencedby>
+        <referencedby refid="imonorder_8cpp_a07236190cb4d24b9fbfe5fcf7478e0c3_1a07236190cb4d24b9fbfe5fcf7478e0c3" compoundref="imonorder_8cpp" startline="345" endline="362">MO_pack4</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_aa7b8cae7dc6b4cdc50c9ebd70979b114_1aa7b8cae7dc6b4cdc50c9ebd70979b114" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::fits_15</definition>
+        <argsstring>(int32_t x, const char *msg)</argsstring>
+        <name>fits_15</name>
+        <qualifiedname>safe::fits_15</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="78" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="78" bodyend="83"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_a317962721403268d43e97799ed4fd27b_1a317962721403268d43e97799ed4fd27b" compoundref="overflow_8hpp" startline="95" endline="98">fits_15</referencedby>
+        <referencedby refid="imonorder_8cpp_a7a1157a61eb832c882289d3377f18a55_1a7a1157a61eb832c882289d3377f18a55" compoundref="imonorder_8cpp" startline="364" endline="377">MO_pack2</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a04894238f455f7b5276c5c87300ff976_1a04894238f455f7b5276c5c87300ff976" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::fits_31</definition>
+        <argsstring>(int32_t x, const char *msg)</argsstring>
+        <name>fits_31</name>
+        <qualifiedname>safe::fits_31</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="84" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="84" bodyend="89"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_aebc03f5a51cd5d95fba530a28e51070b_1aebc03f5a51cd5d95fba530a28e51070b" compoundref="overflow_8hpp" startline="99" endline="102">fits_31</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a5e4bd00daf1c908a8cba97db5ebc79dc_1a5e4bd00daf1c908a8cba97db5ebc79dc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::fits_7</definition>
+        <argsstring>(int32_t x)</argsstring>
+        <name>fits_7</name>
+        <qualifiedname>safe::fits_7</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="91" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="91" bodyend="94"/>
+        <references refid="namespacesafe_a5c49e5c2dd699ef91ee5edcab3f576a1_1a5c49e5c2dd699ef91ee5edcab3f576a1" compoundref="overflow_8hpp" startline="72" endline="77">fits_7</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a317962721403268d43e97799ed4fd27b_1a317962721403268d43e97799ed4fd27b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::fits_15</definition>
+        <argsstring>(int32_t x)</argsstring>
+        <name>fits_15</name>
+        <qualifiedname>safe::fits_15</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="95" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="95" bodyend="98"/>
+        <references refid="namespacesafe_aa7b8cae7dc6b4cdc50c9ebd70979b114_1aa7b8cae7dc6b4cdc50c9ebd70979b114" compoundref="overflow_8hpp" startline="78" endline="83">fits_15</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_aebc03f5a51cd5d95fba530a28e51070b_1aebc03f5a51cd5d95fba530a28e51070b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::fits_31</definition>
+        <argsstring>(int32_t x)</argsstring>
+        <name>fits_31</name>
+        <qualifiedname>safe::fits_31</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="99" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="99" bodyend="102"/>
+        <references refid="namespacesafe_a04894238f455f7b5276c5c87300ff976_1a04894238f455f7b5276c5c87300ff976" compoundref="overflow_8hpp" startline="84" endline="89">fits_31</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_ac6b28ead5f03d38a567dfe78a8bf0432_1ac6b28ead5f03d38a567dfe78a8bf0432" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::over_1</definition>
+        <argsstring>(int32_t x)</argsstring>
+        <name>over_1</name>
+        <qualifiedname>safe::over_1</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="104" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="104" bodyend="104"/>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_a32c5688e26a10560340967f20c5b44d3_1a32c5688e26a10560340967f20c5b44d3" compoundref="overflow_8hpp" startline="195" endline="202">pos_add</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a50d91aac8861b157e2a2dd9742cad008_1a50d91aac8861b157e2a2dd9742cad008" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::over_2</definition>
+        <argsstring>(int32_t x)</argsstring>
+        <name>over_2</name>
+        <qualifiedname>safe::over_2</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="105" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="105" bodyend="108"/>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_aa343f8acd87377835aebf9be1c38376b_1aa343f8acd87377835aebf9be1c38376b" compoundref="overflow_8hpp" startline="207" endline="214">pos_add_2</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a257330702698810cf777226a2ad1ba1c_1a257330702698810cf777226a2ad1ba1c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::over_4</definition>
+        <argsstring>(int32_t x)</argsstring>
+        <name>over_4</name>
+        <qualifiedname>safe::over_4</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="109" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="109" bodyend="112"/>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_a5a60829273ea9f73e74ad145e75e5488_1a5a60829273ea9f73e74ad145e75e5488" compoundref="overflow_8hpp" startline="220" endline="227">pos_add_4</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a33c6936227918d3d2d0706c2b33e67e6_1a33c6936227918d3d2d0706c2b33e67e6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::add</definition>
+        <argsstring>(int32_t x, int32_t y, const char *msg)</argsstring>
+        <name>add</name>
+        <qualifiedname>safe::add</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="114" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="114" bodyend="121"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_a9bc0f400d9284da1cf4a66355924eb63_1a9bc0f400d9284da1cf4a66355924eb63" compoundref="overflow_8hpp" startline="123" endline="126">add</referencedby>
+        <referencedby refid="overflow-test_8cpp_a3c04138a5bfe5d72780bb7e82a18e627_1a3c04138a5bfe5d72780bb7e82a18e627" compoundref="overflow-test_8cpp" startline="68" endline="245">main</referencedby>
+        <referencedby refid="imonorder_8cpp_a4c8b68e12051c0839192a7a920addc78_1a4c8b68e12051c0839192a7a920addc78" compoundref="imonorder_8cpp" startline="411" endline="546">monomialOrderEncodeFromActualExponents</referencedby>
+        <referencedby refid="class_exponent_list_a6a491949bdc39b77a66387d425836158_1a6a491949bdc39b77a66387d425836158" compoundref="_exponent_list_8cpp" startline="92" endline="140">ExponentList&lt; int, true &gt;::mult</referencedby>
+        <referencedby refid="class_exponent_vector_a47b39fdd909b303b27b83f4824dc991b_1a47b39fdd909b303b27b83f4824dc991b" compoundref="_exponent_vector_8hpp" startline="98" endline="107">ExponentVector&lt; int, true &gt;::mult</referencedby>
+        <referencedby refid="class_monoid_ac6c092c8e8afa4ab22276f88def6c2bf_1ac6c092c8e8afa4ab22276f88def6c2bf" compoundref="monoid_8cpp" startline="363" endline="383">Monoid::mult</referencedby>
+        <referencedby refid="class_exponent_vector_a7bfed1521d991702add19554926b42ef_1a7bfed1521d991702add19554926b42ef" compoundref="_exponent_vector_8hpp" startline="122" endline="133">ExponentVector&lt; int, true &gt;::multpower</referencedby>
+        <referencedby refid="class_exponent_vector_a117fd1c075c77923f2d25c10ca7cdadd_1a117fd1c075c77923f2d25c10ca7cdadd" compoundref="_exponent_vector_8hpp" startline="218" endline="229">ExponentVector&lt; int, true &gt;::simple_degree</referencedby>
+        <referencedby refid="class_exponent_vector_a0fb7ae5fd187970f44c7868efda3c51e_1a0fb7ae5fd187970f44c7868efda3c51e" compoundref="_exponent_vector_8hpp" startline="232" endline="244">ExponentVector&lt; int, true &gt;::weight</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a9bc0f400d9284da1cf4a66355924eb63_1a9bc0f400d9284da1cf4a66355924eb63" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::add</definition>
+        <argsstring>(int32_t x, int32_t y)</argsstring>
+        <name>add</name>
+        <qualifiedname>safe::add</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="123" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="123" bodyend="126"/>
+        <references refid="namespacesafe_a33c6936227918d3d2d0706c2b33e67e6_1a33c6936227918d3d2d0706c2b33e67e6" compoundref="overflow_8hpp" startline="114" endline="121">add</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a66eea95e6062395bfb26838596c44783_1a66eea95e6062395bfb26838596c44783" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::add_to</definition>
+        <argsstring>(int32_t &amp;x, int32_t y, const char *msg)</argsstring>
+        <name>add_to</name>
+        <qualifiedname>safe::add_to</qualifiedname>
+        <param>
+          <type>int32_t &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="128" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="128" bodyend="135"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_a8bf6d09ac8e2ebaf97571945e541acad_1a8bf6d09ac8e2ebaf97571945e541acad" compoundref="overflow_8hpp" startline="137" endline="140">add_to</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a8bf6d09ac8e2ebaf97571945e541acad_1a8bf6d09ac8e2ebaf97571945e541acad" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::add_to</definition>
+        <argsstring>(int32_t &amp;x, int32_t y)</argsstring>
+        <name>add_to</name>
+        <qualifiedname>safe::add_to</qualifiedname>
+        <param>
+          <type>int32_t &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="137" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="137" bodyend="140"/>
+        <references refid="namespacesafe_a66eea95e6062395bfb26838596c44783_1a66eea95e6062395bfb26838596c44783" compoundref="overflow_8hpp" startline="128" endline="135">add_to</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a85ee3289833734b3062569f03fe090a6_1a85ee3289833734b3062569f03fe090a6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::sub</definition>
+        <argsstring>(int32_t x, int32_t y, const char *msg)</argsstring>
+        <name>sub</name>
+        <qualifiedname>safe::sub</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="142" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="142" bodyend="149"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_exponent_vector_a1595c7323de1771806b9e1856860d8ea_1a1595c7323de1771806b9e1856860d8ea" compoundref="_exponent_vector_8hpp" startline="145" endline="154">ExponentVector&lt; int, true &gt;::divide</referencedby>
+        <referencedby refid="overflow-test_8cpp_a3c04138a5bfe5d72780bb7e82a18e627_1a3c04138a5bfe5d72780bb7e82a18e627" compoundref="overflow-test_8cpp" startline="68" endline="245">main</referencedby>
+        <referencedby refid="imonorder_8cpp_a79215441690cae9016d1b108f74dbcd2_1a79215441690cae9016d1b108f74dbcd2" compoundref="imonorder_8cpp" startline="548" endline="649">monomialOrderDecodeToActualExponents</referencedby>
+        <referencedby refid="namespacesafe_a350e8091a0f4d91677f379b26dc220e6_1a350e8091a0f4d91677f379b26dc220e6" compoundref="overflow_8hpp" startline="151" endline="154">sub</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a350e8091a0f4d91677f379b26dc220e6_1a350e8091a0f4d91677f379b26dc220e6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::sub</definition>
+        <argsstring>(int32_t x, int32_t y)</argsstring>
+        <name>sub</name>
+        <qualifiedname>safe::sub</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="151" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="151" bodyend="154"/>
+        <references refid="namespacesafe_a85ee3289833734b3062569f03fe090a6_1a85ee3289833734b3062569f03fe090a6" compoundref="overflow_8hpp" startline="142" endline="149">sub</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a2a1c27f47016a1c86386adeeae1ecfd4_1a2a1c27f47016a1c86386adeeae1ecfd4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::sub_from</definition>
+        <argsstring>(int32_t &amp;x, int32_t y, const char *msg)</argsstring>
+        <name>sub_from</name>
+        <qualifiedname>safe::sub_from</qualifiedname>
+        <param>
+          <type>int32_t &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="156" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="156" bodyend="163"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_a03fdec925fc9bbd8478abfcae6307d9a_1a03fdec925fc9bbd8478abfcae6307d9a" compoundref="overflow_8hpp" startline="165" endline="168">sub_from</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a03fdec925fc9bbd8478abfcae6307d9a_1a03fdec925fc9bbd8478abfcae6307d9a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::sub_from</definition>
+        <argsstring>(int32_t &amp;x, int32_t y)</argsstring>
+        <name>sub_from</name>
+        <qualifiedname>safe::sub_from</qualifiedname>
+        <param>
+          <type>int32_t &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="165" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="165" bodyend="168"/>
+        <references refid="namespacesafe_a2a1c27f47016a1c86386adeeae1ecfd4_1a2a1c27f47016a1c86386adeeae1ecfd4" compoundref="overflow_8hpp" startline="156" endline="163">sub_from</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_ac74cdc0abe5f4c77f8e576037840a8b6_1ac74cdc0abe5f4c77f8e576037840a8b6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::sub_pos</definition>
+        <argsstring>(int32_t x, int32_t y, const char *msg)</argsstring>
+        <name>sub_pos</name>
+        <qualifiedname>safe::sub_pos</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="170" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="170" bodyend="177"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_exponent_vector_aa016f1a8a6eb8067f0b8f0e58b8192f4_1aa016f1a8a6eb8067f0b8f0e58b8192f4" compoundref="_exponent_vector_8hpp" startline="157" endline="176">ExponentVector&lt; int, true &gt;::quotient</referencedby>
+        <referencedby refid="namespacesafe_a773dca3b373704ef9f35fa293acf31a6_1a773dca3b373704ef9f35fa293acf31a6" compoundref="overflow_8hpp" startline="178" endline="181">sub_pos</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a773dca3b373704ef9f35fa293acf31a6_1a773dca3b373704ef9f35fa293acf31a6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::sub_pos</definition>
+        <argsstring>(int32_t x, int32_t y)</argsstring>
+        <name>sub_pos</name>
+        <qualifiedname>safe::sub_pos</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="178" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="178" bodyend="181"/>
+        <references refid="namespacesafe_ac74cdc0abe5f4c77f8e576037840a8b6_1ac74cdc0abe5f4c77f8e576037840a8b6" compoundref="overflow_8hpp" startline="170" endline="177">sub_pos</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_af45cf8f47dc141fe72db241a972ed246_1af45cf8f47dc141fe72db241a972ed246" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::minus</definition>
+        <argsstring>(int32_t x, const char *msg)</argsstring>
+        <name>minus</name>
+        <qualifiedname>safe::minus</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="183" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="183" bodyend="189"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="overflow-test_8cpp_a3c04138a5bfe5d72780bb7e82a18e627_1a3c04138a5bfe5d72780bb7e82a18e627" compoundref="overflow-test_8cpp" startline="68" endline="245">main</referencedby>
+        <referencedby refid="namespacesafe_a08c84671c07e86e67cd1448c15b06f30_1a08c84671c07e86e67cd1448c15b06f30" compoundref="overflow_8hpp" startline="190" endline="193">minus</referencedby>
+        <referencedby refid="imonorder_8cpp_a79215441690cae9016d1b108f74dbcd2_1a79215441690cae9016d1b108f74dbcd2" compoundref="imonorder_8cpp" startline="548" endline="649">monomialOrderDecodeToActualExponents</referencedby>
+        <referencedby refid="imonorder_8cpp_a4c8b68e12051c0839192a7a920addc78_1a4c8b68e12051c0839192a7a920addc78" compoundref="imonorder_8cpp" startline="411" endline="546">monomialOrderEncodeFromActualExponents</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a08c84671c07e86e67cd1448c15b06f30_1a08c84671c07e86e67cd1448c15b06f30" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::minus</definition>
+        <argsstring>(int32_t x)</argsstring>
+        <name>minus</name>
+        <qualifiedname>safe::minus</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="190" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="190" bodyend="193"/>
+        <references refid="namespacesafe_af45cf8f47dc141fe72db241a972ed246_1af45cf8f47dc141fe72db241a972ed246" compoundref="overflow_8hpp" startline="183" endline="189">minus</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a32c5688e26a10560340967f20c5b44d3_1a32c5688e26a10560340967f20c5b44d3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::pos_add</definition>
+        <argsstring>(int32_t x, int32_t y, const char *msg)</argsstring>
+        <name>pos_add</name>
+        <qualifiedname>safe::pos_add</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="195" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="195" bodyend="202"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="namespacesafe_ac6b28ead5f03d38a567dfe78a8bf0432_1ac6b28ead5f03d38a567dfe78a8bf0432" compoundref="overflow_8hpp" startline="104" endline="104">over_1</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_monoid_ac6c092c8e8afa4ab22276f88def6c2bf_1ac6c092c8e8afa4ab22276f88def6c2bf" compoundref="monoid_8cpp" startline="363" endline="383">Monoid::mult</referencedby>
+        <referencedby refid="namespacesafe_a7667b4bf299ea5a3520d1519279b1922_1a7667b4bf299ea5a3520d1519279b1922" compoundref="overflow_8hpp" startline="203" endline="206">pos_add</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a7667b4bf299ea5a3520d1519279b1922_1a7667b4bf299ea5a3520d1519279b1922" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::pos_add</definition>
+        <argsstring>(int32_t x, int32_t y)</argsstring>
+        <name>pos_add</name>
+        <qualifiedname>safe::pos_add</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="203" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="203" bodyend="206"/>
+        <references refid="namespacesafe_a32c5688e26a10560340967f20c5b44d3_1a32c5688e26a10560340967f20c5b44d3" compoundref="overflow_8hpp" startline="195" endline="202">pos_add</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_aa343f8acd87377835aebf9be1c38376b_1aa343f8acd87377835aebf9be1c38376b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::pos_add_2</definition>
+        <argsstring>(int32_t x, int32_t y, const char *msg)</argsstring>
+        <name>pos_add_2</name>
+        <qualifiedname>safe::pos_add_2</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="207" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="207" bodyend="214"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="namespacesafe_a50d91aac8861b157e2a2dd9742cad008_1a50d91aac8861b157e2a2dd9742cad008" compoundref="overflow_8hpp" startline="105" endline="108">over_2</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_monoid_ac6c092c8e8afa4ab22276f88def6c2bf_1ac6c092c8e8afa4ab22276f88def6c2bf" compoundref="monoid_8cpp" startline="363" endline="383">Monoid::mult</referencedby>
+        <referencedby refid="namespacesafe_acd23502268087473053b570c870fea43_1acd23502268087473053b570c870fea43" compoundref="overflow_8hpp" startline="215" endline="219">pos_add_2</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_acd23502268087473053b570c870fea43_1acd23502268087473053b570c870fea43" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::pos_add_2</definition>
+        <argsstring>(int32_t x, int32_t y)</argsstring>
+        <name>pos_add_2</name>
+        <qualifiedname>safe::pos_add_2</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="215" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="215" bodyend="219"/>
+        <references refid="namespacesafe_aa343f8acd87377835aebf9be1c38376b_1aa343f8acd87377835aebf9be1c38376b" compoundref="overflow_8hpp" startline="207" endline="214">pos_add_2</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a5a60829273ea9f73e74ad145e75e5488_1a5a60829273ea9f73e74ad145e75e5488" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::pos_add_4</definition>
+        <argsstring>(int32_t x, int32_t y, const char *msg)</argsstring>
+        <name>pos_add_4</name>
+        <qualifiedname>safe::pos_add_4</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="220" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="220" bodyend="227"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="namespacesafe_a257330702698810cf777226a2ad1ba1c_1a257330702698810cf777226a2ad1ba1c" compoundref="overflow_8hpp" startline="109" endline="112">over_4</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_monoid_ac6c092c8e8afa4ab22276f88def6c2bf_1ac6c092c8e8afa4ab22276f88def6c2bf" compoundref="monoid_8cpp" startline="363" endline="383">Monoid::mult</referencedby>
+        <referencedby refid="namespacesafe_aaa5fd74abc793f45e31c07649dce3575_1aaa5fd74abc793f45e31c07649dce3575" compoundref="overflow_8hpp" startline="228" endline="232">pos_add_4</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_aaa5fd74abc793f45e31c07649dce3575_1aaa5fd74abc793f45e31c07649dce3575" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::pos_add_4</definition>
+        <argsstring>(int32_t x, int32_t y)</argsstring>
+        <name>pos_add_4</name>
+        <qualifiedname>safe::pos_add_4</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="228" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="228" bodyend="232"/>
+        <references refid="namespacesafe_a5a60829273ea9f73e74ad145e75e5488_1a5a60829273ea9f73e74ad145e75e5488" compoundref="overflow_8hpp" startline="220" endline="227">pos_add_4</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a145feb05f9904060dc91bef00892b0b4_1a145feb05f9904060dc91bef00892b0b4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::mult</definition>
+        <argsstring>(int32_t x, int32_t y, const char *msg)</argsstring>
+        <name>mult</name>
+        <qualifiedname>safe::mult</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="234" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="234" bodyend="241"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="overflow-test_8cpp_a3c04138a5bfe5d72780bb7e82a18e627_1a3c04138a5bfe5d72780bb7e82a18e627" compoundref="overflow-test_8cpp" startline="68" endline="245">main</referencedby>
+        <referencedby refid="imonorder_8cpp_a4c8b68e12051c0839192a7a920addc78_1a4c8b68e12051c0839192a7a920addc78" compoundref="imonorder_8cpp" startline="411" endline="546">monomialOrderEncodeFromActualExponents</referencedby>
+        <referencedby refid="namespacesafe_a7076ad641e3e67f9b48b36c53f51e95f_1a7076ad641e3e67f9b48b36c53f51e95f" compoundref="overflow_8hpp" startline="242" endline="245">mult</referencedby>
+        <referencedby refid="class_exponent_vector_a7bfed1521d991702add19554926b42ef_1a7bfed1521d991702add19554926b42ef" compoundref="_exponent_vector_8hpp" startline="122" endline="133">ExponentVector&lt; int, true &gt;::multpower</referencedby>
+        <referencedby refid="class_exponent_vector_a625967961fdd3659518f7c6e566c8aa9_1a625967961fdd3659518f7c6e566c8aa9" compoundref="_exponent_vector_8hpp" startline="110" endline="119">ExponentVector&lt; int, true &gt;::power</referencedby>
+        <referencedby refid="class_exponent_vector_a0fb7ae5fd187970f44c7868efda3c51e_1a0fb7ae5fd187970f44c7868efda3c51e" compoundref="_exponent_vector_8hpp" startline="232" endline="244">ExponentVector&lt; int, true &gt;::weight</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a7076ad641e3e67f9b48b36c53f51e95f_1a7076ad641e3e67f9b48b36c53f51e95f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::mult</definition>
+        <argsstring>(int32_t x, int32_t y)</argsstring>
+        <name>mult</name>
+        <qualifiedname>safe::mult</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="242" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="242" bodyend="245"/>
+        <references refid="namespacesafe_a145feb05f9904060dc91bef00892b0b4_1a145feb05f9904060dc91bef00892b0b4" compoundref="overflow_8hpp" startline="234" endline="241">mult</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a266b8dbfb13223a2251d084fb851566a_1a266b8dbfb13223a2251d084fb851566a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::mult_by</definition>
+        <argsstring>(int32_t &amp;x, int32_t y, const char *msg)</argsstring>
+        <name>mult_by</name>
+        <qualifiedname>safe::mult_by</qualifiedname>
+        <param>
+          <type>int32_t &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="247" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="247" bodyend="254"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_a85cfb891b73304033a48eb3549e3bc01_1a85cfb891b73304033a48eb3549e3bc01" compoundref="overflow_8hpp" startline="255" endline="259">mult_by</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a85cfb891b73304033a48eb3549e3bc01_1a85cfb891b73304033a48eb3549e3bc01" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::mult_by</definition>
+        <argsstring>(int32_t &amp;x, int32_t y)</argsstring>
+        <name>mult_by</name>
+        <qualifiedname>safe::mult_by</qualifiedname>
+        <param>
+          <type>int32_t &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="255" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="255" bodyend="259"/>
+        <references refid="namespacesafe_a266b8dbfb13223a2251d084fb851566a_1a266b8dbfb13223a2251d084fb851566a" compoundref="overflow_8hpp" startline="247" endline="254">mult_by</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a4218c3f5f8449654f457f1c2971f7a8f_1a4218c3f5f8449654f457f1c2971f7a8f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::div</definition>
+        <argsstring>(int32_t x, int32_t y, const char *msg)</argsstring>
+        <name>div</name>
+        <qualifiedname>safe::div</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="261" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="261" bodyend="266"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_a06e944cbd6e8fca335634410d9102bcb_1a06e944cbd6e8fca335634410d9102bcb" compoundref="overflow_8hpp" startline="267" endline="270">div</referencedby>
+        <referencedby refid="overflow-test_8cpp_a3c04138a5bfe5d72780bb7e82a18e627_1a3c04138a5bfe5d72780bb7e82a18e627" compoundref="overflow-test_8cpp" startline="68" endline="245">main</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a06e944cbd6e8fca335634410d9102bcb_1a06e944cbd6e8fca335634410d9102bcb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::div</definition>
+        <argsstring>(int32_t x, int32_t y)</argsstring>
+        <name>div</name>
+        <qualifiedname>safe::div</qualifiedname>
+        <param>
+          <type>int32_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="267" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="267" bodyend="270"/>
+        <references refid="namespacesafe_a4218c3f5f8449654f457f1c2971f7a8f_1a4218c3f5f8449654f457f1c2971f7a8f" compoundref="overflow_8hpp" startline="261" endline="266">div</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_a1c08ea468d7a7e5dd9fc45897a3fb167_1a1c08ea468d7a7e5dd9fc45897a3fb167" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::div_by</definition>
+        <argsstring>(int32_t &amp;x, int32_t y, const char *msg)</argsstring>
+        <name>div_by</name>
+        <qualifiedname>safe::div_by</qualifiedname>
+        <param>
+          <type>int32_t &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="272" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="272" bodyend="277"/>
+        <references refid="overflow_8hpp_ae9306dbe9028727aa129a962371b6959_1ae9306dbe9028727aa129a962371b6959" compoundref="overflow_8hpp" startline="64">expect_false</references>
+        <references refid="namespacesafe_a955cce9a212f332ff5e276ea4f61cb3f_1a955cce9a212f332ff5e276ea4f61cb3f" compoundref="overflow_8cpp" startline="5" endline="9">ov</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="namespacesafe_aba9dea99621e955e01268d43daa78a72_1aba9dea99621e955e01268d43daa78a72" compoundref="overflow_8hpp" startline="278" endline="281">div_by</referencedby>
+        <referencedby refid="imonorder_8cpp_a569a1b1cac1332509ad69d7153a69256_1a569a1b1cac1332509ad69d7153a69256" compoundref="imonorder_8cpp" startline="171" endline="342">monomialOrderMake</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacesafe_aba9dea99621e955e01268d43daa78a72_1aba9dea99621e955e01268d43daa78a72" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int32_t</type>
+        <definition>static int32_t safe::div_by</definition>
+        <argsstring>(int32_t &amp;x, int32_t y)</argsstring>
+        <name>div_by</name>
+        <qualifiedname>safe::div_by</qualifiedname>
+        <param>
+          <type>int32_t &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int32_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/overflow.hpp" line="278" column="23" bodyfile="Macaulay2/e/overflow.hpp" bodystart="278" bodyend="281"/>
+        <references refid="namespacesafe_a1c08ea468d7a7e5dd9fc45897a3fb167_1a1c08ea468d7a7e5dd9fc45897a3fb167" compoundref="overflow_8hpp" startline="272" endline="277">div_by</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/overflow.cpp" line="4" column="1"/>
+  </compounddef>
+</doxygen>

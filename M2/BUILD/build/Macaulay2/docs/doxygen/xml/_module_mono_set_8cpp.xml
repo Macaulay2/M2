@@ -1,0 +1,1012 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_module_mono_set_8cpp" kind="file" language="C++">
+    <compoundname>ModuleMonoSet.cpp</compoundname>
+    <includes refid="mathicgb_2src_2mathicgb_2stdinc_8h" local="yes">stdinc.h</includes>
+    <includes refid="_module_mono_set_8hpp" local="yes">ModuleMonoSet.hpp</includes>
+    <includes refid="_static_mono_map_8hpp" local="yes">StaticMonoMap.hpp</includes>
+    <includes refid="_mathic_i_o_8hpp" local="yes">MathicIO.hpp</includes>
+    <incdepgraph>
+      <node id="26">
+        <label>mathic.h</label>
+        <link refid="mathic_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>mathic/Action.h</label>
+        <link refid="_action_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>BinaryKDTree.h</label>
+        <link refid="_binary_k_d_tree_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>mathic/BitTriangle.h</label>
+        <link refid="_bit_triangle_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>mathic/BoolParameter.h</label>
+        <link refid="_bool_parameter_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>CliParameter.h</label>
+        <link refid="_cli_parameter_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>mathic/CliParser.h</label>
+        <link refid="_cli_parser_8h"/>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>mathic/ColumnPrinter.h</label>
+        <link refid="_column_printer_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>ComTree.h</label>
+        <link refid="_com_tree_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>Comparer.h</label>
+        <link refid="_comparer_8h"/>
+      </node>
+      <node id="39">
+        <label>mathic/DivList.h</label>
+        <link refid="_div_list_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>DivMask.h</label>
+        <link refid="_div_mask_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>GeoFront.h</label>
+        <link refid="_geo_front_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>mathic/Geobucket.h</label>
+        <link refid="_geobucket_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>mathic/HashTable.h</label>
+        <link refid="_hash_table_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>mathic/Heap.h</label>
+        <link refid="_heap_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>mathic/HelpAction.h</label>
+        <link refid="_help_action_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>mathic/IntegerParameter.h</label>
+        <link refid="_integer_parameter_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>KDEntryArray.h</label>
+        <link refid="_k_d_entry_array_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>mathic/KDTree.h</label>
+        <link refid="_k_d_tree_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>NameFactory.h</label>
+        <link refid="_name_factory_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>PackedKDTree.h</label>
+        <link refid="_packed_k_d_tree_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>mathic/PairQueue.h</label>
+        <link refid="_pair_queue_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>mathic/StlSet.h</label>
+        <link refid="_stl_set_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>mathic/StringParameter.h</label>
+        <link refid="_string_parameter_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>mathic/Timer.h</label>
+        <link refid="_timer_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>mathic/TourTree.h</label>
+        <link refid="_tour_tree_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>mathic/display.h</label>
+        <link refid="display_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>mathic/error.h</label>
+        <link refid="submodules_2mathic_2src_2mathic_2error_8h"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2mathic_2stdinc_8h"/>
+      </node>
+      <node id="76">
+        <label>Basis.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_basis_8hpp"/>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="78">
+        <label>MathicIO.hpp</label>
+        <link refid="_mathic_i_o_8hpp"/>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp</label>
+        <link refid="_module_mono_set_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ModuleMonoSet.hpp</label>
+        <link refid="_module_mono_set_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="73">
+        <label>MonoLookup.hpp</label>
+        <link refid="_mono_lookup_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>MonoMonoid.hpp</label>
+        <link refid="_mono_monoid_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>MonoOrder.hpp</label>
+        <link refid="_mono_order_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="75">
+        <label>MonoProcessor.hpp</label>
+        <link refid="_mono_processor_8hpp"/>
+        <childnode refid="76" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>NonCopyable.hpp</label>
+        <link refid="_non_copyable_8hpp"/>
+      </node>
+      <node id="71">
+        <label>Poly.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="74">
+        <label>PolyBasis.hpp</label>
+        <link refid="_poly_basis_8hpp"/>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>PolyRing.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>PrimeField.hpp</label>
+        <link refid="_prime_field_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>Range.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="79">
+        <label>Scanner.hpp</label>
+        <link refid="mathicgb_2_scanner_8hpp"/>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>SigPolyBasis.hpp</label>
+        <link refid="_sig_poly_basis_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>StaticMonoMap.hpp</label>
+        <link refid="_static_mono_map_8hpp"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="80">
+        <label>Unchar.hpp</label>
+        <link refid="_unchar_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdinc.h</label>
+        <link refid="mathicgb_2src_2mathicgb_2stdinc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>memtailor.h</label>
+        <link refid="memtailor_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>memtailor/Arena.h</label>
+        <link refid="_arena_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>memtailor/ArenaVector.h</label>
+        <link refid="_arena_vector_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>memtailor/BufferPool.h</label>
+        <link refid="_buffer_pool_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>MemoryBlocks.h</label>
+        <link refid="_memory_blocks_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>stdinc.h</label>
+        <link refid="memtailor_2src_2memtailor_2stdinc_8h"/>
+      </node>
+      <node id="11">
+        <label>algorithm</label>
+      </node>
+      <node id="67">
+        <label>assert.h</label>
+      </node>
+      <node id="25">
+        <label>cctype</label>
+      </node>
+      <node id="38">
+        <label>cmath</label>
+      </node>
+      <node id="3">
+        <label>cstddef</label>
+      </node>
+      <node id="30">
+        <label>cstdio</label>
+      </node>
+      <node id="23">
+        <label>cstdlib</label>
+      </node>
+      <node id="24">
+        <label>cstring</label>
+      </node>
+      <node id="29">
+        <label>ctime</label>
+      </node>
+      <node id="68">
+        <label>iostream</label>
+      </node>
+      <node id="21">
+        <label>istream</label>
+      </node>
+      <node id="47">
+        <label>iterator</label>
+      </node>
+      <node id="56">
+        <label>limits</label>
+      </node>
+      <node id="42">
+        <label>list</label>
+      </node>
+      <node id="4">
+        <label>memory</label>
+      </node>
+      <node id="17">
+        <label>new</label>
+      </node>
+      <node id="22">
+        <label>ostream</label>
+      </node>
+      <node id="51">
+        <label>set</label>
+      </node>
+      <node id="32">
+        <label>sstream</label>
+      </node>
+      <node id="35">
+        <label>stdexcept</label>
+      </node>
+      <node id="33">
+        <label>string</label>
+      </node>
+      <node id="77">
+        <label>tuple</label>
+      </node>
+      <node id="20">
+        <label>type_traits</label>
+      </node>
+      <node id="5">
+        <label>utility</label>
+      </node>
+      <node id="10">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="class_concrete_module_mono_set" prot="public">ConcreteModuleMonoSet</innerclass>
+    <innerclass refid="struct_concrete_module_mono_set_1_1_no_data" prot="public">ConcreteModuleMonoSet::NoData</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>MathicGB<sp/>copyright<sp/>2012<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h" kindref="compound">stdinc.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_module_mono_set_8hpp" kindref="compound">ModuleMonoSet.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_static_mono_map_8hpp" kindref="compound">StaticMonoMap.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_mathic_i_o_8hpp" kindref="compound">MathicIO.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><ref refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n" kindref="compound">MATHICGB_NAMESPACE_BEGIN</ref></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseKDTree,</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AllowRemovals,</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseDivMask</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="16" refid="class_concrete_module_mono_set" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" kindref="member">ConcreteModuleMonoSet</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_module_mono_set" kindref="compound">ModuleMonoSet</ref><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="18" refid="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref><sp/><ref refid="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" kindref="member">Monoid</ref>;</highlight></codeline>
+<codeline lineno="19" refid="struct_concrete_module_mono_set_1_1_no_data" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_concrete_module_mono_set_1_1_no_data" kindref="compound">NoData</ref><sp/>{};</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_static_mono_lookup" kindref="compound">StaticMonoLookup&lt;UseKDTree, NoData, AllowRemovals, UseDivMask&gt;</ref></highlight></codeline>
+<codeline lineno="21" refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" kindref="member">Lookup</ref>;</highlight></codeline>
+<codeline lineno="22" refid="class_concrete_module_mono_set_af6299cb543bfbef04247b7ddf798e0c9_1af6299cb543bfbef04247b7ddf798e0c9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="class_static_mono_lookup_a9dcee866f5caea31f0dd2edc0a6782e1_1a9dcee866f5caea31f0dd2edc0a6782e1" kindref="member">Lookup::Entry</ref><sp/><ref refid="class_concrete_module_mono_set_af6299cb543bfbef04247b7ddf798e0c9_1af6299cb543bfbef04247b7ddf798e0c9" kindref="member">Entry</ref>;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" kindref="member">ConcreteModuleMonoSet</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" kindref="member">Monoid</ref>&amp;<sp/><ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>):</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_concrete_module_mono_set_a3d8eb54940648f1f73053810a0ab2093_1a3d8eb54940648f1f73053810a0ab2093" kindref="member">mMonoid</ref>(<ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>),</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" kindref="member">mComponentCount</ref>(<ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>),</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>(<ref refid="namespacestd" kindref="compound">std</ref>::allocator&lt;<ref refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" kindref="member">Lookup</ref>&gt;().allocate(<ref refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" kindref="member">mComponentCount</ref>))</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>component<sp/>=<sp/>0;<sp/>component<sp/>&lt;<sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>;<sp/>++component)</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>(&amp;<ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[component])<sp/><ref refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" kindref="member">Lookup</ref>(<ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="class_concrete_module_mono_set_a9f698f92f6e9bc388a7b9e64db4da66d_1a9f698f92f6e9bc388a7b9e64db4da66d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a9f698f92f6e9bc388a7b9e64db4da66d_1a9f698f92f6e9bc388a7b9e64db4da66d" kindref="member">~ConcreteModuleMonoSet</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>component<sp/>=<sp/>0;<sp/>component<sp/>&lt;<sp/><ref refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" kindref="member">mComponentCount</ref>;<sp/>++component)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[component].~<ref refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" kindref="member">Lookup</ref>();</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>std::allocator&lt;Lookup&gt;().deallocate(<ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>,<sp/><ref refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" kindref="member">mComponentCount</ref>);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="class_concrete_module_mono_set_a1fc33eb7854c3ed54664ccf453aa4a19_1a1fc33eb7854c3ed54664ccf453aa4a19" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a1fc33eb7854c3ed54664ccf453aa4a19_1a1fc33eb7854c3ed54664ccf453aa4a19" kindref="member">insert</ref>(<ref refid="class_module_mono_set_a315870cd5f8090965c62abdf5a04247d_1a315870cd5f8090965c62abdf5a04247d" kindref="member">ConstMonoRef</ref><sp/>m)<sp/>{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>c<sp/>=<sp/><ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>().<ref refid="class_mono_monoid_ac05d1b7142f0937bc860b22d56cac1e0_1ac05d1b7142f0937bc860b22d56cac1e0" kindref="member">component</ref>(m);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(c<sp/>&lt;<sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>());</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_concrete_module_mono_set_aed51f13ae094a196ed92a96546f75223_1aed51f13ae094a196ed92a96546f75223" kindref="member">member</ref>(m))</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(AllowRemovals)</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[c].removeMultiples(m);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[c].insert(m,<sp/><ref refid="struct_concrete_module_mono_set_1_1_no_data" kindref="compound">NoData</ref>());</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="class_concrete_module_mono_set_aed51f13ae094a196ed92a96546f75223_1aed51f13ae094a196ed92a96546f75223" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_aed51f13ae094a196ed92a96546f75223_1aed51f13ae094a196ed92a96546f75223" kindref="member">member</ref>(<ref refid="class_module_mono_set_a315870cd5f8090965c62abdf5a04247d_1a315870cd5f8090965c62abdf5a04247d" kindref="member">ConstMonoRef</ref><sp/>m)<sp/>{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>c<sp/>=<sp/><ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>().<ref refid="class_mono_monoid_ac05d1b7142f0937bc860b22d56cac1e0_1ac05d1b7142f0937bc860b22d56cac1e0" kindref="member">component</ref>(m);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(c<sp/>&lt;<sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>());</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[c].divisor(m)<sp/>!=<sp/>0;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="class_concrete_module_mono_set_a0c1be679f87f0edfd1b3ff4cdfacde40_1a0c1be679f87f0edfd1b3ff4cdfacde40" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="class_concrete_module_mono_set_a0c1be679f87f0edfd1b3ff4cdfacde40_1a0c1be679f87f0edfd1b3ff4cdfacde40" kindref="member">name</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" kindref="member">Lookup</ref>(<ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>()).<ref refid="class_static_mono_lookup_ab3b58a617381377d63495843e6d2c1fe_1ab3b58a617381377d63495843e6d2c1fe" kindref="member">getName</ref>();</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="class_concrete_module_mono_set_a5be488333da098b13ccf162ed1958de8_1a5be488333da098b13ccf162ed1958de8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a5be488333da098b13ccf162ed1958de8_1a5be488333da098b13ccf162ed1958de8" kindref="member">display</ref>(std::ostream&amp;<sp/>out)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;ConstMonoPtr&gt;<sp/><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>();<sp/>++c)<sp/>{</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" kindref="member">Lookup</ref>&amp;<sp/>lookup<sp/>=<sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[c];</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(lookup.<ref refid="class_static_mono_lookup_a76b40a62f93c18dd2d33b316ccb95fd8_1a76b40a62f93c18dd2d33b316ccb95fd8" kindref="member">size</ref>()<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>c<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref>.clear();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>lookup.<ref refid="class_static_mono_lookup_ad143e0f1e2e19f51f50b1e839145b852_1ad143e0f1e2e19f51f50b1e839145b852" kindref="member">forAll</ref>([&amp;](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_af6299cb543bfbef04247b7ddf798e0c9_1af6299cb543bfbef04247b7ddf798e0c9" kindref="member">Entry</ref>&amp;<sp/>entry)<sp/>{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref>.emplace_back(entry.mono().ptr());</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>});</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/><ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref><sp/>=<sp/>this-&gt;<ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>();<sp/></highlight><highlight class="comment">//<sp/>workaround<sp/>for<sp/>gcc<sp/>4.5.3<sp/>issue</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>cmp<sp/>=<sp/>[&amp;](<ref refid="class_module_mono_set_a3c88ea9992d6f36be525eadcd1a00ee4_1a3c88ea9992d6f36be525eadcd1a00ee4" kindref="member">ConstMonoPtr</ref><sp/>a,<sp/><ref refid="class_module_mono_set_a3c88ea9992d6f36be525eadcd1a00ee4_1a3c88ea9992d6f36be525eadcd1a00ee4" kindref="member">ConstMonoPtr</ref><sp/>b)<sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>.lessThan(*a,<sp/>*b);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::sort(<ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref>.begin(),<sp/><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref>.end(),<sp/>cmp);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>mono<sp/>=<sp/><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref>.cbegin();<sp/>mono<sp/>!=<sp/><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref>.cend();<sp/>++mono)<sp/>{</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_mathic_i_o" kindref="compound">MathicIO&lt;&gt;</ref>().<ref refid="class_mathic_i_o_a5b5c3c193fcbe871357b5e67467f46de_1a5b5c3c193fcbe871357b5e67467f46de" kindref="member">writeMonomial</ref>(<ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>**mono,<sp/>out);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="class_concrete_module_mono_set_a35db75bc747699e0289974f16fab3bad_1a35db75bc747699e0289974f16fab3bad" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a35db75bc747699e0289974f16fab3bad_1a35db75bc747699e0289974f16fab3bad" kindref="member">getMonomials</ref>(std::vector&lt;ConstMonoPtr&gt;&amp;<sp/><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref>)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>();<sp/>++c)<sp/>{</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[c].forAll(</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[&amp;](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_af6299cb543bfbef04247b7ddf798e0c9_1af6299cb543bfbef04247b7ddf798e0c9" kindref="member">Entry</ref>&amp;<sp/>entry)<sp/>{</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="franzi-brp_8hpp_a56537b056a55673d92279fe5a33c2619_1a56537b056a55673d92279fe5a33c2619" kindref="member">monomials</ref>.push_back(entry.mono().ptr());</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="class_concrete_module_mono_set_a383ac234ade789b26df4732fffad720f_1a383ac234ade789b26df4732fffad720f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a383ac234ade789b26df4732fffad720f_1a383ac234ade789b26df4732fffad720f" kindref="member">forAllVirtual</ref>(<ref refid="class_module_mono_set_1_1_entry_output" kindref="compound">EntryOutput</ref>&amp;<sp/>consumer)<sp/>{</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>();<sp/>++c)<sp/>{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[c].forAll(</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[&amp;](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_af6299cb543bfbef04247b7ddf798e0c9_1af6299cb543bfbef04247b7ddf798e0c9" kindref="member">Entry</ref>&amp;<sp/>entry)<sp/>{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>consumer.<ref refid="class_module_mono_set_1_1_entry_output_ac6331527d318635fc56767da5db9bf03_1ac6331527d318635fc56767da5db9bf03" kindref="member">proceed</ref>(entry.mono());</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="105" refid="class_concrete_module_mono_set_acbc18bcdfd78c5219304a2faa79b875d_1acbc18bcdfd78c5219304a2faa79b875d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_acbc18bcdfd78c5219304a2faa79b875d_1acbc18bcdfd78c5219304a2faa79b875d" kindref="member">elementCount</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>();<sp/>++c)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>count<sp/>+=<sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[c].size();</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>count;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="class_concrete_module_mono_set_a380b2afda232a6abf90facb20d560799_1a380b2afda232a6abf90facb20d560799" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a380b2afda232a6abf90facb20d560799_1a380b2afda232a6abf90facb20d560799" kindref="member">getMemoryUse</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>();<sp/>++c)</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>count<sp/>+=<sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>[c].<ref refid="class_concrete_module_mono_set_a380b2afda232a6abf90facb20d560799_1a380b2afda232a6abf90facb20d560799" kindref="member">getMemoryUse</ref>();</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>count;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" kindref="member">Monoid</ref>&amp;<sp/><ref refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" kindref="member">monoid</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a3d8eb54940648f1f73053810a0ab2093_1a3d8eb54940648f1f73053810a0ab2093" kindref="member">mMonoid</ref>;}</highlight></codeline>
+<codeline lineno="120" refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" kindref="member">componentCount</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" kindref="member">mComponentCount</ref>;}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="123" refid="class_concrete_module_mono_set_a3d8eb54940648f1f73053810a0ab2093_1a3d8eb54940648f1f73053810a0ab2093" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" kindref="member">Monoid</ref>&amp;<sp/><ref refid="class_concrete_module_mono_set_a3d8eb54940648f1f73053810a0ab2093_1a3d8eb54940648f1f73053810a0ab2093" kindref="member">mMonoid</ref>;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>cannot<sp/>use<sp/>std::vector<sp/>as<sp/>Lookup<sp/>might<sp/>not<sp/>be<sp/>copyable<sp/>or<sp/>movable.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" kindref="member">mComponentCount</ref>;</highlight></codeline>
+<codeline lineno="127" refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" kindref="member">Lookup</ref>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" kindref="member">mLookups</ref>;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="class_module_mono_set_a530a7a846788e2fd0a1cb5fa3b731fee_1a530a7a846788e2fd0a1cb5fa3b731fee" refkind="member"><highlight class="normal"><ref refid="class_module_mono_set_a530a7a846788e2fd0a1cb5fa3b731fee_1a530a7a846788e2fd0a1cb5fa3b731fee" kindref="member">ModuleMonoSet::~ModuleMonoSet</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="class_module_mono_set_a9b5a5867cbdc6928bc3b145d157d7935_1a9b5a5867cbdc6928bc3b145d157d7935" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_module_mono_set_a9b5a5867cbdc6928bc3b145d157d7935_1a9b5a5867cbdc6928bc3b145d157d7935" kindref="member">ModuleMonoSet::displayCodes</ref>(std::ostream&amp;<sp/>out)<sp/>{</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>1<sp/><sp/><sp/>list,<sp/>using<sp/>divmasks\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>2<sp/><sp/><sp/>KD-tree,<sp/>using<sp/>divmasks\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>3<sp/><sp/><sp/>list\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>4<sp/><sp/><sp/>KD-tree\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">ModuleMonoSetFactory<sp/>{</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref><sp/><ref refid="class_monoid" kindref="compound">Monoid</ref>;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;ModuleMonoSet&gt;<sp/>make(</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monoid" kindref="compound">Monoid</ref>&amp;<sp/>monoid,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>type,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>componentCount,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>allowRemovals</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>)<sp/>{</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Params<sp/>params<sp/>=<sp/>{monoid,<sp/>type,<sp/>componentCount};</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="_static_mono_map_8hpp_aceb65738916c481d049f108547661b60_1aceb65738916c481d049f108547661b60" kindref="member">staticMonoLookupMake</ref></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;Make,<sp/>std::unique_ptr&lt;ModuleMonoSet&gt;&gt;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(type,<sp/>allowRemovals,<sp/>params);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">Params<sp/>{</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a3657baee60c1332c44d735c270f8ede4_1a3657baee60c1332c44d735c270f8ede4" kindref="member">Monoid</ref>&amp;<sp/>monoid;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>type;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>componentCount;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseKDTree,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>AllowRemovals,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseDivMask&gt;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">Make<sp/>{</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::unique_ptr&lt;ModuleMonoSet&gt;<sp/>make(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Params&amp;<sp/>params)<sp/>{</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af8b703a7a8a0f8ebbdd534ea12ab2ec0_1af8b703a7a8a0f8ebbdd534ea12ab2ec0" kindref="member">make_unique</ref></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;ConcreteModuleMonoSet&lt;UseKDTree,<sp/>AllowRemovals,<sp/>UseDivMask&gt;&gt;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(params.monoid,<sp/>params.componentCount);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="173"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="class_module_mono_set_ac34f97525d531105fb85e69e6ef9ea35_1ac34f97525d531105fb85e69e6ef9ea35" refkind="member"><highlight class="normal">std::unique_ptr&lt;ModuleMonoSet&gt;<sp/><ref refid="class_module_mono_set_ac34f97525d531105fb85e69e6ef9ea35_1ac34f97525d531105fb85e69e6ef9ea35" kindref="member">ModuleMonoSet::make</ref>(</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_module_mono_set_abf2922828ce78e756f9666808de36259_1abf2922828ce78e756f9666808de36259" kindref="member">Monoid</ref>&amp;<sp/>monoid,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>type,</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>components,</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>allowRemovals</highlight></codeline>
+<codeline lineno="180"><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ModuleMonoSetFactory().make(monoid,<sp/>type,<sp/>components,<sp/>allowRemovals);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a3dd074a16d8db719c612d38d30802066_1a3dd074a16d8db719c612d38d30802066" kindref="member">MATHICGB_NAMESPACE_END</ref></highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp"/>
+  </compounddef>
+</doxygen>

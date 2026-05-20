@@ -1,0 +1,1782 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monomial_info" kind="class" language="C++" prot="public">
+    <compoundname>MonomialInfo</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="moninfo_8hpp" local="no">moninfo.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_monomial_info_af1ea3bba8c44f88ac1142bf8e869a71d_1af1ea3bba8c44f88ac1142bf8e869a71d" prot="public" static="no">
+        <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+        <definition>typedef packed_monomial MonomialInfo::monomial</definition>
+        <argsstring></argsstring>
+        <name>monomial</name>
+        <qualifiedname>MonomialInfo::monomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="143" column="27" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_monomial_info_a17755993ce2ba11bab0befab5b2850e9_1a17755993ce2ba11bab0befab5b2850e9" prot="public" static="no">
+        <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+        <definition>typedef const_packed_monomial MonomialInfo::const_monomial</definition>
+        <argsstring></argsstring>
+        <name>const_monomial</name>
+        <qualifiedname>MonomialInfo::const_monomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="144" column="33" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_monomial_info_a4bdc8e786f751aaa4c37688c2b10f48e_1a4bdc8e786f751aaa4c37688c2b10f48e" prot="public" static="no">
+        <type><ref refid="class_monomial_info_af1ea3bba8c44f88ac1142bf8e869a71d_1af1ea3bba8c44f88ac1142bf8e869a71d" kindref="member">monomial</ref></type>
+        <definition>typedef monomial MonomialInfo::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <qualifiedname>MonomialInfo::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="145" column="20" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::nvars</definition>
+        <argsstring></argsstring>
+        <name>nvars</name>
+        <qualifiedname>MonomialInfo::nvars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="105" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="105" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" compoundref="moninfo_8hpp" startline="516" endline="553">compare</referencedby>
+        <referencedby refid="class_monomial_info_a6c7d07f22cd5e3a8c507085e746b5499_1a6c7d07f22cd5e3a8c507085e746b5499" compoundref="moninfo_8hpp" startline="485" endline="509">compare_weightvector</referencedby>
+        <referencedby refid="class_monomial_info_adc4e661c5cb08700fd89d3686471b61d_1adc4e661c5cb08700fd89d3686471b61d" compoundref="moninfo_8hpp" startline="187" endline="215">from_expvector</referencedby>
+        <referencedby refid="class_monomial_info_aece19aaf82323dab095f51e630e8f669_1aece19aaf82323dab095f51e630e8f669" compoundref="moninfo_8hpp" startline="288" endline="327">from_varpower_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_aeb40358990ddebf14f0714e19c16b010_1aeb40358990ddebf14f0714e19c16b010" compoundref="moninfo_8hpp" startline="154" endline="154">n_vars</referencedby>
+        <referencedby refid="class_monomial_info_a1f3736e18413aeb785e51e28cc99a6b0_1a1f3736e18413aeb785e51e28cc99a6b0" compoundref="moninfo_8hpp" startline="681" endline="709">quotient_as_vp</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_ac620137a8229ba361947392db9ebfa68_1ac620137a8229ba361947392db9ebfa68" compoundref="moninfo_8cpp" startline="124" endline="137">showAlpha</referencedby>
+        <referencedby refid="class_monomial_info_a6292fa0b1de47b16c2f0f64394f47e30_1a6292fa0b1de47b16c2f0f64394f47e30" compoundref="moninfo_8hpp" startline="242" endline="252">to_expvector</referencedby>
+        <referencedby refid="class_monomial_info_a22b07a3c42e294a496a25a77dba8affd_1a22b07a3c42e294a496a25a77dba8affd" compoundref="moninfo_8hpp" startline="268" endline="286">to_varpower_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a6b6ab7746febafa2bc0d3b305083afcc_1a6b6ab7746febafa2bc0d3b305083afcc" compoundref="moninfo_8hpp" startline="612" endline="672">unnecessary</referencedby>
+        <referencedby refid="class_monomial_info_afe93be33bdb774bd544468f107318c5f_1afe93be33bdb774bd544468f107318c5f" compoundref="moninfo_8hpp" startline="570" endline="610">unnecessary1</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::nslots</definition>
+        <argsstring></argsstring>
+        <name>nslots</name>
+        <qualifiedname>MonomialInfo::nslots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="106" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="106" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a691cde724dbb8706cf939491e94a3de3_1a691cde724dbb8706cf939491e94a3de3" compoundref="moninfo_8hpp" startline="351" endline="358">check_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" compoundref="moninfo_8hpp" startline="516" endline="553">compare</referencedby>
+        <referencedby refid="class_monomial_info_a96ff91eb4d088372c8da10f12c292edb_1a96ff91eb4d088372c8da10f12c292edb" compoundref="moninfo_8hpp" startline="415" endline="430">compare_grevlex</referencedby>
+        <referencedby refid="class_monomial_info_abec51699ef38a20c69c8562231bf1c90_1abec51699ef38a20c69c8562231bf1c90" compoundref="moninfo_8hpp" startline="468" endline="483">compare_lex</referencedby>
+        <referencedby refid="class_monomial_info_a6be33e365d5c3ffb8bd882faf3691de3_1a6be33e365d5c3ffb8bd882faf3691de3" compoundref="moninfo_8hpp" startline="432" endline="466">compare_schreyer</referencedby>
+        <referencedby refid="class_monomial_info_a6c7d07f22cd5e3a8c507085e746b5499_1a6c7d07f22cd5e3a8c507085e746b5499" compoundref="moninfo_8hpp" startline="485" endline="509">compare_weightvector</referencedby>
+        <referencedby refid="class_monomial_info_a6bc3f1a833cc7b406647457af8295aa9_1a6bc3f1a833cc7b406647457af8295aa9" compoundref="moninfo_8hpp" startline="170" endline="173">copy</referencedby>
+        <referencedby refid="class_monomial_info_a9754b2f3986ad9aad247dd8d3a7bb387_1a9754b2f3986ad9aad247dd8d3a7bb387" compoundref="moninfo_8hpp" startline="376" endline="398">divide</referencedby>
+        <referencedby refid="class_monomial_info_aece19aaf82323dab095f51e630e8f669_1aece19aaf82323dab095f51e630e8f669" compoundref="moninfo_8hpp" startline="288" endline="327">from_varpower_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a0034bc992ad667ca5a41a3dcc9e71389_1a0034bc992ad667ca5a41a3dcc9e71389" compoundref="moninfo_8hpp" startline="329" endline="336">is_equal</referencedby>
+        <referencedby refid="class_monomial_info_a8fe3d65d48bec12c5458f5dbaff192b2_1a8fe3d65d48bec12c5458f5dbaff192b2" compoundref="moninfo_8hpp" startline="175" endline="175">last_exponent</referencedby>
+        <referencedby refid="class_monomial_info_a7111e3ac9f9bd85c0555d3d177006054_1a7111e3ac9f9bd85c0555d3d177006054" compoundref="moninfo_8hpp" startline="155" endline="155">max_monomial_size</referencedby>
+        <referencedby refid="class_monomial_info_ac11dc04781f4b589e91e503e8afb5d16_1ac11dc04781f4b589e91e503e8afb5d16" compoundref="moninfo_8hpp" startline="338" endline="349">monomial_part_is_equal</referencedby>
+        <referencedby refid="class_monomial_info_ad9323d9d84e9eebf78eaaed6da703a73_1ad9323d9d84e9eebf78eaaed6da703a73" compoundref="moninfo_8hpp" startline="156" endline="160">monomial_size</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_ae59872702e7c50feb58a48171e3d3d46_1ae59872702e7c50feb58a48171e3d3d46" compoundref="moninfo_8hpp" startline="231" endline="240">one</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_a22b07a3c42e294a496a25a77dba8affd_1a22b07a3c42e294a496a25a77dba8affd" compoundref="moninfo_8hpp" startline="268" endline="286">to_varpower_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a0a7e27444bf1bf8577c4e89ed6523c12_1a0a7e27444bf1bf8577c4e89ed6523c12" compoundref="moninfo_8hpp" startline="368" endline="374">unchecked_divide</referencedby>
+        <referencedby refid="class_monomial_info_a84e97933943d489b292d34a962af855d_1a84e97933943d489b292d34a962af855d" compoundref="moninfo_8hpp" startline="360" endline="366">unchecked_mult</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_ae64856e9d3b50e232d5b3bc19ddbd77d_1ae64856e9d3b50e232d5b3bc19ddbd77d" prot="private" static="no" mutable="no">
+        <type><ref refid="moninfo_8hpp_afe2d8fe59c70630e71d82733c3f8ddcb_1afe2d8fe59c70630e71d82733c3f8ddcb" kindref="member">monomial_word</ref> *</type>
+        <definition>monomial_word* MonomialInfo::hashfcn</definition>
+        <argsstring></argsstring>
+        <name>hashfcn</name>
+        <qualifiedname>MonomialInfo::hashfcn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="107" column="17" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="107" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_adc4e661c5cb08700fd89d3686471b61d_1adc4e661c5cb08700fd89d3686471b61d" compoundref="moninfo_8hpp" startline="187" endline="215">from_expvector</referencedby>
+        <referencedby refid="class_monomial_info_aece19aaf82323dab095f51e630e8f669_1aece19aaf82323dab095f51e630e8f669" compoundref="moninfo_8hpp" startline="288" endline="327">from_varpower_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_af29339c2e92d9e7b658a151d17975c5b_1af29339c2e92d9e7b658a151d17975c5b" compoundref="moninfo_8cpp" startline="70" endline="73">~MonomialInfo</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a0f5e98e7fce9abf1c8ed9f5ab603493a_1a0f5e98e7fce9abf1c8ed9f5ab603493a" prot="private" static="no" mutable="no">
+        <type><ref refid="moninfo_8hpp_afe2d8fe59c70630e71d82733c3f8ddcb_1afe2d8fe59c70630e71d82733c3f8ddcb" kindref="member">monomial_word</ref></type>
+        <definition>monomial_word MonomialInfo::mask</definition>
+        <argsstring></argsstring>
+        <name>mask</name>
+        <qualifiedname>MonomialInfo::mask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="108" column="17" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="108" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a691cde724dbb8706cf939491e94a3de3_1a691cde724dbb8706cf939491e94a3de3" compoundref="moninfo_8hpp" startline="351" endline="358">check_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::firstvar</definition>
+        <argsstring></argsstring>
+        <name>firstvar</name>
+        <qualifiedname>MonomialInfo::firstvar</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="111" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="111" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" compoundref="moninfo_8hpp" startline="516" endline="553">compare</referencedby>
+        <referencedby refid="class_monomial_info_adc4e661c5cb08700fd89d3686471b61d_1adc4e661c5cb08700fd89d3686471b61d" compoundref="moninfo_8hpp" startline="187" endline="215">from_expvector</referencedby>
+        <referencedby refid="class_monomial_info_aece19aaf82323dab095f51e630e8f669_1aece19aaf82323dab095f51e630e8f669" compoundref="moninfo_8hpp" startline="288" endline="327">from_varpower_monomial</referencedby>
+        <referencedby refid="class_monomial_info_ab2c8ff4c9bd295c2eb073dfc92e8e173_1ab2c8ff4c9bd295c2eb073dfc92e8e173" compoundref="moninfo_8cpp" startline="75" endline="85">monomial_heft</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a1f3736e18413aeb785e51e28cc99a6b0_1a1f3736e18413aeb785e51e28cc99a6b0" compoundref="moninfo_8hpp" startline="681" endline="709">quotient_as_vp</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_af84080e02e7a44dcff39d53ffbbd9df7_1af84080e02e7a44dcff39d53ffbbd9df7" compoundref="moninfo_8hpp" startline="254" endline="266">to_intstar_vector</referencedby>
+        <referencedby refid="class_monomial_info_a6b6ab7746febafa2bc0d3b305083afcc_1a6b6ab7746febafa2bc0d3b305083afcc" compoundref="moninfo_8hpp" startline="612" endline="672">unnecessary</referencedby>
+        <referencedby refid="class_monomial_info_afe93be33bdb774bd544468f107318c5f_1afe93be33bdb774bd544468f107318c5f" compoundref="moninfo_8hpp" startline="570" endline="610">unnecessary1</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::mNumWeights</definition>
+        <argsstring></argsstring>
+        <name>mNumWeights</name>
+        <qualifiedname>MonomialInfo::mNumWeights</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="112" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="112" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" compoundref="moninfo_8hpp" startline="516" endline="553">compare</referencedby>
+        <referencedby refid="class_monomial_info_a6c7d07f22cd5e3a8c507085e746b5499_1a6c7d07f22cd5e3a8c507085e746b5499" compoundref="moninfo_8hpp" startline="485" endline="509">compare_weightvector</referencedby>
+        <referencedby refid="class_monomial_info_adc4e661c5cb08700fd89d3686471b61d_1adc4e661c5cb08700fd89d3686471b61d" compoundref="moninfo_8hpp" startline="187" endline="215">from_expvector</referencedby>
+        <referencedby refid="class_monomial_info_aece19aaf82323dab095f51e630e8f669_1aece19aaf82323dab095f51e630e8f669" compoundref="moninfo_8hpp" startline="288" endline="327">from_varpower_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_ac620137a8229ba361947392db9ebfa68_1ac620137a8229ba361947392db9ebfa68" compoundref="moninfo_8cpp" startline="124" endline="137">showAlpha</referencedby>
+        <referencedby refid="class_monomial_info_a751e692b8d03a82606a01ec457f52ea4_1a751e692b8d03a82606a01ec457f52ea4" compoundref="moninfo_8hpp" startline="224" endline="229">skew_mult_sign</referencedby>
+        <referencedby refid="class_monomial_info_a12e90ac52fa4532654c0047c0a367f4d_1a12e90ac52fa4532654c0047c0a367f4d" compoundref="moninfo_8hpp" startline="217" endline="222">skew_vars</referencedby>
+        <referencedby refid="class_monomial_info_a6292fa0b1de47b16c2f0f64394f47e30_1a6292fa0b1de47b16c2f0f64394f47e30" compoundref="moninfo_8hpp" startline="242" endline="252">to_expvector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_aa2fbcf11474c7afa34e85dbcc054c4dc_1aa2fbcf11474c7afa34e85dbcc054c4dc" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>std::vector&lt;int&gt; MonomialInfo::mWeightVectors</definition>
+        <argsstring></argsstring>
+        <name>mWeightVectors</name>
+        <qualifiedname>MonomialInfo::mWeightVectors</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="115" column="15" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="115" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_adc4e661c5cb08700fd89d3686471b61d_1adc4e661c5cb08700fd89d3686471b61d" compoundref="moninfo_8hpp" startline="187" endline="215">from_expvector</referencedby>
+        <referencedby refid="class_monomial_info_aece19aaf82323dab095f51e630e8f669_1aece19aaf82323dab095f51e630e8f669" compoundref="moninfo_8hpp" startline="288" endline="327">from_varpower_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a5d3c70bda0e72a2c330f0dfcd66f489b_1a5d3c70bda0e72a2c330f0dfcd66f489b" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>std::vector&lt;int&gt; MonomialInfo::mHeftDegrees</definition>
+        <argsstring></argsstring>
+        <name>mHeftDegrees</name>
+        <qualifiedname>MonomialInfo::mHeftDegrees</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="116" column="15" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="116" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_ab2c8ff4c9bd295c2eb073dfc92e8e173_1ab2c8ff4c9bd295c2eb073dfc92e8e173" compoundref="moninfo_8cpp" startline="75" endline="85">monomial_heft</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a1f3736e18413aeb785e51e28cc99a6b0_1a1f3736e18413aeb785e51e28cc99a6b0" compoundref="moninfo_8hpp" startline="681" endline="709">quotient_as_vp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a8f3281c942d59bbcd8a665b4d204d2f9_1a8f3281c942d59bbcd8a665b4d204d2f9" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>std::vector&lt;int&gt; MonomialInfo::mModuleHeftDegrees</definition>
+        <argsstring></argsstring>
+        <name>mModuleHeftDegrees</name>
+        <qualifiedname>MonomialInfo::mModuleHeftDegrees</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="119" column="15" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="119" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_ab2c8ff4c9bd295c2eb073dfc92e8e173_1ab2c8ff4c9bd295c2eb073dfc92e8e173" compoundref="moninfo_8cpp" startline="75" endline="85">monomial_heft</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a1f3736e18413aeb785e51e28cc99a6b0_1a1f3736e18413aeb785e51e28cc99a6b0" compoundref="moninfo_8hpp" startline="681" endline="709">quotient_as_vp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_aadf54956b2321bfd46b3cfcf6ca0ae48_1aadf54956b2321bfd46b3cfcf6ca0ae48" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::mTieBreakerIsRevLex</definition>
+        <argsstring></argsstring>
+        <name>mTieBreakerIsRevLex</name>
+        <qualifiedname>MonomialInfo::mTieBreakerIsRevLex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="121" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="121" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" compoundref="moninfo_8hpp" startline="516" endline="553">compare</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a69b114b41a89da2394833c64b8818f8c_1a69b114b41a89da2394833c64b8818f8c" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::mPositionUp</definition>
+        <argsstring></argsstring>
+        <name>mPositionUp</name>
+        <qualifiedname>MonomialInfo::mPositionUp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="122" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="122" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a4a4b49d00e20557d65044364c3dbcc8a_1a4a4b49d00e20557d65044364c3dbcc8a" compoundref="moninfo_8hpp" startline="165" endline="165">positionUp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_ae4a2b2bda8e06898178f1c2fa51b8296_1ae4a2b2bda8e06898178f1c2fa51b8296" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::mComponentLoc</definition>
+        <argsstring></argsstring>
+        <name>mComponentLoc</name>
+        <qualifiedname>MonomialInfo::mComponentLoc</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="123" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="123" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a6fe661e97aff856be7baac1041301f00_1a6fe661e97aff856be7baac1041301f00" compoundref="moninfo_8hpp" startline="164" endline="164">componentLocation</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a30db6f0c6c032aa01f398cb44853e842_1a30db6f0c6c032aa01f398cb44853e842" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_compare</definition>
+        <argsstring></argsstring>
+        <name>ncalls_compare</name>
+        <qualifiedname>MonomialInfo::ncalls_compare</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="128" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="128" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" compoundref="moninfo_8hpp" startline="516" endline="553">compare</referencedby>
+        <referencedby refid="class_monomial_info_a96ff91eb4d088372c8da10f12c292edb_1a96ff91eb4d088372c8da10f12c292edb" compoundref="moninfo_8hpp" startline="415" endline="430">compare_grevlex</referencedby>
+        <referencedby refid="class_monomial_info_abec51699ef38a20c69c8562231bf1c90_1abec51699ef38a20c69c8562231bf1c90" compoundref="moninfo_8hpp" startline="468" endline="483">compare_lex</referencedby>
+        <referencedby refid="class_monomial_info_a6be33e365d5c3ffb8bd882faf3691de3_1a6be33e365d5c3ffb8bd882faf3691de3" compoundref="moninfo_8hpp" startline="432" endline="466">compare_schreyer</referencedby>
+        <referencedby refid="class_monomial_info_a6c7d07f22cd5e3a8c507085e746b5499_1a6c7d07f22cd5e3a8c507085e746b5499" compoundref="moninfo_8hpp" startline="485" endline="509">compare_weightvector</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_ae2b615fc6d8eb878bb42b7db7e2611a1_1ae2b615fc6d8eb878bb42b7db7e2611a1" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_mult</definition>
+        <argsstring></argsstring>
+        <name>ncalls_mult</name>
+        <qualifiedname>MonomialInfo::ncalls_mult</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="129" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="129" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_a84e97933943d489b292d34a962af855d_1a84e97933943d489b292d34a962af855d" compoundref="moninfo_8hpp" startline="360" endline="366">unchecked_mult</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_ab1ce683e085afaae1862d86dec8fee12_1ab1ce683e085afaae1862d86dec8fee12" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_get_component</definition>
+        <argsstring></argsstring>
+        <name>ncalls_get_component</name>
+        <qualifiedname>MonomialInfo::ncalls_get_component</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="130" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="130" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a975f33d350dc5fdf096d959c47ad45d5_1a975f33d350dc5fdf096d959c47ad45d5" compoundref="moninfo_8hpp" startline="181" endline="185">get_component</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a0c9be1acdc96e55e0fade0a3133898f5_1a0c9be1acdc96e55e0fade0a3133898f5" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_from_expvector</definition>
+        <argsstring></argsstring>
+        <name>ncalls_from_expvector</name>
+        <qualifiedname>MonomialInfo::ncalls_from_expvector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="131" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="131" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_adc4e661c5cb08700fd89d3686471b61d_1adc4e661c5cb08700fd89d3686471b61d" compoundref="moninfo_8hpp" startline="187" endline="215">from_expvector</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a98a5648ed0a903736b1d675c80208b4b_1a98a5648ed0a903736b1d675c80208b4b" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_to_expvector</definition>
+        <argsstring></argsstring>
+        <name>ncalls_to_expvector</name>
+        <qualifiedname>MonomialInfo::ncalls_to_expvector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="132" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="132" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_a6292fa0b1de47b16c2f0f64394f47e30_1a6292fa0b1de47b16c2f0f64394f47e30" compoundref="moninfo_8hpp" startline="242" endline="252">to_expvector</referencedby>
+        <referencedby refid="class_monomial_info_af84080e02e7a44dcff39d53ffbbd9df7_1af84080e02e7a44dcff39d53ffbbd9df7" compoundref="moninfo_8hpp" startline="254" endline="266">to_intstar_vector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a07c44a7fec80ac37c6a8bdc463fab1af_1a07c44a7fec80ac37c6a8bdc463fab1af" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_to_varpower</definition>
+        <argsstring></argsstring>
+        <name>ncalls_to_varpower</name>
+        <qualifiedname>MonomialInfo::ncalls_to_varpower</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="133" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="133" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_a22b07a3c42e294a496a25a77dba8affd_1a22b07a3c42e294a496a25a77dba8affd" compoundref="moninfo_8hpp" startline="268" endline="286">to_varpower_monomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_ad9f2ad5d9f113dee82b1578c312e69b1_1ad9f2ad5d9f113dee82b1578c312e69b1" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_from_varpower</definition>
+        <argsstring></argsstring>
+        <name>ncalls_from_varpower</name>
+        <qualifiedname>MonomialInfo::ncalls_from_varpower</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="134" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="134" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_aece19aaf82323dab095f51e630e8f669_1aece19aaf82323dab095f51e630e8f669" compoundref="moninfo_8hpp" startline="288" endline="327">from_varpower_monomial</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_ad959c4e5081bdde14c03da7b493f7f8e_1ad959c4e5081bdde14c03da7b493f7f8e" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_is_equal</definition>
+        <argsstring></argsstring>
+        <name>ncalls_is_equal</name>
+        <qualifiedname>MonomialInfo::ncalls_is_equal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="135" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="135" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a0034bc992ad667ca5a41a3dcc9e71389_1a0034bc992ad667ca5a41a3dcc9e71389" compoundref="moninfo_8hpp" startline="329" endline="336">is_equal</referencedby>
+        <referencedby refid="class_monomial_info_ac11dc04781f4b589e91e503e8afb5d16_1ac11dc04781f4b589e91e503e8afb5d16" compoundref="moninfo_8hpp" startline="338" endline="349">monomial_part_is_equal</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a2e8ef4a8ca5751441870402fee8e623d_1a2e8ef4a8ca5751441870402fee8e623d" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_is_equal_true</definition>
+        <argsstring></argsstring>
+        <name>ncalls_is_equal_true</name>
+        <qualifiedname>MonomialInfo::ncalls_is_equal_true</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="136" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="136" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a0034bc992ad667ca5a41a3dcc9e71389_1a0034bc992ad667ca5a41a3dcc9e71389" compoundref="moninfo_8hpp" startline="329" endline="336">is_equal</referencedby>
+        <referencedby refid="class_monomial_info_ac11dc04781f4b589e91e503e8afb5d16_1ac11dc04781f4b589e91e503e8afb5d16" compoundref="moninfo_8hpp" startline="338" endline="349">monomial_part_is_equal</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_ad9f0febd7e71e3e38c66e8c08aa57f01_1ad9f0febd7e71e3e38c66e8c08aa57f01" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_divide</definition>
+        <argsstring></argsstring>
+        <name>ncalls_divide</name>
+        <qualifiedname>MonomialInfo::ncalls_divide</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="137" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="137" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a9754b2f3986ad9aad247dd8d3a7bb387_1a9754b2f3986ad9aad247dd8d3a7bb387" compoundref="moninfo_8hpp" startline="376" endline="398">divide</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_a0a7e27444bf1bf8577c4e89ed6523c12_1a0a7e27444bf1bf8577c4e89ed6523c12" compoundref="moninfo_8hpp" startline="368" endline="374">unchecked_divide</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a05a50e9e011f2269c1d022fa87950e23_1a05a50e9e011f2269c1d022fa87950e23" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_weight</definition>
+        <argsstring></argsstring>
+        <name>ncalls_weight</name>
+        <qualifiedname>MonomialInfo::ncalls_weight</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="138" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="138" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_ab2c8ff4c9bd295c2eb073dfc92e8e173_1ab2c8ff4c9bd295c2eb073dfc92e8e173" compoundref="moninfo_8cpp" startline="75" endline="85">monomial_heft</referencedby>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a5622d6443ec251cb5337db4a0a499e4b_1a5622d6443ec251cb5337db4a0a499e4b" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_unneccesary</definition>
+        <argsstring></argsstring>
+        <name>ncalls_unneccesary</name>
+        <qualifiedname>MonomialInfo::ncalls_unneccesary</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="139" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="139" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+        <referencedby refid="class_monomial_info_a6b6ab7746febafa2bc0d3b305083afcc_1a6b6ab7746febafa2bc0d3b305083afcc" compoundref="moninfo_8hpp" startline="612" endline="672">unnecessary</referencedby>
+        <referencedby refid="class_monomial_info_afe93be33bdb774bd544468f107318c5f_1afe93be33bdb774bd544468f107318c5f" compoundref="moninfo_8hpp" startline="570" endline="610">unnecessary1</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_info_a35a58cbfbbd3d7407646bd441c1a3a4f_1a35a58cbfbbd3d7407646bd441c1a3a4f" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialInfo::ncalls_quotient_as_vp</definition>
+        <argsstring></argsstring>
+        <name>ncalls_quotient_as_vp</name>
+        <qualifiedname>MonomialInfo::ncalls_quotient_as_vp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="140" column="25" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="140" bodyend="-1"/>
+        <referencedby refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" compoundref="moninfo_8cpp" startline="11" endline="68">MonomialInfo</referencedby>
+        <referencedby refid="class_monomial_info_a1f3736e18413aeb785e51e28cc99a6b0_1a1f3736e18413aeb785e51e28cc99a6b0" compoundref="moninfo_8hpp" startline="681" endline="709">quotient_as_vp</referencedby>
+        <referencedby refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MonomialInfo::MonomialInfo</definition>
+        <argsstring>(int nvars, const MonomialOrdering *mo, const std::vector&lt; int &gt; &amp;heftDegrees, const std::vector&lt; int &gt; &amp;moduleHeftDegrees)</argsstring>
+        <name>MonomialInfo</name>
+        <qualifiedname>MonomialInfo::MonomialInfo</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+          <declname>mo</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>heftDegrees</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>moduleHeftDegrees</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="147" column="3" bodyfile="Macaulay2/e/f4/moninfo.cpp" bodystart="11" bodyend="68"/>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="class_monomial_info_ae64856e9d3b50e232d5b3bc19ddbd77d_1ae64856e9d3b50e232d5b3bc19ddbd77d" compoundref="moninfo_8hpp" startline="107">hashfcn</references>
+        <references refid="class_monomial_info_a0f5e98e7fce9abf1c8ed9f5ab603493a_1a0f5e98e7fce9abf1c8ed9f5ab603493a" compoundref="moninfo_8hpp" startline="108">mask</references>
+        <references refid="class_monomial_info_ae4a2b2bda8e06898178f1c2fa51b8296_1ae4a2b2bda8e06898178f1c2fa51b8296" compoundref="moninfo_8hpp" startline="123">mComponentLoc</references>
+        <references refid="class_monomial_info_a5d3c70bda0e72a2c330f0dfcd66f489b_1a5d3c70bda0e72a2c330f0dfcd66f489b" compoundref="moninfo_8hpp" startline="116">mHeftDegrees</references>
+        <references refid="class_monomial_info_a8f3281c942d59bbcd8a665b4d204d2f9_1a8f3281c942d59bbcd8a665b4d204d2f9" compoundref="moninfo_8hpp" startline="119">mModuleHeftDegrees</references>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="groebner_8cpp_ac8e6aec63b8db19052ae6ed45d4540f0_1ac8e6aec63b8db19052ae6ed45d4540f0" compoundref="monomial-ordering_8cpp" startline="861" endline="987">monomialOrderingToMatrix</references>
+        <references refid="class_monomial_info_a69b114b41a89da2394833c64b8818f8c_1a69b114b41a89da2394833c64b8818f8c" compoundref="moninfo_8hpp" startline="122">mPositionUp</references>
+        <references refid="class_monomial_info_aadf54956b2321bfd46b3cfcf6ca0ae48_1aadf54956b2321bfd46b3cfcf6ca0ae48" compoundref="moninfo_8hpp" startline="121">mTieBreakerIsRevLex</references>
+        <references refid="class_monomial_info_aa2fbcf11474c7afa34e85dbcc054c4dc_1aa2fbcf11474c7afa34e85dbcc054c4dc" compoundref="moninfo_8hpp" startline="115">mWeightVectors</references>
+        <references refid="class_monomial_info_a30db6f0c6c032aa01f398cb44853e842_1a30db6f0c6c032aa01f398cb44853e842" compoundref="moninfo_8hpp" startline="128">ncalls_compare</references>
+        <references refid="class_monomial_info_ad9f0febd7e71e3e38c66e8c08aa57f01_1ad9f0febd7e71e3e38c66e8c08aa57f01" compoundref="moninfo_8hpp" startline="137">ncalls_divide</references>
+        <references refid="class_monomial_info_a0c9be1acdc96e55e0fade0a3133898f5_1a0c9be1acdc96e55e0fade0a3133898f5" compoundref="moninfo_8hpp" startline="131">ncalls_from_expvector</references>
+        <references refid="class_monomial_info_ad9f2ad5d9f113dee82b1578c312e69b1_1ad9f2ad5d9f113dee82b1578c312e69b1" compoundref="moninfo_8hpp" startline="134">ncalls_from_varpower</references>
+        <references refid="class_monomial_info_ab1ce683e085afaae1862d86dec8fee12_1ab1ce683e085afaae1862d86dec8fee12" compoundref="moninfo_8hpp" startline="130">ncalls_get_component</references>
+        <references refid="class_monomial_info_ad959c4e5081bdde14c03da7b493f7f8e_1ad959c4e5081bdde14c03da7b493f7f8e" compoundref="moninfo_8hpp" startline="135">ncalls_is_equal</references>
+        <references refid="class_monomial_info_a2e8ef4a8ca5751441870402fee8e623d_1a2e8ef4a8ca5751441870402fee8e623d" compoundref="moninfo_8hpp" startline="136">ncalls_is_equal_true</references>
+        <references refid="class_monomial_info_ae2b615fc6d8eb878bb42b7db7e2611a1_1ae2b615fc6d8eb878bb42b7db7e2611a1" compoundref="moninfo_8hpp" startline="129">ncalls_mult</references>
+        <references refid="class_monomial_info_a35a58cbfbbd3d7407646bd441c1a3a4f_1a35a58cbfbbd3d7407646bd441c1a3a4f" compoundref="moninfo_8hpp" startline="140">ncalls_quotient_as_vp</references>
+        <references refid="class_monomial_info_a98a5648ed0a903736b1d675c80208b4b_1a98a5648ed0a903736b1d675c80208b4b" compoundref="moninfo_8hpp" startline="132">ncalls_to_expvector</references>
+        <references refid="class_monomial_info_a07c44a7fec80ac37c6a8bdc463fab1af_1a07c44a7fec80ac37c6a8bdc463fab1af" compoundref="moninfo_8hpp" startline="133">ncalls_to_varpower</references>
+        <references refid="class_monomial_info_a5622d6443ec251cb5337db4a0a499e4b_1a5622d6443ec251cb5337db4a0a499e4b" compoundref="moninfo_8hpp" startline="139">ncalls_unneccesary</references>
+        <references refid="class_monomial_info_a05a50e9e011f2269c1d022fa87950e23_1a05a50e9e011f2269c1d022fa87950e23" compoundref="moninfo_8hpp" startline="138">ncalls_weight</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_af29339c2e92d9e7b658a151d17975c5b_1af29339c2e92d9e7b658a151d17975c5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>MonomialInfo::~MonomialInfo</definition>
+        <argsstring>()</argsstring>
+        <name>~MonomialInfo</name>
+        <qualifiedname>MonomialInfo::~MonomialInfo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="152" column="11" bodyfile="Macaulay2/e/f4/moninfo.cpp" bodystart="70" bodyend="73"/>
+        <references refid="class_monomial_info_ae64856e9d3b50e232d5b3bc19ddbd77d_1ae64856e9d3b50e232d5b3bc19ddbd77d" compoundref="moninfo_8hpp" startline="107">hashfcn</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_aeb40358990ddebf14f0714e19c16b010_1aeb40358990ddebf14f0714e19c16b010" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::n_vars</definition>
+        <argsstring>() const</argsstring>
+        <name>n_vars</name>
+        <qualifiedname>MonomialInfo::n_vars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="154" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="154" bodyend="154"/>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a7111e3ac9f9bd85c0555d3d177006054_1a7111e3ac9f9bd85c0555d3d177006054" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::max_monomial_size</definition>
+        <argsstring>() const</argsstring>
+        <name>max_monomial_size</name>
+        <qualifiedname>MonomialInfo::max_monomial_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="155" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="155" bodyend="155"/>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <referencedby refid="class_f4to_m2_interface_a033aaf936047f35de1074ebf222882b4_1a033aaf936047f35de1074ebf222882b4" compoundref="f4-m2-interface_8cpp" startline="19" endline="56">F4toM2Interface::from_M2_vec</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_ad9323d9d84e9eebf78eaaed6da703a73_1ad9323d9d84e9eebf78eaaed6da703a73" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::monomial_size</definition>
+        <argsstring>(const_packed_monomial m) const</argsstring>
+        <name>monomial_size</name>
+        <qualifiedname>MonomialInfo::monomial_size</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="156" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="156" bodyend="160"/>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <referencedby refid="class_f4to_m2_interface_a033aaf936047f35de1074ebf222882b4_1a033aaf936047f35de1074ebf222882b4" compoundref="f4-m2-interface_8cpp" startline="19" endline="56">F4toM2Interface::from_M2_vec</referencedby>
+        <referencedby refid="class_monomial_info_a88892e933e84b245740be38b639182dc_1a88892e933e84b245740be38b639182dc" compoundref="moninfo_8cpp" startline="113" endline="122">show</referencedby>
+        <referencedby refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" compoundref="f4-m2-interface_8cpp" startline="72" endline="128">F4toM2Interface::to_M2_vec</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::show</definition>
+        <argsstring>() const</argsstring>
+        <name>show</name>
+        <qualifiedname>MonomialInfo::show</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="162" column="8" bodyfile="Macaulay2/e/f4/moninfo.cpp" bodystart="87" bodyend="111"/>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="class_monomial_info_ae64856e9d3b50e232d5b3bc19ddbd77d_1ae64856e9d3b50e232d5b3bc19ddbd77d" compoundref="moninfo_8hpp" startline="107">hashfcn</references>
+        <references refid="class_monomial_info_a0f5e98e7fce9abf1c8ed9f5ab603493a_1a0f5e98e7fce9abf1c8ed9f5ab603493a" compoundref="moninfo_8hpp" startline="108">mask</references>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="class_monomial_info_aadf54956b2321bfd46b3cfcf6ca0ae48_1aadf54956b2321bfd46b3cfcf6ca0ae48" compoundref="moninfo_8hpp" startline="121">mTieBreakerIsRevLex</references>
+        <references refid="class_monomial_info_a30db6f0c6c032aa01f398cb44853e842_1a30db6f0c6c032aa01f398cb44853e842" compoundref="moninfo_8hpp" startline="128">ncalls_compare</references>
+        <references refid="class_monomial_info_ad9f0febd7e71e3e38c66e8c08aa57f01_1ad9f0febd7e71e3e38c66e8c08aa57f01" compoundref="moninfo_8hpp" startline="137">ncalls_divide</references>
+        <references refid="class_monomial_info_a0c9be1acdc96e55e0fade0a3133898f5_1a0c9be1acdc96e55e0fade0a3133898f5" compoundref="moninfo_8hpp" startline="131">ncalls_from_expvector</references>
+        <references refid="class_monomial_info_ad9f2ad5d9f113dee82b1578c312e69b1_1ad9f2ad5d9f113dee82b1578c312e69b1" compoundref="moninfo_8hpp" startline="134">ncalls_from_varpower</references>
+        <references refid="class_monomial_info_ab1ce683e085afaae1862d86dec8fee12_1ab1ce683e085afaae1862d86dec8fee12" compoundref="moninfo_8hpp" startline="130">ncalls_get_component</references>
+        <references refid="class_monomial_info_ad959c4e5081bdde14c03da7b493f7f8e_1ad959c4e5081bdde14c03da7b493f7f8e" compoundref="moninfo_8hpp" startline="135">ncalls_is_equal</references>
+        <references refid="class_monomial_info_a2e8ef4a8ca5751441870402fee8e623d_1a2e8ef4a8ca5751441870402fee8e623d" compoundref="moninfo_8hpp" startline="136">ncalls_is_equal_true</references>
+        <references refid="class_monomial_info_ae2b615fc6d8eb878bb42b7db7e2611a1_1ae2b615fc6d8eb878bb42b7db7e2611a1" compoundref="moninfo_8hpp" startline="129">ncalls_mult</references>
+        <references refid="class_monomial_info_a35a58cbfbbd3d7407646bd441c1a3a4f_1a35a58cbfbbd3d7407646bd441c1a3a4f" compoundref="moninfo_8hpp" startline="140">ncalls_quotient_as_vp</references>
+        <references refid="class_monomial_info_a98a5648ed0a903736b1d675c80208b4b_1a98a5648ed0a903736b1d675c80208b4b" compoundref="moninfo_8hpp" startline="132">ncalls_to_expvector</references>
+        <references refid="class_monomial_info_a07c44a7fec80ac37c6a8bdc463fab1af_1a07c44a7fec80ac37c6a8bdc463fab1af" compoundref="moninfo_8hpp" startline="133">ncalls_to_varpower</references>
+        <references refid="class_monomial_info_a5622d6443ec251cb5337db4a0a499e4b_1a5622d6443ec251cb5337db4a0a499e4b" compoundref="moninfo_8hpp" startline="139">ncalls_unneccesary</references>
+        <references refid="class_monomial_info_a05a50e9e011f2269c1d022fa87950e23_1a05a50e9e011f2269c1d022fa87950e23" compoundref="moninfo_8hpp" startline="138">ncalls_weight</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <referencedby refid="class_monomial_info_a930d75b089d272124670e7fb918b6866_1a930d75b089d272124670e7fb918b6866" compoundref="moninfo_8hpp" startline="555" endline="565">compareVerbose</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a6fe661e97aff856be7baac1041301f00_1a6fe661e97aff856be7baac1041301f00" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::componentLocation</definition>
+        <argsstring>() const</argsstring>
+        <name>componentLocation</name>
+        <qualifiedname>MonomialInfo::componentLocation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="164" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="164" bodyend="164"/>
+        <references refid="class_monomial_info_ae4a2b2bda8e06898178f1c2fa51b8296_1ae4a2b2bda8e06898178f1c2fa51b8296" compoundref="moninfo_8hpp" startline="123">mComponentLoc</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a4a4b49d00e20557d65044364c3dbcc8a_1a4a4b49d00e20557d65044364c3dbcc8a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::positionUp</definition>
+        <argsstring>()</argsstring>
+        <name>positionUp</name>
+        <qualifiedname>MonomialInfo::positionUp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="165" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="165" bodyend="165"/>
+        <references refid="class_monomial_info_a69b114b41a89da2394833c64b8818f8c_1a69b114b41a89da2394833c64b8818f8c" compoundref="moninfo_8hpp" startline="122">mPositionUp</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a2b730bde883a895e80a3bead3b3a6091_1a2b730bde883a895e80a3bead3b3a6091" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long MonomialInfo::hash_value</definition>
+        <argsstring>(const_packed_monomial m) const</argsstring>
+        <name>hash_value</name>
+        <qualifiedname>MonomialInfo::hash_value</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="167" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="167" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a6bc3f1a833cc7b406647457af8295aa9_1a6bc3f1a833cc7b406647457af8295aa9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::copy</definition>
+        <argsstring>(const_packed_monomial src, packed_monomial target) const</argsstring>
+        <name>copy</name>
+        <qualifiedname>MonomialInfo::copy</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="170" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="170" bodyend="173"/>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a8fe3d65d48bec12c5458f5dbaff192b2_1a8fe3d65d48bec12c5458f5dbaff192b2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long MonomialInfo::last_exponent</definition>
+        <argsstring>(const_packed_monomial m) const</argsstring>
+        <name>last_exponent</name>
+        <qualifiedname>MonomialInfo::last_exponent</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="175" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="175" bodyend="175"/>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a11e4c9cf967b4c4c105bb6537ba22555_1a11e4c9cf967b4c4c105bb6537ba22555" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::set_component</definition>
+        <argsstring>(long component, packed_monomial m) const</argsstring>
+        <name>set_component</name>
+        <qualifiedname>MonomialInfo::set_component</qualifiedname>
+        <param>
+          <type>long</type>
+          <declname>component</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="176" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="176" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a975f33d350dc5fdf096d959c47ad45d5_1a975f33d350dc5fdf096d959c47ad45d5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long MonomialInfo::get_component</definition>
+        <argsstring>(const_packed_monomial m) const</argsstring>
+        <name>get_component</name>
+        <qualifiedname>MonomialInfo::get_component</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="181" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="181" bodyend="185"/>
+        <references refid="class_monomial_info_ab1ce683e085afaae1862d86dec8fee12_1ab1ce683e085afaae1862d86dec8fee12" compoundref="moninfo_8hpp" startline="130">ncalls_get_component</references>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ad6b3e8a449e8e94e3b228e09ac36ecf5_1ad6b3e8a449e8e94e3b228e09ac36ecf5" compoundref="f4-monlookup_8cpp" startline="311" endline="322">F4MonomialLookupTableT&lt; Key &gt;::find_all_divisors_packed</referencedby>
+        <referencedby refid="class_monomial_info_ab2c8ff4c9bd295c2eb073dfc92e8e173_1ab2c8ff4c9bd295c2eb073dfc92e8e173" compoundref="moninfo_8cpp" startline="75" endline="85">monomial_heft</referencedby>
+        <referencedby refid="class_monomial_info_a1f3736e18413aeb785e51e28cc99a6b0_1a1f3736e18413aeb785e51e28cc99a6b0" compoundref="moninfo_8hpp" startline="681" endline="709">quotient_as_vp</referencedby>
+        <referencedby refid="class_monomial_info_ac620137a8229ba361947392db9ebfa68_1ac620137a8229ba361947392db9ebfa68" compoundref="moninfo_8cpp" startline="124" endline="137">showAlpha</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_adc4e661c5cb08700fd89d3686471b61d_1adc4e661c5cb08700fd89d3686471b61d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::from_expvector</definition>
+        <argsstring>(const_ntuple_monomial e, long comp, packed_monomial result) const</argsstring>
+        <name>from_expvector</name>
+        <qualifiedname>MonomialInfo::from_expvector</qualifiedname>
+        <param>
+          <type><ref refid="ntuple-monomial_8hpp_ae8541b176c9487d01296a0dcea69e280_1ae8541b176c9487d01296a0dcea69e280" kindref="member">const_ntuple_monomial</ref></type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>comp</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="187" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="187" bodyend="215"/>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="class_monomial_info_ae64856e9d3b50e232d5b3bc19ddbd77d_1ae64856e9d3b50e232d5b3bc19ddbd77d" compoundref="moninfo_8hpp" startline="107">hashfcn</references>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="class_monomial_info_aa2fbcf11474c7afa34e85dbcc054c4dc_1aa2fbcf11474c7afa34e85dbcc054c4dc" compoundref="moninfo_8hpp" startline="115">mWeightVectors</references>
+        <references refid="class_monomial_info_a0c9be1acdc96e55e0fade0a3133898f5_1a0c9be1acdc96e55e0fade0a3133898f5" compoundref="moninfo_8hpp" startline="131">ncalls_from_expvector</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_f4to_m2_interface_a033aaf936047f35de1074ebf222882b4_1a033aaf936047f35de1074ebf222882b4" compoundref="f4-m2-interface_8cpp" startline="19" endline="56">F4toM2Interface::from_M2_vec</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a12e90ac52fa4532654c0047c0a367f4d_1a12e90ac52fa4532654c0047c0a367f4d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::skew_vars</definition>
+        <argsstring>(const SkewMultiplication *skew, const_packed_monomial m, int *skewvars) const</argsstring>
+        <name>skew_vars</name>
+        <qualifiedname>MonomialInfo::skew_vars</qualifiedname>
+        <param>
+          <type>const <ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref> *</type>
+          <declname>skew</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>skewvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="217" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="217" bodyend="222"/>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" compoundref="skew_8cpp" startline="61" endline="74">SkewMultiplication::skew_vars</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a751e692b8d03a82606a01ec457f52ea4_1a751e692b8d03a82606a01ec457f52ea4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::skew_mult_sign</definition>
+        <argsstring>(const SkewMultiplication *skew, const_packed_monomial m, const_packed_monomial n) const</argsstring>
+        <name>skew_mult_sign</name>
+        <qualifiedname>MonomialInfo::skew_mult_sign</qualifiedname>
+        <param>
+          <type>const <ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref> *</type>
+          <declname>skew</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="224" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="224" bodyend="229"/>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="class_skew_multiplication_a869bde7ea8e5d3c68e5a95c25e5c0c26_1a869bde7ea8e5d3c68e5a95c25e5c0c26" compoundref="skew_8cpp" startline="91" endline="98">SkewMultiplication::mult_sign</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_ae59872702e7c50feb58a48171e3d3d46_1ae59872702e7c50feb58a48171e3d3d46" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::one</definition>
+        <argsstring>(long comp, packed_monomial result) const</argsstring>
+        <name>one</name>
+        <qualifiedname>MonomialInfo::one</qualifiedname>
+        <param>
+          <type>long</type>
+          <declname>comp</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="231" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="231" bodyend="240"/>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a6292fa0b1de47b16c2f0f64394f47e30_1a6292fa0b1de47b16c2f0f64394f47e30" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::to_expvector</definition>
+        <argsstring>(const_packed_monomial m, ntuple_monomial result, long &amp;result_comp) const</argsstring>
+        <name>to_expvector</name>
+        <qualifiedname>MonomialInfo::to_expvector</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="ntuple-monomial_8hpp_ac762fe7fe918aec66d8175fac1620d24_1ac762fe7fe918aec66d8175fac1620d24" kindref="member">ntuple_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>long &amp;</type>
+          <declname>result_comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="242" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="242" bodyend="252"/>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="class_monomial_info_a98a5648ed0a903736b1d675c80208b4b_1a98a5648ed0a903736b1d675c80208b4b" compoundref="moninfo_8hpp" startline="132">ncalls_to_expvector</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ad6b3e8a449e8e94e3b228e09ac36ecf5_1ad6b3e8a449e8e94e3b228e09ac36ecf5" compoundref="f4-monlookup_8cpp" startline="311" endline="322">F4MonomialLookupTableT&lt; Key &gt;::find_all_divisors_packed</referencedby>
+        <referencedby refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" compoundref="f4-m2-interface_8cpp" startline="72" endline="128">F4toM2Interface::to_M2_vec</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_af84080e02e7a44dcff39d53ffbbd9df7_1af84080e02e7a44dcff39d53ffbbd9df7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::to_intstar_vector</definition>
+        <argsstring>(const_packed_monomial m, int *result, int &amp;result_comp) const</argsstring>
+        <name>to_intstar_vector</name>
+        <qualifiedname>MonomialInfo::to_intstar_vector</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>result_comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="254" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="254" bodyend="266"/>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="class_monomial_info_a98a5648ed0a903736b1d675c80208b4b_1a98a5648ed0a903736b1d675c80208b4b" compoundref="moninfo_8hpp" startline="132">ncalls_to_expvector</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a22b07a3c42e294a496a25a77dba8affd_1a22b07a3c42e294a496a25a77dba8affd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::to_varpower_monomial</definition>
+        <argsstring>(const_packed_monomial m, varpower_monomial result) const</argsstring>
+        <name>to_varpower_monomial</name>
+        <qualifiedname>MonomialInfo::to_varpower_monomial</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="varpower-monomial_8hpp_a157ac534e5ec3ea071fa7e5928ad2db5_1a157ac534e5ec3ea071fa7e5928ad2db5" kindref="member">varpower_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="268" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="268" bodyend="286"/>
+        <references refid="class_monomial_info_a07c44a7fec80ac37c6a8bdc463fab1af_1a07c44a7fec80ac37c6a8bdc463fab1af" compoundref="moninfo_8hpp" startline="133">ncalls_to_varpower</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_aece19aaf82323dab095f51e630e8f669_1aece19aaf82323dab095f51e630e8f669" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::from_varpower_monomial</definition>
+        <argsstring>(const_varpower_monomial m, long comp, packed_monomial result) const</argsstring>
+        <name>from_varpower_monomial</name>
+        <qualifiedname>MonomialInfo::from_varpower_monomial</qualifiedname>
+        <param>
+          <type><ref refid="varpower-monomial_8hpp_aafe85fd808bd13fc2516f834d2b6de46_1aafe85fd808bd13fc2516f834d2b6de46" kindref="member">const_varpower_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>comp</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="288" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="288" bodyend="327"/>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="class_monomial_info_ae64856e9d3b50e232d5b3bc19ddbd77d_1ae64856e9d3b50e232d5b3bc19ddbd77d" compoundref="moninfo_8hpp" startline="107">hashfcn</references>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="class_monomial_info_aa2fbcf11474c7afa34e85dbcc054c4dc_1aa2fbcf11474c7afa34e85dbcc054c4dc" compoundref="moninfo_8hpp" startline="115">mWeightVectors</references>
+        <references refid="class_monomial_info_ad9f2ad5d9f113dee82b1578c312e69b1_1ad9f2ad5d9f113dee82b1578c312e69b1" compoundref="moninfo_8hpp" startline="134">ncalls_from_varpower</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a0034bc992ad667ca5a41a3dcc9e71389_1a0034bc992ad667ca5a41a3dcc9e71389" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::is_equal</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n) const</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>MonomialInfo::is_equal</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="329" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="329" bodyend="336"/>
+        <references refid="class_monomial_info_ad959c4e5081bdde14c03da7b493f7f8e_1ad959c4e5081bdde14c03da7b493f7f8e" compoundref="moninfo_8hpp" startline="135">ncalls_is_equal</references>
+        <references refid="class_monomial_info_a2e8ef4a8ca5751441870402fee8e623d_1a2e8ef4a8ca5751441870402fee8e623d" compoundref="moninfo_8hpp" startline="136">ncalls_is_equal_true</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_ac11dc04781f4b589e91e503e8afb5d16_1ac11dc04781f4b589e91e503e8afb5d16" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::monomial_part_is_equal</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n) const</argsstring>
+        <name>monomial_part_is_equal</name>
+        <qualifiedname>MonomialInfo::monomial_part_is_equal</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="338" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="338" bodyend="349"/>
+        <references refid="class_monomial_info_ad959c4e5081bdde14c03da7b493f7f8e_1ad959c4e5081bdde14c03da7b493f7f8e" compoundref="moninfo_8hpp" startline="135">ncalls_is_equal</references>
+        <references refid="class_monomial_info_a2e8ef4a8ca5751441870402fee8e623d_1a2e8ef4a8ca5751441870402fee8e623d" compoundref="moninfo_8hpp" startline="136">ncalls_is_equal_true</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a691cde724dbb8706cf939491e94a3de3_1a691cde724dbb8706cf939491e94a3de3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::check_monomial</definition>
+        <argsstring>(const_packed_monomial m) const</argsstring>
+        <name>check_monomial</name>
+        <qualifiedname>MonomialInfo::check_monomial</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="351" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="351" bodyend="358"/>
+        <references refid="class_monomial_info_a0f5e98e7fce9abf1c8ed9f5ab603493a_1a0f5e98e7fce9abf1c8ed9f5ab603493a" compoundref="moninfo_8hpp" startline="108">mask</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <referencedby refid="class_monomial_info_a9a0816b99553107e135c0b8c27330fa3_1a9a0816b99553107e135c0b8c27330fa3" compoundref="moninfo_8hpp" startline="400" endline="406">mult</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a84e97933943d489b292d34a962af855d_1a84e97933943d489b292d34a962af855d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::unchecked_mult</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const</argsstring>
+        <name>unchecked_mult</name>
+        <qualifiedname>MonomialInfo::unchecked_mult</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="360" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="360" bodyend="366"/>
+        <references refid="class_monomial_info_ae2b615fc6d8eb878bb42b7db7e2611a1_1ae2b615fc6d8eb878bb42b7db7e2611a1" compoundref="moninfo_8hpp" startline="129">ncalls_mult</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_monomial_info_a9a0816b99553107e135c0b8c27330fa3_1a9a0816b99553107e135c0b8c27330fa3" compoundref="moninfo_8hpp" startline="400" endline="406">mult</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a0a7e27444bf1bf8577c4e89ed6523c12_1a0a7e27444bf1bf8577c4e89ed6523c12" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::unchecked_divide</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const</argsstring>
+        <name>unchecked_divide</name>
+        <qualifiedname>MonomialInfo::unchecked_divide</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="368" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="368" bodyend="374"/>
+        <references refid="class_monomial_info_ad9f0febd7e71e3e38c66e8c08aa57f01_1ad9f0febd7e71e3e38c66e8c08aa57f01" compoundref="moninfo_8hpp" startline="137">ncalls_divide</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a9754b2f3986ad9aad247dd8d3a7bb387_1a9754b2f3986ad9aad247dd8d3a7bb387" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::divide</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const</argsstring>
+        <name>divide</name>
+        <qualifiedname>MonomialInfo::divide</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="376" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="376" bodyend="398"/>
+        <references refid="class_monomial_info_ad9f0febd7e71e3e38c66e8c08aa57f01_1ad9f0febd7e71e3e38c66e8c08aa57f01" compoundref="moninfo_8hpp" startline="137">ncalls_divide</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a9a0816b99553107e135c0b8c27330fa3_1a9a0816b99553107e135c0b8c27330fa3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::mult</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const</argsstring>
+        <name>mult</name>
+        <qualifiedname>MonomialInfo::mult</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="400" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="400" bodyend="406"/>
+        <references refid="class_monomial_info_a691cde724dbb8706cf939491e94a3de3_1a691cde724dbb8706cf939491e94a3de3" compoundref="moninfo_8hpp" startline="351" endline="358">check_monomial</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_monomial_info_a84e97933943d489b292d34a962af855d_1a84e97933943d489b292d34a962af855d" compoundref="moninfo_8hpp" startline="360" endline="366">unchecked_mult</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_ab2c8ff4c9bd295c2eb073dfc92e8e173_1ab2c8ff4c9bd295c2eb073dfc92e8e173" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="moninfo_8hpp_afe2d8fe59c70630e71d82733c3f8ddcb_1afe2d8fe59c70630e71d82733c3f8ddcb" kindref="member">monomial_word</ref></type>
+        <definition>monomial_word MonomialInfo::monomial_heft</definition>
+        <argsstring>(const_packed_monomial m) const</argsstring>
+        <name>monomial_heft</name>
+        <qualifiedname>MonomialInfo::monomial_heft</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="408" column="17" bodyfile="Macaulay2/e/f4/moninfo.cpp" bodystart="75" bodyend="85"/>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="class_monomial_info_a975f33d350dc5fdf096d959c47ad45d5_1a975f33d350dc5fdf096d959c47ad45d5" compoundref="moninfo_8hpp" startline="181" endline="185">get_component</references>
+        <references refid="class_monomial_info_a5d3c70bda0e72a2c330f0dfcd66f489b_1a5d3c70bda0e72a2c330f0dfcd66f489b" compoundref="moninfo_8hpp" startline="116">mHeftDegrees</references>
+        <references refid="class_monomial_info_a8f3281c942d59bbcd8a665b4d204d2f9_1a8f3281c942d59bbcd8a665b4d204d2f9" compoundref="moninfo_8hpp" startline="119">mModuleHeftDegrees</references>
+        <references refid="class_monomial_info_a05a50e9e011f2269c1d022fa87950e23_1a05a50e9e011f2269c1d022fa87950e23" compoundref="moninfo_8hpp" startline="138">ncalls_weight</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a88892e933e84b245740be38b639182dc_1a88892e933e84b245740be38b639182dc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::show</definition>
+        <argsstring>(const_packed_monomial m) const</argsstring>
+        <name>show</name>
+        <qualifiedname>MonomialInfo::show</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="410" column="8" bodyfile="Macaulay2/e/f4/moninfo.cpp" bodystart="113" bodyend="122"/>
+        <references refid="class_monomial_info_ad9323d9d84e9eebf78eaaed6da703a73_1ad9323d9d84e9eebf78eaaed6da703a73" compoundref="moninfo_8hpp" startline="156" endline="160">monomial_size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_ac620137a8229ba361947392db9ebfa68_1ac620137a8229ba361947392db9ebfa68" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::showAlpha</definition>
+        <argsstring>(const_packed_monomial m) const</argsstring>
+        <name>showAlpha</name>
+        <qualifiedname>MonomialInfo::showAlpha</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="412" column="8" bodyfile="Macaulay2/e/f4/moninfo.cpp" bodystart="124" bodyend="137"/>
+        <references refid="class_monomial_info_a975f33d350dc5fdf096d959c47ad45d5_1a975f33d350dc5fdf096d959c47ad45d5" compoundref="moninfo_8hpp" startline="181" endline="185">get_component</references>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <referencedby refid="class_monomial_info_a6be33e365d5c3ffb8bd882faf3691de3_1a6be33e365d5c3ffb8bd882faf3691de3" compoundref="moninfo_8hpp" startline="432" endline="466">compare_schreyer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a96ff91eb4d088372c8da10f12c292edb_1a96ff91eb4d088372c8da10f12c292edb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::compare_grevlex</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n) const</argsstring>
+        <name>compare_grevlex</name>
+        <qualifiedname>MonomialInfo::compare_grevlex</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="415" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="415" bodyend="430"/>
+        <references refid="class_monomial_info_a30db6f0c6c032aa01f398cb44853e842_1a30db6f0c6c032aa01f398cb44853e842" compoundref="moninfo_8hpp" startline="128">ncalls_compare</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a6be33e365d5c3ffb8bd882faf3691de3_1a6be33e365d5c3ffb8bd882faf3691de3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::compare_schreyer</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n, const_packed_monomial m0, const_packed_monomial n0, long tie1, long tie2) const</argsstring>
+        <name>compare_schreyer</name>
+        <qualifiedname>MonomialInfo::compare_schreyer</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m0</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n0</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>tie1</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>tie2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="432" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="432" bodyend="466"/>
+        <references refid="class_monomial_info_a30db6f0c6c032aa01f398cb44853e842_1a30db6f0c6c032aa01f398cb44853e842" compoundref="moninfo_8hpp" startline="128">ncalls_compare</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="class_monomial_info_ac620137a8229ba361947392db9ebfa68_1ac620137a8229ba361947392db9ebfa68" compoundref="moninfo_8cpp" startline="124" endline="137">showAlpha</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_abec51699ef38a20c69c8562231bf1c90_1abec51699ef38a20c69c8562231bf1c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::compare_lex</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n) const</argsstring>
+        <name>compare_lex</name>
+        <qualifiedname>MonomialInfo::compare_lex</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="468" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="468" bodyend="483"/>
+        <references refid="class_monomial_info_a30db6f0c6c032aa01f398cb44853e842_1a30db6f0c6c032aa01f398cb44853e842" compoundref="moninfo_8hpp" startline="128">ncalls_compare</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a6c7d07f22cd5e3a8c507085e746b5499_1a6c7d07f22cd5e3a8c507085e746b5499" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::compare_weightvector</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n) const</argsstring>
+        <name>compare_weightvector</name>
+        <qualifiedname>MonomialInfo::compare_weightvector</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="485" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="485" bodyend="509"/>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="class_monomial_info_a30db6f0c6c032aa01f398cb44853e842_1a30db6f0c6c032aa01f398cb44853e842" compoundref="moninfo_8hpp" startline="128">ncalls_compare</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::compare</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n) const</argsstring>
+        <name>compare</name>
+        <qualifiedname>MonomialInfo::compare</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>compare: </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="516" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="516" bodyend="553"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_abaab8d42f075ee8ddc9b70951d3fd6cd_1abaab8d42f075ee8ddc9b70951d3fd6cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="19">EQ</references>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ab89310b3f2f97e4e9415fc5a51549612_1ab89310b3f2f97e4e9415fc5a51549612" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="20">GT</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aaf56b99cbe34023f42ce5b7878c827d8_1aaf56b99cbe34023f42ce5b7878c827d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="18">LT</references>
+        <references refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" compoundref="moninfo_8hpp" startline="112">mNumWeights</references>
+        <references refid="class_monomial_info_aadf54956b2321bfd46b3cfcf6ca0ae48_1aadf54956b2321bfd46b3cfcf6ca0ae48" compoundref="moninfo_8hpp" startline="121">mTieBreakerIsRevLex</references>
+        <references refid="class_monomial_info_a30db6f0c6c032aa01f398cb44853e842_1a30db6f0c6c032aa01f398cb44853e842" compoundref="moninfo_8hpp" startline="128">ncalls_compare</references>
+        <references refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" compoundref="moninfo_8hpp" startline="106">nslots</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <referencedby refid="class_monomial_info_a930d75b089d272124670e7fb918b6866_1a930d75b089d272124670e7fb918b6866" compoundref="moninfo_8hpp" startline="555" endline="565">compareVerbose</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a930d75b089d272124670e7fb918b6866_1a930d75b089d272124670e7fb918b6866" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialInfo::compareVerbose</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial n) const</argsstring>
+        <name>compareVerbose</name>
+        <qualifiedname>MonomialInfo::compareVerbose</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="555" column="7" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="555" bodyend="565"/>
+        <references refid="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" compoundref="moninfo_8hpp" startline="516" endline="553">compare</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" compoundref="moninfo_8cpp" startline="87" endline="111">show</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_afe93be33bdb774bd544468f107318c5f_1afe93be33bdb774bd544468f107318c5f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::unnecessary1</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial p1, const_packed_monomial p2, const_packed_monomial lcm) const</argsstring>
+        <name>unnecessary1</name>
+        <qualifiedname>MonomialInfo::unnecessary1</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>p1</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>p2</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>lcm</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="570" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="570" bodyend="610"/>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="class_monomial_info_a5622d6443ec251cb5337db4a0a499e4b_1a5622d6443ec251cb5337db4a0a499e4b" compoundref="moninfo_8hpp" startline="139">ncalls_unneccesary</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a6b6ab7746febafa2bc0d3b305083afcc_1a6b6ab7746febafa2bc0d3b305083afcc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialInfo::unnecessary</definition>
+        <argsstring>(const_packed_monomial m, const_packed_monomial p1, const_packed_monomial p2, const_packed_monomial lcm) const</argsstring>
+        <name>unnecessary</name>
+        <qualifiedname>MonomialInfo::unnecessary</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>p1</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>p2</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>lcm</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="612" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="612" bodyend="672"/>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="class_monomial_info_a5622d6443ec251cb5337db4a0a499e4b_1a5622d6443ec251cb5337db4a0a499e4b" compoundref="moninfo_8hpp" startline="139">ncalls_unneccesary</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_ab53591f412e79d98a7766891f310e6af_1ab53591f412e79d98a7766891f310e6af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::variable_as_vp</definition>
+        <argsstring>(int v, varpower_monomial result) const</argsstring>
+        <name>variable_as_vp</name>
+        <qualifiedname>MonomialInfo::variable_as_vp</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type><ref refid="varpower-monomial_8hpp_a157ac534e5ec3ea071fa7e5928ad2db5_1a157ac534e5ec3ea071fa7e5928ad2db5" kindref="member">varpower_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="674" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="674" bodyend="679"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_info_a1f3736e18413aeb785e51e28cc99a6b0_1a1f3736e18413aeb785e51e28cc99a6b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialInfo::quotient_as_vp</definition>
+        <argsstring>(const_packed_monomial a, const_packed_monomial b, varpower_monomial result, int &amp;deg_result, bool &amp;are_disjoint) const</argsstring>
+        <name>quotient_as_vp</name>
+        <qualifiedname>MonomialInfo::quotient_as_vp</qualifiedname>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_a8ebc6aeb2b5443bc5d07ed5cc64b10b6_1a8ebc6aeb2b5443bc5d07ed5cc64b10b6" kindref="member">const_packed_monomial</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="varpower-monomial_8hpp_a157ac534e5ec3ea071fa7e5928ad2db5_1a157ac534e5ec3ea071fa7e5928ad2db5" kindref="member">varpower_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>deg_result</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref> &amp;</type>
+          <declname>are_disjoint</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/moninfo.hpp" line="681" column="8" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="681" bodyend="709"/>
+        <references refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" compoundref="moninfo_8hpp" startline="111">firstvar</references>
+        <references refid="class_monomial_info_a975f33d350dc5fdf096d959c47ad45d5_1a975f33d350dc5fdf096d959c47ad45d5" compoundref="moninfo_8hpp" startline="181" endline="185">get_component</references>
+        <references refid="class_monomial_info_a5d3c70bda0e72a2c330f0dfcd66f489b_1a5d3c70bda0e72a2c330f0dfcd66f489b" compoundref="moninfo_8hpp" startline="116">mHeftDegrees</references>
+        <references refid="class_monomial_info_a8f3281c942d59bbcd8a665b4d204d2f9_1a8f3281c942d59bbcd8a665b4d204d2f9" compoundref="moninfo_8hpp" startline="119">mModuleHeftDegrees</references>
+        <references refid="class_monomial_info_a35a58cbfbbd3d7407646bd441c1a3a4f_1a35a58cbfbbd3d7407646bd441c1a3a4f" compoundref="moninfo_8hpp" startline="140">ncalls_quotient_as_vp</references>
+        <references refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" compoundref="moninfo_8hpp" startline="105">nvars</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Per-ring monomial layout / encoding helper used by <computeroutput><ref refid="class_f4_g_b" kindref="compound">F4GB</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds the variable count <computeroutput><ref refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" kindref="member">nvars</ref></computeroutput> and the encoded monomial word width <computeroutput><ref refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" kindref="member">nslots</ref></computeroutput>, plus a per-variable hash table (<computeroutput><ref refid="class_monomial_info_ae64856e9d3b50e232d5b3bc19ddbd77d_1ae64856e9d3b50e232d5b3bc19ddbd77d" kindref="member">hashfcn</ref></computeroutput>) and mask. Encoded monomials are laid out as <computeroutput>[hashvalue, <ref refid="group__comp" kindref="compound">Computations</ref>, w_1, ..., w_r, e_1, ..., e_n]</computeroutput> (or with the weights at the tail, depending on convention <mdash/> see in-source comments at the top of the file). Provides the operations the F4 inner loops need: <computeroutput><ref refid="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" kindref="member">compare</ref></computeroutput>, <computeroutput><ref refid="class_monomial_info_a9a0816b99553107e135c0b8c27330fa3_1a9a0816b99553107e135c0b8c27330fa3" kindref="member">mult</ref></computeroutput>, <computeroutput><ref refid="class_monomial_info_a9754b2f3986ad9aad247dd8d3a7bb387_1a9754b2f3986ad9aad247dd8d3a7bb387" kindref="member">divide</ref></computeroutput>, <computeroutput>lcm</computeroutput>, <computeroutput>gcd</computeroutput>, hash-with- component, plus encode / decode against actual exponent vectors. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>MonomialInfo</label>
+        <link refid="class_monomial_info"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>MonomialInfo</label>
+        <link refid="class_monomial_info"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>firstvar</edgelabel>
+          <edgelabel>mComponentLoc</edgelabel>
+          <edgelabel>mNumWeights</edgelabel>
+          <edgelabel>mPositionUp</edgelabel>
+          <edgelabel>nslots</edgelabel>
+          <edgelabel>nvars</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>hashfcn</edgelabel>
+          <edgelabel>mask</edgelabel>
+          <edgelabel>ncalls_compare</edgelabel>
+          <edgelabel>ncalls_divide</edgelabel>
+          <edgelabel>ncalls_from_expvector</edgelabel>
+          <edgelabel>ncalls_from_varpower</edgelabel>
+          <edgelabel>ncalls_get_component</edgelabel>
+          <edgelabel>ncalls_is_equal</edgelabel>
+          <edgelabel>ncalls_is_equal_true</edgelabel>
+          <edgelabel>ncalls_mult</edgelabel>
+          <edgelabel>  ...</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mModuleHeftDegrees</edgelabel>
+          <edgelabel>mWeightVectors</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mTieBreakerIsRevLex</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>T</label>
+      </node>
+      <node id="8">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>long</label>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/moninfo.hpp" line="103" column="1" bodyfile="Macaulay2/e/f4/moninfo.hpp" bodystart="104" bodyend="710"/>
+    <listofallmembers>
+      <member refid="class_monomial_info_a691cde724dbb8706cf939491e94a3de3_1a691cde724dbb8706cf939491e94a3de3" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>check_monomial</name></member>
+      <member refid="class_monomial_info_a0d39f02d353521b5d8eafc1caf2d63e2_1a0d39f02d353521b5d8eafc1caf2d63e2" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>compare</name></member>
+      <member refid="class_monomial_info_a96ff91eb4d088372c8da10f12c292edb_1a96ff91eb4d088372c8da10f12c292edb" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>compare_grevlex</name></member>
+      <member refid="class_monomial_info_abec51699ef38a20c69c8562231bf1c90_1abec51699ef38a20c69c8562231bf1c90" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>compare_lex</name></member>
+      <member refid="class_monomial_info_a6be33e365d5c3ffb8bd882faf3691de3_1a6be33e365d5c3ffb8bd882faf3691de3" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>compare_schreyer</name></member>
+      <member refid="class_monomial_info_a6c7d07f22cd5e3a8c507085e746b5499_1a6c7d07f22cd5e3a8c507085e746b5499" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>compare_weightvector</name></member>
+      <member refid="class_monomial_info_a930d75b089d272124670e7fb918b6866_1a930d75b089d272124670e7fb918b6866" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>compareVerbose</name></member>
+      <member refid="class_monomial_info_a6fe661e97aff856be7baac1041301f00_1a6fe661e97aff856be7baac1041301f00" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>componentLocation</name></member>
+      <member refid="class_monomial_info_a17755993ce2ba11bab0befab5b2850e9_1a17755993ce2ba11bab0befab5b2850e9" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>const_monomial</name></member>
+      <member refid="class_monomial_info_a6bc3f1a833cc7b406647457af8295aa9_1a6bc3f1a833cc7b406647457af8295aa9" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>copy</name></member>
+      <member refid="class_monomial_info_a9754b2f3986ad9aad247dd8d3a7bb387_1a9754b2f3986ad9aad247dd8d3a7bb387" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>divide</name></member>
+      <member refid="class_monomial_info_ab871cfa4ab66344a8de516bf9fe5962c_1ab871cfa4ab66344a8de516bf9fe5962c" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>firstvar</name></member>
+      <member refid="class_monomial_info_adc4e661c5cb08700fd89d3686471b61d_1adc4e661c5cb08700fd89d3686471b61d" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>from_expvector</name></member>
+      <member refid="class_monomial_info_aece19aaf82323dab095f51e630e8f669_1aece19aaf82323dab095f51e630e8f669" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>from_varpower_monomial</name></member>
+      <member refid="class_monomial_info_a975f33d350dc5fdf096d959c47ad45d5_1a975f33d350dc5fdf096d959c47ad45d5" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>get_component</name></member>
+      <member refid="class_monomial_info_a2b730bde883a895e80a3bead3b3a6091_1a2b730bde883a895e80a3bead3b3a6091" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>hash_value</name></member>
+      <member refid="class_monomial_info_ae64856e9d3b50e232d5b3bc19ddbd77d_1ae64856e9d3b50e232d5b3bc19ddbd77d" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>hashfcn</name></member>
+      <member refid="class_monomial_info_a0034bc992ad667ca5a41a3dcc9e71389_1a0034bc992ad667ca5a41a3dcc9e71389" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>is_equal</name></member>
+      <member refid="class_monomial_info_a8fe3d65d48bec12c5458f5dbaff192b2_1a8fe3d65d48bec12c5458f5dbaff192b2" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>last_exponent</name></member>
+      <member refid="class_monomial_info_a0f5e98e7fce9abf1c8ed9f5ab603493a_1a0f5e98e7fce9abf1c8ed9f5ab603493a" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>mask</name></member>
+      <member refid="class_monomial_info_a7111e3ac9f9bd85c0555d3d177006054_1a7111e3ac9f9bd85c0555d3d177006054" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>max_monomial_size</name></member>
+      <member refid="class_monomial_info_ae4a2b2bda8e06898178f1c2fa51b8296_1ae4a2b2bda8e06898178f1c2fa51b8296" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>mComponentLoc</name></member>
+      <member refid="class_monomial_info_a5d3c70bda0e72a2c330f0dfcd66f489b_1a5d3c70bda0e72a2c330f0dfcd66f489b" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>mHeftDegrees</name></member>
+      <member refid="class_monomial_info_a8f3281c942d59bbcd8a665b4d204d2f9_1a8f3281c942d59bbcd8a665b4d204d2f9" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>mModuleHeftDegrees</name></member>
+      <member refid="class_monomial_info_aa561bd63c7b692187dca3b89b8f5e66c_1aa561bd63c7b692187dca3b89b8f5e66c" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>mNumWeights</name></member>
+      <member refid="class_monomial_info_af1ea3bba8c44f88ac1142bf8e869a71d_1af1ea3bba8c44f88ac1142bf8e869a71d" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>monomial</name></member>
+      <member refid="class_monomial_info_ab2c8ff4c9bd295c2eb073dfc92e8e173_1ab2c8ff4c9bd295c2eb073dfc92e8e173" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>monomial_heft</name></member>
+      <member refid="class_monomial_info_ac11dc04781f4b589e91e503e8afb5d16_1ac11dc04781f4b589e91e503e8afb5d16" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>monomial_part_is_equal</name></member>
+      <member refid="class_monomial_info_ad9323d9d84e9eebf78eaaed6da703a73_1ad9323d9d84e9eebf78eaaed6da703a73" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>monomial_size</name></member>
+      <member refid="class_monomial_info_a67c557c3a96536c895e5b8275520792d_1a67c557c3a96536c895e5b8275520792d" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>MonomialInfo</name></member>
+      <member refid="class_monomial_info_a69b114b41a89da2394833c64b8818f8c_1a69b114b41a89da2394833c64b8818f8c" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>mPositionUp</name></member>
+      <member refid="class_monomial_info_aadf54956b2321bfd46b3cfcf6ca0ae48_1aadf54956b2321bfd46b3cfcf6ca0ae48" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>mTieBreakerIsRevLex</name></member>
+      <member refid="class_monomial_info_a9a0816b99553107e135c0b8c27330fa3_1a9a0816b99553107e135c0b8c27330fa3" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>mult</name></member>
+      <member refid="class_monomial_info_aa2fbcf11474c7afa34e85dbcc054c4dc_1aa2fbcf11474c7afa34e85dbcc054c4dc" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>mWeightVectors</name></member>
+      <member refid="class_monomial_info_aeb40358990ddebf14f0714e19c16b010_1aeb40358990ddebf14f0714e19c16b010" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>n_vars</name></member>
+      <member refid="class_monomial_info_a30db6f0c6c032aa01f398cb44853e842_1a30db6f0c6c032aa01f398cb44853e842" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_compare</name></member>
+      <member refid="class_monomial_info_ad9f0febd7e71e3e38c66e8c08aa57f01_1ad9f0febd7e71e3e38c66e8c08aa57f01" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_divide</name></member>
+      <member refid="class_monomial_info_a0c9be1acdc96e55e0fade0a3133898f5_1a0c9be1acdc96e55e0fade0a3133898f5" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_from_expvector</name></member>
+      <member refid="class_monomial_info_ad9f2ad5d9f113dee82b1578c312e69b1_1ad9f2ad5d9f113dee82b1578c312e69b1" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_from_varpower</name></member>
+      <member refid="class_monomial_info_ab1ce683e085afaae1862d86dec8fee12_1ab1ce683e085afaae1862d86dec8fee12" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_get_component</name></member>
+      <member refid="class_monomial_info_ad959c4e5081bdde14c03da7b493f7f8e_1ad959c4e5081bdde14c03da7b493f7f8e" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_is_equal</name></member>
+      <member refid="class_monomial_info_a2e8ef4a8ca5751441870402fee8e623d_1a2e8ef4a8ca5751441870402fee8e623d" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_is_equal_true</name></member>
+      <member refid="class_monomial_info_ae2b615fc6d8eb878bb42b7db7e2611a1_1ae2b615fc6d8eb878bb42b7db7e2611a1" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_mult</name></member>
+      <member refid="class_monomial_info_a35a58cbfbbd3d7407646bd441c1a3a4f_1a35a58cbfbbd3d7407646bd441c1a3a4f" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_quotient_as_vp</name></member>
+      <member refid="class_monomial_info_a98a5648ed0a903736b1d675c80208b4b_1a98a5648ed0a903736b1d675c80208b4b" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_to_expvector</name></member>
+      <member refid="class_monomial_info_a07c44a7fec80ac37c6a8bdc463fab1af_1a07c44a7fec80ac37c6a8bdc463fab1af" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_to_varpower</name></member>
+      <member refid="class_monomial_info_a5622d6443ec251cb5337db4a0a499e4b_1a5622d6443ec251cb5337db4a0a499e4b" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_unneccesary</name></member>
+      <member refid="class_monomial_info_a05a50e9e011f2269c1d022fa87950e23_1a05a50e9e011f2269c1d022fa87950e23" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>ncalls_weight</name></member>
+      <member refid="class_monomial_info_ab2f231b40b18b614c6d53dfb030200ab_1ab2f231b40b18b614c6d53dfb030200ab" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>nslots</name></member>
+      <member refid="class_monomial_info_a68e18bb4033baee1ab6a43913f29d3a6_1a68e18bb4033baee1ab6a43913f29d3a6" prot="private" virt="non-virtual"><scope>MonomialInfo</scope><name>nvars</name></member>
+      <member refid="class_monomial_info_ae59872702e7c50feb58a48171e3d3d46_1ae59872702e7c50feb58a48171e3d3d46" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>one</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>operator new[]</name></member>
+      <member refid="class_monomial_info_a4a4b49d00e20557d65044364c3dbcc8a_1a4a4b49d00e20557d65044364c3dbcc8a" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>positionUp</name></member>
+      <member refid="class_monomial_info_a1f3736e18413aeb785e51e28cc99a6b0_1a1f3736e18413aeb785e51e28cc99a6b0" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>quotient_as_vp</name></member>
+      <member refid="class_monomial_info_a11e4c9cf967b4c4c105bb6537ba22555_1a11e4c9cf967b4c4c105bb6537ba22555" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>set_component</name></member>
+      <member refid="class_monomial_info_a332d7315b13d6a2331a29cceafba64c0_1a332d7315b13d6a2331a29cceafba64c0" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>show</name></member>
+      <member refid="class_monomial_info_a88892e933e84b245740be38b639182dc_1a88892e933e84b245740be38b639182dc" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>show</name></member>
+      <member refid="class_monomial_info_ac620137a8229ba361947392db9ebfa68_1ac620137a8229ba361947392db9ebfa68" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>showAlpha</name></member>
+      <member refid="class_monomial_info_a751e692b8d03a82606a01ec457f52ea4_1a751e692b8d03a82606a01ec457f52ea4" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>skew_mult_sign</name></member>
+      <member refid="class_monomial_info_a12e90ac52fa4532654c0047c0a367f4d_1a12e90ac52fa4532654c0047c0a367f4d" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>skew_vars</name></member>
+      <member refid="class_monomial_info_a6292fa0b1de47b16c2f0f64394f47e30_1a6292fa0b1de47b16c2f0f64394f47e30" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>to_expvector</name></member>
+      <member refid="class_monomial_info_af84080e02e7a44dcff39d53ffbbd9df7_1af84080e02e7a44dcff39d53ffbbd9df7" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>to_intstar_vector</name></member>
+      <member refid="class_monomial_info_a22b07a3c42e294a496a25a77dba8affd_1a22b07a3c42e294a496a25a77dba8affd" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>to_varpower_monomial</name></member>
+      <member refid="class_monomial_info_a0a7e27444bf1bf8577c4e89ed6523c12_1a0a7e27444bf1bf8577c4e89ed6523c12" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>unchecked_divide</name></member>
+      <member refid="class_monomial_info_a84e97933943d489b292d34a962af855d_1a84e97933943d489b292d34a962af855d" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>unchecked_mult</name></member>
+      <member refid="class_monomial_info_a6b6ab7746febafa2bc0d3b305083afcc_1a6b6ab7746febafa2bc0d3b305083afcc" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>unnecessary</name></member>
+      <member refid="class_monomial_info_afe93be33bdb774bd544468f107318c5f_1afe93be33bdb774bd544468f107318c5f" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>unnecessary1</name></member>
+      <member refid="class_monomial_info_a4bdc8e786f751aaa4c37688c2b10f48e_1a4bdc8e786f751aaa4c37688c2b10f48e" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>value</name></member>
+      <member refid="class_monomial_info_ab53591f412e79d98a7766891f310e6af_1ab53591f412e79d98a7766891f310e6af" prot="public" virt="non-virtual"><scope>MonomialInfo</scope><name>variable_as_vp</name></member>
+      <member refid="class_monomial_info_af29339c2e92d9e7b658a151d17975c5b_1af29339c2e92d9e7b658a151d17975c5b" prot="public" virt="virtual"><scope>MonomialInfo</scope><name>~MonomialInfo</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

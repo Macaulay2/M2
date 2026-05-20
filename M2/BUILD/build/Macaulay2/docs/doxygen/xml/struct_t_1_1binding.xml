@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_t_1_1binding" kind="struct" language="C++" prot="public">
+    <compoundname>T::binding</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_t_1_1binding_aa4e327e2f615f7a2c20dacbaa3a730b1_1aa4e327e2f615f7a2c20dacbaa3a730b1" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="struct_t_1_1binding" kindref="compound">binding</ref> *</type>
+        <definition>struct binding* T::binding::link</definition>
+        <argsstring></argsstring>
+        <name>link</name>
+        <qualifiedname>T::binding::link</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.c" line="39" column="18" bodyfile="Macaulay2/e/table.c" bodystart="39" bodyend="-1"/>
+        <referencedby refid="table_8c_ac76d8a76af9448767fca6d00d084a078_1ac76d8a76af9448767fca6d00d084a078" compoundref="table_8c" startline="130" endline="149">Table_remove</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_t_1_1binding_a20ad0963a8bc04472b5d35c5ce32cb4f_1a20ad0963a8bc04472b5d35c5ce32cb4f" prot="public" static="no" mutable="no">
+        <type>const void *</type>
+        <definition>const void* T::binding::key</definition>
+        <argsstring></argsstring>
+        <name>key</name>
+        <qualifiedname>T::binding::key</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.c" line="40" column="16" bodyfile="Macaulay2/e/table.c" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_t_1_1binding_a85a783d407006983c69c8b4222b8352d_1a85a783d407006983c69c8b4222b8352d" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* T::binding::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <qualifiedname>T::binding::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.c" line="41" column="10" bodyfile="Macaulay2/e/table.c" bodystart="41" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Singly linked-list node holding one <computeroutput>(key, value)</computeroutput> pair in a hash bucket chain. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>const void *</label>
+      </node>
+      <node id="3">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/table.c" line="37" column="3" bodyfile="Macaulay2/e/table.c" bodystart="38" bodyend="42"/>
+    <listofallmembers>
+      <member refid="struct_t_1_1binding_a20ad0963a8bc04472b5d35c5ce32cb4f_1a20ad0963a8bc04472b5d35c5ce32cb4f" prot="public" virt="non-virtual"><scope>T::binding</scope><name>key</name></member>
+      <member refid="struct_t_1_1binding_aa4e327e2f615f7a2c20dacbaa3a730b1_1aa4e327e2f615f7a2c20dacbaa3a730b1" prot="public" virt="non-virtual"><scope>T::binding</scope><name>link</name></member>
+      <member refid="struct_t_1_1binding_a85a783d407006983c69c8b4222b8352d_1a85a783d407006983c69c8b4222b8352d" prot="public" virt="non-virtual"><scope>T::binding</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

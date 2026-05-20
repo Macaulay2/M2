@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_string_parameter_8cpp" kind="file" language="C++">
+    <compoundname>StringParameter.cpp</compoundname>
+    <includes refid="_string_parameter_8h" local="yes">StringParameter.h</includes>
+    <incdepgraph>
+      <node id="4">
+        <label>CliParameter.h</label>
+        <link refid="_cli_parameter_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/mathic/StringParameter.cpp</label>
+        <link refid="_string_parameter_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>StringParameter.h</label>
+        <link refid="_string_parameter_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2mathic_2stdinc_8h"/>
+      </node>
+      <node id="5">
+        <label>string</label>
+      </node>
+      <node id="6">
+        <label>utility</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacemathic">mathic</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_string_parameter_8h" kindref="compound">StringParameter.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemathic" kindref="compound">mathic</ref><sp/>{</highlight></codeline>
+<codeline lineno="4" refid="classmathic_1_1_string_parameter_a8ca4b1d15fcf5dad1820195b1704661f_1a8ca4b1d15fcf5dad1820195b1704661f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmathic_1_1_string_parameter_a8ca4b1d15fcf5dad1820195b1704661f_1a8ca4b1d15fcf5dad1820195b1704661f" kindref="member">StringParameter::StringParameter</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" kindref="member">name</ref>,</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="classmathic_1_1_cli_parameter_aeade79559d7d88d8820a15a0b2cea6a9_1aeade79559d7d88d8820a15a0b2cea6a9" kindref="member">description</ref>,</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>defaultValue):</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmathic_1_1_cli_parameter_ab9a72dc27af0562cb89d2cd98fd7e03e_1ab9a72dc27af0562cb89d2cd98fd7e03e" kindref="member">CliParameter</ref>(<ref refid="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" kindref="member">name</ref>,<sp/><ref refid="classmathic_1_1_cli_parameter_aeade79559d7d88d8820a15a0b2cea6a9_1aeade79559d7d88d8820a15a0b2cea6a9" kindref="member">description</ref>),</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmathic_1_1_string_parameter_a98ba1ec1f491e97e5f6bf86293906ac4_1a98ba1ec1f491e97e5f6bf86293906ac4" kindref="member">_value</ref>(defaultValue)<sp/>{</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="classmathic_1_1_string_parameter_a119c982beea8023cca47a336fe809a53_1a119c982beea8023cca47a336fe809a53" refkind="member"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="classmathic_1_1_string_parameter_a119c982beea8023cca47a336fe809a53_1a119c982beea8023cca47a336fe809a53" kindref="member">StringParameter::argumentType</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;STRING&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="classmathic_1_1_string_parameter_a1ca93eea74a32e866ec04f57a5b2f2a5_1a1ca93eea74a32e866ec04f57a5b2f2a5" refkind="member"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="classmathic_1_1_string_parameter_a1ca93eea74a32e866ec04f57a5b2f2a5_1a1ca93eea74a32e866ec04f57a5b2f2a5" kindref="member">StringParameter::valueAsString</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmathic_1_1_string_parameter_a98ba1ec1f491e97e5f6bf86293906ac4_1a98ba1ec1f491e97e5f6bf86293906ac4" kindref="member">_value</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="classmathic_1_1_string_parameter_a865d5bd95cd052a8b3b4d310fef98b18_1a865d5bd95cd052a8b3b4d310fef98b18" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmathic_1_1_string_parameter_a865d5bd95cd052a8b3b4d310fef98b18_1a865d5bd95cd052a8b3b4d310fef98b18" kindref="member">StringParameter::processArgument</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>argument)<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmathic_1_1_string_parameter_a98ba1ec1f491e97e5f6bf86293906ac4_1a98ba1ec1f491e97e5f6bf86293906ac4" kindref="member">_value</ref><sp/>=<sp/>argument;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/mathic/StringParameter.cpp"/>
+  </compounddef>
+</doxygen>

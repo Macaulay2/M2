@@ -1,0 +1,606 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dmat-qq-interface-flint_8hpp" kind="file" language="C++">
+    <compoundname>dmat-qq-interface-flint.hpp</compoundname>
+    <includedby refid="dmat-lu-qq_8hpp" local="yes">Macaulay2/e/dmat-lu-qq.hpp</includedby>
+    <includedby refid="mat-linalg_8hpp" local="yes">Macaulay2/e/mat-linalg.hpp</includedby>
+    <invincdepgraph>
+      <node id="9">
+        <label>Macaulay2/e/NAG.cpp</label>
+        <link refid="_n_a_g_8cpp"/>
+      </node>
+      <node id="8">
+        <label>Macaulay2/e/NAG.hpp</label>
+        <link refid="_n_a_g_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Macaulay2/e/NCAlgebras/NCF4.cpp</label>
+        <link refid="_n_c_f4_8cpp"/>
+      </node>
+      <node id="17">
+        <label>Macaulay2/e/NCAlgebras/NCF4.hpp</label>
+        <link refid="_n_c_f4_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Macaulay2/e/SLP.cpp</label>
+        <link refid="_s_l_p_8cpp"/>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/SLP.hpp</label>
+        <link refid="_s_l_p_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Macaulay2/e/VectorArithmetic.hpp</label>
+        <link refid="_vector_arithmetic_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Macaulay2/e/aring-glue.hpp</label>
+        <link refid="aring-glue_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/dmat-lu-qq.hpp</label>
+        <link refid="dmat-lu-qq_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/dmat-lu.hpp</label>
+        <link refid="dmat-lu_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/dmat-qq-interface-flint.hpp</label>
+        <link refid="dmat-qq-interface-flint_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/dmat.cpp</label>
+        <link refid="dmat_8cpp"/>
+      </node>
+      <node id="50">
+        <label>Macaulay2/e/engine.cpp</label>
+        <link refid="engine_8cpp"/>
+      </node>
+      <node id="19">
+        <label>Macaulay2/e/f4/f4-computation.cpp</label>
+        <link refid="f4-computation_8cpp"/>
+      </node>
+      <node id="27">
+        <label>Macaulay2/e/f4/f4-computation.hpp</label>
+        <link refid="f4-computation_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Macaulay2/e/f4/f4-m2-interface.cpp</label>
+        <link refid="f4-m2-interface_8cpp"/>
+      </node>
+      <node id="22">
+        <label>Macaulay2/e/f4/f4-m2-interface.hpp</label>
+        <link refid="f4-m2-interface_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>Macaulay2/e/f4/f4-spairs.cpp</label>
+        <link refid="f4-spairs_8cpp"/>
+      </node>
+      <node id="24">
+        <label>Macaulay2/e/f4/f4-spairs.hpp</label>
+        <link refid="f4-spairs_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Macaulay2/e/f4/f4-types.hpp</label>
+        <link refid="f4-types_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>Macaulay2/e/f4/f4.cpp</label>
+        <link refid="f4_8cpp"/>
+      </node>
+      <node id="26">
+        <label>Macaulay2/e/f4/f4.hpp</label>
+        <link refid="f4_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>Macaulay2/e/fplll-interface.cpp</label>
+        <link refid="fplll-interface_8cpp"/>
+      </node>
+      <node id="29">
+        <label>Macaulay2/e/gb-f4/Basis.cpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8cpp"/>
+      </node>
+      <node id="28">
+        <label>Macaulay2/e/gb-f4/Basis.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.cpp</label>
+        <link refid="_g_b_f4_computation_8cpp"/>
+      </node>
+      <node id="30">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.hpp</label>
+        <link refid="_g_b_f4_computation_8hpp"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.cpp</label>
+        <link refid="_g_b_f4_interface_8cpp"/>
+      </node>
+      <node id="32">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.hpp</label>
+        <link refid="_g_b_f4_interface_8hpp"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>Macaulay2/e/gb-f4/PolynomialList.cpp</label>
+        <link refid="_polynomial_list_8cpp"/>
+      </node>
+      <node id="36">
+        <label>Macaulay2/e/gb-f4/PolynomialList.hpp</label>
+        <link refid="_polynomial_list_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>Macaulay2/e/gb-f4/SPairs.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_s_pairs_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>Macaulay2/e/gbring.cpp</label>
+        <link refid="gbring_8cpp"/>
+      </node>
+      <node id="52">
+        <label>Macaulay2/e/interface/aring.cpp</label>
+        <link refid="interface_2aring_8cpp"/>
+      </node>
+      <node id="18">
+        <label>Macaulay2/e/interface/groebner.cpp</label>
+        <link refid="groebner_8cpp"/>
+      </node>
+      <node id="10">
+        <label>Macaulay2/e/interface/matrix.cpp</label>
+        <link refid="interface_2matrix_8cpp"/>
+      </node>
+      <node id="53">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="54">
+        <label>Macaulay2/e/interface/ringelement.cpp</label>
+        <link refid="ringelement_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/mat-linalg.hpp</label>
+        <link refid="mat-linalg_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>Macaulay2/e/mat.cpp</label>
+        <link refid="mat_8cpp"/>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/mutablemat-defs.hpp</label>
+        <link refid="mutablemat-defs_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Macaulay2/e/mutablemat.hpp</label>
+        <link refid="mutablemat_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>Macaulay2/e/poly.cpp</label>
+        <link refid="poly_8cpp"/>
+      </node>
+      <node id="57">
+        <label>Macaulay2/e/qring.cpp</label>
+        <link refid="qring_8cpp"/>
+      </node>
+      <node id="58">
+        <label>Macaulay2/e/relem.cpp</label>
+        <link refid="relem_8cpp"/>
+      </node>
+      <node id="40">
+        <label>Macaulay2/e/schreyer-resolution/res-dep-graph.cpp</label>
+        <link refid="res-dep-graph_8cpp"/>
+      </node>
+      <node id="46">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.cpp</label>
+        <link refid="res-f4-computation_8cpp"/>
+      </node>
+      <node id="44">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.hpp</label>
+        <link refid="res-f4-computation_8hpp"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</label>
+        <link refid="res-f4-m2-interface_8cpp"/>
+      </node>
+      <node id="41">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.cpp</label>
+        <link refid="res-f4_8cpp"/>
+      </node>
+      <node id="39">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.hpp</label>
+        <link refid="res-f4_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.cpp</label>
+        <link refid="res-poly-ring_8cpp"/>
+      </node>
+      <node id="43">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.hpp</label>
+        <link refid="res-poly-ring_8hpp"/>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.cpp</label>
+        <link refid="res-schreyer-frame_8cpp"/>
+      </node>
+      <node id="49">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp</label>
+        <link refid="res-schreyer-frame_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>Macaulay2/e/unit-tests/ARingRRiTest.cpp</label>
+        <link refid="_a_ring_r_ri_test_8cpp"/>
+      </node>
+      <node id="60">
+        <label>Macaulay2/e/unit-tests/DMatZZpTest.cpp</label>
+        <link refid="_d_mat_z_zp_test_8cpp"/>
+      </node>
+      <node id="34">
+        <label>Macaulay2/e/unit-tests/MatrixIOTest.cpp</label>
+        <link refid="_matrix_i_o_test_8cpp"/>
+      </node>
+      <node id="61">
+        <label>Macaulay2/e/unit-tests/NCGroebnerTest.cpp</label>
+        <link refid="_n_c_groebner_test_8cpp"/>
+      </node>
+      <node id="38">
+        <label>Macaulay2/e/unit-tests/NewF4Test.cpp</label>
+        <link refid="_new_f4_test_8cpp"/>
+      </node>
+      <node id="11">
+        <label>Macaulay2/e/unit-tests/PointArray.cpp</label>
+        <link refid="_point_array_8cpp"/>
+      </node>
+      <node id="62">
+        <label>Macaulay2/e/unit-tests/RingCCCTest.cpp</label>
+        <link refid="_ring_c_c_c_test_8cpp"/>
+      </node>
+      <node id="63">
+        <label>Macaulay2/e/unit-tests/RingQQTest.cpp</label>
+        <link refid="_ring_q_q_test_8cpp"/>
+      </node>
+      <node id="64">
+        <label>Macaulay2/e/unit-tests/RingRRRTest.cpp</label>
+        <link refid="_ring_r_r_r_test_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_flint_z_z_mat" prot="public">FlintZZMat</innerclass>
+    <innerclass refid="class_flint_q_q_mat" prot="public">FlintQQMat</innerclass>
+    <briefdescription>
+<para>Translation bridge that lets GMP-backed <computeroutput><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt;ARingQQ&gt;</computeroutput> borrow FLINT matrix arithmetic. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares <computeroutput><ref refid="class_flint_z_z_mat" kindref="compound">FlintZZMat</ref></computeroutput> (and the corresponding <computeroutput><ref refid="class_flint_q_q_mat" kindref="compound">FlintQQMat</ref></computeroutput> used by neighbouring LU code), small RAII wrappers that hold a FLINT <computeroutput>fmpz_mat_t</computeroutput> / <computeroutput>fmpq_mat_t</computeroutput> and copy entries in from a <computeroutput><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt;<ref refid="namespace_m2_a4020664aefa28984a9e3e19b16a31981_1a4020664aefa28984a9e3e19b16a31981" kindref="member">M2::ARingQQ</ref>&gt;</computeroutput> (or <computeroutput><ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref></computeroutput>) on construction so the work itself can run through FLINT&apos;s fast <computeroutput>fmpz_mat_*</computeroutput> / <computeroutput>fmpq_mat_*</computeroutput> routines. After the FLINT call the wrapper provides a back-copy path to land the result in the engine&apos;s native matrix type, and the destructor releases the FLINT storage.</para>
+<para>The layer exists because the default <computeroutput>ARingQQ</computeroutput> alias still resolves to <computeroutput>ARingQQGMP</computeroutput>, so <computeroutput><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt;ARingQQ&gt;</computeroutput> stores <computeroutput>mpq_t</computeroutput> values <mdash/> but FLINT&apos;s matrix routines need FLINT storage to deliver their speedups. Once the default <computeroutput>ARingQQ</computeroutput> flips to <computeroutput>ARingQQFlint</computeroutput> (see <computeroutput><ref refid="aring-qq_8hpp" kindref="compound">aring-qq.hpp</ref></computeroutput>), callers can talk to <computeroutput><ref refid="dmat-qq-flint_8hpp" kindref="compound">dmat-qq-flint.hpp</ref></computeroutput> directly and this translation file can be removed.</para>
+<para><simplesect kind="see"><para><ref refid="dmat-qq-flint_8hpp" kindref="compound">dmat-qq-flint.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="aring-qq_8hpp" kindref="compound">aring-qq.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="aring-qq-gmp_8hpp" kindref="compound">aring-qq-gmp.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>2014<sp/><sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_flintqq_mat_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_flintqq_mat_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>class<sp/>is<sp/>designed<sp/>to<sp/>use<sp/>DMat&lt;M2::ARingQQ&gt;,<sp/>which<sp/>stores<sp/>elements<sp/>as<sp/>gmp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//<sp/>ints</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>sets<sp/>up<sp/>flint<sp/>fmpq_mat<sp/>matrices,<sp/>and<sp/>provides<sp/>translation.<sp/><sp/>This<sp/>is</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/>significantly<sp/>faster<sp/>than<sp/>doing<sp/>the<sp/>operations<sp/>in<sp/>a<sp/>naive<sp/>manner.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>will<sp/>become<sp/>un-needed<sp/>once<sp/>DMat&lt;ARingQQ&gt;<sp/>starts<sp/>using<sp/>flint</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/>integers/rationals.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="class_flint_z_z_mat" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_flint_z_z_mat_a1e0d6c45d9fa3c34f518277fd16998eb_1a1e0d6c45d9fa3c34f518277fd16998eb" kindref="member">FlintZZMat</ref></highlight></codeline>
+<codeline lineno="53"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="55" refid="class_flint_z_z_mat_a1e0d6c45d9fa3c34f518277fd16998eb_1a1e0d6c45d9fa3c34f518277fd16998eb" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flint_z_z_mat_a1e0d6c45d9fa3c34f518277fd16998eb_1a1e0d6c45d9fa3c34f518277fd16998eb" kindref="member">FlintZZMat</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref>&amp;<sp/>mat)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>fmpz_mat_init(<ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>,<sp/>mat.<ref refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" kindref="member">numRows</ref>(),<sp/>mat.<ref refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" kindref="member">numColumns</ref>());</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" kindref="member">to_fmpz_mat</ref>(mat,<sp/><ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="60" refid="class_flint_z_z_mat_a96981672d80d42030ac35e27227d352f_1a96981672d80d42030ac35e27227d352f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flint_z_z_mat_a96981672d80d42030ac35e27227d352f_1a96981672d80d42030ac35e27227d352f" kindref="member">FlintZZMat</ref>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>numrows,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>numcolumns)</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>fmpz_mat_init(<ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>,<sp/>numrows,<sp/>numcolumns);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="class_flint_z_z_mat_ac36b2d9e2f144979b07f439de00f61f7_1ac36b2d9e2f144979b07f439de00f61f7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flint_z_z_mat_ac36b2d9e2f144979b07f439de00f61f7_1ac36b2d9e2f144979b07f439de00f61f7" kindref="member">~FlintZZMat</ref>()<sp/>{<sp/>fmpz_mat_clear(<ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="66" refid="class_flint_z_z_mat_acec81c5a3a088a5c5f91a86ac50b01ac_1acec81c5a3a088a5c5f91a86ac50b01ac" refkind="member"><highlight class="normal"><sp/><sp/>fmpz_mat_struct*<sp/><ref refid="class_flint_z_z_mat_acec81c5a3a088a5c5f91a86ac50b01ac_1acec81c5a3a088a5c5f91a86ac50b01ac" kindref="member">value</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="67" refid="class_flint_z_z_mat_a94f945b98c39c30206e15deee930605e_1a94f945b98c39c30206e15deee930605e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_flint_z_z_mat_a94f945b98c39c30206e15deee930605e_1a94f945b98c39c30206e15deee930605e" kindref="member">toDMat</ref>(<ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref>&amp;<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>.resize(fmpz_mat_nrows(<ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>),<sp/>fmpz_mat_ncols(<ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>));</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" kindref="member">from_fmpz_mat</ref>(<ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>,<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="class_flint_z_z_mat_a37b03266538159c0f867f1fcf2a5b895_1a37b03266538159c0f867f1fcf2a5b895" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_flint_z_z_mat_a37b03266538159c0f867f1fcf2a5b895_1a37b03266538159c0f867f1fcf2a5b895" kindref="member">numRows</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fmpz_mat_nrows(<ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="74" refid="class_flint_z_z_mat_a46de485baadd6b9347508a20eee4e20f_1a46de485baadd6b9347508a20eee4e20f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_flint_z_z_mat_a46de485baadd6b9347508a20eee4e20f_1a46de485baadd6b9347508a20eee4e20f" kindref="member">numColumns</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fmpz_mat_ncols(<ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="76" refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" refkind="member"><highlight class="normal"><sp/><sp/>fmpz_mat_t<sp/><ref refid="class_flint_z_z_mat_ae22fbdd74c8a8340e3b82945d8e2e56f_1ae22fbdd74c8a8340e3b82945d8e2e56f" kindref="member">mMatrix</ref>;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" kindref="member">to_fmpz_mat</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref>&amp;<sp/>mat1,<sp/>fmpz_mat_t<sp/>result_mat)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref>&amp;<sp/>mat<sp/>=<sp/></highlight><highlight class="keyword">const_cast&lt;</highlight><highlight class="normal"><ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref>&amp;</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(mat1);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>0;<sp/>r<sp/>&lt;<sp/>mat.<ref refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" kindref="member">numRows</ref>();<sp/>r++)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/>mat.<ref refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" kindref="member">numColumns</ref>();<sp/>c++)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fmpz_set_mpz(fmpz_mat_entry(result_mat,<sp/>r,<sp/>c),<sp/>&amp;<sp/>mat1.<ref refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" kindref="member">entry</ref>(r,c));</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" kindref="member">from_fmpz_mat</ref>(fmpz_mat_t<sp/>mat,<sp/><ref refid="mat-linalg_8hpp_a114b5da0f74642d3b8aabfaa14ac2a57_1a114b5da0f74642d3b8aabfaa14ac2a57" kindref="member">DMatZZGMP</ref>&amp;<sp/>result_mat)</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>0;<sp/>r<sp/>&lt;<sp/>result_mat.<ref refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" kindref="member">numRows</ref>();<sp/>r++)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/>result_mat.<ref refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" kindref="member">numColumns</ref>();<sp/>c++)</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fmpz_get_mpz(&amp;<sp/>result_mat.<ref refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" kindref="member">entry</ref>(r,c),<sp/>fmpz_mat_entry(mat,<sp/>r,<sp/>c));</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="class_flint_q_q_mat" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_flint_q_q_mat_a604ed61dfa7f4c8d9f3eafd7b14eabfc_1a604ed61dfa7f4c8d9f3eafd7b14eabfc" kindref="member">FlintQQMat</ref></highlight></codeline>
+<codeline lineno="109"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="111" refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" refkind="member"><highlight class="normal"><sp/><sp/>fmpq_mat_t<sp/><ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="113" refid="class_flint_q_q_mat_acf0f9b5070ff33ed66f770198d9188e8_1acf0f9b5070ff33ed66f770198d9188e8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_d_mat" kindref="compound">DMat&lt;M2::ARingQQ&gt;</ref><sp/><ref refid="class_flint_q_q_mat_acf0f9b5070ff33ed66f770198d9188e8_1acf0f9b5070ff33ed66f770198d9188e8" kindref="member">DMatQQ</ref>;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="class_flint_q_q_mat_a604ed61dfa7f4c8d9f3eafd7b14eabfc_1a604ed61dfa7f4c8d9f3eafd7b14eabfc" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flint_q_q_mat_a604ed61dfa7f4c8d9f3eafd7b14eabfc_1a604ed61dfa7f4c8d9f3eafd7b14eabfc" kindref="member">FlintQQMat</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_flint_q_q_mat_acf0f9b5070ff33ed66f770198d9188e8_1acf0f9b5070ff33ed66f770198d9188e8" kindref="member">DMatQQ</ref>&amp;<sp/>mat)</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>fmpq_mat_init(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>,<sp/>mat.<ref refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" kindref="member">numRows</ref>(),<sp/>mat.<ref refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" kindref="member">numColumns</ref>());</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flint_q_q_mat_acfec25dd2b67e376fba78e3f8814fa1f_1acfec25dd2b67e376fba78e3f8814fa1f" kindref="member">to_fmpq_mat</ref>(mat,<sp/><ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="120" refid="class_flint_q_q_mat_a9431b9549218180c19e2ccff72396034_1a9431b9549218180c19e2ccff72396034" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flint_q_q_mat_a9431b9549218180c19e2ccff72396034_1a9431b9549218180c19e2ccff72396034" kindref="member">FlintQQMat</ref>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>numrows,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>numcolumns)</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>fmpq_mat_init(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>,<sp/>numrows,<sp/>numcolumns);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="class_flint_q_q_mat_acd77570b40098a678449b52b3202d318_1acd77570b40098a678449b52b3202d318" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flint_q_q_mat_acd77570b40098a678449b52b3202d318_1acd77570b40098a678449b52b3202d318" kindref="member">~FlintQQMat</ref>()<sp/>{<sp/>fmpq_mat_clear(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="126" refid="class_flint_q_q_mat_a3a263e83042fdcd86c4def0fe7ca3cee_1a3a263e83042fdcd86c4def0fe7ca3cee" refkind="member"><highlight class="normal"><sp/><sp/>fmpq_mat_struct*<sp/><ref refid="class_flint_q_q_mat_a3a263e83042fdcd86c4def0fe7ca3cee_1a3a263e83042fdcd86c4def0fe7ca3cee" kindref="member">value</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="127" refid="class_flint_q_q_mat_a479503cbda7fc8118de5d1210352df96_1a479503cbda7fc8118de5d1210352df96" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_flint_q_q_mat_a479503cbda7fc8118de5d1210352df96_1a479503cbda7fc8118de5d1210352df96" kindref="member">toDMat</ref>(<ref refid="class_flint_q_q_mat_acf0f9b5070ff33ed66f770198d9188e8_1acf0f9b5070ff33ed66f770198d9188e8" kindref="member">DMatQQ</ref>&amp;<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>.resize(fmpq_mat_nrows(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>),<sp/>fmpq_mat_ncols(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>));</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flint_q_q_mat_a0e924cfa55cc881c56636248a5cf5b8b_1a0e924cfa55cc881c56636248a5cf5b8b" kindref="member">from_fmpq_mat</ref>(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>,<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="class_flint_q_q_mat_a70fe2c8640a8398d3b03cc78916e1fd6_1a70fe2c8640a8398d3b03cc78916e1fd6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_flint_q_q_mat_a70fe2c8640a8398d3b03cc78916e1fd6_1a70fe2c8640a8398d3b03cc78916e1fd6" kindref="member">numRows</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fmpq_mat_nrows(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="134" refid="class_flint_q_q_mat_a6a272f50c07c0e44817a08e9cd568163_1a6a272f50c07c0e44817a08e9cd568163" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_flint_q_q_mat_a6a272f50c07c0e44817a08e9cd568163_1a6a272f50c07c0e44817a08e9cd568163" kindref="member">numColumns</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fmpq_mat_ncols(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="135" refid="class_flint_q_q_mat_a0aeae29a6e5933b1257cb03bf895695c_1a0aeae29a6e5933b1257cb03bf895695c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_flint_q_q_mat_a0aeae29a6e5933b1257cb03bf895695c_1a0aeae29a6e5933b1257cb03bf895695c" kindref="member">set_from_fmpz</ref>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>r,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>c,<sp/>fmpz_t<sp/>val)</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>fmpz_set(fmpq_numref(fmpq_mat_entry(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>,<sp/>r,<sp/>c)),<sp/>val);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>fmpz_set_ui(fmpq_denref(fmpq_mat_entry(<ref refid="class_flint_q_q_mat_a9d104962e43b9d26d5fa54c75e5a3b7b_1a9d104962e43b9d26d5fa54c75e5a3b7b" kindref="member">mMatrix</ref>,<sp/>r,<sp/>c)),<sp/>1);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:<sp/><sp/></highlight></codeline>
+<codeline lineno="142" refid="class_flint_q_q_mat_acfec25dd2b67e376fba78e3f8814fa1f_1acfec25dd2b67e376fba78e3f8814fa1f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_flint_q_q_mat_acfec25dd2b67e376fba78e3f8814fa1f_1acfec25dd2b67e376fba78e3f8814fa1f" kindref="member">to_fmpq_mat</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_flint_q_q_mat_acf0f9b5070ff33ed66f770198d9188e8_1acf0f9b5070ff33ed66f770198d9188e8" kindref="member">DMatQQ</ref>&amp;<sp/>mat1,<sp/>fmpq_mat_t<sp/>result_mat)</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flint_q_q_mat_acf0f9b5070ff33ed66f770198d9188e8_1acf0f9b5070ff33ed66f770198d9188e8" kindref="member">DMatQQ</ref>&amp;<sp/>mat<sp/>=<sp/></highlight><highlight class="keyword">const_cast&lt;</highlight><highlight class="normal"><ref refid="class_flint_q_q_mat_acf0f9b5070ff33ed66f770198d9188e8_1acf0f9b5070ff33ed66f770198d9188e8" kindref="member">DMatQQ</ref>&amp;</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(mat1);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>0;<sp/>r<sp/>&lt;<sp/>mat.<ref refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" kindref="member">numRows</ref>();<sp/>r++)</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/>mat.<ref refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" kindref="member">numColumns</ref>();<sp/>c++)</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fmpq_set_mpq(fmpq_mat_entry(result_mat,<sp/>r,<sp/>c),<sp/>&amp;<sp/>mat1.<ref refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" kindref="member">entry</ref>(r,c));</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152" refid="class_flint_q_q_mat_a0e924cfa55cc881c56636248a5cf5b8b_1a0e924cfa55cc881c56636248a5cf5b8b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_flint_q_q_mat_a0e924cfa55cc881c56636248a5cf5b8b_1a0e924cfa55cc881c56636248a5cf5b8b" kindref="member">from_fmpq_mat</ref>(fmpq_mat_t<sp/>mat,<sp/><ref refid="class_flint_q_q_mat_acf0f9b5070ff33ed66f770198d9188e8_1acf0f9b5070ff33ed66f770198d9188e8" kindref="member">DMatQQ</ref>&amp;<sp/>result_mat)</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>0;<sp/>r<sp/>&lt;<sp/>result_mat.<ref refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" kindref="member">numRows</ref>();<sp/>r++)</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;<sp/>c<sp/>&lt;<sp/>result_mat.<ref refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" kindref="member">numColumns</ref>();<sp/>c++)</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fmpq_get_mpq(&amp;<sp/>result_mat.<ref refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" kindref="member">entry</ref>(r,c),<sp/>fmpq_mat_entry(mat,<sp/>r,<sp/>c));</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/dmat-qq-interface-flint.hpp"/>
+  </compounddef>
+</doxygen>

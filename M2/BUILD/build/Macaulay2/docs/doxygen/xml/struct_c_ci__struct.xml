@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_c_ci__struct" kind="struct" language="C++" prot="public">
+    <compoundname>CCi_struct</compoundname>
+    <includes refid="gmp-util_8h" local="no">gmp-util.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_c_ci__struct_ad4eda976d2dace1ed195b8e3bce730c6_1ad4eda976d2dace1ed195b8e3bce730c6" prot="public" static="no" mutable="no">
+        <type>mpfi_srcptr</type>
+        <definition>mpfi_srcptr CCi_struct::re</definition>
+        <argsstring></argsstring>
+        <name>re</name>
+        <qualifiedname>CCi_struct::re</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/gmp-util.h" line="124" column="15" bodyfile="Macaulay2/e/interface/gmp-util.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_c_ci__struct_a9ec5d1d35954b42cf05eeb93e71a7c6b_1a9ec5d1d35954b42cf05eeb93e71a7c6b" prot="public" static="no" mutable="no">
+        <type>mpfi_srcptr</type>
+        <definition>mpfi_srcptr CCi_struct::im</definition>
+        <argsstring></argsstring>
+        <name>im</name>
+        <qualifiedname>CCi_struct::im</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/gmp-util.h" line="125" column="15" bodyfile="Macaulay2/e/interface/gmp-util.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Immutable view of a complex interval as a pair of <computeroutput>mpfi_srcptr</computeroutput> real and imaginary parts. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Interval analogue of <computeroutput><ref refid="struct_c_c__struct" kindref="compound">CC_struct</ref></computeroutput>: real and imaginary components are MPFI intervals rather than MPFR scalars, supporting the <computeroutput>RRi</computeroutput> / <computeroutput>CCi</computeroutput> interval-arithmetic rings. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>CCi_struct</label>
+        <link refid="struct_c_ci__struct"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mpfi_srcptr</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/interface/gmp-util.h" line="123" column="1" bodyfile="Macaulay2/e/interface/gmp-util.h" bodystart="123" bodyend="126"/>
+    <listofallmembers>
+      <member refid="struct_c_ci__struct_a9ec5d1d35954b42cf05eeb93e71a7c6b_1a9ec5d1d35954b42cf05eeb93e71a7c6b" prot="public" virt="non-virtual"><scope>CCi_struct</scope><name>im</name></member>
+      <member refid="struct_c_ci__struct_ad4eda976d2dace1ed195b8e3bce730c6_1ad4eda976d2dace1ed195b8e3bce730c6" prot="public" virt="non-virtual"><scope>CCi_struct</scope><name>re</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

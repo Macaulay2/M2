@@ -1,0 +1,405 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_sub_matrix" kind="struct" language="C++" prot="public">
+    <compoundname>SubMatrix</compoundname>
+    <includes refid="mat-arith_8hpp" local="no">mat-arith.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MatType</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_sub_matrix_afa46643c5cdc8e1972cb593edcff6ca6_1afa46643c5cdc8e1972cb593edcff6ca6" prot="public" static="no" mutable="no">
+        <type>MatType &amp;</type>
+        <definition>MatType&amp; SubMatrix&lt; MatType &gt;::matrix</definition>
+        <argsstring></argsstring>
+        <name>matrix</name>
+        <qualifiedname>SubMatrix::matrix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="79" column="11" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="79" bodyend="-1"/>
+        <referencedby refid="struct_sub_matrix_a1a8317cdcd91cb308252ea37880bf894_1a1a8317cdcd91cb308252ea37880bf894" compoundref="mat-arith_8hpp" startline="151" endline="164">SubMatrix&lt; MatType &gt;::addMultipleTo</referencedby>
+        <referencedby refid="mat-arith_8hpp_ac51d49a3a5196503f93ad746a9463a39_1ac51d49a3a5196503f93ad746a9463a39" compoundref="mat-arith_8hpp" startline="181" endline="194">normSquared</referencedby>
+        <referencedby refid="struct_sub_matrix_a8389ce15ec6622f2e891e0fbceadac4b_1a8389ce15ec6622f2e891e0fbceadac4b" compoundref="mat-arith_8hpp" startline="167" endline="177">SubMatrix&lt; MatType &gt;::operator*=</referencedby>
+        <referencedby refid="struct_sub_matrix_a83df2fb11e507e3557c82deb5ef3a79b_1a83df2fb11e507e3557c82deb5ef3a79b" compoundref="mat-arith_8hpp" startline="133" endline="148">SubMatrix&lt; MatType &gt;::operator+=</referencedby>
+        <referencedby refid="struct_sub_matrix_aa4831a63d7cfb2bb80553ca28365673e_1aa4831a63d7cfb2bb80553ca28365673e" compoundref="mat-arith_8hpp" startline="109" endline="117">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a9002c640f8ad3f7f38c9691cf5a631ed_1a9002c640f8ad3f7f38c9691cf5a631ed" compoundref="mat-arith_8hpp" startline="119" endline="131">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="namespace_matrix_ops_ae753f2e353c3decad1eb81b972b0c96c_1ae753f2e353c3decad1eb81b972b0c96c" compoundref="mat-arith_8hpp" startline="295" endline="301">MatrixOps::setZero</referencedby>
+        <referencedby refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" compoundref="mat-arith_8hpp" startline="85" endline="92">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+        <referencedby refid="struct_sub_matrix_a93a8d78fd75b88f8abac8dd6fb6cc14a_1a93a8d78fd75b88f8abac8dd6fb6cc14a" compoundref="mat-arith_8hpp" startline="94" endline="101">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long SubMatrix&lt; MatType &gt;::begin_row</definition>
+        <argsstring></argsstring>
+        <name>begin_row</name>
+        <qualifiedname>SubMatrix::begin_row</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="80" column="14" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="80" bodyend="-1"/>
+        <referencedby refid="struct_sub_matrix_a1a8317cdcd91cb308252ea37880bf894_1a1a8317cdcd91cb308252ea37880bf894" compoundref="mat-arith_8hpp" startline="151" endline="164">SubMatrix&lt; MatType &gt;::addMultipleTo</referencedby>
+        <referencedby refid="mat-arith_8hpp_ac51d49a3a5196503f93ad746a9463a39_1ac51d49a3a5196503f93ad746a9463a39" compoundref="mat-arith_8hpp" startline="181" endline="194">normSquared</referencedby>
+        <referencedby refid="struct_sub_matrix_a8389ce15ec6622f2e891e0fbceadac4b_1a8389ce15ec6622f2e891e0fbceadac4b" compoundref="mat-arith_8hpp" startline="167" endline="177">SubMatrix&lt; MatType &gt;::operator*=</referencedby>
+        <referencedby refid="struct_sub_matrix_a83df2fb11e507e3557c82deb5ef3a79b_1a83df2fb11e507e3557c82deb5ef3a79b" compoundref="mat-arith_8hpp" startline="133" endline="148">SubMatrix&lt; MatType &gt;::operator+=</referencedby>
+        <referencedby refid="struct_sub_matrix_aa4831a63d7cfb2bb80553ca28365673e_1aa4831a63d7cfb2bb80553ca28365673e" compoundref="mat-arith_8hpp" startline="109" endline="117">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a9002c640f8ad3f7f38c9691cf5a631ed_1a9002c640f8ad3f7f38c9691cf5a631ed" compoundref="mat-arith_8hpp" startline="119" endline="131">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" compoundref="mat-arith_8hpp" startline="103" endline="107">SubMatrix&lt; MatType &gt;::sameSize</referencedby>
+        <referencedby refid="namespace_matrix_ops_ae753f2e353c3decad1eb81b972b0c96c_1ae753f2e353c3decad1eb81b972b0c96c" compoundref="mat-arith_8hpp" startline="295" endline="301">MatrixOps::setZero</referencedby>
+        <referencedby refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" compoundref="mat-arith_8hpp" startline="85" endline="92">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+        <referencedby refid="struct_sub_matrix_a93a8d78fd75b88f8abac8dd6fb6cc14a_1a93a8d78fd75b88f8abac8dd6fb6cc14a" compoundref="mat-arith_8hpp" startline="94" endline="101">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long SubMatrix&lt; MatType &gt;::end_row</definition>
+        <argsstring></argsstring>
+        <name>end_row</name>
+        <qualifiedname>SubMatrix::end_row</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="81" column="14" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="81" bodyend="-1"/>
+        <referencedby refid="struct_sub_matrix_a1a8317cdcd91cb308252ea37880bf894_1a1a8317cdcd91cb308252ea37880bf894" compoundref="mat-arith_8hpp" startline="151" endline="164">SubMatrix&lt; MatType &gt;::addMultipleTo</referencedby>
+        <referencedby refid="mat-arith_8hpp_ac51d49a3a5196503f93ad746a9463a39_1ac51d49a3a5196503f93ad746a9463a39" compoundref="mat-arith_8hpp" startline="181" endline="194">normSquared</referencedby>
+        <referencedby refid="struct_sub_matrix_a8389ce15ec6622f2e891e0fbceadac4b_1a8389ce15ec6622f2e891e0fbceadac4b" compoundref="mat-arith_8hpp" startline="167" endline="177">SubMatrix&lt; MatType &gt;::operator*=</referencedby>
+        <referencedby refid="struct_sub_matrix_a83df2fb11e507e3557c82deb5ef3a79b_1a83df2fb11e507e3557c82deb5ef3a79b" compoundref="mat-arith_8hpp" startline="133" endline="148">SubMatrix&lt; MatType &gt;::operator+=</referencedby>
+        <referencedby refid="struct_sub_matrix_aa4831a63d7cfb2bb80553ca28365673e_1aa4831a63d7cfb2bb80553ca28365673e" compoundref="mat-arith_8hpp" startline="109" endline="117">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a9002c640f8ad3f7f38c9691cf5a631ed_1a9002c640f8ad3f7f38c9691cf5a631ed" compoundref="mat-arith_8hpp" startline="119" endline="131">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" compoundref="mat-arith_8hpp" startline="103" endline="107">SubMatrix&lt; MatType &gt;::sameSize</referencedby>
+        <referencedby refid="namespace_matrix_ops_ae753f2e353c3decad1eb81b972b0c96c_1ae753f2e353c3decad1eb81b972b0c96c" compoundref="mat-arith_8hpp" startline="295" endline="301">MatrixOps::setZero</referencedby>
+        <referencedby refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" compoundref="mat-arith_8hpp" startline="85" endline="92">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+        <referencedby refid="struct_sub_matrix_a93a8d78fd75b88f8abac8dd6fb6cc14a_1a93a8d78fd75b88f8abac8dd6fb6cc14a" compoundref="mat-arith_8hpp" startline="94" endline="101">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long SubMatrix&lt; MatType &gt;::begin_column</definition>
+        <argsstring></argsstring>
+        <name>begin_column</name>
+        <qualifiedname>SubMatrix::begin_column</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="82" column="14" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="82" bodyend="-1"/>
+        <referencedby refid="struct_sub_matrix_a1a8317cdcd91cb308252ea37880bf894_1a1a8317cdcd91cb308252ea37880bf894" compoundref="mat-arith_8hpp" startline="151" endline="164">SubMatrix&lt; MatType &gt;::addMultipleTo</referencedby>
+        <referencedby refid="mat-arith_8hpp_ac51d49a3a5196503f93ad746a9463a39_1ac51d49a3a5196503f93ad746a9463a39" compoundref="mat-arith_8hpp" startline="181" endline="194">normSquared</referencedby>
+        <referencedby refid="struct_sub_matrix_a8389ce15ec6622f2e891e0fbceadac4b_1a8389ce15ec6622f2e891e0fbceadac4b" compoundref="mat-arith_8hpp" startline="167" endline="177">SubMatrix&lt; MatType &gt;::operator*=</referencedby>
+        <referencedby refid="struct_sub_matrix_a83df2fb11e507e3557c82deb5ef3a79b_1a83df2fb11e507e3557c82deb5ef3a79b" compoundref="mat-arith_8hpp" startline="133" endline="148">SubMatrix&lt; MatType &gt;::operator+=</referencedby>
+        <referencedby refid="struct_sub_matrix_aa4831a63d7cfb2bb80553ca28365673e_1aa4831a63d7cfb2bb80553ca28365673e" compoundref="mat-arith_8hpp" startline="109" endline="117">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a9002c640f8ad3f7f38c9691cf5a631ed_1a9002c640f8ad3f7f38c9691cf5a631ed" compoundref="mat-arith_8hpp" startline="119" endline="131">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" compoundref="mat-arith_8hpp" startline="103" endline="107">SubMatrix&lt; MatType &gt;::sameSize</referencedby>
+        <referencedby refid="namespace_matrix_ops_ae753f2e353c3decad1eb81b972b0c96c_1ae753f2e353c3decad1eb81b972b0c96c" compoundref="mat-arith_8hpp" startline="295" endline="301">MatrixOps::setZero</referencedby>
+        <referencedby refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" compoundref="mat-arith_8hpp" startline="85" endline="92">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+        <referencedby refid="struct_sub_matrix_a93a8d78fd75b88f8abac8dd6fb6cc14a_1a93a8d78fd75b88f8abac8dd6fb6cc14a" compoundref="mat-arith_8hpp" startline="94" endline="101">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long SubMatrix&lt; MatType &gt;::end_column</definition>
+        <argsstring></argsstring>
+        <name>end_column</name>
+        <qualifiedname>SubMatrix::end_column</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="83" column="14" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="83" bodyend="-1"/>
+        <referencedby refid="struct_sub_matrix_a1a8317cdcd91cb308252ea37880bf894_1a1a8317cdcd91cb308252ea37880bf894" compoundref="mat-arith_8hpp" startline="151" endline="164">SubMatrix&lt; MatType &gt;::addMultipleTo</referencedby>
+        <referencedby refid="mat-arith_8hpp_ac51d49a3a5196503f93ad746a9463a39_1ac51d49a3a5196503f93ad746a9463a39" compoundref="mat-arith_8hpp" startline="181" endline="194">normSquared</referencedby>
+        <referencedby refid="struct_sub_matrix_a8389ce15ec6622f2e891e0fbceadac4b_1a8389ce15ec6622f2e891e0fbceadac4b" compoundref="mat-arith_8hpp" startline="167" endline="177">SubMatrix&lt; MatType &gt;::operator*=</referencedby>
+        <referencedby refid="struct_sub_matrix_a83df2fb11e507e3557c82deb5ef3a79b_1a83df2fb11e507e3557c82deb5ef3a79b" compoundref="mat-arith_8hpp" startline="133" endline="148">SubMatrix&lt; MatType &gt;::operator+=</referencedby>
+        <referencedby refid="struct_sub_matrix_aa4831a63d7cfb2bb80553ca28365673e_1aa4831a63d7cfb2bb80553ca28365673e" compoundref="mat-arith_8hpp" startline="109" endline="117">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a9002c640f8ad3f7f38c9691cf5a631ed_1a9002c640f8ad3f7f38c9691cf5a631ed" compoundref="mat-arith_8hpp" startline="119" endline="131">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" compoundref="mat-arith_8hpp" startline="103" endline="107">SubMatrix&lt; MatType &gt;::sameSize</referencedby>
+        <referencedby refid="namespace_matrix_ops_ae753f2e353c3decad1eb81b972b0c96c_1ae753f2e353c3decad1eb81b972b0c96c" compoundref="mat-arith_8hpp" startline="295" endline="301">MatrixOps::setZero</referencedby>
+        <referencedby refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" compoundref="mat-arith_8hpp" startline="85" endline="92">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+        <referencedby refid="struct_sub_matrix_a93a8d78fd75b88f8abac8dd6fb6cc14a_1a93a8d78fd75b88f8abac8dd6fb6cc14a" compoundref="mat-arith_8hpp" startline="94" endline="101">SubMatrix&lt; MatType &gt;::SubMatrix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SubMatrix&lt; MatType &gt;::SubMatrix</definition>
+        <argsstring>(MatType &amp;m)</argsstring>
+        <name>SubMatrix</name>
+        <qualifiedname>SubMatrix::SubMatrix</qualifiedname>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="85" column="3" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="85" bodyend="92"/>
+        <references refid="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" compoundref="mat-arith_8hpp" startline="82">SubMatrix&lt; MatType &gt;::begin_column</references>
+        <references refid="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" compoundref="mat-arith_8hpp" startline="80">SubMatrix&lt; MatType &gt;::begin_row</references>
+        <references refid="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" compoundref="mat-arith_8hpp" startline="83">SubMatrix&lt; MatType &gt;::end_column</references>
+        <references refid="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" compoundref="mat-arith_8hpp" startline="81">SubMatrix&lt; MatType &gt;::end_row</references>
+        <references refid="struct_sub_matrix_afa46643c5cdc8e1972cb593edcff6ca6_1afa46643c5cdc8e1972cb593edcff6ca6" compoundref="mat-arith_8hpp" startline="79">SubMatrix&lt; MatType &gt;::matrix</references>
+        <referencedby refid="struct_sub_matrix_a1a8317cdcd91cb308252ea37880bf894_1a1a8317cdcd91cb308252ea37880bf894" compoundref="mat-arith_8hpp" startline="151" endline="164">SubMatrix&lt; MatType &gt;::addMultipleTo</referencedby>
+        <referencedby refid="struct_sub_matrix_a83df2fb11e507e3557c82deb5ef3a79b_1a83df2fb11e507e3557c82deb5ef3a79b" compoundref="mat-arith_8hpp" startline="133" endline="148">SubMatrix&lt; MatType &gt;::operator+=</referencedby>
+        <referencedby refid="struct_sub_matrix_a9002c640f8ad3f7f38c9691cf5a631ed_1a9002c640f8ad3f7f38c9691cf5a631ed" compoundref="mat-arith_8hpp" startline="119" endline="131">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+        <referencedby refid="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" compoundref="mat-arith_8hpp" startline="103" endline="107">SubMatrix&lt; MatType &gt;::sameSize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_sub_matrix_a93a8d78fd75b88f8abac8dd6fb6cc14a_1a93a8d78fd75b88f8abac8dd6fb6cc14a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SubMatrix&lt; MatType &gt;::SubMatrix</definition>
+        <argsstring>(MatType &amp;m, long x, long y, long nrows, long ncols)</argsstring>
+        <name>SubMatrix</name>
+        <qualifiedname>SubMatrix::SubMatrix</qualifiedname>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>nrows</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>ncols</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="94" column="3" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="94" bodyend="101"/>
+        <references refid="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" compoundref="mat-arith_8hpp" startline="82">SubMatrix&lt; MatType &gt;::begin_column</references>
+        <references refid="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" compoundref="mat-arith_8hpp" startline="80">SubMatrix&lt; MatType &gt;::begin_row</references>
+        <references refid="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" compoundref="mat-arith_8hpp" startline="83">SubMatrix&lt; MatType &gt;::end_column</references>
+        <references refid="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" compoundref="mat-arith_8hpp" startline="81">SubMatrix&lt; MatType &gt;::end_row</references>
+        <references refid="struct_sub_matrix_afa46643c5cdc8e1972cb593edcff6ca6_1afa46643c5cdc8e1972cb593edcff6ca6" compoundref="mat-arith_8hpp" startline="79">SubMatrix&lt; MatType &gt;::matrix</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SubMatrix&lt; MatType &gt;::sameSize</definition>
+        <argsstring>(const SubMatrix &amp;b) const</argsstring>
+        <name>sameSize</name>
+        <qualifiedname>SubMatrix::sameSize</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_sub_matrix" kindref="compound">SubMatrix</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="103" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="103" bodyend="107"/>
+        <references refid="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" compoundref="mat-arith_8hpp" startline="82">SubMatrix&lt; MatType &gt;::begin_column</references>
+        <references refid="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" compoundref="mat-arith_8hpp" startline="80">SubMatrix&lt; MatType &gt;::begin_row</references>
+        <references refid="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" compoundref="mat-arith_8hpp" startline="83">SubMatrix&lt; MatType &gt;::end_column</references>
+        <references refid="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" compoundref="mat-arith_8hpp" startline="81">SubMatrix&lt; MatType &gt;::end_row</references>
+        <references refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" compoundref="mat-arith_8hpp" startline="85" endline="92">SubMatrix&lt; MatType &gt;::SubMatrix</references>
+        <referencedby refid="struct_sub_matrix_a1a8317cdcd91cb308252ea37880bf894_1a1a8317cdcd91cb308252ea37880bf894" compoundref="mat-arith_8hpp" startline="151" endline="164">SubMatrix&lt; MatType &gt;::addMultipleTo</referencedby>
+        <referencedby refid="struct_sub_matrix_a83df2fb11e507e3557c82deb5ef3a79b_1a83df2fb11e507e3557c82deb5ef3a79b" compoundref="mat-arith_8hpp" startline="133" endline="148">SubMatrix&lt; MatType &gt;::operator+=</referencedby>
+        <referencedby refid="struct_sub_matrix_a9002c640f8ad3f7f38c9691cf5a631ed_1a9002c640f8ad3f7f38c9691cf5a631ed" compoundref="mat-arith_8hpp" startline="119" endline="131">SubMatrix&lt; MatType &gt;::operator=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_sub_matrix_aa4831a63d7cfb2bb80553ca28365673e_1aa4831a63d7cfb2bb80553ca28365673e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SubMatrix&lt; MatType &gt;::operator=</definition>
+        <argsstring>(int x)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>SubMatrix::operator=</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="109" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="109" bodyend="117"/>
+        <references refid="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" compoundref="mat-arith_8hpp" startline="82">SubMatrix&lt; MatType &gt;::begin_column</references>
+        <references refid="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" compoundref="mat-arith_8hpp" startline="80">SubMatrix&lt; MatType &gt;::begin_row</references>
+        <references refid="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" compoundref="mat-arith_8hpp" startline="83">SubMatrix&lt; MatType &gt;::end_column</references>
+        <references refid="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" compoundref="mat-arith_8hpp" startline="81">SubMatrix&lt; MatType &gt;::end_row</references>
+        <references refid="struct_sub_matrix_afa46643c5cdc8e1972cb593edcff6ca6_1afa46643c5cdc8e1972cb593edcff6ca6" compoundref="mat-arith_8hpp" startline="79">SubMatrix&lt; MatType &gt;::matrix</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_sub_matrix_a9002c640f8ad3f7f38c9691cf5a631ed_1a9002c640f8ad3f7f38c9691cf5a631ed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SubMatrix&lt; MatType &gt;::operator=</definition>
+        <argsstring>(SubMatrix&lt; MatType &gt; src)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>SubMatrix::operator=</qualifiedname>
+        <param>
+          <type><ref refid="struct_sub_matrix" kindref="compound">SubMatrix</ref>&lt; MatType &gt;</type>
+          <declname>src</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="119" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="119" bodyend="131"/>
+        <references refid="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" compoundref="mat-arith_8hpp" startline="82">SubMatrix&lt; MatType &gt;::begin_column</references>
+        <references refid="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" compoundref="mat-arith_8hpp" startline="80">SubMatrix&lt; MatType &gt;::begin_row</references>
+        <references refid="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" compoundref="mat-arith_8hpp" startline="83">SubMatrix&lt; MatType &gt;::end_column</references>
+        <references refid="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" compoundref="mat-arith_8hpp" startline="81">SubMatrix&lt; MatType &gt;::end_row</references>
+        <references refid="struct_sub_matrix_afa46643c5cdc8e1972cb593edcff6ca6_1afa46643c5cdc8e1972cb593edcff6ca6" compoundref="mat-arith_8hpp" startline="79">SubMatrix&lt; MatType &gt;::matrix</references>
+        <references refid="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" compoundref="mat-arith_8hpp" startline="103" endline="107">SubMatrix&lt; MatType &gt;::sameSize</references>
+        <references refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" compoundref="mat-arith_8hpp" startline="85" endline="92">SubMatrix&lt; MatType &gt;::SubMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_sub_matrix_a83df2fb11e507e3557c82deb5ef3a79b_1a83df2fb11e507e3557c82deb5ef3a79b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SubMatrix&lt; MatType &gt;::operator+=</definition>
+        <argsstring>(SubMatrix&lt; MatType &gt; src)</argsstring>
+        <name>operator+=</name>
+        <qualifiedname>SubMatrix::operator+=</qualifiedname>
+        <param>
+          <type><ref refid="struct_sub_matrix" kindref="compound">SubMatrix</ref>&lt; MatType &gt;</type>
+          <declname>src</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="133" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="133" bodyend="148"/>
+        <references refid="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" compoundref="mat-arith_8hpp" startline="82">SubMatrix&lt; MatType &gt;::begin_column</references>
+        <references refid="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" compoundref="mat-arith_8hpp" startline="80">SubMatrix&lt; MatType &gt;::begin_row</references>
+        <references refid="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" compoundref="mat-arith_8hpp" startline="83">SubMatrix&lt; MatType &gt;::end_column</references>
+        <references refid="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" compoundref="mat-arith_8hpp" startline="81">SubMatrix&lt; MatType &gt;::end_row</references>
+        <references refid="struct_sub_matrix_afa46643c5cdc8e1972cb593edcff6ca6_1afa46643c5cdc8e1972cb593edcff6ca6" compoundref="mat-arith_8hpp" startline="79">SubMatrix&lt; MatType &gt;::matrix</references>
+        <references refid="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" compoundref="mat-arith_8hpp" startline="103" endline="107">SubMatrix&lt; MatType &gt;::sameSize</references>
+        <references refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" compoundref="mat-arith_8hpp" startline="85" endline="92">SubMatrix&lt; MatType &gt;::SubMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_sub_matrix_a1a8317cdcd91cb308252ea37880bf894_1a1a8317cdcd91cb308252ea37880bf894" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElementType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void SubMatrix&lt; MatType &gt;::addMultipleTo</definition>
+        <argsstring>(ElementType &amp;c, SubMatrix&lt; MatType &gt; src)</argsstring>
+        <name>addMultipleTo</name>
+        <qualifiedname>SubMatrix::addMultipleTo</qualifiedname>
+        <param>
+          <type>ElementType &amp;</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_sub_matrix" kindref="compound">SubMatrix</ref>&lt; MatType &gt;</type>
+          <declname>src</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="151" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="151" bodyend="164"/>
+        <references refid="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" compoundref="mat-arith_8hpp" startline="82">SubMatrix&lt; MatType &gt;::begin_column</references>
+        <references refid="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" compoundref="mat-arith_8hpp" startline="80">SubMatrix&lt; MatType &gt;::begin_row</references>
+        <references refid="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" compoundref="mat-arith_8hpp" startline="83">SubMatrix&lt; MatType &gt;::end_column</references>
+        <references refid="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" compoundref="mat-arith_8hpp" startline="81">SubMatrix&lt; MatType &gt;::end_row</references>
+        <references refid="struct_sub_matrix_afa46643c5cdc8e1972cb593edcff6ca6_1afa46643c5cdc8e1972cb593edcff6ca6" compoundref="mat-arith_8hpp" startline="79">SubMatrix&lt; MatType &gt;::matrix</references>
+        <references refid="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" compoundref="mat-arith_8hpp" startline="103" endline="107">SubMatrix&lt; MatType &gt;::sameSize</references>
+        <references refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" compoundref="mat-arith_8hpp" startline="85" endline="92">SubMatrix&lt; MatType &gt;::SubMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_sub_matrix_a8389ce15ec6622f2e891e0fbceadac4b_1a8389ce15ec6622f2e891e0fbceadac4b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElementType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void SubMatrix&lt; MatType &gt;::operator*=</definition>
+        <argsstring>(ElementType &amp;c)</argsstring>
+        <name>operator*=</name>
+        <qualifiedname>SubMatrix::operator*=</qualifiedname>
+        <param>
+          <type>ElementType &amp;</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="167" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="167" bodyend="177"/>
+        <references refid="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" compoundref="mat-arith_8hpp" startline="82">SubMatrix&lt; MatType &gt;::begin_column</references>
+        <references refid="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" compoundref="mat-arith_8hpp" startline="80">SubMatrix&lt; MatType &gt;::begin_row</references>
+        <references refid="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" compoundref="mat-arith_8hpp" startline="83">SubMatrix&lt; MatType &gt;::end_column</references>
+        <references refid="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" compoundref="mat-arith_8hpp" startline="81">SubMatrix&lt; MatType &gt;::end_row</references>
+        <references refid="struct_sub_matrix_afa46643c5cdc8e1972cb593edcff6ca6_1afa46643c5cdc8e1972cb593edcff6ca6" compoundref="mat-arith_8hpp" startline="79">SubMatrix&lt; MatType &gt;::matrix</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>MatType &amp;</label>
+      </node>
+      <node id="1">
+        <label>SubMatrix&lt; MatType &gt;</label>
+        <link refid="struct_sub_matrix"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>matrix</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>begin_column</edgelabel>
+          <edgelabel>begin_row</edgelabel>
+          <edgelabel>end_column</edgelabel>
+          <edgelabel>end_row</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/mat-arith.hpp" line="77" column="1" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="78" bodyend="178"/>
+    <listofallmembers>
+      <member refid="struct_sub_matrix_a1a8317cdcd91cb308252ea37880bf894_1a1a8317cdcd91cb308252ea37880bf894" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>addMultipleTo</name></member>
+      <member refid="struct_sub_matrix_a4bf42ac673d3952e2755f4a1e3bf36b3_1a4bf42ac673d3952e2755f4a1e3bf36b3" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>begin_column</name></member>
+      <member refid="struct_sub_matrix_a2920e0f66b76ab7015e01683f73ff65b_1a2920e0f66b76ab7015e01683f73ff65b" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>begin_row</name></member>
+      <member refid="struct_sub_matrix_a6fd5c2c7ad65192d7eaf6a91cf4430b2_1a6fd5c2c7ad65192d7eaf6a91cf4430b2" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>end_column</name></member>
+      <member refid="struct_sub_matrix_ab7e1064964c923c4e4ff3d74771dc979_1ab7e1064964c923c4e4ff3d74771dc979" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>end_row</name></member>
+      <member refid="struct_sub_matrix_afa46643c5cdc8e1972cb593edcff6ca6_1afa46643c5cdc8e1972cb593edcff6ca6" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>matrix</name></member>
+      <member refid="struct_sub_matrix_a8389ce15ec6622f2e891e0fbceadac4b_1a8389ce15ec6622f2e891e0fbceadac4b" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>operator*=</name></member>
+      <member refid="struct_sub_matrix_a83df2fb11e507e3557c82deb5ef3a79b_1a83df2fb11e507e3557c82deb5ef3a79b" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>operator+=</name></member>
+      <member refid="struct_sub_matrix_aa4831a63d7cfb2bb80553ca28365673e_1aa4831a63d7cfb2bb80553ca28365673e" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>operator=</name></member>
+      <member refid="struct_sub_matrix_a9002c640f8ad3f7f38c9691cf5a631ed_1a9002c640f8ad3f7f38c9691cf5a631ed" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>operator=</name></member>
+      <member refid="struct_sub_matrix_a8a8f0474d02f75e2393094584357c4cd_1a8a8f0474d02f75e2393094584357c4cd" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>sameSize</name></member>
+      <member refid="struct_sub_matrix_afd35ed7bd4b924d01a3a9e2e1d86a47a_1afd35ed7bd4b924d01a3a9e2e1d86a47a" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>SubMatrix</name></member>
+      <member refid="struct_sub_matrix_a93a8d78fd75b88f8abac8dd6fb6cc14a_1a93a8d78fd75b88f8abac8dd6fb6cc14a" prot="public" virt="non-virtual"><scope>SubMatrix</scope><name>SubMatrix</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

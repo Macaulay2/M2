@@ -1,0 +1,498 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_subset_test_8cpp" kind="file" language="C++">
+    <compoundname>SubsetTest.cpp</compoundname>
+    <includes local="no">cstdio</includes>
+    <includes local="no">string</includes>
+    <includes local="no">iostream</includes>
+    <includes local="no">memory</includes>
+    <includes local="no">gtest/gtest.h</includes>
+    <includes refid="comb_8hpp" local="yes">comb.hpp</includes>
+    <incdepgraph>
+      <node id="7">
+        <label>comb.hpp</label>
+        <link refid="comb_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/unit-tests/SubsetTest.cpp</label>
+        <link refid="_subset_test_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>cassert</label>
+      </node>
+      <node id="2">
+        <label>cstdio</label>
+      </node>
+      <node id="6">
+        <label>gtest/gtest.h</label>
+      </node>
+      <node id="10">
+        <label>iosfwd</label>
+      </node>
+      <node id="4">
+        <label>iostream</label>
+      </node>
+      <node id="5">
+        <label>memory</label>
+      </node>
+      <node id="3">
+        <label>string</label>
+      </node>
+      <node id="9">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Subsets, encode1)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_subsets" kindref="compound">Subsets</ref></type>
+        </param>
+        <param>
+          <type>encode1</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="37" column="1" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="37" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="_subset_test_8cpp_a2d58541683a41890c1ccb66735fb4674_1a2d58541683a41890c1ccb66735fb4674" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Subsets, encode2)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_subsets" kindref="compound">Subsets</ref></type>
+        </param>
+        <param>
+          <type>encode2</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="52" column="1" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="52" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="_subset_test_8cpp_ad3d37a00eb96caee1df9e3dfa3a8a609_1ad3d37a00eb96caee1df9e3dfa3a8a609" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Subsets, encode3)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_subsets" kindref="compound">Subsets</ref></type>
+        </param>
+        <param>
+          <type>encode3</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="67" column="1" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="67" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="_subset_test_8cpp_a1f512d90f71d342959e3e7f9b9103b5a_1a1f512d90f71d342959e3e7f9b9103b5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Subsets, encode4)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_subsets" kindref="compound">Subsets</ref></type>
+        </param>
+        <param>
+          <type>encode4</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="82" column="1" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="82" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="_subset_test_8cpp_ab5729d10c96ad66c38bfe2ce9d260fff_1ab5729d10c96ad66c38bfe2ce9d260fff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Subsets, encode5)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_subsets" kindref="compound">Subsets</ref></type>
+        </param>
+        <param>
+          <type>encode5</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="97" column="1" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="97" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="_subset_test_8cpp_abbd9a8605cad456d8af3add0b8aefeaa_1abbd9a8605cad456d8af3add0b8aefeaa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool sameSubset</definition>
+        <argsstring>(const Subset &amp;a, const Subset &amp;b)</argsstring>
+        <name>sameSubset</name>
+        <param>
+          <type>const <ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="112" column="6" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="112" bodyend="118"/>
+        <referencedby refid="_subset_test_8cpp_a62b547a3eb91218822a2bf7533bb2189_1a62b547a3eb91218822a2bf7533bb2189" compoundref="_subset_test_8cpp" startline="145" endline="182">TEST</referencedby>
+        <referencedby refid="_subset_test_8cpp_afd3a32071985530437e3645825101026_1afd3a32071985530437e3645825101026" compoundref="_subset_test_8cpp" startline="120" endline="143">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_subset_test_8cpp_afd3a32071985530437e3645825101026_1afd3a32071985530437e3645825101026" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Subsets, encode6)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_subsets" kindref="compound">Subsets</ref></type>
+        </param>
+        <param>
+          <type>encode6</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="120" column="1" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="120" bodyend="143"/>
+        <references refid="class_subsets_a0fa6840b17ab300a5bf015458b20e302_1a0fa6840b17ab300a5bf015458b20e302" compoundref="comb_8cpp" startline="124" endline="144">Subsets::increment</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="_subset_test_8cpp_abbd9a8605cad456d8af3add0b8aefeaa_1abbd9a8605cad456d8af3add0b8aefeaa" compoundref="_subset_test_8cpp" startline="112" endline="118">sameSubset</references>
+      </memberdef>
+      <memberdef kind="function" id="_subset_test_8cpp_a62b547a3eb91218822a2bf7533bb2189_1a62b547a3eb91218822a2bf7533bb2189" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Subsets, concatenateSubsets)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_subsets" kindref="compound">Subsets</ref></type>
+        </param>
+        <param>
+          <type>concatenateSubsets</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="145" column="1" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="145" bodyend="182"/>
+        <references refid="class_subsets_a51ce5fef32d765ccc0e9389cd46eb844_1a51ce5fef32d765ccc0e9389cd46eb844" compoundref="comb_8cpp" startline="163" endline="201">Subsets::concatenateSubsets</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="_subset_test_8cpp_abbd9a8605cad456d8af3add0b8aefeaa_1abbd9a8605cad456d8af3add0b8aefeaa" compoundref="_subset_test_8cpp" startline="112" endline="118">sameSubset</references>
+      </memberdef>
+      <memberdef kind="function" id="_subset_test_8cpp_a2d9bd05ed365f33e659177f9aecf35cc_1a2d9bd05ed365f33e659177f9aecf35cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Subsets, outOfRange)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_subsets" kindref="compound">Subsets</ref></type>
+        </param>
+        <param>
+          <type>outOfRange</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="184" column="1" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="184" bodyend="201"/>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_subsets_ae80021fd53ac087bde55fe9ac360f114_1ae80021fd53ac087bde55fe9ac360f114" compoundref="comb_8cpp" startline="203" endline="212">Subsets::show</references>
+      </memberdef>
+      <memberdef kind="function" id="_subset_test_8cpp_a304771f20f162265cb98328248883502_1a304771f20f162265cb98328248883502" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Subsets, encodeBoundary)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_subsets" kindref="compound">Subsets</ref></type>
+        </param>
+        <param>
+          <type>encodeBoundary</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/SubsetTest.cpp" line="203" column="1" bodyfile="Macaulay2/e/unit-tests/SubsetTest.cpp" bodystart="203" bodyend="228"/>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_subsets_ae80021fd53ac087bde55fe9ac360f114_1ae80021fd53ac087bde55fe9ac360f114" compoundref="comb_8cpp" startline="203" endline="212">Subsets::show</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>gtest coverage for <computeroutput><ref refid="class_subsets" kindref="compound">Subsets</ref></computeroutput> <mdash/> the bijection between integers and <computeroutput>k</computeroutput>-subsets of <computeroutput>{0..n-1}</computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Hosts the <computeroutput>TEST(Subsets, *)</computeroutput> battery: the <computeroutput>encode1</computeroutput> ... <computeroutput>encode6</computeroutput> cases round-trip every <computeroutput>k</computeroutput>-subset through <computeroutput>Subsets::decode(i, a)</computeroutput> / <computeroutput>Subsets::encode(a)</computeroutput> for small <computeroutput>(n, k)</computeroutput> pairs (5 choose 2, 12 choose 6, ...) asserting that <computeroutput>encode(decode(i)) == i</computeroutput> for each index in the <computeroutput>C(n, k)</computeroutput> range; <computeroutput>concatenateSubsets</computeroutput>, <computeroutput>outOfRange</computeroutput>, and <computeroutput>encodeBoundary</computeroutput> cover the combining helper and the out-of-range guard rails. This encoding underpins the engine&apos;s free-resolution and Hilbert-function combinatorics, where each homological level indexes into a sparse range of subsets of variables.</para>
+<para>Companion files <computeroutput><ref refid="_point_array_8cpp" kindref="compound">PointArray.cpp</ref></computeroutput> (numerical clustering for NAG) and <computeroutput><ref refid="basics-test_8cpp" kindref="compound">basics-test.cpp</ref></computeroutput> (the harness-itself liveness check) are covered by the same <computeroutput>file-misc-tests</computeroutput> markdown.</para>
+<para><simplesect kind="see"><para><ref refid="comb_8hpp" kindref="compound">comb.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="basics-test_8cpp" kindref="compound">basics-test.cpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_point_array_8cpp" kindref="compound">PointArray.cpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_a_ring_test_8hpp" kindref="compound">ARingTest.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>2013<sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdio&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;memory&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;gtest/gtest.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="comb_8hpp" kindref="compound">comb.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" refkind="member"><highlight class="normal"><ref refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" kindref="member">TEST</ref>(<ref refid="class_subsets" kindref="compound">Subsets</ref>,<sp/>encode1)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><ref refid="class_subsets" kindref="compound">Subsets</ref><sp/>C(5,<sp/>2);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>a(2,<sp/>0);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>10;<sp/>i++)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(i,<sp/>a);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(C.isValid(a));</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>C.encode(a);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_EQ(i,<sp/>j);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="_subset_test_8cpp_a2d58541683a41890c1ccb66735fb4674_1a2d58541683a41890c1ccb66735fb4674" refkind="member"><highlight class="normal"><ref refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" kindref="member">TEST</ref>(<ref refid="class_subsets" kindref="compound">Subsets</ref>,<sp/>encode2)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><ref refid="class_subsets" kindref="compound">Subsets</ref><sp/>C(12,<sp/>6);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>a(6,<sp/>0);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>924;<sp/>i++)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(i,<sp/>a);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(C.isValid(a));</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>C.encode(a);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_EQ(i,<sp/>j);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="_subset_test_8cpp_ad3d37a00eb96caee1df9e3dfa3a8a609_1ad3d37a00eb96caee1df9e3dfa3a8a609" refkind="member"><highlight class="normal"><ref refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" kindref="member">TEST</ref>(<ref refid="class_subsets" kindref="compound">Subsets</ref>,<sp/>encode3)</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><ref refid="class_subsets" kindref="compound">Subsets</ref><sp/>C(12,<sp/>0);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>a(0,<sp/>0);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>1;<sp/>i++)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(i,<sp/>a);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(C.isValid(a));</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>C.encode(a);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_EQ(i,<sp/>j);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="_subset_test_8cpp_a1f512d90f71d342959e3e7f9b9103b5a_1a1f512d90f71d342959e3e7f9b9103b5a" refkind="member"><highlight class="normal"><ref refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" kindref="member">TEST</ref>(<ref refid="class_subsets" kindref="compound">Subsets</ref>,<sp/>encode4)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><ref refid="class_subsets" kindref="compound">Subsets</ref><sp/>C(21,<sp/>7);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>a(7,<sp/>0);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>116280;<sp/>i++)</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(i,<sp/>a);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(C.isValid(a));</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>C.encode(a);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_EQ(i,<sp/>j);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="_subset_test_8cpp_ab5729d10c96ad66c38bfe2ce9d260fff_1ab5729d10c96ad66c38bfe2ce9d260fff" refkind="member"><highlight class="normal"><ref refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" kindref="member">TEST</ref>(<ref refid="class_subsets" kindref="compound">Subsets</ref>,<sp/>encode5)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><ref refid="class_subsets" kindref="compound">Subsets</ref><sp/>C(21,<sp/>21);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>a(21,<sp/>0);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>1;<sp/>i++)</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(i,<sp/>a);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(C.isValid(a));</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>C.encode(a);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_EQ(i,<sp/>j);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="_subset_test_8cpp_abbd9a8605cad456d8af3add0b8aefeaa_1abbd9a8605cad456d8af3add0b8aefeaa" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="_subset_test_8cpp_abbd9a8605cad456d8af3add0b8aefeaa_1abbd9a8605cad456d8af3add0b8aefeaa" kindref="member">sameSubset</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>&amp;a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>&amp;b)</highlight></codeline>
+<codeline lineno="113"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a.size()<sp/>!=<sp/>b.size())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>a.size();<sp/>i++)</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a[i]<sp/>!=<sp/>b[i])<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="_subset_test_8cpp_afd3a32071985530437e3645825101026_1afd3a32071985530437e3645825101026" refkind="member"><highlight class="normal"><ref refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" kindref="member">TEST</ref>(<ref refid="class_subsets" kindref="compound">Subsets</ref>,<sp/>encode6)</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>test<sp/>the<sp/>increment<sp/>and<sp/>decrement<sp/>functions<sp/>too</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>21;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>=<sp/>7;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n_choose_p<sp/>=<sp/>116280;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><ref refid="class_subsets" kindref="compound">Subsets</ref><sp/>C(n,<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>a(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>,<sp/>0);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>b(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>,<sp/>0);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>;<sp/>i++)<sp/>b[i]<sp/>=<sp/>i;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>n_choose_p;<sp/>i++)</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(i,<sp/>a);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(<ref refid="_subset_test_8cpp_abbd9a8605cad456d8af3add0b8aefeaa_1abbd9a8605cad456d8af3add0b8aefeaa" kindref="member">sameSubset</ref>(a,<sp/>b));</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(C.isValid(a));</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>C.encode(a);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_EQ(i,<sp/>j);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ret<sp/>=<sp/><ref refid="class_subsets_a0fa6840b17ab300a5bf015458b20e302_1a0fa6840b17ab300a5bf015458b20e302" kindref="member">Subsets::increment</ref>(n,<sp/>b);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_EQ(ret,<sp/>i<sp/>+<sp/>1<sp/>!=<sp/>n_choose_p);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="_subset_test_8cpp_a62b547a3eb91218822a2bf7533bb2189_1a62b547a3eb91218822a2bf7533bb2189" refkind="member"><highlight class="normal"><ref refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" kindref="member">TEST</ref>(<ref refid="class_subsets" kindref="compound">Subsets</ref>,<sp/>concatenateSubsets)</highlight></codeline>
+<codeline lineno="146"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>7;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>q<sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n_choose_p<sp/>=<sp/>35;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><ref refid="class_subsets" kindref="compound">Subsets</ref><sp/>C(n,<sp/>std::max(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>,<sp/>q));</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>a(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>,<sp/>0);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>b(q,<sp/>0);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>c(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>+<sp/>q,<sp/>0);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>d(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>+<sp/>q,<sp/>0);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>%<sp/>2<sp/>==<sp/>1)<sp/>&amp;&amp;<sp/>(q<sp/>%<sp/>2<sp/>==<sp/>1))</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>sign<sp/>=<sp/>-1;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>sign<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>n_choose_p;<sp/>i++)</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(i,<sp/>a);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(C.isValid(a));</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>n_choose_p;<sp/>j++)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(j,<sp/>b);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(C.isValid(b));</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ret1<sp/>=<sp/><ref refid="class_subsets_a51ce5fef32d765ccc0e9389cd46eb844_1a51ce5fef32d765ccc0e9389cd46eb844" kindref="member">Subsets::concatenateSubsets</ref>(a,<sp/>b,<sp/>c);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ret2<sp/>=<sp/><ref refid="class_subsets_a51ce5fef32d765ccc0e9389cd46eb844_1a51ce5fef32d765ccc0e9389cd46eb844" kindref="member">Subsets::concatenateSubsets</ref>(b,<sp/>a,<sp/>d);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ret1<sp/>==<sp/>0<sp/>||<sp/>ret2<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_EQ(ret1,<sp/>ret2);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_EQ(ret1,<sp/>sign<sp/>*<sp/>ret2);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(<ref refid="_subset_test_8cpp_abbd9a8605cad456d8af3add0b8aefeaa_1abbd9a8605cad456d8af3add0b8aefeaa" kindref="member">sameSubset</ref>(c,<sp/>d));</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="182"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184" refid="_subset_test_8cpp_a2d9bd05ed365f33e659177f9aecf35cc_1a2d9bd05ed365f33e659177f9aecf35cc" refkind="member"><highlight class="normal"><ref refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" kindref="member">TEST</ref>(<ref refid="class_subsets" kindref="compound">Subsets</ref>,<sp/>outOfRange)</highlight></codeline>
+<codeline lineno="185"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>7;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>q<sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><ref refid="class_subsets" kindref="compound">Subsets</ref><sp/>C(n,<sp/>std::max(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>,<sp/>q));</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>b(q,<sp/>0);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>21;<sp/>i++)</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(i,<sp/>b);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;i=&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>i<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>set=&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_subsets_ae80021fd53ac087bde55fe9ac360f114_1ae80021fd53ac087bde55fe9ac360f114" kindref="member">Subsets::show</ref>(std::cout,<sp/>b);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>EXPECT_TRUE(C.isValid(b));</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="201"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203" refid="_subset_test_8cpp_a304771f20f162265cb98328248883502_1a304771f20f162265cb98328248883502" refkind="member"><highlight class="normal"><ref refid="_subset_test_8cpp_ad159df68d56b2ad0667eb2abdc0556d1_1ad159df68d56b2ad0667eb2abdc0556d1" kindref="member">TEST</ref>(<ref refid="class_subsets" kindref="compound">Subsets</ref>,<sp/>encodeBoundary)</highlight></codeline>
+<codeline lineno="204"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>7;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n_choose_p<sp/>=<sp/>35;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><ref refid="class_subsets" kindref="compound">Subsets</ref><sp/>C(n,<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>a(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>,<sp/>0);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><ref refid="comb_8hpp_a3dbc1effdceb64fb669cf05c4776eec3_1a3dbc1effdceb64fb669cf05c4776eec3" kindref="member">Subset</ref><sp/>b(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>-<sp/>1,<sp/>0);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>n_choose_p;<sp/>i++)</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(i,<sp/>a);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;i=&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>i<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;set=&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_subsets_ae80021fd53ac087bde55fe9ac360f114_1ae80021fd53ac087bde55fe9ac360f114" kindref="member">Subsets::show</ref>(std::cout,<sp/>a);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>bds=<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>;<sp/>j++)</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>=<sp/>C.encodeBoundary(j,<sp/>a);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>C.decode(<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,<sp/>b);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_subsets_ae80021fd53ac087bde55fe9ac360f114_1ae80021fd53ac087bde55fe9ac360f114" kindref="member">Subsets::show</ref>(std::cout,<sp/>b);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="228"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e/unit-tests<sp/>check<sp/><sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/unit-tests/SubsetTest.cpp"/>
+  </compounddef>
+</doxygen>

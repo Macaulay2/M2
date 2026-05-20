@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_reducer_helper" kind="namespace" language="C++">
+    <compoundname>ReducerHelper</compoundname>
+    <innerclass refid="class_reducer_helper_1_1_configuration_basics" prot="public">ReducerHelper::ConfigurationBasics</innerclass>
+    <innerclass refid="class_reducer_helper_1_1_plain_configuration" prot="public">ReducerHelper::PlainConfiguration</innerclass>
+    <innerclass refid="class_reducer_helper_1_1_dedup_configuration" prot="public">ReducerHelper::DedupConfiguration</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_reducer_helper_a50735f8629f1bb5b7eb32f884b8fa578_1a50735f8629f1bb5b7eb32f884b8fa578" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structconst__term" kindref="compound">const_term</ref></type>
+        <definition>const_term ReducerHelper::allocTermCopy</definition>
+        <argsstring>(const PolyRing &amp;ring, const_term term)</argsstring>
+        <name>allocTermCopy</name>
+        <qualifiedname>ReducerHelper::allocTermCopy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <param>
+          <type><ref refid="structconst__term" kindref="compound">const_term</ref></type>
+          <declname>term</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerHelper.hpp" line="84" column="21" bodyfile="submodules/mathicgb/src/mathicgb/ReducerHelper.hpp" bodystart="84" bodyend="88"/>
+        <references refid="class_poly_ring_ad7e94cc68fd8803a5f00c6ebfccb1916_1ad7e94cc68fd8803a5f00c6ebfccb1916" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="264" endline="274">PolyRing::allocMonomial</references>
+        <references refid="structterm_a320ea573c1ee780fd018fcb0fc2bdf35_1a320ea573c1ee780fd018fcb0fc2bdf35" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="227">term::coeff</references>
+        <references refid="structterm_a6addacb0127292f6c90b19332074e6fb_1a6addacb0127292f6c90b19332074e6fb" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="228">term::monom</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_poly_ring_a385843f48af450fc78c4fa3950806fe6_1a385843f48af450fc78c4fa3950806fe6" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8cpp" startline="72" endline="76">PolyRing::monomialCopy</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb/ReducerHelper.hpp" line="13" column="1"/>
+  </compounddef>
+</doxygen>

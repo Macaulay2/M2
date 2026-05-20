@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_matrix_action" kind="class" language="C++" prot="public">
+    <compoundname>MatrixAction</compoundname>
+    <basecompoundref refid="classmathic_1_1_action" prot="public" virt="non-virtual">mathic::Action</basecompoundref>
+    <includes refid="_matrix_action_8hpp" local="no">MatrixAction.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_matrix_action_a04095ab421bc1aa1bf840411accbc242_1a04095ab421bc1aa1bf840411accbc242" prot="private" static="no" mutable="no">
+        <type><ref refid="class_common_params" kindref="compound">CommonParams</ref></type>
+        <definition>CommonParams MatrixAction::mParams</definition>
+        <argsstring></argsstring>
+        <name>mParams</name>
+        <qualifiedname>MatrixAction::mParams</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="32" column="16" bodyfile="submodules/mathicgb/src/cli/MatrixAction.hpp" bodystart="32" bodyend="-1"/>
+        <referencedby refid="class_matrix_action_a0f2493538afcbc67ec1fb30e060f08a8_1a0f2493538afcbc67ec1fb30e060f08a8" compoundref="_matrix_action_8cpp" startline="44" endline="49">directOptions</referencedby>
+        <referencedby refid="class_matrix_action_a8b25f4c97bbda0f2e7cdf77c09190fea_1a8b25f4c97bbda0f2e7cdf77c09190fea" compoundref="_matrix_action_8cpp" startline="36" endline="42">MatrixAction</referencedby>
+        <referencedby refid="class_matrix_action_a4fb6a72dcadf0971eddb2df7bb7e5b11_1a4fb6a72dcadf0971eddb2df7bb7e5b11" compoundref="_matrix_action_8cpp" startline="51" endline="123">performAction</referencedby>
+        <referencedby refid="class_matrix_action_a410bf9d83fcf3885a1c95f795747fbf5_1a410bf9d83fcf3885a1c95f795747fbf5" compoundref="_matrix_action_8cpp" startline="142" endline="146">pushBackParameters</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_matrix_action_a8b25f4c97bbda0f2e7cdf77c09190fea_1a8b25f4c97bbda0f2e7cdf77c09190fea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MatrixAction::MatrixAction</definition>
+        <argsstring>()</argsstring>
+        <name>MatrixAction</name>
+        <qualifiedname>MatrixAction::MatrixAction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="14" column="3" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="36" bodyend="42"/>
+        <references refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" compoundref="polyroots_8cpp" startline="50">max</references>
+        <references refid="class_matrix_action_a04095ab421bc1aa1bf840411accbc242_1a04095ab421bc1aa1bf840411accbc242" compoundref="_matrix_action_8hpp" startline="32">mParams</references>
+        <references refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" compoundref="m2-mem_8h" startline="112">size_t</references>
+      </memberdef>
+      <memberdef kind="function" id="class_matrix_action_a0f2493538afcbc67ec1fb30e060f08a8_1a0f2493538afcbc67ec1fb30e060f08a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void MatrixAction::directOptions</definition>
+        <argsstring>(std::vector&lt; std::string &gt; tokens, mic::CliParser &amp;parser)</argsstring>
+        <name>directOptions</name>
+        <qualifiedname>MatrixAction::directOptions</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_aa7da7f5378296c7de9dcc6ec051e9b85_1aa7da7f5378296c7de9dcc6ec051e9b85">directOptions</reimplements>
+        <param>
+          <type>std::vector&lt; std::string &gt;</type>
+          <declname>tokens</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_cli_parser" kindref="compound">mic::CliParser</ref> &amp;</type>
+          <declname>parser</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="16" column="16" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="44" bodyend="49"/>
+        <references refid="class_matrix_action_a04095ab421bc1aa1bf840411accbc242_1a04095ab421bc1aa1bf840411accbc242" compoundref="_matrix_action_8hpp" startline="32">mParams</references>
+      </memberdef>
+      <memberdef kind="function" id="class_matrix_action_a4fb6a72dcadf0971eddb2df7bb7e5b11_1a4fb6a72dcadf0971eddb2df7bb7e5b11" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void MatrixAction::performAction</definition>
+        <argsstring>()</argsstring>
+        <name>performAction</name>
+        <qualifiedname>MatrixAction::performAction</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a6e987a99ab445d6abdaa8709a659c37a_1a6e987a99ab445d6abdaa8709a659c37a">performAction</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="21" column="16" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="51" bodyend="123"/>
+        <references refid="class_c_file_a3a155ac94b6346edcbfa8b61f8b3c48f_1a3a155ac94b6346edcbfa8b61f8b3c48f" compoundref="_c_file_8cpp" startline="29" endline="32">CFile::close</references>
+        <references refid="class_c_file_a5a59eca83e7cc8d635e7afbe7493dee8_1a5a59eca83e7cc8d635e7afbe7493dee8" compoundref="_c_file_8hpp" startline="34" endline="34">CFile::handle</references>
+        <references refid="class_matrix_action_a04095ab421bc1aa1bf840411accbc242_1a04095ab421bc1aa1bf840411accbc242" compoundref="_matrix_action_8hpp" startline="32">mParams</references>
+        <references refid="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" compoundref="_quad_matrix_8cpp" startline="352" endline="372">QuadMatrix::read</references>
+        <references refid="class_sparse_matrix_ad27fcb69c72da2967f305adde0bb11c7_1ad27fcb69c72da2967f305adde0bb11c7" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="495" endline="549">SparseMatrix::read</references>
+        <references refid="class_f4_matrix_reducer_a3c79388bcb07ddec26db9b489188d4c5_1a3c79388bcb07ddec26db9b489188d4c5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="735" endline="744">F4MatrixReducer::reduceToBottomRight</references>
+        <references refid="namespacemathic_aba2df5396ea54101a096481c819534dc_1aba2df5396ea54101a096481c819534dc" compoundref="error_8cpp" startline="5" endline="7">mathic::reportError</references>
+        <references refid="class_sparse_matrix_a6bf99d230899411b0f9f600aa50a9aef_1a6bf99d230899411b0f9f600aa50a9aef" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="50" endline="80">SparseMatrix::sortRowsByIncreasingPivots</references>
+        <references refid="_signature_g_b_8cpp_a6e489efa94065c9df3aa803bcbfbeea8_1a6e489efa94065c9df3aa803bcbfbeea8" compoundref="_signature_g_b_8cpp" startline="26">tracingLevel</references>
+        <references refid="class_sparse_matrix_a7bbd91805ee0eb15c8d917315f45372a_1a7bbd91805ee0eb15c8d917315f45372a" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="467" endline="493">SparseMatrix::write</references>
+        <references refid="class_sparse_matrix_ae012b01ef3ec0520f2e2867d51e8330d_1ae012b01ef3ec0520f2e2867d51e8330d" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="551" endline="578">SparseMatrix::writePBM</references>
+      </memberdef>
+      <memberdef kind="function" id="class_matrix_action_a04fe47fcfe098d0f1a43f91ecdb444e8_1a04fe47fcfe098d0f1a43f91ecdb444e8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * MatrixAction::name</definition>
+        <argsstring>() const</argsstring>
+        <name>name</name>
+        <qualifiedname>MatrixAction::name</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a33d9f68f939a171145e49b0839c6ec56_1a33d9f68f939a171145e49b0839c6ec56">name</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="25" column="22" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="129" bodyend="131"/>
+        <references refid="class_matrix_action_adb95bef952ab40007506524fc9beab39_1adb95bef952ab40007506524fc9beab39" compoundref="_matrix_action_8cpp" startline="125" endline="127">staticName</references>
+      </memberdef>
+      <memberdef kind="function" id="class_matrix_action_ab86378846e1e4c16db1350227525ebb0_1ab86378846e1e4c16db1350227525ebb0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * MatrixAction::description</definition>
+        <argsstring>() const</argsstring>
+        <name>description</name>
+        <qualifiedname>MatrixAction::description</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a9b68c910283cdf1c6f08ca0b85f3d001_1a9b68c910283cdf1c6f08ca0b85f3d001">description</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="26" column="22" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="133" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="class_matrix_action_a1407c7b3db4daa669f331dec05d6ef6b_1a1407c7b3db4daa669f331dec05d6ef6b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * MatrixAction::shortDescription</definition>
+        <argsstring>() const</argsstring>
+        <name>shortDescription</name>
+        <qualifiedname>MatrixAction::shortDescription</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a560176988354a3e8e89d0bed5e931d7b_1a560176988354a3e8e89d0bed5e931d7b">shortDescription</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="27" column="22" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="138" bodyend="140"/>
+      </memberdef>
+      <memberdef kind="function" id="class_matrix_action_a410bf9d83fcf3885a1c95f795747fbf5_1a410bf9d83fcf3885a1c95f795747fbf5" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void MatrixAction::pushBackParameters</definition>
+        <argsstring>(std::vector&lt; mic::CliParameter * &gt; &amp;parameters)</argsstring>
+        <name>pushBackParameters</name>
+        <qualifiedname>MatrixAction::pushBackParameters</qualifiedname>
+        <reimplements refid="classmathic_1_1_action_a2a55e9dd992666f1d3e111536866222f_1a2a55e9dd992666f1d3e111536866222f">pushBackParameters</reimplements>
+        <param>
+          <type>std::vector&lt; <ref refid="classmathic_1_1_cli_parameter" kindref="compound">mic::CliParameter</ref> * &gt; &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="29" column="16" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="142" bodyend="146"/>
+        <references refid="class_matrix_action_a04095ab421bc1aa1bf840411accbc242_1a04095ab421bc1aa1bf840411accbc242" compoundref="_matrix_action_8hpp" startline="32">mParams</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_matrix_action_adb95bef952ab40007506524fc9beab39_1adb95bef952ab40007506524fc9beab39" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * MatrixAction::staticName</definition>
+        <argsstring>()</argsstring>
+        <name>staticName</name>
+        <qualifiedname>MatrixAction::staticName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="23" column="21" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="125" bodyend="127"/>
+        <referencedby refid="class_matrix_action_a04fe47fcfe098d0f1a43f91ecdb444e8_1a04fe47fcfe098d0f1a43f91ecdb444e8" compoundref="_matrix_action_8cpp" startline="129" endline="131">name</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Performs computations on matrices. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>MatrixAction</label>
+        <link refid="class_matrix_action"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mathic::Action</label>
+        <link refid="classmathic_1_1_action"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>CommonParams</label>
+        <link refid="class_common_params"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mThreadCount</edgelabel>
+          <edgelabel>mTracingLevel</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mLogs</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mDirectParameters</edgelabel>
+          <edgelabel>mExtensions</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mTaskArena</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mMaxDirectParams</edgelabel>
+          <edgelabel>mMinDirectParams</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>MatrixAction</label>
+        <link refid="class_matrix_action"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mParams</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>mathic::Action</label>
+        <link refid="classmathic_1_1_action"/>
+      </node>
+      <node id="5">
+        <label>mathic::CliParameter</label>
+        <link refid="classmathic_1_1_cli_parameter"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_description</edgelabel>
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mathic::IntegerParameter</label>
+        <link refid="classmathic_1_1_integer_parameter"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_value</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>mathic::StringParameter</label>
+        <link refid="classmathic_1_1_string_parameter"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_value</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>task_arena</label>
+      </node>
+      <node id="7">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="16">
+        <label>size_t</label>
+      </node>
+      <node id="6">
+        <label>std::string</label>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="12" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::unique_ptr&lt; mtbb::task_arena &gt;</label>
+        <childnode refid="14" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; mtbb::task_arena &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="12" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>unsigned</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/cli/MatrixAction.hpp" line="12" column="1" bodyfile="submodules/mathicgb/src/cli/MatrixAction.hpp" bodystart="12" bodyend="33"/>
+    <listofallmembers>
+      <member refid="class_matrix_action_ab86378846e1e4c16db1350227525ebb0_1ab86378846e1e4c16db1350227525ebb0" prot="public" virt="virtual"><scope>MatrixAction</scope><name>description</name></member>
+      <member refid="class_matrix_action_a0f2493538afcbc67ec1fb30e060f08a8_1a0f2493538afcbc67ec1fb30e060f08a8" prot="public" virt="virtual"><scope>MatrixAction</scope><name>directOptions</name></member>
+      <member refid="classmathic_1_1_action_afb19093560a9e774ec3451cef12e68a6_1afb19093560a9e774ec3451cef12e68a6" prot="public" virt="virtual"><scope>MatrixAction</scope><name>isHelpAction</name></member>
+      <member refid="class_matrix_action_a8b25f4c97bbda0f2e7cdf77c09190fea_1a8b25f4c97bbda0f2e7cdf77c09190fea" prot="public" virt="non-virtual"><scope>MatrixAction</scope><name>MatrixAction</name></member>
+      <member refid="class_matrix_action_a04095ab421bc1aa1bf840411accbc242_1a04095ab421bc1aa1bf840411accbc242" prot="private" virt="non-virtual"><scope>MatrixAction</scope><name>mParams</name></member>
+      <member refid="class_matrix_action_a04fe47fcfe098d0f1a43f91ecdb444e8_1a04fe47fcfe098d0f1a43f91ecdb444e8" prot="public" virt="virtual"><scope>MatrixAction</scope><name>name</name></member>
+      <member refid="class_matrix_action_a4fb6a72dcadf0971eddb2df7bb7e5b11_1a4fb6a72dcadf0971eddb2df7bb7e5b11" prot="public" virt="virtual"><scope>MatrixAction</scope><name>performAction</name></member>
+      <member refid="class_matrix_action_a410bf9d83fcf3885a1c95f795747fbf5_1a410bf9d83fcf3885a1c95f795747fbf5" prot="public" virt="virtual"><scope>MatrixAction</scope><name>pushBackParameters</name></member>
+      <member refid="class_matrix_action_a1407c7b3db4daa669f331dec05d6ef6b_1a1407c7b3db4daa669f331dec05d6ef6b" prot="public" virt="virtual"><scope>MatrixAction</scope><name>shortDescription</name></member>
+      <member refid="class_matrix_action_adb95bef952ab40007506524fc9beab39_1adb95bef952ab40007506524fc9beab39" prot="public" virt="non-virtual"><scope>MatrixAction</scope><name>staticName</name></member>
+      <member refid="classmathic_1_1_action_a1df019d99d092e2ca328a4ff65c71c0b_1a1df019d99d092e2ca328a4ff65c71c0b" prot="public" virt="virtual"><scope>MatrixAction</scope><name>~Action</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

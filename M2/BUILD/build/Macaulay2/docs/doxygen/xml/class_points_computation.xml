@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_points_computation" kind="class" language="C++" prot="public">
+    <compoundname>PointsComputation</compoundname>
+    <includes refid="points_8hpp" local="no">points.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename CoeffRing</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_points_computation_acb3233898f92304e174f70428f051d9a_1acb3233898f92304e174f70428f051d9a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>Matrix * PointsComputation&lt; CoeffRing &gt;::points</definition>
+        <argsstring>(const PolynomialRing *R, const typename CoeffRing::ring_type *K, const DMat&lt; CoeffRing &gt; *Pts, Matrix *&amp;result_std_monoms)</argsstring>
+        <name>points</name>
+        <qualifiedname>PointsComputation::points</qualifiedname>
+        <param>
+          <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type>const typename CoeffRing::ring_type *</type>
+          <declname>K</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; CoeffRing &gt; *</type>
+          <declname>Pts</declname>
+        </param>
+        <param>
+          <type><ref refid="class_matrix" kindref="compound">Matrix</ref> *&amp;</type>
+          <declname>result_std_monoms</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/points.hpp" line="39" column="17" bodyfile="Macaulay2/e/points.cpp" bodystart="54" bodyend="90"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <referencedby refid="engine_8h_ae9099efa6dc7a56d6f4c6b85692aebfb_1ae9099efa6dc7a56d6f4c6b85692aebfb" compoundref="points_8cpp" startline="13" endline="42">rawIdealOfPoints</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/points.hpp" line="36" column="1" bodyfile="Macaulay2/e/points.hpp" bodystart="37" bodyend="43"/>
+    <listofallmembers>
+      <member refid="class_points_computation_acb3233898f92304e174f70428f051d9a_1acb3233898f92304e174f70428f051d9a" prot="public" virt="non-virtual"><scope>PointsComputation</scope><name>points</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

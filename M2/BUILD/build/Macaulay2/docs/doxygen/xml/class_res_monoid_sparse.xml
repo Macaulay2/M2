@@ -1,0 +1,1418 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_res_monoid_sparse" kind="class" language="C++" prot="public">
+    <compoundname>ResMonoidSparse</compoundname>
+    <includes refid="res-moninfo-sparse_8hpp" local="no">res-moninfo-sparse.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_res_monoid_sparse_aedfcd65ff538519fb13fc443a3af2bb2_1aedfcd65ff538519fb13fc443a3af2bb2" prot="public" static="no">
+        <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+        <definition>typedef res_packed_monomial ResMonoidSparse::monomial</definition>
+        <argsstring></argsstring>
+        <name>monomial</name>
+        <qualifiedname>ResMonoidSparse::monomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="118" column="31" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_res_monoid_sparse_a9da72362c0cd586b13b7aa94bb53b55f_1a9da72362c0cd586b13b7aa94bb53b55f" prot="public" static="no">
+        <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+        <definition>typedef res_const_packed_monomial ResMonoidSparse::const_monomial</definition>
+        <argsstring></argsstring>
+        <name>const_monomial</name>
+        <qualifiedname>ResMonoidSparse::const_monomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="119" column="37" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_res_monoid_sparse_a08e7a8b463bed291627d296b8f924e5f_1a08e7a8b463bed291627d296b8f924e5f" prot="public" static="no">
+        <type><ref refid="class_res_monoid_sparse_aedfcd65ff538519fb13fc443a3af2bb2_1aedfcd65ff538519fb13fc443a3af2bb2" kindref="member">monomial</ref></type>
+        <definition>typedef monomial ResMonoidSparse::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <qualifiedname>ResMonoidSparse::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="120" column="20" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_res_monoid_sparse_a0b7338d8ecabd93eedeeb08289986326_1a0b7338d8ecabd93eedeeb08289986326" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::mNumVars</definition>
+        <argsstring></argsstring>
+        <name>mNumVars</name>
+        <qualifiedname>ResMonoidSparse::mNumVars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="85" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="85" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a1099045e3d65f7c8a7b8a09d0f1d4ae6_1a1099045e3d65f7c8a7b8a09d0f1d4ae6" compoundref="res-moninfo-sparse_8hpp" startline="179" endline="207">from_expvector</referencedby>
+        <referencedby refid="class_res_monoid_sparse_aa11123f1642443e883517e3c9447d717_1aa11123f1642443e883517e3c9447d717" compoundref="res-moninfo-sparse_8hpp" startline="129" endline="129">n_vars</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" compoundref="res-moninfo-sparse_8hpp" startline="157" endline="178">setWeightAndHash</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a404b267441c4b4b12b909fe7f0ef8457_1a404b267441c4b4b12b909fe7f0ef8457" compoundref="res-moninfo-sparse_8hpp" startline="233" endline="244">to_expvector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_abb9fd86f43b50431049e2f2adddb55a1_1abb9fd86f43b50431049e2f2adddb55a1" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::nslots</definition>
+        <argsstring></argsstring>
+        <name>nslots</name>
+        <qualifiedname>ResMonoidSparse::nslots</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="86" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="86" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a50dbe0aceef55d54f9901d897477c22f_1a50dbe0aceef55d54f9901d897477c22f" compoundref="res-moninfo-sparse_8hpp" startline="130" endline="130">max_monomial_size</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_afb6635e65bab28e0d0e8ce446eb1f2ce_1afb6635e65bab28e0d0e8ce446eb1f2ce" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="res-monomial-types_8hpp_a519813b4b46a3b9a9de16c4845d0609c_1a519813b4b46a3b9a9de16c4845d0609c" kindref="member">res_monomial_word</ref>[]&gt;</type>
+        <definition>std::unique_ptr&lt;res_monomial_word[]&gt; ResMonoidSparse::hashfcn</definition>
+        <argsstring></argsstring>
+        <name>hashfcn</name>
+        <qualifiedname>ResMonoidSparse::hashfcn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="88" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="88" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a1099045e3d65f7c8a7b8a09d0f1d4ae6_1a1099045e3d65f7c8a7b8a09d0f1d4ae6" compoundref="res-moninfo-sparse_8hpp" startline="179" endline="207">from_expvector</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" compoundref="res-moninfo-sparse_8hpp" startline="157" endline="178">setWeightAndHash</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a4f8abebe7c2758447539abaaccd0d7e9_1a4f8abebe7c2758447539abaaccd0d7e9" prot="private" static="no" mutable="no">
+        <type><ref refid="res-monomial-types_8hpp_a519813b4b46a3b9a9de16c4845d0609c_1a519813b4b46a3b9a9de16c4845d0609c" kindref="member">res_monomial_word</ref></type>
+        <definition>res_monomial_word ResMonoidSparse::mask</definition>
+        <argsstring></argsstring>
+        <name>mask</name>
+        <qualifiedname>ResMonoidSparse::mask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="89" column="21" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="89" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a77feaf031672e899c8b08dfe49caa39b_1a77feaf031672e899c8b08dfe49caa39b" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>std::vector&lt;int&gt; ResMonoidSparse::mVarDegrees</definition>
+        <argsstring></argsstring>
+        <name>mVarDegrees</name>
+        <qualifiedname>ResMonoidSparse::mVarDegrees</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="90" column="15" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="90" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a2955fc1f0be9eab4fb04d7b11a691681_1a2955fc1f0be9eab4fb04d7b11a691681" compoundref="res-moninfo-sparse_8hpp" startline="510" endline="513">degree_of_vp</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::mFirstVar</definition>
+        <argsstring></argsstring>
+        <name>mFirstVar</name>
+        <qualifiedname>ResMonoidSparse::mFirstVar</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="93" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="93" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_ab9b095c95ef7183b9a8c918613be67b1_1ab9b095c95ef7183b9a8c918613be67b1" compoundref="res-moninfo-sparse_8hpp" startline="423" endline="460">compare_grevlex</referencedby>
+        <referencedby refid="class_res_monoid_sparse_ab12584a3b29d351847c42dc76c89beba_1ab12584a3b29d351847c42dc76c89beba" compoundref="res-moninfo-sparse_8hpp" startline="384" endline="408">divide</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a1099045e3d65f7c8a7b8a09d0f1d4ae6_1a1099045e3d65f7c8a7b8a09d0f1d4ae6" compoundref="res-moninfo-sparse_8hpp" startline="179" endline="207">from_expvector</referencedby>
+        <referencedby refid="class_res_monoid_sparse_ad72399e0a80961d70d5135bf8d54b225_1ad72399e0a80961d70d5135bf8d54b225" compoundref="res-moninfo-sparse_8hpp" startline="276" endline="294">from_varpower_monomial</referencedby>
+        <referencedby refid="class_res_monoid_sparse_aa9122ba11512aeff20a678dc8d025e2f_1aa9122ba11512aeff20a678dc8d025e2f" compoundref="res-moninfo-sparse_8hpp" startline="223" endline="231">one</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3d7eae0e990e9b09c39915d9d3d4d692_1a3d7eae0e990e9b09c39915d9d3d4d692" compoundref="res-moninfo-sparse_8hpp" startline="515" endline="554">quotient_as_vp</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" compoundref="res-moninfo-sparse_8hpp" startline="157" endline="178">setWeightAndHash</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a2f5a351339c320a95334f8aaee4d207d_1a2f5a351339c320a95334f8aaee4d207d" compoundref="res-moninfo-sparse_8cpp" startline="101" endline="110">showAlpha</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a404b267441c4b4b12b909fe7f0ef8457_1a404b267441c4b4b12b909fe7f0ef8457" compoundref="res-moninfo-sparse_8hpp" startline="233" endline="244">to_expvector</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a623965fb45cd0b1a99f50ab89738d13e_1a623965fb45cd0b1a99f50ab89738d13e" compoundref="res-moninfo-sparse_8hpp" startline="246" endline="274">to_varpower_monomial</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a2deb7036d87fc52b492c823edf9cc798_1a2deb7036d87fc52b492c823edf9cc798" compoundref="res-moninfo-sparse_8hpp" startline="333" endline="382">unchecked_mult</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_ad4f157b09c79399b3713d5242a05d8dd_1ad4f157b09c79399b3713d5242a05d8dd" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::mFirstWeight</definition>
+        <argsstring></argsstring>
+        <name>mFirstWeight</name>
+        <qualifiedname>ResMonoidSparse::mFirstWeight</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="95" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="95" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" compoundref="res-moninfo-sparse_8hpp" startline="157" endline="178">setWeightAndHash</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a042d9474da1a4f88d79c0b7b224c14b8_1a042d9474da1a4f88d79c0b7b224c14b8" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::mNumWeights</definition>
+        <argsstring></argsstring>
+        <name>mNumWeights</name>
+        <qualifiedname>ResMonoidSparse::mNumWeights</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="96" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="96" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" compoundref="res-moninfo-sparse_8hpp" startline="157" endline="178">setWeightAndHash</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a7d9e6b90d2e8bde0a0aaa7de5b17a8dd_1a7d9e6b90d2e8bde0a0aaa7de5b17a8dd" compoundref="res-moninfo-sparse_8hpp" startline="216" endline="221">skew_mult_sign</referencedby>
+        <referencedby refid="class_res_monoid_sparse_abaffbb4017bbde349b1c6e04b786b4c0_1abaffbb4017bbde349b1c6e04b786b4c0" compoundref="res-moninfo-sparse_8hpp" startline="209" endline="214">skew_vars</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_ab7238d5e5cc59d63651b04f780a13504_1ab7238d5e5cc59d63651b04f780a13504" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>std::vector&lt;int&gt; ResMonoidSparse::mWeightVectors</definition>
+        <argsstring></argsstring>
+        <name>mWeightVectors</name>
+        <qualifiedname>ResMonoidSparse::mWeightVectors</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="99" column="15" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="99" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" compoundref="res-moninfo-sparse_8hpp" startline="157" endline="178">setWeightAndHash</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a58b0edd8ff695ce3674e2e8ace843eec_1a58b0edd8ff695ce3674e2e8ace843eec" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_hash_value</definition>
+        <argsstring></argsstring>
+        <name>ncalls_hash_value</name>
+        <qualifiedname>ResMonoidSparse::ncalls_hash_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="101" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="101" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_af2d7808427190f8fb9d47faa9765b02f_1af2d7808427190f8fb9d47faa9765b02f" compoundref="res-moninfo-sparse_8hpp" startline="134" endline="138">hash_value</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a4a82f2101a80b71b06b5ae0a168e4fe5_1a4a82f2101a80b71b06b5ae0a168e4fe5" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_compare</definition>
+        <argsstring></argsstring>
+        <name>ncalls_compare</name>
+        <qualifiedname>ResMonoidSparse::ncalls_compare</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="102" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="102" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a63967c3c37beade69e977c0e89812ed1_1a63967c3c37beade69e977c0e89812ed1" compoundref="res-moninfo-sparse_8hpp" startline="462" endline="500">compare_schreyer</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_ab25a68c56eef50f36f5b7faa1328759a_1ab25a68c56eef50f36f5b7faa1328759a" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_compare_grevlex</definition>
+        <argsstring></argsstring>
+        <name>ncalls_compare_grevlex</name>
+        <qualifiedname>ResMonoidSparse::ncalls_compare_grevlex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="103" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="103" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_ab9b095c95ef7183b9a8c918613be67b1_1ab9b095c95ef7183b9a8c918613be67b1" compoundref="res-moninfo-sparse_8hpp" startline="423" endline="460">compare_grevlex</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a7a432ad51bc757271265f0c735a438fd_1a7a432ad51bc757271265f0c735a438fd" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_mult</definition>
+        <argsstring></argsstring>
+        <name>ncalls_mult</name>
+        <qualifiedname>ResMonoidSparse::ncalls_mult</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="104" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="104" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a2deb7036d87fc52b492c823edf9cc798_1a2deb7036d87fc52b492c823edf9cc798" compoundref="res-moninfo-sparse_8hpp" startline="333" endline="382">unchecked_mult</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_af756bbfaf6389f1315af6171aaafa924_1af756bbfaf6389f1315af6171aaafa924" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_get_component</definition>
+        <argsstring></argsstring>
+        <name>ncalls_get_component</name>
+        <qualifiedname>ResMonoidSparse::ncalls_get_component</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="105" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="105" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a2975ccbfb3b7bf39faa96782f3a8c384_1a2975ccbfb3b7bf39faa96782f3a8c384" compoundref="res-moninfo-sparse_8hpp" startline="151" endline="155">get_component</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a0d2afe3e5efaa944a605ba36e2a4c5e6_1a0d2afe3e5efaa944a605ba36e2a4c5e6" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_from_expvector</definition>
+        <argsstring></argsstring>
+        <name>ncalls_from_expvector</name>
+        <qualifiedname>ResMonoidSparse::ncalls_from_expvector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="106" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="106" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a1099045e3d65f7c8a7b8a09d0f1d4ae6_1a1099045e3d65f7c8a7b8a09d0f1d4ae6" compoundref="res-moninfo-sparse_8hpp" startline="179" endline="207">from_expvector</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_ac57efac247d5bdc753ef7dfc4cbbc4b1_1ac57efac247d5bdc753ef7dfc4cbbc4b1" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_to_expvector</definition>
+        <argsstring></argsstring>
+        <name>ncalls_to_expvector</name>
+        <qualifiedname>ResMonoidSparse::ncalls_to_expvector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="107" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="107" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a404b267441c4b4b12b909fe7f0ef8457_1a404b267441c4b4b12b909fe7f0ef8457" compoundref="res-moninfo-sparse_8hpp" startline="233" endline="244">to_expvector</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a73607c1469bd9be3ec7b5f5fde8853e1_1a73607c1469bd9be3ec7b5f5fde8853e1" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_to_varpower</definition>
+        <argsstring></argsstring>
+        <name>ncalls_to_varpower</name>
+        <qualifiedname>ResMonoidSparse::ncalls_to_varpower</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="108" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="108" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a623965fb45cd0b1a99f50ab89738d13e_1a623965fb45cd0b1a99f50ab89738d13e" compoundref="res-moninfo-sparse_8hpp" startline="246" endline="274">to_varpower_monomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a34582529d3d5f136236308d3b08c69ff_1a34582529d3d5f136236308d3b08c69ff" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_from_varpower</definition>
+        <argsstring></argsstring>
+        <name>ncalls_from_varpower</name>
+        <qualifiedname>ResMonoidSparse::ncalls_from_varpower</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="109" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="109" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_ad72399e0a80961d70d5135bf8d54b225_1ad72399e0a80961d70d5135bf8d54b225" compoundref="res-moninfo-sparse_8hpp" startline="276" endline="294">from_varpower_monomial</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_ab971fc6111368aa82671e79a43c1f0d0_1ab971fc6111368aa82671e79a43c1f0d0" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_is_equal</definition>
+        <argsstring></argsstring>
+        <name>ncalls_is_equal</name>
+        <qualifiedname>ResMonoidSparse::ncalls_is_equal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="110" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="110" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_ae8c0293da1009679195ee045d64e4d72_1ae8c0293da1009679195ee045d64e4d72" compoundref="res-moninfo-sparse_8hpp" startline="296" endline="304">is_equal</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a154e2590ea93fa74b22005357b8bf1aa_1a154e2590ea93fa74b22005357b8bf1aa" compoundref="res-moninfo-sparse_8hpp" startline="306" endline="318">monomial_part_is_equal</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a686e1541e0bebc65f2654fe6a262e104_1a686e1541e0bebc65f2654fe6a262e104" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_is_equal_true</definition>
+        <argsstring></argsstring>
+        <name>ncalls_is_equal_true</name>
+        <qualifiedname>ResMonoidSparse::ncalls_is_equal_true</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="111" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="111" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_ae8c0293da1009679195ee045d64e4d72_1ae8c0293da1009679195ee045d64e4d72" compoundref="res-moninfo-sparse_8hpp" startline="296" endline="304">is_equal</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a154e2590ea93fa74b22005357b8bf1aa_1a154e2590ea93fa74b22005357b8bf1aa" compoundref="res-moninfo-sparse_8hpp" startline="306" endline="318">monomial_part_is_equal</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_abfcd8f59ad10b35dad8e287aed44cf4e_1abfcd8f59ad10b35dad8e287aed44cf4e" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_divide</definition>
+        <argsstring></argsstring>
+        <name>ncalls_divide</name>
+        <qualifiedname>ResMonoidSparse::ncalls_divide</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="112" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="112" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_ab12584a3b29d351847c42dc76c89beba_1ab12584a3b29d351847c42dc76c89beba" compoundref="res-moninfo-sparse_8hpp" startline="384" endline="408">divide</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a388ccdc2cd6589c4429e6e0f3e124d40_1a388ccdc2cd6589c4429e6e0f3e124d40" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_weight</definition>
+        <argsstring></argsstring>
+        <name>ncalls_weight</name>
+        <qualifiedname>ResMonoidSparse::ncalls_weight</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="113" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="113" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a9ad832e6fb3a42dfb231ac17a83832b4_1a9ad832e6fb3a42dfb231ac17a83832b4" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_unneccesary</definition>
+        <argsstring></argsstring>
+        <name>ncalls_unneccesary</name>
+        <qualifiedname>ResMonoidSparse::ncalls_unneccesary</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="114" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="114" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_monoid_sparse_a8495606135aa3990f7e2421976beba2f_1a8495606135aa3990f7e2421976beba2f" prot="private" static="no" mutable="yes">
+        <type>unsigned long</type>
+        <definition>unsigned long ResMonoidSparse::ncalls_quotient_as_vp</definition>
+        <argsstring></argsstring>
+        <name>ncalls_quotient_as_vp</name>
+        <qualifiedname>ResMonoidSparse::ncalls_quotient_as_vp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="115" column="25" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="115" bodyend="-1"/>
+        <referencedby refid="class_res_monoid_sparse_a3d7eae0e990e9b09c39915d9d3d4d692_1a3d7eae0e990e9b09c39915d9d3d4d692" compoundref="res-moninfo-sparse_8hpp" startline="515" endline="554">quotient_as_vp</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" compoundref="res-moninfo-sparse_8cpp" startline="9" endline="62">ResMonoidSparse</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" compoundref="res-moninfo-sparse_8cpp" startline="65" endline="88">show</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ResMonoidSparse::ResMonoidSparse</definition>
+        <argsstring>(int mNumVars, const std::vector&lt; int &gt; &amp;var_degrees, const std::vector&lt; int &gt; &amp;weightvecs, const MonomialOrderingType moType)</argsstring>
+        <name>ResMonoidSparse</name>
+        <qualifiedname>ResMonoidSparse::ResMonoidSparse</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>mNumVars</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>var_degrees</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>weightvecs</declname>
+        </param>
+        <param>
+          <type>const <ref refid="res-monomial-types_8hpp_a63153a009acee44d67d789ad5d367bff_1a63153a009acee44d67d789ad5d367bff" kindref="member">MonomialOrderingType</ref></type>
+          <declname>moType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="122" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.cpp" bodystart="9" bodyend="62"/>
+        <references refid="res-monomial-types_8hpp_a63153a009acee44d67d789ad5d367bff_1a63153a009acee44d67d789ad5d367bffa903417f3aa0cffa7141aff8d8d5da0d7" compoundref="res-monomial-types_8hpp" startline="41">GRevLex</references>
+        <references refid="class_res_monoid_sparse_afb6635e65bab28e0d0e8ce446eb1f2ce_1afb6635e65bab28e0d0e8ce446eb1f2ce" compoundref="res-moninfo-sparse_8hpp" startline="88">hashfcn</references>
+        <references refid="res-monomial-types_8hpp_a63153a009acee44d67d789ad5d367bff_1a63153a009acee44d67d789ad5d367bffa976472a144efa6a4b849b24ac6b18867" compoundref="res-monomial-types_8hpp" startline="41">Lex</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="class_res_monoid_sparse_a4f8abebe7c2758447539abaaccd0d7e9_1a4f8abebe7c2758447539abaaccd0d7e9" compoundref="res-moninfo-sparse_8hpp" startline="89">mask</references>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_ad4f157b09c79399b3713d5242a05d8dd_1ad4f157b09c79399b3713d5242a05d8dd" compoundref="res-moninfo-sparse_8hpp" startline="95">mFirstWeight</references>
+        <references refid="class_res_monoid_sparse_a0b7338d8ecabd93eedeeb08289986326_1a0b7338d8ecabd93eedeeb08289986326" compoundref="res-moninfo-sparse_8hpp" startline="85">mNumVars</references>
+        <references refid="class_res_monoid_sparse_a042d9474da1a4f88d79c0b7b224c14b8_1a042d9474da1a4f88d79c0b7b224c14b8" compoundref="res-moninfo-sparse_8hpp" startline="96">mNumWeights</references>
+        <references refid="class_res_monoid_sparse_a77feaf031672e899c8b08dfe49caa39b_1a77feaf031672e899c8b08dfe49caa39b" compoundref="res-moninfo-sparse_8hpp" startline="90">mVarDegrees</references>
+        <references refid="class_res_monoid_sparse_ab7238d5e5cc59d63651b04f780a13504_1ab7238d5e5cc59d63651b04f780a13504" compoundref="res-moninfo-sparse_8hpp" startline="99">mWeightVectors</references>
+        <references refid="class_res_monoid_sparse_a4a82f2101a80b71b06b5ae0a168e4fe5_1a4a82f2101a80b71b06b5ae0a168e4fe5" compoundref="res-moninfo-sparse_8hpp" startline="102">ncalls_compare</references>
+        <references refid="class_res_monoid_sparse_ab25a68c56eef50f36f5b7faa1328759a_1ab25a68c56eef50f36f5b7faa1328759a" compoundref="res-moninfo-sparse_8hpp" startline="103">ncalls_compare_grevlex</references>
+        <references refid="class_res_monoid_sparse_abfcd8f59ad10b35dad8e287aed44cf4e_1abfcd8f59ad10b35dad8e287aed44cf4e" compoundref="res-moninfo-sparse_8hpp" startline="112">ncalls_divide</references>
+        <references refid="class_res_monoid_sparse_a0d2afe3e5efaa944a605ba36e2a4c5e6_1a0d2afe3e5efaa944a605ba36e2a4c5e6" compoundref="res-moninfo-sparse_8hpp" startline="106">ncalls_from_expvector</references>
+        <references refid="class_res_monoid_sparse_a34582529d3d5f136236308d3b08c69ff_1a34582529d3d5f136236308d3b08c69ff" compoundref="res-moninfo-sparse_8hpp" startline="109">ncalls_from_varpower</references>
+        <references refid="class_res_monoid_sparse_af756bbfaf6389f1315af6171aaafa924_1af756bbfaf6389f1315af6171aaafa924" compoundref="res-moninfo-sparse_8hpp" startline="105">ncalls_get_component</references>
+        <references refid="class_res_monoid_sparse_a58b0edd8ff695ce3674e2e8ace843eec_1a58b0edd8ff695ce3674e2e8ace843eec" compoundref="res-moninfo-sparse_8hpp" startline="101">ncalls_hash_value</references>
+        <references refid="class_res_monoid_sparse_ab971fc6111368aa82671e79a43c1f0d0_1ab971fc6111368aa82671e79a43c1f0d0" compoundref="res-moninfo-sparse_8hpp" startline="110">ncalls_is_equal</references>
+        <references refid="class_res_monoid_sparse_a686e1541e0bebc65f2654fe6a262e104_1a686e1541e0bebc65f2654fe6a262e104" compoundref="res-moninfo-sparse_8hpp" startline="111">ncalls_is_equal_true</references>
+        <references refid="class_res_monoid_sparse_a7a432ad51bc757271265f0c735a438fd_1a7a432ad51bc757271265f0c735a438fd" compoundref="res-moninfo-sparse_8hpp" startline="104">ncalls_mult</references>
+        <references refid="class_res_monoid_sparse_a8495606135aa3990f7e2421976beba2f_1a8495606135aa3990f7e2421976beba2f" compoundref="res-moninfo-sparse_8hpp" startline="115">ncalls_quotient_as_vp</references>
+        <references refid="class_res_monoid_sparse_ac57efac247d5bdc753ef7dfc4cbbc4b1_1ac57efac247d5bdc753ef7dfc4cbbc4b1" compoundref="res-moninfo-sparse_8hpp" startline="107">ncalls_to_expvector</references>
+        <references refid="class_res_monoid_sparse_a73607c1469bd9be3ec7b5f5fde8853e1_1a73607c1469bd9be3ec7b5f5fde8853e1" compoundref="res-moninfo-sparse_8hpp" startline="108">ncalls_to_varpower</references>
+        <references refid="class_res_monoid_sparse_a9ad832e6fb3a42dfb231ac17a83832b4_1a9ad832e6fb3a42dfb231ac17a83832b4" compoundref="res-moninfo-sparse_8hpp" startline="114">ncalls_unneccesary</references>
+        <references refid="class_res_monoid_sparse_a388ccdc2cd6589c4429e6e0f3e124d40_1a388ccdc2cd6589c4429e6e0f3e124d40" compoundref="res-moninfo-sparse_8hpp" startline="113">ncalls_weight</references>
+        <references refid="class_res_monoid_sparse_abb9fd86f43b50431049e2f2adddb55a1_1abb9fd86f43b50431049e2f2adddb55a1" compoundref="res-moninfo-sparse_8hpp" startline="86">nslots</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a14a7e702b918a4334864c8590b500bd1_1a14a7e702b918a4334864c8590b500bd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ResMonoidSparse::~ResMonoidSparse</definition>
+        <argsstring>()</argsstring>
+        <name>~ResMonoidSparse</name>
+        <qualifiedname>ResMonoidSparse::~ResMonoidSparse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="127" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.cpp" bodystart="64" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_aa11123f1642443e883517e3c9447d717_1aa11123f1642443e883517e3c9447d717" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::n_vars</definition>
+        <argsstring>() const</argsstring>
+        <name>n_vars</name>
+        <qualifiedname>ResMonoidSparse::n_vars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="129" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="129" bodyend="129"/>
+        <references refid="class_res_monoid_sparse_a0b7338d8ecabd93eedeeb08289986326_1a0b7338d8ecabd93eedeeb08289986326" compoundref="res-moninfo-sparse_8hpp" startline="85">mNumVars</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a50dbe0aceef55d54f9901d897477c22f_1a50dbe0aceef55d54f9901d897477c22f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::max_monomial_size</definition>
+        <argsstring>() const</argsstring>
+        <name>max_monomial_size</name>
+        <qualifiedname>ResMonoidSparse::max_monomial_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="130" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="130" bodyend="130"/>
+        <references refid="class_res_monoid_sparse_abb9fd86f43b50431049e2f2adddb55a1_1abb9fd86f43b50431049e2f2adddb55a1" compoundref="res-moninfo-sparse_8hpp" startline="86">nslots</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a647dbaff6be1f3921612dc718447f46b_1a647dbaff6be1f3921612dc718447f46b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::monomial_size</definition>
+        <argsstring>(res_const_packed_monomial m) const</argsstring>
+        <name>monomial_size</name>
+        <qualifiedname>ResMonoidSparse::monomial_size</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="131" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="131" bodyend="131"/>
+        <referencedby refid="class_res_monoid_sparse_af1b251b2705e05515a5549aa608db9c5_1af1b251b2705e05515a5549aa608db9c5" compoundref="res-moninfo-sparse_8cpp" startline="112" endline="121">dump</referencedby>
+        <referencedby refid="class_res_monoid_sparse_af3e984980dcf3b1d251ab017b61e06cd_1af3e984980dcf3b1d251ab017b61e06cd" compoundref="res-moninfo-sparse_8cpp" startline="90" endline="99">show</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::show</definition>
+        <argsstring>() const</argsstring>
+        <name>show</name>
+        <qualifiedname>ResMonoidSparse::show</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="132" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.cpp" bodystart="65" bodyend="88"/>
+        <references refid="class_res_monoid_sparse_afb6635e65bab28e0d0e8ce446eb1f2ce_1afb6635e65bab28e0d0e8ce446eb1f2ce" compoundref="res-moninfo-sparse_8hpp" startline="88">hashfcn</references>
+        <references refid="class_res_monoid_sparse_a4f8abebe7c2758447539abaaccd0d7e9_1a4f8abebe7c2758447539abaaccd0d7e9" compoundref="res-moninfo-sparse_8hpp" startline="89">mask</references>
+        <references refid="class_res_monoid_sparse_a0b7338d8ecabd93eedeeb08289986326_1a0b7338d8ecabd93eedeeb08289986326" compoundref="res-moninfo-sparse_8hpp" startline="85">mNumVars</references>
+        <references refid="class_res_monoid_sparse_a4a82f2101a80b71b06b5ae0a168e4fe5_1a4a82f2101a80b71b06b5ae0a168e4fe5" compoundref="res-moninfo-sparse_8hpp" startline="102">ncalls_compare</references>
+        <references refid="class_res_monoid_sparse_ab25a68c56eef50f36f5b7faa1328759a_1ab25a68c56eef50f36f5b7faa1328759a" compoundref="res-moninfo-sparse_8hpp" startline="103">ncalls_compare_grevlex</references>
+        <references refid="class_res_monoid_sparse_abfcd8f59ad10b35dad8e287aed44cf4e_1abfcd8f59ad10b35dad8e287aed44cf4e" compoundref="res-moninfo-sparse_8hpp" startline="112">ncalls_divide</references>
+        <references refid="class_res_monoid_sparse_a0d2afe3e5efaa944a605ba36e2a4c5e6_1a0d2afe3e5efaa944a605ba36e2a4c5e6" compoundref="res-moninfo-sparse_8hpp" startline="106">ncalls_from_expvector</references>
+        <references refid="class_res_monoid_sparse_a34582529d3d5f136236308d3b08c69ff_1a34582529d3d5f136236308d3b08c69ff" compoundref="res-moninfo-sparse_8hpp" startline="109">ncalls_from_varpower</references>
+        <references refid="class_res_monoid_sparse_af756bbfaf6389f1315af6171aaafa924_1af756bbfaf6389f1315af6171aaafa924" compoundref="res-moninfo-sparse_8hpp" startline="105">ncalls_get_component</references>
+        <references refid="class_res_monoid_sparse_a58b0edd8ff695ce3674e2e8ace843eec_1a58b0edd8ff695ce3674e2e8ace843eec" compoundref="res-moninfo-sparse_8hpp" startline="101">ncalls_hash_value</references>
+        <references refid="class_res_monoid_sparse_ab971fc6111368aa82671e79a43c1f0d0_1ab971fc6111368aa82671e79a43c1f0d0" compoundref="res-moninfo-sparse_8hpp" startline="110">ncalls_is_equal</references>
+        <references refid="class_res_monoid_sparse_a686e1541e0bebc65f2654fe6a262e104_1a686e1541e0bebc65f2654fe6a262e104" compoundref="res-moninfo-sparse_8hpp" startline="111">ncalls_is_equal_true</references>
+        <references refid="class_res_monoid_sparse_a7a432ad51bc757271265f0c735a438fd_1a7a432ad51bc757271265f0c735a438fd" compoundref="res-moninfo-sparse_8hpp" startline="104">ncalls_mult</references>
+        <references refid="class_res_monoid_sparse_a8495606135aa3990f7e2421976beba2f_1a8495606135aa3990f7e2421976beba2f" compoundref="res-moninfo-sparse_8hpp" startline="115">ncalls_quotient_as_vp</references>
+        <references refid="class_res_monoid_sparse_ac57efac247d5bdc753ef7dfc4cbbc4b1_1ac57efac247d5bdc753ef7dfc4cbbc4b1" compoundref="res-moninfo-sparse_8hpp" startline="107">ncalls_to_expvector</references>
+        <references refid="class_res_monoid_sparse_a73607c1469bd9be3ec7b5f5fde8853e1_1a73607c1469bd9be3ec7b5f5fde8853e1" compoundref="res-moninfo-sparse_8hpp" startline="108">ncalls_to_varpower</references>
+        <references refid="class_res_monoid_sparse_a9ad832e6fb3a42dfb231ac17a83832b4_1a9ad832e6fb3a42dfb231ac17a83832b4" compoundref="res-moninfo-sparse_8hpp" startline="114">ncalls_unneccesary</references>
+        <references refid="class_res_monoid_sparse_a388ccdc2cd6589c4429e6e0f3e124d40_1a388ccdc2cd6589c4429e6e0f3e124d40" compoundref="res-moninfo-sparse_8hpp" startline="113">ncalls_weight</references>
+        <references refid="class_res_monoid_sparse_abb9fd86f43b50431049e2f2adddb55a1_1abb9fd86f43b50431049e2f2adddb55a1" compoundref="res-moninfo-sparse_8hpp" startline="86">nslots</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_af2d7808427190f8fb9d47faa9765b02f_1af2d7808427190f8fb9d47faa9765b02f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="res-monomial-types_8hpp_a519813b4b46a3b9a9de16c4845d0609c_1a519813b4b46a3b9a9de16c4845d0609c" kindref="member">res_monomial_word</ref></type>
+        <definition>res_monomial_word ResMonoidSparse::hash_value</definition>
+        <argsstring>(res_const_packed_monomial m) const</argsstring>
+        <name>hash_value</name>
+        <qualifiedname>ResMonoidSparse::hash_value</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="134" column="21" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="134" bodyend="138"/>
+        <references refid="class_res_monoid_sparse_a58b0edd8ff695ce3674e2e8ace843eec_1a58b0edd8ff695ce3674e2e8ace843eec" compoundref="res-moninfo-sparse_8hpp" startline="101">ncalls_hash_value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_adf557cce176cd07b108b46e173f85996_1adf557cce176cd07b108b46e173f85996" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::copy</definition>
+        <argsstring>(res_const_packed_monomial src, res_packed_monomial target) const</argsstring>
+        <name>copy</name>
+        <qualifiedname>ResMonoidSparse::copy</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="141" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="141" bodyend="144"/>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_ae46cf3fd206007a111ee216f4602587c_1ae46cf3fd206007a111ee216f4602587c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::set_component</definition>
+        <argsstring>(component_index component, res_packed_monomial m) const</argsstring>
+        <name>set_component</name>
+        <qualifiedname>ResMonoidSparse::set_component</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref></type>
+          <declname>component</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="146" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="146" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a2975ccbfb3b7bf39faa96782f3a8c384_1a2975ccbfb3b7bf39faa96782f3a8c384" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref></type>
+        <definition>component_index ResMonoidSparse::get_component</definition>
+        <argsstring>(res_const_packed_monomial m) const</argsstring>
+        <name>get_component</name>
+        <qualifiedname>ResMonoidSparse::get_component</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="151" column="19" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="151" bodyend="155"/>
+        <references refid="class_res_monoid_sparse_af756bbfaf6389f1315af6171aaafa924_1af756bbfaf6389f1315af6171aaafa924" compoundref="res-moninfo-sparse_8hpp" startline="105">ncalls_get_component</references>
+        <referencedby refid="class_res_monoid_sparse_a2f5a351339c320a95334f8aaee4d207d_1a2f5a351339c320a95334f8aaee4d207d" compoundref="res-moninfo-sparse_8cpp" startline="101" endline="110">showAlpha</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::setWeightAndHash</definition>
+        <argsstring>(res_packed_monomial result) const</argsstring>
+        <name>setWeightAndHash</name>
+        <qualifiedname>ResMonoidSparse::setWeightAndHash</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="157" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="157" bodyend="178"/>
+        <references refid="class_res_monoid_sparse_afb6635e65bab28e0d0e8ce446eb1f2ce_1afb6635e65bab28e0d0e8ce446eb1f2ce" compoundref="res-moninfo-sparse_8hpp" startline="88">hashfcn</references>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_ad4f157b09c79399b3713d5242a05d8dd_1ad4f157b09c79399b3713d5242a05d8dd" compoundref="res-moninfo-sparse_8hpp" startline="95">mFirstWeight</references>
+        <references refid="class_res_monoid_sparse_a0b7338d8ecabd93eedeeb08289986326_1a0b7338d8ecabd93eedeeb08289986326" compoundref="res-moninfo-sparse_8hpp" startline="85">mNumVars</references>
+        <references refid="class_res_monoid_sparse_a042d9474da1a4f88d79c0b7b224c14b8_1a042d9474da1a4f88d79c0b7b224c14b8" compoundref="res-moninfo-sparse_8hpp" startline="96">mNumWeights</references>
+        <references refid="class_res_monoid_sparse_ab7238d5e5cc59d63651b04f780a13504_1ab7238d5e5cc59d63651b04f780a13504" compoundref="res-moninfo-sparse_8hpp" startline="99">mWeightVectors</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_res_monoid_sparse_a1099045e3d65f7c8a7b8a09d0f1d4ae6_1a1099045e3d65f7c8a7b8a09d0f1d4ae6" compoundref="res-moninfo-sparse_8hpp" startline="179" endline="207">from_expvector</referencedby>
+        <referencedby refid="class_res_monoid_sparse_ad72399e0a80961d70d5135bf8d54b225_1ad72399e0a80961d70d5135bf8d54b225" compoundref="res-moninfo-sparse_8hpp" startline="276" endline="294">from_varpower_monomial</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a1099045e3d65f7c8a7b8a09d0f1d4ae6_1a1099045e3d65f7c8a7b8a09d0f1d4ae6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ResMonoidSparse::from_expvector</definition>
+        <argsstring>(res_const_ntuple_monomial e, component_index comp, res_packed_monomial result) const</argsstring>
+        <name>from_expvector</name>
+        <qualifiedname>ResMonoidSparse::from_expvector</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af79149b276b5225b9f62f35116d656c3_1af79149b276b5225b9f62f35116d656c3" kindref="member">res_const_ntuple_monomial</ref></type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref></type>
+          <declname>comp</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="179" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="179" bodyend="207"/>
+        <references refid="class_res_monoid_sparse_afb6635e65bab28e0d0e8ce446eb1f2ce_1afb6635e65bab28e0d0e8ce446eb1f2ce" compoundref="res-moninfo-sparse_8hpp" startline="88">hashfcn</references>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_a0b7338d8ecabd93eedeeb08289986326_1a0b7338d8ecabd93eedeeb08289986326" compoundref="res-moninfo-sparse_8hpp" startline="85">mNumVars</references>
+        <references refid="class_res_monoid_sparse_a0d2afe3e5efaa944a605ba36e2a4c5e6_1a0d2afe3e5efaa944a605ba36e2a4c5e6" compoundref="res-moninfo-sparse_8hpp" startline="106">ncalls_from_expvector</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" compoundref="res-moninfo-sparse_8hpp" startline="157" endline="178">setWeightAndHash</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_abaffbb4017bbde349b1c6e04b786b4c0_1abaffbb4017bbde349b1c6e04b786b4c0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::skew_vars</definition>
+        <argsstring>(const SkewMultiplication *skew, res_const_packed_monomial m, int *skewvars) const</argsstring>
+        <name>skew_vars</name>
+        <qualifiedname>ResMonoidSparse::skew_vars</qualifiedname>
+        <param>
+          <type>const <ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref> *</type>
+          <declname>skew</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>skewvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="209" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="209" bodyend="214"/>
+        <references refid="class_res_monoid_sparse_a042d9474da1a4f88d79c0b7b224c14b8_1a042d9474da1a4f88d79c0b7b224c14b8" compoundref="res-moninfo-sparse_8hpp" startline="96">mNumWeights</references>
+        <references refid="class_skew_multiplication_ad9139688809cf9df508938552ddc01e3_1ad9139688809cf9df508938552ddc01e3" compoundref="skew_8cpp" startline="61" endline="74">SkewMultiplication::skew_vars</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a7d9e6b90d2e8bde0a0aaa7de5b17a8dd_1a7d9e6b90d2e8bde0a0aaa7de5b17a8dd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::skew_mult_sign</definition>
+        <argsstring>(const SkewMultiplication *skew, res_const_packed_monomial m, res_const_packed_monomial n) const</argsstring>
+        <name>skew_mult_sign</name>
+        <qualifiedname>ResMonoidSparse::skew_mult_sign</qualifiedname>
+        <param>
+          <type>const <ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref> *</type>
+          <declname>skew</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="216" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="216" bodyend="221"/>
+        <references refid="class_res_monoid_sparse_a042d9474da1a4f88d79c0b7b224c14b8_1a042d9474da1a4f88d79c0b7b224c14b8" compoundref="res-moninfo-sparse_8hpp" startline="96">mNumWeights</references>
+        <references refid="class_skew_multiplication_a869bde7ea8e5d3c68e5a95c25e5c0c26_1a869bde7ea8e5d3c68e5a95c25e5c0c26" compoundref="skew_8cpp" startline="91" endline="98">SkewMultiplication::mult_sign</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_aa9122ba11512aeff20a678dc8d025e2f_1aa9122ba11512aeff20a678dc8d025e2f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ResMonoidSparse::one</definition>
+        <argsstring>(component_index comp, res_packed_monomial result) const</argsstring>
+        <name>one</name>
+        <qualifiedname>ResMonoidSparse::one</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref></type>
+          <declname>comp</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="223" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="223" bodyend="231"/>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a404b267441c4b4b12b909fe7f0ef8457_1a404b267441c4b4b12b909fe7f0ef8457" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ResMonoidSparse::to_expvector</definition>
+        <argsstring>(res_const_packed_monomial m, res_ntuple_monomial result, component_index &amp;result_comp) const</argsstring>
+        <name>to_expvector</name>
+        <qualifiedname>ResMonoidSparse::to_expvector</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a1c2a518c06fe13a8a4c72a4348ccda20_1a1c2a518c06fe13a8a4c72a4348ccda20" kindref="member">res_ntuple_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref> &amp;</type>
+          <declname>result_comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="233" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="233" bodyend="244"/>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_a0b7338d8ecabd93eedeeb08289986326_1a0b7338d8ecabd93eedeeb08289986326" compoundref="res-moninfo-sparse_8hpp" startline="85">mNumVars</references>
+        <references refid="class_res_monoid_sparse_ac57efac247d5bdc753ef7dfc4cbbc4b1_1ac57efac247d5bdc753ef7dfc4cbbc4b1" compoundref="res-moninfo-sparse_8hpp" startline="107">ncalls_to_expvector</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a623965fb45cd0b1a99f50ab89738d13e_1a623965fb45cd0b1a99f50ab89738d13e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::to_varpower_monomial</definition>
+        <argsstring>(res_const_packed_monomial m, res_varpower_monomial result) const</argsstring>
+        <name>to_varpower_monomial</name>
+        <qualifiedname>ResMonoidSparse::to_varpower_monomial</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a184f0cb454f74a5f8e8a0a16136ae244_1a184f0cb454f74a5f8e8a0a16136ae244" kindref="member">res_varpower_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="246" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="246" bodyend="274"/>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_a73607c1469bd9be3ec7b5f5fde8853e1_1a73607c1469bd9be3ec7b5f5fde8853e1" compoundref="res-moninfo-sparse_8hpp" startline="108">ncalls_to_varpower</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_ad72399e0a80961d70d5135bf8d54b225_1ad72399e0a80961d70d5135bf8d54b225" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::from_varpower_monomial</definition>
+        <argsstring>(res_const_varpower_monomial m, component_index comp, res_packed_monomial result) const</argsstring>
+        <name>from_varpower_monomial</name>
+        <qualifiedname>ResMonoidSparse::from_varpower_monomial</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a158a93e7bf5b0fa6f22140a152adc894_1a158a93e7bf5b0fa6f22140a152adc894" kindref="member">res_const_varpower_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref></type>
+          <declname>comp</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="276" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="276" bodyend="294"/>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_a34582529d3d5f136236308d3b08c69ff_1a34582529d3d5f136236308d3b08c69ff" compoundref="res-moninfo-sparse_8hpp" startline="109">ncalls_from_varpower</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" compoundref="res-moninfo-sparse_8hpp" startline="157" endline="178">setWeightAndHash</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_ae8c0293da1009679195ee045d64e4d72_1ae8c0293da1009679195ee045d64e4d72" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ResMonoidSparse::is_equal</definition>
+        <argsstring>(res_const_packed_monomial m, res_const_packed_monomial n) const</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>ResMonoidSparse::is_equal</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="296" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="296" bodyend="304"/>
+        <references refid="class_res_monoid_sparse_ab971fc6111368aa82671e79a43c1f0d0_1ab971fc6111368aa82671e79a43c1f0d0" compoundref="res-moninfo-sparse_8hpp" startline="110">ncalls_is_equal</references>
+        <references refid="class_res_monoid_sparse_a686e1541e0bebc65f2654fe6a262e104_1a686e1541e0bebc65f2654fe6a262e104" compoundref="res-moninfo-sparse_8hpp" startline="111">ncalls_is_equal_true</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a154e2590ea93fa74b22005357b8bf1aa_1a154e2590ea93fa74b22005357b8bf1aa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ResMonoidSparse::monomial_part_is_equal</definition>
+        <argsstring>(res_const_packed_monomial m, res_const_packed_monomial n) const</argsstring>
+        <name>monomial_part_is_equal</name>
+        <qualifiedname>ResMonoidSparse::monomial_part_is_equal</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="306" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="306" bodyend="318"/>
+        <references refid="class_res_monoid_sparse_ab971fc6111368aa82671e79a43c1f0d0_1ab971fc6111368aa82671e79a43c1f0d0" compoundref="res-moninfo-sparse_8hpp" startline="110">ncalls_is_equal</references>
+        <references refid="class_res_monoid_sparse_a686e1541e0bebc65f2654fe6a262e104_1a686e1541e0bebc65f2654fe6a262e104" compoundref="res-moninfo-sparse_8hpp" startline="111">ncalls_is_equal_true</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a2deb7036d87fc52b492c823edf9cc798_1a2deb7036d87fc52b492c823edf9cc798" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::unchecked_mult</definition>
+        <argsstring>(res_const_packed_monomial a, res_const_packed_monomial b, res_packed_monomial result) const</argsstring>
+        <name>unchecked_mult</name>
+        <qualifiedname>ResMonoidSparse::unchecked_mult</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="333" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="333" bodyend="382"/>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_a7a432ad51bc757271265f0c735a438fd_1a7a432ad51bc757271265f0c735a438fd" compoundref="res-moninfo-sparse_8hpp" startline="104">ncalls_mult</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_res_monoid_sparse_a4b3f68bf09b7b23c876e2d33a3937832_1a4b3f68bf09b7b23c876e2d33a3937832" compoundref="res-moninfo-sparse_8hpp" startline="410" endline="417">mult</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_ab12584a3b29d351847c42dc76c89beba_1ab12584a3b29d351847c42dc76c89beba" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ResMonoidSparse::divide</definition>
+        <argsstring>(res_const_packed_monomial m, res_const_packed_monomial n, res_packed_monomial result) const</argsstring>
+        <name>divide</name>
+        <qualifiedname>ResMonoidSparse::divide</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="384" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="384" bodyend="408"/>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_abfcd8f59ad10b35dad8e287aed44cf4e_1abfcd8f59ad10b35dad8e287aed44cf4e" compoundref="res-moninfo-sparse_8hpp" startline="112">ncalls_divide</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a4b3f68bf09b7b23c876e2d33a3937832_1a4b3f68bf09b7b23c876e2d33a3937832" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ResMonoidSparse::mult</definition>
+        <argsstring>(res_const_packed_monomial m, res_const_packed_monomial n, res_packed_monomial result) const</argsstring>
+        <name>mult</name>
+        <qualifiedname>ResMonoidSparse::mult</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_af33ca331995cea8124ea3653cfbf069d_1af33ca331995cea8124ea3653cfbf069d" kindref="member">res_packed_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="410" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="410" bodyend="417"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_res_monoid_sparse_a2deb7036d87fc52b492c823edf9cc798_1a2deb7036d87fc52b492c823edf9cc798" compoundref="res-moninfo-sparse_8hpp" startline="333" endline="382">unchecked_mult</references>
+        <referencedby refid="class_res_monoid_sparse_a63967c3c37beade69e977c0e89812ed1_1a63967c3c37beade69e977c0e89812ed1" compoundref="res-moninfo-sparse_8hpp" startline="462" endline="500">compare_schreyer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_af3e984980dcf3b1d251ab017b61e06cd_1af3e984980dcf3b1d251ab017b61e06cd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::show</definition>
+        <argsstring>(res_const_packed_monomial m) const</argsstring>
+        <name>show</name>
+        <qualifiedname>ResMonoidSparse::show</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="419" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.cpp" bodystart="90" bodyend="99"/>
+        <references refid="class_res_monoid_sparse_a647dbaff6be1f3921612dc718447f46b_1a647dbaff6be1f3921612dc718447f46b" compoundref="res-moninfo-sparse_8hpp" startline="131" endline="131">monomial_size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a2f5a351339c320a95334f8aaee4d207d_1a2f5a351339c320a95334f8aaee4d207d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::showAlpha</definition>
+        <argsstring>(res_const_packed_monomial m) const</argsstring>
+        <name>showAlpha</name>
+        <qualifiedname>ResMonoidSparse::showAlpha</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="421" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.cpp" bodystart="101" bodyend="110"/>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_res_monoid_sparse_a2975ccbfb3b7bf39faa96782f3a8c384_1a2975ccbfb3b7bf39faa96782f3a8c384" compoundref="res-moninfo-sparse_8hpp" startline="151" endline="155">get_component</references>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <referencedby refid="class_res_monoid_sparse_a63967c3c37beade69e977c0e89812ed1_1a63967c3c37beade69e977c0e89812ed1" compoundref="res-moninfo-sparse_8hpp" startline="462" endline="500">compare_schreyer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_ab9b095c95ef7183b9a8c918613be67b1_1ab9b095c95ef7183b9a8c918613be67b1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::compare_grevlex</definition>
+        <argsstring>(res_const_packed_monomial m, res_const_packed_monomial n) const</argsstring>
+        <name>compare_grevlex</name>
+        <qualifiedname>ResMonoidSparse::compare_grevlex</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="423" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="423" bodyend="460"/>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_ab25a68c56eef50f36f5b7faa1328759a_1ab25a68c56eef50f36f5b7faa1328759a" compoundref="res-moninfo-sparse_8hpp" startline="103">ncalls_compare_grevlex</references>
+        <referencedby refid="class_res_monoid_sparse_a63967c3c37beade69e977c0e89812ed1_1a63967c3c37beade69e977c0e89812ed1" compoundref="res-moninfo-sparse_8hpp" startline="462" endline="500">compare_schreyer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a63967c3c37beade69e977c0e89812ed1_1a63967c3c37beade69e977c0e89812ed1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::compare_schreyer</definition>
+        <argsstring>(res_const_packed_monomial m, res_const_packed_monomial n, res_const_packed_monomial m0, res_const_packed_monomial n0, component_index tie1, component_index tie2) const</argsstring>
+        <name>compare_schreyer</name>
+        <qualifiedname>ResMonoidSparse::compare_schreyer</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m0</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n0</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref></type>
+          <declname>tie1</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref></type>
+          <declname>tie2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="462" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="462" bodyend="500"/>
+        <references refid="class_res_monoid_sparse_ab9b095c95ef7183b9a8c918613be67b1_1ab9b095c95ef7183b9a8c918613be67b1" compoundref="res-moninfo-sparse_8hpp" startline="423" endline="460">compare_grevlex</references>
+        <references refid="class_res_monoid_sparse_a4b3f68bf09b7b23c876e2d33a3937832_1a4b3f68bf09b7b23c876e2d33a3937832" compoundref="res-moninfo-sparse_8hpp" startline="410" endline="417">mult</references>
+        <references refid="class_res_monoid_sparse_a4a82f2101a80b71b06b5ae0a168e4fe5_1a4a82f2101a80b71b06b5ae0a168e4fe5" compoundref="res-moninfo-sparse_8hpp" startline="102">ncalls_compare</references>
+        <references refid="class_res_monoid_sparse_a2f5a351339c320a95334f8aaee4d207d_1a2f5a351339c320a95334f8aaee4d207d" compoundref="res-moninfo-sparse_8cpp" startline="101" endline="110">showAlpha</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_ab251e27c10e1abd579005903a55d4a77_1ab251e27c10e1abd579005903a55d4a77" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::variable_as_vp</definition>
+        <argsstring>(int v, res_varpower_monomial result) const</argsstring>
+        <name>variable_as_vp</name>
+        <qualifiedname>ResMonoidSparse::variable_as_vp</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a184f0cb454f74a5f8e8a0a16136ae244_1a184f0cb454f74a5f8e8a0a16136ae244" kindref="member">res_varpower_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="502" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="502" bodyend="508"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a2955fc1f0be9eab4fb04d7b11a691681_1a2955fc1f0be9eab4fb04d7b11a691681" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMonoidSparse::degree_of_vp</definition>
+        <argsstring>(res_const_varpower_monomial a) const</argsstring>
+        <name>degree_of_vp</name>
+        <qualifiedname>ResMonoidSparse::degree_of_vp</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a158a93e7bf5b0fa6f22140a152adc894_1a158a93e7bf5b0fa6f22140a152adc894" kindref="member">res_const_varpower_monomial</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="510" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="510" bodyend="513"/>
+        <references refid="class_res_monoid_sparse_a77feaf031672e899c8b08dfe49caa39b_1a77feaf031672e899c8b08dfe49caa39b" compoundref="res-moninfo-sparse_8hpp" startline="90">mVarDegrees</references>
+        <references refid="class_exponent_list_a62cea695d46f55c62939763970f589bc_1a62cea695d46f55c62939763970f589bc" compoundref="_exponent_list_8hpp" startline="166" endline="173">ExponentList&lt; myword, false &gt;::weight</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_a3d7eae0e990e9b09c39915d9d3d4d692_1a3d7eae0e990e9b09c39915d9d3d4d692" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::quotient_as_vp</definition>
+        <argsstring>(res_const_packed_monomial m, res_const_packed_monomial n, res_varpower_monomial result) const</argsstring>
+        <name>quotient_as_vp</name>
+        <qualifiedname>ResMonoidSparse::quotient_as_vp</qualifiedname>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a184f0cb454f74a5f8e8a0a16136ae244_1a184f0cb454f74a5f8e8a0a16136ae244" kindref="member">res_varpower_monomial</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="515" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="515" bodyend="554"/>
+        <references refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" compoundref="res-moninfo-sparse_8hpp" startline="93">mFirstVar</references>
+        <references refid="class_res_monoid_sparse_a8495606135aa3990f7e2421976beba2f_1a8495606135aa3990f7e2421976beba2f" compoundref="res-moninfo-sparse_8hpp" startline="115">ncalls_quotient_as_vp</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_monoid_sparse_af1b251b2705e05515a5549aa608db9c5_1af1b251b2705e05515a5549aa608db9c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMonoidSparse::dump</definition>
+        <argsstring>(std::ostream &amp;o, res_const_packed_monomial mon)</argsstring>
+        <name>dump</name>
+        <qualifiedname>ResMonoidSparse::dump</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type><ref refid="res-monomial-types_8hpp_a49487411723b81298f85d07cad2b85a4_1a49487411723b81298f85d07cad2b85a4" kindref="member">res_const_packed_monomial</ref></type>
+          <declname>mon</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="556" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.cpp" bodystart="112" bodyend="121"/>
+        <references refid="class_res_monoid_sparse_a647dbaff6be1f3921612dc718447f46b_1a647dbaff6be1f3921612dc718447f46b" compoundref="res-moninfo-sparse_8hpp" startline="131" endline="131">monomial_size</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Sparse / varpower-format <computeroutput><ref refid="res-moninfo_8hpp_a7bc93e1c6a618d8b5a83f61057c445dd_1a7bc93e1c6a618d8b5a83f61057c445dd" kindref="member">ResMonoid</ref></computeroutput> implementation: monomials laid out as length-prefixed lists of <computeroutput>(variable, <ref refid="exptable_8h_acbad03742bc161b060402329a67aa889_1acbad03742bc161b060402329a67aa889" kindref="member">exponent</ref>)</computeroutput> pairs. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Each encoded monomial has variable width: <computeroutput>[length, hash, <ref refid="group__comp" kindref="compound">Computations</ref>, w_1, ..., w_r, v_1, e_1, ..., v_d, e_d]</computeroutput>. Encode / decode walk only the non-zero variables, so the representation wins when monomials are typically supported in a small subset of variables; the dense counterpart is <computeroutput><ref refid="class_res_monoid_dense" kindref="compound">ResMonoidDense</ref></computeroutput>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ResMonoidSparse</label>
+        <link refid="class_res_monoid_sparse"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mFirstVar</edgelabel>
+          <edgelabel>mFirstWeight</edgelabel>
+          <edgelabel>mNumVars</edgelabel>
+          <edgelabel>mNumWeights</edgelabel>
+          <edgelabel>nslots</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>hashfcn</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mask</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mVarDegrees</edgelabel>
+          <edgelabel>mWeightVectors</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>ncalls_compare</edgelabel>
+          <edgelabel>ncalls_compare_grevlex</edgelabel>
+          <edgelabel>ncalls_divide</edgelabel>
+          <edgelabel>ncalls_from_expvector</edgelabel>
+          <edgelabel>ncalls_from_varpower</edgelabel>
+          <edgelabel>ncalls_get_component</edgelabel>
+          <edgelabel>ncalls_hash_value</edgelabel>
+          <edgelabel>ncalls_is_equal</edgelabel>
+          <edgelabel>ncalls_is_equal_true</edgelabel>
+          <edgelabel>ncalls_mult</edgelabel>
+          <edgelabel>  ...</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>int32_t</label>
+      </node>
+      <node id="9">
+        <label>long</label>
+      </node>
+      <node id="5">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::unique_ptr&lt; res_monomial_word[]&gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; res_monomial_word[]&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="8" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" line="83" column="1" bodyfile="Macaulay2/e/schreyer-resolution/res-moninfo-sparse.hpp" bodystart="84" bodyend="557"/>
+    <listofallmembers>
+      <member refid="class_res_monoid_sparse_ab9b095c95ef7183b9a8c918613be67b1_1ab9b095c95ef7183b9a8c918613be67b1" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>compare_grevlex</name></member>
+      <member refid="class_res_monoid_sparse_a63967c3c37beade69e977c0e89812ed1_1a63967c3c37beade69e977c0e89812ed1" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>compare_schreyer</name></member>
+      <member refid="class_res_monoid_sparse_a9da72362c0cd586b13b7aa94bb53b55f_1a9da72362c0cd586b13b7aa94bb53b55f" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>const_monomial</name></member>
+      <member refid="class_res_monoid_sparse_adf557cce176cd07b108b46e173f85996_1adf557cce176cd07b108b46e173f85996" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>copy</name></member>
+      <member refid="class_res_monoid_sparse_a2955fc1f0be9eab4fb04d7b11a691681_1a2955fc1f0be9eab4fb04d7b11a691681" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>degree_of_vp</name></member>
+      <member refid="class_res_monoid_sparse_ab12584a3b29d351847c42dc76c89beba_1ab12584a3b29d351847c42dc76c89beba" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>divide</name></member>
+      <member refid="class_res_monoid_sparse_af1b251b2705e05515a5549aa608db9c5_1af1b251b2705e05515a5549aa608db9c5" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>dump</name></member>
+      <member refid="class_res_monoid_sparse_a1099045e3d65f7c8a7b8a09d0f1d4ae6_1a1099045e3d65f7c8a7b8a09d0f1d4ae6" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>from_expvector</name></member>
+      <member refid="class_res_monoid_sparse_ad72399e0a80961d70d5135bf8d54b225_1ad72399e0a80961d70d5135bf8d54b225" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>from_varpower_monomial</name></member>
+      <member refid="class_res_monoid_sparse_a2975ccbfb3b7bf39faa96782f3a8c384_1a2975ccbfb3b7bf39faa96782f3a8c384" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>get_component</name></member>
+      <member refid="class_res_monoid_sparse_af2d7808427190f8fb9d47faa9765b02f_1af2d7808427190f8fb9d47faa9765b02f" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>hash_value</name></member>
+      <member refid="class_res_monoid_sparse_afb6635e65bab28e0d0e8ce446eb1f2ce_1afb6635e65bab28e0d0e8ce446eb1f2ce" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>hashfcn</name></member>
+      <member refid="class_res_monoid_sparse_ae8c0293da1009679195ee045d64e4d72_1ae8c0293da1009679195ee045d64e4d72" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>is_equal</name></member>
+      <member refid="class_res_monoid_sparse_a4f8abebe7c2758447539abaaccd0d7e9_1a4f8abebe7c2758447539abaaccd0d7e9" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>mask</name></member>
+      <member refid="class_res_monoid_sparse_a50dbe0aceef55d54f9901d897477c22f_1a50dbe0aceef55d54f9901d897477c22f" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>max_monomial_size</name></member>
+      <member refid="class_res_monoid_sparse_ae74ccb6358dca8261f2b0c9d0cb4fc5f_1ae74ccb6358dca8261f2b0c9d0cb4fc5f" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>mFirstVar</name></member>
+      <member refid="class_res_monoid_sparse_ad4f157b09c79399b3713d5242a05d8dd_1ad4f157b09c79399b3713d5242a05d8dd" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>mFirstWeight</name></member>
+      <member refid="class_res_monoid_sparse_a0b7338d8ecabd93eedeeb08289986326_1a0b7338d8ecabd93eedeeb08289986326" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>mNumVars</name></member>
+      <member refid="class_res_monoid_sparse_a042d9474da1a4f88d79c0b7b224c14b8_1a042d9474da1a4f88d79c0b7b224c14b8" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>mNumWeights</name></member>
+      <member refid="class_res_monoid_sparse_aedfcd65ff538519fb13fc443a3af2bb2_1aedfcd65ff538519fb13fc443a3af2bb2" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>monomial</name></member>
+      <member refid="class_res_monoid_sparse_a154e2590ea93fa74b22005357b8bf1aa_1a154e2590ea93fa74b22005357b8bf1aa" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>monomial_part_is_equal</name></member>
+      <member refid="class_res_monoid_sparse_a647dbaff6be1f3921612dc718447f46b_1a647dbaff6be1f3921612dc718447f46b" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>monomial_size</name></member>
+      <member refid="class_res_monoid_sparse_a4b3f68bf09b7b23c876e2d33a3937832_1a4b3f68bf09b7b23c876e2d33a3937832" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>mult</name></member>
+      <member refid="class_res_monoid_sparse_a77feaf031672e899c8b08dfe49caa39b_1a77feaf031672e899c8b08dfe49caa39b" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>mVarDegrees</name></member>
+      <member refid="class_res_monoid_sparse_ab7238d5e5cc59d63651b04f780a13504_1ab7238d5e5cc59d63651b04f780a13504" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>mWeightVectors</name></member>
+      <member refid="class_res_monoid_sparse_aa11123f1642443e883517e3c9447d717_1aa11123f1642443e883517e3c9447d717" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>n_vars</name></member>
+      <member refid="class_res_monoid_sparse_a4a82f2101a80b71b06b5ae0a168e4fe5_1a4a82f2101a80b71b06b5ae0a168e4fe5" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_compare</name></member>
+      <member refid="class_res_monoid_sparse_ab25a68c56eef50f36f5b7faa1328759a_1ab25a68c56eef50f36f5b7faa1328759a" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_compare_grevlex</name></member>
+      <member refid="class_res_monoid_sparse_abfcd8f59ad10b35dad8e287aed44cf4e_1abfcd8f59ad10b35dad8e287aed44cf4e" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_divide</name></member>
+      <member refid="class_res_monoid_sparse_a0d2afe3e5efaa944a605ba36e2a4c5e6_1a0d2afe3e5efaa944a605ba36e2a4c5e6" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_from_expvector</name></member>
+      <member refid="class_res_monoid_sparse_a34582529d3d5f136236308d3b08c69ff_1a34582529d3d5f136236308d3b08c69ff" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_from_varpower</name></member>
+      <member refid="class_res_monoid_sparse_af756bbfaf6389f1315af6171aaafa924_1af756bbfaf6389f1315af6171aaafa924" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_get_component</name></member>
+      <member refid="class_res_monoid_sparse_a58b0edd8ff695ce3674e2e8ace843eec_1a58b0edd8ff695ce3674e2e8ace843eec" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_hash_value</name></member>
+      <member refid="class_res_monoid_sparse_ab971fc6111368aa82671e79a43c1f0d0_1ab971fc6111368aa82671e79a43c1f0d0" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_is_equal</name></member>
+      <member refid="class_res_monoid_sparse_a686e1541e0bebc65f2654fe6a262e104_1a686e1541e0bebc65f2654fe6a262e104" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_is_equal_true</name></member>
+      <member refid="class_res_monoid_sparse_a7a432ad51bc757271265f0c735a438fd_1a7a432ad51bc757271265f0c735a438fd" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_mult</name></member>
+      <member refid="class_res_monoid_sparse_a8495606135aa3990f7e2421976beba2f_1a8495606135aa3990f7e2421976beba2f" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_quotient_as_vp</name></member>
+      <member refid="class_res_monoid_sparse_ac57efac247d5bdc753ef7dfc4cbbc4b1_1ac57efac247d5bdc753ef7dfc4cbbc4b1" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_to_expvector</name></member>
+      <member refid="class_res_monoid_sparse_a73607c1469bd9be3ec7b5f5fde8853e1_1a73607c1469bd9be3ec7b5f5fde8853e1" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_to_varpower</name></member>
+      <member refid="class_res_monoid_sparse_a9ad832e6fb3a42dfb231ac17a83832b4_1a9ad832e6fb3a42dfb231ac17a83832b4" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_unneccesary</name></member>
+      <member refid="class_res_monoid_sparse_a388ccdc2cd6589c4429e6e0f3e124d40_1a388ccdc2cd6589c4429e6e0f3e124d40" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ncalls_weight</name></member>
+      <member refid="class_res_monoid_sparse_abb9fd86f43b50431049e2f2adddb55a1_1abb9fd86f43b50431049e2f2adddb55a1" prot="private" virt="non-virtual"><scope>ResMonoidSparse</scope><name>nslots</name></member>
+      <member refid="class_res_monoid_sparse_aa9122ba11512aeff20a678dc8d025e2f_1aa9122ba11512aeff20a678dc8d025e2f" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>one</name></member>
+      <member refid="class_res_monoid_sparse_a3d7eae0e990e9b09c39915d9d3d4d692_1a3d7eae0e990e9b09c39915d9d3d4d692" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>quotient_as_vp</name></member>
+      <member refid="class_res_monoid_sparse_a3fa2aa24f79104c71b2225e23cacde7d_1a3fa2aa24f79104c71b2225e23cacde7d" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>ResMonoidSparse</name></member>
+      <member refid="class_res_monoid_sparse_ae46cf3fd206007a111ee216f4602587c_1ae46cf3fd206007a111ee216f4602587c" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>set_component</name></member>
+      <member refid="class_res_monoid_sparse_a685158f9d6f73b809bb31f9929caec37_1a685158f9d6f73b809bb31f9929caec37" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>setWeightAndHash</name></member>
+      <member refid="class_res_monoid_sparse_a777c47da5023a93cabab4be21212a427_1a777c47da5023a93cabab4be21212a427" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>show</name></member>
+      <member refid="class_res_monoid_sparse_af3e984980dcf3b1d251ab017b61e06cd_1af3e984980dcf3b1d251ab017b61e06cd" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>show</name></member>
+      <member refid="class_res_monoid_sparse_a2f5a351339c320a95334f8aaee4d207d_1a2f5a351339c320a95334f8aaee4d207d" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>showAlpha</name></member>
+      <member refid="class_res_monoid_sparse_a7d9e6b90d2e8bde0a0aaa7de5b17a8dd_1a7d9e6b90d2e8bde0a0aaa7de5b17a8dd" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>skew_mult_sign</name></member>
+      <member refid="class_res_monoid_sparse_abaffbb4017bbde349b1c6e04b786b4c0_1abaffbb4017bbde349b1c6e04b786b4c0" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>skew_vars</name></member>
+      <member refid="class_res_monoid_sparse_a404b267441c4b4b12b909fe7f0ef8457_1a404b267441c4b4b12b909fe7f0ef8457" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>to_expvector</name></member>
+      <member refid="class_res_monoid_sparse_a623965fb45cd0b1a99f50ab89738d13e_1a623965fb45cd0b1a99f50ab89738d13e" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>to_varpower_monomial</name></member>
+      <member refid="class_res_monoid_sparse_a2deb7036d87fc52b492c823edf9cc798_1a2deb7036d87fc52b492c823edf9cc798" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>unchecked_mult</name></member>
+      <member refid="class_res_monoid_sparse_a08e7a8b463bed291627d296b8f924e5f_1a08e7a8b463bed291627d296b8f924e5f" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>value</name></member>
+      <member refid="class_res_monoid_sparse_ab251e27c10e1abd579005903a55d4a77_1ab251e27c10e1abd579005903a55d4a77" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>variable_as_vp</name></member>
+      <member refid="class_res_monoid_sparse_a14a7e702b918a4334864c8590b500bd1_1a14a7e702b918a4334864c8590b500bd1" prot="public" virt="non-virtual"><scope>ResMonoidSparse</scope><name>~ResMonoidSparse</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

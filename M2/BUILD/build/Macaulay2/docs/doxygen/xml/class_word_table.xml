@@ -1,0 +1,707 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_word_table" kind="class" language="C++" prot="public">
+    <compoundname>WordTable</compoundname>
+    <includes refid="_word_table_8hpp" local="no">WordTable.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_word" kindref="compound">Word</ref> &gt;</type>
+        <definition>std::vector&lt;Word&gt; WordTable::mMonomials</definition>
+        <argsstring></argsstring>
+        <name>mMonomials</name>
+        <qualifiedname>WordTable::mMonomials</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="169" column="15" bodyfile="Macaulay2/e/NCAlgebras/WordTable.hpp" bodystart="169" bodyend="-1"/>
+        <referencedby refid="class_word_table_acc1c76390fc0349573e7dcca5c0dd13f_1acc1c76390fc0349573e7dcca5c0dd13f" compoundref="_word_table_8hpp" startline="94" endline="94">clear</referencedby>
+        <referencedby refid="class_word_table_adb6e3da530bf9ae6ef66bd6b7645cb59_1adb6e3da530bf9ae6ef66bd6b7645cb59" compoundref="_word_table_8cpp" startline="17" endline="25">insert</referencedby>
+        <referencedby refid="class_word_table_ac5e7942b001b718ddbdd07886d225ae3_1ac5e7942b001b718ddbdd07886d225ae3" compoundref="_word_table_8cpp" startline="27" endline="36">insert</referencedby>
+        <referencedby refid="class_word_table_a55437f358e9a89c87af0291295f46abe_1a55437f358e9a89c87af0291295f46abe" compoundref="_word_table_8cpp" startline="133" endline="145">isPrefix</referencedby>
+        <referencedby refid="class_word_table_a5bd3cc3fee3e78180a2105bab65f76d1_1a5bd3cc3fee3e78180a2105bab65f76d1" compoundref="_word_table_8cpp" startline="147" endline="159">isSuffix</referencedby>
+        <referencedby refid="class_word_table_aa09193cb49a9800f27df34d0167e950e_1aa09193cb49a9800f27df34d0167e950e" compoundref="_word_table_8cpp" startline="227" endline="248">leftOverlaps</referencedby>
+        <referencedby refid="class_word_table_a0654687cec7e44bd5a33b3f0a79426a9_1a0654687cec7e44bd5a33b3f0a79426a9" compoundref="_word_table_8hpp" startline="96" endline="96">monomialCount</referencedby>
+        <referencedby refid="class_word_table_aa5b7bfc82a47346c6f23797f6726c253_1aa5b7bfc82a47346c6f23797f6726c253" compoundref="_word_table_8cpp" startline="4" endline="15">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_word_table_a06f117ba48263ba223b15f3a5920114b_1a06f117ba48263ba223b15f3a5920114b" compoundref="_word_table_8hpp" startline="103" endline="103">operator[]</referencedby>
+        <referencedby refid="class_word_table_a209d2fb3ca001d6aee5efbb0055e2204_1a209d2fb3ca001d6aee5efbb0055e2204" compoundref="_word_table_8cpp" startline="250" endline="262">rightOverlaps</referencedby>
+        <referencedby refid="class_word_table_acc86435937719079a77637a5c0d91614_1acc86435937719079a77637a5c0d91614" compoundref="_word_table_8cpp" startline="161" endline="174">subword</referencedby>
+        <referencedby refid="class_word_table_a7a60e3ce3292910ef1367b6aec3c6049_1a7a60e3ce3292910ef1367b6aec3c6049" compoundref="_word_table_8cpp" startline="118" endline="131">subwords</referencedby>
+        <referencedby refid="class_word_table_a1aa542a443bc036ed7acae78c0c9acc6_1a1aa542a443bc036ed7acae78c0c9acc6" compoundref="_word_table_8cpp" startline="176" endline="189">superwords</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_word_table_a6ef2410d15f46d7ffd09c856683590c8_1a6ef2410d15f46d7ffd09c856683590c8" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>std::vector&lt;int&gt; WordTable::mIndices</definition>
+        <argsstring></argsstring>
+        <name>mIndices</name>
+        <qualifiedname>WordTable::mIndices</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="170" column="15" bodyfile="Macaulay2/e/NCAlgebras/WordTable.hpp" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_word_table_ad64ce22971a70bf79ae87a8000c26ecc_1ad64ce22971a70bf79ae87a8000c26ecc" prot="private" static="no" mutable="no">
+        <type><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref></type>
+        <definition>MemoryBlock WordTable::mMonomialSpace</definition>
+        <argsstring></argsstring>
+        <name>mMonomialSpace</name>
+        <qualifiedname>WordTable::mMonomialSpace</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="172" column="15" bodyfile="Macaulay2/e/NCAlgebras/WordTable.hpp" bodystart="172" bodyend="-1"/>
+        <referencedby refid="class_word_table_adb6e3da530bf9ae6ef66bd6b7645cb59_1adb6e3da530bf9ae6ef66bd6b7645cb59" compoundref="_word_table_8cpp" startline="17" endline="25">insert</referencedby>
+        <referencedby refid="class_word_table_ac5e7942b001b718ddbdd07886d225ae3_1ac5e7942b001b718ddbdd07886d225ae3" compoundref="_word_table_8cpp" startline="27" endline="36">insert</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_word_table_aa5b7bfc82a47346c6f23797f6726c253_1aa5b7bfc82a47346c6f23797f6726c253" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;o, const WordTable &amp;wordTable)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>WordTable::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_word_table" kindref="compound">WordTable</ref> &amp;</type>
+          <declname>wordTable</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="88" column="10" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="4" bodyend="15"/>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="class_word_table_a50405797862e90442843a5a0b96c941d_1a50405797862e90442843a5a0b96c941d" compoundref="_word_table_8hpp" startline="90" endline="90">WordTable</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_word_table_a50405797862e90442843a5a0b96c941d_1a50405797862e90442843a5a0b96c941d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>WordTable::WordTable</definition>
+        <argsstring>()</argsstring>
+        <name>WordTable</name>
+        <qualifiedname>WordTable::WordTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="90" column="3" bodyfile="Macaulay2/e/NCAlgebras/WordTable.hpp" bodystart="90" bodyend="90"/>
+        <referencedby refid="class_word_table_aa5b7bfc82a47346c6f23797f6726c253_1aa5b7bfc82a47346c6f23797f6726c253" compoundref="_word_table_8cpp" startline="4" endline="15">operator&lt;&lt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_ad453003512c4d88131c11138c997ab17_1ad453003512c4d88131c11138c997ab17" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>WordTable::~WordTable</definition>
+        <argsstring>()</argsstring>
+        <name>~WordTable</name>
+        <qualifiedname>WordTable::~WordTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="92" column="3" bodyfile="Macaulay2/e/NCAlgebras/WordTable.hpp" bodystart="92" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_acc1c76390fc0349573e7dcca5c0dd13f_1acc1c76390fc0349573e7dcca5c0dd13f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void WordTable::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>WordTable::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="94" column="8" bodyfile="Macaulay2/e/NCAlgebras/WordTable.hpp" bodystart="94" bodyend="94"/>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_a0654687cec7e44bd5a33b3f0a79426a9_1a0654687cec7e44bd5a33b3f0a79426a9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t WordTable::monomialCount</definition>
+        <argsstring>() const</argsstring>
+        <name>monomialCount</name>
+        <qualifiedname>WordTable::monomialCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="96" column="10" bodyfile="Macaulay2/e/NCAlgebras/WordTable.hpp" bodystart="96" bodyend="96"/>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a938ce56cc7430a7a89714c990511d487_1a938ce56cc7430a7a89714c990511d487" compoundref="_n_c_groebner_test_8cpp" startline="486" endline="498">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_adb6e3da530bf9ae6ef66bd6b7645cb59_1adb6e3da530bf9ae6ef66bd6b7645cb59" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t WordTable::insert</definition>
+        <argsstring>(Word w)</argsstring>
+        <name>insert</name>
+        <qualifiedname>WordTable::insert</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="98" column="10" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="17" bodyend="25"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">Word::begin</references>
+        <references refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" compoundref="_word_8hpp" startline="69" endline="69">Word::end</references>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="class_word_table_ad64ce22971a70bf79ae87a8000c26ecc_1ad64ce22971a70bf79ae87a8000c26ecc" compoundref="_word_table_8hpp" startline="172">mMonomialSpace</references>
+        <references refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">Word::size</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a938ce56cc7430a7a89714c990511d487_1a938ce56cc7430a7a89714c990511d487" compoundref="_n_c_groebner_test_8cpp" startline="486" endline="498">TEST</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a5d896181a8440bda3e183105adf3f255_1a5d896181a8440bda3e183105adf3f255" compoundref="_n_c_groebner_test_8cpp" startline="500" endline="518">TEST</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a1e270bbd7066b28e4234ddca1301f11d_1a1e270bbd7066b28e4234ddca1301f11d" compoundref="_n_c_groebner_test_8cpp" startline="578" endline="624">TEST</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a57f05c805b50f38e4e6389299d81d36f_1a57f05c805b50f38e4e6389299d81d36f" compoundref="_n_c_groebner_test_8cpp" startline="531" endline="543">TEST</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a00c9e6091933592c76e0a46c29759ada_1a00c9e6091933592c76e0a46c29759ada" compoundref="_n_c_groebner_test_8cpp" startline="680" endline="775">TEST</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a698ed831bdc06c66d1ca2855f1f9e744_1a698ed831bdc06c66d1ca2855f1f9e744" compoundref="_n_c_groebner_test_8cpp" startline="545" endline="576">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_ac5e7942b001b718ddbdd07886d225ae3_1ac5e7942b001b718ddbdd07886d225ae3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t WordTable::insert</definition>
+        <argsstring>(Word w, std::vector&lt; Overlap &gt; &amp;newRightOverlaps)</argsstring>
+        <name>insert</name>
+        <qualifiedname>WordTable::insert</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>w</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="_word_table_8hpp_a6137b15715e0fc6d08b1936ca1f48e85_1a6137b15715e0fc6d08b1936ca1f48e85" kindref="member">Overlap</ref> &gt; &amp;</type>
+          <declname>newRightOverlaps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="100" column="10" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="27" bodyend="36"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">Word::begin</references>
+        <references refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" compoundref="_word_8hpp" startline="69" endline="69">Word::end</references>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="class_word_table_ad64ce22971a70bf79ae87a8000c26ecc_1ad64ce22971a70bf79ae87a8000c26ecc" compoundref="_word_table_8hpp" startline="172">mMonomialSpace</references>
+        <references refid="class_word_table_a209d2fb3ca001d6aee5efbb0055e2204_1a209d2fb3ca001d6aee5efbb0055e2204" compoundref="_word_table_8cpp" startline="250" endline="262">rightOverlaps</references>
+        <references refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">Word::size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_a06f117ba48263ba223b15f3a5920114b_1a06f117ba48263ba223b15f3a5920114b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_word" kindref="compound">Word</ref> &amp;</type>
+        <definition>const Word &amp; WordTable::operator[]</definition>
+        <argsstring>(int index) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>WordTable::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="103" column="14" bodyfile="Macaulay2/e/NCAlgebras/WordTable.hpp" bodystart="103" bodyend="103"/>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_a7a60e3ce3292910ef1367b6aec3c6049_1a7a60e3ce3292910ef1367b6aec3c6049" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void WordTable::subwords</definition>
+        <argsstring>(Word word, std::vector&lt; std::pair&lt; int, int &gt; &gt; &amp;output) const</argsstring>
+        <name>subwords</name>
+        <qualifiedname>WordTable::subwords</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::pair&lt; <ref refid="classint" kindref="compound">int</ref>, <ref refid="classint" kindref="compound">int</ref> &gt; &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="111" column="8" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="118" bodyend="131"/>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="io-util_8cpp_a6b55c5c1639e11a6292c2f26b3fc5480_1a6b55c5c1639e11a6292c2f26b3fc5480" compoundref="io-util_8cpp" startline="122" endline="132">output</references>
+        <references refid="class_word_table_a35265a6b2f65427ce3ea4a4c4da071b8_1a35265a6b2f65427ce3ea4a4c4da071b8" compoundref="_word_table_8cpp" startline="38" endline="57">subwordPositions</references>
+        <references refid="_n_c_groebner_test_8cpp_ad7ff07a5d062e08684d658ddd7ebe35e_1ad7ff07a5d062e08684d658ddd7ebe35e" compoundref="_n_c_groebner_test_8cpp" startline="92" endline="92">word</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a5d896181a8440bda3e183105adf3f255_1a5d896181a8440bda3e183105adf3f255" compoundref="_n_c_groebner_test_8cpp" startline="500" endline="518">TEST</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a57f05c805b50f38e4e6389299d81d36f_1a57f05c805b50f38e4e6389299d81d36f" compoundref="_n_c_groebner_test_8cpp" startline="531" endline="543">TEST</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a00c9e6091933592c76e0a46c29759ada_1a00c9e6091933592c76e0a46c29759ada" compoundref="_n_c_groebner_test_8cpp" startline="680" endline="775">TEST</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a698ed831bdc06c66d1ca2855f1f9e744_1a698ed831bdc06c66d1ca2855f1f9e744" compoundref="_n_c_groebner_test_8cpp" startline="545" endline="576">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_acc86435937719079a77637a5c0d91614_1acc86435937719079a77637a5c0d91614" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool WordTable::subword</definition>
+        <argsstring>(Word word, std::pair&lt; int, int &gt; &amp;output) const</argsstring>
+        <name>subword</name>
+        <qualifiedname>WordTable::subword</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word</declname>
+        </param>
+        <param>
+          <type>std::pair&lt; <ref refid="classint" kindref="compound">int</ref>, <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="120" column="8" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="161" bodyend="174"/>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="io-util_8cpp_a6b55c5c1639e11a6292c2f26b3fc5480_1a6b55c5c1639e11a6292c2f26b3fc5480" compoundref="io-util_8cpp" startline="122" endline="132">output</references>
+        <references refid="class_word_table_abb81e2ab3b2481e286d959ed0993d2a8_1abb81e2ab3b2481e286d959ed0993d2a8" compoundref="_word_table_8cpp" startline="59" endline="84">subwordPosition</references>
+        <references refid="_n_c_groebner_test_8cpp_ad7ff07a5d062e08684d658ddd7ebe35e_1ad7ff07a5d062e08684d658ddd7ebe35e" compoundref="_n_c_groebner_test_8cpp" startline="92" endline="92">word</references>
+        <referencedby refid="class_n_c_groebner_acd47c23abb202dca06047ba3115684d3_1acd47c23abb202dca06047ba3115684d3" compoundref="_n_c_groebner_8cpp" startline="254" endline="324">NCGroebner::twoSidedReduction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_a55437f358e9a89c87af0291295f46abe_1a55437f358e9a89c87af0291295f46abe" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool WordTable::isPrefix</definition>
+        <argsstring>(Word word, int &amp;output) const</argsstring>
+        <name>isPrefix</name>
+        <qualifiedname>WordTable::isPrefix</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="125" column="8" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="133" bodyend="145"/>
+        <references refid="class_word_table_aa6993f5f76a203d4bfbf9b1d71e0c9ee_1aa6993f5f76a203d4bfbf9b1d71e0c9ee" compoundref="_word_table_8cpp" startline="86" endline="98">isPrefixOf</references>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="io-util_8cpp_a6b55c5c1639e11a6292c2f26b3fc5480_1a6b55c5c1639e11a6292c2f26b3fc5480" compoundref="io-util_8cpp" startline="122" endline="132">output</references>
+        <references refid="_n_c_groebner_test_8cpp_ad7ff07a5d062e08684d658ddd7ebe35e_1ad7ff07a5d062e08684d658ddd7ebe35e" compoundref="_n_c_groebner_test_8cpp" startline="92" endline="92">word</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a1e270bbd7066b28e4234ddca1301f11d_1a1e270bbd7066b28e4234ddca1301f11d" compoundref="_n_c_groebner_test_8cpp" startline="578" endline="624">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_a5bd3cc3fee3e78180a2105bab65f76d1_1a5bd3cc3fee3e78180a2105bab65f76d1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool WordTable::isSuffix</definition>
+        <argsstring>(Word word, int &amp;output) const</argsstring>
+        <name>isSuffix</name>
+        <qualifiedname>WordTable::isSuffix</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="126" column="8" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="147" bodyend="159"/>
+        <references refid="class_word_table_ae805ab20cf473e5698c89ba7d8d11c3c_1ae805ab20cf473e5698c89ba7d8d11c3c" compoundref="_word_table_8cpp" startline="100" endline="116">isSuffixOf</references>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="io-util_8cpp_a6b55c5c1639e11a6292c2f26b3fc5480_1a6b55c5c1639e11a6292c2f26b3fc5480" compoundref="io-util_8cpp" startline="122" endline="132">output</references>
+        <references refid="_n_c_groebner_test_8cpp_ad7ff07a5d062e08684d658ddd7ebe35e_1ad7ff07a5d062e08684d658ddd7ebe35e" compoundref="_n_c_groebner_test_8cpp" startline="92" endline="92">word</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a1e270bbd7066b28e4234ddca1301f11d_1a1e270bbd7066b28e4234ddca1301f11d" compoundref="_n_c_groebner_test_8cpp" startline="578" endline="624">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_a9dd6f959a23863217989f1948960ad82_1a9dd6f959a23863217989f1948960ad82" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool WordTable::isNontrivialSuperword</definition>
+        <argsstring>(Word word, int index1, int index2) const</argsstring>
+        <name>isNontrivialSuperword</name>
+        <qualifiedname>WordTable::isNontrivialSuperword</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>index1</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>index2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="128" column="8" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="191" bodyend="210"/>
+        <references refid="_n_c_groebner_test_8cpp_ad7ff07a5d062e08684d658ddd7ebe35e_1ad7ff07a5d062e08684d658ddd7ebe35e" compoundref="_n_c_groebner_test_8cpp" startline="92" endline="92">word</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a00c9e6091933592c76e0a46c29759ada_1a00c9e6091933592c76e0a46c29759ada" compoundref="_n_c_groebner_test_8cpp" startline="680" endline="775">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_a1aa542a443bc036ed7acae78c0c9acc6_1a1aa542a443bc036ed7acae78c0c9acc6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void WordTable::superwords</definition>
+        <argsstring>(Word word, std::vector&lt; std::pair&lt; int, int &gt; &gt; &amp;output) const</argsstring>
+        <name>superwords</name>
+        <qualifiedname>WordTable::superwords</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::pair&lt; <ref refid="classint" kindref="compound">int</ref>, <ref refid="classint" kindref="compound">int</ref> &gt; &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="134" column="8" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="176" bodyend="189"/>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="io-util_8cpp_a6b55c5c1639e11a6292c2f26b3fc5480_1a6b55c5c1639e11a6292c2f26b3fc5480" compoundref="io-util_8cpp" startline="122" endline="132">output</references>
+        <references refid="class_word_table_a35265a6b2f65427ce3ea4a4c4da071b8_1a35265a6b2f65427ce3ea4a4c4da071b8" compoundref="_word_table_8cpp" startline="38" endline="57">subwordPositions</references>
+        <references refid="_n_c_groebner_test_8cpp_ad7ff07a5d062e08684d658ddd7ebe35e_1ad7ff07a5d062e08684d658ddd7ebe35e" compoundref="_n_c_groebner_test_8cpp" startline="92" endline="92">word</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a00c9e6091933592c76e0a46c29759ada_1a00c9e6091933592c76e0a46c29759ada" compoundref="_n_c_groebner_test_8cpp" startline="680" endline="775">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_aa09193cb49a9800f27df34d0167e950e_1aa09193cb49a9800f27df34d0167e950e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void WordTable::leftOverlaps</definition>
+        <argsstring>(std::vector&lt; Overlap &gt; &amp;newLeftOverlaps) const</argsstring>
+        <name>leftOverlaps</name>
+        <qualifiedname>WordTable::leftOverlaps</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="_word_table_8hpp_a6137b15715e0fc6d08b1936ca1f48e85_1a6137b15715e0fc6d08b1936ca1f48e85" kindref="member">Overlap</ref> &gt; &amp;</type>
+          <declname>newLeftOverlaps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="143" column="8" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="227" bodyend="248"/>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="class_word_table_a96cc81810bed8bd2709e4f345a5d214c_1a96cc81810bed8bd2709e4f345a5d214c" compoundref="_word_table_8cpp" startline="213" endline="225">overlaps</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a00c9e6091933592c76e0a46c29759ada_1a00c9e6091933592c76e0a46c29759ada" compoundref="_n_c_groebner_test_8cpp" startline="680" endline="775">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_a209d2fb3ca001d6aee5efbb0055e2204_1a209d2fb3ca001d6aee5efbb0055e2204" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void WordTable::rightOverlaps</definition>
+        <argsstring>(std::vector&lt; Overlap &gt; &amp;newRightOverlaps) const</argsstring>
+        <name>rightOverlaps</name>
+        <qualifiedname>WordTable::rightOverlaps</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="_word_table_8hpp_a6137b15715e0fc6d08b1936ca1f48e85_1a6137b15715e0fc6d08b1936ca1f48e85" kindref="member">Overlap</ref> &gt; &amp;</type>
+          <declname>newRightOverlaps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="146" column="8" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="250" bodyend="262"/>
+        <references refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" compoundref="_word_table_8hpp" startline="169">mMonomials</references>
+        <references refid="class_word_table_a96cc81810bed8bd2709e4f345a5d214c_1a96cc81810bed8bd2709e4f345a5d214c" compoundref="_word_table_8cpp" startline="213" endline="225">overlaps</references>
+        <referencedby refid="class_word_table_ac5e7942b001b718ddbdd07886d225ae3_1ac5e7942b001b718ddbdd07886d225ae3" compoundref="_word_table_8cpp" startline="27" endline="36">insert</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_word_table_a35265a6b2f65427ce3ea4a4c4da071b8_1a35265a6b2f65427ce3ea4a4c4da071b8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void WordTable::subwordPositions</definition>
+        <argsstring>(Word word1, Word word2, std::vector&lt; int &gt; &amp;result_start_indices)</argsstring>
+        <name>subwordPositions</name>
+        <qualifiedname>WordTable::subwordPositions</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word2</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>result_start_indices</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="149" column="15" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="38" bodyend="57"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">Word::begin</references>
+        <references refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">Word::size</references>
+        <referencedby refid="class_n_c_f4_aa449584c2d4b7ebd6fd573139bc0d8d0_1aa449584c2d4b7ebd6fd573139bc0d8d0" compoundref="_n_c_f4_8cpp" startline="267" endline="299">NCF4::checkOldOverlaps</referencedby>
+        <referencedby refid="class_word_table_a7a60e3ce3292910ef1367b6aec3c6049_1a7a60e3ce3292910ef1367b6aec3c6049" compoundref="_word_table_8cpp" startline="118" endline="131">subwords</referencedby>
+        <referencedby refid="class_word_table_a1aa542a443bc036ed7acae78c0c9acc6_1a1aa542a443bc036ed7acae78c0c9acc6" compoundref="_word_table_8cpp" startline="176" endline="189">superwords</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_word_table_aa6993f5f76a203d4bfbf9b1d71e0c9ee_1aa6993f5f76a203d4bfbf9b1d71e0c9ee" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool WordTable::isPrefixOf</definition>
+        <argsstring>(Word word1, Word word2)</argsstring>
+        <name>isPrefixOf</name>
+        <qualifiedname>WordTable::isPrefixOf</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="155" column="15" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="86" bodyend="98"/>
+        <referencedby refid="class_word_table_a55437f358e9a89c87af0291295f46abe_1a55437f358e9a89c87af0291295f46abe" compoundref="_word_table_8cpp" startline="133" endline="145">isPrefix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_ae805ab20cf473e5698c89ba7d8d11c3c_1ae805ab20cf473e5698c89ba7d8d11c3c" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool WordTable::isSuffixOf</definition>
+        <argsstring>(Word word1, Word word2)</argsstring>
+        <name>isSuffixOf</name>
+        <qualifiedname>WordTable::isSuffixOf</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="156" column="15" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="100" bodyend="116"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">Word::begin</references>
+        <references refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">Word::size</references>
+        <referencedby refid="class_word_table_a5bd3cc3fee3e78180a2105bab65f76d1_1a5bd3cc3fee3e78180a2105bab65f76d1" compoundref="_word_table_8cpp" startline="147" endline="159">isSuffix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_abb81e2ab3b2481e286d959ed0993d2a8_1abb81e2ab3b2481e286d959ed0993d2a8" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool WordTable::subwordPosition</definition>
+        <argsstring>(Word word1, Word word2, int &amp;result_start_index)</argsstring>
+        <name>subwordPosition</name>
+        <qualifiedname>WordTable::subwordPosition</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word2</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>result_start_index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="158" column="15" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="59" bodyend="84"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">Word::begin</references>
+        <references refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">Word::size</references>
+        <referencedby refid="class_word_table_acc86435937719079a77637a5c0d91614_1acc86435937719079a77637a5c0d91614" compoundref="_word_table_8cpp" startline="161" endline="174">subword</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_table_a96cc81810bed8bd2709e4f345a5d214c_1a96cc81810bed8bd2709e4f345a5d214c" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void WordTable::overlaps</definition>
+        <argsstring>(Word word1, Word word2, std::vector&lt; int &gt; &amp;result_overlaps)</argsstring>
+        <name>overlaps</name>
+        <qualifiedname>WordTable::overlaps</qualifiedname>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_word" kindref="compound">Word</ref></type>
+          <declname>word2</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>result_overlaps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="164" column="15" bodyfile="Macaulay2/e/NCAlgebras/WordTable.cpp" bodystart="213" bodyend="225"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">Word::begin</references>
+        <references refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" compoundref="_word_8hpp" startline="69" endline="69">Word::end</references>
+        <references refid="_suffix_tree_8cpp_a268cb68e13e7e5362dae595c483ad349_1a268cb68e13e7e5362dae595c483ad349" compoundref="_suffix_tree_8cpp" startline="80" endline="84">prefix</references>
+        <references refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">Word::size</references>
+        <references refid="_suffix_tree_8cpp_ad880702bc4b9be6d86a18b463fff2715_1ad880702bc4b9be6d86a18b463fff2715" compoundref="_suffix_tree_8cpp" startline="86" endline="90">suffix</references>
+        <referencedby refid="class_word_table_aa09193cb49a9800f27df34d0167e950e_1aa09193cb49a9800f27df34d0167e950e" compoundref="_word_table_8cpp" startline="227" endline="248">leftOverlaps</referencedby>
+        <referencedby refid="class_word_table_a209d2fb3ca001d6aee5efbb0055e2204_1a209d2fb3ca001d6aee5efbb0055e2204" compoundref="_word_table_8cpp" startline="250" endline="262">rightOverlaps</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Index of <computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput>s (non-commutative monomials) with subword, prefix/suffix, and overlap lookup used by the NC Groebner code. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Stores monomials in <computeroutput><ref refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" kindref="member">mMonomials</ref></computeroutput> and a parallel <computeroutput><ref refid="class_word_table_a6ef2410d15f46d7ffd09c856683590c8_1a6ef2410d15f46d7ffd09c856683590c8" kindref="member">mIndices</ref></computeroutput> slot per entry (-1 marks a retired word the search routines should skip). The query API exposes the operations the NC GB inner loop needs <mdash/> <computeroutput><ref refid="class_word_table_a7a60e3ce3292910ef1367b6aec3c6049_1a7a60e3ce3292910ef1367b6aec3c6049" kindref="member">subwords</ref></computeroutput> / <computeroutput><ref refid="class_word_table_acc86435937719079a77637a5c0d91614_1acc86435937719079a77637a5c0d91614" kindref="member">subword</ref></computeroutput> (where does each table entry occur inside <computeroutput><ref refid="_n_c_groebner_test_8cpp_ad7ff07a5d062e08684d658ddd7ebe35e_1ad7ff07a5d062e08684d658ddd7ebe35e" kindref="member">word</ref></computeroutput>?), <computeroutput><ref refid="class_word_table_a55437f358e9a89c87af0291295f46abe_1a55437f358e9a89c87af0291295f46abe" kindref="member">isPrefix</ref></computeroutput> / <computeroutput><ref refid="class_word_table_a5bd3cc3fee3e78180a2105bab65f76d1_1a5bd3cc3fee3e78180a2105bab65f76d1" kindref="member">isSuffix</ref></computeroutput> (single-end containment), <computeroutput><ref refid="class_word_table_a1aa542a443bc036ed7acae78c0c9acc6_1a1aa542a443bc036ed7acae78c0c9acc6" kindref="member">superwords</ref></computeroutput> (the reverse direction), and <computeroutput><ref refid="class_word_table_aa09193cb49a9800f27df34d0167e950e_1aa09193cb49a9800f27df34d0167e950e" kindref="member">leftOverlaps</ref></computeroutput> / <computeroutput><ref refid="class_word_table_a209d2fb3ca001d6aee5efbb0055e2204_1a209d2fb3ca001d6aee5efbb0055e2204" kindref="member">rightOverlaps</ref></computeroutput> (suffix-of-X equals prefix-of-Y pairs that generate new S-pairs). <ref refid="class_word" kindref="compound">Word</ref> storage lives in a <computeroutput><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref></computeroutput> arena so insertions are bump-pointer cheap. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="8">
+        <label>MemoryBlock</label>
+        <link refid="class_memory_block"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>T</label>
+      </node>
+      <node id="3">
+        <label>Word</label>
+        <link refid="class_word"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+          <edgelabel>mSize</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>WordTable</label>
+        <link refid="class_word_table"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mMonomials</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mIndices</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mMonomialSpace</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>char</label>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="9">
+        <label>memt::Arena</label>
+        <link refid="classmemt_1_1_arena"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_scratchArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; Word &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; Word &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/NCAlgebras/WordTable.hpp" line="84" column="1" bodyfile="Macaulay2/e/NCAlgebras/WordTable.hpp" bodystart="85" bodyend="173"/>
+    <listofallmembers>
+      <member refid="class_word_table_acc1c76390fc0349573e7dcca5c0dd13f_1acc1c76390fc0349573e7dcca5c0dd13f" prot="public" virt="non-virtual"><scope>WordTable</scope><name>clear</name></member>
+      <member refid="class_word_table_adb6e3da530bf9ae6ef66bd6b7645cb59_1adb6e3da530bf9ae6ef66bd6b7645cb59" prot="public" virt="non-virtual"><scope>WordTable</scope><name>insert</name></member>
+      <member refid="class_word_table_ac5e7942b001b718ddbdd07886d225ae3_1ac5e7942b001b718ddbdd07886d225ae3" prot="public" virt="non-virtual"><scope>WordTable</scope><name>insert</name></member>
+      <member refid="class_word_table_a9dd6f959a23863217989f1948960ad82_1a9dd6f959a23863217989f1948960ad82" prot="public" virt="non-virtual"><scope>WordTable</scope><name>isNontrivialSuperword</name></member>
+      <member refid="class_word_table_a55437f358e9a89c87af0291295f46abe_1a55437f358e9a89c87af0291295f46abe" prot="public" virt="non-virtual"><scope>WordTable</scope><name>isPrefix</name></member>
+      <member refid="class_word_table_aa6993f5f76a203d4bfbf9b1d71e0c9ee_1aa6993f5f76a203d4bfbf9b1d71e0c9ee" prot="private" virt="non-virtual"><scope>WordTable</scope><name>isPrefixOf</name></member>
+      <member refid="class_word_table_a5bd3cc3fee3e78180a2105bab65f76d1_1a5bd3cc3fee3e78180a2105bab65f76d1" prot="public" virt="non-virtual"><scope>WordTable</scope><name>isSuffix</name></member>
+      <member refid="class_word_table_ae805ab20cf473e5698c89ba7d8d11c3c_1ae805ab20cf473e5698c89ba7d8d11c3c" prot="private" virt="non-virtual"><scope>WordTable</scope><name>isSuffixOf</name></member>
+      <member refid="class_word_table_aa09193cb49a9800f27df34d0167e950e_1aa09193cb49a9800f27df34d0167e950e" prot="public" virt="non-virtual"><scope>WordTable</scope><name>leftOverlaps</name></member>
+      <member refid="class_word_table_a6ef2410d15f46d7ffd09c856683590c8_1a6ef2410d15f46d7ffd09c856683590c8" prot="private" virt="non-virtual"><scope>WordTable</scope><name>mIndices</name></member>
+      <member refid="class_word_table_a894f7b53057ea6290b3b15d5c97d2e4d_1a894f7b53057ea6290b3b15d5c97d2e4d" prot="private" virt="non-virtual"><scope>WordTable</scope><name>mMonomials</name></member>
+      <member refid="class_word_table_ad64ce22971a70bf79ae87a8000c26ecc_1ad64ce22971a70bf79ae87a8000c26ecc" prot="private" virt="non-virtual"><scope>WordTable</scope><name>mMonomialSpace</name></member>
+      <member refid="class_word_table_a0654687cec7e44bd5a33b3f0a79426a9_1a0654687cec7e44bd5a33b3f0a79426a9" prot="public" virt="non-virtual"><scope>WordTable</scope><name>monomialCount</name></member>
+      <member refid="class_word_table_aa5b7bfc82a47346c6f23797f6726c253_1aa5b7bfc82a47346c6f23797f6726c253" prot="public" virt="non-virtual"><scope>WordTable</scope><name>operator&lt;&lt;</name></member>
+      <member refid="class_word_table_a06f117ba48263ba223b15f3a5920114b_1a06f117ba48263ba223b15f3a5920114b" prot="public" virt="non-virtual"><scope>WordTable</scope><name>operator[]</name></member>
+      <member refid="class_word_table_a96cc81810bed8bd2709e4f345a5d214c_1a96cc81810bed8bd2709e4f345a5d214c" prot="private" virt="non-virtual"><scope>WordTable</scope><name>overlaps</name></member>
+      <member refid="class_word_table_a209d2fb3ca001d6aee5efbb0055e2204_1a209d2fb3ca001d6aee5efbb0055e2204" prot="public" virt="non-virtual"><scope>WordTable</scope><name>rightOverlaps</name></member>
+      <member refid="class_word_table_acc86435937719079a77637a5c0d91614_1acc86435937719079a77637a5c0d91614" prot="public" virt="non-virtual"><scope>WordTable</scope><name>subword</name></member>
+      <member refid="class_word_table_abb81e2ab3b2481e286d959ed0993d2a8_1abb81e2ab3b2481e286d959ed0993d2a8" prot="private" virt="non-virtual"><scope>WordTable</scope><name>subwordPosition</name></member>
+      <member refid="class_word_table_a35265a6b2f65427ce3ea4a4c4da071b8_1a35265a6b2f65427ce3ea4a4c4da071b8" prot="public" virt="non-virtual"><scope>WordTable</scope><name>subwordPositions</name></member>
+      <member refid="class_word_table_a7a60e3ce3292910ef1367b6aec3c6049_1a7a60e3ce3292910ef1367b6aec3c6049" prot="public" virt="non-virtual"><scope>WordTable</scope><name>subwords</name></member>
+      <member refid="class_word_table_a1aa542a443bc036ed7acae78c0c9acc6_1a1aa542a443bc036ed7acae78c0c9acc6" prot="public" virt="non-virtual"><scope>WordTable</scope><name>superwords</name></member>
+      <member refid="class_word_table_a50405797862e90442843a5a0b96c941d_1a50405797862e90442843a5a0b96c941d" prot="public" virt="non-virtual"><scope>WordTable</scope><name>WordTable</name></member>
+      <member refid="class_word_table_ad453003512c4d88131c11138c997ab17_1ad453003512c4d88131c11138c997ab17" prot="public" virt="non-virtual"><scope>WordTable</scope><name>~WordTable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

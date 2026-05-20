@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_atomic_internal_1_1_choose_atomic" kind="struct" language="C++" prot="public">
+    <compoundname>AtomicInternal::ChooseAtomic</compoundname>
+    <includes refid="_atomic_8hpp" local="no">Atomic.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class <ref refid="struct_t" kindref="compound">T</ref></type>
+      </param>
+      <param>
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <declname>size</declname>
+        <defname>size</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="struct_atomic_internal_1_1_choose_atomic_ad27110011b40c199486617392efb28b9_1ad27110011b40c199486617392efb28b9" prot="public" static="no">
+        <type>std::atomic&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt;</type>
+        <definition>typedef std::atomic&lt;T&gt; AtomicInternal::ChooseAtomic&lt; T, size &gt;::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <qualifiedname>AtomicInternal::ChooseAtomic::type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Atomic.hpp" line="123" column="25" bodyfile="submodules/mathicgb/src/mathicgb/Atomic.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Class for deciding which implementation of atomic to use. The default is to use std::atomic which is a fine choice if std::atomic is implemented in a reasonable way by the standard library implementation you are using. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>AtomicInternal::ChooseAtomic&lt; FixedSizeMonomialMap::Node *, sizeof(FixedSizeMonomialMap::Node *)&gt;</label>
+        <link refid="struct_atomic_internal_1_1_choose_atomic"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; FixedSizeMonomialMap::Node *, sizeof(FixedSizeMonomialMap::Node *)&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>AtomicInternal::ChooseAtomic&lt; FixedSizeMonomialMap&lt; mapped_type &gt; *, sizeof(FixedSizeMonomialMap&lt; mapped_type &gt; *)&gt;</label>
+        <link refid="struct_atomic_internal_1_1_choose_atomic"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; FixedSizeMonomialMap&lt; mapped_type &gt; *, sizeof(FixedSizeMonomialMap&lt; mapped_type &gt; *)&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>AtomicInternal::ChooseAtomic&lt; T, size &gt;</label>
+        <link refid="struct_atomic_internal_1_1_choose_atomic"/>
+      </node>
+      <node id="2">
+        <label>AtomicInternal::ChooseAtomic&lt; T, sizeof(T)&gt;</label>
+        <link refid="struct_atomic_internal_1_1_choose_atomic"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; T, sizeof(T)&gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="submodules/mathicgb/src/mathicgb/Atomic.hpp" line="122" column="3" bodyfile="submodules/mathicgb/src/mathicgb/Atomic.hpp" bodystart="122" bodyend="124"/>
+    <listofallmembers>
+      <member refid="struct_atomic_internal_1_1_choose_atomic_ad27110011b40c199486617392efb28b9_1ad27110011b40c199486617392efb28b9" prot="public" virt="non-virtual"><scope>AtomicInternal::ChooseAtomic</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

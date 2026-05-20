@@ -1,0 +1,5 @@
+var structmathic_1_1_pair_queue_namespace_1_1_construct_pair_data_function_3_01_p_q_con_decon_counter_conf_01_4 =
+[
+    [ "PairData", "structmathic_1_1_pair_queue_namespace_1_1_construct_pair_data_function_a4ee2e641c98c0d25c85a175116b0ba65.html#a4ee2e641c98c0d25c85a175116b0ba65", null ],
+    [ "function", "structmathic_1_1_pair_queue_namespace_1_1_construct_pair_data_function_3_01_p_q_con_decon_counter_conf_01_4_a181f571542355aba8fa8764f28de9557.html#a181f571542355aba8fa8764f28de9557", null ]
+];

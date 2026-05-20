@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_schreyer_frame_types" kind="namespace" language="C++">
+    <compoundname>SchreyerFrameTypes</compoundname>
+    <innerclass refid="struct_schreyer_frame_types_1_1_frame_element" prot="public">SchreyerFrameTypes::FrameElement</innerclass>
+    <innerclass refid="struct_schreyer_frame_types_1_1_pre_element" prot="public">SchreyerFrameTypes::PreElement</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp" line="78" column="1"/>
+  </compounddef>
+</doxygen>

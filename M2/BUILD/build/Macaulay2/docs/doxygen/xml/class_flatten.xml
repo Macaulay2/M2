@@ -1,0 +1,339 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_flatten" kind="class" language="C++" prot="public">
+    <compoundname>Flatten</compoundname>
+    <includes refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" local="no">Range.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class OuterIterator</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" prot="public" static="no">
+        <type><ref refid="struct_flatten_namespace_1_1_inner_iterator_type" kindref="compound">FlattenNamespace::InnerIteratorType</ref>&lt; OuterIterator &gt;::type</type>
+        <definition>typedef FlattenNamespace::InnerIteratorType&lt;OuterIterator&gt;::type Flatten&lt; OuterIterator &gt;::InnerIterator</definition>
+        <argsstring></argsstring>
+        <name>InnerIterator</name>
+        <qualifiedname>Flatten::InnerIterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="414" column="5" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="414" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_flatten_a4ceb35215cb2548fe1c6a6dad4279e73_1a4ceb35215cb2548fe1c6a6dad4279e73" prot="public" static="no">
+        <type>std::iterator_traits&lt; <ref refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" kindref="member">InnerIterator</ref> &gt;::difference_type</type>
+        <definition>typedef std::iterator_traits&lt;InnerIterator&gt;::difference_type Flatten&lt; OuterIterator &gt;::difference_type</definition>
+        <argsstring></argsstring>
+        <name>difference_type</name>
+        <qualifiedname>Flatten::difference_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="416" column="5" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="416" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_flatten_ae0d415b362361be6cb8e3a9e05f0130d_1ae0d415b362361be6cb8e3a9e05f0130d" prot="public" static="no">
+        <type>std::iterator_traits&lt; <ref refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" kindref="member">InnerIterator</ref> &gt;::value_type</type>
+        <definition>typedef std::iterator_traits&lt;InnerIterator&gt;::value_type Flatten&lt; OuterIterator &gt;::value_type</definition>
+        <argsstring></argsstring>
+        <name>value_type</name>
+        <qualifiedname>Flatten::value_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="417" column="54" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="417" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_flatten_a10c68786520e358516dc1abac72bbef3_1a10c68786520e358516dc1abac72bbef3" prot="public" static="no">
+        <type>std::iterator_traits&lt; <ref refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" kindref="member">InnerIterator</ref> &gt;::pointer</type>
+        <definition>typedef std::iterator_traits&lt;InnerIterator&gt;::pointer Flatten&lt; OuterIterator &gt;::pointer</definition>
+        <argsstring></argsstring>
+        <name>pointer</name>
+        <qualifiedname>Flatten::pointer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="418" column="51" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="418" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_flatten_a7e829ef644e345c7e92a2e743a848a03_1a7e829ef644e345c7e92a2e743a848a03" prot="public" static="no">
+        <type>std::iterator_traits&lt; <ref refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" kindref="member">InnerIterator</ref> &gt;::reference</type>
+        <definition>typedef std::iterator_traits&lt;InnerIterator&gt;::reference Flatten&lt; OuterIterator &gt;::reference</definition>
+        <argsstring></argsstring>
+        <name>reference</name>
+        <qualifiedname>Flatten::reference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="419" column="53" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="419" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_flatten_a494785d5dac519f485f6ef1e0fe3041a_1a494785d5dac519f485f6ef1e0fe3041a" prot="public" static="no">
+        <type>std::forward_iterator_tag</type>
+        <definition>typedef std::forward_iterator_tag Flatten&lt; OuterIterator &gt;::iterator_category</definition>
+        <argsstring></argsstring>
+        <name>iterator_category</name>
+        <qualifiedname>Flatten::iterator_category</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="424" column="37" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="424" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" prot="private" static="no" mutable="no">
+        <type><ref refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" kindref="member">InnerIterator</ref></type>
+        <definition>InnerIterator Flatten&lt; OuterIterator &gt;::mInner</definition>
+        <argsstring></argsstring>
+        <name>mInner</name>
+        <qualifiedname>Flatten::mInner</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="484" column="17" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="484" bodyend="-1"/>
+        <referencedby refid="class_flatten_a67ec661392e13b6a13207b0aa5b87ee9_1a67ec661392e13b6a13207b0aa5b87ee9" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="455" endline="465">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::equal</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" prot="private" static="no" mutable="no">
+        <type>OuterIterator</type>
+        <definition>OuterIterator Flatten&lt; OuterIterator &gt;::mOuter</definition>
+        <argsstring></argsstring>
+        <name>mOuter</name>
+        <qualifiedname>Flatten::mOuter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="485" column="17" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="485" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_flatten_a9635eb53d3842d4702b7727285cb569a_1a9635eb53d3842d4702b7727285cb569a" prot="private" static="no" mutable="no">
+        <type>OuterIterator</type>
+        <definition>OuterIterator Flatten&lt; OuterIterator &gt;::mOuterEnd</definition>
+        <argsstring></argsstring>
+        <name>mOuterEnd</name>
+        <qualifiedname>Flatten::mOuterEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="486" column="17" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="486" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_flatten_a787eb2d7b5095871610fd75c074b476d_1a787eb2d7b5095871610fd75c074b476d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Flatten&lt; OuterIterator &gt;::Flatten</definition>
+        <argsstring>()</argsstring>
+        <name>Flatten</name>
+        <qualifiedname>Flatten::Flatten</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="426" column="3" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="426" bodyend="426"/>
+      </memberdef>
+      <memberdef kind="function" id="class_flatten_a6f0a4bb29200ae2749995eea18bf794c_1a6f0a4bb29200ae2749995eea18bf794c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Flatten&lt; OuterIterator &gt;::Flatten</definition>
+        <argsstring>(const OuterIterator outerBegin, const OuterIterator outerEnd)</argsstring>
+        <name>Flatten</name>
+        <qualifiedname>Flatten::Flatten</qualifiedname>
+        <param>
+          <type>const OuterIterator</type>
+          <declname>outerBegin</declname>
+        </param>
+        <param>
+          <type>const OuterIterator</type>
+          <declname>outerEnd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="427" column="3" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="427" bodyend="433"/>
+      </memberdef>
+      <memberdef kind="function" id="class_flatten_a7990167a76fe3f7a510e37562f2da65e_1a7990167a76fe3f7a510e37562f2da65e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_flatten" kindref="compound">Flatten</ref> &amp;</type>
+        <definition>Flatten &amp; Flatten&lt; OuterIterator &gt;::operator++</definition>
+        <argsstring>()</argsstring>
+        <name>operator++</name>
+        <qualifiedname>Flatten::operator++</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="435" column="11" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="435" bodyend="448"/>
+      </memberdef>
+      <memberdef kind="function" id="class_flatten_a58ed7aa4007f74f4845afe03cc0f25a9_1a58ed7aa4007f74f4845afe03cc0f25a9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>decltype(*std::declval&lt; <ref refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" kindref="member">InnerIterator</ref> &gt;())</type>
+        <definition>decltype(*std::declval&lt; InnerIterator &gt;()) Flatten&lt; OuterIterator &gt;::operator*</definition>
+        <argsstring>() const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>Flatten::operator*</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="450" column="12" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="450" bodyend="453"/>
+      </memberdef>
+      <memberdef kind="function" id="class_flatten_a67ec661392e13b6a13207b0aa5b87ee9_1a67ec661392e13b6a13207b0aa5b87ee9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Flatten&lt; OuterIterator &gt;::equal</definition>
+        <argsstring>(const Flatten &amp;f) const</argsstring>
+        <name>equal</name>
+        <qualifiedname>Flatten::equal</qualifiedname>
+        <param>
+          <type>const <ref refid="class_flatten" kindref="compound">Flatten</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="455" column="8" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="455" bodyend="465"/>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_aa369f8bcda9e6303823e38e73138e5d3_1aa369f8bcda9e6303823e38e73138e5d3" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="490" endline="495">operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Flatten&lt; OuterIterator &gt;::debugAssertValid</definition>
+        <argsstring>() const</argsstring>
+        <name>debugAssertValid</name>
+        <qualifiedname>Flatten::debugAssertValid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="467" column="8" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="467" bodyend="470"/>
+        <referencedby refid="class_flatten_a67ec661392e13b6a13207b0aa5b87ee9_1a67ec661392e13b6a13207b0aa5b87ee9" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="455" endline="465">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::equal</referencedby>
+        <referencedby refid="class_flatten_a6f0a4bb29200ae2749995eea18bf794c_1a6f0a4bb29200ae2749995eea18bf794c" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="427" endline="433">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::Flatten</referencedby>
+        <referencedby refid="class_flatten_a7990167a76fe3f7a510e37562f2da65e_1a7990167a76fe3f7a510e37562f2da65e" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="435" endline="448">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::operator++</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Flatten&lt; OuterIterator &gt;::atEnd</definition>
+        <argsstring>() const</argsstring>
+        <name>atEnd</name>
+        <qualifiedname>Flatten::atEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="473" column="8" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="473" bodyend="473"/>
+        <referencedby refid="class_flatten_a6492d38ca99aee603b729a79df9758de_1a6492d38ca99aee603b729a79df9758de" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="475" endline="482">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::adjustOuter</referencedby>
+        <referencedby refid="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="467" endline="470">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::debugAssertValid</referencedby>
+        <referencedby refid="class_flatten_a67ec661392e13b6a13207b0aa5b87ee9_1a67ec661392e13b6a13207b0aa5b87ee9" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="455" endline="465">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::equal</referencedby>
+        <referencedby refid="class_flatten_a58ed7aa4007f74f4845afe03cc0f25a9_1a58ed7aa4007f74f4845afe03cc0f25a9" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="450" endline="453">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::operator*</referencedby>
+        <referencedby refid="class_flatten_a7990167a76fe3f7a510e37562f2da65e_1a7990167a76fe3f7a510e37562f2da65e" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="435" endline="448">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::operator++</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_flatten_a6492d38ca99aee603b729a79df9758de_1a6492d38ca99aee603b729a79df9758de" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Flatten&lt; OuterIterator &gt;::adjustOuter</definition>
+        <argsstring>()</argsstring>
+        <name>adjustOuter</name>
+        <qualifiedname>Flatten::adjustOuter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="475" column="8" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="475" bodyend="482"/>
+        <referencedby refid="class_flatten_a6f0a4bb29200ae2749995eea18bf794c_1a6f0a4bb29200ae2749995eea18bf794c" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="427" endline="433">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::Flatten</referencedby>
+        <referencedby refid="class_flatten_a7990167a76fe3f7a510e37562f2da65e_1a7990167a76fe3f7a510e37562f2da65e" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="435" endline="448">Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;::operator++</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="class_flatten" kindref="compound">Flatten</ref> is an iterator that iterates through each range in a range of ranges. The point is to enable the <ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten()</ref> function defined further down in this header. This iterator is invalidated whenever the outer range or any of the inner ranges invalidate any iterator or change their number of elements. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Flatten&lt; OuterIterator &gt;</label>
+        <link refid="class_flatten"/>
+      </node>
+      <node id="2">
+        <label>Flatten&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;</label>
+        <link refid="class_flatten"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; typename std::vector&lt; MonoVector &gt;::const_iterator &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Flatten&lt; OuterIterator &gt;</label>
+        <link refid="class_flatten"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mInner</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mOuter</edgelabel>
+          <edgelabel>mOuterEnd</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>type</label>
+      </node>
+      <node id="3">
+        <label>OuterIterator</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="406" column="1" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="406" bodyend="487"/>
+    <listofallmembers>
+      <member refid="class_flatten_a6492d38ca99aee603b729a79df9758de_1a6492d38ca99aee603b729a79df9758de" prot="private" virt="non-virtual"><scope>Flatten</scope><name>adjustOuter</name></member>
+      <member refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" prot="private" virt="non-virtual"><scope>Flatten</scope><name>atEnd</name></member>
+      <member refid="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" prot="public" virt="non-virtual"><scope>Flatten</scope><name>debugAssertValid</name></member>
+      <member refid="class_flatten_a4ceb35215cb2548fe1c6a6dad4279e73_1a4ceb35215cb2548fe1c6a6dad4279e73" prot="public" virt="non-virtual"><scope>Flatten</scope><name>difference_type</name></member>
+      <member refid="class_flatten_a67ec661392e13b6a13207b0aa5b87ee9_1a67ec661392e13b6a13207b0aa5b87ee9" prot="public" virt="non-virtual"><scope>Flatten</scope><name>equal</name></member>
+      <member refid="class_flatten_a787eb2d7b5095871610fd75c074b476d_1a787eb2d7b5095871610fd75c074b476d" prot="public" virt="non-virtual"><scope>Flatten</scope><name>Flatten</name></member>
+      <member refid="class_flatten_a6f0a4bb29200ae2749995eea18bf794c_1a6f0a4bb29200ae2749995eea18bf794c" prot="public" virt="non-virtual"><scope>Flatten</scope><name>Flatten</name></member>
+      <member refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" prot="public" virt="non-virtual"><scope>Flatten</scope><name>InnerIterator</name></member>
+      <member refid="class_flatten_a494785d5dac519f485f6ef1e0fe3041a_1a494785d5dac519f485f6ef1e0fe3041a" prot="public" virt="non-virtual"><scope>Flatten</scope><name>iterator_category</name></member>
+      <member refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" prot="private" virt="non-virtual"><scope>Flatten</scope><name>mInner</name></member>
+      <member refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" prot="private" virt="non-virtual"><scope>Flatten</scope><name>mOuter</name></member>
+      <member refid="class_flatten_a9635eb53d3842d4702b7727285cb569a_1a9635eb53d3842d4702b7727285cb569a" prot="private" virt="non-virtual"><scope>Flatten</scope><name>mOuterEnd</name></member>
+      <member refid="class_flatten_a58ed7aa4007f74f4845afe03cc0f25a9_1a58ed7aa4007f74f4845afe03cc0f25a9" prot="public" virt="non-virtual"><scope>Flatten</scope><name>operator*</name></member>
+      <member refid="class_flatten_a7990167a76fe3f7a510e37562f2da65e_1a7990167a76fe3f7a510e37562f2da65e" prot="public" virt="non-virtual"><scope>Flatten</scope><name>operator++</name></member>
+      <member refid="class_flatten_a10c68786520e358516dc1abac72bbef3_1a10c68786520e358516dc1abac72bbef3" prot="public" virt="non-virtual"><scope>Flatten</scope><name>pointer</name></member>
+      <member refid="class_flatten_a7e829ef644e345c7e92a2e743a848a03_1a7e829ef644e345c7e92a2e743a848a03" prot="public" virt="non-virtual"><scope>Flatten</scope><name>reference</name></member>
+      <member refid="class_flatten_ae0d415b362361be6cb8e3a9e05f0130d_1ae0d415b362361be6cb8e3a9e05f0130d" prot="public" virt="non-virtual"><scope>Flatten</scope><name>value_type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

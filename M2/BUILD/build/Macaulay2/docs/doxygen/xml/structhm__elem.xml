@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structhm__elem" kind="struct" language="C++" prot="public">
+    <compoundname>hm_elem</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="hermite_8hpp" local="no">hermite.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structhm__elem_a9fe91b83c7d7367fe85ff78c2b9d1d4d_1a9fe91b83c7d7367fe85ff78c2b9d1d4d" prot="public" static="no" mutable="no">
+        <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+        <definition>hm_elem* hm_elem::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>hm_elem::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="42" column="11" bodyfile="Macaulay2/e/hermite.hpp" bodystart="42" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_a992dc9f54ed8b8159c89c5061ce57674_1a992dc9f54ed8b8159c89c5061ce57674" compoundref="hermite_8cpp" startline="124" endline="183">HermiteComputation::merge</referencedby>
+        <referencedby refid="class_hermite_computation_afc94471ae40cbcf6d996766b3e491f82_1afc94471ae40cbcf6d996766b3e491f82" compoundref="hermite_8cpp" startline="185" endline="208">HermiteComputation::sort</referencedby>
+        <referencedby refid="class_hermite_computation_a48af30122752f103fabb50db08142fcc_1a48af30122752f103fabb50db08142fcc" compoundref="hermite_8cpp" startline="90" endline="114">HermiteComputation::~HermiteComputation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structhm__elem_a91b1e1a947d916ac6c1730b7dd902a71_1a91b1e1a947d916ac6c1730b7dd902a71" prot="public" static="no" mutable="no">
+        <type>mpz_t</type>
+        <definition>mpz_t hm_elem::lead</definition>
+        <argsstring></argsstring>
+        <name>lead</name>
+        <qualifiedname>hm_elem::lead</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="43" column="9" bodyfile="Macaulay2/e/hermite.hpp" bodystart="43" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_a93bb467ccb738eafd172194a56ccc74d_1a93bb467ccb738eafd172194a56ccc74d" compoundref="hermite_8cpp" startline="116" endline="122">HermiteComputation::compare_elems</referencedby>
+        <referencedby refid="class_hermite_computation_a992dc9f54ed8b8159c89c5061ce57674_1a992dc9f54ed8b8159c89c5061ce57674" compoundref="hermite_8cpp" startline="124" endline="183">HermiteComputation::merge</referencedby>
+        <referencedby refid="class_hermite_computation_a728abdccc619e66fd85da5bb0345ec41_1a728abdccc619e66fd85da5bb0345ec41" compoundref="hermite_8cpp" startline="210" endline="258">HermiteComputation::reduce</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structhm__elem_a6c4e3a22776a82f0136f8aa8e83cd351_1a6c4e3a22776a82f0136f8aa8e83cd351" prot="public" static="no" mutable="no">
+        <type>vec</type>
+        <definition>vec hm_elem::f</definition>
+        <argsstring></argsstring>
+        <name>f</name>
+        <qualifiedname>hm_elem::f</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="44" column="7" bodyfile="Macaulay2/e/hermite.hpp" bodystart="44" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_a905c2256c83102682eba846df0842718_1a905c2256c83102682eba846df0842718" compoundref="hermite_8cpp" startline="387" endline="421">HermiteComputation::gb_reduce</referencedby>
+        <referencedby refid="class_hermite_computation_ab9165fb3d442836b0e5354b677247ee4_1ab9165fb3d442836b0e5354b677247ee4" compoundref="hermite_8cpp" startline="423" endline="459">HermiteComputation::gb_reduce</referencedby>
+        <referencedby refid="class_hermite_computation_a992dc9f54ed8b8159c89c5061ce57674_1a992dc9f54ed8b8159c89c5061ce57674" compoundref="hermite_8cpp" startline="124" endline="183">HermiteComputation::merge</referencedby>
+        <referencedby refid="class_hermite_computation_a728abdccc619e66fd85da5bb0345ec41_1a728abdccc619e66fd85da5bb0345ec41" compoundref="hermite_8cpp" startline="210" endline="258">HermiteComputation::reduce</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structhm__elem_afbe611b8905d29f551e41521b2c7ecec_1afbe611b8905d29f551e41521b2c7ecec" prot="public" static="no" mutable="no">
+        <type>vec</type>
+        <definition>vec hm_elem::fsyz</definition>
+        <argsstring></argsstring>
+        <name>fsyz</name>
+        <qualifiedname>hm_elem::fsyz</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="45" column="7" bodyfile="Macaulay2/e/hermite.hpp" bodystart="45" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_ab9165fb3d442836b0e5354b677247ee4_1ab9165fb3d442836b0e5354b677247ee4" compoundref="hermite_8cpp" startline="423" endline="459">HermiteComputation::gb_reduce</referencedby>
+        <referencedby refid="class_hermite_computation_a992dc9f54ed8b8159c89c5061ce57674_1a992dc9f54ed8b8159c89c5061ce57674" compoundref="hermite_8cpp" startline="124" endline="183">HermiteComputation::merge</referencedby>
+        <referencedby refid="class_hermite_computation_a728abdccc619e66fd85da5bb0345ec41_1a728abdccc619e66fd85da5bb0345ec41" compoundref="hermite_8cpp" startline="210" endline="258">HermiteComputation::reduce</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>hm_elem</label>
+        <link refid="structhm__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>hm_elem</label>
+        <link refid="structhm__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>lead</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mpz_t</label>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="4">
+        <label>vec</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/hermite.hpp" line="40" column="1" bodyfile="Macaulay2/e/hermite.hpp" bodystart="41" bodyend="46"/>
+    <listofallmembers>
+      <member refid="structhm__elem_a6c4e3a22776a82f0136f8aa8e83cd351_1a6c4e3a22776a82f0136f8aa8e83cd351" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>f</name></member>
+      <member refid="structhm__elem_afbe611b8905d29f551e41521b2c7ecec_1afbe611b8905d29f551e41521b2c7ecec" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>fsyz</name></member>
+      <member refid="structhm__elem_a91b1e1a947d916ac6c1730b7dd902a71_1a91b1e1a947d916ac6c1730b7dd902a71" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>lead</name></member>
+      <member refid="structhm__elem_a9fe91b83c7d7367fe85ff78c2b9d1d4d_1a9fe91b83c7d7367fe85ff78c2b9d1d4d" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>next</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>hm_elem</scope><name>operator new[]</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

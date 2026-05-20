@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_f4_matrix_projection_1_1_col_project_to" kind="struct" language="C++" prot="private">
+    <compoundname>F4MatrixProjection::ColProjectTo</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_f4_matrix_projection_1_1_col_project_to_aa23dd6a5b225b0b22013c20c694a7ed1_1aa23dd6a5b225b0b22013c20c694a7ed1" prot="public" static="no" mutable="no">
+        <type><ref refid="class_f4_matrix_projection_a8983d34fd4bb612efe578103ea733831_1a8983d34fd4bb612efe578103ea733831" kindref="member">ColIndex</ref></type>
+        <definition>ColIndex F4MatrixProjection::ColProjectTo::index</definition>
+        <argsstring></argsstring>
+        <name>index</name>
+        <qualifiedname>F4MatrixProjection::ColProjectTo::index</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="52" column="14" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_matrix_projection_1_1_col_project_to_aa8c4ea402a64020ca5470baec5647862_1aa8c4ea402a64020ca5470baec5647862" prot="public" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool F4MatrixProjection::ColProjectTo::isLeft</definition>
+        <argsstring></argsstring>
+        <name>isLeft</name>
+        <qualifiedname>F4MatrixProjection::ColProjectTo::isLeft</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="53" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>F4MatrixProjection::ColProjectTo</label>
+        <link refid="struct_f4_matrix_projection_1_1_col_project_to"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>index</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>isLeft</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ColIndex</label>
+      </node>
+      <node id="3">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="51" column="3" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="51" bodyend="54"/>
+    <listofallmembers>
+      <member refid="struct_f4_matrix_projection_1_1_col_project_to_aa23dd6a5b225b0b22013c20c694a7ed1_1aa23dd6a5b225b0b22013c20c694a7ed1" prot="public" virt="non-virtual"><scope>F4MatrixProjection::ColProjectTo</scope><name>index</name></member>
+      <member refid="struct_f4_matrix_projection_1_1_col_project_to_aa8c4ea402a64020ca5470baec5647862_1aa8c4ea402a64020ca5470baec5647862" prot="public" virt="non-virtual"><scope>F4MatrixProjection::ColProjectTo</scope><name>isLeft</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

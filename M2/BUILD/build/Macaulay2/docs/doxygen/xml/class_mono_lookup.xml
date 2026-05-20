@@ -1,0 +1,497 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_mono_lookup" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>MonoLookup</compoundname>
+    <derivedcompoundref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup" prot="public" virt="non-virtual">MATHICGB_NAMESPACE_BEGIN::ConcreteMonoLookup&lt; UseKDTree, AllowRemovals, UseDivMask &gt;</derivedcompoundref>
+    <includes refid="_mono_lookup_8hpp" local="no">MonoLookup.hpp</includes>
+    <innerclass refid="class_mono_lookup_1_1_factory" prot="public">MonoLookup::Factory</innerclass>
+    <innerclass refid="class_mono_lookup_1_1_entry_output" prot="public">MonoLookup::EntryOutput</innerclass>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_mono_lookup_a369c2ec7966ba31363a6e4595a5dd591_1a369c2ec7966ba31363a6e4595a5dd591" prot="public" static="no">
+        <type><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref></type>
+        <definition>typedef PolyRing::Monoid MonoLookup::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>MonoLookup::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="19" column="28" bodyfile="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" prot="public" static="no">
+        <type>Monoid::ConstMonoRef</type>
+        <definition>typedef Monoid::ConstMonoRef MonoLookup::ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>MonoLookup::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="20" column="32" bodyfile="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_lookup_a6267383543080f6b57c99bcd02dee9a5_1a6267383543080f6b57c99bcd02dee9a5" prot="public" static="no">
+        <type>Monoid::ConstMonoPtr</type>
+        <definition>typedef Monoid::ConstMonoPtr MonoLookup::ConstMonoPtr</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoPtr</name>
+        <qualifiedname>MonoLookup::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="21" column="32" bodyfile="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_mono_lookup_aa71474a69a85dcfe878eb83e734f651a_1aa71474a69a85dcfe878eb83e734f651a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>MonoLookup::~MonoLookup</definition>
+        <argsstring>()</argsstring>
+        <name>~MonoLookup</name>
+        <qualifiedname>MonoLookup::~MonoLookup</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="23" column="11" bodyfile="submodules/mathicgb/src/mathicgb/MonoLookup.cpp" bodystart="168" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a705b0ac778d522c154b4c629904cf2d1_1a705b0ac778d522c154b4c629904cf2d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void MonoLookup::setBasis</definition>
+        <argsstring>(const PolyBasis &amp;basis)=0</argsstring>
+        <name>setBasis</name>
+        <qualifiedname>MonoLookup::setBasis</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_ad571c370f9f306c7a01dedc701c2fd46_1ad571c370f9f306c7a01dedc701c2fd46">setBasis</reimplementedby>
+        <param>
+          <type>const <ref refid="class_poly_basis" kindref="compound">PolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="27" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a7b9b7dd9e93dfe446c3b7a2b71d36acf_1a7b9b7dd9e93dfe446c3b7a2b71d36acf" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void MonoLookup::setSigBasis</definition>
+        <argsstring>(const SigPolyBasis &amp;sigBasis)=0</argsstring>
+        <name>setSigBasis</name>
+        <qualifiedname>MonoLookup::setSigBasis</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_ae9dde8056c071dfa410590aedd1969de_1ae9dde8056c071dfa410590aedd1969de">setSigBasis</reimplementedby>
+        <param>
+          <type>const <ref refid="class_sig_poly_basis" kindref="compound">SigPolyBasis</ref> &amp;</type>
+          <declname>sigBasis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="31" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a48f670b3df9b20e0b238853468c30070_1a48f670b3df9b20e0b238853468c30070" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void MonoLookup::insert</definition>
+        <argsstring>(ConstMonoRef mono, size_t index)=0</argsstring>
+        <name>insert</name>
+        <qualifiedname>MonoLookup::insert</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_abea57b79db7254cd0ed3b28b0f7853fd_1abea57b79db7254cd0ed3b28b0f7853fd">insert</reimplementedby>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="33" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_aabefc82bd76b7b25fe876c30b3bba297_1aabefc82bd76b7b25fe876c30b3bba297" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t MonoLookup::regularReducer</definition>
+        <argsstring>(ConstMonoRef sig, ConstMonoRef mono) const =0</argsstring>
+        <name>regularReducer</name>
+        <qualifiedname>MonoLookup::regularReducer</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a569e3efdc7d7637cc5eb81a163bf80bc_1a569e3efdc7d7637cc5eb81a163bf80bc">regularReducer</reimplementedby>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>sig</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="39" column="18"/>
+        <referencedby refid="class_sig_poly_basis_a58c79b4e50096f7851bea1a82787a712_1a58c79b4e50096f7851bea1a82787a712" compoundref="_sig_poly_basis_8cpp" startline="168" endline="189">SigPolyBasis::regularReducer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_ad6c4542d134350d7e1493aa4c45f56c9_1ad6c4542d134350d7e1493aa4c45f56c9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t MonoLookup::classicReducer</definition>
+        <argsstring>(ConstMonoRef mono) const =0</argsstring>
+        <name>classicReducer</name>
+        <qualifiedname>MonoLookup::classicReducer</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a8e5a8270b9a52425d0d42f497bee2756_1a8e5a8270b9a52425d0d42f497bee2756">classicReducer</reimplementedby>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="44" column="18"/>
+        <referencedby refid="class_poly_basis_af519f0265b75ea73264febee29b5b00b_1af519f0265b75ea73264febee29b5b00b" compoundref="_poly_basis_8cpp" startline="116" endline="123">PolyBasis::classicReducer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a8c5a8bc1fab217aa85a88c8662eef140_1a8c5a8bc1fab217aa85a88c8662eef140" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::string</type>
+        <definition>virtual std::string MonoLookup::getName</definition>
+        <argsstring>() const =0</argsstring>
+        <name>getName</name>
+        <qualifiedname>MonoLookup::getName</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_ae7fafa12eda8ca04ae0b3e622695a0d3_1ae7fafa12eda8ca04ae0b3e622695a0d3">getName</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="46" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a504bad236243f6faf2ce4ff74a92cbcf_1a504bad236243f6faf2ce4ff74a92cbcf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t MonoLookup::getMemoryUse</definition>
+        <argsstring>() const =0</argsstring>
+        <name>getMemoryUse</name>
+        <qualifiedname>MonoLookup::getMemoryUse</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_ab36616b52a11cdcabb7b4801eb957505_1ab36616b52a11cdcabb7b4801eb957505">getMemoryUse</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="48" column="18"/>
+        <referencedby refid="class_sig_poly_basis_ae44b9ccc76b8dcb9ccf16a5505fb81b6_1ae44b9ccc76b8dcb9ccf16a5505fb81b6" compoundref="_sig_poly_basis_8cpp" startline="425" endline="445">SigPolyBasis::getMemoryUse</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a515765a14be989c0ea5a69de621aed3a_1a515765a14be989c0ea5a69de621aed3a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t MonoLookup::highBaseDivisor</definition>
+        <argsstring>(size_t newGenerator) const =0</argsstring>
+        <name>highBaseDivisor</name>
+        <qualifiedname>MonoLookup::highBaseDivisor</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_ab9a67011995c6499cdc92a87b8ccc87d_1ab9a67011995c6499cdc92a87b8ccc87d">highBaseDivisor</reimplementedby>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>newGenerator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="50" column="18"/>
+        <referencedby refid="class_sig_poly_basis_a0ad19da0b919cd8498a242871e366ac5_1a0ad19da0b919cd8498a242871e366ac5" compoundref="_sig_poly_basis_8cpp" startline="267" endline="278">SigPolyBasis::highBaseDivisor</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a58c69058c4de85bc907340a08519ba4a_1a58c69058c4de85bc907340a08519ba4a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void MonoLookup::lowBaseDivisors</definition>
+        <argsstring>(std::vector&lt; size_t &gt; &amp;divisors, size_t maxDivisors, size_t newGenerator) const =0</argsstring>
+        <name>lowBaseDivisors</name>
+        <qualifiedname>MonoLookup::lowBaseDivisors</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a62fa9940244b3eb2e2e22dad705c7914_1a62fa9940244b3eb2e2e22dad705c7914">lowBaseDivisors</reimplementedby>
+        <param>
+          <type>std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &amp;</type>
+          <declname>divisors</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>maxDivisors</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>newGenerator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="51" column="16"/>
+        <references refid="class_mono_lookup_ac4a9081d4b42a5b309f77a5e1a7450ed_1ac4a9081d4b42a5b309f77a5e1a7450ed">divisors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_aee302a09ad48fc70a70bb2ca0b364d43_1aee302a09ad48fc70a70bb2ca0b364d43" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t MonoLookup::minimalLeadInSig</definition>
+        <argsstring>(ConstMonoRef sig) const =0</argsstring>
+        <name>minimalLeadInSig</name>
+        <qualifiedname>MonoLookup::minimalLeadInSig</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a453ec080da63f63b8ebb2bdb152c3687_1a453ec080da63f63b8ebb2bdb152c3687">minimalLeadInSig</reimplementedby>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>sig</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="56" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a61ae9d7e5cfc2980767cada7dad0b677_1a61ae9d7e5cfc2980767cada7dad0b677" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>virtual int MonoLookup::type</definition>
+        <argsstring>() const =0</argsstring>
+        <name>type</name>
+        <qualifiedname>MonoLookup::type</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a10d2ba4b0b2fdb3ba3d4f0d05e0e572e_1a10d2ba4b0b2fdb3ba3d4f0d05e0e572e">type</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="58" column="15"/>
+        <referencedby refid="class_mono_lookup_aa051a9222ec23f259ee7d45a8225a16c_1aa051a9222ec23f259ee7d45a8225a16c" compoundref="_mono_lookup_8cpp" startline="170" endline="175">makeFactory</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a0e3c860745d26734ceedfcd0efd58857_1a0e3c860745d26734ceedfcd0efd58857" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void MonoLookup::multiples</definition>
+        <argsstring>(ConstMonoRef mono, EntryOutput &amp;consumer) const =0</argsstring>
+        <name>multiples</name>
+        <qualifiedname>MonoLookup::multiples</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a24d356ab03d5dfff11f1770d546ed93c_1a24d356ab03d5dfff11f1770d546ed93c">multiples</reimplementedby>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mono_lookup_1_1_entry_output" kindref="compound">EntryOutput</ref> &amp;</type>
+          <declname>consumer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="81" column="16"/>
+        <referencedby refid="class_poly_basis_ad82e4743e309688f3160a1a1fd701197_1ad82e4743e309688f3160a1a1fd701197" compoundref="_poly_basis_8cpp" startline="45" endline="87">PolyBasis::insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a5904717a7b0abab1aef12f30db9b07a7_1a5904717a7b0abab1aef12f30db9b07a7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t MonoLookup::divisor</definition>
+        <argsstring>(ConstMonoRef mono) const =0</argsstring>
+        <name>divisor</name>
+        <qualifiedname>MonoLookup::divisor</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_aabc0b8059d7bb1d4c7346ba33ea00697_1aabc0b8059d7bb1d4c7346ba33ea00697">divisor</reimplementedby>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="84" column="18"/>
+        <referencedby refid="class_poly_basis_a5b45bc7d740ad365b2c81591c058c77d_1a5b45bc7d740ad365b2c81591c058c77d" compoundref="_poly_basis_8cpp" startline="107" endline="114">PolyBasis::divisor</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_ac4a9081d4b42a5b309f77a5e1a7450ed_1ac4a9081d4b42a5b309f77a5e1a7450ed" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void MonoLookup::divisors</definition>
+        <argsstring>(ConstMonoRef mono, EntryOutput &amp;consumer) const =0</argsstring>
+        <name>divisors</name>
+        <qualifiedname>MonoLookup::divisors</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a59a612b349160dd1472c062d43f99b7f_1a59a612b349160dd1472c062d43f99b7f">divisors</reimplementedby>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mono_lookup_1_1_entry_output" kindref="compound">EntryOutput</ref> &amp;</type>
+          <declname>consumer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="88" column="16"/>
+        <referencedby refid="class_mono_lookup_a58c69058c4de85bc907340a08519ba4a_1a58c69058c4de85bc907340a08519ba4a">lowBaseDivisors</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a12c33d44496c75ffa5f9cb66043fd492_1a12c33d44496c75ffa5f9cb66043fd492" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void MonoLookup::removeMultiples</definition>
+        <argsstring>(ConstMonoRef mono)=0</argsstring>
+        <name>removeMultiples</name>
+        <qualifiedname>MonoLookup::removeMultiples</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a4a52dbf67fc16e3366b0548868cd1c9c_1a4a52dbf67fc16e3366b0548868cd1c9c">removeMultiples</reimplementedby>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="91" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a7d7bc8a8e0fb6b1634abd5e3eb3c08a7_1a7d7bc8a8e0fb6b1634abd5e3eb3c08a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void MonoLookup::remove</definition>
+        <argsstring>(ConstMonoRef mono)=0</argsstring>
+        <name>remove</name>
+        <qualifiedname>MonoLookup::remove</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a3a395d688e120ed9985d2f1d7c241c6f_1a3a395d688e120ed9985d2f1d7c241c6f">remove</reimplementedby>
+        <param>
+          <type><ref refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="94" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_a737717a0954ad8150a8e176dbf6500a0_1a737717a0954ad8150a8e176dbf6500a0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t MonoLookup::size</definition>
+        <argsstring>() const =0</argsstring>
+        <name>size</name>
+        <qualifiedname>MonoLookup::size</qualifiedname>
+        <reimplementedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup_a0535e8c9a3f2a72f6c10cf2f0ded763c_1a0535e8c9a3f2a72f6c10cf2f0ded763c">size</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="97" column="18"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_mono_lookup_a63210143acd2481f312fac8cf58e0919_1a63210143acd2481f312fac8cf58e0919" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoLookup::displayCodes</definition>
+        <argsstring>(std::ostream &amp;out)</argsstring>
+        <name>displayCodes</name>
+        <qualifiedname>MonoLookup::displayCodes</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prints a human-readable description of the type codes for the implementations of this interface. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="62" column="15" bodyfile="submodules/mathicgb/src/mathicgb/MonoLookup.cpp" bodystart="177" bodyend="183"/>
+        <referencedby refid="class_g_b_common_params_ade5d11ae8690fd164769f7f175cffead_1ade5d11ae8690fd164769f7f175cffead" compoundref="_g_b_common_params_8cpp" startline="12" endline="95">GBCommonParams::GBCommonParams</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_lookup_aa051a9222ec23f259ee7d45a8225a16c_1aa051a9222ec23f259ee7d45a8225a16c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_mono_lookup_1_1_factory" kindref="compound">Factory</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; MonoLookup::Factory &gt; MonoLookup::makeFactory</definition>
+        <argsstring>(const Monoid &amp;monoid, int type)</argsstring>
+        <name>makeFactory</name>
+        <qualifiedname>MonoLookup::makeFactory</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mono_lookup_a369c2ec7966ba31363a6e4595a5dd591_1a369c2ec7966ba31363a6e4595a5dd591" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+          <declname>monoid</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="70" column="26" bodyfile="submodules/mathicgb/src/mathicgb/MonoLookup.cpp" bodystart="170" bodyend="175"/>
+        <references refid="class_mono_lookup_a61ae9d7e5cfc2980767cada7dad0b677_1a61ae9d7e5cfc2980767cada7dad0b677">type</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>MATHICGB_NAMESPACE_BEGIN::ConcreteMonoLookup&lt; UseKDTree, AllowRemovals, UseDivMask &gt;</label>
+        <link refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>MonoLookup</label>
+        <link refid="class_mono_lookup"/>
+      </node>
+    </inheritancegraph>
+    <location file="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" line="16" column="1" bodyfile="submodules/mathicgb/src/mathicgb/MonoLookup.hpp" bodystart="17" bodyend="98"/>
+    <listofallmembers>
+      <member refid="class_mono_lookup_ad6c4542d134350d7e1493aa4c45f56c9_1ad6c4542d134350d7e1493aa4c45f56c9" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>classicReducer</name></member>
+      <member refid="class_mono_lookup_a6267383543080f6b57c99bcd02dee9a5_1a6267383543080f6b57c99bcd02dee9a5" prot="public" virt="non-virtual"><scope>MonoLookup</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_mono_lookup_aa0eab067b9c97397d4ff7d3504666d34_1aa0eab067b9c97397d4ff7d3504666d34" prot="public" virt="non-virtual"><scope>MonoLookup</scope><name>ConstMonoRef</name></member>
+      <member refid="class_mono_lookup_a63210143acd2481f312fac8cf58e0919_1a63210143acd2481f312fac8cf58e0919" prot="public" virt="non-virtual"><scope>MonoLookup</scope><name>displayCodes</name></member>
+      <member refid="class_mono_lookup_a5904717a7b0abab1aef12f30db9b07a7_1a5904717a7b0abab1aef12f30db9b07a7" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>divisor</name></member>
+      <member refid="class_mono_lookup_ac4a9081d4b42a5b309f77a5e1a7450ed_1ac4a9081d4b42a5b309f77a5e1a7450ed" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>divisors</name></member>
+      <member refid="class_mono_lookup_a504bad236243f6faf2ce4ff74a92cbcf_1a504bad236243f6faf2ce4ff74a92cbcf" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>getMemoryUse</name></member>
+      <member refid="class_mono_lookup_a8c5a8bc1fab217aa85a88c8662eef140_1a8c5a8bc1fab217aa85a88c8662eef140" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>getName</name></member>
+      <member refid="class_mono_lookup_a515765a14be989c0ea5a69de621aed3a_1a515765a14be989c0ea5a69de621aed3a" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>highBaseDivisor</name></member>
+      <member refid="class_mono_lookup_a48f670b3df9b20e0b238853468c30070_1a48f670b3df9b20e0b238853468c30070" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>insert</name></member>
+      <member refid="class_mono_lookup_a58c69058c4de85bc907340a08519ba4a_1a58c69058c4de85bc907340a08519ba4a" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>lowBaseDivisors</name></member>
+      <member refid="class_mono_lookup_aa051a9222ec23f259ee7d45a8225a16c_1aa051a9222ec23f259ee7d45a8225a16c" prot="public" virt="non-virtual"><scope>MonoLookup</scope><name>makeFactory</name></member>
+      <member refid="class_mono_lookup_aee302a09ad48fc70a70bb2ca0b364d43_1aee302a09ad48fc70a70bb2ca0b364d43" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>minimalLeadInSig</name></member>
+      <member refid="class_mono_lookup_a369c2ec7966ba31363a6e4595a5dd591_1a369c2ec7966ba31363a6e4595a5dd591" prot="public" virt="non-virtual"><scope>MonoLookup</scope><name>Monoid</name></member>
+      <member refid="class_mono_lookup_a0e3c860745d26734ceedfcd0efd58857_1a0e3c860745d26734ceedfcd0efd58857" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>multiples</name></member>
+      <member refid="class_mono_lookup_aabefc82bd76b7b25fe876c30b3bba297_1aabefc82bd76b7b25fe876c30b3bba297" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>regularReducer</name></member>
+      <member refid="class_mono_lookup_a7d7bc8a8e0fb6b1634abd5e3eb3c08a7_1a7d7bc8a8e0fb6b1634abd5e3eb3c08a7" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>remove</name></member>
+      <member refid="class_mono_lookup_a12c33d44496c75ffa5f9cb66043fd492_1a12c33d44496c75ffa5f9cb66043fd492" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>removeMultiples</name></member>
+      <member refid="class_mono_lookup_a705b0ac778d522c154b4c629904cf2d1_1a705b0ac778d522c154b4c629904cf2d1" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>setBasis</name></member>
+      <member refid="class_mono_lookup_a7b9b7dd9e93dfe446c3b7a2b71d36acf_1a7b9b7dd9e93dfe446c3b7a2b71d36acf" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>setSigBasis</name></member>
+      <member refid="class_mono_lookup_a737717a0954ad8150a8e176dbf6500a0_1a737717a0954ad8150a8e176dbf6500a0" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>size</name></member>
+      <member refid="class_mono_lookup_a61ae9d7e5cfc2980767cada7dad0b677_1a61ae9d7e5cfc2980767cada7dad0b677" prot="public" virt="pure-virtual"><scope>MonoLookup</scope><name>type</name></member>
+      <member refid="class_mono_lookup_aa71474a69a85dcfe878eb83e734f651a_1aa71474a69a85dcfe878eb83e734f651a" prot="public" virt="virtual"><scope>MonoLookup</scope><name>~MonoLookup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

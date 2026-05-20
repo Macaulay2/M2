@@ -1,0 +1,390 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_res_memory_block" kind="class" language="C++" prot="public">
+    <compoundname>ResMemoryBlock</compoundname>
+    <includes refid="res-memblock_8hpp" local="no">res-memblock.hpp</includes>
+    <innerclass refid="struct_res_memory_block_1_1slab" prot="private">ResMemoryBlock::slab</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename <ref refid="struct_t" kindref="compound">T</ref></type>
+      </param>
+      <param>
+        <type>long <ref refid="classint" kindref="compound">int</ref></type>
+        <declname>NSLAB</declname>
+        <defname>NSLAB</defname>
+        <defval>4092</defval>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_res_memory_block_af51d113ab6e7a3119e0ab412d80846cc_1af51d113ab6e7a3119e0ab412d80846cc" prot="private" static="no" mutable="no">
+        <type><ref refid="classslab" kindref="compound">slab</ref> *</type>
+        <definition>slab* ResMemoryBlock&lt; T, NSLAB &gt;::first_slab</definition>
+        <argsstring></argsstring>
+        <name>first_slab</name>
+        <qualifiedname>ResMemoryBlock::first_slab</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="44" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="44" bodyend="-1"/>
+        <referencedby refid="class_res_memory_block_a453c014c808201598fee487cb77c1f79_1a453c014c808201598fee487cb77c1f79" compoundref="res-memblock_8hpp" startline="148" endline="153">ResMemoryBlock&lt; T, NSLAB &gt;::n_slabs</referencedby>
+        <referencedby refid="class_res_memory_block_a1f2098ef1e2f04feb652da5b12980cd3_1a1f2098ef1e2f04feb652da5b12980cd3" compoundref="res-memblock_8hpp" startline="107" endline="111">ResMemoryBlock&lt; T, NSLAB &gt;::reset</referencedby>
+        <referencedby refid="class_res_memory_block_aaa910de40af92598d07cdaff6ee4af78_1aaa910de40af92598d07cdaff6ee4af78" compoundref="res-memblock_8hpp" startline="73" endline="80">ResMemoryBlock&lt; T, NSLAB &gt;::ResMemoryBlock</referencedby>
+        <referencedby refid="class_res_memory_block_ad4e7f04e64b5614f622486d589cadc61_1ad4e7f04e64b5614f622486d589cadc61" compoundref="res-memblock_8hpp" startline="83" endline="96">ResMemoryBlock&lt; T, NSLAB &gt;::~ResMemoryBlock</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_memory_block_a415f90ad1846513bade607709a7b7b2a_1a415f90ad1846513bade607709a7b7b2a" prot="private" static="no" mutable="no">
+        <type><ref refid="classslab" kindref="compound">slab</ref> *</type>
+        <definition>slab* ResMemoryBlock&lt; T, NSLAB &gt;::current_slab</definition>
+        <argsstring></argsstring>
+        <name>current_slab</name>
+        <qualifiedname>ResMemoryBlock::current_slab</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="45" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="45" bodyend="-1"/>
+        <referencedby refid="class_res_memory_block_ae5234844d28f44e80f1236fc741cbdd2_1ae5234844d28f44e80f1236fc741cbdd2" compoundref="res-memblock_8hpp" startline="114" endline="131">ResMemoryBlock&lt; T, NSLAB &gt;::reserve</referencedby>
+        <referencedby refid="class_res_memory_block_a1f2098ef1e2f04feb652da5b12980cd3_1a1f2098ef1e2f04feb652da5b12980cd3" compoundref="res-memblock_8hpp" startline="107" endline="111">ResMemoryBlock&lt; T, NSLAB &gt;::reset</referencedby>
+        <referencedby refid="class_res_memory_block_aaa910de40af92598d07cdaff6ee4af78_1aaa910de40af92598d07cdaff6ee4af78" compoundref="res-memblock_8hpp" startline="73" endline="80">ResMemoryBlock&lt; T, NSLAB &gt;::ResMemoryBlock</referencedby>
+        <referencedby refid="class_res_memory_block_ad4e7f04e64b5614f622486d589cadc61_1ad4e7f04e64b5614f622486d589cadc61" compoundref="res-memblock_8hpp" startline="83" endline="96">ResMemoryBlock&lt; T, NSLAB &gt;::~ResMemoryBlock</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_memory_block_aa2255d316d121aeaa3e88092a9ae530f_1aa2255d316d121aeaa3e88092a9ae530f" prot="private" static="no" mutable="no">
+        <type><ref refid="classslab" kindref="compound">slab</ref> *</type>
+        <definition>slab* ResMemoryBlock&lt; T, NSLAB &gt;::last_slab</definition>
+        <argsstring></argsstring>
+        <name>last_slab</name>
+        <qualifiedname>ResMemoryBlock::last_slab</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="46" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="46" bodyend="-1"/>
+        <referencedby refid="class_res_memory_block_ae5234844d28f44e80f1236fc741cbdd2_1ae5234844d28f44e80f1236fc741cbdd2" compoundref="res-memblock_8hpp" startline="114" endline="131">ResMemoryBlock&lt; T, NSLAB &gt;::reserve</referencedby>
+        <referencedby refid="class_res_memory_block_aaa910de40af92598d07cdaff6ee4af78_1aaa910de40af92598d07cdaff6ee4af78" compoundref="res-memblock_8hpp" startline="73" endline="80">ResMemoryBlock&lt; T, NSLAB &gt;::ResMemoryBlock</referencedby>
+        <referencedby refid="class_res_memory_block_ad4e7f04e64b5614f622486d589cadc61_1ad4e7f04e64b5614f622486d589cadc61" compoundref="res-memblock_8hpp" startline="83" endline="96">ResMemoryBlock&lt; T, NSLAB &gt;::~ResMemoryBlock</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_memory_block_ab076e8ff64b9723839580ebed0002bf3_1ab076e8ff64b9723839580ebed0002bf3" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>T* ResMemoryBlock&lt; T, NSLAB &gt;::next_free</definition>
+        <argsstring></argsstring>
+        <name>next_free</name>
+        <qualifiedname>ResMemoryBlock::next_free</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="47" column="5" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="47" bodyend="-1"/>
+        <referencedby refid="class_res_memory_block_af77acddf4135a57f5abf66c6ad12cc73_1af77acddf4135a57f5abf66c6ad12cc73" compoundref="res-memblock_8hpp" startline="140" endline="145">ResMemoryBlock&lt; T, NSLAB &gt;::allocate</referencedby>
+        <referencedby refid="class_res_memory_block_a2e7a2f268fb45e881ccb8fc36d63c413_1a2e7a2f268fb45e881ccb8fc36d63c413" compoundref="res-memblock_8hpp" startline="134" endline="137">ResMemoryBlock&lt; T, NSLAB &gt;::intern</referencedby>
+        <referencedby refid="class_res_memory_block_ae5234844d28f44e80f1236fc741cbdd2_1ae5234844d28f44e80f1236fc741cbdd2" compoundref="res-memblock_8hpp" startline="114" endline="131">ResMemoryBlock&lt; T, NSLAB &gt;::reserve</referencedby>
+        <referencedby refid="class_res_memory_block_a1f2098ef1e2f04feb652da5b12980cd3_1a1f2098ef1e2f04feb652da5b12980cd3" compoundref="res-memblock_8hpp" startline="107" endline="111">ResMemoryBlock&lt; T, NSLAB &gt;::reset</referencedby>
+        <referencedby refid="class_res_memory_block_aaa910de40af92598d07cdaff6ee4af78_1aaa910de40af92598d07cdaff6ee4af78" compoundref="res-memblock_8hpp" startline="73" endline="80">ResMemoryBlock&lt; T, NSLAB &gt;::ResMemoryBlock</referencedby>
+        <referencedby refid="class_res_memory_block_ad4e7f04e64b5614f622486d589cadc61_1ad4e7f04e64b5614f622486d589cadc61" compoundref="res-memblock_8hpp" startline="83" endline="96">ResMemoryBlock&lt; T, NSLAB &gt;::~ResMemoryBlock</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_res_memory_block_aaa532cfc3545a9237ab42093ff62a128_1aaa532cfc3545a9237ab42093ff62a128" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classslab" kindref="compound">slab</ref> *</type>
+        <definition>ResMemoryBlock&lt; T, NSLAB &gt;::slab * ResMemoryBlock&lt; T, NSLAB &gt;::new_slab</definition>
+        <argsstring>()</argsstring>
+        <name>new_slab</name>
+        <qualifiedname>ResMemoryBlock::new_slab</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="50" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="99" bodyend="104"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_res_memory_block_ae5234844d28f44e80f1236fc741cbdd2_1ae5234844d28f44e80f1236fc741cbdd2" compoundref="res-memblock_8hpp" startline="114" endline="131">ResMemoryBlock&lt; T, NSLAB &gt;::reserve</referencedby>
+        <referencedby refid="class_res_memory_block_aaa910de40af92598d07cdaff6ee4af78_1aaa910de40af92598d07cdaff6ee4af78" compoundref="res-memblock_8hpp" startline="73" endline="80">ResMemoryBlock&lt; T, NSLAB &gt;::ResMemoryBlock</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_res_memory_block_aaa910de40af92598d07cdaff6ee4af78_1aaa910de40af92598d07cdaff6ee4af78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ResMemoryBlock&lt; T, NSLAB &gt;::ResMemoryBlock</definition>
+        <argsstring>()</argsstring>
+        <name>ResMemoryBlock</name>
+        <qualifiedname>ResMemoryBlock::ResMemoryBlock</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="53" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="73" bodyend="80"/>
+        <references refid="class_res_memory_block_a415f90ad1846513bade607709a7b7b2a_1a415f90ad1846513bade607709a7b7b2a" compoundref="res-memblock_8hpp" startline="45">ResMemoryBlock&lt; T, NSLAB &gt;::current_slab</references>
+        <references refid="class_res_memory_block_af51d113ab6e7a3119e0ab412d80846cc_1af51d113ab6e7a3119e0ab412d80846cc" compoundref="res-memblock_8hpp" startline="44">ResMemoryBlock&lt; T, NSLAB &gt;::first_slab</references>
+        <references refid="class_res_memory_block_aa2255d316d121aeaa3e88092a9ae530f_1aa2255d316d121aeaa3e88092a9ae530f" compoundref="res-memblock_8hpp" startline="46">ResMemoryBlock&lt; T, NSLAB &gt;::last_slab</references>
+        <references refid="class_res_memory_block_aaa532cfc3545a9237ab42093ff62a128_1aaa532cfc3545a9237ab42093ff62a128" compoundref="res-memblock_8hpp" startline="99" endline="104">ResMemoryBlock&lt; T, NSLAB &gt;::new_slab</references>
+        <references refid="class_res_memory_block_ab076e8ff64b9723839580ebed0002bf3_1ab076e8ff64b9723839580ebed0002bf3" compoundref="res-memblock_8hpp" startline="47">ResMemoryBlock&lt; T, NSLAB &gt;::next_free</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_memory_block_ad4e7f04e64b5614f622486d589cadc61_1ad4e7f04e64b5614f622486d589cadc61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ResMemoryBlock&lt; T, NSLAB &gt;::~ResMemoryBlock</definition>
+        <argsstring>()</argsstring>
+        <name>~ResMemoryBlock</name>
+        <qualifiedname>ResMemoryBlock::~ResMemoryBlock</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="54" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="83" bodyend="96"/>
+        <references refid="class_res_memory_block_a415f90ad1846513bade607709a7b7b2a_1a415f90ad1846513bade607709a7b7b2a" compoundref="res-memblock_8hpp" startline="45">ResMemoryBlock&lt; T, NSLAB &gt;::current_slab</references>
+        <references refid="class_res_memory_block_af51d113ab6e7a3119e0ab412d80846cc_1af51d113ab6e7a3119e0ab412d80846cc" compoundref="res-memblock_8hpp" startline="44">ResMemoryBlock&lt; T, NSLAB &gt;::first_slab</references>
+        <references refid="class_res_memory_block_aa2255d316d121aeaa3e88092a9ae530f_1aa2255d316d121aeaa3e88092a9ae530f" compoundref="res-memblock_8hpp" startline="46">ResMemoryBlock&lt; T, NSLAB &gt;::last_slab</references>
+        <references refid="class_res_memory_block_ab076e8ff64b9723839580ebed0002bf3_1ab076e8ff64b9723839580ebed0002bf3" compoundref="res-memblock_8hpp" startline="47">ResMemoryBlock&lt; T, NSLAB &gt;::next_free</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_memory_block_a1f2098ef1e2f04feb652da5b12980cd3_1a1f2098ef1e2f04feb652da5b12980cd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMemoryBlock&lt; T, NSLAB &gt;::reset</definition>
+        <argsstring>()</argsstring>
+        <name>reset</name>
+        <qualifiedname>ResMemoryBlock::reset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="56" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="107" bodyend="111"/>
+        <references refid="class_res_memory_block_a415f90ad1846513bade607709a7b7b2a_1a415f90ad1846513bade607709a7b7b2a" compoundref="res-memblock_8hpp" startline="45">ResMemoryBlock&lt; T, NSLAB &gt;::current_slab</references>
+        <references refid="class_res_memory_block_af51d113ab6e7a3119e0ab412d80846cc_1af51d113ab6e7a3119e0ab412d80846cc" compoundref="res-memblock_8hpp" startline="44">ResMemoryBlock&lt; T, NSLAB &gt;::first_slab</references>
+        <references refid="class_res_memory_block_ab076e8ff64b9723839580ebed0002bf3_1ab076e8ff64b9723839580ebed0002bf3" compoundref="res-memblock_8hpp" startline="47">ResMemoryBlock&lt; T, NSLAB &gt;::next_free</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_memory_block_ae5234844d28f44e80f1236fc741cbdd2_1ae5234844d28f44e80f1236fc741cbdd2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>T * ResMemoryBlock&lt; T, NSLAB &gt;::reserve</definition>
+        <argsstring>(int len)</argsstring>
+        <name>reserve</name>
+        <qualifiedname>ResMemoryBlock::reserve</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="58" column="5" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="114" bodyend="131"/>
+        <references refid="class_res_memory_block_a415f90ad1846513bade607709a7b7b2a_1a415f90ad1846513bade607709a7b7b2a" compoundref="res-memblock_8hpp" startline="45">ResMemoryBlock&lt; T, NSLAB &gt;::current_slab</references>
+        <references refid="class_res_memory_block_aa2255d316d121aeaa3e88092a9ae530f_1aa2255d316d121aeaa3e88092a9ae530f" compoundref="res-memblock_8hpp" startline="46">ResMemoryBlock&lt; T, NSLAB &gt;::last_slab</references>
+        <references refid="class_res_memory_block_aaa532cfc3545a9237ab42093ff62a128_1aaa532cfc3545a9237ab42093ff62a128" compoundref="res-memblock_8hpp" startline="99" endline="104">ResMemoryBlock&lt; T, NSLAB &gt;::new_slab</references>
+        <references refid="class_res_memory_block_ab076e8ff64b9723839580ebed0002bf3_1ab076e8ff64b9723839580ebed0002bf3" compoundref="res-memblock_8hpp" startline="47">ResMemoryBlock&lt; T, NSLAB &gt;::next_free</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <referencedby refid="class_res_memory_block_af77acddf4135a57f5abf66c6ad12cc73_1af77acddf4135a57f5abf66c6ad12cc73" compoundref="res-memblock_8hpp" startline="140" endline="145">ResMemoryBlock&lt; T, NSLAB &gt;::allocate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_memory_block_a2e7a2f268fb45e881ccb8fc36d63c413_1a2e7a2f268fb45e881ccb8fc36d63c413" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResMemoryBlock&lt; T, NSLAB &gt;::intern</definition>
+        <argsstring>(int len)</argsstring>
+        <name>intern</name>
+        <qualifiedname>ResMemoryBlock::intern</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="59" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="134" bodyend="137"/>
+        <references refid="class_res_memory_block_ab076e8ff64b9723839580ebed0002bf3_1ab076e8ff64b9723839580ebed0002bf3" compoundref="res-memblock_8hpp" startline="47">ResMemoryBlock&lt; T, NSLAB &gt;::next_free</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_memory_block_af77acddf4135a57f5abf66c6ad12cc73_1af77acddf4135a57f5abf66c6ad12cc73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>T * ResMemoryBlock&lt; T, NSLAB &gt;::allocate</definition>
+        <argsstring>(int len=1)</argsstring>
+        <name>allocate</name>
+        <qualifiedname>ResMemoryBlock::allocate</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>len</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="60" column="5" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="140" bodyend="145"/>
+        <references refid="class_res_memory_block_ab076e8ff64b9723839580ebed0002bf3_1ab076e8ff64b9723839580ebed0002bf3" compoundref="res-memblock_8hpp" startline="47">ResMemoryBlock&lt; T, NSLAB &gt;::next_free</references>
+        <references refid="class_res_memory_block_ae5234844d28f44e80f1236fc741cbdd2_1ae5234844d28f44e80f1236fc741cbdd2" compoundref="res-memblock_8hpp" startline="114" endline="131">ResMemoryBlock&lt; T, NSLAB &gt;::reserve</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <referencedby refid="class_schreyer_frame_a7aa65f42ee24c75759a741038edb3e34_1a7aa65f42ee24c75759a741038edb3e34" compoundref="res-schreyer-frame_8cpp" startline="480" endline="543">SchreyerFrame::computeIdealQuotient</referencedby>
+        <referencedby refid="class_schreyer_frame_a9db8c505acfa90796e1c0a8d0e68ed56_1a9db8c505acfa90796e1c0a8d0e68ed56" compoundref="res-schreyer-frame_8cpp" startline="605" endline="625">SchreyerFrame::insertBasic</referencedby>
+        <referencedby refid="class_schreyer_frame_a6b0f9a04ba79d8abac92bb6bbeca97c1_1a6b0f9a04ba79d8abac92bb6bbeca97c1" compoundref="res-schreyer-frame_8cpp" startline="627" endline="643">SchreyerFrame::insertLevelZero</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_memory_block_a453c014c808201598fee487cb77c1f79_1a453c014c808201598fee487cb77c1f79" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResMemoryBlock&lt; T, NSLAB &gt;::n_slabs</definition>
+        <argsstring>() const</argsstring>
+        <name>n_slabs</name>
+        <qualifiedname>ResMemoryBlock::n_slabs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="62" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="148" bodyend="153"/>
+        <references refid="class_res_memory_block_af51d113ab6e7a3119e0ab412d80846cc_1af51d113ab6e7a3119e0ab412d80846cc" compoundref="res-memblock_8hpp" startline="44">ResMemoryBlock&lt; T, NSLAB &gt;::first_slab</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_res_memory_block_a08634ff3f15991d24affd3ec6d163d2c_1a08634ff3f15991d24affd3ec6d163d2c" compoundref="res-memblock_8hpp" startline="156" endline="161">ResMemoryBlock&lt; T, NSLAB &gt;::memoryUsage</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_memory_block_a08634ff3f15991d24affd3ec6d163d2c_1a08634ff3f15991d24affd3ec6d163d2c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long ResMemoryBlock&lt; T, NSLAB &gt;::memoryUsage</definition>
+        <argsstring>() const</argsstring>
+        <name>memoryUsage</name>
+        <qualifiedname>ResMemoryBlock::memoryUsage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="64" column="8" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="156" bodyend="161"/>
+        <references refid="class_res_memory_block_a453c014c808201598fee487cb77c1f79_1a453c014c808201598fee487cb77c1f79" compoundref="res-memblock_8hpp" startline="148" endline="153">ResMemoryBlock&lt; T, NSLAB &gt;::n_slabs</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>ResMemoryBlock&lt; SchreyerFrameTypes::PreElement &gt;</label>
+        <link refid="class_res_memory_block"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; SchreyerFrameTypes::PreElement &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ResMemoryBlock&lt; T, NSLAB &gt;</label>
+        <link refid="class_res_memory_block"/>
+      </node>
+      <node id="2">
+        <label>ResMemoryBlock&lt; res_monomial_word &gt;</label>
+        <link refid="class_res_memory_block"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; res_monomial_word &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ResMemoryBlock&lt; res_varpower_word &gt;</label>
+        <link refid="class_res_memory_block"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; res_varpower_word &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>ResMemoryBlock&lt; T, NSLAB &gt;::slab</label>
+        <link refid="struct_res_memory_block_1_1slab"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>block</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ResMemoryBlock&lt; T, NSLAB &gt;</label>
+        <link refid="class_res_memory_block"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>current_slab</edgelabel>
+          <edgelabel>first_slab</edgelabel>
+          <edgelabel>last_slab</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>next_free</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>const void *</label>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="6">
+        <label>unsigned</label>
+      </node>
+      <node id="5">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="9">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/schreyer-resolution/res-memblock.hpp" line="36" column="1" bodyfile="Macaulay2/e/schreyer-resolution/res-memblock.hpp" bodystart="37" bodyend="66"/>
+    <listofallmembers>
+      <member refid="class_res_memory_block_af77acddf4135a57f5abf66c6ad12cc73_1af77acddf4135a57f5abf66c6ad12cc73" prot="public" virt="non-virtual"><scope>ResMemoryBlock</scope><name>allocate</name></member>
+      <member refid="class_res_memory_block_a415f90ad1846513bade607709a7b7b2a_1a415f90ad1846513bade607709a7b7b2a" prot="private" virt="non-virtual"><scope>ResMemoryBlock</scope><name>current_slab</name></member>
+      <member refid="class_res_memory_block_af51d113ab6e7a3119e0ab412d80846cc_1af51d113ab6e7a3119e0ab412d80846cc" prot="private" virt="non-virtual"><scope>ResMemoryBlock</scope><name>first_slab</name></member>
+      <member refid="class_res_memory_block_a2e7a2f268fb45e881ccb8fc36d63c413_1a2e7a2f268fb45e881ccb8fc36d63c413" prot="public" virt="non-virtual"><scope>ResMemoryBlock</scope><name>intern</name></member>
+      <member refid="class_res_memory_block_aa2255d316d121aeaa3e88092a9ae530f_1aa2255d316d121aeaa3e88092a9ae530f" prot="private" virt="non-virtual"><scope>ResMemoryBlock</scope><name>last_slab</name></member>
+      <member refid="class_res_memory_block_a08634ff3f15991d24affd3ec6d163d2c_1a08634ff3f15991d24affd3ec6d163d2c" prot="public" virt="non-virtual"><scope>ResMemoryBlock</scope><name>memoryUsage</name></member>
+      <member refid="class_res_memory_block_a453c014c808201598fee487cb77c1f79_1a453c014c808201598fee487cb77c1f79" prot="public" virt="non-virtual"><scope>ResMemoryBlock</scope><name>n_slabs</name></member>
+      <member refid="class_res_memory_block_aaa532cfc3545a9237ab42093ff62a128_1aaa532cfc3545a9237ab42093ff62a128" prot="private" virt="non-virtual"><scope>ResMemoryBlock</scope><name>new_slab</name></member>
+      <member refid="class_res_memory_block_ab076e8ff64b9723839580ebed0002bf3_1ab076e8ff64b9723839580ebed0002bf3" prot="private" virt="non-virtual"><scope>ResMemoryBlock</scope><name>next_free</name></member>
+      <member refid="class_res_memory_block_ae5234844d28f44e80f1236fc741cbdd2_1ae5234844d28f44e80f1236fc741cbdd2" prot="public" virt="non-virtual"><scope>ResMemoryBlock</scope><name>reserve</name></member>
+      <member refid="class_res_memory_block_a1f2098ef1e2f04feb652da5b12980cd3_1a1f2098ef1e2f04feb652da5b12980cd3" prot="public" virt="non-virtual"><scope>ResMemoryBlock</scope><name>reset</name></member>
+      <member refid="class_res_memory_block_aaa910de40af92598d07cdaff6ee4af78_1aaa910de40af92598d07cdaff6ee4af78" prot="public" virt="non-virtual"><scope>ResMemoryBlock</scope><name>ResMemoryBlock</name></member>
+      <member refid="class_res_memory_block_ad4e7f04e64b5614f622486d589cadc61_1ad4e7f04e64b5614f622486d589cadc61" prot="public" virt="non-virtual"><scope>ResMemoryBlock</scope><name>~ResMemoryBlock</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

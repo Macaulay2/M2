@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_f4_g_b_1_1_macaulay_matrix_stats" kind="struct" language="C++" prot="private">
+    <compoundname>F4GB::MacaulayMatrixStats</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_acbdbcb664e4fb249a20f494eb3d46e12_1acbdbcb664e4fb249a20f494eb3d46e12" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mTopAndLeft</definition>
+        <argsstring></argsstring>
+        <name>mTopAndLeft</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mTopAndLeft</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="215" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="215" bodyend="-1"/>
+        <referencedby refid="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" compoundref="f4_8cpp" startline="554" endline="578">display</referencedby>
+        <referencedby refid="class_f4_g_b_a44651e907f58e535221b535140a33ed5_1a44651e907f58e535221b535140a33ed5" compoundref="f4_8cpp" startline="515" endline="552">F4GB::macaulayMatrixStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_a2b7711b7a515371a67c43a06c14d0760_1a2b7711b7a515371a67c43a06c14d0760" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mBottom</definition>
+        <argsstring></argsstring>
+        <name>mBottom</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mBottom</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="216" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="216" bodyend="-1"/>
+        <referencedby refid="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" compoundref="f4_8cpp" startline="554" endline="578">display</referencedby>
+        <referencedby refid="class_f4_g_b_a44651e907f58e535221b535140a33ed5_1a44651e907f58e535221b535140a33ed5" compoundref="f4_8cpp" startline="515" endline="552">F4GB::macaulayMatrixStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_a16dc48c80addbf25f55810607618d510_1a16dc48c80addbf25f55810607618d510" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mRight</definition>
+        <argsstring></argsstring>
+        <name>mRight</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mRight</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="217" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="217" bodyend="-1"/>
+        <referencedby refid="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" compoundref="f4_8cpp" startline="554" endline="578">display</referencedby>
+        <referencedby refid="class_f4_g_b_a44651e907f58e535221b535140a33ed5_1a44651e907f58e535221b535140a33ed5" compoundref="f4_8cpp" startline="515" endline="552">F4GB::macaulayMatrixStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_ab4191b4aab1855f97ef82cbb57eeeae5_1ab4191b4aab1855f97ef82cbb57eeeae5" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mAEntries</definition>
+        <argsstring></argsstring>
+        <name>mAEntries</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mAEntries</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="220" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="220" bodyend="-1"/>
+        <referencedby refid="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" compoundref="f4_8cpp" startline="554" endline="578">display</referencedby>
+        <referencedby refid="class_f4_g_b_a44651e907f58e535221b535140a33ed5_1a44651e907f58e535221b535140a33ed5" compoundref="f4_8cpp" startline="515" endline="552">F4GB::macaulayMatrixStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_a5ee345bf86ae84f9b4196c87d82417ce_1a5ee345bf86ae84f9b4196c87d82417ce" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mBEntries</definition>
+        <argsstring></argsstring>
+        <name>mBEntries</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mBEntries</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="221" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="221" bodyend="-1"/>
+        <referencedby refid="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" compoundref="f4_8cpp" startline="554" endline="578">display</referencedby>
+        <referencedby refid="class_f4_g_b_a44651e907f58e535221b535140a33ed5_1a44651e907f58e535221b535140a33ed5" compoundref="f4_8cpp" startline="515" endline="552">F4GB::macaulayMatrixStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_a28ffb8b3bc1d47a5734a98434dce8441_1a28ffb8b3bc1d47a5734a98434dce8441" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mCEntries</definition>
+        <argsstring></argsstring>
+        <name>mCEntries</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mCEntries</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="222" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="222" bodyend="-1"/>
+        <referencedby refid="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" compoundref="f4_8cpp" startline="554" endline="578">display</referencedby>
+        <referencedby refid="class_f4_g_b_a44651e907f58e535221b535140a33ed5_1a44651e907f58e535221b535140a33ed5" compoundref="f4_8cpp" startline="515" endline="552">F4GB::macaulayMatrixStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_a9e57d8558dc909825fab03d2e6949fbf_1a9e57d8558dc909825fab03d2e6949fbf" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mDEntries</definition>
+        <argsstring></argsstring>
+        <name>mDEntries</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mDEntries</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="223" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="223" bodyend="-1"/>
+        <referencedby refid="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" compoundref="f4_8cpp" startline="554" endline="578">display</referencedby>
+        <referencedby refid="class_f4_g_b_a44651e907f58e535221b535140a33ed5_1a44651e907f58e535221b535140a33ed5" compoundref="f4_8cpp" startline="515" endline="552">F4GB::macaulayMatrixStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_ac52578e7802eb3327b1d49903383190b_1ac52578e7802eb3327b1d49903383190b" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mColumnInfo</definition>
+        <argsstring></argsstring>
+        <name>mColumnInfo</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mColumnInfo</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="226" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_a3d6ab60e684423b45cc231e3637e577b_1a3d6ab60e684423b45cc231e3637e577b" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mRowInfo</definition>
+        <argsstring></argsstring>
+        <name>mRowInfo</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mRowInfo</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="227" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_f4_g_b_1_1_macaulay_matrix_stats_a204f82fc1be8f9d8acf0dc9191f3f4b2_1a204f82fc1be8f9d8acf0dc9191f3f4b2" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long F4GB::MacaulayMatrixStats::mEntries</definition>
+        <argsstring></argsstring>
+        <name>mEntries</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::mEntries</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="228" column="10" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="228" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4GB::MacaulayMatrixStats::display</definition>
+        <argsstring>(buffer &amp;o)</argsstring>
+        <name>display</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::display</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="230" column="10" bodyfile="Macaulay2/e/f4/f4.cpp" bodystart="554" bodyend="578"/>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="struct_f4_g_b_1_1_macaulay_matrix_stats_ab4191b4aab1855f97ef82cbb57eeeae5_1ab4191b4aab1855f97ef82cbb57eeeae5" compoundref="f4_8hpp" startline="220">mAEntries</references>
+        <references refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a5ee345bf86ae84f9b4196c87d82417ce_1a5ee345bf86ae84f9b4196c87d82417ce" compoundref="f4_8hpp" startline="221">mBEntries</references>
+        <references refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a2b7711b7a515371a67c43a06c14d0760_1a2b7711b7a515371a67c43a06c14d0760" compoundref="f4_8hpp" startline="216">mBottom</references>
+        <references refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a28ffb8b3bc1d47a5734a98434dce8441_1a28ffb8b3bc1d47a5734a98434dce8441" compoundref="f4_8hpp" startline="222">mCEntries</references>
+        <references refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a9e57d8558dc909825fab03d2e6949fbf_1a9e57d8558dc909825fab03d2e6949fbf" compoundref="f4_8hpp" startline="223">mDEntries</references>
+        <references refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a16dc48c80addbf25f55810607618d510_1a16dc48c80addbf25f55810607618d510" compoundref="f4_8hpp" startline="217">mRight</references>
+        <references refid="struct_f4_g_b_1_1_macaulay_matrix_stats_acbdbcb664e4fb249a20f494eb3d46e12_1acbdbcb664e4fb249a20f494eb3d46e12" compoundref="f4_8hpp" startline="215">mTopAndLeft</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <referencedby refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a65729fd62f7e19880f8a4fc4f9982793_1a65729fd62f7e19880f8a4fc4f9982793" compoundref="f4_8cpp" startline="580" endline="585">display</referencedby>
+        <referencedby refid="class_f4_g_b_a44651e907f58e535221b535140a33ed5_1a44651e907f58e535221b535140a33ed5" compoundref="f4_8cpp" startline="515" endline="552">F4GB::macaulayMatrixStats</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_f4_g_b_1_1_macaulay_matrix_stats_a65729fd62f7e19880f8a4fc4f9982793_1a65729fd62f7e19880f8a4fc4f9982793" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4GB::MacaulayMatrixStats::display</definition>
+        <argsstring>()</argsstring>
+        <name>display</name>
+        <qualifiedname>F4GB::MacaulayMatrixStats::display</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4.hpp" line="231" column="10" bodyfile="Macaulay2/e/f4/f4.cpp" bodystart="580" bodyend="585"/>
+        <references refid="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" compoundref="f4_8cpp" startline="554" endline="578">display</references>
+        <references refid="text-io_8cpp_a5bd0b57b7653fb12e1dcaa8c4d09ce4e_1a5bd0b57b7653fb12e1dcaa8c4d09ce4e" compoundref="text-io_8cpp" startline="41" endline="45">emit</references>
+        <references refid="classbuffer_a39972fb7c929bb9e42ed60cddbc1109f_1a39972fb7c929bb9e42ed60cddbc1109f" compoundref="buffer_8hpp" startline="70" endline="74">buffer::str</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Per-degree counters describing the shape and density of the Macaulay matrix that <computeroutput><ref refid="class_f4_g_b" kindref="compound">F4GB</ref></computeroutput> just built. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The matrix is conceptually split into a (top-left) pivot block and a (bottom-right) non-pivot block; <computeroutput><ref refid="struct_f4_g_b_1_1_macaulay_matrix_stats_acbdbcb664e4fb249a20f494eb3d46e12_1acbdbcb664e4fb249a20f494eb3d46e12" kindref="member">mTopAndLeft</ref></computeroutput>, <computeroutput><ref refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a2b7711b7a515371a67c43a06c14d0760_1a2b7711b7a515371a67c43a06c14d0760" kindref="member">mBottom</ref></computeroutput>, and <computeroutput><ref refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a16dc48c80addbf25f55810607618d510_1a16dc48c80addbf25f55810607618d510" kindref="member">mRight</ref></computeroutput> count the row / column dimensions of the pivot and remaining blocks. The per-block entry counts (<computeroutput><ref refid="struct_f4_g_b_1_1_macaulay_matrix_stats_ab4191b4aab1855f97ef82cbb57eeeae5_1ab4191b4aab1855f97ef82cbb57eeeae5" kindref="member">mAEntries</ref></computeroutput>, <computeroutput><ref refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a5ee345bf86ae84f9b4196c87d82417ce_1a5ee345bf86ae84f9b4196c87d82417ce" kindref="member">mBEntries</ref></computeroutput>, ...) feed the F4 diagnostics that report matrix fill rates and reduction work. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>F4GB::MacaulayMatrixStats</label>
+        <link refid="struct_f4_g_b_1_1_macaulay_matrix_stats"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mAEntries</edgelabel>
+          <edgelabel>mBEntries</edgelabel>
+          <edgelabel>mBottom</edgelabel>
+          <edgelabel>mCEntries</edgelabel>
+          <edgelabel>mColumnInfo</edgelabel>
+          <edgelabel>mDEntries</edgelabel>
+          <edgelabel>mEntries</edgelabel>
+          <edgelabel>mRight</edgelabel>
+          <edgelabel>mRowInfo</edgelabel>
+          <edgelabel>mTopAndLeft</edgelabel>
+          <edgelabel>  ...</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/f4.hpp" line="211" column="3" bodyfile="Macaulay2/e/f4/f4.hpp" bodystart="212" bodyend="232"/>
+    <listofallmembers>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_abfd252877fe8fbf7a670b9529a536bf0_1abfd252877fe8fbf7a670b9529a536bf0" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>display</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a65729fd62f7e19880f8a4fc4f9982793_1a65729fd62f7e19880f8a4fc4f9982793" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>display</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_ab4191b4aab1855f97ef82cbb57eeeae5_1ab4191b4aab1855f97ef82cbb57eeeae5" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mAEntries</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a5ee345bf86ae84f9b4196c87d82417ce_1a5ee345bf86ae84f9b4196c87d82417ce" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mBEntries</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a2b7711b7a515371a67c43a06c14d0760_1a2b7711b7a515371a67c43a06c14d0760" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mBottom</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a28ffb8b3bc1d47a5734a98434dce8441_1a28ffb8b3bc1d47a5734a98434dce8441" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mCEntries</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_ac52578e7802eb3327b1d49903383190b_1ac52578e7802eb3327b1d49903383190b" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mColumnInfo</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a9e57d8558dc909825fab03d2e6949fbf_1a9e57d8558dc909825fab03d2e6949fbf" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mDEntries</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a204f82fc1be8f9d8acf0dc9191f3f4b2_1a204f82fc1be8f9d8acf0dc9191f3f4b2" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mEntries</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a16dc48c80addbf25f55810607618d510_1a16dc48c80addbf25f55810607618d510" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mRight</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_a3d6ab60e684423b45cc231e3637e577b_1a3d6ab60e684423b45cc231e3637e577b" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mRowInfo</name></member>
+      <member refid="struct_f4_g_b_1_1_macaulay_matrix_stats_acbdbcb664e4fb249a20f494eb3d46e12_1acbdbcb664e4fb249a20f494eb3d46e12" prot="public" virt="non-virtual"><scope>F4GB::MacaulayMatrixStats</scope><name>mTopAndLeft</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

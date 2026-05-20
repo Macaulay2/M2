@@ -1,0 +1,462 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monomial_orderings" kind="class" language="C++" prot="public">
+    <compoundname>MonomialOrderings</compoundname>
+    <includes refid="monordering_8hpp" local="no">monordering.hpp</includes>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_monomial_orderings_adcbc87f98f3e76ff28eb33f4a3fefb05_1adcbc87f98f3e76ff28eb33f4a3fefb05" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string MonomialOrderings::toString</definition>
+        <argsstring>(const MonomialOrdering *mo)</argsstring>
+        <name>toString</name>
+        <qualifiedname>MonomialOrderings::toString</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+          <declname>mo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="54" column="22" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="293" bodyend="370"/>
+        <references refid="struct_monomial_ordering_a50917e95eea25ef79478905ec6d244ca_1a50917e95eea25ef79478905ec6d244ca" compoundref="monomial-ordering_8h" startline="99">MonomialOrdering::array</references>
+        <references refid="struct_monomial_ordering_a4d4b8bd4a33482af83efaca798a33519_1a4d4b8bd4a33482af83efaca798a33519" compoundref="monomial-ordering_8h" startline="98">MonomialOrdering::len</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a6619d54e309421536ef1859b61783f00" compoundref="monomial-ordering_8h" startline="61">MO_GREVLEX</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07aeba25fa0f217879ce34166d9f848b685" compoundref="monomial-ordering_8h" startline="62">MO_GREVLEX2</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07acef729b126f1b4e56e945545293ea26a" compoundref="monomial-ordering_8h" startline="65">MO_GREVLEX2_WTS</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a95e084ddbafaaf8ec49bcd4372f08373" compoundref="monomial-ordering_8h" startline="63">MO_GREVLEX4</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a1cad82ff3f888de3bd4a4f48680bc1df" compoundref="monomial-ordering_8h" startline="66">MO_GREVLEX4_WTS</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07af32ab848e2dc558ed9afc2293c25590d" compoundref="monomial-ordering_8h" startline="64">MO_GREVLEX_WTS</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07acb827a31699af7fafeec27f643a81ad8" compoundref="monomial-ordering_8h" startline="69">MO_LAURENT</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a2908592a67036abfbc78806aa2c4e957" compoundref="monomial-ordering_8h" startline="70">MO_LAURENT_REVLEX</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a586e53bd3286b9511c04b7f72d24039a" compoundref="monomial-ordering_8h" startline="58">MO_LEX</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a8ecfeec3ce722415498cdd849b65acff" compoundref="monomial-ordering_8h" startline="59">MO_LEX2</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a4ea0226b2b14b6dc5fabb693ec9f8f29" compoundref="monomial-ordering_8h" startline="60">MO_LEX4</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a3bed9058be49f4aeb42dffc02e26e2b0" compoundref="monomial-ordering_8h" startline="71">MO_NC_LEX</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07ae019983d5705546741ee7ca3b45cfcd0" compoundref="monomial-ordering_8h" startline="73">MO_POSITION_DOWN</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a563f67d645f2323fa504eaae053b6aa6" compoundref="monomial-ordering_8h" startline="72">MO_POSITION_UP</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a54fc56171ae0beb32e2c357e7bc27629" compoundref="monomial-ordering_8h" startline="67">MO_REVLEX</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07ad4f3cdd6021b3c061a43eb6f21701232" compoundref="monomial-ordering_8h" startline="68">MO_WEIGHTS</references>
+        <references refid="monomial-ordering_8cpp_aedf033884ba5acdf53af1907b21e7734_1aedf033884ba5acdf53af1907b21e7734" compoundref="monomial-ordering_8cpp" startline="281" endline="291">ones</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_monomial_orderings_adcbc87f98f3e76ff28eb33f4a3fefb05_1adcbc87f98f3e76ff28eb33f4a3fefb05" compoundref="monomial-ordering_8cpp" startline="293" endline="370">toString</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a79febf658f202d7405b19941a4457e87_1a79febf658f202d7405b19941a4457e87" compoundref="_n_c_groebner_test_8cpp" startline="241" endline="264">TEST</referencedby>
+        <referencedby refid="class_monomial_orderings_adcbc87f98f3e76ff28eb33f4a3fefb05_1adcbc87f98f3e76ff28eb33f4a3fefb05" compoundref="monomial-ordering_8cpp" startline="293" endline="370">toString</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_aeac24bb39d682a1ae9b85e7a40d903a2_1aeac24bb39d682a1ae9b85e7a40d903a2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::join</definition>
+        <argsstring>(const std::vector&lt; MonomialOrdering * &gt; &amp;M)</argsstring>
+        <name>join</name>
+        <qualifiedname>MonomialOrderings::join</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> * &gt; &amp;</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="55" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="206" bodyend="246"/>
+        <references refid="struct_monomial_ordering_a50917e95eea25ef79478905ec6d244ca_1a50917e95eea25ef79478905ec6d244ca" compoundref="monomial-ordering_8h" startline="99">MonomialOrdering::array</references>
+        <references refid="m2-mem_8h_a343597a45ce5e5a6f71bb99842c06375_1a343597a45ce5e5a6f71bb99842c06375" compoundref="m2-mem_8h" startline="144">getmemvectortype</references>
+        <references refid="monomial-ordering_8cpp_aa7139db9c6e2c92f8bfe442a6217d137_1aa7139db9c6e2c92f8bfe442a6217d137" compoundref="monomial-ordering_8cpp" startline="66" endline="90">is_good</references>
+        <references refid="struct_monomial_ordering_a4d4b8bd4a33482af83efaca798a33519_1a4d4b8bd4a33482af83efaca798a33519" compoundref="monomial-ordering_8h" startline="98">MonomialOrdering::len</references>
+        <references refid="monomial-ordering_8cpp_aa78b63bdf4dfba7f3a94a3ce6164c012_1aa78b63bdf4dfba7f3a94a3ce6164c012" compoundref="monomial-ordering_8cpp" startline="35" endline="44">make_mon_order</references>
+        <references refid="monomial-ordering_8cpp_a2545b2e0f25e4c26d7085c5b35446ce6_1a2545b2e0f25e4c26d7085c5b35446ce6" compoundref="monomial-ordering_8cpp" startline="16" endline="33">mo_make</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07ad4f3cdd6021b3c061a43eb6f21701232" compoundref="monomial-ordering_8h" startline="68">MO_WEIGHTS</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="util-polyring-creation_8cpp_a02552d796198f37d8ba1a54ed60a01f0_1a02552d796198f37d8ba1a54ed60a01f0" compoundref="util-polyring-creation_8cpp" startline="28" endline="45">degreeMonoid</referencedby>
+        <referencedby refid="util-polyring-creation_8cpp_a45a0a96d3ec0b0086be66a86120dd5a9_1a45a0a96d3ec0b0086be66a86120dd5a9" compoundref="util-polyring-creation_8cpp" startline="82" endline="99">simplePolynomialRing</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a79febf658f202d7405b19941a4457e87_1a79febf658f202d7405b19941a4457e87" compoundref="_n_c_groebner_test_8cpp" startline="241" endline="264">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_ab6124c3acdc7d20b5c5ba484d615f14a_1ab6124c3acdc7d20b5c5ba484d615f14a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::product</definition>
+        <argsstring>(const std::vector&lt; MonomialOrdering * &gt; &amp;M)</argsstring>
+        <name>product</name>
+        <qualifiedname>MonomialOrderings::product</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> * &gt; &amp;</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="56" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="248" bodyend="267"/>
+        <references refid="struct_monomial_ordering_a50917e95eea25ef79478905ec6d244ca_1a50917e95eea25ef79478905ec6d244ca" compoundref="monomial-ordering_8h" startline="99">MonomialOrdering::array</references>
+        <references refid="struct_monomial_ordering_a4d4b8bd4a33482af83efaca798a33519_1a4d4b8bd4a33482af83efaca798a33519" compoundref="monomial-ordering_8h" startline="98">MonomialOrdering::len</references>
+        <references refid="monomial-ordering_8cpp_a7dab1707234f43ff5745583bd3f176f6_1a7dab1707234f43ff5745583bd3f176f6" compoundref="monomial-ordering_8cpp" startline="46" endline="64">M2_mo_offset</references>
+        <references refid="monomial-ordering_8cpp_aa78b63bdf4dfba7f3a94a3ce6164c012_1aa78b63bdf4dfba7f3a94a3ce6164c012" compoundref="monomial-ordering_8cpp" startline="35" endline="44">make_mon_order</references>
+        <references refid="monomial-ordering_8cpp_aee840111a46c83f2fff0b6931b66383d_1aee840111a46c83f2fff0b6931b66383d" compoundref="monomial-ordering_8cpp" startline="431" endline="437">rawNumberOfVariables</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_ab700dfacdf5317b25b7670c4232527a8_1ab700dfacdf5317b25b7670c4232527a8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::Lex</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>Lex</name>
+        <qualifiedname>MonomialOrderings::Lex</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="57" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="92" bodyend="95"/>
+        <references refid="monomial-ordering_8cpp_aa8161ff5803258b82a9d8cb7f18773b8_1aa8161ff5803258b82a9d8cb7f18773b8" compoundref="monomial-ordering_8cpp" startline="533" endline="550">rawLexMonomialOrdering</references>
+        <referencedby refid="_n_c_groebner_test_8cpp_a79febf658f202d7405b19941a4457e87_1a79febf658f202d7405b19941a4457e87" compoundref="_n_c_groebner_test_8cpp" startline="241" endline="264">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a30d724f14e27c8a7b43e6da2d845cec5_1a30d724f14e27c8a7b43e6da2d845cec5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::Lex2</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>Lex2</name>
+        <qualifiedname>MonomialOrderings::Lex2</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="58" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="96" bodyend="99"/>
+        <references refid="monomial-ordering_8cpp_aa8161ff5803258b82a9d8cb7f18773b8_1aa8161ff5803258b82a9d8cb7f18773b8" compoundref="monomial-ordering_8cpp" startline="533" endline="550">rawLexMonomialOrdering</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a2d5c8afdd48b157ff811126d85513abd_1a2d5c8afdd48b157ff811126d85513abd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::Lex4</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>Lex4</name>
+        <qualifiedname>MonomialOrderings::Lex4</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="59" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="100" bodyend="103"/>
+        <references refid="monomial-ordering_8cpp_aa8161ff5803258b82a9d8cb7f18773b8_1aa8161ff5803258b82a9d8cb7f18773b8" compoundref="monomial-ordering_8cpp" startline="533" endline="550">rawLexMonomialOrdering</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a603e630de63149b99d5c4f599fa7b1df_1a603e630de63149b99d5c4f599fa7b1df" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::GRevLex</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>GRevLex</name>
+        <qualifiedname>MonomialOrderings::GRevLex</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="60" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="104" bodyend="109"/>
+        <references refid="class_monomial_orderings_a603e630de63149b99d5c4f599fa7b1df_1a603e630de63149b99d5c4f599fa7b1df" compoundref="monomial-ordering_8cpp" startline="104" endline="109">GRevLex</references>
+        <referencedby refid="class_monomial_orderings_a9e5695e9616abe21477487a3c51a92a8_1a9e5695e9616abe21477487a3c51a92a8" compoundref="monomial-ordering_8cpp" startline="122" endline="125">GRevLex</referencedby>
+        <referencedby refid="class_monomial_orderings_a603e630de63149b99d5c4f599fa7b1df_1a603e630de63149b99d5c4f599fa7b1df" compoundref="monomial-ordering_8cpp" startline="104" endline="109">GRevLex</referencedby>
+        <referencedby refid="class_monomial_orderings_aa8cdc077ac31336a54e277856694d148_1aa8cdc077ac31336a54e277856694d148" compoundref="monomial-ordering_8cpp" startline="126" endline="129">GRevLex2</referencedby>
+        <referencedby refid="class_monomial_orderings_aef78d1e9e812f3817488ef98ca77e3b2_1aef78d1e9e812f3817488ef98ca77e3b2" compoundref="monomial-ordering_8cpp" startline="130" endline="133">GRevLex4</referencedby>
+        <referencedby refid="util-polyring-creation_8cpp_a45a0a96d3ec0b0086be66a86120dd5a9_1a45a0a96d3ec0b0086be66a86120dd5a9" compoundref="util-polyring-creation_8cpp" startline="82" endline="99">simplePolynomialRing</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a79febf658f202d7405b19941a4457e87_1a79febf658f202d7405b19941a4457e87" compoundref="_n_c_groebner_test_8cpp" startline="241" endline="264">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a095c9057cb5b961499b84bbc771ea842_1a095c9057cb5b961499b84bbc771ea842" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::GRevLex2</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>GRevLex2</name>
+        <qualifiedname>MonomialOrderings::GRevLex2</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="61" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="110" bodyend="115"/>
+        <references refid="class_monomial_orderings_a095c9057cb5b961499b84bbc771ea842_1a095c9057cb5b961499b84bbc771ea842" compoundref="monomial-ordering_8cpp" startline="110" endline="115">GRevLex2</references>
+        <referencedby refid="class_monomial_orderings_a095c9057cb5b961499b84bbc771ea842_1a095c9057cb5b961499b84bbc771ea842" compoundref="monomial-ordering_8cpp" startline="110" endline="115">GRevLex2</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a79febf658f202d7405b19941a4457e87_1a79febf658f202d7405b19941a4457e87" compoundref="_n_c_groebner_test_8cpp" startline="241" endline="264">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a9a5d7d75ef6fd16b96ec638995657323_1a9a5d7d75ef6fd16b96ec638995657323" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::GRevLex4</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>GRevLex4</name>
+        <qualifiedname>MonomialOrderings::GRevLex4</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="62" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="116" bodyend="121"/>
+        <references refid="class_monomial_orderings_a9a5d7d75ef6fd16b96ec638995657323_1a9a5d7d75ef6fd16b96ec638995657323" compoundref="monomial-ordering_8cpp" startline="116" endline="121">GRevLex4</references>
+        <referencedby refid="class_monomial_orderings_a9a5d7d75ef6fd16b96ec638995657323_1a9a5d7d75ef6fd16b96ec638995657323" compoundref="monomial-ordering_8cpp" startline="116" endline="121">GRevLex4</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a79febf658f202d7405b19941a4457e87_1a79febf658f202d7405b19941a4457e87" compoundref="_n_c_groebner_test_8cpp" startline="241" endline="264">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a9e5695e9616abe21477487a3c51a92a8_1a9e5695e9616abe21477487a3c51a92a8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::GRevLex</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;wts)</argsstring>
+        <name>GRevLex</name>
+        <qualifiedname>MonomialOrderings::GRevLex</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>wts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="63" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="122" bodyend="125"/>
+        <references refid="class_monomial_orderings_a603e630de63149b99d5c4f599fa7b1df_1a603e630de63149b99d5c4f599fa7b1df" compoundref="monomial-ordering_8cpp" startline="104" endline="109">GRevLex</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_aa8cdc077ac31336a54e277856694d148_1aa8cdc077ac31336a54e277856694d148" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::GRevLex2</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;wts)</argsstring>
+        <name>GRevLex2</name>
+        <qualifiedname>MonomialOrderings::GRevLex2</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>wts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="64" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="126" bodyend="129"/>
+        <references refid="class_monomial_orderings_a603e630de63149b99d5c4f599fa7b1df_1a603e630de63149b99d5c4f599fa7b1df" compoundref="monomial-ordering_8cpp" startline="104" endline="109">GRevLex</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_aef78d1e9e812f3817488ef98ca77e3b2_1aef78d1e9e812f3817488ef98ca77e3b2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::GRevLex4</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;wts)</argsstring>
+        <name>GRevLex4</name>
+        <qualifiedname>MonomialOrderings::GRevLex4</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>wts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="65" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="130" bodyend="133"/>
+        <references refid="class_monomial_orderings_a603e630de63149b99d5c4f599fa7b1df_1a603e630de63149b99d5c4f599fa7b1df" compoundref="monomial-ordering_8cpp" startline="104" endline="109">GRevLex</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_ad75e90cd11f5f436f5c6588ec4cfd4f0_1ad75e90cd11f5f436f5c6588ec4cfd4f0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::RevLex</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>RevLex</name>
+        <qualifiedname>MonomialOrderings::RevLex</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="66" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="134" bodyend="137"/>
+        <references refid="monomial-ordering_8cpp_a1f76ea98f8364fd8e383e32232a2f205_1a1f76ea98f8364fd8e383e32232a2f205" compoundref="monomial-ordering_8cpp" startline="597" endline="603">rawRevLexMonomialOrdering</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a167bb8dc2dd397a80f998ea0d038ba32_1a167bb8dc2dd397a80f998ea0d038ba32" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::Weights</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;wts)</argsstring>
+        <name>Weights</name>
+        <qualifiedname>MonomialOrderings::Weights</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>wts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="67" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="138" bodyend="144"/>
+        <references refid="monomial-ordering_8cpp_aa78b63bdf4dfba7f3a94a3ce6164c012_1aa78b63bdf4dfba7f3a94a3ce6164c012" compoundref="monomial-ordering_8cpp" startline="35" endline="44">make_mon_order</references>
+        <references refid="monomial-ordering_8cpp_a2545b2e0f25e4c26d7085c5b35446ce6_1a2545b2e0f25e4c26d7085c5b35446ce6" compoundref="monomial-ordering_8cpp" startline="16" endline="33">mo_make</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07ad4f3cdd6021b3c061a43eb6f21701232" compoundref="monomial-ordering_8h" startline="68">MO_WEIGHTS</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="util-polyring-creation_8cpp_a02552d796198f37d8ba1a54ed60a01f0_1a02552d796198f37d8ba1a54ed60a01f0" compoundref="util-polyring-creation_8cpp" startline="28" endline="45">degreeMonoid</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_aa22efe83cb447575b3ecea0a8268f631_1aa22efe83cb447575b3ecea0a8268f631" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::GroupLex</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>GroupLex</name>
+        <qualifiedname>MonomialOrderings::GroupLex</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="68" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="145" bodyend="148"/>
+        <references refid="monomial-ordering_8cpp_a8428c4c66467a0473ac35f9a3f46ff9b_1a8428c4c66467a0473ac35f9a3f46ff9b" compoundref="monomial-ordering_8cpp" startline="612" endline="618">rawGroupLexMonomialOrdering</references>
+        <referencedby refid="util-polyring-creation_8cpp_a02552d796198f37d8ba1a54ed60a01f0_1a02552d796198f37d8ba1a54ed60a01f0" compoundref="util-polyring-creation_8cpp" startline="28" endline="45">degreeMonoid</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a79febf658f202d7405b19941a4457e87_1a79febf658f202d7405b19941a4457e87" compoundref="_n_c_groebner_test_8cpp" startline="241" endline="264">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_ad287e7d9f295e721a58dbb4c471e1a7e_1ad287e7d9f295e721a58dbb4c471e1a7e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::GroupRevLex</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>GroupRevLex</name>
+        <qualifiedname>MonomialOrderings::GroupRevLex</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="69" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="149" bodyend="152"/>
+        <references refid="monomial-ordering_8cpp_abb783995390dc315dc34666c47c46dc5_1abb783995390dc315dc34666c47c46dc5" compoundref="monomial-ordering_8cpp" startline="619" endline="625">rawGroupRevLexMonomialOrdering</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a58dcc054ebaeb7498afc5afb260c30ed_1a58dcc054ebaeb7498afc5afb260c30ed" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::PositionUp</definition>
+        <argsstring>()</argsstring>
+        <name>PositionUp</name>
+        <qualifiedname>MonomialOrderings::PositionUp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="70" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="153" bodyend="156"/>
+        <references refid="monomial-ordering_8cpp_ae4243ece580cd896647010893812389c_1ae4243ece580cd896647010893812389c" compoundref="monomial-ordering_8cpp" startline="633" endline="640">rawPositionMonomialOrdering</references>
+        <referencedby refid="util-polyring-creation_8cpp_a02552d796198f37d8ba1a54ed60a01f0_1a02552d796198f37d8ba1a54ed60a01f0" compoundref="util-polyring-creation_8cpp" startline="28" endline="45">degreeMonoid</referencedby>
+        <referencedby refid="util-polyring-creation_8cpp_a45a0a96d3ec0b0086be66a86120dd5a9_1a45a0a96d3ec0b0086be66a86120dd5a9" compoundref="util-polyring-creation_8cpp" startline="82" endline="99">simplePolynomialRing</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a37c69fb38911305233c3521e78565483_1a37c69fb38911305233c3521e78565483" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::PositionDown</definition>
+        <argsstring>()</argsstring>
+        <name>PositionDown</name>
+        <qualifiedname>MonomialOrderings::PositionDown</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="71" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="157" bodyend="160"/>
+        <references refid="monomial-ordering_8cpp_ae4243ece580cd896647010893812389c_1ae4243ece580cd896647010893812389c" compoundref="monomial-ordering_8cpp" startline="633" endline="640">rawPositionMonomialOrdering</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_orderings_a12d7d77b74e7e00294a448a18472f57e_1a12d7d77b74e7e00294a448a18472f57e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+        <definition>MonomialOrdering * MonomialOrderings::GRevLex</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;wts, int packing)</argsstring>
+        <name>GRevLex</name>
+        <qualifiedname>MonomialOrderings::GRevLex</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>wts</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>packing</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monordering.hpp" line="73" column="27" bodyfile="Macaulay2/e/interface/monomial-ordering.cpp" bodystart="162" bodyend="204"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="monomial-ordering_8cpp_aa78b63bdf4dfba7f3a94a3ce6164c012_1aa78b63bdf4dfba7f3a94a3ce6164c012" compoundref="monomial-ordering_8cpp" startline="35" endline="44">make_mon_order</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a6619d54e309421536ef1859b61783f00" compoundref="monomial-ordering_8h" startline="61">MO_GREVLEX</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07aeba25fa0f217879ce34166d9f848b685" compoundref="monomial-ordering_8h" startline="62">MO_GREVLEX2</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07acef729b126f1b4e56e945545293ea26a" compoundref="monomial-ordering_8h" startline="65">MO_GREVLEX2_WTS</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a95e084ddbafaaf8ec49bcd4372f08373" compoundref="monomial-ordering_8h" startline="63">MO_GREVLEX4</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07a1cad82ff3f888de3bd4a4f48680bc1df" compoundref="monomial-ordering_8h" startline="66">MO_GREVLEX4_WTS</references>
+        <references refid="monomial-ordering_8h_aef0dda4b3c1bd2001600d55e8deadc07_1aef0dda4b3c1bd2001600d55e8deadc07af32ab848e2dc558ed9afc2293c25590d" compoundref="monomial-ordering_8h" startline="64">MO_GREVLEX_WTS</references>
+        <references refid="monomial-ordering_8cpp_a2545b2e0f25e4c26d7085c5b35446ce6_1a2545b2e0f25e4c26d7085c5b35446ce6" compoundref="monomial-ordering_8cpp" startline="16" endline="33">mo_make</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Static-method namespace of constructors for the front-end <computeroutput><ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref></computeroutput> value type. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds no state <mdash/> every method is <computeroutput>static</computeroutput>. Provides factories for the standard monomial orders (<computeroutput><ref refid="class_monomial_orderings_ab700dfacdf5317b25b7670c4232527a8_1ab700dfacdf5317b25b7670c4232527a8" kindref="member">Lex</ref></computeroutput>, <computeroutput><ref refid="class_monomial_orderings_a603e630de63149b99d5c4f599fa7b1df_1a603e630de63149b99d5c4f599fa7b1df" kindref="member">GRevLex</ref></computeroutput>, <computeroutput><ref refid="class_monomial_orderings_ad75e90cd11f5f436f5c6588ec4cfd4f0_1ad75e90cd11f5f436f5c6588ec4cfd4f0" kindref="member">RevLex</ref></computeroutput>, <computeroutput><ref refid="class_monomial_orderings_a167bb8dc2dd397a80f998ea0d038ba32_1a167bb8dc2dd397a80f998ea0d038ba32" kindref="member">Weights</ref></computeroutput>, <computeroutput>Position</computeroutput>, ...), variants with 2-byte and 4-byte exponent packings (<computeroutput><ref refid="class_monomial_orderings_a30d724f14e27c8a7b43e6da2d845cec5_1a30d724f14e27c8a7b43e6da2d845cec5" kindref="member">Lex2</ref></computeroutput> / <computeroutput><ref refid="class_monomial_orderings_a2d5c8afdd48b157ff811126d85513abd_1a2d5c8afdd48b157ff811126d85513abd" kindref="member">Lex4</ref></computeroutput>, <computeroutput><ref refid="class_monomial_orderings_a095c9057cb5b961499b84bbc771ea842_1a095c9057cb5b961499b84bbc771ea842" kindref="member">GRevLex2</ref></computeroutput> / <computeroutput><ref refid="class_monomial_orderings_a9a5d7d75ef6fd16b96ec638995657323_1a9a5d7d75ef6fd16b96ec638995657323" kindref="member">GRevLex4</ref></computeroutput>), weighted forms, plus the combinators <computeroutput><ref refid="class_monomial_orderings_aeac24bb39d682a1ae9b85e7a40d903a2_1aeac24bb39d682a1ae9b85e7a40d903a2" kindref="member">join</ref></computeroutput> (lex-of-blocks) and <computeroutput><ref refid="class_monomial_orderings_ab6124c3acdc7d20b5c5ba484d615f14a_1ab6124c3acdc7d20b5c5ba484d615f14a" kindref="member">product</ref></computeroutput> (tensor-product order). <computeroutput>toString(mo)</computeroutput> renders a <computeroutput>MonomialOrdering*</computeroutput> back to its <ref refid="namespace_m2" kindref="compound">M2</ref> source form. </para>
+    </detaileddescription>
+    <location file="Macaulay2/e/monordering.hpp" line="52" column="1" bodyfile="Macaulay2/e/monordering.hpp" bodystart="52" bodyend="74"/>
+    <listofallmembers>
+      <member refid="class_monomial_orderings_a603e630de63149b99d5c4f599fa7b1df_1a603e630de63149b99d5c4f599fa7b1df" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>GRevLex</name></member>
+      <member refid="class_monomial_orderings_a9e5695e9616abe21477487a3c51a92a8_1a9e5695e9616abe21477487a3c51a92a8" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>GRevLex</name></member>
+      <member refid="class_monomial_orderings_a12d7d77b74e7e00294a448a18472f57e_1a12d7d77b74e7e00294a448a18472f57e" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>GRevLex</name></member>
+      <member refid="class_monomial_orderings_a095c9057cb5b961499b84bbc771ea842_1a095c9057cb5b961499b84bbc771ea842" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>GRevLex2</name></member>
+      <member refid="class_monomial_orderings_aa8cdc077ac31336a54e277856694d148_1aa8cdc077ac31336a54e277856694d148" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>GRevLex2</name></member>
+      <member refid="class_monomial_orderings_a9a5d7d75ef6fd16b96ec638995657323_1a9a5d7d75ef6fd16b96ec638995657323" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>GRevLex4</name></member>
+      <member refid="class_monomial_orderings_aef78d1e9e812f3817488ef98ca77e3b2_1aef78d1e9e812f3817488ef98ca77e3b2" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>GRevLex4</name></member>
+      <member refid="class_monomial_orderings_aa22efe83cb447575b3ecea0a8268f631_1aa22efe83cb447575b3ecea0a8268f631" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>GroupLex</name></member>
+      <member refid="class_monomial_orderings_ad287e7d9f295e721a58dbb4c471e1a7e_1ad287e7d9f295e721a58dbb4c471e1a7e" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>GroupRevLex</name></member>
+      <member refid="class_monomial_orderings_aeac24bb39d682a1ae9b85e7a40d903a2_1aeac24bb39d682a1ae9b85e7a40d903a2" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>join</name></member>
+      <member refid="class_monomial_orderings_ab700dfacdf5317b25b7670c4232527a8_1ab700dfacdf5317b25b7670c4232527a8" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>Lex</name></member>
+      <member refid="class_monomial_orderings_a30d724f14e27c8a7b43e6da2d845cec5_1a30d724f14e27c8a7b43e6da2d845cec5" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>Lex2</name></member>
+      <member refid="class_monomial_orderings_a2d5c8afdd48b157ff811126d85513abd_1a2d5c8afdd48b157ff811126d85513abd" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>Lex4</name></member>
+      <member refid="class_monomial_orderings_a37c69fb38911305233c3521e78565483_1a37c69fb38911305233c3521e78565483" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>PositionDown</name></member>
+      <member refid="class_monomial_orderings_a58dcc054ebaeb7498afc5afb260c30ed_1a58dcc054ebaeb7498afc5afb260c30ed" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>PositionUp</name></member>
+      <member refid="class_monomial_orderings_ab6124c3acdc7d20b5c5ba484d615f14a_1ab6124c3acdc7d20b5c5ba484d615f14a" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>product</name></member>
+      <member refid="class_monomial_orderings_ad75e90cd11f5f436f5c6588ec4cfd4f0_1ad75e90cd11f5f436f5c6588ec4cfd4f0" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>RevLex</name></member>
+      <member refid="class_monomial_orderings_adcbc87f98f3e76ff28eb33f4a3fefb05_1adcbc87f98f3e76ff28eb33f4a3fefb05" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>toString</name></member>
+      <member refid="class_monomial_orderings_a167bb8dc2dd397a80f998ea0d038ba32_1a167bb8dc2dd397a80f998ea0d038ba32" prot="public" virt="non-virtual"><scope>MonomialOrderings</scope><name>Weights</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

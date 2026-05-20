@@ -1,0 +1,271 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_pair_range" kind="class" language="C++" prot="public">
+    <compoundname>PairRange</compoundname>
+    <includes refid="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" local="no">Range.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename U</type>
+      </param>
+      <param>
+        <type>typename <ref refid="struct_t" kindref="compound">T</ref></type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_pair_range_a51691205fbf3e58e367ab2eecb997e6e_1a51691205fbf3e58e367ab2eecb997e6e" prot="private" static="no" mutable="no">
+        <type><ref refid="class_range" kindref="compound">Range</ref>&lt; U &gt;</type>
+        <definition>Range&lt;U&gt; PairRange&lt; U, T &gt;::mRange1</definition>
+        <argsstring></argsstring>
+        <name>mRange1</name>
+        <qualifiedname>PairRange::mRange1</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Range.hpp" line="113" column="9" bodyfile="Macaulay2/e/NCAlgebras/Range.hpp" bodystart="113" bodyend="-1"/>
+        <referencedby refid="class_pair_range_a02977fd5f5db8d4737eefab959f64ed6_1a02977fd5f5db8d4737eefab959f64ed6" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="120" endline="120">PairRange&lt; U, T &gt;::begin</referencedby>
+        <referencedby refid="class_pair_range_af02a8a2a430d31278b0b5dff6cbfeebb_1af02a8a2a430d31278b0b5dff6cbfeebb" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="123" endline="123">PairRange&lt; U, T &gt;::begin</referencedby>
+        <referencedby refid="class_pair_range_af555639987c242032b7cad99e1d8b44d_1af555639987c242032b7cad99e1d8b44d" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="121" endline="121">PairRange&lt; U, T &gt;::end</referencedby>
+        <referencedby refid="class_pair_range_a617b0e3e880518cd808ad789d4dea1c0_1a617b0e3e880518cd808ad789d4dea1c0" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="124" endline="124">PairRange&lt; U, T &gt;::end</referencedby>
+        <referencedby refid="class_pair_range_aa66199952b58e57c4271ef6b7cf4538b_1aa66199952b58e57c4271ef6b7cf4538b" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="116" endline="116">PairRange&lt; U, T &gt;::PairRange</referencedby>
+        <referencedby refid="class_pair_range_a7f78e32dbdcfd99c840e55c558418b07_1a7f78e32dbdcfd99c840e55c558418b07" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="118" endline="118">PairRange&lt; U, T &gt;::size</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_pair_range_a77c6d21378d73d6a010f5dd56ed07eec_1a77c6d21378d73d6a010f5dd56ed07eec" prot="private" static="no" mutable="no">
+        <type><ref refid="class_range" kindref="compound">Range</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt;</type>
+        <definition>Range&lt;T&gt; PairRange&lt; U, T &gt;::mRange2</definition>
+        <argsstring></argsstring>
+        <name>mRange2</name>
+        <qualifiedname>PairRange::mRange2</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Range.hpp" line="114" column="9" bodyfile="Macaulay2/e/NCAlgebras/Range.hpp" bodystart="114" bodyend="-1"/>
+        <referencedby refid="class_pair_range_a02977fd5f5db8d4737eefab959f64ed6_1a02977fd5f5db8d4737eefab959f64ed6" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="120" endline="120">PairRange&lt; U, T &gt;::begin</referencedby>
+        <referencedby refid="class_pair_range_af02a8a2a430d31278b0b5dff6cbfeebb_1af02a8a2a430d31278b0b5dff6cbfeebb" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="123" endline="123">PairRange&lt; U, T &gt;::begin</referencedby>
+        <referencedby refid="class_pair_range_af555639987c242032b7cad99e1d8b44d_1af555639987c242032b7cad99e1d8b44d" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="121" endline="121">PairRange&lt; U, T &gt;::end</referencedby>
+        <referencedby refid="class_pair_range_a617b0e3e880518cd808ad789d4dea1c0_1a617b0e3e880518cd808ad789d4dea1c0" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="124" endline="124">PairRange&lt; U, T &gt;::end</referencedby>
+        <referencedby refid="class_pair_range_aa66199952b58e57c4271ef6b7cf4538b_1aa66199952b58e57c4271ef6b7cf4538b" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="116" endline="116">PairRange&lt; U, T &gt;::PairRange</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_pair_range_aa66199952b58e57c4271ef6b7cf4538b_1aa66199952b58e57c4271ef6b7cf4538b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>PairRange&lt; U, T &gt;::PairRange</definition>
+        <argsstring>(Range&lt; U &gt; range1, Range&lt; T &gt; range2)</argsstring>
+        <name>PairRange</name>
+        <qualifiedname>PairRange::PairRange</qualifiedname>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref>&lt; U &gt;</type>
+          <declname>range1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt;</type>
+          <declname>range2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Range.hpp" line="116" column="3" bodyfile="Macaulay2/e/NCAlgebras/Range.hpp" bodystart="116" bodyend="116"/>
+        <references refid="class_pair_range_a51691205fbf3e58e367ab2eecb997e6e_1a51691205fbf3e58e367ab2eecb997e6e" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="113">PairRange&lt; U, T &gt;::mRange1</references>
+        <references refid="class_pair_range_a77c6d21378d73d6a010f5dd56ed07eec_1a77c6d21378d73d6a010f5dd56ed07eec" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="114">PairRange&lt; U, T &gt;::mRange2</references>
+      </memberdef>
+      <memberdef kind="function" id="class_pair_range_a7f78e32dbdcfd99c840e55c558418b07_1a7f78e32dbdcfd99c840e55c558418b07" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PairRange&lt; U, T &gt;::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>PairRange::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Range.hpp" line="118" column="7" bodyfile="Macaulay2/e/NCAlgebras/Range.hpp" bodystart="118" bodyend="118"/>
+        <references refid="class_pair_range_a51691205fbf3e58e367ab2eecb997e6e_1a51691205fbf3e58e367ab2eecb997e6e" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="113">PairRange&lt; U, T &gt;::mRange1</references>
+      </memberdef>
+      <memberdef kind="function" id="class_pair_range_a02977fd5f5db8d4737eefab959f64ed6_1a02977fd5f5db8d4737eefab959f64ed6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_zip_iterator" kindref="compound">ZipIterator</ref>&lt; U, <ref refid="struct_t" kindref="compound">T</ref> &gt;</type>
+        <definition>ZipIterator&lt; U, T &gt; PairRange&lt; U, T &gt;::begin</definition>
+        <argsstring>()</argsstring>
+        <name>begin</name>
+        <qualifiedname>PairRange::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Range.hpp" line="120" column="15" bodyfile="Macaulay2/e/NCAlgebras/Range.hpp" bodystart="120" bodyend="120"/>
+        <references refid="class_pair_range_a51691205fbf3e58e367ab2eecb997e6e_1a51691205fbf3e58e367ab2eecb997e6e" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="113">PairRange&lt; U, T &gt;::mRange1</references>
+        <references refid="class_pair_range_a77c6d21378d73d6a010f5dd56ed07eec_1a77c6d21378d73d6a010f5dd56ed07eec" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="114">PairRange&lt; U, T &gt;::mRange2</references>
+      </memberdef>
+      <memberdef kind="function" id="class_pair_range_af555639987c242032b7cad99e1d8b44d_1af555639987c242032b7cad99e1d8b44d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_zip_iterator" kindref="compound">ZipIterator</ref>&lt; U, <ref refid="struct_t" kindref="compound">T</ref> &gt;</type>
+        <definition>ZipIterator&lt; U, T &gt; PairRange&lt; U, T &gt;::end</definition>
+        <argsstring>()</argsstring>
+        <name>end</name>
+        <qualifiedname>PairRange::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Range.hpp" line="121" column="15" bodyfile="Macaulay2/e/NCAlgebras/Range.hpp" bodystart="121" bodyend="121"/>
+        <references refid="class_pair_range_a51691205fbf3e58e367ab2eecb997e6e_1a51691205fbf3e58e367ab2eecb997e6e" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="113">PairRange&lt; U, T &gt;::mRange1</references>
+        <references refid="class_pair_range_a77c6d21378d73d6a010f5dd56ed07eec_1a77c6d21378d73d6a010f5dd56ed07eec" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="114">PairRange&lt; U, T &gt;::mRange2</references>
+      </memberdef>
+      <memberdef kind="function" id="class_pair_range_af02a8a2a430d31278b0b5dff6cbfeebb_1af02a8a2a430d31278b0b5dff6cbfeebb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_const_zip_iterator" kindref="compound">ConstZipIterator</ref>&lt; U, <ref refid="struct_t" kindref="compound">T</ref> &gt;</type>
+        <definition>ConstZipIterator&lt; U, T &gt; PairRange&lt; U, T &gt;::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>PairRange::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Range.hpp" line="123" column="20" bodyfile="Macaulay2/e/NCAlgebras/Range.hpp" bodystart="123" bodyend="123"/>
+        <references refid="class_pair_range_a51691205fbf3e58e367ab2eecb997e6e_1a51691205fbf3e58e367ab2eecb997e6e" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="113">PairRange&lt; U, T &gt;::mRange1</references>
+        <references refid="class_pair_range_a77c6d21378d73d6a010f5dd56ed07eec_1a77c6d21378d73d6a010f5dd56ed07eec" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="114">PairRange&lt; U, T &gt;::mRange2</references>
+      </memberdef>
+      <memberdef kind="function" id="class_pair_range_a617b0e3e880518cd808ad789d4dea1c0_1a617b0e3e880518cd808ad789d4dea1c0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_const_zip_iterator" kindref="compound">ConstZipIterator</ref>&lt; U, <ref refid="struct_t" kindref="compound">T</ref> &gt;</type>
+        <definition>ConstZipIterator&lt; U, T &gt; PairRange&lt; U, T &gt;::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>PairRange::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Range.hpp" line="124" column="20" bodyfile="Macaulay2/e/NCAlgebras/Range.hpp" bodystart="124" bodyend="124"/>
+        <references refid="class_pair_range_a51691205fbf3e58e367ab2eecb997e6e_1a51691205fbf3e58e367ab2eecb997e6e" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="113">PairRange&lt; U, T &gt;::mRange1</references>
+        <references refid="class_pair_range_a77c6d21378d73d6a010f5dd56ed07eec_1a77c6d21378d73d6a010f5dd56ed07eec" compoundref="_macaulay2_2e_2_n_c_algebras_2_range_8hpp" startline="114">PairRange&lt; U, T &gt;::mRange2</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Iter</label>
+      </node>
+      <node id="1">
+        <label>PairRange&lt; U, T &gt;</label>
+        <link refid="class_pair_range"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mRange1</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mRange2</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Range&lt; T &gt;</label>
+        <link refid="class_range"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mFirst</edgelabel>
+          <edgelabel>mLast</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Range&lt; T &gt;</label>
+      </node>
+      <node id="2">
+        <label>Range&lt; U &gt;</label>
+        <link refid="class_range"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mFirst</edgelabel>
+          <edgelabel>mLast</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; U &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>U *</label>
+      </node>
+      <node id="11">
+        <label>const void *</label>
+      </node>
+      <node id="7">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="9">
+        <label>unsigned</label>
+      </node>
+      <node id="8">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="12">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/NCAlgebras/Range.hpp" line="110" column="1" bodyfile="Macaulay2/e/NCAlgebras/Range.hpp" bodystart="111" bodyend="131"/>
+    <listofallmembers>
+      <member refid="class_pair_range_a02977fd5f5db8d4737eefab959f64ed6_1a02977fd5f5db8d4737eefab959f64ed6" prot="public" virt="non-virtual"><scope>PairRange</scope><name>begin</name></member>
+      <member refid="class_pair_range_af02a8a2a430d31278b0b5dff6cbfeebb_1af02a8a2a430d31278b0b5dff6cbfeebb" prot="public" virt="non-virtual"><scope>PairRange</scope><name>begin</name></member>
+      <member refid="class_pair_range_af555639987c242032b7cad99e1d8b44d_1af555639987c242032b7cad99e1d8b44d" prot="public" virt="non-virtual"><scope>PairRange</scope><name>end</name></member>
+      <member refid="class_pair_range_a617b0e3e880518cd808ad789d4dea1c0_1a617b0e3e880518cd808ad789d4dea1c0" prot="public" virt="non-virtual"><scope>PairRange</scope><name>end</name></member>
+      <member refid="class_pair_range_a51691205fbf3e58e367ab2eecb997e6e_1a51691205fbf3e58e367ab2eecb997e6e" prot="private" virt="non-virtual"><scope>PairRange</scope><name>mRange1</name></member>
+      <member refid="class_pair_range_a77c6d21378d73d6a010f5dd56ed07eec_1a77c6d21378d73d6a010f5dd56ed07eec" prot="private" virt="non-virtual"><scope>PairRange</scope><name>mRange2</name></member>
+      <member refid="class_pair_range_aa66199952b58e57c4271ef6b7cf4538b_1aa66199952b58e57c4271ef6b7cf4538b" prot="public" virt="non-virtual"><scope>PairRange</scope><name>PairRange</name></member>
+      <member refid="class_pair_range_a7f78e32dbdcfd99c840e55c558418b07_1a7f78e32dbdcfd99c840e55c558418b07" prot="public" virt="non-virtual"><scope>PairRange</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

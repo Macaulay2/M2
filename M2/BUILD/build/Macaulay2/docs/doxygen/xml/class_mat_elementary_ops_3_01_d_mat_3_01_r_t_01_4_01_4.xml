@@ -1,0 +1,987 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4" kind="class" language="C++" prot="public">
+    <compoundname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</compoundname>
+    <includes refid="mat-elem-ops_8hpp" local="no">mat-elem-ops.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename RT</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" prot="public" static="no">
+        <type><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; RT &gt;</type>
+        <definition>typedef DMat&lt;RT&gt; MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::Mat</definition>
+        <argsstring></argsstring>
+        <name>Mat</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::Mat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="49" column="16" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" prot="public" static="no">
+        <type><ref refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" kindref="member">Mat::ElementType</ref></type>
+        <definition>typedef Mat::ElementType MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="50" column="37" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a8669c3b987b90417b17746ca33567360_1a8669c3b987b90417b17746ca33567360" prot="public" static="no">
+        <type>RT::Element</type>
+        <definition>typedef RT::Element MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::Element</definition>
+        <argsstring></argsstring>
+        <name>Element</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::Element</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="51" column="32" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a6bf36107358b63bff918bcdfa416266e_1a6bf36107358b63bff918bcdfa416266e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>static size_t MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</definition>
+        <argsstring>(const Mat &amp;mat, size_t col)</argsstring>
+        <name>lead_row</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="62" column="17" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="62" bodyend="73"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">perform_reduction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a88ba8aeb42efaabd80589cf39434d8fc_1a88ba8aeb42efaabd80589cf39434d8fc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>static size_t MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</definition>
+        <argsstring>(const Mat &amp;mat, size_t col, ElementType &amp;result)</argsstring>
+        <name>lead_row</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>col</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="75" column="17" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="75" bodyend="92"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a8e841f0c687be82ea09d579c196119f9_1a8e841f0c687be82ea09d579c196119f9" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_rows</definition>
+        <argsstring>(Mat &amp;mat, size_t i, size_t j)</argsstring>
+        <name>interchange_rows</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_rows</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="100" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="100" bodyend="109"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">perform_reduction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a488107a18f569875ba421776aed06e9e_1a488107a18f569875ba421776aed06e9e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_columns</definition>
+        <argsstring>(Mat &amp;mat, size_t i, size_t j)</argsstring>
+        <name>interchange_columns</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_columns</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="111" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="111" bodyend="120"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">perform_reduction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a100cbe56a5588f5c96dd68088d1e9e56_1a100cbe56a5588f5c96dd68088d1e9e56" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_row</definition>
+        <argsstring>(Mat &amp;mat, size_t i, const ElementType &amp;a)</argsstring>
+        <name>scale_row</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_row</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="122" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="122" bodyend="129"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a34f019a7684a540cf3b4e4b318d8e8dc_1a34f019a7684a540cf3b4e4b318d8e8dc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_column</definition>
+        <argsstring>(Mat &amp;mat, size_t i, const ElementType &amp;a)</argsstring>
+        <name>scale_column</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_column</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="131" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="131" bodyend="138"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">perform_reduction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a2ac2a3a44a57b41eeecf7fa6f01a2ca0_1a2ac2a3a44a57b41eeecf7fa6f01a2ca0" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_row</definition>
+        <argsstring>(Mat &amp;mat, size_t i, const ElementType &amp;a)</argsstring>
+        <name>divide_row</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_row</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="140" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="140" bodyend="147"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aeb81d1fdf71b0981c98e2605601a8888_1aeb81d1fdf71b0981c98e2605601a8888" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_column</definition>
+        <argsstring>(Mat &amp;mat, size_t i, const ElementType &amp;a)</argsstring>
+        <name>divide_column</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_column</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="149" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="149" bodyend="156"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">perform_reduction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad83429ed2810a793e831636b652a9825_1ad83429ed2810a793e831636b652a9825" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_op</definition>
+        <argsstring>(Mat &amp;mat, size_t i, const ElementType &amp;a, size_t j)</argsstring>
+        <name>row_op</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_op</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="158" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="158" bodyend="173"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a467a36aa06905806f10d29b728823361_1a467a36aa06905806f10d29b728823361" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_op</definition>
+        <argsstring>(Mat &amp;mat, size_t i, const ElementType &amp;a, size_t j)</argsstring>
+        <name>column_op</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_op</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="175" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="175" bodyend="190"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">perform_reduction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_acb800f8bbb01ba96e0656c93ce814f83_1acb800f8bbb01ba96e0656c93ce814f83" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row2by2</definition>
+        <argsstring>(Mat &amp;mat, size_t r1, size_t r2, const ElementType &amp;a1, const ElementType &amp;a2, const ElementType &amp;b1, const ElementType &amp;b2)</argsstring>
+        <name>row2by2</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row2by2</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>r1</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>r2</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a2</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="193" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="193" bodyend="228"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ab1fc64e9e13e6ab4a15a7236f82f7183_1ab1fc64e9e13e6ab4a15a7236f82f7183" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column2by2</definition>
+        <argsstring>(Mat &amp;mat, size_t c1, size_t c2, const ElementType &amp;a1, const ElementType &amp;a2, const ElementType &amp;b1, const ElementType &amp;b2)</argsstring>
+        <name>column2by2</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column2by2</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>c1</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>c2</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a2</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="230" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="230" bodyend="265"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a4b96cbf748d0a84e4c25233247c5e86e_1a4b96cbf748d0a84e4c25233247c5e86e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::dot_product</definition>
+        <argsstring>(const Mat &amp;mat, size_t i, size_t j, ElementType &amp;result)</argsstring>
+        <name>dot_product</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::dot_product</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>j</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="268" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="268" bodyend="285"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_af19e1c5ba4e6bebc081f4c60443a8360_1af19e1c5ba4e6bebc081f4c60443a8360" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>static bool MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_permute</definition>
+        <argsstring>(Mat &amp;mat, size_t start_row, M2_arrayint perm)</argsstring>
+        <name>row_permute</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_permute</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>start_row</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>perm</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="287" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="287" bodyend="334"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a9af45eb48c3be215183c5eaa1a5815ac_1a9af45eb48c3be215183c5eaa1a5815ac" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>static bool MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_permute</definition>
+        <argsstring>(Mat &amp;mat, size_t start_col, M2_arrayint perm)</argsstring>
+        <name>column_permute</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_permute</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>start_col</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>perm</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="336" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="336" bodyend="383"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a19da472bddbb8fe686904f916d7c6680_1a19da472bddbb8fe686904f916d7c6680" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_columns</definition>
+        <argsstring>(Mat &amp;mat, size_t i, size_t n_to_add)</argsstring>
+        <name>insert_columns</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_columns</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>n_to_add</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="385" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="385" bodyend="399"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <references refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" compoundref="dmat_8hpp" startline="132" endline="139">DMat&lt; ACoeffRing &gt;::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a51e6aaa88eb6653567d132a18f55525d_1a51e6aaa88eb6653567d132a18f55525d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_rows</definition>
+        <argsstring>(Mat &amp;mat, size_t i, size_t n_to_add)</argsstring>
+        <name>insert_rows</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_rows</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>n_to_add</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="401" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="401" bodyend="415"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <references refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" compoundref="dmat_8hpp" startline="132" endline="139">DMat&lt; ACoeffRing &gt;::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a75f3f661e35044f2d666604c32c87ce7_1a75f3f661e35044f2d666604c32c87ce7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_columns</definition>
+        <argsstring>(Mat &amp;mat, size_t i, size_t j)</argsstring>
+        <name>delete_columns</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_columns</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="417" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="417" bodyend="435"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <references refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" compoundref="dmat_8hpp" startline="132" endline="139">DMat&lt; ACoeffRing &gt;::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a885d74a3aab53687e0c5f8f0385bea48_1a885d74a3aab53687e0c5f8f0385bea48" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_rows</definition>
+        <argsstring>(Mat &amp;mat, size_t i, size_t j)</argsstring>
+        <name>delete_rows</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_rows</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="437" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="437" bodyend="455"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <references refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" compoundref="dmat_8hpp" startline="132" endline="139">DMat&lt; ACoeffRing &gt;::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ace26a7e3cab6a90d5ac33a90dff3fd4f_1ace26a7e3cab6a90d5ac33a90dff3fd4f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::reduce_by_pivots</definition>
+        <argsstring>(Mat &amp;M)</argsstring>
+        <name>reduce_by_pivots</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::reduce_by_pivots</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="506" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="506" bodyend="573"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="godbolt_test_8cpp_a0e1045921b894ff7aa509d02f4740b4b_1a0e1045921b894ff7aa509d02f4740b4b" compoundref="godbolt_test_8cpp" startline="36">minus_one</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">perform_reduction</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aca4a9d74f3bab7ab512359b0e8b5a645_1aca4a9d74f3bab7ab512359b0e8b5a645" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</definition>
+        <argsstring>(const Mat &amp;mat, size_t r0, size_t r1, size_t c0, size_t c1, Mat &amp;result)</argsstring>
+        <name>setFromSubmatrix</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>r0</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>r1</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>c0</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>c1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="576" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="576" bodyend="590"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a1d8c12b85af93bc51460e9a5c357fbb4_1a1d8c12b85af93bc51460e9a5c357fbb4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</definition>
+        <argsstring>(const Mat &amp;mat, M2_arrayint rows, M2_arrayint cols, Mat &amp;result)</argsstring>
+        <name>setFromSubmatrix</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>cols</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="592" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="592" bodyend="604"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a38e50635f2aa9494317f5d6f69091cc1_1a38e50635f2aa9494317f5d6f69091cc1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</definition>
+        <argsstring>(const Mat &amp;mat, M2_arrayint cols, Mat &amp;result)</argsstring>
+        <name>setFromSubmatrix</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>cols</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="606" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="606" bodyend="614"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad59e10bd3e5d8196c45776ebc88fac8e_1ad59e10bd3e5d8196c45776ebc88fac8e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::getEntry</definition>
+        <argsstring>(const Mat &amp;mat, size_t r, size_t c, ElementType &amp;result)</argsstring>
+        <name>getEntry</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::getEntry</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="616" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="616" bodyend="619"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a0a5323471c13905d2de190d36f958d4a_1a0a5323471c13905d2de190d36f958d4a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setEntry</definition>
+        <argsstring>(Mat &amp;mat, size_t r, size_t c, const ElementType &amp;a)</argsstring>
+        <name>setEntry</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setEntry</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="621" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="621" bodyend="624"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">perform_reduction</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::perform_reduction</definition>
+        <argsstring>(Mat &amp;M, size_t r, size_t c, size_t nr, size_t nc, int pivot_type)</argsstring>
+        <name>perform_reduction</name>
+        <qualifiedname>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::perform_reduction</qualifiedname>
+        <param>
+          <type><ref refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" kindref="member">Mat</ref> &amp;</type>
+          <declname>M</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>nr</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>nc</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>pivot_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-elem-ops.hpp" line="462" column="15" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="462" bodyend="503"/>
+        <references refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a467a36aa06905806f10d29b728823361_1a467a36aa06905806f10d29b728823361" compoundref="mat-elem-ops_8hpp" startline="175" endline="190">column_op</references>
+        <references refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aeb81d1fdf71b0981c98e2605601a8888_1aeb81d1fdf71b0981c98e2605601a8888" compoundref="mat-elem-ops_8hpp" startline="149" endline="156">divide_column</references>
+        <references refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a488107a18f569875ba421776aed06e9e_1a488107a18f569875ba421776aed06e9e" compoundref="mat-elem-ops_8hpp" startline="111" endline="120">interchange_columns</references>
+        <references refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a8e841f0c687be82ea09d579c196119f9_1a8e841f0c687be82ea09d579c196119f9" compoundref="mat-elem-ops_8hpp" startline="100" endline="109">interchange_rows</references>
+        <references refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a6bf36107358b63bff918bcdfa416266e_1a6bf36107358b63bff918bcdfa416266e" compoundref="mat-elem-ops_8hpp" startline="62" endline="73">lead_row</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <references refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a34f019a7684a540cf3b4e4b318d8e8dc_1a34f019a7684a540cf3b4e4b318d8e8dc" compoundref="mat-elem-ops_8hpp" startline="131" endline="138">scale_column</references>
+        <references refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a0a5323471c13905d2de190d36f958d4a_1a0a5323471c13905d2de190d36f958d4a" compoundref="mat-elem-ops_8hpp" startline="621" endline="624">setEntry</references>
+        <references refid="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" compoundref="godbolt_test_8cpp" startline="35">zero</references>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ace26a7e3cab6a90d5ac33a90dff3fd4f_1ace26a7e3cab6a90d5ac33a90dff3fd4f" compoundref="mat-elem-ops_8hpp" startline="506" endline="573">reduce_by_pivots</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>MatElementaryOps&lt; MT &gt;</label>
+        <link refid="class_mat_elementary_ops"/>
+      </node>
+      <node id="1">
+        <label>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</label>
+        <link refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; DMat&lt; RT &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>MatElementaryOps&lt; MT &gt;</label>
+        <link refid="class_mat_elementary_ops"/>
+      </node>
+      <node id="1">
+        <label>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</label>
+        <link refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; DMat&lt; RT &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/mat-elem-ops.hpp" line="46" column="1" bodyfile="Macaulay2/e/mat-elem-ops.hpp" bodystart="47" bodyend="733"/>
+    <listofallmembers>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ab1fc64e9e13e6ab4a15a7236f82f7183_1ab1fc64e9e13e6ab4a15a7236f82f7183" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>column2by2</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a467a36aa06905806f10d29b728823361_1a467a36aa06905806f10d29b728823361" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>column_op</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a9af45eb48c3be215183c5eaa1a5815ac_1a9af45eb48c3be215183c5eaa1a5815ac" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>column_permute</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a75f3f661e35044f2d666604c32c87ce7_1a75f3f661e35044f2d666604c32c87ce7" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>delete_columns</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a885d74a3aab53687e0c5f8f0385bea48_1a885d74a3aab53687e0c5f8f0385bea48" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>delete_rows</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aeb81d1fdf71b0981c98e2605601a8888_1aeb81d1fdf71b0981c98e2605601a8888" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>divide_column</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a2ac2a3a44a57b41eeecf7fa6f01a2ca0_1a2ac2a3a44a57b41eeecf7fa6f01a2ca0" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>divide_row</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a4b96cbf748d0a84e4c25233247c5e86e_1a4b96cbf748d0a84e4c25233247c5e86e" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>dot_product</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a8669c3b987b90417b17746ca33567360_1a8669c3b987b90417b17746ca33567360" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>Element</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a5efd74a4f4a302a70315aa0250f2d438_1a5efd74a4f4a302a70315aa0250f2d438" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>ElementType</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad59e10bd3e5d8196c45776ebc88fac8e_1ad59e10bd3e5d8196c45776ebc88fac8e" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>getEntry</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a19da472bddbb8fe686904f916d7c6680_1a19da472bddbb8fe686904f916d7c6680" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>insert_columns</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a51e6aaa88eb6653567d132a18f55525d_1a51e6aaa88eb6653567d132a18f55525d" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>insert_rows</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a488107a18f569875ba421776aed06e9e_1a488107a18f569875ba421776aed06e9e" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>interchange_columns</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a8e841f0c687be82ea09d579c196119f9_1a8e841f0c687be82ea09d579c196119f9" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>interchange_rows</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a6bf36107358b63bff918bcdfa416266e_1a6bf36107358b63bff918bcdfa416266e" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>lead_row</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a88ba8aeb42efaabd80589cf39434d8fc_1a88ba8aeb42efaabd80589cf39434d8fc" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>lead_row</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a86d9d46de12f0d9f8ce29eeea0725076_1a86d9d46de12f0d9f8ce29eeea0725076" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>Mat</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" prot="private" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>perform_reduction</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ace26a7e3cab6a90d5ac33a90dff3fd4f_1ace26a7e3cab6a90d5ac33a90dff3fd4f" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>reduce_by_pivots</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_acb800f8bbb01ba96e0656c93ce814f83_1acb800f8bbb01ba96e0656c93ce814f83" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>row2by2</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad83429ed2810a793e831636b652a9825_1ad83429ed2810a793e831636b652a9825" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>row_op</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_af19e1c5ba4e6bebc081f4c60443a8360_1af19e1c5ba4e6bebc081f4c60443a8360" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>row_permute</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a34f019a7684a540cf3b4e4b318d8e8dc_1a34f019a7684a540cf3b4e4b318d8e8dc" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>scale_column</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a100cbe56a5588f5c96dd68088d1e9e56_1a100cbe56a5588f5c96dd68088d1e9e56" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>scale_row</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a0a5323471c13905d2de190d36f958d4a_1a0a5323471c13905d2de190d36f958d4a" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>setEntry</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aca4a9d74f3bab7ab512359b0e8b5a645_1aca4a9d74f3bab7ab512359b0e8b5a645" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>setFromSubmatrix</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a1d8c12b85af93bc51460e9a5c357fbb4_1a1d8c12b85af93bc51460e9a5c357fbb4" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>setFromSubmatrix</name></member>
+      <member refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a38e50635f2aa9494317f5d6f69091cc1_1a38e50635f2aa9494317f5d6f69091cc1" prot="public" virt="non-virtual"><scope>MatElementaryOps&lt; DMat&lt; RT &gt; &gt;</scope><name>setFromSubmatrix</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structindent" kind="struct" language="C++" prot="public">
+    <compoundname>indent</compoundname>
+    <includes refid="buffer_8hpp" local="no">buffer.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structindent_aeb2c02246dfd9df93fff66ab334ec7c6_1aeb2c02246dfd9df93fff66ab334ec7c6" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int indent::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <qualifiedname>indent::n</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/buffer.hpp" line="48" column="7" bodyfile="Macaulay2/e/buffer.hpp" bodystart="48" bodyend="-1"/>
+        <referencedby refid="structindent_a30d64c10032e6f645ef3275e994408fb_1a30d64c10032e6f645ef3275e994408fb" compoundref="buffer_8hpp" startline="49" endline="49">indent</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structindent_a30d64c10032e6f645ef3275e994408fb_1a30d64c10032e6f645ef3275e994408fb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>indent::indent</definition>
+        <argsstring>(int n0)</argsstring>
+        <name>indent</name>
+        <qualifiedname>indent::indent</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/buffer.hpp" line="49" column="3" bodyfile="Macaulay2/e/buffer.hpp" bodystart="49" bodyend="49"/>
+        <references refid="structindent_aeb2c02246dfd9df93fff66ab334ec7c6_1aeb2c02246dfd9df93fff66ab334ec7c6" compoundref="buffer_8hpp" startline="48">n</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>indent</label>
+        <link refid="structindent"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>n</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/buffer.hpp" line="46" column="1" bodyfile="Macaulay2/e/buffer.hpp" bodystart="47" bodyend="50"/>
+    <listofallmembers>
+      <member refid="structindent_a30d64c10032e6f645ef3275e994408fb_1a30d64c10032e6f645ef3275e994408fb" prot="public" virt="non-virtual"><scope>indent</scope><name>indent</name></member>
+      <member refid="structindent_aeb2c02246dfd9df93fff66ab334ec7c6_1aeb2c02246dfd9df93fff66ab334ec7c6" prot="public" virt="non-virtual"><scope>indent</scope><name>n</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_reducer_1_1_registration" kind="class" language="C++" prot="public">
+    <compoundname>Reducer::Registration</compoundname>
+    <includes refid="_reducer_8hpp" local="no">Reducer.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_reducer_1_1_registration_ab05e86bbc2cf9a2a92f2fbf1b2817f47_1ab05e86bbc2cf9a2a92f2fbf1b2817f47" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Reducer</definition>
+        <argsstring></argsstring>
+        <name>Reducer</name>
+        <qualifiedname>Reducer::Registration::Reducer</qualifiedname>
+        <param>
+          <type><ref refid="class_reducer" kindref="compound">Reducer</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="139" column="18" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="139" bodyend="-1"/>
+        <references refid="class_reducer_1_1_registration_ab05e86bbc2cf9a2a92f2fbf1b2817f47_1ab05e86bbc2cf9a2a92f2fbf1b2817f47" compoundref="_reducer_8hpp" startline="139">Reducer</references>
+        <referencedby refid="class_reducer_1_1_registration_ab05e86bbc2cf9a2a92f2fbf1b2817f47_1ab05e86bbc2cf9a2a92f2fbf1b2817f47" compoundref="_reducer_8hpp" startline="139">Reducer</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_reducer_1_1_registration_a73e113a79bdadee4ccbd7e557395838f_1a73e113a79bdadee4ccbd7e557395838f" prot="private" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* Reducer::Registration::mName</definition>
+        <argsstring></argsstring>
+        <name>mName</name>
+        <qualifiedname>Reducer::Registration::mName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="141" column="16" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="141" bodyend="-1"/>
+        <referencedby refid="class_reducer_1_1_registration_ade9f591653d1d8c9ee3cd73c74e1dce3_1ade9f591653d1d8c9ee3cd73c74e1dce3" compoundref="_reducer_8cpp" startline="49" endline="59">Registration</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_reducer_1_1_registration_a10dc9010ab819e3b31c04c92582f8cc9_1a10dc9010ab819e3b31c04c92582f8cc9" prot="private" static="no" mutable="no">
+        <type><ref refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869" kindref="member">ReducerType</ref></type>
+        <definition>ReducerType Reducer::Registration::mId</definition>
+        <argsstring></argsstring>
+        <name>mId</name>
+        <qualifiedname>Reducer::Registration::mId</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="142" column="17" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="142" bodyend="-1"/>
+        <referencedby refid="class_reducer_a90b7b1542ab900eea1972381fca6114d_1a90b7b1542ab900eea1972381fca6114d" compoundref="_reducer_8cpp" startline="117" endline="132">Reducer::displayReducerTypes</referencedby>
+        <referencedby refid="class_reducer_1_1_registration_ade9f591653d1d8c9ee3cd73c74e1dce3_1ade9f591653d1d8c9ee3cd73c74e1dce3" compoundref="_reducer_8cpp" startline="49" endline="59">Registration</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_reducer_1_1_registration_a05eddbcc27d4670ce2a2e1bc5090a11f_1a05eddbcc27d4670ce2a2e1bc5090a11f" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_reducer" kindref="compound">Reducer</ref> &gt;(*</type>
+        <definition>std::unique_ptr&lt; Reducer &gt;(* Reducer::Registration::mCreate) (const PolyRing &amp;)</definition>
+        <argsstring>)(const PolyRing &amp;)</argsstring>
+        <name>mCreate</name>
+        <qualifiedname>Reducer::Registration::mCreate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="142" column="17" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="143" bodyend="-1"/>
+        <referencedby refid="class_reducer_1_1_registration_ade9f591653d1d8c9ee3cd73c74e1dce3_1ade9f591653d1d8c9ee3cd73c74e1dce3" compoundref="_reducer_8cpp" startline="49" endline="59">Registration</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_reducer_1_1_registration_ade9f591653d1d8c9ee3cd73c74e1dce3_1ade9f591653d1d8c9ee3cd73c74e1dce3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Reducer::Registration::Registration</definition>
+        <argsstring>(const char *name, ReducerType id, std::unique_ptr&lt; Reducer &gt;(*create)(const PolyRing &amp;))</argsstring>
+        <name>Registration</name>
+        <qualifiedname>Reducer::Registration::Registration</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type><ref refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869" kindref="member">ReducerType</ref></type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="class_reducer" kindref="compound">Reducer</ref> &gt;(*)(const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;)</type>
+          <declname>create</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="132" column="5" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.cpp" bodystart="49" bodyend="59"/>
+        <references refid="class_reducer_1_1_registration_a05eddbcc27d4670ce2a2e1bc5090a11f_1a05eddbcc27d4670ce2a2e1bc5090a11f" compoundref="_reducer_8hpp" startline="143">mCreate</references>
+        <references refid="class_reducer_1_1_registration_a10dc9010ab819e3b31c04c92582f8cc9_1a10dc9010ab819e3b31c04c92582f8cc9" compoundref="_reducer_8hpp" startline="142">mId</references>
+        <references refid="class_reducer_1_1_registration_a73e113a79bdadee4ccbd7e557395838f_1a73e113a79bdadee4ccbd7e557395838f" compoundref="_reducer_8hpp" startline="141">mName</references>
+        <references refid="_reducer_8cpp_a18a909f2505b41204a22069b5e3f7240_1a18a909f2505b41204a22069b5e3f7240" compoundref="_reducer_8cpp" startline="44" endline="47">reducerTypes</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>Reducer</label>
+        <link refid="class_reducer"/>
+      </node>
+      <node id="1">
+        <label>Reducer::Registration</label>
+        <link refid="class_reducer_1_1_registration"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mName</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mId</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mCreate</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ReducerType</label>
+      </node>
+      <node id="7">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>char</label>
+      </node>
+      <node id="6">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::unique_ptr&lt; Reducer &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; Reducer &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/Reducer.hpp" line="130" column="3" bodyfile="submodules/mathicgb/src/mathicgb/Reducer.hpp" bodystart="130" bodyend="144"/>
+    <listofallmembers>
+      <member refid="class_reducer_1_1_registration_a05eddbcc27d4670ce2a2e1bc5090a11f_1a05eddbcc27d4670ce2a2e1bc5090a11f" prot="private" virt="non-virtual"><scope>Reducer::Registration</scope><name>mCreate</name></member>
+      <member refid="class_reducer_1_1_registration_a10dc9010ab819e3b31c04c92582f8cc9_1a10dc9010ab819e3b31c04c92582f8cc9" prot="private" virt="non-virtual"><scope>Reducer::Registration</scope><name>mId</name></member>
+      <member refid="class_reducer_1_1_registration_a73e113a79bdadee4ccbd7e557395838f_1a73e113a79bdadee4ccbd7e557395838f" prot="private" virt="non-virtual"><scope>Reducer::Registration</scope><name>mName</name></member>
+      <member refid="class_reducer_1_1_registration_ab05e86bbc2cf9a2a92f2fbf1b2817f47_1ab05e86bbc2cf9a2a92f2fbf1b2817f47" prot="private" virt="non-virtual"><scope>Reducer::Registration</scope><name>Reducer</name></member>
+      <member refid="class_reducer_1_1_registration_ade9f591653d1d8c9ee3cd73c74e1dce3_1ade9f591653d1d8c9ee3cd73c74e1dce3" prot="public" virt="non-virtual"><scope>Reducer::Registration</scope><name>Registration</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

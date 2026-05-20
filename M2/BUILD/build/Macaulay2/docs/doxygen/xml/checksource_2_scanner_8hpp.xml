@@ -1,0 +1,294 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="checksource_2_scanner_8hpp" kind="file" language="C++">
+    <compoundname>Scanner.hpp</compoundname>
+    <includes local="no">string</includes>
+    <includes local="no">cstdio</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">type_traits</includes>
+    <includes local="no">limits</includes>
+    <includes local="no">sstream</includes>
+    <includes local="no">istream</includes>
+    <includedby refid="checksource_2_scanner_8cpp" local="yes">submodules/mathicgb/src/checksource/Scanner.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathicgb/src/checksource/Scanner.hpp</label>
+        <link refid="checksource_2_scanner_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>cstdio</label>
+      </node>
+      <node id="8">
+        <label>istream</label>
+      </node>
+      <node id="6">
+        <label>limits</label>
+      </node>
+      <node id="7">
+        <label>sstream</label>
+      </node>
+      <node id="2">
+        <label>string</label>
+      </node>
+      <node id="5">
+        <label>type_traits</label>
+      </node>
+      <node id="4">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>submodules/mathicgb/src/checksource/CheckSource.cpp</label>
+        <link refid="_check_source_8cpp"/>
+      </node>
+      <node id="2">
+        <label>submodules/mathicgb/src/checksource/Scanner.cpp</label>
+        <link refid="checksource_2_scanner_8cpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/checksource/Scanner.hpp</label>
+        <link refid="checksource_2_scanner_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_scanner" prot="public">Scanner</innerclass>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" prot="public" static="no">
+        <type>unsigned long long</type>
+        <definition>typedef unsigned long long uint64</definition>
+        <argsstring></argsstring>
+        <name>uint64</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/checksource/Scanner.hpp" line="12" column="28" bodyfile="submodules/mathicgb/src/checksource/Scanner.hpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>MATHICGB_SCANNER_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_SCANNER_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdio&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;type_traits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;limits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;istream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref>;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="class_scanner" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_scanner_af92fe233e07b952b9841e6bb64d832f5_1af92fe233e07b952b9841e6bb64d832f5" kindref="member">Scanner</ref><sp/>{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><ref refid="class_scanner_af92fe233e07b952b9841e6bb64d832f5_1af92fe233e07b952b9841e6bb64d832f5" kindref="member">Scanner</ref>(FILE*<sp/>input);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><ref refid="class_scanner_af92fe233e07b952b9841e6bb64d832f5_1af92fe233e07b952b9841e6bb64d832f5" kindref="member">Scanner</ref>(std::istream&amp;<sp/>input);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><ref refid="class_scanner_af92fe233e07b952b9841e6bb64d832f5_1af92fe233e07b952b9841e6bb64d832f5" kindref="member">Scanner</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>input);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><ref refid="class_scanner_af92fe233e07b952b9841e6bb64d832f5_1af92fe233e07b952b9841e6bb64d832f5" kindref="member">Scanner</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>input);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ac7b4af36b7cb7b17c6689add3a59bd90_1ac7b4af36b7cb7b17c6689add3a59bd90" kindref="member">ignore</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ae4870fd108fee9b392fabf3576d5cc2c_1ae4870fd108fee9b392fabf3576d5cc2c" kindref="member">match</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>c);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ac96b5feebd97fe59a2cb4c6b525b69db_1ac96b5feebd97fe59a2cb4c6b525b69db" kindref="member">matchEOF</ref>();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ae4870fd108fee9b392fabf3576d5cc2c_1ae4870fd108fee9b392fabf3576d5cc2c" kindref="member">match</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>str);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a9c4d68c6f1cc46e1d63a2613aa9b500b_1a9c4d68c6f1cc46e1d63a2613aa9b500b" kindref="member">expect</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>expected);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a9c4d68c6f1cc46e1d63a2613aa9b500b_1a9c4d68c6f1cc46e1d63a2613aa9b500b" kindref="member">expect</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>b);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a9c4d68c6f1cc46e1d63a2613aa9b500b_1a9c4d68c6f1cc46e1d63a2613aa9b500b" kindref="member">expect</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>str);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="class_scanner_a9815b1df3b2d8ef46d88e81925d5869a_1a9815b1df3b2d8ef46d88e81925d5869a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a9815b1df3b2d8ef46d88e81925d5869a_1a9815b1df3b2d8ef46d88e81925d5869a" kindref="member">expect</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>str)<sp/>{<ref refid="class_scanner_a9815b1df3b2d8ef46d88e81925d5869a_1a9815b1df3b2d8ef46d88e81925d5869a" kindref="member">expect</ref>(str.c_str());}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a7a40cbbc4784c907e6df0ad2d75b3a98_1a7a40cbbc4784c907e6df0ad2d75b3a98" kindref="member">expectEOF</ref>();</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/><ref refid="class_scanner_a72a5a846c7e10b3bc5a55006468125d4_1a72a5a846c7e10b3bc5a55006468125d4" kindref="member">readInteger</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>negate<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ac95a18beab4525dd6ad62bbba3452f02_1ac95a18beab4525dd6ad62bbba3452f02" kindref="member">matchReadIntegerNoSign</ref>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>&amp;<sp/>t,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>negate<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="class_scanner_ac3e098fcb4ad181e7a994c74ab3330ff_1ac3e098fcb4ad181e7a994c74ab3330ff" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ac3e098fcb4ad181e7a994c74ab3330ff_1ac3e098fcb4ad181e7a994c74ab3330ff" kindref="member">readUntil</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>delimiter)<sp/>{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>()<sp/>!=<sp/>delimiter<sp/>&amp;&amp;<sp/>!<ref refid="class_scanner_ac96b5feebd97fe59a2cb4c6b525b69db_1ac96b5feebd97fe59a2cb4c6b525b69db" kindref="member">matchEOF</ref>())</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="class_scanner_a4293fc08d6619f4a19a6760f26143546_1a4293fc08d6619f4a19a6760f26143546" refkind="member"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="class_scanner_a4293fc08d6619f4a19a6760f26143546_1a4293fc08d6619f4a19a6760f26143546" kindref="member">readString</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>str;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(!<ref refid="class_scanner_a7df8f2174204c20d9f79082d57a46a5e_1a7df8f2174204c20d9f79082d57a46a5e" kindref="member">peekWhite</ref>()<sp/>&amp;&amp;<sp/>!<ref refid="class_scanner_ac96b5feebd97fe59a2cb4c6b525b69db_1ac96b5feebd97fe59a2cb4c6b525b69db" kindref="member">matchEOF</ref>())</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>str<sp/>+=<sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>str;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>()<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ae52d22b96996ca5098688ce6522b5d58_1ae52d22b96996ca5098688ce6522b5d58" kindref="member">mChar</ref>;}</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="class_scanner_a88e206b97319e00c4d00de841946ef0a_1a88e206b97319e00c4d00de841946ef0a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a88e206b97319e00c4d00de841946ef0a_1a88e206b97319e00c4d00de841946ef0a" kindref="member">peekDigit</ref>()<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::isdigit(<ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>());}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="class_scanner_a4edb437c6bad357925582100158074ce_1a4edb437c6bad357925582100158074ce" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a4edb437c6bad357925582100158074ce_1a4edb437c6bad357925582100158074ce" kindref="member">peekAlpha</ref>()<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::isalpha(<ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>());}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="class_scanner_a7df8f2174204c20d9f79082d57a46a5e_1a7df8f2174204c20d9f79082d57a46a5e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a7df8f2174204c20d9f79082d57a46a5e_1a7df8f2174204c20d9f79082d57a46a5e" kindref="member">peekWhite</ref>()<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>isspace(<ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>());}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="class_scanner_acbd67541a6c27c02ea3d62c385c7d964_1acbd67541a6c27c02ea3d62c385c7d964" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_acbd67541a6c27c02ea3d62c385c7d964_1acbd67541a6c27c02ea3d62c385c7d964" kindref="member">peekSign</ref>()<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>()<sp/>==<sp/></highlight><highlight class="charliteral">&apos;+&apos;</highlight><highlight class="normal"><sp/>||<sp/><ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>()<sp/>==<sp/></highlight><highlight class="charliteral">&apos;-&apos;</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128" refid="class_scanner_a60e1120175115d4a5da9a319703d7011_1a60e1120175115d4a5da9a319703d7011" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref><sp/><ref refid="class_scanner_a60e1120175115d4a5da9a319703d7011_1a60e1120175115d4a5da9a319703d7011" kindref="member">lineCount</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a7929fa072eed9157a1a6c9ff4a3024f0_1a7929fa072eed9157a1a6c9ff4a3024f0" kindref="member">mLineCount</ref>;}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a39f75d293b48ad55af3bb3259451b384_1a39f75d293b48ad55af3bb3259451b384" kindref="member">eatWhite</ref>();</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_af6ef85a26e5791a8c58e10764c893068_1af6ef85a26e5791a8c58e10764c893068" kindref="member">reportError</ref>(std::string<sp/>msg)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ab47d5f99ad90173a22a7f23d5d16209e_1ab47d5f99ad90173a22a7f23d5d16209e" kindref="member">errorExpectTwo</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>b,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>got);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ad1bf9bde3e736e977e8b7b863678834c_1ad1bf9bde3e736e977e8b7b863678834c" kindref="member">errorExpectOne</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>expected,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>got);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a5f6f7ebe8768a4db505568c51ea2a41d_1a5f6f7ebe8768a4db505568c51ea2a41d" kindref="member">reportErrorUnexpectedToken</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>expected,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>got);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a5f6f7ebe8768a4db505568c51ea2a41d_1a5f6f7ebe8768a4db505568c51ea2a41d" kindref="member">reportErrorUnexpectedToken</ref></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>expected,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>got);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a3e4dbdd7cccc9d0c93fac553fe6fc432_1a3e4dbdd7cccc9d0c93fac553fe6fc432" kindref="member">ensureBuffer</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>min);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a14491c99a0fdf77b398912bcdc682782_1a14491c99a0fdf77b398912bcdc682782" kindref="member">readBuffer</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minRead);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="class_scanner_ae79b987fe5d279e00046a2ab67c6ec86_1ae79b987fe5d279e00046a2ab67c6ec86" refkind="member"><highlight class="normal"><sp/><sp/>FILE*<sp/><ref refid="class_scanner_ae79b987fe5d279e00046a2ab67c6ec86_1ae79b987fe5d279e00046a2ab67c6ec86" kindref="member">mFile</ref>;</highlight></codeline>
+<codeline lineno="147" refid="class_scanner_aa2a58809b00a92e26da288a1e0edf7ff_1aa2a58809b00a92e26da288a1e0edf7ff" refkind="member"><highlight class="normal"><sp/><sp/>std::istream*<sp/><ref refid="class_scanner_aa2a58809b00a92e26da288a1e0edf7ff_1aa2a58809b00a92e26da288a1e0edf7ff" kindref="member">mStream</ref>;</highlight></codeline>
+<codeline lineno="148" refid="class_scanner_a7929fa072eed9157a1a6c9ff4a3024f0_1a7929fa072eed9157a1a6c9ff4a3024f0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref><sp/><ref refid="class_scanner_a7929fa072eed9157a1a6c9ff4a3024f0_1a7929fa072eed9157a1a6c9ff4a3024f0" kindref="member">mLineCount</ref>;</highlight></codeline>
+<codeline lineno="149" refid="class_scanner_ae52d22b96996ca5098688ce6522b5d58_1ae52d22b96996ca5098688ce6522b5d58" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ae52d22b96996ca5098688ce6522b5d58_1ae52d22b96996ca5098688ce6522b5d58" kindref="member">mChar</ref>;<sp/></highlight><highlight class="comment">//<sp/>next<sp/>character<sp/>on<sp/>stream</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151" refid="class_scanner_a0dfc87624e23a7c9d7a011b2330bfe2e_1a0dfc87624e23a7c9d7a011b2330bfe2e" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;char&gt;<sp/><ref refid="class_scanner_a0dfc87624e23a7c9d7a011b2330bfe2e_1a0dfc87624e23a7c9d7a011b2330bfe2e" kindref="member">mBuffer</ref>;</highlight></codeline>
+<codeline lineno="152" refid="class_scanner_a55df98f4a822c42faf2b3d8991552cc9_1a55df98f4a822c42faf2b3d8991552cc9" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;char&gt;::iterator<sp/><ref refid="class_scanner_a55df98f4a822c42faf2b3d8991552cc9_1a55df98f4a822c42faf2b3d8991552cc9" kindref="member">mBufferPos</ref>;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="class_scanner_ac96b5feebd97fe59a2cb4c6b525b69db_1ac96b5feebd97fe59a2cb4c6b525b69db" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ac96b5feebd97fe59a2cb4c6b525b69db_1ac96b5feebd97fe59a2cb4c6b525b69db" kindref="member">Scanner::matchEOF</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><ref refid="class_scanner_a39f75d293b48ad55af3bb3259451b384_1a39f75d293b48ad55af3bb3259451b384" kindref="member">eatWhite</ref>();</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>()<sp/>==<sp/>EOF;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160" refid="class_scanner_ae4870fd108fee9b392fabf3576d5cc2c_1ae4870fd108fee9b392fabf3576d5cc2c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ae4870fd108fee9b392fabf3576d5cc2c_1ae4870fd108fee9b392fabf3576d5cc2c" kindref="member">Scanner::match</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>c)<sp/>{</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><ref refid="class_scanner_a39f75d293b48ad55af3bb3259451b384_1a39f75d293b48ad55af3bb3259451b384" kindref="member">eatWhite</ref>();</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(c<sp/>==<sp/><ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169" refid="class_scanner_a88f4b2babd8f04e8928b9fd004d73ebd_1a88f4b2babd8f04e8928b9fd004d73ebd" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a9c4d68c6f1cc46e1d63a2613aa9b500b_1a9c4d68c6f1cc46e1d63a2613aa9b500b" kindref="member">Scanner::expect</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>b)<sp/>{</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><ref refid="class_scanner_a39f75d293b48ad55af3bb3259451b384_1a39f75d293b48ad55af3bb3259451b384" kindref="member">eatWhite</ref>();</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>got<sp/>=<sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(got<sp/>!=<sp/>a<sp/>&amp;&amp;<sp/>got<sp/>!=<sp/>b)</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_scanner_ab47d5f99ad90173a22a7f23d5d16209e_1ab47d5f99ad90173a22a7f23d5d16209e" kindref="member">errorExpectTwo</ref>(a,<sp/>b,<sp/>got);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="class_scanner_a9c4d68c6f1cc46e1d63a2613aa9b500b_1a9c4d68c6f1cc46e1d63a2613aa9b500b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a9c4d68c6f1cc46e1d63a2613aa9b500b_1a9c4d68c6f1cc46e1d63a2613aa9b500b" kindref="member">Scanner::expect</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>expected)<sp/>{</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><ref refid="class_scanner_a39f75d293b48ad55af3bb3259451b384_1a39f75d293b48ad55af3bb3259451b384" kindref="member">eatWhite</ref>();</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>got<sp/>=<sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(got<sp/>!=<sp/>expected)</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_scanner_ad1bf9bde3e736e977e8b7b863678834c_1ad1bf9bde3e736e977e8b7b863678834c" kindref="member">errorExpectOne</ref>(expected,<sp/>got);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183" refid="class_scanner_a39f75d293b48ad55af3bb3259451b384_1a39f75d293b48ad55af3bb3259451b384" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a39f75d293b48ad55af3bb3259451b384_1a39f75d293b48ad55af3bb3259451b384" kindref="member">Scanner::eatWhite</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<ref refid="class_scanner_a7df8f2174204c20d9f79082d57a46a5e_1a7df8f2174204c20d9f79082d57a46a5e" kindref="member">peekWhite</ref>())</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="186"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188" refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">Scanner::get</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_scanner_ae52d22b96996ca5098688ce6522b5d58_1ae52d22b96996ca5098688ce6522b5d58" kindref="member">mChar</ref><sp/>==<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>++<ref refid="class_scanner_a7929fa072eed9157a1a6c9ff4a3024f0_1a7929fa072eed9157a1a6c9ff4a3024f0" kindref="member">mLineCount</ref>;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>oldChar<sp/>=<sp/><ref refid="class_scanner_ae52d22b96996ca5098688ce6522b5d58_1ae52d22b96996ca5098688ce6522b5d58" kindref="member">mChar</ref>;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_scanner_a55df98f4a822c42faf2b3d8991552cc9_1a55df98f4a822c42faf2b3d8991552cc9" kindref="member">mBufferPos</ref><sp/>==<sp/><ref refid="class_scanner_a0dfc87624e23a7c9d7a011b2330bfe2e_1a0dfc87624e23a7c9d7a011b2330bfe2e" kindref="member">mBuffer</ref>.end()<sp/>&amp;&amp;<sp/>!<ref refid="class_scanner_a14491c99a0fdf77b398912bcdc682782_1a14491c99a0fdf77b398912bcdc682782" kindref="member">readBuffer</ref>(1))</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_scanner_ae52d22b96996ca5098688ce6522b5d58_1ae52d22b96996ca5098688ce6522b5d58" kindref="member">mChar</ref><sp/>=<sp/>EOF;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_scanner_ae52d22b96996ca5098688ce6522b5d58_1ae52d22b96996ca5098688ce6522b5d58" kindref="member">mChar</ref><sp/>=<sp/>*<ref refid="class_scanner_a55df98f4a822c42faf2b3d8991552cc9_1a55df98f4a822c42faf2b3d8991552cc9" kindref="member">mBufferPos</ref>;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/>++<ref refid="class_scanner_a55df98f4a822c42faf2b3d8991552cc9_1a55df98f4a822c42faf2b3d8991552cc9" kindref="member">mBufferPos</ref>;</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>oldChar;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201" refid="class_scanner_ac7b4af36b7cb7b17c6689add3a59bd90_1ac7b4af36b7cb7b17c6689add3a59bd90" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ac7b4af36b7cb7b17c6689add3a59bd90_1ac7b4af36b7cb7b17c6689add3a59bd90" kindref="member">Scanner::ignore</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count)<sp/>{</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>count;<sp/>++i)</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="204"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="209" refid="class_scanner_a72a5a846c7e10b3bc5a55006468125d4_1a72a5a846c7e10b3bc5a55006468125d4" refkind="member"><highlight class="normal"><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/><ref refid="class_scanner_a72a5a846c7e10b3bc5a55006468125d4_1a72a5a846c7e10b3bc5a55006468125d4" kindref="member">Scanner::readInteger</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>negate)<sp/>{</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static_assert</highlight><highlight class="normal">(std::numeric_limits&lt;T&gt;::is_integer,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><ref refid="class_scanner_a39f75d293b48ad55af3bb3259451b384_1a39f75d293b48ad55af3bb3259451b384" kindref="member">eatWhite</ref>();</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>minus<sp/>=<sp/>!<ref refid="class_scanner_ae4870fd108fee9b392fabf3576d5cc2c_1ae4870fd108fee9b392fabf3576d5cc2c" kindref="member">match</ref>(</highlight><highlight class="charliteral">&apos;+&apos;</highlight><highlight class="normal">)<sp/>&amp;&amp;<sp/><ref refid="class_scanner_ae4870fd108fee9b392fabf3576d5cc2c_1ae4870fd108fee9b392fabf3576d5cc2c" kindref="member">match</ref>(</highlight><highlight class="charliteral">&apos;-&apos;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>positive<sp/>=<sp/>minus<sp/>==<sp/>negate;</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="class_scanner_a88e206b97319e00c4d00de841946ef0a_1a88e206b97319e00c4d00de841946ef0a" kindref="member">peekDigit</ref>())</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_scanner_a5f6f7ebe8768a4db505568c51ea2a41d_1a5f6f7ebe8768a4db505568c51ea2a41d" kindref="member">reportErrorUnexpectedToken</ref>(</highlight><highlight class="stringliteral">&quot;an<sp/>integer&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Skip<sp/>leading<sp/>zeroes<sp/>and<sp/>return<sp/>if<sp/>the<sp/>number<sp/>is<sp/>zero.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>()<sp/>==<sp/></highlight><highlight class="charliteral">&apos;0&apos;</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<ref refid="class_scanner_a24ab68a6c58d10ebac49894bde426bde_1a24ab68a6c58d10ebac49894bde426bde" kindref="member">peek</ref>()<sp/>==<sp/></highlight><highlight class="charliteral">&apos;0&apos;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="class_scanner_a88e206b97319e00c4d00de841946ef0a_1a88e206b97319e00c4d00de841946ef0a" kindref="member">peekDigit</ref>())</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(0);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Checking<sp/>this<sp/>here<sp/>allows<sp/>us<sp/>to<sp/>recognize<sp/>-0<sp/>as<sp/>non-negative.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!positive<sp/>&amp;&amp;<sp/>!std::numeric_limits&lt;T&gt;::is_signed)</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_scanner_a5f6f7ebe8768a4db505568c51ea2a41d_1a5f6f7ebe8768a4db505568c51ea2a41d" kindref="member">reportErrorUnexpectedToken</ref>(</highlight><highlight class="stringliteral">&quot;a<sp/>positive<sp/>integer&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>min<sp/>=<sp/>std::numeric_limits&lt;T&gt;::min();</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" kindref="member">max</ref><sp/>=<sp/>std::numeric_limits&lt;T&gt;::max();</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>t<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(0);</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<ref refid="class_scanner_a88e206b97319e00c4d00de841946ef0a_1a88e206b97319e00c4d00de841946ef0a" kindref="member">peekDigit</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>c<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">char</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<ref refid="class_scanner_a634b4c68be95f7b722866f147ccc081a_1a634b4c68be95f7b722866f147ccc081a" kindref="member">get</ref>());</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>d<sp/>=<sp/>positive<sp/>?<sp/>c<sp/>-<sp/></highlight><highlight class="charliteral">&apos;0&apos;</highlight><highlight class="normal"><sp/>:<sp/>-(c<sp/>-<sp/></highlight><highlight class="charliteral">&apos;0&apos;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(positive<sp/>?<sp/>t<sp/>&gt;<sp/>(<ref refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" kindref="member">max</ref><sp/>-<sp/>d)<sp/>/<sp/>10<sp/>:<sp/>t<sp/>&lt;<sp/>(min<sp/>-<sp/>d)<sp/>/<sp/>10)<sp/>{</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::ostringstream<sp/>err;</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>err<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;an<sp/>integer<sp/>in<sp/>the<sp/>range<sp/>[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>min</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" kindref="member">max</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;]&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_scanner_a5f6f7ebe8768a4db505568c51ea2a41d_1a5f6f7ebe8768a4db505568c51ea2a41d" kindref="member">reportErrorUnexpectedToken</ref>(err.str(),<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/>t<sp/>=<sp/>t<sp/>*<sp/>10<sp/>+<sp/>d;</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>t;</highlight></codeline>
+<codeline lineno="244"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="247" refid="class_scanner_ac95a18beab4525dd6ad62bbba3452f02_1ac95a18beab4525dd6ad62bbba3452f02" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_scanner_ac95a18beab4525dd6ad62bbba3452f02_1ac95a18beab4525dd6ad62bbba3452f02" kindref="member">Scanner::matchReadIntegerNoSign</ref>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>&amp;<sp/>t,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>negate)<sp/>{</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_scanner_a88e206b97319e00c4d00de841946ef0a_1a88e206b97319e00c4d00de841946ef0a" kindref="member">peekDigit</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/>t<sp/>=<sp/><ref refid="class_scanner_a72a5a846c7e10b3bc5a55006468125d4_1a72a5a846c7e10b3bc5a55006468125d4" kindref="member">readInteger&lt;T&gt;</ref>(negate);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/checksource/Scanner.hpp"/>
+  </compounddef>
+</doxygen>

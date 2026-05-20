@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structmpfr_1_1internal_1_1result__type" kind="struct" language="C++" prot="public">
+    <compoundname>mpfr::internal::result_type</compoundname>
+    <includes refid="mpreal_8h" local="no">mpreal.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename ArgumentType</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>mpfr::internal::result_type&lt; ArgumentType &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type"/>
+      </node>
+      <node id="2">
+        <label>mpfr::internal::result_type&lt; double &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01double_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; double &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mpfr::internal::result_type&lt; int &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01int_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mpfr::internal::result_type&lt; long double &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01long_01double_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; long double &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>mpfr::internal::result_type&lt; long int &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01long_01int_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; long int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>mpfr::internal::result_type&lt; long long &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01long_01long_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; long long &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>mpfr::internal::result_type&lt; mpq_t &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01mpq__t_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mpq_t &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>mpfr::internal::result_type&lt; mpreal &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01mpreal_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mpreal &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>mpfr::internal::result_type&lt; mpz_t &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01mpz__t_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mpz_t &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>mpfr::internal::result_type&lt; unsigned int &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01unsigned_01int_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; unsigned int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>mpfr::internal::result_type&lt; unsigned long int &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01unsigned_01long_01int_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; unsigned long int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>mpfr::internal::result_type&lt; unsigned long long &gt;</label>
+        <link refid="structmpfr_1_1internal_1_1result__type_3_01unsigned_01long_01long_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; unsigned long long &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="Macaulay2/e/mpreal.h" line="787" column="16" bodyfile="Macaulay2/e/mpreal.h" bodystart="787" bodyend="787"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

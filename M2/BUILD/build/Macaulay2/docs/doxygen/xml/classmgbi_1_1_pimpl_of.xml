@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmgbi_1_1_pimpl_of" kind="class" language="C++" prot="public">
+    <compoundname>mgbi::PimplOf</compoundname>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmgbi_1_1_pimpl_of_a7a7cd1cec62c4e83e61232248cda8606_1a7a7cd1cec62c4e83e61232248cda8606" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="struct_t" kindref="compound">T</ref></type>
+          </param>
+        </templateparamlist>
+        <type>T::Pimpl &amp;</type>
+        <definition>T::Pimpl &amp; mgbi::PimplOf::operator()</definition>
+        <argsstring>(T &amp;t)</argsstring>
+        <name>operator()</name>
+        <qualifiedname>mgbi::PimplOf::operator()</qualifiedname>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.cpp" line="793" column="23" bodyfile="submodules/mathicgb/src/mathicgb.cpp" bodystart="793" bodyend="796"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb.cpp" line="790" column="3" bodyfile="submodules/mathicgb/src/mathicgb.cpp" bodystart="790" bodyend="797"/>
+    <listofallmembers>
+      <member refid="classmgbi_1_1_pimpl_of_a7a7cd1cec62c4e83e61232248cda8606_1a7a7cd1cec62c4e83e61232248cda8606" prot="public" virt="non-virtual"><scope>mgbi::PimplOf</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

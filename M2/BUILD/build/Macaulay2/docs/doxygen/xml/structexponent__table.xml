@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structexponent__table" kind="struct" language="C++" prot="public">
+    <compoundname>exponent_table</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structexponent__table_ac76bb1adbac02a5414f3430c505e76d1_1ac76bb1adbac02a5414f3430c505e76d1" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int exponent_table::nvars</definition>
+        <argsstring></argsstring>
+        <name>nvars</name>
+        <qualifiedname>exponent_table::nvars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/exptable.c" line="15" column="7" bodyfile="Macaulay2/e/exptable.c" bodystart="15" bodyend="-1"/>
+        <referencedby refid="exptable_8c_afba68e09d5d6ee8efc78c08e22b1908b_1afba68e09d5d6ee8efc78c08e22b1908b" compoundref="exptable_8c" startline="71" endline="77">exponent_table_get</referencedby>
+        <referencedby refid="exptable_8c_adfdbaae69463c93055f5aaf8de017d3b_1adfdbaae69463c93055f5aaf8de017d3b" compoundref="exptable_8c" startline="62" endline="69">exponent_table_put</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structexponent__table_a8d632d6fa33d31c375014b1d2b620af1_1a8d632d6fa33d31c375014b1d2b620af1" prot="public" static="no" mutable="no">
+        <type>Table_T *</type>
+        <definition>Table_T* exponent_table::table</definition>
+        <argsstring></argsstring>
+        <name>table</name>
+        <qualifiedname>exponent_table::table</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/exptable.c" line="16" column="11" bodyfile="Macaulay2/e/exptable.c" bodystart="16" bodyend="-1"/>
+        <referencedby refid="exptable_8c_afba68e09d5d6ee8efc78c08e22b1908b_1afba68e09d5d6ee8efc78c08e22b1908b" compoundref="exptable_8c" startline="71" endline="77">exponent_table_get</referencedby>
+        <referencedby refid="exptable_8c_aec673c461904eaac4d190677665d2c90_1aec673c461904eaac4d190677665d2c90" compoundref="exptable_8c" startline="54" endline="54">exponent_table_length</referencedby>
+        <referencedby refid="exptable_8c_adfdbaae69463c93055f5aaf8de017d3b_1adfdbaae69463c93055f5aaf8de017d3b" compoundref="exptable_8c" startline="62" endline="69">exponent_table_put</referencedby>
+        <referencedby refid="exptable_8c_a658ade4ce8bfcad70119113f4fdeae8e_1a658ade4ce8bfcad70119113f4fdeae8e" compoundref="exptable_8c" startline="79" endline="82">exponent_table_to_array</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>Table_T *</label>
+      </node>
+      <node id="1">
+        <label>exponent_table</label>
+        <link refid="structexponent__table"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>nvars</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>table</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/exptable.c" line="13" column="1" bodyfile="Macaulay2/e/exptable.c" bodystart="14" bodyend="17"/>
+    <listofallmembers>
+      <member refid="structexponent__table_ac76bb1adbac02a5414f3430c505e76d1_1ac76bb1adbac02a5414f3430c505e76d1" prot="public" virt="non-virtual"><scope>exponent_table</scope><name>nvars</name></member>
+      <member refid="structexponent__table_a8d632d6fa33d31c375014b1d2b620af1_1a8d632d6fa33d31c375014b1d2b620af1" prot="public" virt="non-virtual"><scope>exponent_table</scope><name>table</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

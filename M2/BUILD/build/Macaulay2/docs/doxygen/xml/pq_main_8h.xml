@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="pq_main_8h" kind="file" language="C++">
+    <compoundname>pqMain.h</compoundname>
+    <includedby refid="main_8cpp" local="yes">submodules/mathic/src/mathic/main.cpp</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>submodules/mathic/src/mathic/main.cpp</label>
+        <link refid="main_8cpp"/>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/pqsim/pqMain.h</label>
+        <link refid="pq_main_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="pq_main_8h_ad65f915dbcaf759b986097074d3fec1a_1ad65f915dbcaf759b986097074d3fec1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int main</definition>
+        <argsstring>(int argc, const char **args)</argsstring>
+        <name>main</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>argc</declname>
+        </param>
+        <param>
+          <type>const char **</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/pqMain.h" line="4" column="5" bodyfile="submodules/mathic/src/mathic/main.cpp" bodystart="6" bodyend="17" declfile="submodules/mathic/src/pqsim/pqMain.h" declline="4" declcolumn="5"/>
+        <references refid="class_simulator_a4ea2373c60a88c480bcfa11e117e0d38_1a4ea2373c60a88c480bcfa11e117e0d38" compoundref="_simulator_8cpp" startline="144" endline="191">Simulator::dupSpans</references>
+        <references refid="mathic_2src_2divsim_2stdinc_8h_ab66b59128fbb3d5a428e94c374959b8e_1ab66b59128fbb3d5a428e94c374959b8e" compoundref="mathic_2src_2divsim_2stdinc_8h" startline="54">IF_DEBUG</references>
+        <references refid="class_simulator_a7bc0f3057aa5118d839d312e50269cb5_1a7bc0f3057aa5118d839d312e50269cb5" compoundref="_simulator_8cpp" startline="275" endline="292">Simulator::printData</references>
+        <references refid="class_simulator_ad42d0c129fc1f8dd4cd72ddd2bc07dbf_1ad42d0c129fc1f8dd4cd72ddd2bc07dbf" compoundref="_simulator_8cpp" startline="252" endline="254">Simulator::printEventSummary</references>
+        <references refid="class_simulator_ad16df28339f9b3f91c087a1f4598957f_1ad16df28339f9b3f91c087a1f4598957f" compoundref="_simulator_8h" startline="61" endline="101">Simulator::run</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>PQ_MAIN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PQ_MAIN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="franzi-brp-test_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_1ae66f6b31b5ad750f1fe042a706a4e3d4" kindref="member">main</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>args);</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/pqsim/pqMain.h"/>
+  </compounddef>
+</doxygen>

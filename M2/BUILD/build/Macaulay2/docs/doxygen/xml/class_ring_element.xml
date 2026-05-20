@@ -1,0 +1,2243 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_ring_element" kind="class" language="C++" prot="public">
+    <compoundname>RingElement</compoundname>
+    <basecompoundref refid="class_engine_object" prot="public" virt="non-virtual">EngineObject</basecompoundref>
+    <includes refid="relem_8hpp" local="no">relem.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>const Ring* RingElement::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>RingElement::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="64" column="14" bodyfile="Macaulay2/e/relem.hpp" bodystart="64" bodyend="-1"/>
+        <referencedby refid="class_ring_element_aec1dfedb2a34de8481965a5c6c11a8e4_1aec1dfedb2a34de8481965a5c6c11a8e4" compoundref="relem_8cpp" startline="337" endline="343">content</referencedby>
+        <referencedby refid="comp-gb_8cpp_ace48e412e5278417f6684766fd9193f8_1ace48e412e5278417f6684766fd9193f8" compoundref="f4-computation_8cpp" startline="25" endline="74">createF4GB</referencedby>
+        <referencedby refid="class_ring_element_a50e0c599a95ace6c8dc41982af141542_1a50e0c599a95ace6c8dc41982af141542" compoundref="relem_8hpp" startline="136" endline="136">degree</referencedby>
+        <referencedby refid="class_ring_element_ac63060238e3328e5b885e7ae0487d55b_1ac63060238e3328e5b885e7ae0487d55b" compoundref="relem_8cpp" startline="227" endline="243">degree_weights</referencedby>
+        <referencedby refid="class_ring_element_a59c251a9905374ad2147513381e6dd57_1a59c251a9905374ad2147513381e6dd57" compoundref="relem_8cpp" startline="374" endline="386">denominator</referencedby>
+        <referencedby refid="class_ring_element_a319962a1c71fab9b611170191f398dc3_1a319962a1c71fab9b611170191f398dc3" compoundref="relem_8cpp" startline="388" endline="419">fraction</referencedby>
+        <referencedby refid="class_ring_element_ae474f0a814b2a875c83549eb9d9874a8_1ae474f0a814b2a875c83549eb9d9874a8" compoundref="relem_8cpp" startline="185" endline="195">get_coeff</referencedby>
+        <referencedby refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</referencedby>
+        <referencedby refid="class_ring_element_aa51a1376728908a43efc6719123ab572_1aa51a1376728908a43efc6719123ab572" compoundref="relem_8cpp" startline="147" endline="163">get_terms</referencedby>
+        <referencedby refid="class_ring_element_ada89d3a964931f562c29adc27625c52d_1ada89d3a964931f562c29adc27625c52d" compoundref="relem_8cpp" startline="421" endline="460">getSmallIntegerCoefficients</referencedby>
+        <referencedby refid="class_ring_element_af772b467564a4f4b6c817ffd4cab97ff_1af772b467564a4f4b6c817ffd4cab97ff" compoundref="relem_8cpp" startline="245" endline="272">homogenize</referencedby>
+        <referencedby refid="class_ring_element_a66dc103c4ee480469b355652acc93fe6_1a66dc103c4ee480469b355652acc93fe6" compoundref="relem_8cpp" startline="274" endline="303">homogenize</referencedby>
+        <referencedby refid="class_ring_element_ab7c16c3c328ab161aeb2257378703dc1_1ab7c16c3c328ab161aeb2257378703dc1" compoundref="relem_8cpp" startline="47" endline="55">invert</referencedby>
+        <referencedby refid="class_ring_element_a3d42e52f8bcffc4b5b2b744a2e375a3d_1a3d42e52f8bcffc4b5b2b744a2e375a3d" compoundref="relem_8cpp" startline="225" endline="225">is_homogeneous</referencedby>
+        <referencedby refid="class_ring_element_a98abe0c2a27d3c3de26e4d005a63b6c8_1a98abe0c2a27d3c3de26e4d005a63b6c8" compoundref="relem_8cpp" startline="165" endline="183">lead_coeff</referencedby>
+        <referencedby refid="class_ring_element_a447e8cf63da8e98304f0c0050cdf133a_1a447e8cf63da8e98304f0c0050cdf133a" compoundref="relem_8cpp" startline="197" endline="223">lead_monom</referencedby>
+        <referencedby refid="class_ring_element_ae7c75b782f8c92ec3216a37a7ddb100e_1ae7c75b782f8c92ec3216a37a7ddb100e" compoundref="relem_8cpp" startline="321" endline="335">lift</referencedby>
+        <referencedby refid="class_ring_element_ab978463e39096a4e0d1ecc0720f9acf3_1ab978463e39096a4e0d1ecc0720f9acf3" compoundref="relem_8cpp" startline="20" endline="23">make_raw</referencedby>
+        <referencedby refid="class_ring_element_a92baf9a67a34d1e8092248d974c03d3f_1a92baf9a67a34d1e8092248d974c03d3f" compoundref="relem_8hpp" startline="137" endline="137">multi_degree</referencedby>
+        <referencedby refid="class_ring_element_a931e1696610aa038fb2cb41971a4ad98_1a931e1696610aa038fb2cb41971a4ad98" compoundref="relem_8cpp" startline="25" endline="40">n_terms</referencedby>
+        <referencedby refid="class_ring_element_aaceed4df2073246abfe640756908d030_1aaceed4df2073246abfe640756908d030" compoundref="relem_8cpp" startline="360" endline="372">numerator</referencedby>
+        <referencedby refid="class_ring_element_afa3f6888e609b76d69b8278c0b77da1d_1afa3f6888e609b76d69b8278c0b77da1d" compoundref="relem_8cpp" startline="82" endline="94">operator*</referencedby>
+        <referencedby refid="class_ring_element_a444b6168ad593b748c94e9c0556298d6_1a444b6168ad593b748c94e9c0556298d6" compoundref="relem_8cpp" startline="96" endline="103">operator*</referencedby>
+        <referencedby refid="class_ring_element_a1ddb6e298583e47808de02de13e28e02_1a1ddb6e298583e47808de02de13e28e02" compoundref="relem_8cpp" startline="57" endline="67">operator+</referencedby>
+        <referencedby refid="class_ring_element_aaf55628a88669ffa3f5ef176c84b9470_1aaf55628a88669ffa3f5ef176c84b9470" compoundref="relem_8cpp" startline="42" endline="45">operator-</referencedby>
+        <referencedby refid="class_ring_element_a28cad1292690e59ad655fc743dd07e2c_1a28cad1292690e59ad655fc743dd07e2c" compoundref="relem_8cpp" startline="69" endline="80">operator-</referencedby>
+        <referencedby refid="class_ring_element_a5efe2d37733d6520b727a463a9cabfed_1a5efe2d37733d6520b727a463a9cabfed" compoundref="relem_8cpp" startline="105" endline="120">operator/</referencedby>
+        <referencedby refid="class_ring_element_ab0bc89cf0bb372da0367cd8fd60a10a1_1ab0bc89cf0bb372da0367cd8fd60a10a1" compoundref="relem_8cpp" startline="122" endline="128">power</referencedby>
+        <referencedby refid="class_ring_element_a189189d4b20d104eb959274e181df6e6_1a189189d4b20d104eb959274e181df6e6" compoundref="relem_8cpp" startline="130" endline="135">power</referencedby>
+        <referencedby refid="class_ring_element_a8d45d9a2620ce1e0c5432070524ccbcb_1a8d45d9a2620ce1e0c5432070524ccbcb" compoundref="relem_8cpp" startline="305" endline="319">promote</referencedby>
+        <referencedby refid="class_ring_element_a39fd58d5efc9028f5f0e7926f8343e68_1a39fd58d5efc9028f5f0e7926f8343e68" compoundref="relem_8cpp" startline="137" endline="140">random</referencedby>
+        <referencedby refid="class_ring_element_ad565e00a8cc4543e1e9b19b901ae364c_1ad565e00a8cc4543e1e9b19b901ae364c" compoundref="relem_8cpp" startline="345" endline="349">remove_content</referencedby>
+        <referencedby refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</referencedby>
+        <referencedby refid="class_ring_element_a8f30d060ccfbbc8906586ebd75c15d2e_1a8f30d060ccfbbc8906586ebd75c15d2e" compoundref="relem_8cpp" startline="351" endline="358">split_off_content</referencedby>
+        <referencedby refid="class_ring_element_a2edc7334ae64d0de6b5dea9b26dafa1c_1a2edc7334ae64d0de6b5dea9b26dafa1c" compoundref="relem_8cpp" startline="142" endline="145">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" prot="private" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem RingElement::val</definition>
+        <argsstring></argsstring>
+        <name>val</name>
+        <qualifiedname>RingElement::val</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="65" column="13" bodyfile="Macaulay2/e/relem.hpp" bodystart="65" bodyend="-1"/>
+        <referencedby refid="class_ring_element_aec1dfedb2a34de8481965a5c6c11a8e4_1aec1dfedb2a34de8481965a5c6c11a8e4" compoundref="relem_8cpp" startline="337" endline="343">content</referencedby>
+        <referencedby refid="class_ring_element_a50e0c599a95ace6c8dc41982af141542_1a50e0c599a95ace6c8dc41982af141542" compoundref="relem_8hpp" startline="136" endline="136">degree</referencedby>
+        <referencedby refid="class_ring_element_ac63060238e3328e5b885e7ae0487d55b_1ac63060238e3328e5b885e7ae0487d55b" compoundref="relem_8cpp" startline="227" endline="243">degree_weights</referencedby>
+        <referencedby refid="class_ring_element_a59c251a9905374ad2147513381e6dd57_1a59c251a9905374ad2147513381e6dd57" compoundref="relem_8cpp" startline="374" endline="386">denominator</referencedby>
+        <referencedby refid="class_ring_element_a319962a1c71fab9b611170191f398dc3_1a319962a1c71fab9b611170191f398dc3" compoundref="relem_8cpp" startline="388" endline="419">fraction</referencedby>
+        <referencedby refid="class_ring_element_aa51a1376728908a43efc6719123ab572_1aa51a1376728908a43efc6719123ab572" compoundref="relem_8cpp" startline="147" endline="163">get_terms</referencedby>
+        <referencedby refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</referencedby>
+        <referencedby refid="class_ring_element_af772b467564a4f4b6c817ffd4cab97ff_1af772b467564a4f4b6c817ffd4cab97ff" compoundref="relem_8cpp" startline="245" endline="272">homogenize</referencedby>
+        <referencedby refid="class_ring_element_a66dc103c4ee480469b355652acc93fe6_1a66dc103c4ee480469b355652acc93fe6" compoundref="relem_8cpp" startline="274" endline="303">homogenize</referencedby>
+        <referencedby refid="class_ring_element_ab7c16c3c328ab161aeb2257378703dc1_1ab7c16c3c328ab161aeb2257378703dc1" compoundref="relem_8cpp" startline="47" endline="55">invert</referencedby>
+        <referencedby refid="class_ring_element_ae9a11e32c034aa68b4f23d3184a1e565_1ae9a11e32c034aa68b4f23d3184a1e565" compoundref="relem_8hpp" startline="165" endline="174">is_equal</referencedby>
+        <referencedby refid="class_ring_element_a3d42e52f8bcffc4b5b2b744a2e375a3d_1a3d42e52f8bcffc4b5b2b744a2e375a3d" compoundref="relem_8cpp" startline="225" endline="225">is_homogeneous</referencedby>
+        <referencedby refid="class_ring_element_aa159891c8c1f7b0ba7e7ae7f5e546c2d_1aa159891c8c1f7b0ba7e7ae7f5e546c2d" compoundref="relem_8hpp" startline="164" endline="164">is_unit</referencedby>
+        <referencedby refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</referencedby>
+        <referencedby refid="class_ring_element_a98abe0c2a27d3c3de26e4d005a63b6c8_1a98abe0c2a27d3c3de26e4d005a63b6c8" compoundref="relem_8cpp" startline="165" endline="183">lead_coeff</referencedby>
+        <referencedby refid="class_ring_element_ae7c75b782f8c92ec3216a37a7ddb100e_1ae7c75b782f8c92ec3216a37a7ddb100e" compoundref="relem_8cpp" startline="321" endline="335">lift</referencedby>
+        <referencedby refid="class_ring_element_a92baf9a67a34d1e8092248d974c03d3f_1a92baf9a67a34d1e8092248d974c03d3f" compoundref="relem_8hpp" startline="137" endline="137">multi_degree</referencedby>
+        <referencedby refid="class_ring_element_a931e1696610aa038fb2cb41971a4ad98_1a931e1696610aa038fb2cb41971a4ad98" compoundref="relem_8cpp" startline="25" endline="40">n_terms</referencedby>
+        <referencedby refid="class_ring_element_aaceed4df2073246abfe640756908d030_1aaceed4df2073246abfe640756908d030" compoundref="relem_8cpp" startline="360" endline="372">numerator</referencedby>
+        <referencedby refid="class_ring_element_aaf55628a88669ffa3f5ef176c84b9470_1aaf55628a88669ffa3f5ef176c84b9470" compoundref="relem_8cpp" startline="42" endline="45">operator-</referencedby>
+        <referencedby refid="class_ring_element_ab0bc89cf0bb372da0367cd8fd60a10a1_1ab0bc89cf0bb372da0367cd8fd60a10a1" compoundref="relem_8cpp" startline="122" endline="128">power</referencedby>
+        <referencedby refid="class_ring_element_a189189d4b20d104eb959274e181df6e6_1a189189d4b20d104eb959274e181df6e6" compoundref="relem_8cpp" startline="130" endline="135">power</referencedby>
+        <referencedby refid="class_ring_element_a8d45d9a2620ce1e0c5432070524ccbcb_1a8d45d9a2620ce1e0c5432070524ccbcb" compoundref="relem_8cpp" startline="305" endline="319">promote</referencedby>
+        <referencedby refid="class_ring_element_ad565e00a8cc4543e1e9b19b901ae364c_1ad565e00a8cc4543e1e9b19b901ae364c" compoundref="relem_8cpp" startline="345" endline="349">remove_content</referencedby>
+        <referencedby refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</referencedby>
+        <referencedby refid="class_ring_element_a8f30d060ccfbbc8906586ebd75c15d2e_1a8f30d060ccfbbc8906586ebd75c15d2e" compoundref="relem_8cpp" startline="351" endline="358">split_off_content</referencedby>
+        <referencedby refid="class_ring_element_a2edc7334ae64d0de6b5dea9b26dafa1c_1a2edc7334ae64d0de6b5dea9b26dafa1c" compoundref="relem_8cpp" startline="142" endline="145">text_out</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_ring_element_aef0e4f3c9691a5b95e8bc19a11f5ba3d_1aef0e4f3c9691a5b95e8bc19a11f5ba3d" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int RingElement::computeHashValue</definition>
+        <argsstring>() const</argsstring>
+        <name>computeHashValue</name>
+        <qualifiedname>RingElement::computeHashValue</qualifiedname>
+        <reimplements refid="class_engine_object_a5d41cd24b788df6502ef4359593fd046_1a5d41cd24b788df6502ef4359593fd046">computeHashValue</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="68" column="24" bodyfile="Macaulay2/e/relem.cpp" bodystart="15" bodyend="18"/>
+        <references refid="class_ring_a3b6fc1b8f37189988d93646fab3eac08_1a3b6fc1b8f37189988d93646fab3eac08">Ring::computeHashValue</references>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RingElement::RingElement</definition>
+        <argsstring>(const Ring *R, ring_elem f)</argsstring>
+        <name>RingElement</name>
+        <qualifiedname>RingElement::RingElement</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="71" column="3" bodyfile="Macaulay2/e/relem.hpp" bodystart="162" bodyend="162"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="class_ring_element_aec1dfedb2a34de8481965a5c6c11a8e4_1aec1dfedb2a34de8481965a5c6c11a8e4" compoundref="relem_8cpp" startline="337" endline="343">content</referencedby>
+        <referencedby refid="class_ring_element_a59c251a9905374ad2147513381e6dd57_1a59c251a9905374ad2147513381e6dd57" compoundref="relem_8cpp" startline="374" endline="386">denominator</referencedby>
+        <referencedby refid="class_ring_element_a319962a1c71fab9b611170191f398dc3_1a319962a1c71fab9b611170191f398dc3" compoundref="relem_8cpp" startline="388" endline="419">fraction</referencedby>
+        <referencedby refid="class_ring_element_ae474f0a814b2a875c83549eb9d9874a8_1ae474f0a814b2a875c83549eb9d9874a8" compoundref="relem_8cpp" startline="185" endline="195">get_coeff</referencedby>
+        <referencedby refid="class_ring_element_aa51a1376728908a43efc6719123ab572_1aa51a1376728908a43efc6719123ab572" compoundref="relem_8cpp" startline="147" endline="163">get_terms</referencedby>
+        <referencedby refid="class_ring_element_af772b467564a4f4b6c817ffd4cab97ff_1af772b467564a4f4b6c817ffd4cab97ff" compoundref="relem_8cpp" startline="245" endline="272">homogenize</referencedby>
+        <referencedby refid="class_ring_element_a66dc103c4ee480469b355652acc93fe6_1a66dc103c4ee480469b355652acc93fe6" compoundref="relem_8cpp" startline="274" endline="303">homogenize</referencedby>
+        <referencedby refid="class_ring_element_ab7c16c3c328ab161aeb2257378703dc1_1ab7c16c3c328ab161aeb2257378703dc1" compoundref="relem_8cpp" startline="47" endline="55">invert</referencedby>
+        <referencedby refid="class_ring_element_ae9a11e32c034aa68b4f23d3184a1e565_1ae9a11e32c034aa68b4f23d3184a1e565" compoundref="relem_8hpp" startline="165" endline="174">is_equal</referencedby>
+        <referencedby refid="class_ring_element_a98abe0c2a27d3c3de26e4d005a63b6c8_1a98abe0c2a27d3c3de26e4d005a63b6c8" compoundref="relem_8cpp" startline="165" endline="183">lead_coeff</referencedby>
+        <referencedby refid="class_ring_element_a97d1d06e63ecd6320766f5d3087ced09_1a97d1d06e63ecd6320766f5d3087ced09">lead_term</referencedby>
+        <referencedby refid="class_ring_element_ae7c75b782f8c92ec3216a37a7ddb100e_1ae7c75b782f8c92ec3216a37a7ddb100e" compoundref="relem_8cpp" startline="321" endline="335">lift</referencedby>
+        <referencedby refid="class_ring_element_ab978463e39096a4e0d1ecc0720f9acf3_1ab978463e39096a4e0d1ecc0720f9acf3" compoundref="relem_8cpp" startline="20" endline="23">make_raw</referencedby>
+        <referencedby refid="class_ring_element_aaceed4df2073246abfe640756908d030_1aaceed4df2073246abfe640756908d030" compoundref="relem_8cpp" startline="360" endline="372">numerator</referencedby>
+        <referencedby refid="class_ring_element_afa3f6888e609b76d69b8278c0b77da1d_1afa3f6888e609b76d69b8278c0b77da1d" compoundref="relem_8cpp" startline="82" endline="94">operator*</referencedby>
+        <referencedby refid="class_ring_element_a444b6168ad593b748c94e9c0556298d6_1a444b6168ad593b748c94e9c0556298d6" compoundref="relem_8cpp" startline="96" endline="103">operator*</referencedby>
+        <referencedby refid="class_ring_element_a1ddb6e298583e47808de02de13e28e02_1a1ddb6e298583e47808de02de13e28e02" compoundref="relem_8cpp" startline="57" endline="67">operator+</referencedby>
+        <referencedby refid="class_ring_element_aaf55628a88669ffa3f5ef176c84b9470_1aaf55628a88669ffa3f5ef176c84b9470" compoundref="relem_8cpp" startline="42" endline="45">operator-</referencedby>
+        <referencedby refid="class_ring_element_a28cad1292690e59ad655fc743dd07e2c_1a28cad1292690e59ad655fc743dd07e2c" compoundref="relem_8cpp" startline="69" endline="80">operator-</referencedby>
+        <referencedby refid="class_ring_element_a5efe2d37733d6520b727a463a9cabfed_1a5efe2d37733d6520b727a463a9cabfed" compoundref="relem_8cpp" startline="105" endline="120">operator/</referencedby>
+        <referencedby refid="class_ring_element_ab0bc89cf0bb372da0367cd8fd60a10a1_1ab0bc89cf0bb372da0367cd8fd60a10a1" compoundref="relem_8cpp" startline="122" endline="128">power</referencedby>
+        <referencedby refid="class_ring_element_a189189d4b20d104eb959274e181df6e6_1a189189d4b20d104eb959274e181df6e6" compoundref="relem_8cpp" startline="130" endline="135">power</referencedby>
+        <referencedby refid="class_ring_element_a8d45d9a2620ce1e0c5432070524ccbcb_1a8d45d9a2620ce1e0c5432070524ccbcb" compoundref="relem_8cpp" startline="305" endline="319">promote</referencedby>
+        <referencedby refid="class_ring_element_a39fd58d5efc9028f5f0e7926f8343e68_1a39fd58d5efc9028f5f0e7926f8343e68" compoundref="relem_8cpp" startline="137" endline="140">random</referencedby>
+        <referencedby refid="class_ring_element_ad565e00a8cc4543e1e9b19b901ae364c_1ad565e00a8cc4543e1e9b19b901ae364c" compoundref="relem_8cpp" startline="345" endline="349">remove_content</referencedby>
+        <referencedby refid="class_ring_element_a7ba961fb9b4cc13275476a1e058acd0f_1a7ba961fb9b4cc13275476a1e058acd0f">rest</referencedby>
+        <referencedby refid="class_ring_element_a8f30d060ccfbbc8906586ebd75c15d2e_1a8f30d060ccfbbc8906586ebd75c15d2e" compoundref="relem_8cpp" startline="351" endline="358">split_off_content</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem RingElement::get_value</definition>
+        <argsstring>() const</argsstring>
+        <name>get_value</name>
+        <qualifiedname>RingElement::get_value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="75" column="13" bodyfile="Macaulay2/e/relem.hpp" bodystart="75" bodyend="75"/>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="classhilb__comp_aea718756e9b698709ed8959488eaf3b7_1aea718756e9b698709ed8959488eaf3b7" compoundref="hilb_8cpp" startline="704" endline="740">hilb_comp::coeff_of</referencedby>
+        <referencedby refid="class_ring_element_aef0e4f3c9691a5b95e8bc19a11f5ba3d_1aef0e4f3c9691a5b95e8bc19a11f5ba3d" compoundref="relem_8cpp" startline="15" endline="18">computeHashValue</referencedby>
+        <referencedby refid="factory_8cpp_ad189cd2538bef9cfb5279e9bcbafae34_1ad189cd2538bef9cfb5279e9bcbafae34" compoundref="factory_8cpp" startline="418" endline="471">convertToFactory</referencedby>
+        <referencedby refid="factory_8cpp_a67c68531e56fcabd05f4724d2e4251e7_1a67c68531e56fcabd05f4724d2e4251e7" compoundref="factory_8cpp" startline="214" endline="285">convertToM2</referencedby>
+        <referencedby refid="class_ring_map_ae03f15753a4d5dd1b571715a688d44a3_1ae03f15753a4d5dd1b571715a688d44a3" compoundref="ringmap_8cpp" startline="238" endline="244">RingMap::eval</referencedby>
+        <referencedby refid="class_ring_element_a319962a1c71fab9b611170191f398dc3_1a319962a1c71fab9b611170191f398dc3" compoundref="relem_8cpp" startline="388" endline="419">fraction</referencedby>
+        <referencedby refid="class_ring_element_ae474f0a814b2a875c83549eb9d9874a8_1ae474f0a814b2a875c83549eb9d9874a8" compoundref="relem_8cpp" startline="185" endline="195">get_coeff</referencedby>
+        <referencedby refid="class_ring_element_ada89d3a964931f562c29adc27625c52d_1ada89d3a964931f562c29adc27625c52d" compoundref="relem_8cpp" startline="421" endline="460">getSmallIntegerCoefficients</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_add9f08875c12df57df248d58501f2428_1add9f08875c12df57df248d58501f2428" compoundref="mutable-matrix_8cpp" startline="407" endline="433">IM2_MutableMatrix_column_2by2</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_acef0b36ace70225c424b0d1e57f006ba_1acef0b36ace70225c424b0d1e57f006ba" compoundref="mutable-matrix_8cpp" startline="323" endline="345">IM2_MutableMatrix_column_operation</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a30157171325b048890ebb135274ee636_1a30157171325b048890ebb135274ee636" compoundref="mutable-matrix_8cpp" startline="369" endline="389">IM2_MutableMatrix_column_scale</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ab820441a0c31dea4db3f5c0eb13bb84d_1ab820441a0c31dea4db3f5c0eb13bb84d" compoundref="mutable-matrix_8cpp" startline="435" endline="461">IM2_MutableMatrix_row_2by2</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a42239ede93fed3033496fa973d7aa76c_1a42239ede93fed3033496fa973d7aa76c" compoundref="mutable-matrix_8cpp" startline="299" endline="321">IM2_MutableMatrix_row_operation</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a9f385029dfe0d873542dda8b0402102d_1a9f385029dfe0d873542dda8b0402102d" compoundref="mutable-matrix_8cpp" startline="347" endline="367">IM2_MutableMatrix_row_scale</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a18b7c82a4157d0602750d4e68e95d31c_1a18b7c82a4157d0602750d4e68e95d31c" compoundref="mutable-matrix_8cpp" startline="247" endline="271">IM2_MutableMatrix_set_entry</referencedby>
+        <referencedby refid="ringelement_8cpp_a21b7103a3fad2174c4c7ff5366637581_1a21b7103a3fad2174c4c7ff5366637581" compoundref="ringelement_8cpp" startline="347" endline="374">IM2_RingElement_divmod</referencedby>
+        <referencedby refid="ringelement_8cpp_a0538c7cd559e138b98556b88f2a71128_1a0538c7cd559e138b98556b88f2a71128" compoundref="ringelement_8cpp" startline="841" endline="847">IM2_RingElement_index_if_var</referencedby>
+        <referencedby refid="ringelement_8cpp_a02da07882395be8e5fea074292a4d058_1a02da07882395be8e5fea074292a4d058" compoundref="ringelement_8cpp" startline="340" endline="345">IM2_RingElement_is_equal</referencedby>
+        <referencedby refid="ringelement_8cpp_a0ba7142a742c05bce9e457383f145bf8_1a0ba7142a742c05bce9e457383f145bf8" compoundref="ringelement_8cpp" startline="335" endline="338">IM2_RingElement_is_zero</referencedby>
+        <referencedby refid="ringelement_8cpp_ac6f27562f60172b5571b10e98141e750_1ac6f27562f60172b5571b10e98141e750" compoundref="ringelement_8cpp" startline="636" endline="670">IM2_RingElement_list_form</referencedby>
+        <referencedby refid="ringelement_8cpp_a0b291882fbb398b121040b5a1b9ec844_1a0b291882fbb398b121040b5a1b9ec844" compoundref="ringelement_8cpp" startline="529" endline="567">IM2_RingElement_term</referencedby>
+        <referencedby refid="ringelement_8cpp_afe4b4bd1b44f06ec5a1a943954bed0cc_1afe4b4bd1b44f06ec5a1a943954bed0cc" compoundref="ringelement_8cpp" startline="195" endline="216">IM2_RingElement_to_BigComplex</referencedby>
+        <referencedby refid="ringelement_8cpp_aa0393c4860201cec145d02cf3e29c816_1aa0393c4860201cec145d02cf3e29c816" compoundref="ringelement_8cpp" startline="136" endline="160">IM2_RingElement_to_BigReal</referencedby>
+        <referencedby refid="ringelement_8cpp_a96981fc0ec84571381f7331c348a46a6_1a96981fc0ec84571381f7331c348a46a6" compoundref="ringelement_8cpp" startline="218" endline="283">IM2_RingElement_to_ComplexInterval</referencedby>
+        <referencedby refid="ringelement_8cpp_af4d649a4a938a18e89a2ffb86abd11af_1af4d649a4a938a18e89a2ffb86abd11af" compoundref="ringelement_8cpp" startline="100" endline="124">IM2_RingElement_to_Integer</referencedby>
+        <referencedby refid="ringelement_8cpp_a7db89161bfd4a2206d5ca1b5dbcfc2a4_1a7db89161bfd4a2206d5ca1b5dbcfc2a4" compoundref="ringelement_8cpp" startline="162" endline="193">IM2_RingElement_to_Interval</referencedby>
+        <referencedby refid="ringelement_8cpp_a193385dacc384435a6f641c3f52a9eed_1a193385dacc384435a6f641c3f52a9eed" compoundref="ringelement_8cpp" startline="126" endline="134">IM2_RingElement_to_rational</referencedby>
+        <referencedby refid="class_g_f_a4c84185c18406893409e0bca62470623_1a4c84185c18406893409e0bca62470623" compoundref="_g_f_8cpp" startline="39" endline="123">GF::initialize_GF</referencedby>
+        <referencedby refid="class_poly_ring_quotient_a854c5c1cd3a4286efa4a439c8bcea812_1a854c5c1cd3a4286efa4a439c8bcea812" compoundref="polyquotient_8cpp" startline="161" endline="190">PolyRingQuotient::invert</referencedby>
+        <referencedby refid="class_ring_element_a447e8cf63da8e98304f0c0050cdf133a_1a447e8cf63da8e98304f0c0050cdf133a" compoundref="relem_8cpp" startline="197" endline="223">lead_monom</referencedby>
+        <referencedby refid="class_local_ring_a331b1a804dcc8bb8d2671077f56e433c_1a331b1a804dcc8bb8d2671077f56e433c" compoundref="localring_8cpp" startline="227" endline="265">LocalRing::lift_up</referencedby>
+        <referencedby refid="class_fraction_field_a7456bfb44797a457a623c874f531d7ce_1a7456bfb44797a457a623c874f531d7ce" compoundref="frac_8cpp" startline="191" endline="218">FractionField::lower_content</referencedby>
+        <referencedby refid="class_local_ring_ac20aafc029675ae1b06902a19693e6c7_1ac20aafc029675ae1b06902a19693e6c7" compoundref="localring_8cpp" startline="373" endline="400">LocalRing::lower_content</referencedby>
+        <referencedby refid="class_ring_element_afa3f6888e609b76d69b8278c0b77da1d_1afa3f6888e609b76d69b8278c0b77da1d" compoundref="relem_8cpp" startline="82" endline="94">operator*</referencedby>
+        <referencedby refid="class_ring_element_a444b6168ad593b748c94e9c0556298d6_1a444b6168ad593b748c94e9c0556298d6" compoundref="relem_8cpp" startline="96" endline="103">operator*</referencedby>
+        <referencedby refid="class_ring_element_a1ddb6e298583e47808de02de13e28e02_1a1ddb6e298583e47808de02de13e28e02" compoundref="relem_8cpp" startline="57" endline="67">operator+</referencedby>
+        <referencedby refid="class_ring_element_a28cad1292690e59ad655fc743dd07e2c_1a28cad1292690e59ad655fc743dd07e2c" compoundref="relem_8cpp" startline="69" endline="80">operator-</referencedby>
+        <referencedby refid="class_ring_element_a5efe2d37733d6520b727a463a9cabfed_1a5efe2d37733d6520b727a463a9cabfed" compoundref="relem_8cpp" startline="105" endline="120">operator/</referencedby>
+        <referencedby refid="interface_2aring_8cpp_a088c58108ca1ee36fa82d8f70f18ae4c_1a088c58108ca1ee36fa82d8f70f18ae4c" compoundref="interface_2aring_8cpp" startline="85" endline="97">rawARingGaloisField1</referencedby>
+        <referencedby refid="interface_2aring_8cpp_ab5807cc45b8558b929b6b88a2444d2e2_1ab5807cc45b8558b929b6b88a2444d2e2" compoundref="interface_2aring_8cpp" startline="98" endline="110">rawARingGaloisFieldFlintBig</referencedby>
+        <referencedby refid="interface_2aring_8cpp_a013f12a50f53ee3fb8266609cece88e8_1a013f12a50f53ee3fb8266609cece88e8" compoundref="interface_2aring_8cpp" startline="112" endline="124">rawARingGaloisFieldFlintZech</referencedby>
+        <referencedby refid="interface_2aring_8cpp_a6d663586e5e5e61ddd6047294c88166b_1a6d663586e5e5e61ddd6047294c88166b" compoundref="interface_2aring_8cpp" startline="346" endline="382">rawARingTower3</referencedby>
+        <referencedby refid="ringelement_8cpp_ad222a8196a2b751167ee2e9b9c903023_1ad222a8196a2b751167ee2e9b9c903023" compoundref="ringelement_8cpp" startline="856" endline="878">rawAssociateDivisor</referencedby>
+        <referencedby refid="ringelement_8cpp_a5c47fc88ea69e5bffdd0e7acc6572bcb_1a5c47fc88ea69e5bffdd0e7acc6572bcb" compoundref="ringelement_8cpp" startline="1016" endline="1023">rawDegree</referencedby>
+        <referencedby refid="ringelement_8cpp_aa852f5a8454854112a02402d64125f32_1aa852f5a8454854112a02402d64125f32" compoundref="ringelement_8cpp" startline="1038" endline="1047">rawDiff</referencedby>
+        <referencedby refid="ringelement_8cpp_ab8f69c8f8442a56d54bb92657ab5c85c_1ab8f69c8f8442a56d54bb92657ab5c85c" compoundref="ringelement_8cpp" startline="303" endline="314">rawDiscreteLog</referencedby>
+        <referencedby refid="factory_8cpp_af04b0de40c3a49e0d68bca62193a8a8a_1af04b0de40c3a49e0d68bca62193a8a8a" compoundref="factory_8cpp" startline="488" endline="551">rawGCDRingElement</referencedby>
+        <referencedby refid="ringelement_8cpp_a44911fc4ec75ae80633109a034488c84_1a44911fc4ec75ae80633109a034488c84" compoundref="ringelement_8cpp" startline="807" endline="839">rawGetPart</referencedby>
+        <referencedby refid="ringelement_8cpp_a616e4d593b0d9163f0f65f1ca4268507_1a616e4d593b0d9163f0f65f1ca4268507" compoundref="ringelement_8cpp" startline="672" endline="701">rawGetParts</referencedby>
+        <referencedby refid="engine_8h_a72df1ec0727f6b638ada77c81bece981_1a72df1ec0727f6b638ada77c81bece981" compoundref="localring_8cpp" startline="753" endline="762">rawIsLocalUnit</referencedby>
+        <referencedby refid="ringelement_8cpp_a0c2dd9ddc0c57534067d1865f7a19a20_1a0c2dd9ddc0c57534067d1865f7a19a20" compoundref="ringelement_8cpp" startline="1049" endline="1058">rawLowerP</referencedby>
+        <referencedby refid="ringelement_8cpp_ad146217cb240496847db855676723545_1ad146217cb240496847db855676723545" compoundref="ringelement_8cpp" startline="1060" endline="1077">rawPowerMod</referencedby>
+        <referencedby refid="ringelement_8cpp_aa3deac342d58ca5e6fe9b6f78bd04dcb_1aa3deac342d58ca5e6fe9b6f78bd04dcb" compoundref="ringelement_8cpp" startline="459" endline="470">rawRingElementAntipode</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a1520d24d84cd7bb19fa99c75f927fdb3_1a1520d24d84cd7bb19fa99c75f927fdb3" compoundref="mutable-matrix_8cpp" startline="1106" endline="1116">rawRingElementClean</referencedby>
+        <referencedby refid="ringelement_8cpp_aa00e36803106728fcb1d19e309ec61e0_1aa00e36803106728fcb1d19e309ec61e0" compoundref="ringelement_8cpp" startline="376" endline="394">rawRingElementCompare</referencedby>
+        <referencedby refid="interface_2cra_8cpp_a4a142b1a7d66686e67683201b033416b_1a4a142b1a7d66686e67683201b033416b" compoundref="interface_2cra_8cpp" startline="14" endline="59">rawRingElementCRA</referencedby>
+        <referencedby refid="ringelement_8cpp_a04669e298f2112553c09fa7762415fd2_1a04669e298f2112553c09fa7762415fd2" compoundref="ringelement_8cpp" startline="849" endline="854">rawRingElementIndices</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ae3274dc975e0691417ca8ef8e3f6eb3b_1ae3274dc975e0691417ca8ef8e3f6eb3b" compoundref="mutable-matrix_8cpp" startline="1157" endline="1163">rawRingElementNorm</referencedby>
+        <referencedby refid="interface_2cra_8cpp_a5327cd55a5ef849a4d37224af92eb314_1a5327cd55a5ef849a4d37224af92eb314" compoundref="interface_2cra_8cpp" startline="94" endline="130">rawRingElementRatConversion</referencedby>
+        <referencedby refid="ringelement_8cpp_aefefad00811a8c234e0c992617e60ddf_1aefefad00811a8c234e0c992617e60ddf" compoundref="ringelement_8cpp" startline="943" endline="960">rawSchurDimension</referencedby>
+        <referencedby refid="ringelement_8cpp_ac51e241956224215ced1cb55e3a65771_1ac51e241956224215ced1cb55e3a65771" compoundref="ringelement_8cpp" startline="962" endline="986">rawSchurSnTensorMult</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a6048e72e6ae325ed8ec9a9f97ac24526_1a6048e72e6ae325ed8ec9a9f97ac24526" compoundref="interface_2ring_8cpp" startline="536" endline="564">rawTowerRing3</referencedby>
+        <referencedby refid="ringelement_8h_a5ea9c59713bed6bb4684531819bdd7d6_1a5ea9c59713bed6bb4684531819bdd7d6" compoundref="tower_8cpp" startline="532" endline="566">rawTowerTranslatePoly</referencedby>
+        <referencedby refid="class_fraction_field_a7e0bb0da2c18133c5026023be412c618_1a7e0bb0da2c18133c5026023be412c618" compoundref="frac_8cpp" startline="108" endline="180">FractionField::simplify</referencedby>
+        <referencedby refid="class_local_ring_aefe76348cf9fc08d7e22838521cbc700_1aefe76348cf9fc08d7e22838521cbc700" compoundref="localring_8cpp" startline="73" endline="145">LocalRing::simplify</referencedby>
+        <referencedby refid="tower_8cpp_a01245f37001ac9d9f7f704de568280e0_1a01245f37001ac9d9f7f704de568280e0" compoundref="tower_8cpp" startline="444" endline="461">towerExtendedGCD</referencedby>
+        <referencedby refid="tower_8cpp_a37239f38e0a22bfafae94ae312efd2da_1a37239f38e0a22bfafae94ae312efd2da" compoundref="tower_8cpp" startline="431" endline="442">towerGCD</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>const Ring * RingElement::get_ring</definition>
+        <argsstring>() const</argsstring>
+        <name>get_ring</name>
+        <qualifiedname>RingElement::get_ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="77" column="14" bodyfile="Macaulay2/e/relem.hpp" bodystart="77" bodyend="77"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <referencedby refid="interface_2aring_8cpp_a1828bc48c0a65ecdcbc2569c31650d12_1a1828bc48c0a65ecdcbc2569c31650d12" compoundref="interface_2aring_8cpp" startline="56" endline="84">checkGaloisFieldInput</referencedby>
+        <referencedby refid="classhilb__comp_aea718756e9b698709ed8959488eaf3b7_1aea718756e9b698709ed8959488eaf3b7" compoundref="hilb_8cpp" startline="704" endline="740">hilb_comp::coeff_of</referencedby>
+        <referencedby refid="class_ring_element_aef0e4f3c9691a5b95e8bc19a11f5ba3d_1aef0e4f3c9691a5b95e8bc19a11f5ba3d" compoundref="relem_8cpp" startline="15" endline="18">computeHashValue</referencedby>
+        <referencedby refid="factory_8cpp_ad189cd2538bef9cfb5279e9bcbafae34_1ad189cd2538bef9cfb5279e9bcbafae34" compoundref="factory_8cpp" startline="418" endline="471">convertToFactory</referencedby>
+        <referencedby refid="class_ring_map_ae03f15753a4d5dd1b571715a688d44a3_1ae03f15753a4d5dd1b571715a688d44a3" compoundref="ringmap_8cpp" startline="238" endline="244">RingMap::eval</referencedby>
+        <referencedby refid="class_ring_element_ada89d3a964931f562c29adc27625c52d_1ada89d3a964931f562c29adc27625c52d" compoundref="relem_8cpp" startline="421" endline="460">getSmallIntegerCoefficients</referencedby>
+        <referencedby refid="groebner_8cpp_a2d9111ea99a8bfad27f8250d6b43cbc1_1a2d9111ea99a8bfad27f8250d6b43cbc1" compoundref="groebner_8cpp" startline="161" endline="181">IM2_GB_set_hilbert_function</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_add9f08875c12df57df248d58501f2428_1add9f08875c12df57df248d58501f2428" compoundref="mutable-matrix_8cpp" startline="407" endline="433">IM2_MutableMatrix_column_2by2</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_acef0b36ace70225c424b0d1e57f006ba_1acef0b36ace70225c424b0d1e57f006ba" compoundref="mutable-matrix_8cpp" startline="323" endline="345">IM2_MutableMatrix_column_operation</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a30157171325b048890ebb135274ee636_1a30157171325b048890ebb135274ee636" compoundref="mutable-matrix_8cpp" startline="369" endline="389">IM2_MutableMatrix_column_scale</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ab820441a0c31dea4db3f5c0eb13bb84d_1ab820441a0c31dea4db3f5c0eb13bb84d" compoundref="mutable-matrix_8cpp" startline="435" endline="461">IM2_MutableMatrix_row_2by2</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a42239ede93fed3033496fa973d7aa76c_1a42239ede93fed3033496fa973d7aa76c" compoundref="mutable-matrix_8cpp" startline="299" endline="321">IM2_MutableMatrix_row_operation</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a9f385029dfe0d873542dda8b0402102d_1a9f385029dfe0d873542dda8b0402102d" compoundref="mutable-matrix_8cpp" startline="347" endline="367">IM2_MutableMatrix_row_scale</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a18b7c82a4157d0602750d4e68e95d31c_1a18b7c82a4157d0602750d4e68e95d31c" compoundref="mutable-matrix_8cpp" startline="247" endline="271">IM2_MutableMatrix_set_entry</referencedby>
+        <referencedby refid="ringelement_8cpp_a21b7103a3fad2174c4c7ff5366637581_1a21b7103a3fad2174c4c7ff5366637581" compoundref="ringelement_8cpp" startline="347" endline="374">IM2_RingElement_divmod</referencedby>
+        <referencedby refid="ringelement_8cpp_a0538c7cd559e138b98556b88f2a71128_1a0538c7cd559e138b98556b88f2a71128" compoundref="ringelement_8cpp" startline="841" endline="847">IM2_RingElement_index_if_var</referencedby>
+        <referencedby refid="ringelement_8cpp_a02da07882395be8e5fea074292a4d058_1a02da07882395be8e5fea074292a4d058" compoundref="ringelement_8cpp" startline="340" endline="345">IM2_RingElement_is_equal</referencedby>
+        <referencedby refid="ringelement_8cpp_a0ba7142a742c05bce9e457383f145bf8_1a0ba7142a742c05bce9e457383f145bf8" compoundref="ringelement_8cpp" startline="335" endline="338">IM2_RingElement_is_zero</referencedby>
+        <referencedby refid="ringelement_8cpp_ac6f27562f60172b5571b10e98141e750_1ac6f27562f60172b5571b10e98141e750" compoundref="ringelement_8cpp" startline="636" endline="670">IM2_RingElement_list_form</referencedby>
+        <referencedby refid="ringelement_8cpp_ae134cd361013d0f9fb0dd27859a29b78_1ae134cd361013d0f9fb0dd27859a29b78" compoundref="ringelement_8cpp" startline="439" endline="457">IM2_RingElement_multidegree</referencedby>
+        <referencedby refid="ringelement_8cpp_a469f3fcbffbd0e4724f2ffe21b63727b_1a469f3fcbffbd0e4724f2ffe21b63727b" compoundref="ringelement_8cpp" startline="43" endline="43">IM2_RingElement_ring</referencedby>
+        <referencedby refid="ringelement_8cpp_a0b291882fbb398b121040b5a1b9ec844_1a0b291882fbb398b121040b5a1b9ec844" compoundref="ringelement_8cpp" startline="529" endline="567">IM2_RingElement_term</referencedby>
+        <referencedby refid="ringelement_8cpp_afe4b4bd1b44f06ec5a1a943954bed0cc_1afe4b4bd1b44f06ec5a1a943954bed0cc" compoundref="ringelement_8cpp" startline="195" endline="216">IM2_RingElement_to_BigComplex</referencedby>
+        <referencedby refid="ringelement_8cpp_aa0393c4860201cec145d02cf3e29c816_1aa0393c4860201cec145d02cf3e29c816" compoundref="ringelement_8cpp" startline="136" endline="160">IM2_RingElement_to_BigReal</referencedby>
+        <referencedby refid="ringelement_8cpp_a96981fc0ec84571381f7331c348a46a6_1a96981fc0ec84571381f7331c348a46a6" compoundref="ringelement_8cpp" startline="218" endline="283">IM2_RingElement_to_ComplexInterval</referencedby>
+        <referencedby refid="ringelement_8cpp_af4d649a4a938a18e89a2ffb86abd11af_1af4d649a4a938a18e89a2ffb86abd11af" compoundref="ringelement_8cpp" startline="100" endline="124">IM2_RingElement_to_Integer</referencedby>
+        <referencedby refid="ringelement_8cpp_a7db89161bfd4a2206d5ca1b5dbcfc2a4_1a7db89161bfd4a2206d5ca1b5dbcfc2a4" compoundref="ringelement_8cpp" startline="162" endline="193">IM2_RingElement_to_Interval</referencedby>
+        <referencedby refid="ringelement_8cpp_a193385dacc384435a6f641c3f52a9eed_1a193385dacc384435a6f641c3f52a9eed" compoundref="ringelement_8cpp" startline="126" endline="134">IM2_RingElement_to_rational</referencedby>
+        <referencedby refid="class_g_f_a4c84185c18406893409e0bca62470623_1a4c84185c18406893409e0bca62470623" compoundref="_g_f_8cpp" startline="39" endline="123">GF::initialize_GF</referencedby>
+        <referencedby refid="class_ring_element_ae9a11e32c034aa68b4f23d3184a1e565_1ae9a11e32c034aa68b4f23d3184a1e565" compoundref="relem_8hpp" startline="165" endline="174">is_equal</referencedby>
+        <referencedby refid="class_ring_element_aa159891c8c1f7b0ba7e7ae7f5e546c2d_1aa159891c8c1f7b0ba7e7ae7f5e546c2d" compoundref="relem_8hpp" startline="164" endline="164">is_unit</referencedby>
+        <referencedby refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</referencedby>
+        <referencedby refid="class_ring_element_afa3f6888e609b76d69b8278c0b77da1d_1afa3f6888e609b76d69b8278c0b77da1d" compoundref="relem_8cpp" startline="82" endline="94">operator*</referencedby>
+        <referencedby refid="class_ring_element_a1ddb6e298583e47808de02de13e28e02_1a1ddb6e298583e47808de02de13e28e02" compoundref="relem_8cpp" startline="57" endline="67">operator+</referencedby>
+        <referencedby refid="class_ring_element_a28cad1292690e59ad655fc743dd07e2c_1a28cad1292690e59ad655fc743dd07e2c" compoundref="relem_8cpp" startline="69" endline="80">operator-</referencedby>
+        <referencedby refid="class_ring_element_a5efe2d37733d6520b727a463a9cabfed_1a5efe2d37733d6520b727a463a9cabfed" compoundref="relem_8cpp" startline="105" endline="120">operator/</referencedby>
+        <referencedby refid="interface_2aring_8cpp_a6d663586e5e5e61ddd6047294c88166b_1a6d663586e5e5e61ddd6047294c88166b" compoundref="interface_2aring_8cpp" startline="346" endline="382">rawARingTower3</referencedby>
+        <referencedby refid="ringelement_8cpp_ad222a8196a2b751167ee2e9b9c903023_1ad222a8196a2b751167ee2e9b9c903023" compoundref="ringelement_8cpp" startline="856" endline="878">rawAssociateDivisor</referencedby>
+        <referencedby refid="ringelement_8cpp_a5c47fc88ea69e5bffdd0e7acc6572bcb_1a5c47fc88ea69e5bffdd0e7acc6572bcb" compoundref="ringelement_8cpp" startline="1016" endline="1023">rawDegree</referencedby>
+        <referencedby refid="ringelement_8cpp_aa852f5a8454854112a02402d64125f32_1aa852f5a8454854112a02402d64125f32" compoundref="ringelement_8cpp" startline="1038" endline="1047">rawDiff</referencedby>
+        <referencedby refid="ringelement_8cpp_ab8f69c8f8442a56d54bb92657ab5c85c_1ab8f69c8f8442a56d54bb92657ab5c85c" compoundref="ringelement_8cpp" startline="303" endline="314">rawDiscreteLog</referencedby>
+        <referencedby refid="factory_8cpp_a169ce4c376b30270249b4551fdfb05f8_1a169ce4c376b30270249b4551fdfb05f8" compoundref="factory_8cpp" startline="553" endline="623">rawExtendedGCDRingElement</referencedby>
+        <referencedby refid="factory_8cpp_a5f8ca45d58516b4ff1758715081e9795_1a5f8ca45d58516b4ff1758715081e9795" compoundref="factory_8cpp" startline="661" endline="735">rawFactorBase</referencedby>
+        <referencedby refid="factory_8cpp_af04b0de40c3a49e0d68bca62193a8a8a_1af04b0de40c3a49e0d68bca62193a8a8a" compoundref="factory_8cpp" startline="488" endline="551">rawGCDRingElement</referencedby>
+        <referencedby refid="ringelement_8cpp_a44911fc4ec75ae80633109a034488c84_1a44911fc4ec75ae80633109a034488c84" compoundref="ringelement_8cpp" startline="807" endline="839">rawGetPart</referencedby>
+        <referencedby refid="ringelement_8cpp_a616e4d593b0d9163f0f65f1ca4268507_1a616e4d593b0d9163f0f65f1ca4268507" compoundref="ringelement_8cpp" startline="672" endline="701">rawGetParts</referencedby>
+        <referencedby refid="engine_8h_a72df1ec0727f6b638ada77c81bece981_1a72df1ec0727f6b638ada77c81bece981" compoundref="localring_8cpp" startline="753" endline="762">rawIsLocalUnit</referencedby>
+        <referencedby refid="ringelement_8cpp_a0c2dd9ddc0c57534067d1865f7a19a20_1a0c2dd9ddc0c57534067d1865f7a19a20" compoundref="ringelement_8cpp" startline="1049" endline="1058">rawLowerP</referencedby>
+        <referencedby refid="ringelement_8cpp_ad146217cb240496847db855676723545_1ad146217cb240496847db855676723545" compoundref="ringelement_8cpp" startline="1060" endline="1077">rawPowerMod</referencedby>
+        <referencedby refid="factory_8cpp_a660a2555972e970e2e55578aee2cc514_1a660a2555972e970e2e55578aee2cc514" compoundref="factory_8cpp" startline="625" endline="659">rawPseudoRemainder</referencedby>
+        <referencedby refid="ringelement_8cpp_aa3deac342d58ca5e6fe9b6f78bd04dcb_1aa3deac342d58ca5e6fe9b6f78bd04dcb" compoundref="ringelement_8cpp" startline="459" endline="470">rawRingElementAntipode</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a1520d24d84cd7bb19fa99c75f927fdb3_1a1520d24d84cd7bb19fa99c75f927fdb3" compoundref="mutable-matrix_8cpp" startline="1106" endline="1116">rawRingElementClean</referencedby>
+        <referencedby refid="ringelement_8cpp_aa00e36803106728fcb1d19e309ec61e0_1aa00e36803106728fcb1d19e309ec61e0" compoundref="ringelement_8cpp" startline="376" endline="394">rawRingElementCompare</referencedby>
+        <referencedby refid="interface_2cra_8cpp_a4a142b1a7d66686e67683201b033416b_1a4a142b1a7d66686e67683201b033416b" compoundref="interface_2cra_8cpp" startline="14" endline="59">rawRingElementCRA</referencedby>
+        <referencedby refid="ringelement_8cpp_a04669e298f2112553c09fa7762415fd2_1a04669e298f2112553c09fa7762415fd2" compoundref="ringelement_8cpp" startline="849" endline="854">rawRingElementIndices</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ae3274dc975e0691417ca8ef8e3f6eb3b_1ae3274dc975e0691417ca8ef8e3f6eb3b" compoundref="mutable-matrix_8cpp" startline="1157" endline="1163">rawRingElementNorm</referencedby>
+        <referencedby refid="interface_2cra_8cpp_a5327cd55a5ef849a4d37224af92eb314_1a5327cd55a5ef849a4d37224af92eb314" compoundref="interface_2cra_8cpp" startline="94" endline="130">rawRingElementRatConversion</referencedby>
+        <referencedby refid="ringelement_8cpp_aefefad00811a8c234e0c992617e60ddf_1aefefad00811a8c234e0c992617e60ddf" compoundref="ringelement_8cpp" startline="943" endline="960">rawSchurDimension</referencedby>
+        <referencedby refid="ringelement_8cpp_ac51e241956224215ced1cb55e3a65771_1ac51e241956224215ced1cb55e3a65771" compoundref="ringelement_8cpp" startline="962" endline="986">rawSchurSnTensorMult</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a6048e72e6ae325ed8ec9a9f97ac24526_1a6048e72e6ae325ed8ec9a9f97ac24526" compoundref="interface_2ring_8cpp" startline="536" endline="564">rawTowerRing3</referencedby>
+        <referencedby refid="ringelement_8h_a5ea9c59713bed6bb4684531819bdd7d6_1a5ea9c59713bed6bb4684531819bdd7d6" compoundref="tower_8cpp" startline="532" endline="566">rawTowerTranslatePoly</referencedby>
+        <referencedby refid="class_g_b__comp_ab700dbc1f1e023c3e923ad5847f221a6_1ab700dbc1f1e023c3e923ad5847f221a6" compoundref="gb-homog2_8cpp" startline="989" endline="1000">GB_comp::set_hilbert_function</referencedby>
+        <referencedby refid="classgb_a_aeade4f35ce1d6fca91e9c6dc06688756_1aeade4f35ce1d6fca91e9c6dc06688756" compoundref="gb-default_8cpp" startline="2682" endline="2709">gbA::set_hilbert_function</referencedby>
+        <referencedby refid="tower_8cpp_a01245f37001ac9d9f7f704de568280e0_1a01245f37001ac9d9f7f704de568280e0" compoundref="tower_8cpp" startline="444" endline="461">towerExtendedGCD</referencedby>
+        <referencedby refid="tower_8cpp_a37239f38e0a22bfafae94ae312efd2da_1a37239f38e0a22bfafae94ae312efd2da" compoundref="tower_8cpp" startline="431" endline="442">towerGCD</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RingElement::is_zero</definition>
+        <argsstring>() const</argsstring>
+        <name>is_zero</name>
+        <qualifiedname>RingElement::is_zero</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="81" column="8" bodyfile="Macaulay2/e/relem.hpp" bodystart="163" bodyend="163"/>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</references>
+        <references refid="class_ring_aa8d762a00cdea91f8d26cea2b52ebce0_1aa8d762a00cdea91f8d26cea2b52ebce0">Ring::is_zero</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="class_ring_element_ac63060238e3328e5b885e7ae0487d55b_1ac63060238e3328e5b885e7ae0487d55b" compoundref="relem_8cpp" startline="227" endline="243">degree_weights</referencedby>
+        <referencedby refid="class_ring_element_a319962a1c71fab9b611170191f398dc3_1a319962a1c71fab9b611170191f398dc3" compoundref="relem_8cpp" startline="388" endline="419">fraction</referencedby>
+        <referencedby refid="class_ring_element_ada89d3a964931f562c29adc27625c52d_1ada89d3a964931f562c29adc27625c52d" compoundref="relem_8cpp" startline="421" endline="460">getSmallIntegerCoefficients</referencedby>
+        <referencedby refid="ringelement_8cpp_ae134cd361013d0f9fb0dd27859a29b78_1ae134cd361013d0f9fb0dd27859a29b78" compoundref="ringelement_8cpp" startline="439" endline="457">IM2_RingElement_multidegree</referencedby>
+        <referencedby refid="class_ring_element_ab7c16c3c328ab161aeb2257378703dc1_1ab7c16c3c328ab161aeb2257378703dc1" compoundref="relem_8cpp" startline="47" endline="55">invert</referencedby>
+        <referencedby refid="class_ring_element_a98abe0c2a27d3c3de26e4d005a63b6c8_1a98abe0c2a27d3c3de26e4d005a63b6c8" compoundref="relem_8cpp" startline="165" endline="183">lead_coeff</referencedby>
+        <referencedby refid="class_ring_element_a447e8cf63da8e98304f0c0050cdf133a_1a447e8cf63da8e98304f0c0050cdf133a" compoundref="relem_8cpp" startline="197" endline="223">lead_monom</referencedby>
+        <referencedby refid="class_ring_element_a931e1696610aa038fb2cb41971a4ad98_1a931e1696610aa038fb2cb41971a4ad98" compoundref="relem_8cpp" startline="25" endline="40">n_terms</referencedby>
+        <referencedby refid="class_ring_element_a444b6168ad593b748c94e9c0556298d6_1a444b6168ad593b748c94e9c0556298d6" compoundref="relem_8cpp" startline="96" endline="103">operator*</referencedby>
+        <referencedby refid="class_ring_element_a5efe2d37733d6520b727a463a9cabfed_1a5efe2d37733d6520b727a463a9cabfed" compoundref="relem_8cpp" startline="105" endline="120">operator/</referencedby>
+        <referencedby refid="factory_8cpp_a169ce4c376b30270249b4551fdfb05f8_1a169ce4c376b30270249b4551fdfb05f8" compoundref="factory_8cpp" startline="553" endline="623">rawExtendedGCDRingElement</referencedby>
+        <referencedby refid="factory_8cpp_af04b0de40c3a49e0d68bca62193a8a8a_1af04b0de40c3a49e0d68bca62193a8a8a" compoundref="factory_8cpp" startline="488" endline="551">rawGCDRingElement</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_ae9a11e32c034aa68b4f23d3184a1e565_1ae9a11e32c034aa68b4f23d3184a1e565" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RingElement::is_equal</definition>
+        <argsstring>(const RingElement &amp;b) const</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>RingElement::is_equal</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="82" column="8" bodyfile="Macaulay2/e/relem.hpp" bodystart="165" bodyend="174"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</references>
+        <references refid="class_ring_a516b8836188a168b3b35a8c8a624aecb_1a516b8836188a168b3b35a8c8a624aecb">Ring::is_equal</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_aa159891c8c1f7b0ba7e7ae7f5e546c2d_1aa159891c8c1f7b0ba7e7ae7f5e546c2d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RingElement::is_unit</definition>
+        <argsstring>() const</argsstring>
+        <name>is_unit</name>
+        <qualifiedname>RingElement::is_unit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="83" column="8" bodyfile="Macaulay2/e/relem.hpp" bodystart="164" bodyend="164"/>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</references>
+        <references refid="class_ring_a2d03e8e7a2dc7b935d00c0ed4357cf05_1a2d03e8e7a2dc7b935d00c0ed4357cf05">Ring::is_unit</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_aaf55628a88669ffa3f5ef176c84b9470_1aaf55628a88669ffa3f5ef176c84b9470" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::operator-</definition>
+        <argsstring>() const</argsstring>
+        <name>operator-</name>
+        <qualifiedname>RingElement::operator-</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="85" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="42" bodyend="45"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a1ddb6e298583e47808de02de13e28e02_1a1ddb6e298583e47808de02de13e28e02" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::operator+</definition>
+        <argsstring>(const RingElement &amp;b) const</argsstring>
+        <name>operator+</name>
+        <qualifiedname>RingElement::operator+</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="86" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="57" bodyend="67"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a28cad1292690e59ad655fc743dd07e2c_1a28cad1292690e59ad655fc743dd07e2c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::operator-</definition>
+        <argsstring>(const RingElement &amp;b) const</argsstring>
+        <name>operator-</name>
+        <qualifiedname>RingElement::operator-</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="87" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="69" bodyend="80"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_afa3f6888e609b76d69b8278c0b77da1d_1afa3f6888e609b76d69b8278c0b77da1d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::operator*</definition>
+        <argsstring>(const RingElement &amp;b) const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>RingElement::operator*</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="88" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="82" bodyend="94"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a444b6168ad593b748c94e9c0556298d6_1a444b6168ad593b748c94e9c0556298d6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::operator*</definition>
+        <argsstring>(int n) const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>RingElement::operator*</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="89" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="96" bodyend="103"/>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+        <references refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="ring_8hpp_afc4022fa228930d460b6d19e3988ddf6_1afc4022fa228930d460b6d19e3988ddf6" compoundref="ring_8hpp" startline="672">ZERO_RINGELEM</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a189189d4b20d104eb959274e181df6e6_1a189189d4b20d104eb959274e181df6e6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::power</definition>
+        <argsstring>(mpz_srcptr n) const</argsstring>
+        <name>power</name>
+        <qualifiedname>RingElement::power</qualifiedname>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="90" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="130" bodyend="135"/>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_ab0bc89cf0bb372da0367cd8fd60a10a1_1ab0bc89cf0bb372da0367cd8fd60a10a1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::power</definition>
+        <argsstring>(int n) const</argsstring>
+        <name>power</name>
+        <qualifiedname>RingElement::power</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="91" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="122" bodyend="128"/>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a5efe2d37733d6520b727a463a9cabfed_1a5efe2d37733d6520b727a463a9cabfed" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::operator/</definition>
+        <argsstring>(const RingElement &amp;b) const</argsstring>
+        <name>operator/</name>
+        <qualifiedname>RingElement::operator/</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="93" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="105" bodyend="120"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+        <references refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_ab7c16c3c328ab161aeb2257378703dc1_1ab7c16c3c328ab161aeb2257378703dc1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::invert</definition>
+        <argsstring>() const</argsstring>
+        <name>invert</name>
+        <qualifiedname>RingElement::invert</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="94" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="47" bodyend="55"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a2edc7334ae64d0de6b5dea9b26dafa1c_1a2edc7334ae64d0de6b5dea9b26dafa1c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void RingElement::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>RingElement::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="98" column="8" bodyfile="Macaulay2/e/relem.cpp" bodystart="142" bodyend="145"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="debug_8cpp_a2639ce7a53a8493bd19049609968506e_1a2639ce7a53a8493bd19049609968506e" compoundref="debug_8cpp" startline="59" endline="64">drelem</referencedby>
+        <referencedby refid="ringelement_8cpp_a9fed30ad68f9eef1375a2a1dcf1a6ab3_1a9fed30ad68f9eef1375a2a1dcf1a6ab3" compoundref="ringelement_8cpp" startline="44" endline="49">IM2_RingElement_to_string</referencedby>
+        <referencedby refid="class_fraction_field_a7e0bb0da2c18133c5026023be412c618_1a7e0bb0da2c18133c5026023be412c618" compoundref="frac_8cpp" startline="108" endline="180">FractionField::simplify</referencedby>
+        <referencedby refid="class_local_ring_aefe76348cf9fc08d7e22838521cbc700_1aefe76348cf9fc08d7e22838521cbc700" compoundref="localring_8cpp" startline="73" endline="145">LocalRing::simplify</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a8d45d9a2620ce1e0c5432070524ccbcb_1a8d45d9a2620ce1e0c5432070524ccbcb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RingElement::promote</definition>
+        <argsstring>(const Ring *S, const RingElement *&amp;result) const</argsstring>
+        <name>promote</name>
+        <qualifiedname>RingElement::promote</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>S</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *&amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="111" column="8" bodyfile="Macaulay2/e/relem.cpp" bodystart="305" bodyend="319"/>
+        <references refid="class_ring_a03f908e0bed75b2c59bfc5cc900a21c6_1a03f908e0bed75b2c59bfc5cc900a21c6">Ring::promote</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_a0f126eae5d5d7b52dbc0a4dd8c1de0dd_1a0f126eae5d5d7b52dbc0a4dd8c1de0dd" compoundref="ringelement_8cpp" startline="396" endline="410">IM2_RingElement_promote</referencedby>
+        <referencedby refid="factory_8cpp_ac24c4350eccd2a37a0ffa1f35e2a6126_1ac24c4350eccd2a37a0ffa1f35e2a6126" compoundref="factory_8cpp" startline="347" endline="358">set_GF_minimal_poly</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_ae7c75b782f8c92ec3216a37a7ddb100e_1ae7c75b782f8c92ec3216a37a7ddb100e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RingElement::lift</definition>
+        <argsstring>(const Ring *S, const RingElement *&amp;result) const</argsstring>
+        <name>lift</name>
+        <qualifiedname>RingElement::lift</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>S</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *&amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="112" column="8" bodyfile="Macaulay2/e/relem.cpp" bodystart="321" bodyend="335"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_ae3c5b59baa8c10f299e727b7fc65674c_1ae3c5b59baa8c10f299e727b7fc65674c" compoundref="ringelement_8cpp" startline="412" endline="432">IM2_RingElement_lift</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a97d1d06e63ecd6320766f5d3087ced09_1a97d1d06e63ecd6320766f5d3087ced09" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::lead_term</definition>
+        <argsstring>(int n=-1) const</argsstring>
+        <name>lead_term</name>
+        <qualifiedname>RingElement::lead_term</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+          <defval>-1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="116" column="15"/>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a7ba961fb9b4cc13275476a1e058acd0f_1a7ba961fb9b4cc13275476a1e058acd0f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::rest</definition>
+        <argsstring>() const</argsstring>
+        <name>rest</name>
+        <qualifiedname>RingElement::rest</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="117" column="15"/>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a931e1696610aa038fb2cb41971a4ad98_1a931e1696610aa038fb2cb41971a4ad98" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int RingElement::n_terms</definition>
+        <argsstring>(int nvars) const</argsstring>
+        <name>n_terms</name>
+        <qualifiedname>RingElement::n_terms</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="124" column="7" bodyfile="Macaulay2/e/relem.cpp" bodystart="25" bodyend="40"/>
+        <references refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</references>
+        <references refid="class_polynomial_ring_a364a82d40ff974c2affd55f622a6ba4d_1a364a82d40ff974c2affd55f622a6ba4d">PolynomialRing::n_logical_terms</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_ab21d657331faca3a51caf33b4c389be9_1ab21d657331faca3a51caf33b4c389be9" compoundref="ringelement_8cpp" startline="629" endline="634">IM2_RingElement_n_terms</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_aa51a1376728908a43efc6719123ab572_1aa51a1376728908a43efc6719123ab572" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::get_terms</definition>
+        <argsstring>(int nvars, int lo, int hi) const</argsstring>
+        <name>get_terms</name>
+        <qualifiedname>RingElement::get_terms</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>hi</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="125" column="16" bodyfile="Macaulay2/e/relem.cpp" bodystart="147" bodyend="163"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_m2_free_algebra_ac87dff799c0b8c6b7b30e48177d1aca0_1ac87dff799c0b8c6b7b30e48177d1aca0" compoundref="_m2_free_algebra_8cpp" startline="395" endline="408">M2FreeAlgebra::get_terms</references>
+        <references refid="class_polynomial_ring_ac3ed4d62763e027c7d51bc600871ded5_1ac3ed4d62763e027c7d51bc600871ded5">PolynomialRing::get_terms</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_a35df452092f4118dd0d46d841a8feaec_1a35df452092f4118dd0d46d841a8feaec" compoundref="ringelement_8cpp" startline="569" endline="581">IM2_RingElement_get_terms</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_ae474f0a814b2a875c83549eb9d9874a8_1ae474f0a814b2a875c83549eb9d9874a8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::get_coeff</definition>
+        <argsstring>(const Ring *coeffR, const EngineMonomial *m) const</argsstring>
+        <name>get_coeff</name>
+        <qualifiedname>RingElement::get_coeff</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>coeffR</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="126" column="16" bodyfile="Macaulay2/e/relem.cpp" bodystart="185" bodyend="195"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_polynomial_ring_a022fa3ad6c939e59a8d17da93392d521_1a022fa3ad6c939e59a8d17da93392d521">PolynomialRing::get_coeff</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+        <references refid="class_engine_monomial_ab2d16bb217269197a331c9b68d913524_1ab2d16bb217269197a331c9b68d913524" compoundref="monomial_8hpp" startline="80" endline="80">EngineMonomial::ints</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <referencedby refid="ringelement_8cpp_a06f8aebb460d17a486c5e8abecedd7f4_1a06f8aebb460d17a486c5e8abecedd7f4" compoundref="ringelement_8cpp" startline="583" endline="599">IM2_RingElement_get_coeff</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a98abe0c2a27d3c3de26e4d005a63b6c8_1a98abe0c2a27d3c3de26e4d005a63b6c8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::lead_coeff</definition>
+        <argsstring>(const Ring *coeffR) const</argsstring>
+        <name>lead_coeff</name>
+        <qualifiedname>RingElement::lead_coeff</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>coeffR</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="128" column="16" bodyfile="Macaulay2/e/relem.cpp" bodystart="165" bodyend="183"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</references>
+        <references refid="class_m2_free_algebra_a5b730e540ca513ce6a0bd1e9e9eb8b2b_1a5b730e540ca513ce6a0bd1e9e9eb8b2b" compoundref="_m2_free_algebra_8cpp" startline="385" endline="393">M2FreeAlgebra::lead_coefficient</references>
+        <references refid="class_polynomial_ring_ad1985fe82a4991fc770551202d5fe0f6_1ad1985fe82a4991fc770551202d5fe0f6">PolynomialRing::lead_logical_coeff</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <references refid="class_ring_a56c4dbffcc7bba98da2103f70a0e8602_1a56c4dbffcc7bba98da2103f70a0e8602" compoundref="ring_8hpp" startline="357" endline="357">Ring::zero</references>
+        <referencedby refid="ringelement_8cpp_a4742bb5510cc62d7ecd155b036dd5971_1a4742bb5510cc62d7ecd155b036dd5971" compoundref="ringelement_8cpp" startline="601" endline="613">IM2_RingElement_lead_coeff</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a447e8cf63da8e98304f0c0050cdf133a_1a447e8cf63da8e98304f0c0050cdf133a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_engine_monomial" kindref="compound">EngineMonomial</ref> *</type>
+        <definition>EngineMonomial * RingElement::lead_monom</definition>
+        <argsstring>(int nvars) const</argsstring>
+        <name>lead_monom</name>
+        <qualifiedname>RingElement::lead_monom</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="129" column="19" bodyfile="Macaulay2/e/relem.cpp" bodystart="197" bodyend="223"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_exponent_list_a7621b2c9174ae326b2081929bf829794_1a7621b2c9174ae326b2081929bf829794">ExponentList&lt; int, true &gt;::from_expvector</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+        <references refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</references>
+        <references refid="class_polynomial_ring_a586ca7f1b4b25a2b5153c38f41acc457_1a586ca7f1b4b25a2b5153c38f41acc457">PolynomialRing::lead_logical_exponents</references>
+        <references refid="class_engine_monomial_ae07ff3fe0b8019f3dba3218a4c098524_1ae07ff3fe0b8019f3dba3218a4c098524" compoundref="monomial_8cpp" startline="26" endline="31">EngineMonomial::make</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <referencedby refid="ringelement_8cpp_a0b5a98bb6cac1872c7e800dd59a9cbe1_1a0b5a98bb6cac1872c7e800dd59a9cbe1" compoundref="ringelement_8cpp" startline="615" endline="627">IM2_RingElement_lead_monomial</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a3d42e52f8bcffc4b5b2b744a2e375a3d_1a3d42e52f8bcffc4b5b2b744a2e375a3d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RingElement::is_homogeneous</definition>
+        <argsstring>() const</argsstring>
+        <name>is_homogeneous</name>
+        <qualifiedname>RingElement::is_homogeneous</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="132" column="8" bodyfile="Macaulay2/e/relem.cpp" bodystart="225" bodyend="225"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_ae53e2d3bc7e75a85d29104051d1dcf3f_1ae53e2d3bc7e75a85d29104051d1dcf3f" compoundref="ringelement_8cpp" startline="434" endline="437">IM2_RingElement_is_graded</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_af772b467564a4f4b6c817ffd4cab97ff_1af772b467564a4f4b6c817ffd4cab97ff" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::homogenize</definition>
+        <argsstring>(int v, const std::vector&lt; int &gt; &amp;wts) const</argsstring>
+        <name>homogenize</name>
+        <qualifiedname>RingElement::homogenize</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>wts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="133" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="245" bodyend="272"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_polynomial_ring_a5424cc913ebf01bf02748ac88f1cb6cb_1a5424cc913ebf01bf02748ac88f1cb6cb">PolynomialRing::homogenize</references>
+        <references refid="class_polynomial_ring_aece123c61c00a4f07a6008badec14362_1aece123c61c00a4f07a6008badec14362" compoundref="_macaulay2_2e_2polyring_8hpp" startline="192" endline="192">PolynomialRing::n_vars</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_a30c1b98b17a54842de3ca783e28863c3_1a30c1b98b17a54842de3ca783e28863c3" compoundref="ringelement_8cpp" startline="517" endline="527">IM2_RingElement_homogenize</referencedby>
+        <referencedby refid="ringelement_8cpp_acc86796ded830409560fb53ad67f2816_1acc86796ded830409560fb53ad67f2816" compoundref="ringelement_8cpp" startline="500" endline="514">IM2_RingElement_homogenize_to_degree</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a66dc103c4ee480469b355652acc93fe6_1a66dc103c4ee480469b355652acc93fe6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::homogenize</definition>
+        <argsstring>(int v, int deg, const std::vector&lt; int &gt; &amp;wts) const</argsstring>
+        <name>homogenize</name>
+        <qualifiedname>RingElement::homogenize</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>deg</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>wts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="134" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="274" bodyend="303"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</references>
+        <references refid="class_polynomial_ring_a5424cc913ebf01bf02748ac88f1cb6cb_1a5424cc913ebf01bf02748ac88f1cb6cb">PolynomialRing::homogenize</references>
+        <references refid="class_polynomial_ring_aece123c61c00a4f07a6008badec14362_1aece123c61c00a4f07a6008badec14362" compoundref="_macaulay2_2e_2polyring_8hpp" startline="192" endline="192">PolynomialRing::n_vars</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_ac63060238e3328e5b885e7ae0487d55b_1ac63060238e3328e5b885e7ae0487d55b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void RingElement::degree_weights</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;wts, int &amp;lo, int &amp;hi) const</argsstring>
+        <name>degree_weights</name>
+        <qualifiedname>RingElement::degree_weights</qualifiedname>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>wts</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>hi</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="135" column="8" bodyfile="Macaulay2/e/relem.cpp" bodystart="227" bodyend="243"/>
+        <references refid="class_polynomial_ring_aac7a38c2292d92770fd19d003cd29d9c_1aac7a38c2292d92770fd19d003cd29d9c">PolynomialRing::degree_weights</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_a49379da656266a7ad2bc330c97f1724f_1a49379da656266a7ad2bc330c97f1724f" compoundref="ringelement_8cpp" startline="472" endline="498">rawWeightRange</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a50e0c599a95ace6c8dc41982af141542_1a50e0c599a95ace6c8dc41982af141542" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref></type>
+        <definition>const_monomial RingElement::degree</definition>
+        <argsstring>() const</argsstring>
+        <name>degree</name>
+        <qualifiedname>RingElement::degree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="136" column="18" bodyfile="Macaulay2/e/relem.hpp" bodystart="136" bodyend="136"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_ae134cd361013d0f9fb0dd27859a29b78_1ae134cd361013d0f9fb0dd27859a29b78" compoundref="ringelement_8cpp" startline="439" endline="457">IM2_RingElement_multidegree</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a92baf9a67a34d1e8092248d974c03d3f_1a92baf9a67a34d1e8092248d974c03d3f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RingElement::multi_degree</definition>
+        <argsstring>(monomial d) const</argsstring>
+        <name>multi_degree</name>
+        <qualifiedname>RingElement::multi_degree</qualifiedname>
+        <param>
+          <type><ref refid="gbring_8hpp_a4b3f8e88af1cc26075f7af0f961adb96_1a4b3f8e88af1cc26075f7af0f961adb96" kindref="member">monomial</ref></type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="137" column="8" bodyfile="Macaulay2/e/relem.hpp" bodystart="137" bodyend="137"/>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_aec1dfedb2a34de8481965a5c6c11a8e4_1aec1dfedb2a34de8481965a5c6c11a8e4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>const RingElement * RingElement::content</definition>
+        <argsstring>() const</argsstring>
+        <name>content</name>
+        <qualifiedname>RingElement::content</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="140" column="22" bodyfile="Macaulay2/e/relem.cpp" bodystart="337" bodyend="343"/>
+        <references refid="class_polynomial_ring_ab1df58ad0edec3c434ad9bdd193a1d9e_1ab1df58ad0edec3c434ad9bdd193a1d9e" compoundref="_macaulay2_2e_2polyring_8hpp" startline="273" endline="273">PolynomialRing::getCoefficients</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_ad51e3db37dcfecfbb8685c424821efc4_1ad51e3db37dcfecfbb8685c424821efc4" compoundref="ringelement_8cpp" startline="880" endline="884">rawRingElementContent</referencedby>
+        <referencedby refid="class_ring_element_a8f30d060ccfbbc8906586ebd75c15d2e_1a8f30d060ccfbbc8906586ebd75c15d2e" compoundref="relem_8cpp" startline="351" endline="358">split_off_content</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_ad565e00a8cc4543e1e9b19b901ae364c_1ad565e00a8cc4543e1e9b19b901ae364c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>const RingElement * RingElement::remove_content</definition>
+        <argsstring>() const</argsstring>
+        <name>remove_content</name>
+        <qualifiedname>RingElement::remove_content</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="141" column="22" bodyfile="Macaulay2/e/relem.cpp" bodystart="345" bodyend="349"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_a0ab6ee9cd125138e293280c365e7b919_1a0ab6ee9cd125138e293280c365e7b919" compoundref="ringelement_8cpp" startline="886" endline="891">rawRingElementRemoveContent</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a8f30d060ccfbbc8906586ebd75c15d2e_1a8f30d060ccfbbc8906586ebd75c15d2e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>const RingElement * RingElement::split_off_content</definition>
+        <argsstring>(const RingElement *&amp;result) const</argsstring>
+        <name>split_off_content</name>
+        <qualifiedname>RingElement::split_off_content</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *&amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="142" column="22" bodyfile="Macaulay2/e/relem.cpp" bodystart="351" bodyend="358"/>
+        <references refid="class_ring_element_aec1dfedb2a34de8481965a5c6c11a8e4_1aec1dfedb2a34de8481965a5c6c11a8e4" compoundref="relem_8cpp" startline="337" endline="343">content</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_aa1b47d8cd4f8d0fb89244f7a2cf4e9e5_1aa1b47d8cd4f8d0fb89244f7a2cf4e9e5" compoundref="ringelement_8cpp" startline="893" endline="900">rawRingElementSplitContent</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_aaceed4df2073246abfe640756908d030_1aaceed4df2073246abfe640756908d030" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::numerator</definition>
+        <argsstring>() const</argsstring>
+        <name>numerator</name>
+        <qualifiedname>RingElement::numerator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="147" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="360" bodyend="372"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_fraction_field_a41dab619661a64ec7e9844ab4d80b4a0_1a41dab619661a64ec7e9844ab4d80b4a0" compoundref="frac_8hpp" startline="80" endline="80">FractionField::get_ring</references>
+        <references refid="class_local_ring_a9c5a11d86aadcf52763685970f81cf05_1a9c5a11d86aadcf52763685970f81cf05" compoundref="localring_8hpp" startline="86" endline="86">LocalRing::get_ring</references>
+        <references refid="aring-glue_8hpp_ab88d3ea2a9742f382a17da830d0b7857_1ab88d3ea2a9742f382a17da830d0b7857" compoundref="interface_2aring_8cpp" startline="24">globalQQ</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="class_fraction_field_a6fdf270875823c56409d0034fcdb94da_1a6fdf270875823c56409d0034fcdb94da" compoundref="frac_8cpp" startline="69" endline="73">FractionField::numerator</references>
+        <references refid="class_local_ring_a3165efbdc851f9cfb8f32d00a86dff73_1a3165efbdc851f9cfb8f32d00a86dff73" compoundref="localring_8cpp" startline="209" endline="213">LocalRing::numerator</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_aeaaf94e76eade88ce5ccd9cd595922e5_1aeaaf94e76eade88ce5ccd9cd595922e5" compoundref="ringelement_8cpp" startline="902" endline="912">IM2_RingElement_numerator</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a59c251a9905374ad2147513381e6dd57_1a59c251a9905374ad2147513381e6dd57" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::denominator</definition>
+        <argsstring>() const</argsstring>
+        <name>denominator</name>
+        <qualifiedname>RingElement::denominator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="148" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="374" bodyend="386"/>
+        <references refid="class_fraction_field_ad03d0be4ae260241c36e0d0c8b524ab2_1ad03d0be4ae260241c36e0d0c8b524ab2" compoundref="frac_8cpp" startline="75" endline="79">FractionField::denominator</references>
+        <references refid="class_local_ring_a88771ae565766d0262c3f0594f2523e2_1a88771ae565766d0262c3f0594f2523e2" compoundref="localring_8cpp" startline="215" endline="219">LocalRing::denominator</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_fraction_field_a41dab619661a64ec7e9844ab4d80b4a0_1a41dab619661a64ec7e9844ab4d80b4a0" compoundref="frac_8hpp" startline="80" endline="80">FractionField::get_ring</references>
+        <references refid="class_local_ring_a9c5a11d86aadcf52763685970f81cf05_1a9c5a11d86aadcf52763685970f81cf05" compoundref="localring_8hpp" startline="86" endline="86">LocalRing::get_ring</references>
+        <references refid="aring-glue_8hpp_ab88d3ea2a9742f382a17da830d0b7857_1ab88d3ea2a9742f382a17da830d0b7857" compoundref="interface_2aring_8cpp" startline="24">globalQQ</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_a05790c823aad1671ea7b92704501c7bc_1a05790c823aad1671ea7b92704501c7bc" compoundref="ringelement_8cpp" startline="914" endline="925">IM2_RingElement_denominator</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a319962a1c71fab9b611170191f398dc3_1a319962a1c71fab9b611170191f398dc3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::fraction</definition>
+        <argsstring>(const Ring *R, const RingElement *bottom) const</argsstring>
+        <name>fraction</name>
+        <qualifiedname>RingElement::fraction</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+          <declname>bottom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="149" column="15" bodyfile="Macaulay2/e/relem.cpp" bodystart="388" bodyend="419"/>
+        <references refid="class_ring_abac24f11adbfb7546d7ee6a4828ed437_1abac24f11adbfb7546d7ee6a4828ed437" compoundref="ring_8hpp" startline="249" endline="249">Ring::cast_to_FractionField</references>
+        <references refid="class_ring_a80f38d20ffdbd9761dde59eb667b0f88_1a80f38d20ffdbd9761dde59eb667b0f88" compoundref="ring_8hpp" startline="251" endline="251">Ring::cast_to_LocalRing</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_fraction_field_ad1c3f1b424a05f20089ea320932e990e_1ad1c3f1b424a05f20089ea320932e990e" compoundref="frac_8cpp" startline="102" endline="106">FractionField::fraction</references>
+        <references refid="class_local_ring_a75e39182f8532884bf8cc3e4c608856d_1a75e39182f8532884bf8cc3e4c608856d" compoundref="localring_8cpp" startline="221" endline="224">LocalRing::fraction</references>
+        <references refid="class_fraction_field_a41dab619661a64ec7e9844ab4d80b4a0_1a41dab619661a64ec7e9844ab4d80b4a0" compoundref="frac_8hpp" startline="80" endline="80">FractionField::get_ring</references>
+        <references refid="class_local_ring_a9c5a11d86aadcf52763685970f81cf05_1a9c5a11d86aadcf52763685970f81cf05" compoundref="localring_8hpp" startline="86" endline="86">LocalRing::get_ring</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+        <references refid="aring-glue_8hpp_ab88d3ea2a9742f382a17da830d0b7857_1ab88d3ea2a9742f382a17da830d0b7857" compoundref="interface_2aring_8cpp" startline="24">globalQQ</references>
+        <references refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <references refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" compoundref="relem_8hpp" startline="65">val</references>
+        <referencedby refid="ringelement_8cpp_aa5684b5ecb78427beb2d4d0190e9b09d_1aa5684b5ecb78427beb2d4d0190e9b09d" compoundref="ringelement_8cpp" startline="927" endline="941">IM2_RingElement_fraction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_ada89d3a964931f562c29adc27625c52d_1ada89d3a964931f562c29adc27625c52d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool RingElement::getSmallIntegerCoefficients</definition>
+        <argsstring>(std::vector&lt; long &gt; &amp;result_coeffs) const</argsstring>
+        <name>getSmallIntegerCoefficients</name>
+        <qualifiedname>RingElement::getSmallIntegerCoefficients</qualifiedname>
+        <param>
+          <type>std::vector&lt; long &gt; &amp;</type>
+          <declname>result_coeffs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="158" column="8" bodyfile="Macaulay2/e/relem.cpp" bodystart="421" bodyend="460"/>
+        <references refid="class_ring_a73bec90f6a8598b3c5cdc201b068589a_1a73bec90f6a8598b3c5cdc201b068589a" compoundref="ring_8hpp" startline="241" endline="241">Ring::cast_to_PolynomialRing</references>
+        <references refid="class_ring_a3d64baae17fd73c1e9b0ed62898e558f_1a3d64baae17fd73c1e9b0ed62898e558f" compoundref="ring_8cpp" startline="236" endline="241">Ring::coerceToLongInteger</references>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">get_ring</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">get_value</references>
+        <references refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" compoundref="relem_8hpp" startline="163" endline="163">is_zero</references>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">M2::ARingGFFlint::ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_big_a96f83dd39fea46e88b349a92c5f2fca2_1a96f83dd39fea46e88b349a92c5f2fca2" compoundref="aring-gf-flint-big_8cpp" startline="10" endline="62">M2::ARingGFFlintBig::ARingGFFlintBig</referencedby>
+        <referencedby refid="factory_8cpp_a6120b9a877f6523d34872602a34017eb_1a6120b9a877f6523d34872602a34017eb" compoundref="factory_8cpp" startline="359" endline="369">getGFRepresentation</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a4e9d7796a09febb268e8e8bacec88529_1a4e9d7796a09febb268e8e8bacec88529" compoundref="aring-gf-flint_8cpp" startline="142" endline="152">M2::ARingGFFlint::promote</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_big_a98f1a4d5df2f1c163af791fde2e480d1_1a98f1a4d5df2f1c163af791fde2e480d1" compoundref="aring-gf-flint-big_8cpp" startline="123" endline="133">M2::ARingGFFlintBig::promote</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_m2_ae61a00e6bbdc57a574e28519fd2d485c_1ae61a00e6bbdc57a574e28519fd2d485c" compoundref="aring-m2-gf_8cpp" startline="141" endline="150">M2::ARingGFM2::promote</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a8241f71d0a8bddd6baaaadfd618215ea_1a8241f71d0a8bddd6baaaadfd618215ea" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a071c143092bff3ecfb25de7581dfba58_1a071c143092bff3ecfb25de7581dfba58" kindref="member">M2_arrayintOrNull</ref></type>
+        <definition>M2_arrayintOrNull RingElement::getSmallIntegerCoefficients</definition>
+        <argsstring>() const</argsstring>
+        <name>getSmallIntegerCoefficients</name>
+        <qualifiedname>RingElement::getSmallIntegerCoefficients</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="159" column="21" bodyfile="Macaulay2/e/relem.cpp" bodystart="462" bodyend="467"/>
+        <references refid="class_ring_element_a8241f71d0a8bddd6baaaadfd618215ea_1a8241f71d0a8bddd6baaaadfd618215ea" compoundref="relem_8cpp" startline="462" endline="467">getSmallIntegerCoefficients</references>
+        <references refid="util_8hpp_a30cf035ffee78e13404b2ee33a431597_1a30cf035ffee78e13404b2ee33a431597" compoundref="util_8hpp" startline="77" endline="82">stdvector_to_M2_arrayint</references>
+        <referencedby refid="class_ring_element_a8241f71d0a8bddd6baaaadfd618215ea_1a8241f71d0a8bddd6baaaadfd618215ea" compoundref="relem_8cpp" startline="462" endline="467">getSmallIntegerCoefficients</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_ring_element_ab978463e39096a4e0d1ecc0720f9acf3_1ab978463e39096a4e0d1ecc0720f9acf3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::make_raw</definition>
+        <argsstring>(const Ring *R, ring_elem f)</argsstring>
+        <name>make_raw</name>
+        <qualifiedname>RingElement::make_raw</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="73" column="22" bodyfile="Macaulay2/e/relem.cpp" bodystart="20" bodyend="23"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">M2::ARingGFFlint::ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_big_a96f83dd39fea46e88b349a92c5f2fca2_1a96f83dd39fea46e88b349a92c5f2fca2" compoundref="aring-gf-flint-big_8cpp" startline="10" endline="62">M2::ARingGFFlintBig::ARingGFFlintBig</referencedby>
+        <referencedby refid="classgb2__comp_a3dd71774b568ffecb3fdad084c99b929_1a3dd71774b568ffecb3fdad084c99b929" compoundref="res-a2-gb_8cpp" startline="684" endline="799">gb2_comp::calc_gb</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_aa5439009f652ce765833966761402308_1aa5439009f652ce765833966761402308" compoundref="mutable-matrix_8cpp" startline="992" endline="1004">convertRingelemsToArray</referencedby>
+        <referencedby refid="factory_8cpp_a89e5ab8480eb0440fbef0ed42e501395_1a89e5ab8480eb0440fbef0ed42e501395" compoundref="factory_8cpp" startline="876" endline="891">convertToCFList</referencedby>
+        <referencedby refid="factory_8cpp_a67c68531e56fcabd05f4724d2e4251e7_1a67c68531e56fcabd05f4724d2e4251e7" compoundref="factory_8cpp" startline="214" endline="285">convertToM2</referencedby>
+        <referencedby refid="class_mutable_mat_a289484fbca57e5e585e4b48992224c94_1a289484fbca57e5e585e4b48992224c94" compoundref="mutablemat-imp_8hpp" startline="69" endline="79">MutableMat&lt; Mat &gt;::determinant</referencedby>
+        <referencedby refid="class_ring_map_ae03f15753a4d5dd1b571715a688d44a3_1ae03f15753a4d5dd1b571715a688d44a3" compoundref="ringmap_8cpp" startline="238" endline="244">RingMap::eval</referencedby>
+        <referencedby refid="namespace_m2_a69670002246cb260befc0da766934f52_1a69670002246cb260befc0da766934f52" compoundref="aring-glue_8hpp" startline="1251" endline="1256">M2::findMinimalPolynomial</referencedby>
+        <referencedby refid="class_m2_1_1_galois_field_table_a5506deba17bc1f7a5a3845be903048c6_1a5506deba17bc1f7a5a3845be903048c6" compoundref="aring-m2-gf_8cpp" startline="18" endline="97">M2::GaloisFieldTable::GaloisFieldTable</referencedby>
+        <referencedby refid="namespace_m2_a3da8b985cd142838a4daf9115c4d27ce_1a3da8b985cd142838a4daf9115c4d27ce" compoundref="aring-glue_8hpp" startline="1311" endline="1319">M2::getGen</referencedby>
+        <referencedby refid="class_g_f_a5f32bc4b3742936caa98ea8efcd1263d_1a5f32bc4b3742936caa98ea8efcd1263d" compoundref="_g_f_8cpp" startline="143" endline="147">GF::getGenerator</referencedby>
+        <referencedby refid="namespace_m2_a1f20f9a3244cfdf32f6d51c6cfe8abed_1a1f20f9a3244cfdf32f6d51c6cfe8abed" compoundref="aring-glue_8hpp" startline="1279" endline="1288">M2::getLiftedRepresentation</referencedby>
+        <referencedby refid="class_g_f_afca151a46c9940b262efb0ad67be1462_1afca151a46c9940b262efb0ad67be1462" compoundref="_g_f_8cpp" startline="136" endline="141">GF::getMinimalPolynomial</referencedby>
+        <referencedby refid="class_g_f_ac9abeb5bf65ea04aad6f5e832d2adbf5_1ac9abeb5bf65ea04aad6f5e832d2adbf5" compoundref="_g_f_8cpp" startline="149" endline="154">GF::getRepresentation</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_afae40df82f55e59f6cc762c53f0bc3d4_1afae40df82f55e59f6cc762c53f0bc3d4" compoundref="mutable-matrix_8cpp" startline="521" endline="528">IM2_Matrix_dot_product</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a9c5fdb06f6066f4a2fdaa59bdedca212_1a9c5fdb06f6066f4a2fdaa59bdedca212" compoundref="interface_2matrix_8cpp" startline="85" endline="137">IM2_Matrix_get_entries</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a4a593a710564f442d08667bb39172530_1a4a593a710564f442d08667bb39172530" compoundref="interface_2matrix_8cpp" startline="55" endline="81">IM2_Matrix_get_entry</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_ab4c6085f7121e46033a48a2bfe2cbea0_1ab4c6085f7121e46033a48a2bfe2cbea0" compoundref="interface_2matrix_8cpp" startline="625" endline="628">IM2_Matrix_pfaffian</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ad6997a9aab026c528115fb76a8ca7dea_1ad6997a9aab026c528115fb76a8ca7dea" compoundref="mutable-matrix_8cpp" startline="204" endline="244">IM2_MutableMatrix_get_entries</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a09837903d8b8d822b88a84950785917f_1a09837903d8b8d822b88a84950785917f" compoundref="mutable-matrix_8cpp" startline="186" endline="201">IM2_MutableMatrix_get_entry</referencedby>
+        <referencedby refid="ringelement_8cpp_a21b7103a3fad2174c4c7ff5366637581_1a21b7103a3fad2174c4c7ff5366637581" compoundref="ringelement_8cpp" startline="347" endline="374">IM2_RingElement_divmod</referencedby>
+        <referencedby refid="ringelement_8cpp_a3101d0c2fe3fa19866e40846f3a03640_1a3101d0c2fe3fa19866e40846f3a03640" compoundref="ringelement_8cpp" startline="68" endline="74">IM2_RingElement_from_BigComplex</referencedby>
+        <referencedby refid="ringelement_8cpp_ab3cfece14e5a924ea0d1c65d9498165f_1ab3cfece14e5a924ea0d1c65d9498165f" compoundref="ringelement_8cpp" startline="76" endline="82">IM2_RingElement_from_BigReal</referencedby>
+        <referencedby refid="ringelement_8cpp_a2d13ea8abf7b0d1257528f077941c796_1a2d13ea8abf7b0d1257528f077941c796" compoundref="ringelement_8cpp" startline="92" endline="98">IM2_RingElement_from_ComplexInterval</referencedby>
+        <referencedby refid="ringelement_8cpp_a430dce4d80322af8cfa8179f7d6bbea9_1a430dce4d80322af8cfa8179f7d6bbea9" compoundref="ringelement_8cpp" startline="51" endline="54">IM2_RingElement_from_Integer</referencedby>
+        <referencedby refid="ringelement_8cpp_a4797448009b502b103f6b023a9d2ea41_1a4797448009b502b103f6b023a9d2ea41" compoundref="ringelement_8cpp" startline="84" endline="90">IM2_RingElement_from_Interval</referencedby>
+        <referencedby refid="ringelement_8cpp_a94dbe739abec474c8d433beb6ebbd64a_1a94dbe739abec474c8d433beb6ebbd64a" compoundref="ringelement_8cpp" startline="56" endline="66">IM2_RingElement_from_rational</referencedby>
+        <referencedby refid="ringelement_8cpp_ac26a8bd25791eeef37049c68331b32f9_1ac26a8bd25791eeef37049c68331b32f9" compoundref="ringelement_8cpp" startline="321" endline="333">IM2_RingElement_make_var</referencedby>
+        <referencedby refid="ringelement_8cpp_a0b291882fbb398b121040b5a1b9ec844_1a0b291882fbb398b121040b5a1b9ec844" compoundref="ringelement_8cpp" startline="529" endline="567">IM2_RingElement_term</referencedby>
+        <referencedby refid="class_poly_ring_quotient_a854c5c1cd3a4286efa4a439c8bcea812_1a854c5c1cd3a4286efa4a439c8bcea812" compoundref="polyquotient_8cpp" startline="161" endline="190">PolyRingQuotient::invert</referencedby>
+        <referencedby refid="class_local_ring_a331b1a804dcc8bb8d2671077f56e433c_1a331b1a804dcc8bb8d2671077f56e433c" compoundref="localring_8cpp" startline="227" endline="265">LocalRing::lift_up</referencedby>
+        <referencedby refid="class_m2_free_algebra_ad8a8c9047a356a6563573ee19d8317db_1ad8a8c9047a356a6563573ee19d8317db" compoundref="_m2_free_algebra_8cpp" startline="348" endline="383">M2FreeAlgebra::list_form</referencedby>
+        <referencedby refid="class_poly_ring_ae9b8ecaaaf7173addac81adeff948c88_1ae9b8ecaaaf7173addac81adeff948c88" compoundref="poly_8cpp" startline="1789" endline="1828">PolyRing::list_form</referencedby>
+        <referencedby refid="class_schur_ring2_abbde84b578a5bd8fa27fb5e552a63adf_1abbde84b578a5bd8fa27fb5e552a63adf" compoundref="schur2_8cpp" startline="682" endline="716">SchurRing2::list_form</referencedby>
+        <referencedby refid="class_fraction_field_a7456bfb44797a457a623c874f531d7ce_1a7456bfb44797a457a623c874f531d7ce" compoundref="frac_8cpp" startline="191" endline="218">FractionField::lower_content</referencedby>
+        <referencedby refid="class_local_ring_ac20aafc029675ae1b06902a19693e6c7_1ac20aafc029675ae1b06902a19693e6c7" compoundref="localring_8cpp" startline="373" endline="400">LocalRing::lower_content</referencedby>
+        <referencedby refid="ringelement_8cpp_ad222a8196a2b751167ee2e9b9c903023_1ad222a8196a2b751167ee2e9b9c903023" compoundref="ringelement_8cpp" startline="856" endline="878">rawAssociateDivisor</referencedby>
+        <referencedby refid="factory_8cpp_a277eb27756a88af857772363f77b3e19_1a277eb27756a88af857772363f77b3e19" compoundref="factory_8cpp" startline="810" endline="874">rawCharSeries</referencedby>
+        <referencedby refid="ringelement_8cpp_a6bf48f82a2f4e957109eb15e00c2e11a_1a6bf48f82a2f4e957109eb15e00c2e11a" compoundref="ringelement_8cpp" startline="762" endline="805">rawConvolve</referencedby>
+        <referencedby refid="ringelement_8cpp_aa852f5a8454854112a02402d64125f32_1aa852f5a8454854112a02402d64125f32" compoundref="ringelement_8cpp" startline="1038" endline="1047">rawDiff</referencedby>
+        <referencedby refid="factory_8cpp_a169ce4c376b30270249b4551fdfb05f8_1a169ce4c376b30270249b4551fdfb05f8" compoundref="factory_8cpp" startline="553" endline="623">rawExtendedGCDRingElement</referencedby>
+        <referencedby refid="factory_8cpp_a5f8ca45d58516b4ff1758715081e9795_1a5f8ca45d58516b4ff1758715081e9795" compoundref="factory_8cpp" startline="661" endline="735">rawFactorBase</referencedby>
+        <referencedby refid="factory_8cpp_af04b0de40c3a49e0d68bca62193a8a8a_1af04b0de40c3a49e0d68bca62193a8a8a" compoundref="factory_8cpp" startline="488" endline="551">rawGCDRingElement</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a76eab0c943d7e99ff38743c8e1ee9730_1a76eab0c943d7e99ff38743c8e1ee9730" compoundref="interface_2ring_8cpp" startline="583" endline="586">rawGetNonUnit</referencedby>
+        <referencedby refid="ringelement_8cpp_a44911fc4ec75ae80633109a034488c84_1a44911fc4ec75ae80633109a034488c84" compoundref="ringelement_8cpp" startline="807" endline="839">rawGetPart</referencedby>
+        <referencedby refid="ringelement_8cpp_a616e4d593b0d9163f0f65f1ca4268507_1a616e4d593b0d9163f0f65f1ca4268507" compoundref="ringelement_8cpp" startline="672" endline="701">rawGetParts</referencedby>
+        <referencedby refid="factory_8cpp_abe0a4b95e1beb3d121ecb439fc0584ab_1abe0a4b95e1beb3d121ecb439fc0584ab" compoundref="factory_8cpp" startline="752" endline="808">rawIdealReorder</referencedby>
+        <referencedby refid="ringelement_8cpp_a0c2dd9ddc0c57534067d1865f7a19a20_1a0c2dd9ddc0c57534067d1865f7a19a20" compoundref="ringelement_8cpp" startline="1049" endline="1058">rawLowerP</referencedby>
+        <referencedby refid="ringelement_8cpp_ad146217cb240496847db855676723545_1ad146217cb240496847db855676723545" compoundref="ringelement_8cpp" startline="1060" endline="1077">rawPowerMod</referencedby>
+        <referencedby refid="ringelement_8cpp_aa3deac342d58ca5e6fe9b6f78bd04dcb_1aa3deac342d58ca5e6fe9b6f78bd04dcb" compoundref="ringelement_8cpp" startline="459" endline="470">rawRingElementAntipode</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a1520d24d84cd7bb19fa99c75f927fdb3_1a1520d24d84cd7bb19fa99c75f927fdb3" compoundref="mutable-matrix_8cpp" startline="1106" endline="1116">rawRingElementClean</referencedby>
+        <referencedby refid="interface_2cra_8cpp_a4a142b1a7d66686e67683201b033416b_1a4a142b1a7d66686e67683201b033416b" compoundref="interface_2cra_8cpp" startline="14" endline="59">rawRingElementCRA</referencedby>
+        <referencedby refid="interface_2cra_8cpp_a5327cd55a5ef849a4d37224af92eb314_1a5327cd55a5ef849a4d37224af92eb314" compoundref="interface_2cra_8cpp" startline="94" endline="130">rawRingElementRatConversion</referencedby>
+        <referencedby refid="factory_8h_aaeba08756f80029d2d0391724962e90f_1aaeba08756f80029d2d0391724962e90f" compoundref="polyroots_8cpp" startline="52" endline="192">rawRoots</referencedby>
+        <referencedby refid="ringelement_8cpp_ab57d680975b7f306e8933cf0d9053732_1ab57d680975b7f306e8933cf0d9053732" compoundref="ringelement_8cpp" startline="988" endline="1013">rawSchurFromPartition</referencedby>
+        <referencedby refid="ringelement_8cpp_ac51e241956224215ced1cb55e3a65771_1ac51e241956224215ced1cb55e3a65771" compoundref="ringelement_8cpp" startline="962" endline="986">rawSchurSnTensorMult</referencedby>
+        <referencedby refid="ringelement_8h_a5ea9c59713bed6bb4684531819bdd7d6_1a5ea9c59713bed6bb4684531819bdd7d6" compoundref="tower_8cpp" startline="532" endline="566">rawTowerTranslatePoly</referencedby>
+        <referencedby refid="class_g_b__comp_ab700dbc1f1e023c3e923ad5847f221a6_1ab700dbc1f1e023c3e923ad5847f221a6" compoundref="gb-homog2_8cpp" startline="989" endline="1000">GB_comp::set_hilbert_function</referencedby>
+        <referencedby refid="classgb_a_aeade4f35ce1d6fca91e9c6dc06688756_1aeade4f35ce1d6fca91e9c6dc06688756" compoundref="gb-default_8cpp" startline="2682" endline="2709">gbA::set_hilbert_function</referencedby>
+        <referencedby refid="class_fraction_field_a7e0bb0da2c18133c5026023be412c618_1a7e0bb0da2c18133c5026023be412c618" compoundref="frac_8cpp" startline="108" endline="180">FractionField::simplify</referencedby>
+        <referencedby refid="class_local_ring_aefe76348cf9fc08d7e22838521cbc700_1aefe76348cf9fc08d7e22838521cbc700" compoundref="localring_8cpp" startline="73" endline="145">LocalRing::simplify</referencedby>
+        <referencedby refid="tower_8cpp_a01245f37001ac9d9f7f704de568280e0_1a01245f37001ac9d9f7f704de568280e0" compoundref="tower_8cpp" startline="444" endline="461">towerExtendedGCD</referencedby>
+        <referencedby refid="tower_8cpp_a37239f38e0a22bfafae94ae312efd2da_1a37239f38e0a22bfafae94ae312efd2da" compoundref="tower_8cpp" startline="431" endline="442">towerGCD</referencedby>
+        <referencedby refid="classhilb__comp_ac8ac7f8024616fd5514707edf081b966_1ac8ac7f8024616fd5514707edf081b966" compoundref="hilb_8cpp" startline="607" endline="616">hilb_comp::value</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_ring_element_a39fd58d5efc9028f5f0e7926f8343e68_1a39fd58d5efc9028f5f0e7926f8343e68" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * RingElement::random</definition>
+        <argsstring>(const Ring *R)</argsstring>
+        <name>random</name>
+        <qualifiedname>RingElement::random</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/relem.hpp" line="96" column="22" bodyfile="Macaulay2/e/relem.cpp" bodystart="137" bodyend="140"/>
+        <references refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" compoundref="relem_8hpp" startline="64">R</references>
+        <references refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" compoundref="relem_8hpp" startline="162" endline="162">RingElement</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Front-end-visible &quot;ring element&quot; value: an engine <computeroutput><ref refid="unionring__elem" kindref="compound">ring_elem</ref></computeroutput> paired with the <computeroutput>Ring*</computeroutput> that gives it meaning. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The interpreter handles ring elements as opaque <computeroutput>RingElement*</computeroutput> pointers and asks the engine to do arithmetic by dispatching through <computeroutput><ref refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" kindref="member">get_ring()</ref></computeroutput>. Inherits from <computeroutput><ref refid="class_engine_object" kindref="compound">EngineObject</ref></computeroutput> so the hash is content-based (computed via the ring&apos;s <computeroutput><ref refid="class_ring_element_aef0e4f3c9691a5b95e8bc19a11f5ba3d_1aef0e4f3c9691a5b95e8bc19a11f5ba3d" kindref="member">computeHashValue</ref></computeroutput>) and the element is immutable once exposed to the front end. <computeroutput><ref refid="class_ring_element_ab978463e39096a4e0d1ecc0720f9acf3_1ab978463e39096a4e0d1ecc0720f9acf3" kindref="member">make_raw</ref></computeroutput> is the standard factory the interface layer uses to wrap a freshly produced <computeroutput><ref refid="unionring__elem" kindref="compound">ring_elem</ref></computeroutput>. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>RingElement</label>
+        <link refid="class_ring_element"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="80">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="66">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="67" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="68">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="68" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="68" relation="public-inheritance">
+        </childnode>
+        <childnode refid="69" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="30" relation="private-inheritance">
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="31">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="32" relation="public-inheritance">
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="25" relation="private-inheritance">
+        </childnode>
+        <childnode refid="29" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="54">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="32">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="33" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="40" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="15" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="17" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>CoefficientType</label>
+      </node>
+      <node id="1">
+        <label>RingElement</label>
+        <link refid="class_ring_element"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>val</edgelabel>
+        </childnode>
+      </node>
+      <node id="77">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="50">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="10">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="48">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="43" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="50" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="52" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>char</label>
+      </node>
+      <node id="79">
+        <label>const ARing *</label>
+      </node>
+      <node id="22">
+        <label>const void *</label>
+      </node>
+      <node id="43">
+        <label>double</label>
+      </node>
+      <node id="64">
+        <label>overflow_type *</label>
+      </node>
+      <node id="61">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="63">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="78">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="42">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>long</label>
+      </node>
+      <node id="34">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="26" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>mon_part</label>
+      </node>
+      <node id="47">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="46">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="44">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="45">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="7">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="39">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="40" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>size_t</label>
+      </node>
+      <node id="71">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>spinLock</label>
+      </node>
+      <node id="70">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="58">
+        <label>std::string</label>
+        <childnode refid="59" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="18" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="28" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="10" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="28" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="58" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>unsigned</label>
+      </node>
+      <node id="19">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="23">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/relem.hpp" line="62" column="1" bodyfile="Macaulay2/e/relem.hpp" bodystart="63" bodyend="160"/>
+    <listofallmembers>
+      <member refid="class_ring_element_aef0e4f3c9691a5b95e8bc19a11f5ba3d_1aef0e4f3c9691a5b95e8bc19a11f5ba3d" prot="protected" virt="virtual"><scope>RingElement</scope><name>computeHashValue</name></member>
+      <member refid="class_ring_element_aec1dfedb2a34de8481965a5c6c11a8e4_1aec1dfedb2a34de8481965a5c6c11a8e4" prot="public" virt="non-virtual"><scope>RingElement</scope><name>content</name></member>
+      <member refid="class_ring_element_a50e0c599a95ace6c8dc41982af141542_1a50e0c599a95ace6c8dc41982af141542" prot="public" virt="non-virtual"><scope>RingElement</scope><name>degree</name></member>
+      <member refid="class_ring_element_ac63060238e3328e5b885e7ae0487d55b_1ac63060238e3328e5b885e7ae0487d55b" prot="public" virt="non-virtual"><scope>RingElement</scope><name>degree_weights</name></member>
+      <member refid="class_ring_element_a59c251a9905374ad2147513381e6dd57_1a59c251a9905374ad2147513381e6dd57" prot="public" virt="non-virtual"><scope>RingElement</scope><name>denominator</name></member>
+      <member refid="class_engine_object_a185a3226f366bf527283905e9478614f_1a185a3226f366bf527283905e9478614f" prot="public" virt="non-virtual"><scope>RingElement</scope><name>EngineObject</name></member>
+      <member refid="class_ring_element_a319962a1c71fab9b611170191f398dc3_1a319962a1c71fab9b611170191f398dc3" prot="public" virt="non-virtual"><scope>RingElement</scope><name>fraction</name></member>
+      <member refid="class_ring_element_ae474f0a814b2a875c83549eb9d9874a8_1ae474f0a814b2a875c83549eb9d9874a8" prot="public" virt="non-virtual"><scope>RingElement</scope><name>get_coeff</name></member>
+      <member refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" prot="public" virt="non-virtual"><scope>RingElement</scope><name>get_ring</name></member>
+      <member refid="class_ring_element_aa51a1376728908a43efc6719123ab572_1aa51a1376728908a43efc6719123ab572" prot="public" virt="non-virtual"><scope>RingElement</scope><name>get_terms</name></member>
+      <member refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" prot="public" virt="non-virtual"><scope>RingElement</scope><name>get_value</name></member>
+      <member refid="class_ring_element_ada89d3a964931f562c29adc27625c52d_1ada89d3a964931f562c29adc27625c52d" prot="public" virt="non-virtual"><scope>RingElement</scope><name>getSmallIntegerCoefficients</name></member>
+      <member refid="class_ring_element_a8241f71d0a8bddd6baaaadfd618215ea_1a8241f71d0a8bddd6baaaadfd618215ea" prot="public" virt="non-virtual"><scope>RingElement</scope><name>getSmallIntegerCoefficients</name></member>
+      <member refid="class_engine_object_a633723c198b26de8f513e91c4bf3120a_1a633723c198b26de8f513e91c4bf3120a" prot="public" virt="non-virtual"><scope>RingElement</scope><name>hash</name></member>
+      <member refid="class_ring_element_af772b467564a4f4b6c817ffd4cab97ff_1af772b467564a4f4b6c817ffd4cab97ff" prot="public" virt="non-virtual"><scope>RingElement</scope><name>homogenize</name></member>
+      <member refid="class_ring_element_a66dc103c4ee480469b355652acc93fe6_1a66dc103c4ee480469b355652acc93fe6" prot="public" virt="non-virtual"><scope>RingElement</scope><name>homogenize</name></member>
+      <member refid="class_ring_element_ab7c16c3c328ab161aeb2257378703dc1_1ab7c16c3c328ab161aeb2257378703dc1" prot="public" virt="non-virtual"><scope>RingElement</scope><name>invert</name></member>
+      <member refid="class_ring_element_ae9a11e32c034aa68b4f23d3184a1e565_1ae9a11e32c034aa68b4f23d3184a1e565" prot="public" virt="non-virtual"><scope>RingElement</scope><name>is_equal</name></member>
+      <member refid="class_ring_element_a3d42e52f8bcffc4b5b2b744a2e375a3d_1a3d42e52f8bcffc4b5b2b744a2e375a3d" prot="public" virt="non-virtual"><scope>RingElement</scope><name>is_homogeneous</name></member>
+      <member refid="class_ring_element_aa159891c8c1f7b0ba7e7ae7f5e546c2d_1aa159891c8c1f7b0ba7e7ae7f5e546c2d" prot="public" virt="non-virtual"><scope>RingElement</scope><name>is_unit</name></member>
+      <member refid="class_ring_element_a90d764d2f3c281c9ed3810cb805868d8_1a90d764d2f3c281c9ed3810cb805868d8" prot="public" virt="non-virtual"><scope>RingElement</scope><name>is_zero</name></member>
+      <member refid="class_ring_element_a98abe0c2a27d3c3de26e4d005a63b6c8_1a98abe0c2a27d3c3de26e4d005a63b6c8" prot="public" virt="non-virtual"><scope>RingElement</scope><name>lead_coeff</name></member>
+      <member refid="class_ring_element_a447e8cf63da8e98304f0c0050cdf133a_1a447e8cf63da8e98304f0c0050cdf133a" prot="public" virt="non-virtual"><scope>RingElement</scope><name>lead_monom</name></member>
+      <member refid="class_ring_element_a97d1d06e63ecd6320766f5d3087ced09_1a97d1d06e63ecd6320766f5d3087ced09" prot="public" virt="non-virtual"><scope>RingElement</scope><name>lead_term</name></member>
+      <member refid="class_ring_element_ae7c75b782f8c92ec3216a37a7ddb100e_1ae7c75b782f8c92ec3216a37a7ddb100e" prot="public" virt="non-virtual"><scope>RingElement</scope><name>lift</name></member>
+      <member refid="class_ring_element_ab978463e39096a4e0d1ecc0720f9acf3_1ab978463e39096a4e0d1ecc0720f9acf3" prot="public" virt="non-virtual"><scope>RingElement</scope><name>make_raw</name></member>
+      <member refid="class_engine_object_a86178bff24d1f06ec3eba664501bd839_1a86178bff24d1f06ec3eba664501bd839" prot="private" virt="non-virtual"><scope>RingElement</scope><name>mHashValue</name></member>
+      <member refid="class_ring_element_a92baf9a67a34d1e8092248d974c03d3f_1a92baf9a67a34d1e8092248d974c03d3f" prot="public" virt="non-virtual"><scope>RingElement</scope><name>multi_degree</name></member>
+      <member refid="class_ring_element_a931e1696610aa038fb2cb41971a4ad98_1a931e1696610aa038fb2cb41971a4ad98" prot="public" virt="non-virtual"><scope>RingElement</scope><name>n_terms</name></member>
+      <member refid="class_ring_element_aaceed4df2073246abfe640756908d030_1aaceed4df2073246abfe640756908d030" prot="public" virt="non-virtual"><scope>RingElement</scope><name>numerator</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator new[]</name></member>
+      <member refid="class_ring_element_afa3f6888e609b76d69b8278c0b77da1d_1afa3f6888e609b76d69b8278c0b77da1d" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator*</name></member>
+      <member refid="class_ring_element_a444b6168ad593b748c94e9c0556298d6_1a444b6168ad593b748c94e9c0556298d6" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator*</name></member>
+      <member refid="class_ring_element_a1ddb6e298583e47808de02de13e28e02_1a1ddb6e298583e47808de02de13e28e02" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator+</name></member>
+      <member refid="class_ring_element_aaf55628a88669ffa3f5ef176c84b9470_1aaf55628a88669ffa3f5ef176c84b9470" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator-</name></member>
+      <member refid="class_ring_element_a28cad1292690e59ad655fc743dd07e2c_1a28cad1292690e59ad655fc743dd07e2c" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator-</name></member>
+      <member refid="class_ring_element_a5efe2d37733d6520b727a463a9cabfed_1a5efe2d37733d6520b727a463a9cabfed" prot="public" virt="non-virtual"><scope>RingElement</scope><name>operator/</name></member>
+      <member refid="class_ring_element_a189189d4b20d104eb959274e181df6e6_1a189189d4b20d104eb959274e181df6e6" prot="public" virt="non-virtual"><scope>RingElement</scope><name>power</name></member>
+      <member refid="class_ring_element_ab0bc89cf0bb372da0367cd8fd60a10a1_1ab0bc89cf0bb372da0367cd8fd60a10a1" prot="public" virt="non-virtual"><scope>RingElement</scope><name>power</name></member>
+      <member refid="class_ring_element_a8d45d9a2620ce1e0c5432070524ccbcb_1a8d45d9a2620ce1e0c5432070524ccbcb" prot="public" virt="non-virtual"><scope>RingElement</scope><name>promote</name></member>
+      <member refid="class_ring_element_aac17d01996fc44a0ce837b4e7351f198_1aac17d01996fc44a0ce837b4e7351f198" prot="private" virt="non-virtual"><scope>RingElement</scope><name>R</name></member>
+      <member refid="class_ring_element_a39fd58d5efc9028f5f0e7926f8343e68_1a39fd58d5efc9028f5f0e7926f8343e68" prot="public" virt="non-virtual"><scope>RingElement</scope><name>random</name></member>
+      <member refid="class_ring_element_ad565e00a8cc4543e1e9b19b901ae364c_1ad565e00a8cc4543e1e9b19b901ae364c" prot="public" virt="non-virtual"><scope>RingElement</scope><name>remove_content</name></member>
+      <member refid="class_ring_element_a7ba961fb9b4cc13275476a1e058acd0f_1a7ba961fb9b4cc13275476a1e058acd0f" prot="public" virt="non-virtual"><scope>RingElement</scope><name>rest</name></member>
+      <member refid="class_ring_element_a0e2a80fc5c6bcc3d890ba8b99e92ff24_1a0e2a80fc5c6bcc3d890ba8b99e92ff24" prot="public" virt="non-virtual"><scope>RingElement</scope><name>RingElement</name></member>
+      <member refid="class_ring_element_a8f30d060ccfbbc8906586ebd75c15d2e_1a8f30d060ccfbbc8906586ebd75c15d2e" prot="public" virt="non-virtual"><scope>RingElement</scope><name>split_off_content</name></member>
+      <member refid="class_ring_element_a2edc7334ae64d0de6b5dea9b26dafa1c_1a2edc7334ae64d0de6b5dea9b26dafa1c" prot="public" virt="non-virtual"><scope>RingElement</scope><name>text_out</name></member>
+      <member refid="class_ring_element_a7e9369caec8ff5a6f3f33e69f7428f41_1a7e9369caec8ff5a6f3f33e69f7428f41" prot="private" virt="non-virtual"><scope>RingElement</scope><name>val</name></member>
+      <member refid="class_engine_object_aa11464cbf65ef39203feda038521e700_1aa11464cbf65ef39203feda038521e700" prot="public" virt="virtual"><scope>RingElement</scope><name>~EngineObject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

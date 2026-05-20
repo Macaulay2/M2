@@ -1,0 +1,495 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="hilb-fcn_8cpp" kind="file" language="C++">
+    <compoundname>hilb-fcn.cpp</compoundname>
+    <includes refid="hilb-fcn_8hpp" local="yes">hilb-fcn.hpp</includes>
+    <includes local="yes">error.h</includes>
+    <includes refid="freemod_8hpp" local="yes">freemod.hpp</includes>
+    <includes refid="hilb_8hpp" local="yes">hilb.hpp</includes>
+    <includes refid="matrix-con_8hpp" local="yes">matrix-con.hpp</includes>
+    <includes refid="monoid_8hpp" local="yes">monoid.hpp</includes>
+    <includes local="yes">polyring.hpp</includes>
+    <includes refid="relem_8hpp" local="yes">relem.hpp</includes>
+    <includes refid="ring_8hpp" local="yes">ring.hpp</includes>
+    <includes refid="style_8hpp" local="yes">style.hpp</includes>
+    <includes local="no">cstdio</includes>
+    <includes local="no">vector</includes>
+    <incdepgraph>
+      <node id="15">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="26">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/f4/hilb-fcn.cpp</label>
+        <link refid="hilb-fcn_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>hilb-fcn.hpp</label>
+        <link refid="hilb-fcn_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>freemod.hpp</label>
+        <link refid="freemod_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>hilb.hpp</label>
+        <link refid="hilb_8hpp"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>matrix-con.hpp</label>
+        <link refid="matrix-con_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>relem.hpp</label>
+        <link refid="relem_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>schorder.hpp</label>
+        <link refid="schorder_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>M2/config.h</label>
+      </node>
+      <node id="7">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="11">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="22">
+        <label>assert.h</label>
+      </node>
+      <node id="28">
+        <label>cassert</label>
+      </node>
+      <node id="44">
+        <label>cstddef</label>
+      </node>
+      <node id="16">
+        <label>cstdio</label>
+      </node>
+      <node id="36">
+        <label>error.h</label>
+      </node>
+      <node id="8">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="32">
+        <label>iostream</label>
+      </node>
+      <node id="41">
+        <label>memory</label>
+      </node>
+      <node id="48">
+        <label>polyring.hpp</label>
+      </node>
+      <node id="13">
+        <label>stddef.h</label>
+      </node>
+      <node id="27">
+        <label>stdexcept</label>
+      </node>
+      <node id="20">
+        <label>stdint.h</label>
+      </node>
+      <node id="5">
+        <label>stdlib.h</label>
+      </node>
+      <node id="14">
+        <label>string</label>
+      </node>
+      <node id="23">
+        <label>string.h</label>
+      </node>
+      <node id="24">
+        <label>type_traits</label>
+      </node>
+      <node id="39">
+        <label>utility</label>
+      </node>
+      <node id="6">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="9">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*<sp/>Copyright<sp/>2010-2021,<sp/>Michael<sp/>E.<sp/>Stillman<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hilb-fcn_8hpp" kindref="compound">hilb-fcn.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;error.h&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>error</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="freemod_8hpp" kindref="compound">freemod.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>FreeModule</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="hilb_8hpp" kindref="compound">hilb.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>hilb_comp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix-con_8hpp" kindref="compound">matrix-con.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>MatrixConstructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="monoid_8hpp" kindref="compound">monoid.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>Monoid,<sp/>monomial</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;polyring.hpp&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>PolynomialRing</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="relem_8hpp" kindref="compound">relem.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>RingElement</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ring_8hpp" kindref="compound">ring.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>Ring</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="style_8hpp" kindref="compound">style.hpp</ref>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>INTSIZE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdio&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>fprintf,<sp/>stderr</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>vector</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="class_hilbert_controller_a33d1c1b19bf75b1a15e8d3b1c9598911_1a33d1c1b19bf75b1a15e8d3b1c9598911" refkind="member"><highlight class="normal"><ref refid="class_hilbert_controller_a33d1c1b19bf75b1a15e8d3b1c9598911_1a33d1c1b19bf75b1a15e8d3b1c9598911" kindref="member">HilbertController::HilbertController</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F0,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring_element" kindref="compound">RingElement</ref><sp/>*hf)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_hilbert_controller_a351450234bd94e12a8fe5afcf4789d68_1a351450234bd94e12a8fe5afcf4789d68" kindref="member">F</ref>(F0),</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_hilbert_controller_a60df47f88bcc00f07f6158b8865dbe60_1a60df47f88bcc00f07f6158b8865dbe60" kindref="member">leadterms</ref>(nullptr),<sp/><sp/></highlight><highlight class="comment">//<sp/>set<sp/>later</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_hilbert_controller_ade42d3b4dd8e03e3a43d4bd6688a4952_1ade42d3b4dd8e03e3a43d4bd6688a4952" kindref="member">hilb_new_elems</ref>(true),</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_hilbert_controller_ae8a6b07277eeb8d400fb69fa0ef95c92_1ae8a6b07277eeb8d400fb69fa0ef95c92" kindref="member">hilb_n_in_degree</ref>(0),<sp/><sp/></highlight><highlight class="comment">//<sp/>will<sp/>be<sp/>really<sp/>set<sp/>later</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_hilbert_controller_a22086fc47a219a4fb265c6ae2f5ae5ac_1a22086fc47a219a4fb265c6ae2f5ae5ac" kindref="member">hf_orig</ref>(hf),</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_hilbert_controller_a3019ff10e0848164a4114238e1e0d172_1a3019ff10e0848164a4114238e1e0d172" kindref="member">hf_diff</ref>(nullptr)<sp/><sp/></highlight><highlight class="comment">//<sp/>will<sp/>be<sp/>set<sp/>later</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>TODO:<sp/>check<sp/>and<sp/>write</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><ref refid="class_hilbert_controller_a0a9406a094cce3523022d7278c9a03f9_1a0a9406a094cce3523022d7278c9a03f9" kindref="member">R</ref><sp/>=<sp/><ref refid="class_hilbert_controller_a351450234bd94e12a8fe5afcf4789d68_1a351450234bd94e12a8fe5afcf4789d68" kindref="member">F</ref>-&gt;get_ring()-&gt;cast_to_PolynomialRing();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="class_hilbert_controller_a69e69068ca5ea7e5af8fd743043b9678_1a69e69068ca5ea7e5af8fd743043b9678" refkind="member"><highlight class="normal"><ref refid="class_hilbert_controller_a69e69068ca5ea7e5af8fd743043b9678_1a69e69068ca5ea7e5af8fd743043b9678" kindref="member">HilbertController::~HilbertController</ref>()</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>TODO:<sp/>check<sp/>and<sp/>write</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/><ref refid="class_hilbert_controller_a60df47f88bcc00f07f6158b8865dbe60_1a60df47f88bcc00f07f6158b8865dbe60" kindref="member">leadterms</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><ref refid="class_hilbert_controller_a351450234bd94e12a8fe5afcf4789d68_1a351450234bd94e12a8fe5afcf4789d68" kindref="member">F</ref><sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><ref refid="class_hilbert_controller_a22086fc47a219a4fb265c6ae2f5ae5ac_1a22086fc47a219a4fb265c6ae2f5ae5ac" kindref="member">hf_orig</ref><sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><ref refid="class_hilbert_controller_a3019ff10e0848164a4114238e1e0d172_1a3019ff10e0848164a4114238e1e0d172" kindref="member">hf_diff</ref><sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="class_hilbert_controller_a88ed4434dd989eeed88b334c68e9d217_1a88ed4434dd989eeed88b334c68e9d217" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_hilbert_controller_a88ed4434dd989eeed88b334c68e9d217_1a88ed4434dd989eeed88b334c68e9d217" kindref="member">HilbertController::setDegree</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>this_degree)</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Recomputes<sp/>Hilbert<sp/>function,<sp/>returns<sp/>#elems<sp/>expected<sp/>in<sp/>degree<sp/>this_degree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>There<sp/>should<sp/>be<sp/>NO<sp/>elements<sp/>expected<sp/>in<sp/>lower<sp/>degrees<sp/>than<sp/>that.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>false<sp/>is<sp/>returned<sp/>if<sp/>either<sp/>the<sp/>computation<sp/>was<sp/>interrupted,<sp/>or</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>it<sp/>was<sp/>determined<sp/>that<sp/>the<sp/>Hilbert<sp/>function<sp/>could<sp/>not<sp/>be<sp/>correct</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>(by<sp/>expecting<sp/>a<sp/>negative<sp/>number<sp/>of<sp/>elements).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="class_hilbert_controller_a5b82ddac829f6bf3cfb509f1cc724f09_1a5b82ddac829f6bf3cfb509f1cc724f09" kindref="member">recomputeHilbertFunction</ref>())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><ref refid="class_hilbert_controller_ae8a6b07277eeb8d400fb69fa0ef95c92_1ae8a6b07277eeb8d400fb69fa0ef95c92" kindref="member">hilb_n_in_degree</ref><sp/>=<sp/><ref refid="classhilb__comp_aea718756e9b698709ed8959488eaf3b7_1aea718756e9b698709ed8959488eaf3b7" kindref="member">hilb_comp::coeff_of</ref>(<ref refid="class_hilbert_controller_a3019ff10e0848164a4114238e1e0d172_1a3019ff10e0848164a4114238e1e0d172" kindref="member">hf_diff</ref>,<sp/>this_degree);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" kindref="member">error</ref>())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="class_hilbert_controller_a26b517c50eb3c2fcd50ab828729e41aa_1a26b517c50eb3c2fcd50ab828729e41aa" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_hilbert_controller_a26b517c50eb3c2fcd50ab828729e41aa_1a26b517c50eb3c2fcd50ab828729e41aa" kindref="member">HilbertController::addMonomial</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/>return<sp/>true<sp/>if<sp/>that<sp/>was<sp/>the<sp/>last<sp/>one<sp/>expected</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><ref refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" kindref="member">monomial</ref><sp/>m<sp/>=<sp/><ref refid="class_hilbert_controller_a0a9406a094cce3523022d7278c9a03f9_1a0a9406a094cce3523022d7278c9a03f9" kindref="member">R</ref>-&gt;getMonoid()-&gt;make_one();</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><ref refid="class_hilbert_controller_a0a9406a094cce3523022d7278c9a03f9_1a0a9406a094cce3523022d7278c9a03f9" kindref="member">R</ref>-&gt;getMonoid()-&gt;from_expvector(a,<sp/>m);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>r<sp/>=<sp/><ref refid="class_hilbert_controller_a0a9406a094cce3523022d7278c9a03f9_1a0a9406a094cce3523022d7278c9a03f9" kindref="member">R</ref>-&gt;make_flat_term(<ref refid="class_hilbert_controller_a0a9406a094cce3523022d7278c9a03f9_1a0a9406a094cce3523022d7278c9a03f9" kindref="member">R</ref>-&gt;getCoefficientRing()-&gt;one(),<sp/>m);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>vec<sp/>v<sp/>=<sp/><ref refid="class_hilbert_controller_a0a9406a094cce3523022d7278c9a03f9_1a0a9406a094cce3523022d7278c9a03f9" kindref="member">R</ref>-&gt;make_vec(comp<sp/>-<sp/>1,<sp/>r);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/>elems.push_back(v);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="class_hilbert_controller_ade42d3b4dd8e03e3a43d4bd6688a4952_1ade42d3b4dd8e03e3a43d4bd6688a4952" kindref="member">hilb_new_elems</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><ref refid="class_hilbert_controller_ae8a6b07277eeb8d400fb69fa0ef95c92_1ae8a6b07277eeb8d400fb69fa0ef95c92" kindref="member">hilb_n_in_degree</ref>--;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_hilbert_controller_ae8a6b07277eeb8d400fb69fa0ef95c92_1ae8a6b07277eeb8d400fb69fa0ef95c92" kindref="member">hilb_n_in_degree</ref><sp/>==<sp/>0;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="class_hilbert_controller_a5b82ddac829f6bf3cfb509f1cc724f09_1a5b82ddac829f6bf3cfb509f1cc724f09" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_hilbert_controller_a5b82ddac829f6bf3cfb509f1cc724f09_1a5b82ddac829f6bf3cfb509f1cc724f09" kindref="member">HilbertController::recomputeHilbertFunction</ref>()</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_hilbert_controller_ade42d3b4dd8e03e3a43d4bd6688a4952_1ade42d3b4dd8e03e3a43d4bd6688a4952" kindref="member">hilb_new_elems</ref>)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Recompute<sp/>h,<sp/>hf_diff</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*M<sp/>=<sp/><ref refid="class_hilbert_controller_af12716cc18941417c94a2806a0b2391b_1af12716cc18941417c94a2806a0b2391b" kindref="member">make_lead_term_matrix</ref>();</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_ring_element" kindref="compound">RingElement</ref><sp/>*h<sp/>=<sp/><ref refid="classhilb__comp_af0a64bcacdeb9fd78d4eba85ff93cacb_1af0a64bcacdeb9fd78d4eba85ff93cacb" kindref="member">hilb_comp::hilbertNumerator</ref>(M);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(h<sp/>==<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/><sp/></highlight><highlight class="comment">//<sp/>computation<sp/>was<sp/>interrupted</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_hilbert_controller_a3019ff10e0848164a4114238e1e0d172_1a3019ff10e0848164a4114238e1e0d172" kindref="member">hf_diff</ref><sp/>=<sp/>(*h)<sp/>-<sp/>(*hf_orig);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_hilbert_controller_ade42d3b4dd8e03e3a43d4bd6688a4952_1ade42d3b4dd8e03e3a43d4bd6688a4952" kindref="member">hilb_new_elems</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="class_hilbert_controller_af12716cc18941417c94a2806a0b2391b_1af12716cc18941417c94a2806a0b2391b" refkind="member"><highlight class="normal"><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="class_hilbert_controller_af12716cc18941417c94a2806a0b2391b_1af12716cc18941417c94a2806a0b2391b" kindref="member">HilbertController::make_lead_term_matrix</ref>()</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><ref refid="class_matrix_constructor" kindref="compound">MatrixConstructor</ref><sp/>mat(<ref refid="class_hilbert_controller_a351450234bd94e12a8fe5afcf4789d68_1a351450234bd94e12a8fe5afcf4789d68" kindref="member">F</ref>,<sp/><ref refid="style_8hpp_ae9befcbff10f3a4ff986f206da609a90_1ae9befcbff10f3a4ff986f206da609a90" kindref="member">INTSIZE</ref>(elems));</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>elems.size();<sp/>i++)<sp/>mat.<ref refid="class_matrix_constructor_ac740b10a84a3ba4d3e910dd7ae3a16bb_1ac740b10a84a3ba4d3e910dd7ae3a16bb" kindref="member">set_column</ref>(i,<sp/>elems[i]);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mat.<ref refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" kindref="member">to_matrix</ref>();</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/f4/hilb-fcn.cpp"/>
+  </compounddef>
+</doxygen>

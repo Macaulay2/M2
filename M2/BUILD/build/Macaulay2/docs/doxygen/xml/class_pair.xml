@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_pair" kind="class" language="C++" prot="public">
+    <compoundname>Pair</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_pair_a174e8c0f0ff85f24f98253a134c085d1_1a174e8c0f0ff85f24f98253a134c085d1" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int Pair::i</definition>
+        <argsstring></argsstring>
+        <name>i</name>
+        <qualifiedname>Pair::i</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="53" column="7" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="53" bodyend="-1"/>
+        <referencedby refid="class_pair_af0423f8c9aba97457ca380e60b549cf6_1af0423f8c9aba97457ca380e60b549cf6" compoundref="franzi-gb_8cpp" startline="25" endline="50">operator&lt;</referencedby>
+        <referencedby refid="class_pair_a8f96481b7793ce173045217ab6a77888_1a8f96481b7793ce173045217ab6a77888" compoundref="franzi-gb_8cpp" startline="58" endline="95">Pair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_pair_a5cc7c357fa4c81c5760aa8e07d68918d_1a5cc7c357fa4c81c5760aa8e07d68918d" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int Pair::j</definition>
+        <argsstring></argsstring>
+        <name>j</name>
+        <qualifiedname>Pair::j</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="54" column="7" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="54" bodyend="-1"/>
+        <referencedby refid="class_pair_af0423f8c9aba97457ca380e60b549cf6_1af0423f8c9aba97457ca380e60b549cf6" compoundref="franzi-gb_8cpp" startline="25" endline="50">operator&lt;</referencedby>
+        <referencedby refid="class_pair_a8f96481b7793ce173045217ab6a77888_1a8f96481b7793ce173045217ab6a77888" compoundref="franzi-gb_8cpp" startline="58" endline="95">Pair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_pair_a55959c06cfec0d4141a7ddb2f4893354_1a55959c06cfec0d4141a7ddb2f4893354" prot="public" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Pair::good</definition>
+        <argsstring></argsstring>
+        <name>good</name>
+        <qualifiedname>Pair::good</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="55" column="8" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="55" bodyend="-1"/>
+        <referencedby refid="class_pair_a8f96481b7793ce173045217ab6a77888_1a8f96481b7793ce173045217ab6a77888" compoundref="franzi-gb_8cpp" startline="58" endline="95">Pair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_pair_affb8bd419fe581fdb84ae0d545fce302_1affb8bd419fe581fdb84ae0d545fce302" prot="public" static="no" mutable="no">
+        <type><ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref></type>
+        <definition>brMonomial Pair::lcm</definition>
+        <argsstring></argsstring>
+        <name>lcm</name>
+        <qualifiedname>Pair::lcm</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="56" column="14" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="class_pair_af0423f8c9aba97457ca380e60b549cf6_1af0423f8c9aba97457ca380e60b549cf6" compoundref="franzi-gb_8cpp" startline="25" endline="50">operator&lt;</referencedby>
+        <referencedby refid="class_pair_a8f96481b7793ce173045217ab6a77888_1a8f96481b7793ce173045217ab6a77888" compoundref="franzi-gb_8cpp" startline="58" endline="95">Pair</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_pair_af0423f8c9aba97457ca380e60b549cf6_1af0423f8c9aba97457ca380e60b549cf6" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool operator&lt;</definition>
+        <argsstring>(const Pair &amp;pair1, const Pair &amp;pair2)</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>Pair::operator&lt;</qualifiedname>
+        <param>
+          <type>const <ref refid="class_pair" kindref="compound">Pair</ref> &amp;</type>
+          <declname>pair1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_pair" kindref="compound">Pair</ref> &amp;</type>
+          <declname>pair2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="25" column="10" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="25" bodyend="50"/>
+        <references refid="class_pair_a174e8c0f0ff85f24f98253a134c085d1_1a174e8c0f0ff85f24f98253a134c085d1" compoundref="franzi-gb_8cpp" startline="53">i</references>
+        <references refid="class_pair_a5cc7c357fa4c81c5760aa8e07d68918d_1a5cc7c357fa4c81c5760aa8e07d68918d" compoundref="franzi-gb_8cpp" startline="54">j</references>
+        <references refid="class_pair_affb8bd419fe581fdb84ae0d545fce302_1affb8bd419fe581fdb84ae0d545fce302" compoundref="franzi-gb_8cpp" startline="56">lcm</references>
+        <references refid="class_pair_a8f96481b7793ce173045217ab6a77888_1a8f96481b7793ce173045217ab6a77888" compoundref="franzi-gb_8cpp" startline="58" endline="95">Pair</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_pair_a8f96481b7793ce173045217ab6a77888_1a8f96481b7793ce173045217ab6a77888" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Pair::Pair</definition>
+        <argsstring>(int a, int b, const IntermediateBasis &amp;F)</argsstring>
+        <name>Pair</name>
+        <qualifiedname>Pair::Pair</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_ab757760310571764b5752f09c0e29abc_1ab757760310571764b5752f09c0e29abc" kindref="member">IntermediateBasis</ref> &amp;</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-gb.cpp" line="58" column="3" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="58" bodyend="95"/>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_pair_a55959c06cfec0d4141a7ddb2f4893354_1a55959c06cfec0d4141a7ddb2f4893354" compoundref="franzi-gb_8cpp" startline="55">good</references>
+        <references refid="class_pair_a174e8c0f0ff85f24f98253a134c085d1_1a174e8c0f0ff85f24f98253a134c085d1" compoundref="franzi-gb_8cpp" startline="53">i</references>
+        <references refid="class_b_r_p_ad5dbfffc63596c3a8ed013e55efe8b9e_1ad5dbfffc63596c3a8ed013e55efe8b9e" compoundref="franzi-brp_8hpp" startline="92" endline="96">BRP::isRelativelyPrime</references>
+        <references refid="class_pair_a5cc7c357fa4c81c5760aa8e07d68918d_1a5cc7c357fa4c81c5760aa8e07d68918d" compoundref="franzi-gb_8cpp" startline="54">j</references>
+        <references refid="class_pair_affb8bd419fe581fdb84ae0d545fce302_1affb8bd419fe581fdb84ae0d545fce302" compoundref="franzi-gb_8cpp" startline="56">lcm</references>
+        <referencedby refid="class_pair_af0423f8c9aba97457ca380e60b549cf6_1af0423f8c9aba97457ca380e60b549cf6" compoundref="franzi-gb_8cpp" startline="25" endline="50">operator&lt;</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>S-pair record for the Franzi boolean Groebner basis algorithm. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Carries the two basis-element indices <computeroutput><ref refid="class_pair_a174e8c0f0ff85f24f98253a134c085d1_1a174e8c0f0ff85f24f98253a134c085d1" kindref="member">i</ref>, <ref refid="class_pair_a5cc7c357fa4c81c5760aa8e07d68918d_1a5cc7c357fa4c81c5760aa8e07d68918d" kindref="member">j</ref></computeroutput> (a negative <computeroutput><ref refid="class_pair_a174e8c0f0ff85f24f98253a134c085d1_1a174e8c0f0ff85f24f98253a134c085d1" kindref="member">i</ref> = -k</computeroutput> means the field polynomial <computeroutput>x_k^2 + x_k</computeroutput> is being paired against <computeroutput>F[<ref refid="class_pair_a5cc7c357fa4c81c5760aa8e07d68918d_1a5cc7c357fa4c81c5760aa8e07d68918d" kindref="member">j</ref>]</computeroutput>), the precomputed lead-term <computeroutput><ref refid="class_pair_affb8bd419fe581fdb84ae0d545fce302_1affb8bd419fe581fdb84ae0d545fce302" kindref="member">lcm</ref></computeroutput>, and a <computeroutput><ref refid="class_pair_a55959c06cfec0d4141a7ddb2f4893354_1a55959c06cfec0d4141a7ddb2f4893354" kindref="member">good</ref></computeroutput> flag set false if either parent has been retired from <computeroutput>F</computeroutput>. Ordered first by <computeroutput><ref refid="class_pair_affb8bd419fe581fdb84ae0d545fce302_1affb8bd419fe581fdb84ae0d545fce302" kindref="member">lcm</ref></computeroutput> (lex), then by <computeroutput><ref refid="class_pair_a5cc7c357fa4c81c5760aa8e07d68918d_1a5cc7c357fa4c81c5760aa8e07d68918d" kindref="member">j</ref></computeroutput>, then by <computeroutput><ref refid="class_pair_a174e8c0f0ff85f24f98253a134c085d1_1a174e8c0f0ff85f24f98253a134c085d1" kindref="member">i</ref></computeroutput>, so the enclosing <computeroutput>std::set&lt;<ref refid="class_pair" kindref="compound">Pair</ref>&gt;</computeroutput> queue pops the smallest pair next. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Pair</label>
+        <link refid="class_pair"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>i</edgelabel>
+          <edgelabel>j</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>good</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>lcm</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/franzi-gb.cpp" line="22" column="1" bodyfile="Macaulay2/e/franzi-gb.cpp" bodystart="23" bodyend="96"/>
+    <listofallmembers>
+      <member refid="class_pair_a55959c06cfec0d4141a7ddb2f4893354_1a55959c06cfec0d4141a7ddb2f4893354" prot="public" virt="non-virtual"><scope>Pair</scope><name>good</name></member>
+      <member refid="class_pair_a174e8c0f0ff85f24f98253a134c085d1_1a174e8c0f0ff85f24f98253a134c085d1" prot="public" virt="non-virtual"><scope>Pair</scope><name>i</name></member>
+      <member refid="class_pair_a5cc7c357fa4c81c5760aa8e07d68918d_1a5cc7c357fa4c81c5760aa8e07d68918d" prot="public" virt="non-virtual"><scope>Pair</scope><name>j</name></member>
+      <member refid="class_pair_affb8bd419fe581fdb84ae0d545fce302_1affb8bd419fe581fdb84ae0d545fce302" prot="public" virt="non-virtual"><scope>Pair</scope><name>lcm</name></member>
+      <member refid="class_pair_af0423f8c9aba97457ca380e60b549cf6_1af0423f8c9aba97457ca380e60b549cf6" prot="private" virt="non-virtual"><scope>Pair</scope><name>operator&lt;</name></member>
+      <member refid="class_pair_a8f96481b7793ce173045217ab6a77888_1a8f96481b7793ce173045217ab6a77888" prot="public" virt="non-virtual"><scope>Pair</scope><name>Pair</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

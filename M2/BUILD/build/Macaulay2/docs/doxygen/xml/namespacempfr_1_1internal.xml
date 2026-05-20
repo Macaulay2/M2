@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespacempfr_1_1internal" kind="namespace" language="C++">
+    <compoundname>mpfr::internal</compoundname>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type" prot="public">mpfr::internal::result_type</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01mpreal_01_4" prot="public">mpfr::internal::result_type&lt; mpreal &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01mpz__t_01_4" prot="public">mpfr::internal::result_type&lt; mpz_t &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01mpq__t_01_4" prot="public">mpfr::internal::result_type&lt; mpq_t &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01long_01double_01_4" prot="public">mpfr::internal::result_type&lt; long double &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01double_01_4" prot="public">mpfr::internal::result_type&lt; double &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01unsigned_01long_01int_01_4" prot="public">mpfr::internal::result_type&lt; unsigned long int &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01unsigned_01int_01_4" prot="public">mpfr::internal::result_type&lt; unsigned int &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01long_01int_01_4" prot="public">mpfr::internal::result_type&lt; long int &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01int_01_4" prot="public">mpfr::internal::result_type&lt; int &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01long_01long_01_4" prot="public">mpfr::internal::result_type&lt; long long &gt;</innerclass>
+    <innerclass refid="structmpfr_1_1internal_1_1result__type_3_01unsigned_01long_01long_01_4" prot="public">mpfr::internal::result_type&lt; unsigned long long &gt;</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/mpreal.h" line="782" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,616 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="freemodule_8h" kind="file" language="C++">
+    <compoundname>freemodule.h</compoundname>
+    <includes refid="engine-includes_8hpp" local="yes">engine-includes.hpp</includes>
+    <includedby refid="engine_8h" local="yes">Macaulay2/e/engine.h</includedby>
+    <includedby refid="freemodule_8cpp" local="yes">Macaulay2/e/interface/freemodule.cpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/interface/freemodule.h</label>
+        <link refid="freemodule_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>M2/config.h</label>
+      </node>
+      <node id="7">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="6">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="5">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/engine.h</label>
+        <link refid="engine_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/interface/freemodule.cpp</label>
+        <link refid="freemodule_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/interface/freemodule.h</label>
+        <link refid="freemodule_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/unit-tests/testMain.cpp</label>
+        <link refid="_macaulay2_2e_2unit-tests_2test_main_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="freemodule_8h_a0155b380ddfe3c30b0ec590cff658795_1a0155b380ddfe3c30b0ec590cff658795" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>const Ring * IM2_FreeModule_ring</definition>
+        <argsstring>(const FreeModule *F)</argsstring>
+        <name>IM2_FreeModule_ring</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="class_free_module" kindref="compound">FreeModule</ref> interface routines</para>
+<para>A <ref refid="class_free_module" kindref="compound">FreeModule</ref> in the engine is always over a specific ring, and is graded using the degree monoid of the ring. Monomials in a free module are ordered, either in a way determined by the ordering in the ring, or using an induced (Schreyer) monomial ordering (in the case when the ring is a polynomial ring of some sort)</para>
+<para>General notes: these are immutable objects, at least once they are returned by the engine</para>
+<para>BUGS/TODO: the Schreyer orders produced by sum,tensor, symm,exterior, and submodule, ignore the current tie breaker values. Also: I might keep all freemodules for a ring unique. This is not currently done. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="76" column="12" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="15" bodyend="15" declfile="Macaulay2/e/interface/freemodule.h" declline="76" declcolumn="12"/>
+        <references refid="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" compoundref="freemod_8hpp" startline="98" endline="98">FreeModule::get_ring</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a928ff5ceb166d149d0c03eb7ebd0cce1_1a928ff5ceb166d149d0c03eb7ebd0cce1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int IM2_FreeModule_rank</definition>
+        <argsstring>(const FreeModule *F)</argsstring>
+        <name>IM2_FreeModule_rank</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="79" column="5" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="16" bodyend="16" declfile="Macaulay2/e/interface/freemodule.h" declline="79" declcolumn="5"/>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">FreeModule::rank</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_ad66e5988b7e67d5feded9ce6239818b8_1ad66e5988b7e67d5feded9ce6239818b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>M2_string</type>
+        <definition>M2_string IM2_FreeModule_to_string</definition>
+        <argsstring>(const FreeModule *F)</argsstring>
+        <name>IM2_FreeModule_to_string</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="82" column="11" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="17" bodyend="22" declfile="Macaulay2/e/interface/freemodule.h" declline="82" declcolumn="11"/>
+        <references refid="class_free_module_afd1ae0d00811e854aaeedace86331209_1afd1ae0d00811e854aaeedace86331209" compoundref="freemod_8cpp" startline="469" endline="483">FreeModule::text_out</references>
+        <references refid="classbuffer_ad181cad11381e3b91b78a583fd07f8b6_1ad181cad11381e3b91b78a583fd07f8b6" compoundref="buffer_8cpp" startline="20" endline="20">buffer::to_string</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a09f79045cdb6c4235dfe6fda7e071b20_1a09f79045cdb6c4235dfe6fda7e071b20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int rawFreeModuleHash</definition>
+        <argsstring>(const FreeModule *F)</argsstring>
+        <name>rawFreeModuleHash</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="85" column="14" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="24" bodyend="24" declfile="Macaulay2/e/interface/freemodule.h" declline="85" declcolumn="14"/>
+        <references refid="class_engine_object_a633723c198b26de8f513e91c4bf3120a_1a633723c198b26de8f513e91c4bf3120a" compoundref="hash_8hpp" startline="66" endline="74">EngineObject::hash</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_abab7672033161a8da8ad872130498dc5_1abab7672033161a8da8ad872130498dc5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule * IM2_FreeModule_make</definition>
+        <argsstring>(const Ring *R, int rank)</argsstring>
+        <name>IM2_FreeModule_make</name>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="88" column="19" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="25" bodyend="40" declfile="Macaulay2/e/interface/freemodule.h" declline="88" declcolumn="19"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_ring_a246965acb6f313f82aa3059a7c43091a_1a246965acb6f313f82aa3059a7c43091a" compoundref="ring_8cpp" startline="53" endline="56">Ring::make_FreeModule</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_abf7ca14483cb39bcd62d8c5ce58a959e_1abf7ca14483cb39bcd62d8c5ce58a959e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule * IM2_FreeModule_make_degs</definition>
+        <argsstring>(const Ring *R, M2_arrayint degs)</argsstring>
+        <name>IM2_FreeModule_make_degs</name>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>degs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="91" column="19" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="42" bodyend="73" declfile="Macaulay2/e/interface/freemodule.h" declline="91" declcolumn="19"/>
+        <references refid="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" compoundref="freemod_8cpp" startline="130" endline="135">FreeModule::append</references>
+        <references refid="class_ring_af6404c989f5555bba318266e64effbb0_1af6404c989f5555bba318266e64effbb0" compoundref="ring_8cpp" startline="13" endline="13">Ring::degree_monoid</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_ring_a246965acb6f313f82aa3059a7c43091a_1a246965acb6f313f82aa3059a7c43091a" compoundref="ring_8cpp" startline="53" endline="56">Ring::make_FreeModule</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_monoid_a686ece7cc294cc80866870573c1e625b_1a686ece7cc294cc80866870573c1e625b" compoundref="monoid_8hpp" startline="203" endline="203">Monoid::n_vars</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_ade4313686fc113911c0bcd844ef8bcab_1ade4313686fc113911c0bcd844ef8bcab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule * IM2_FreeModule_make_schreyer</definition>
+        <argsstring>(const Matrix *m)</argsstring>
+        <name>IM2_FreeModule_make_schreyer</name>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="100" column="19" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="75" bodyend="85" declfile="Macaulay2/e/interface/freemodule.h" declline="100" declcolumn="19"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_af87653ed4a51630daac57b958b818197_1af87653ed4a51630daac57b958b818197" compoundref="freemod_8cpp" startline="53" endline="71">FreeModule::make_schreyer</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_ad863e2d26329acf6fb844e5df2b8e17b_1ad863e2d26329acf6fb844e5df2b8e17b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        <definition>M2_arrayint IM2_FreeModule_get_degrees</definition>
+        <argsstring>(const FreeModule *F)</argsstring>
+        <name>IM2_FreeModule_get_degrees</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="111" column="13" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="87" bodyend="96" declfile="Macaulay2/e/interface/freemodule.h" declline="111" declcolumn="13"/>
+        <references refid="class_free_module_a61bc243d245bec72ef2e1ea9fb42e052_1a61bc243d245bec72ef2e1ea9fb42e052" compoundref="freemod_8hpp" startline="100" endline="100">FreeModule::degree</references>
+        <references refid="class_ring_af6404c989f5555bba318266e64effbb0_1af6404c989f5555bba318266e64effbb0" compoundref="ring_8cpp" startline="13" endline="13">Ring::degree_monoid</references>
+        <references refid="class_free_module_a4d2867218464947a9455e8533f6f8e51_1a4d2867218464947a9455e8533f6f8e51" compoundref="freemod_8hpp" startline="98" endline="98">FreeModule::get_ring</references>
+        <references refid="m2-types_8cpp_a84a8e7c0bac25be533dcc0125ff14c50_1a84a8e7c0bac25be533dcc0125ff14c50" compoundref="m2-types_8cpp" startline="6" endline="12">M2_makearrayint</references>
+        <references refid="class_monoid_a686ece7cc294cc80866870573c1e625b_1a686ece7cc294cc80866870573c1e625b" compoundref="monoid_8hpp" startline="203" endline="203">Monoid::n_vars</references>
+        <references refid="class_free_module_af359cfc5802d332b199aeca8a79f2107_1af359cfc5802d332b199aeca8a79f2107" compoundref="freemod_8hpp" startline="101" endline="101">FreeModule::rank</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a41d7b8e1ab1ab1c8aa71d57809bce5a9_1a41d7b8e1ab1ab1c8aa71d57809bce5a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * IM2_FreeModule_get_schreyer</definition>
+        <argsstring>(const FreeModule *F)</argsstring>
+        <name>IM2_FreeModule_get_schreyer</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="114" column="14" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="98" bodyend="101" declfile="Macaulay2/e/interface/freemodule.h" declline="114" declcolumn="14"/>
+        <references refid="class_free_module_abe948d3c41021e794e83c3f1080f828e_1abe948d3c41021e794e83c3f1080f828e" compoundref="freemod_8cpp" startline="100" endline="118">FreeModule::get_induced_order</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a1e019580392f0d193a42577dc1ae9712_1a1e019580392f0d193a42577dc1ae9712" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool IM2_FreeModule_is_equal</definition>
+        <argsstring>(const FreeModule *F, const FreeModule *G)</argsstring>
+        <name>IM2_FreeModule_is_equal</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="117" column="9" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="103" bodyend="109" declfile="Macaulay2/e/interface/freemodule.h" declline="117" declcolumn="9"/>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="class_free_module_a91966e5bad28bd403bdb2ee6983a8798_1a91966e5bad28bd403bdb2ee6983a8798" compoundref="freemod_8cpp" startline="154" endline="172">FreeModule::is_equal</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a62e98dbfc03f80da058ab6f1d7a37d26_1a62e98dbfc03f80da058ab6f1d7a37d26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule * IM2_FreeModule_sum</definition>
+        <argsstring>(const FreeModule *F, const FreeModule *G)</argsstring>
+        <name>IM2_FreeModule_sum</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="124" column="19" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="111" bodyend="115" declfile="Macaulay2/e/interface/freemodule.h" declline="124" declcolumn="19"/>
+        <references refid="class_free_module_aeaa0657e0acc01d349c4db33d6ccb382_1aeaa0657e0acc01d349c4db33d6ccb382" compoundref="freemod_8cpp" startline="244" endline="261">FreeModule::direct_sum</references>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a27e9c183e5e8c60d8c937d0f5f89bf3b_1a27e9c183e5e8c60d8c937d0f5f89bf3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule * IM2_FreeModule_tensor</definition>
+        <argsstring>(const FreeModule *F, const FreeModule *G)</argsstring>
+        <name>IM2_FreeModule_tensor</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="131" column="19" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="117" bodyend="128" declfile="Macaulay2/e/interface/freemodule.h" declline="131" declcolumn="19"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="class_free_module_a4ba7445417116df56e618d2124543e97_1a4ba7445417116df56e618d2124543e97" compoundref="freemod_8cpp" startline="271" endline="294">FreeModule::tensor</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a62edc71c7910e9820a34992f83f5267e_1a62edc71c7910e9820a34992f83f5267e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule * IM2_FreeModule_dual</definition>
+        <argsstring>(const FreeModule *F)</argsstring>
+        <name>IM2_FreeModule_dual</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="146" column="19" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="130" bodyend="140" declfile="Macaulay2/e/interface/freemodule.h" declline="146" declcolumn="19"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_a1f5078a18a9521f0e85159928f239c6e_1a1f5078a18a9521f0e85159928f239c6e" compoundref="freemod_8cpp" startline="227" endline="242">FreeModule::transpose</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a3d9a4afd513459347ce39deed6c96a1c_1a3d9a4afd513459347ce39deed6c96a1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule * IM2_FreeModule_symm</definition>
+        <argsstring>(int n, const FreeModule *F)</argsstring>
+        <name>IM2_FreeModule_symm</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="154" column="18" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="142" bodyend="152" declfile="Macaulay2/e/interface/freemodule.h" declline="154" declcolumn="18"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4_1a86e15b5c6a1fb5dbbcbeb44e0fc6d6a4" compoundref="freemod_8cpp" startline="393" endline="400">FreeModule::symm</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a60fb5f8006e80082cadcb8b8d9c494d1_1a60fb5f8006e80082cadcb8b8d9c494d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule * IM2_FreeModule_exterior</definition>
+        <argsstring>(int n, const FreeModule *F)</argsstring>
+        <name>IM2_FreeModule_exterior</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="163" column="18" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="154" bodyend="164" declfile="Macaulay2/e/interface/freemodule.h" declline="163" declcolumn="18"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" compoundref="freemod_8cpp" startline="296" endline="330">FreeModule::exterior</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a6132d6f253a167d914c807320832e841_1a6132d6f253a167d914c807320832e841" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule * IM2_FreeModule_submodule</definition>
+        <argsstring>(const FreeModule *F, M2_arrayint selection)</argsstring>
+        <name>IM2_FreeModule_submodule</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>selection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="172" column="19" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="166" bodyend="177" declfile="Macaulay2/e/interface/freemodule.h" declline="172" declcolumn="19"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_ac284d81e9e059f250499a1045fda03b9_1ac284d81e9e059f250499a1045fda03b9" compoundref="freemod_8cpp" startline="197" endline="209">FreeModule::sub_space</references>
+      </memberdef>
+      <memberdef kind="function" id="freemodule_8h_a9affbd8fd470e4a6a9460bb99f72ea5b_1a9affbd8fd470e4a6a9460bb99f72ea5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a071c143092bff3ecfb25de7581dfba58_1a071c143092bff3ecfb25de7581dfba58" kindref="member">M2_arrayintOrNull</ref></type>
+        <definition>M2_arrayintOrNull rawFreeModuleSelectByDegrees</definition>
+        <argsstring>(const FreeModule *F, M2_arrayint lo, M2_arrayint hi)</argsstring>
+        <name>rawFreeModuleSelectByDegrees</name>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>hi</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/freemodule.h" line="183" column="19" bodyfile="Macaulay2/e/interface/freemodule.cpp" bodystart="179" bodyend="191" declfile="Macaulay2/e/interface/freemodule.h" declline="183" declcolumn="19"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_free_module_a2e1ac36741b96a7c3a2350da9ba84918_1a2e1ac36741b96a7c3a2350da9ba84918" compoundref="freemod_8cpp" startline="413" endline="436">FreeModule::select_by_degrees</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Engine-boundary C API for constructing and querying <computeroutput><ref refid="class_free_module" kindref="compound">FreeModule</ref></computeroutput>s. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares the <computeroutput>extern "C"</computeroutput> entry points the <ref refid="namespace_m2" kindref="compound">M2</ref> interpreter calls to build graded free modules over a given <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput> and to inspect them once built. Construction comes in plain (<computeroutput>IM2_FreeModule_make(R, rank)</computeroutput>, bound on the <ref refid="namespace_m2" kindref="compound">M2</ref> side as <computeroutput>rawFreeModule</computeroutput>) and graded (<computeroutput>IM2_FreeModule_make_degs(R, degs)</computeroutput>, also <computeroutput>rawFreeModule</computeroutput>) flavours, plus the Schreyer-induced <computeroutput>IM2_FreeModule_make_schreyer(m)</computeroutput> bound as <computeroutput>rawSchreyerSource</computeroutput>. The combinators bound as <computeroutput>rawDirectSum</computeroutput>, <computeroutput>rawTensor</computeroutput>, <computeroutput>rawDual</computeroutput>, <computeroutput>rawSymmetricPower</computeroutput>, <computeroutput>rawExteriorPower</computeroutput>, and <computeroutput>rawSubmodule</computeroutput> produce derived free modules from existing ones; the accessors <computeroutput><ref refid="freemodule_8h_a0155b380ddfe3c30b0ec590cff658795_1a0155b380ddfe3c30b0ec590cff658795" kindref="member">IM2_FreeModule_ring</ref></computeroutput> (<computeroutput>rawRing</computeroutput>), <computeroutput><ref refid="freemodule_8h_a928ff5ceb166d149d0c03eb7ebd0cce1_1a928ff5ceb166d149d0c03eb7ebd0cce1" kindref="member">IM2_FreeModule_rank</ref></computeroutput> (<computeroutput>rawRank</computeroutput>), <computeroutput><ref refid="freemodule_8h_ad863e2d26329acf6fb844e5df2b8e17b_1ad863e2d26329acf6fb844e5df2b8e17b" kindref="member">IM2_FreeModule_get_degrees</ref></computeroutput> (<computeroutput>rawMultiDegree</computeroutput>), and <computeroutput><ref refid="freemodule_8h_a41d7b8e1ab1ab1c8aa71d57809bce5a9_1a41d7b8e1ab1ab1c8aa71d57809bce5a9" kindref="member">IM2_FreeModule_get_schreyer</ref></computeroutput> (<computeroutput>rawGetSchreyer</computeroutput>) expose the underlying state.</para>
+<para><computeroutput><ref refid="class_free_module" kindref="compound">FreeModule</ref></computeroutput>s are immutable once returned, so every &quot;modify&quot; operation builds a fresh object. The in-file BUGS/TODO block notes two outstanding limitations: the Schreyer orders produced by <computeroutput>sum</computeroutput> / <computeroutput>tensor</computeroutput> / <computeroutput>symm</computeroutput> / <computeroutput>exterior</computeroutput> / <computeroutput>submodule</computeroutput> currently ignore tie-breaker information, and the engine does not intern free modules per ring (a possible future change). Per-function <computeroutput>/* drg: connected ... */</computeroutput> trailers mark the M2-side binding for each C entry point.</para>
+<para><simplesect kind="see"><para><ref refid="freemodule_8cpp" kindref="compound">freemodule.cpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="engine-includes_8hpp" kindref="compound">engine-includes.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>_freemodule_h_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>define<sp/>_freemodule_h_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal">`</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/>*<sp/>trailers<sp/>mark<sp/>the<sp/><ref refid="namespace_m2" kindref="compound">M2</ref>-side<sp/>binding<sp/></highlight><highlight class="keywordflow">for<sp/>each</highlight><highlight class="normal"><sp/>C<sp/>entry<sp/>point.</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/>*</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/>*<sp/>@see<sp/>freemodule.cpp</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/>*<sp/>@see<sp/>engine-includes.hpp</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/>*/</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>include<sp/>&quot;<ref refid="engine-includes_8hpp" kindref="compound">engine-includes.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">//<sp/>TODO:<sp/>fix<sp/>this</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>if<sp/>defined(__cplusplus)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_free_module" kindref="compound">FreeModule</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref>;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_ring" kindref="compound">Ring</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref>;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref>;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="class_ring" kindref="compound">Ring</ref><sp/><ref refid="class_ring" kindref="compound">Ring</ref>;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>if<sp/>defined(__cplusplus)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*<ref refid="freemodule_8h_a0155b380ddfe3c30b0ec590cff658795_1a0155b380ddfe3c30b0ec590cff658795" kindref="member">IM2_FreeModule_ring</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawRing*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="freemodule_8h_a928ff5ceb166d149d0c03eb7ebd0cce1_1a928ff5ceb166d149d0c03eb7ebd0cce1" kindref="member">IM2_FreeModule_rank</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawRank*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal">M2_string<sp/><ref refid="freemodule_8h_ad66e5988b7e67d5feded9ce6239818b8_1ad66e5988b7e67d5feded9ce6239818b8" kindref="member">IM2_FreeModule_to_string</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="freemodule_8h_a09f79045cdb6c4235dfe6fda7e071b20_1a09f79045cdb6c4235dfe6fda7e071b20" kindref="member">rawFreeModuleHash</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>not<sp/>quite<sp/>connected<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="freemodule_8h_abab7672033161a8da8ad872130498dc5_1abab7672033161a8da8ad872130498dc5" kindref="member">IM2_FreeModule_make</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*R,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rank);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawFreeModule*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="freemodule_8h_abf7ca14483cb39bcd62d8c5ce58a959e_1abf7ca14483cb39bcd62d8c5ce58a959e" kindref="member">IM2_FreeModule_make_degs</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*R,</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/>degs);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawFreeModule*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Make<sp/>a<sp/>graded<sp/>free<sp/>module<sp/>over<sp/>R.<sp/><sp/>&apos;degs&apos;<sp/>should<sp/>be<sp/>of<sp/>length</highlight></codeline>
+<codeline lineno="95"><highlight class="comment"><sp/>*<sp/>divisible<sp/>by<sp/>the<sp/>length<sp/>&apos;d&apos;<sp/>of<sp/>a<sp/>degree<sp/>vector,<sp/>and<sp/>the</highlight></codeline>
+<codeline lineno="96"><highlight class="comment"><sp/>*<sp/>i<sp/>th<sp/>degree<sp/>will<sp/>be<sp/>degs[i*d]..degs[i*d+d-1],<sp/>starting<sp/>at</highlight></codeline>
+<codeline lineno="97"><highlight class="comment"><sp/>*<sp/>i<sp/>=<sp/>0.</highlight></codeline>
+<codeline lineno="98"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="freemodule_8h_ade4313686fc113911c0bcd844ef8bcab_1ade4313686fc113911c0bcd844ef8bcab" kindref="member">IM2_FreeModule_make_schreyer</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*m);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawSchreyerSource<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Returns<sp/>G,<sp/>(a<sp/>copy<sp/>of)<sp/>the<sp/>source<sp/>free<sp/>module<sp/>of<sp/>&apos;m&apos;,<sp/>modified<sp/>to</highlight></codeline>
+<codeline lineno="103"><highlight class="comment"><sp/>*<sp/>use<sp/>the<sp/>induced<sp/>order<sp/>via<sp/>m:<sp/>compare<sp/>two<sp/>monomials<sp/>of<sp/>G<sp/>via</highlight></codeline>
+<codeline lineno="104"><highlight class="comment"><sp/>*<sp/>x^A<sp/>e_i<sp/>&gt;<sp/>x^B<sp/>e_j<sp/>iff<sp/>either</highlight></codeline>
+<codeline lineno="105"><highlight class="comment"><sp/>*<sp/>leadmonomial((in<sp/>m)(x^A<sp/>e_i))<sp/>&gt;<sp/>leadmonomial((in<sp/>m)(x^B<sp/>e_j))</highlight></codeline>
+<codeline lineno="106"><highlight class="comment"><sp/>*<sp/>or<sp/>these<sp/>are<sp/>the<sp/>same<sp/>monomial,<sp/>and<sp/>i<sp/>&gt;<sp/>j.</highlight></codeline>
+<codeline lineno="107"><highlight class="comment"><sp/>*<sp/>The<sp/>case<sp/>where<sp/>the<sp/>target<sp/>of<sp/>&apos;m&apos;<sp/>has<sp/>a<sp/>Schreyer<sp/>order<sp/>is</highlight></codeline>
+<codeline lineno="108"><highlight class="comment"><sp/>*<sp/>handled<sp/>efficiently.</highlight></codeline>
+<codeline lineno="109"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/><ref refid="freemodule_8h_ad863e2d26329acf6fb844e5df2b8e17b_1ad863e2d26329acf6fb844e5df2b8e17b" kindref="member">IM2_FreeModule_get_degrees</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawMultiDegree*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" kindref="member">Matrix</ref><sp/>*<ref refid="freemodule_8h_a41d7b8e1ab1ab1c8aa71d57809bce5a9_1a41d7b8e1ab1ab1c8aa71d57809bce5a9" kindref="member">IM2_FreeModule_get_schreyer</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawGetSchreyer*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref><sp/><ref refid="freemodule_8h_a1e019580392f0d193a42577dc1ae9712_1a1e019580392f0d193a42577dc1ae9712" kindref="member">IM2_FreeModule_is_equal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*<ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref>);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>===<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Determines<sp/>if<sp/>F<sp/>and<sp/>G<sp/>are<sp/>the<sp/>same<sp/>graded<sp/>module.<sp/><sp/>If<sp/>one<sp/>has<sp/>a</highlight></codeline>
+<codeline lineno="120"><highlight class="comment"><sp/>*<sp/>Schreyer<sp/>order<sp/>and<sp/>one<sp/>does<sp/>not,<sp/>but<sp/>their<sp/>ranks<sp/>and<sp/>degrees<sp/>are<sp/>the</highlight></codeline>
+<codeline lineno="121"><highlight class="comment"><sp/>*<sp/>same,<sp/>then<sp/>they<sp/>are<sp/>considered<sp/>equal<sp/>by<sp/>this<sp/>routine.</highlight></codeline>
+<codeline lineno="122"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="freemodule_8h_a62e98dbfc03f80da058ab6f1d7a37d26_1a62e98dbfc03f80da058ab6f1d7a37d26" kindref="member">IM2_FreeModule_sum</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*<ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref>);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawDirectSum<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>The<sp/>direct<sp/>sum<sp/>of<sp/>two<sp/>free<sp/>modules<sp/>over<sp/>the<sp/>same<sp/>ring,<sp/>or<sp/>NULL.</highlight></codeline>
+<codeline lineno="128"><highlight class="comment"><sp/>*<sp/>If<sp/>F<sp/>or<sp/>G<sp/>has<sp/>a<sp/>Schreyer<sp/>order,<sp/>then<sp/>so<sp/>does<sp/>their<sp/>direct<sp/>sum</highlight></codeline>
+<codeline lineno="129"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="freemodule_8h_a27e9c183e5e8c60d8c937d0f5f89bf3b_1a27e9c183e5e8c60d8c937d0f5f89bf3b" kindref="member">IM2_FreeModule_tensor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F,</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*<ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref>);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawTensor*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>The<sp/>tensor<sp/>product<sp/>of<sp/>two<sp/>free<sp/>modules<sp/>over<sp/>the<sp/>same<sp/>ring,<sp/>or<sp/>NULL.</highlight></codeline>
+<codeline lineno="135"><highlight class="comment"><sp/>*<sp/>If<sp/>F<sp/>has<sp/>(ordered)<sp/>basis<sp/>{f_1,...,f_r},<sp/>and</highlight></codeline>
+<codeline lineno="136"><highlight class="comment"><sp/>*<sp/>G<sp/>has<sp/>(ordered)<sp/>basis<sp/>{g_1,<sp/>...,<sp/>g_s},<sp/>then</highlight></codeline>
+<codeline lineno="137"><highlight class="comment"><sp/>*<sp/>the<sp/>result<sp/>has<sp/>(ordered)<sp/>basis</highlight></codeline>
+<codeline lineno="138"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>{f_1<sp/>**<sp/>g_1,<sp/>f_1<sp/>**<sp/>g_2,<sp/>...,<sp/>f_1<sp/>**<sp/>g_s,</highlight></codeline>
+<codeline lineno="139"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/>f_2<sp/>**<sp/>g_1,<sp/>f_2<sp/>**<sp/>g_2,<sp/>...,<sp/>f_2<sp/>**<sp/>g_s,</highlight></codeline>
+<codeline lineno="140"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/>...</highlight></codeline>
+<codeline lineno="141"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/>f_r<sp/>**<sp/>g_1,<sp/>...<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>f_r<sp/>**<sp/>g_s}.</highlight></codeline>
+<codeline lineno="142"><highlight class="comment"><sp/>*<sp/><sp/>If<sp/>F<sp/>or<sp/>G<sp/>has<sp/>a<sp/>Schreyer<sp/>order,<sp/>what<sp/>about<sp/>their<sp/>tensor<sp/>product?</highlight></codeline>
+<codeline lineno="143"><highlight class="comment"><sp/>*<sp/><sp/>At<sp/>the<sp/>moment,<sp/>the<sp/>answer<sp/>is<sp/>almost<sp/>yes...</highlight></codeline>
+<codeline lineno="144"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="freemodule_8h_a62edc71c7910e9820a34992f83f5267e_1a62edc71c7910e9820a34992f83f5267e" kindref="member">IM2_FreeModule_dual</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawDual*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Returns<sp/>the<sp/>graded<sp/>dual<sp/>F^*<sp/>of<sp/>F:<sp/>if<sp/>F<sp/>has<sp/>basis<sp/>{f_1,...,f_r},</highlight></codeline>
+<codeline lineno="149"><highlight class="comment"><sp/>*<sp/>with<sp/>degrees<sp/>{d_1,<sp/>...,<sp/>d_r},<sp/>then<sp/>F^*<sp/>has<sp/>rank<sp/>r,<sp/>with</highlight></codeline>
+<codeline lineno="150"><highlight class="comment"><sp/>*<sp/>degrees<sp/>{-d_1,<sp/>...,<sp/>-d_r}.<sp/><sp/>The<sp/>result<sp/>does<sp/>not<sp/>have<sp/>a</highlight></codeline>
+<codeline lineno="151"><highlight class="comment"><sp/>*<sp/>Schreyer<sp/>order<sp/>(even<sp/>if<sp/>F<sp/>does).</highlight></codeline>
+<codeline lineno="152"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*<ref refid="freemodule_8h_a3d9a4afd513459347ce39deed6c96a1c_1a3d9a4afd513459347ce39deed6c96a1c" kindref="member">IM2_FreeModule_symm</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawSymmetricPower*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Returns<sp/>the<sp/>n<sp/>th<sp/>symmetric<sp/>power<sp/>G<sp/>of<sp/>F.</highlight></codeline>
+<codeline lineno="157"><highlight class="comment"><sp/>*<sp/>If<sp/>F<sp/>has<sp/>basis<sp/>{f_1,...,f_r},<sp/>then<sp/>G<sp/>has<sp/>basis</highlight></codeline>
+<codeline lineno="158"><highlight class="comment"><sp/>*<sp/>the<sp/>monomials<sp/>of<sp/>f_1,<sp/>...,<sp/>f_r<sp/>of<sp/>degree<sp/>exactly<sp/>n,<sp/>in</highlight></codeline>
+<codeline lineno="159"><highlight class="comment"><sp/>*<sp/>descending<sp/>lexicographic<sp/>order.</highlight></codeline>
+<codeline lineno="160"><highlight class="comment"><sp/>*<sp/>If<sp/>F<sp/>has<sp/>a<sp/>Schreyer<sp/>order,<sp/>then<sp/>G<sp/>is<sp/>set<sp/>to<sp/>have<sp/>one<sp/>as<sp/>well.</highlight></codeline>
+<codeline lineno="161"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*<ref refid="freemodule_8h_a60fb5f8006e80082cadcb8b8d9c494d1_1a60fb5f8006e80082cadcb8b8d9c494d1" kindref="member">IM2_FreeModule_exterior</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawExteriorPower*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Returns<sp/>the<sp/>n<sp/>th<sp/>exterior<sp/>power<sp/>G<sp/>of<sp/>F.</highlight></codeline>
+<codeline lineno="166"><highlight class="comment"><sp/>*<sp/>If<sp/>F<sp/>has<sp/>basis<sp/>{f_1,...,f_r},<sp/>then<sp/>G<sp/>has<sp/>basis</highlight></codeline>
+<codeline lineno="167"><highlight class="comment"><sp/>*<sp/>the<sp/>squarefree<sp/>monomials<sp/>of<sp/>f_1,<sp/>...,<sp/>f_r<sp/>of<sp/>degree<sp/>exactly<sp/>n,<sp/>in</highlight></codeline>
+<codeline lineno="168"><highlight class="comment"><sp/>*<sp/>descending<sp/>reverse<sp/>lexicographic<sp/>order.</highlight></codeline>
+<codeline lineno="169"><highlight class="comment"><sp/>*<sp/>If<sp/>F<sp/>has<sp/>a<sp/>Schreyer<sp/>order,<sp/>then<sp/>G<sp/>is<sp/>set<sp/>to<sp/>have<sp/>one<sp/>as<sp/>well.</highlight></codeline>
+<codeline lineno="170"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/></highlight><highlight class="comment">/*<sp/>or<sp/>null<sp/>*/</highlight><highlight class="normal"><sp/>*<ref refid="freemodule_8h_a6132d6f253a167d914c807320832e841_1a6132d6f253a167d914c807320832e841" kindref="member">IM2_FreeModule_submodule</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/>selection);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>drg:<sp/>connected<sp/>rawSubmodule*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Returns<sp/>a<sp/>free<sp/>module<sp/>obtained<sp/>by<sp/>choosing<sp/>basis<sp/>elements<sp/>of<sp/>F:</highlight></codeline>
+<codeline lineno="176"><highlight class="comment"><sp/>*<sp/>if<sp/>F<sp/>has<sp/>basis<sp/>{f_0,<sp/>...,<sp/>f_(r-1)}<sp/>with<sp/>degrees<sp/>{d_0,<sp/>..,d_(r-1)},</highlight></codeline>
+<codeline lineno="177"><highlight class="comment"><sp/>*<sp/>and<sp/>selection<sp/>=<sp/>[i_1,<sp/>...,<sp/>i_s],<sp/>where<sp/>0<sp/>&lt;=<sp/>i_j<sp/>&lt;<sp/>r<sp/>for<sp/>all<sp/>j,</highlight></codeline>
+<codeline lineno="178"><highlight class="comment"><sp/>*<sp/>then<sp/>return<sp/>a<sp/>free<sp/>module<sp/>of<sp/>rank<sp/>s,<sp/>having<sp/>degrees</highlight></codeline>
+<codeline lineno="179"><highlight class="comment"><sp/>*<sp/>d_(i_1),<sp/>...,<sp/>d_(i_s).<sp/><sp/>&apos;selection&apos;<sp/>may<sp/>include<sp/>duplicate<sp/>values.</highlight></codeline>
+<codeline lineno="180"><highlight class="comment"><sp/>*<sp/>If<sp/>F<sp/>has<sp/>a<sp/>Schreyer<sp/>order,<sp/>the<sp/>result<sp/>has<sp/>one<sp/>as<sp/>well.</highlight></codeline>
+<codeline lineno="181"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><ref refid="m2-types_8h_a071c143092bff3ecfb25de7581dfba58_1a071c143092bff3ecfb25de7581dfba58" kindref="member">M2_arrayintOrNull</ref><sp/><ref refid="freemodule_8h_a9affbd8fd470e4a6a9460bb99f72ea5b_1a9affbd8fd470e4a6a9460bb99f72ea5b" kindref="member">rawFreeModuleSelectByDegrees</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_free_module" kindref="compound">FreeModule</ref><sp/>*F,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/>lo,</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/>hi);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>If<sp/>F_i<sp/>has<sp/>multi-degree<sp/>&gt;=<sp/>lo,<sp/>AND<sp/>&lt;=<sp/>hi,<sp/>then<sp/>add<sp/>i<sp/>to<sp/>the<sp/>result</highlight></codeline>
+<codeline lineno="187"><highlight class="comment"><sp/><sp/><sp/>IF:<sp/>lo<sp/>has<sp/>length<sp/>0,<sp/>then<sp/>treat<sp/>that<sp/>as<sp/>-infinity<sp/>in<sp/>each<sp/>component.</highlight></codeline>
+<codeline lineno="188"><highlight class="comment"><sp/><sp/><sp/>Same<sp/>with<sp/>hi.</highlight></codeline>
+<codeline lineno="189"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>if<sp/>defined(__cplusplus)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_freemodule_h_<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/interface/freemodule.h"/>
+  </compounddef>
+</doxygen>

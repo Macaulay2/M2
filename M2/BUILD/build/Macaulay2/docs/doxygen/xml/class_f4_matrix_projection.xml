@@ -1,0 +1,1369 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_f4_matrix_projection" kind="class" language="C++" prot="public">
+    <compoundname>F4MatrixProjection</compoundname>
+    <includes refid="_f4_matrix_projection_8hpp" local="no">F4MatrixProjection.hpp</includes>
+    <innerclass refid="struct_f4_matrix_projection_1_1_col_project_to" prot="private">F4MatrixProjection::ColProjectTo</innerclass>
+    <innerclass refid="class_f4_matrix_projection_1_1_top_bottom" prot="public">F4MatrixProjection::TopBottom</innerclass>
+    <innerclass refid="class_f4_matrix_projection_1_1_left_right" prot="public">F4MatrixProjection::LeftRight</innerclass>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_f4_matrix_projection_a15405f432d77d0f46f1e917e57e3b9d5_1a15405f432d77d0f46f1e917e57e3b9d5" prot="public" static="no">
+        <type><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref></type>
+        <definition>typedef PolyRing::Monoid F4MatrixProjection::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>F4MatrixProjection::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="17" column="28" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_projection_a9e2bb040b91ea9928b3bcfe6569f05cf_1a9e2bb040b91ea9928b3bcfe6569f05cf" prot="public" static="no">
+        <type>Monoid::Mono</type>
+        <definition>typedef Monoid::Mono F4MatrixProjection::Mono</definition>
+        <argsstring></argsstring>
+        <name>Mono</name>
+        <qualifiedname>F4MatrixProjection::Mono</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="18" column="24" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_projection_ab0949bc8ae192836f490ddeee8b4bc7f_1ab0949bc8ae192836f490ddeee8b4bc7f" prot="public" static="no">
+        <type>Monoid::MonoRef</type>
+        <definition>typedef Monoid::MonoRef F4MatrixProjection::MonoRef</definition>
+        <argsstring></argsstring>
+        <name>MonoRef</name>
+        <qualifiedname>F4MatrixProjection::MonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="19" column="27" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_projection_a1e606047dd0c3f6c74e3c920f5e6d7bd_1a1e606047dd0c3f6c74e3c920f5e6d7bd" prot="public" static="no">
+        <type>Monoid::ConstMonoRef</type>
+        <definition>typedef Monoid::ConstMonoRef F4MatrixProjection::ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>F4MatrixProjection::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="20" column="32" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_projection_a086bd89a463c6cb4c26f93228ed46460_1a086bd89a463c6cb4c26f93228ed46460" prot="public" static="no">
+        <type>Monoid::MonoPtr</type>
+        <definition>typedef Monoid::MonoPtr F4MatrixProjection::MonoPtr</definition>
+        <argsstring></argsstring>
+        <name>MonoPtr</name>
+        <qualifiedname>F4MatrixProjection::MonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="21" column="27" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_projection_a4ba7080e9ec13f94fdcd30c6183fce50_1a4ba7080e9ec13f94fdcd30c6183fce50" prot="public" static="no">
+        <type>Monoid::ConstMonoPtr</type>
+        <definition>typedef Monoid::ConstMonoPtr F4MatrixProjection::ConstMonoPtr</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoPtr</name>
+        <qualifiedname>F4MatrixProjection::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="22" column="32" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_projection_a733705592efbd030f93b8dc3464be448_1a733705592efbd030f93b8dc3464be448" prot="public" static="no">
+        <type><ref refid="class_sparse_matrix_abc95decca7dd099bbbace0771eab8ce2_1abc95decca7dd099bbbace0771eab8ce2" kindref="member">SparseMatrix::RowIndex</ref></type>
+        <definition>typedef SparseMatrix::RowIndex F4MatrixProjection::RowIndex</definition>
+        <argsstring></argsstring>
+        <name>RowIndex</name>
+        <qualifiedname>F4MatrixProjection::RowIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="24" column="34" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_projection_a8983d34fd4bb612efe578103ea733831_1a8983d34fd4bb612efe578103ea733831" prot="public" static="no">
+        <type><ref refid="class_sparse_matrix_a7c42586fe17c8e6c9231765abaf2e1da_1a7c42586fe17c8e6c9231765abaf2e1da" kindref="member">SparseMatrix::ColIndex</ref></type>
+        <definition>typedef SparseMatrix::ColIndex F4MatrixProjection::ColIndex</definition>
+        <argsstring></argsstring>
+        <name>ColIndex</name>
+        <qualifiedname>F4MatrixProjection::ColIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="25" column="34" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_projection_a477118140673342453c565a822925cef_1a477118140673342453c565a822925cef" prot="public" static="no">
+        <type><ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+        <definition>typedef SparseMatrix::Scalar F4MatrixProjection::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <qualifiedname>F4MatrixProjection::Scalar</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="26" column="32" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_f4_matrix_projection_af892d27873d2d0002b1c5006d2e075a6_1af892d27873d2d0002b1c5006d2e075a6" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_f4_matrix_projection_1_1_col_project_to" kindref="compound">ColProjectTo</ref> &gt;</type>
+        <definition>std::vector&lt;ColProjectTo&gt; F4MatrixProjection::mColProjectTo</definition>
+        <argsstring></argsstring>
+        <name>mColProjectTo</name>
+        <qualifiedname>F4MatrixProjection::mColProjectTo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="55" column="15" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="55" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_projection_a1a1e2a81089108fac94ca5ca4994169c_1a1a1e2a81089108fac94ca5ca4994169c" compoundref="_f4_matrix_projection_8cpp" startline="18" endline="41">addColumn</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a59bc7b314fd3617e601303d8ed81b4a8_1a59bc7b314fd3617e601303d8ed81b4a8" compoundref="_f4_matrix_projection_8cpp" startline="10" endline="16">F4MatrixProjection</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">makeAndClearTwoStep</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_projection_a2a20fa5f959ac2dccb29f8c0df79ac1c_1a2a20fa5f959ac2dccb29f8c0df79ac1c" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_f4_proto_matrix" kindref="compound">F4ProtoMatrix</ref> * &gt;</type>
+        <definition>std::vector&lt;F4ProtoMatrix*&gt; F4MatrixProjection::mMatrices</definition>
+        <argsstring></argsstring>
+        <name>mMatrices</name>
+        <qualifiedname>F4MatrixProjection::mMatrices</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="57" column="15" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_projection_af5ad18b302bb80a8e9be246df2eb2530_1af5ad18b302bb80a8e9be246df2eb2530" compoundref="_f4_matrix_projection_8hpp" startline="30" endline="30">addProtoMatrix</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">makeAndClearTwoStep</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_projection_a228cc0b99f4e92f79a0d11b3fda4632b_1a228cc0b99f4e92f79a0d11b3fda4632b" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_f4_matrix_projection_a4ba7080e9ec13f94fdcd30c6183fce50_1a4ba7080e9ec13f94fdcd30c6183fce50" kindref="member">ConstMonoPtr</ref> &gt;</type>
+        <definition>std::vector&lt;ConstMonoPtr&gt; F4MatrixProjection::mLeftMonomials</definition>
+        <argsstring></argsstring>
+        <name>mLeftMonomials</name>
+        <qualifiedname>F4MatrixProjection::mLeftMonomials</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="58" column="15" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_projection_a1a1e2a81089108fac94ca5ca4994169c_1a1a1e2a81089108fac94ca5ca4994169c" compoundref="_f4_matrix_projection_8cpp" startline="18" endline="41">addColumn</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">makeAndClearTwoStep</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_projection_a9c4d9a193e86f0d99f399dc30259ef1a_1a9c4d9a193e86f0d99f399dc30259ef1a" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_f4_matrix_projection_a4ba7080e9ec13f94fdcd30c6183fce50_1a4ba7080e9ec13f94fdcd30c6183fce50" kindref="member">ConstMonoPtr</ref> &gt;</type>
+        <definition>std::vector&lt;ConstMonoPtr&gt; F4MatrixProjection::mRightMonomials</definition>
+        <argsstring></argsstring>
+        <name>mRightMonomials</name>
+        <qualifiedname>F4MatrixProjection::mRightMonomials</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="59" column="15" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_projection_a1a1e2a81089108fac94ca5ca4994169c_1a1a1e2a81089108fac94ca5ca4994169c" compoundref="_f4_matrix_projection_8cpp" startline="18" endline="41">addColumn</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">makeAndClearTwoStep</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_projection_ac9c3392f894c122f8b3d37128017e345_1ac9c3392f894c122f8b3d37128017e345" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+        <definition>const PolyRing&amp; F4MatrixProjection::mRing</definition>
+        <argsstring></argsstring>
+        <name>mRing</name>
+        <qualifiedname>F4MatrixProjection::mRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="60" column="18" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_projection_a1a1e2a81089108fac94ca5ca4994169c_1a1a1e2a81089108fac94ca5ca4994169c" compoundref="_f4_matrix_projection_8cpp" startline="18" endline="41">addColumn</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a59bc7b314fd3617e601303d8ed81b4a8_1a59bc7b314fd3617e601303d8ed81b4a8" compoundref="_f4_matrix_projection_8cpp" startline="10" endline="16">F4MatrixProjection</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a050397b81dbf29dde8f42f94f298a293_1a050397b81dbf29dde8f42f94f298a293" compoundref="_f4_matrix_projection_8hpp" startline="37" endline="37">ring</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_f4_matrix_projection_a59bc7b314fd3617e601303d8ed81b4a8_1a59bc7b314fd3617e601303d8ed81b4a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MATHICGB_NAMESPACE_BEGIN F4MatrixProjection::F4MatrixProjection</definition>
+        <argsstring>(const PolyRing &amp;ring, ColIndex colCount)</argsstring>
+        <name>F4MatrixProjection</name>
+        <qualifiedname>F4MatrixProjection::F4MatrixProjection</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_projection_a8983d34fd4bb612efe578103ea733831_1a8983d34fd4bb612efe578103ea733831" kindref="member">ColIndex</ref></type>
+          <declname>colCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="28" column="3" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="10" bodyend="16"/>
+        <references refid="class_f4_matrix_projection_af892d27873d2d0002b1c5006d2e075a6_1af892d27873d2d0002b1c5006d2e075a6" compoundref="_f4_matrix_projection_8hpp" startline="55">mColProjectTo</references>
+        <references refid="class_f4_matrix_projection_ac9c3392f894c122f8b3d37128017e345_1ac9c3392f894c122f8b3d37128017e345" compoundref="_f4_matrix_projection_8hpp" startline="60">mRing</references>
+        <references refid="class_f4_matrix_projection_a050397b81dbf29dde8f42f94f298a293_1a050397b81dbf29dde8f42f94f298a293" compoundref="_f4_matrix_projection_8hpp" startline="37" endline="37">ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_af5ad18b302bb80a8e9be246df2eb2530_1af5ad18b302bb80a8e9be246df2eb2530" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixProjection::addProtoMatrix</definition>
+        <argsstring>(F4ProtoMatrix &amp;&amp;matrix)</argsstring>
+        <name>addProtoMatrix</name>
+        <qualifiedname>F4MatrixProjection::addProtoMatrix</qualifiedname>
+        <param>
+          <type><ref refid="class_f4_proto_matrix" kindref="compound">F4ProtoMatrix</ref> &amp;&amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="30" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="30" bodyend="30"/>
+        <references refid="class_f4_matrix_projection_a2a20fa5f959ac2dccb29f8c0df79ac1c_1a2a20fa5f959ac2dccb29f8c0df79ac1c" compoundref="_f4_matrix_projection_8hpp" startline="57">mMatrices</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_a1a1e2a81089108fac94ca5ca4994169c_1a1a1e2a81089108fac94ca5ca4994169c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixProjection::addColumn</definition>
+        <argsstring>(ColIndex index, ConstMonoRef mono, const bool isLeft)</argsstring>
+        <name>addColumn</name>
+        <qualifiedname>F4MatrixProjection::addColumn</qualifiedname>
+        <param>
+          <type><ref refid="class_f4_matrix_projection_a8983d34fd4bb612efe578103ea733831_1a8983d34fd4bb612efe578103ea733831" kindref="member">ColIndex</ref></type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_projection_a1e606047dd0c3f6c74e3c920f5e6d7bd_1a1e606047dd0c3f6c74e3c920f5e6d7bd" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>isLeft</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="33" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="18" bodyend="41"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_projection_af892d27873d2d0002b1c5006d2e075a6_1af892d27873d2d0002b1c5006d2e075a6" compoundref="_f4_matrix_projection_8hpp" startline="55">mColProjectTo</references>
+        <references refid="class_f4_matrix_projection_a228cc0b99f4e92f79a0d11b3fda4632b_1a228cc0b99f4e92f79a0d11b3fda4632b" compoundref="_f4_matrix_projection_8hpp" startline="58">mLeftMonomials</references>
+        <references refid="class_f4_matrix_projection_a9c4d9a193e86f0d99f399dc30259ef1a_1a9c4d9a193e86f0d99f399dc30259ef1a" compoundref="_f4_matrix_projection_8hpp" startline="59">mRightMonomials</references>
+        <references refid="class_f4_matrix_projection_ac9c3392f894c122f8b3d37128017e345_1ac9c3392f894c122f8b3d37128017e345" compoundref="_f4_matrix_projection_8hpp" startline="60">mRing</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_a06c497c49f532e66614400de97a80584_1a06c497c49f532e66614400de97a80584" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref></type>
+        <definition>QuadMatrix F4MatrixProjection::makeAndClear</definition>
+        <argsstring>(const size_t quantum)</argsstring>
+        <name>makeAndClear</name>
+        <qualifiedname>F4MatrixProjection::makeAndClear</qualifiedname>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>quantum</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="35" column="14" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="222" bodyend="227"/>
+        <references refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">makeAndClearOneStep</references>
+        <references refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">makeAndClearTwoStep</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_a050397b81dbf29dde8f42f94f298a293_1a050397b81dbf29dde8f42f94f298a293" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+        <definition>const PolyRing &amp; F4MatrixProjection::ring</definition>
+        <argsstring>() const</argsstring>
+        <name>ring</name>
+        <qualifiedname>F4MatrixProjection::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="37" column="18" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="37" bodyend="37"/>
+        <references refid="class_f4_matrix_projection_ac9c3392f894c122f8b3d37128017e345_1ac9c3392f894c122f8b3d37128017e345" compoundref="_f4_matrix_projection_8hpp" startline="60">mRing</references>
+        <referencedby refid="class_f4_matrix_projection_a59bc7b314fd3617e601303d8ed81b4a8_1a59bc7b314fd3617e601303d8ed81b4a8" compoundref="_f4_matrix_projection_8cpp" startline="10" endline="16">F4MatrixProjection</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_left_right_a40505a5f0883527535f85eb0065a8ee9_1a40505a5f0883527535f85eb0065a8ee9" compoundref="_f4_matrix_projection_8cpp" startline="120" endline="133">F4MatrixProjection::LeftRight::LeftRight</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">makeAndClearTwoStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_1_1_top_bottom_acaf841c3978d51fd679a357002cbe34b_1acaf841c3978d51fd679a357002cbe34b" compoundref="_f4_matrix_projection_8cpp" startline="57" endline="63">F4MatrixProjection::TopBottom&lt; Row &gt;::TopBottom</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref></type>
+        <definition>QuadMatrix F4MatrixProjection::makeAndClearOneStep</definition>
+        <argsstring>(const size_t quantum)</argsstring>
+        <name>makeAndClearOneStep</name>
+        <qualifiedname>F4MatrixProjection::makeAndClearOneStep</qualifiedname>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>quantum</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="40" column="14" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="229" bodyend="279"/>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_a5ea555764d5243ed99cb1eda07cbae41_1a5ea555764d5243ed99cb1eda07cbae41" compoundref="_f4_matrix_projection_8cpp" startline="65" endline="88">F4MatrixProjection::TopBottom&lt; Row &gt;::addRow</references>
+        <references refid="class_f4_matrix_projection_1_1_left_right_a4274ab8ba145c3291295cca4aeebcd12_1a4274ab8ba145c3291295cca4aeebcd12" compoundref="_f4_matrix_projection_8cpp" startline="136" endline="140">F4MatrixProjection::LeftRight::appendRowsPermuted</references>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">QuadMatrix::bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">QuadMatrix::bottomRight</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_aa0df7bcb052bbbdeb476639db1ab6cc5_1aa0df7bcb052bbbdeb476639db1ab6cc5" compoundref="_f4_matrix_projection_8cpp" startline="90" endline="100">F4MatrixProjection::TopBottom&lt; Row &gt;::debugAssertValid</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" compoundref="_quad_matrix_8hpp" startline="57">QuadMatrix::leftColumnMonomials</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_projection_af892d27873d2d0002b1c5006d2e075a6_1af892d27873d2d0002b1c5006d2e075a6" compoundref="_f4_matrix_projection_8hpp" startline="55">mColProjectTo</references>
+        <references refid="class_f4_matrix_projection_a228cc0b99f4e92f79a0d11b3fda4632b_1a228cc0b99f4e92f79a0d11b3fda4632b" compoundref="_f4_matrix_projection_8hpp" startline="58">mLeftMonomials</references>
+        <references refid="class_f4_matrix_projection_a2a20fa5f959ac2dccb29f8c0df79ac1c_1a2a20fa5f959ac2dccb29f8c0df79ac1c" compoundref="_f4_matrix_projection_8hpp" startline="57">mMatrices</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_aa4eea0346e0df179c241e3467f27cdb0_1aa4eea0346e0df179c241e3467f27cdb0" compoundref="_f4_matrix_projection_8cpp" startline="107" endline="107">F4MatrixProjection::TopBottom&lt; Row &gt;::moveBottom</references>
+        <references refid="class_f4_matrix_projection_1_1_left_right_afb9d3295bc13a2f3d850d45e51a7904e_1afb9d3295bc13a2f3d850d45e51a7904e" compoundref="_f4_matrix_projection_8cpp" startline="211" endline="211">F4MatrixProjection::LeftRight::moveLeft</references>
+        <references refid="class_f4_matrix_projection_1_1_left_right_aa9f11d2b01c85d5cb1e7abcc0f58bdef_1aa9f11d2b01c85d5cb1e7abcc0f58bdef" compoundref="_f4_matrix_projection_8cpp" startline="212" endline="212">F4MatrixProjection::LeftRight::moveRight</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_a5471c7975e4ac0aa145f483713e94950_1a5471c7975e4ac0aa145f483713e94950" compoundref="_f4_matrix_projection_8cpp" startline="106" endline="106">F4MatrixProjection::TopBottom&lt; Row &gt;::moveTop</references>
+        <references refid="class_f4_matrix_projection_a9c4d9a193e86f0d99f399dc30259ef1a_1a9c4d9a193e86f0d99f399dc30259ef1a" compoundref="_f4_matrix_projection_8hpp" startline="59">mRightMonomials</references>
+        <references refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" compoundref="_quad_matrix_8hpp" startline="58">QuadMatrix::rightColumnMonomials</references>
+        <references refid="class_f4_matrix_projection_a050397b81dbf29dde8f42f94f298a293_1a050397b81dbf29dde8f42f94f298a293" compoundref="_f4_matrix_projection_8hpp" startline="37" endline="37">ring</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">QuadMatrix::topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">QuadMatrix::topRight</references>
+        <referencedby refid="class_f4_matrix_projection_a06c497c49f532e66614400de97a80584_1a06c497c49f532e66614400de97a80584" compoundref="_f4_matrix_projection_8cpp" startline="222" endline="227">makeAndClear</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref></type>
+        <definition>QuadMatrix F4MatrixProjection::makeAndClearTwoStep</definition>
+        <argsstring>(const size_t quantum)</argsstring>
+        <name>makeAndClearTwoStep</name>
+        <qualifiedname>F4MatrixProjection::makeAndClearTwoStep</qualifiedname>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>quantum</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="41" column="14" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp" bodystart="316" bodyend="356"/>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_a5ea555764d5243ed99cb1eda07cbae41_1a5ea555764d5243ed99cb1eda07cbae41" compoundref="_f4_matrix_projection_8cpp" startline="65" endline="88">F4MatrixProjection::TopBottom&lt; Row &gt;::addRow</references>
+        <references refid="class_f4_matrix_projection_1_1_left_right_a44c702d3f5220abc6b32075b71bc378a_1a44c702d3f5220abc6b32075b71bc378a" compoundref="_f4_matrix_projection_8cpp" startline="142" endline="153">F4MatrixProjection::LeftRight::appendRows</references>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">QuadMatrix::bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">QuadMatrix::bottomRight</references>
+        <references refid="class_f4_matrix_projection_1_1_top_bottom_aa0df7bcb052bbbdeb476639db1ab6cc5_1aa0df7bcb052bbbdeb476639db1ab6cc5" compoundref="_f4_matrix_projection_8cpp" startline="90" endline="100">F4MatrixProjection::TopBottom&lt; Row &gt;::debugAssertValid</references>
+        <references refid="class_sparse_matrix_aa2849ea590ded2a0e13c632c495817d1_1aa2849ea590ded2a0e13c632c495817d1" compoundref="_sparse_matrix_8hpp" startline="115" endline="118">SparseMatrix::entryCountInRow</references>
+        <references refid="class_f4_matrix_projection_1_1_left_right_a91f39404d88039092a01836b6d940c1f_1a91f39404d88039092a01836b6d940c1f" compoundref="_f4_matrix_projection_8cpp" startline="208" endline="208">F4MatrixProjection::LeftRight::left</references>
+        <references refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" compoundref="_quad_matrix_8hpp" startline="57">QuadMatrix::leftColumnMonomials</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_projection_af892d27873d2d0002b1c5006d2e075a6_1af892d27873d2d0002b1c5006d2e075a6" compoundref="_f4_matrix_projection_8hpp" startline="55">mColProjectTo</references>
+        <references refid="class_f4_matrix_projection_a228cc0b99f4e92f79a0d11b3fda4632b_1a228cc0b99f4e92f79a0d11b3fda4632b" compoundref="_f4_matrix_projection_8hpp" startline="58">mLeftMonomials</references>
+        <references refid="class_f4_matrix_projection_a2a20fa5f959ac2dccb29f8c0df79ac1c_1a2a20fa5f959ac2dccb29f8c0df79ac1c" compoundref="_f4_matrix_projection_8hpp" startline="57">mMatrices</references>
+        <references refid="class_f4_matrix_projection_1_1_left_right_afb9d3295bc13a2f3d850d45e51a7904e_1afb9d3295bc13a2f3d850d45e51a7904e" compoundref="_f4_matrix_projection_8cpp" startline="211" endline="211">F4MatrixProjection::LeftRight::moveLeft</references>
+        <references refid="class_f4_matrix_projection_1_1_left_right_aa9f11d2b01c85d5cb1e7abcc0f58bdef_1aa9f11d2b01c85d5cb1e7abcc0f58bdef" compoundref="_f4_matrix_projection_8cpp" startline="212" endline="212">F4MatrixProjection::LeftRight::moveRight</references>
+        <references refid="class_f4_matrix_projection_a9c4d9a193e86f0d99f399dc30259ef1a_1a9c4d9a193e86f0d99f399dc30259ef1a" compoundref="_f4_matrix_projection_8hpp" startline="59">mRightMonomials</references>
+        <references refid="class_f4_matrix_projection_1_1_left_right_a0a6d172bcc90a4f7a5f3db613144746f_1a0a6d172bcc90a4f7a5f3db613144746f" compoundref="_f4_matrix_projection_8cpp" startline="209" endline="209">F4MatrixProjection::LeftRight::right</references>
+        <references refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" compoundref="_quad_matrix_8hpp" startline="58">QuadMatrix::rightColumnMonomials</references>
+        <references refid="class_f4_matrix_projection_a050397b81dbf29dde8f42f94f298a293_1a050397b81dbf29dde8f42f94f298a293" compoundref="_f4_matrix_projection_8hpp" startline="37" endline="37">ring</references>
+        <references refid="class_sparse_matrix_ad9fe5f5a2455d3a86d2f1be34aad933a_1ad9fe5f5a2455d3a86d2f1be34aad933a" compoundref="_sparse_matrix_8hpp" startline="126" endline="130">SparseMatrix::rowBegin</references>
+        <references refid="class_sparse_matrix_ab78c27fba04c0e3a58ac9a6dbce2f4fa_1ab78c27fba04c0e3a58ac9a6dbce2f4fa" compoundref="_sparse_matrix_8hpp" startline="96" endline="96">SparseMatrix::rowCount</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">QuadMatrix::topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">QuadMatrix::topRight</references>
+        <referencedby refid="class_f4_matrix_projection_a06c497c49f532e66614400de97a80584_1a06c497c49f532e66614400de97a80584" compoundref="_f4_matrix_projection_8cpp" startline="222" endline="227">makeAndClear</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="31">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="23" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="63" relation="public-inheritance">
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>F4MatrixProjection</label>
+        <link refid="class_f4_matrix_projection"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mColProjectTo</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mMatrices</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mLeftMonomials</edgelabel>
+          <edgelabel>mRightMonomials</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>F4MatrixProjection::ColProjectTo</label>
+        <link refid="struct_f4_matrix_projection_1_1_col_project_to"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>index</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>isLeft</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>F4ProtoMatrix</label>
+        <link refid="class_f4_proto_matrix"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mIndices</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mScalars</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mRows</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>F4ProtoMatrix::InternalRow</label>
+        <link refid="struct_f4_proto_matrix_1_1_internal_row"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>indicesBegin</edgelabel>
+          <edgelabel>scalarsBegin</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>entryCount</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>scalarsStoredExternally</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>externalScalars</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="65" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="83">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="84" relation="private-inheritance">
+        </childnode>
+        <childnode refid="85" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="85">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="86" relation="public-inheritance">
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="88" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="81" relation="private-inheritance">
+        </childnode>
+        <childnode refid="83" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="84">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="51">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="27" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="25" relation="public-inheritance">
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="87">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="86">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="87" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="33" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>ConstCoefIterator</label>
+      </node>
+      <node id="20">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="21" relation="public-inheritance">
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="22" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="23" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="79" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>ColIndex</label>
+      </node>
+      <node id="23">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>CoefficientType</label>
+      </node>
+      <node id="76">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="27" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ColIndex</label>
+      </node>
+      <node id="7">
+        <label>T</label>
+      </node>
+      <node id="71">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="43">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="5">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="41">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="36" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="43" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="45" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>char</label>
+      </node>
+      <node id="30">
+        <label>const ARing *</label>
+      </node>
+      <node id="13">
+        <label>Scalar</label>
+      </node>
+      <node id="46">
+        <label>const void *</label>
+      </node>
+      <node id="36">
+        <label>double</label>
+      </node>
+      <node id="60">
+        <label>overflow_type *</label>
+      </node>
+      <node id="57">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="59">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="77">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="27">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="35">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="32" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>long</label>
+      </node>
+      <node id="88">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="89" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="90" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="89">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="89" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="90">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="91" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="91">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="67" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="91" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>mon_part</label>
+      </node>
+      <node id="40">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="39">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="37">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="38">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="25">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="32">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="33" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>size_t</label>
+      </node>
+      <node id="68">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>spinLock</label>
+      </node>
+      <node id="66">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="26" relation="public-inheritance">
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="55">
+        <label>std::string</label>
+        <childnode refid="56" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; ColIndex &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; ColIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>std::vector&lt; ConstMonoPtr &gt;</label>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; ConstMonoPtr &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="82">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; F4MatrixProjection::ColProjectTo &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; F4MatrixProjection::ColProjectTo &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>std::vector&lt; F4ProtoMatrix * &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; F4ProtoMatrix * &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>std::vector&lt; F4ProtoMatrix::InternalRow &gt;</label>
+        <childnode refid="15" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; F4ProtoMatrix::InternalRow &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::vector&lt; Scalar &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; Scalar &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="55" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>uint32</label>
+      </node>
+      <node id="69">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" line="15" column="1" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp" bodystart="15" bodyend="61"/>
+    <listofallmembers>
+      <member refid="class_f4_matrix_projection_a1a1e2a81089108fac94ca5ca4994169c_1a1a1e2a81089108fac94ca5ca4994169c" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>addColumn</name></member>
+      <member refid="class_f4_matrix_projection_af5ad18b302bb80a8e9be246df2eb2530_1af5ad18b302bb80a8e9be246df2eb2530" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>addProtoMatrix</name></member>
+      <member refid="class_f4_matrix_projection_a8983d34fd4bb612efe578103ea733831_1a8983d34fd4bb612efe578103ea733831" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>ColIndex</name></member>
+      <member refid="class_f4_matrix_projection_a4ba7080e9ec13f94fdcd30c6183fce50_1a4ba7080e9ec13f94fdcd30c6183fce50" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_f4_matrix_projection_a1e606047dd0c3f6c74e3c920f5e6d7bd_1a1e606047dd0c3f6c74e3c920f5e6d7bd" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>ConstMonoRef</name></member>
+      <member refid="class_f4_matrix_projection_a59bc7b314fd3617e601303d8ed81b4a8_1a59bc7b314fd3617e601303d8ed81b4a8" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>F4MatrixProjection</name></member>
+      <member refid="class_f4_matrix_projection_a06c497c49f532e66614400de97a80584_1a06c497c49f532e66614400de97a80584" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>makeAndClear</name></member>
+      <member refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" prot="private" virt="non-virtual"><scope>F4MatrixProjection</scope><name>makeAndClearOneStep</name></member>
+      <member refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" prot="private" virt="non-virtual"><scope>F4MatrixProjection</scope><name>makeAndClearTwoStep</name></member>
+      <member refid="class_f4_matrix_projection_af892d27873d2d0002b1c5006d2e075a6_1af892d27873d2d0002b1c5006d2e075a6" prot="private" virt="non-virtual"><scope>F4MatrixProjection</scope><name>mColProjectTo</name></member>
+      <member refid="class_f4_matrix_projection_a228cc0b99f4e92f79a0d11b3fda4632b_1a228cc0b99f4e92f79a0d11b3fda4632b" prot="private" virt="non-virtual"><scope>F4MatrixProjection</scope><name>mLeftMonomials</name></member>
+      <member refid="class_f4_matrix_projection_a2a20fa5f959ac2dccb29f8c0df79ac1c_1a2a20fa5f959ac2dccb29f8c0df79ac1c" prot="private" virt="non-virtual"><scope>F4MatrixProjection</scope><name>mMatrices</name></member>
+      <member refid="class_f4_matrix_projection_a9e2bb040b91ea9928b3bcfe6569f05cf_1a9e2bb040b91ea9928b3bcfe6569f05cf" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>Mono</name></member>
+      <member refid="class_f4_matrix_projection_a15405f432d77d0f46f1e917e57e3b9d5_1a15405f432d77d0f46f1e917e57e3b9d5" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>Monoid</name></member>
+      <member refid="class_f4_matrix_projection_a086bd89a463c6cb4c26f93228ed46460_1a086bd89a463c6cb4c26f93228ed46460" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>MonoPtr</name></member>
+      <member refid="class_f4_matrix_projection_ab0949bc8ae192836f490ddeee8b4bc7f_1ab0949bc8ae192836f490ddeee8b4bc7f" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>MonoRef</name></member>
+      <member refid="class_f4_matrix_projection_a9c4d9a193e86f0d99f399dc30259ef1a_1a9c4d9a193e86f0d99f399dc30259ef1a" prot="private" virt="non-virtual"><scope>F4MatrixProjection</scope><name>mRightMonomials</name></member>
+      <member refid="class_f4_matrix_projection_ac9c3392f894c122f8b3d37128017e345_1ac9c3392f894c122f8b3d37128017e345" prot="private" virt="non-virtual"><scope>F4MatrixProjection</scope><name>mRing</name></member>
+      <member refid="class_f4_matrix_projection_a050397b81dbf29dde8f42f94f298a293_1a050397b81dbf29dde8f42f94f298a293" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>ring</name></member>
+      <member refid="class_f4_matrix_projection_a733705592efbd030f93b8dc3464be448_1a733705592efbd030f93b8dc3464be448" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>RowIndex</name></member>
+      <member refid="class_f4_matrix_projection_a477118140673342453c565a822925cef_1a477118140673342453c565a822925cef" prot="public" virt="non-virtual"><scope>F4MatrixProjection</scope><name>Scalar</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

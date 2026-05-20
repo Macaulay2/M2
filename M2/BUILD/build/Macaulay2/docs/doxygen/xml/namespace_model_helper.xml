@@ -1,0 +1,243 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_model_helper" kind="namespace" language="C++">
+    <compoundname>ModelHelper</compoundname>
+    <innerclass refid="class_model_helper_1_1_null_configuration_base" prot="public">ModelHelper::NullConfigurationBase</innerclass>
+    <innerclass refid="struct_model_helper_1_1_on_spans" prot="public">ModelHelper::OnSpans</innerclass>
+    <innerclass refid="struct_model_helper_1_1_use_decrease_top" prot="public">ModelHelper::UseDecreaseTop</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_model_helper_a8ed56c0482156c1167f746f490d377a0_1a8ed56c0482156c1167f746f490d377a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DS</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void ModelHelper::push</definition>
+        <argsstring>(DS &amp;ds, const Value *begin, const Value *end, OnSpans&lt; 0 &gt;)</argsstring>
+        <name>push</name>
+        <qualifiedname>ModelHelper::push</qualifiedname>
+        <param>
+          <type>DS &amp;</type>
+          <declname>ds</declname>
+        </param>
+        <param>
+          <type>const <ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref> *</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const <ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref> *</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_model_helper_1_1_on_spans" kindref="compound">OnSpans</ref>&lt; 0 &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="111" column="15" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="111" bodyend="113" declfile="submodules/mathic/src/pqsim/Model.h" declline="13" declcolumn="15"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <referencedby refid="class_model_adffc7a83fbda6d0ecc662ab1d8aae529_1adffc7a83fbda6d0ecc662ab1d8aae529" compoundref="_model_8h" startline="50" endline="52">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::push</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_model_helper_a7b47e093ebf63f3b53c5c4e9c6671152_1a7b47e093ebf63f3b53c5c4e9c6671152" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DS</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void ModelHelper::push</definition>
+        <argsstring>(DS &amp;ds, const Value *begin, const Value *end, OnSpans&lt; 1 &gt;)</argsstring>
+        <name>push</name>
+        <qualifiedname>ModelHelper::push</qualifiedname>
+        <param>
+          <type>DS &amp;</type>
+          <declname>ds</declname>
+        </param>
+        <param>
+          <type>const <ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref> *</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const <ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref> *</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_model_helper_1_1_on_spans" kindref="compound">OnSpans</ref>&lt; 1 &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="115" column="15" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="115" bodyend="117" declfile="submodules/mathic/src/pqsim/Model.h" declline="15" declcolumn="15"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_model_helper_aa0ab826b2e86bede569d5a0cc0b6d5dd_1aa0ab826b2e86bede569d5a0cc0b6d5dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DS</type>
+          </param>
+          <param>
+            <type><ref refid="classbool" kindref="compound">bool</ref></type>
+            <declname>DT</declname>
+            <defname>DT</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref></type>
+        <definition>Value ModelHelper::pop</definition>
+        <argsstring>(DS &amp;ds, OnSpans&lt; 0 &gt;, UseDecreaseTop&lt; DT &gt;)</argsstring>
+        <name>pop</name>
+        <qualifiedname>ModelHelper::pop</qualifiedname>
+        <param>
+          <type>DS &amp;</type>
+          <declname>ds</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_model_helper_1_1_on_spans" kindref="compound">OnSpans</ref>&lt; 0 &gt;</type>
+        </param>
+        <param>
+          <type><ref refid="struct_model_helper_1_1_use_decrease_top" kindref="compound">UseDecreaseTop</ref>&lt; DT &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="120" column="16" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="120" bodyend="126" declfile="submodules/mathic/src/pqsim/Model.h" declline="17" declcolumn="16"/>
+        <referencedby refid="class_model_a7384b2cd71eb2823eb18e2b884c50e22_1a7384b2cd71eb2823eb18e2b884c50e22" compoundref="_model_8h" startline="54" endline="58">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::pop</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_model_helper_a81a9c03939250d22cf56446daeaef17a_1a81a9c03939250d22cf56446daeaef17a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DS</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref></type>
+        <definition>Value ModelHelper::pop</definition>
+        <argsstring>(DS &amp;ds, OnSpans&lt; 1 &gt;, UseDecreaseTop&lt; 0 &gt;)</argsstring>
+        <name>pop</name>
+        <qualifiedname>ModelHelper::pop</qualifiedname>
+        <param>
+          <type>DS &amp;</type>
+          <declname>ds</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_model_helper_1_1_on_spans" kindref="compound">OnSpans</ref>&lt; 1 &gt;</type>
+        </param>
+        <param>
+          <type><ref refid="struct_model_helper_1_1_use_decrease_top" kindref="compound">UseDecreaseTop</ref>&lt; 0 &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="129" column="16" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="129" bodyend="155" declfile="submodules/mathic/src/pqsim/Model.h" declline="20" declcolumn="16"/>
+        <references refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" compoundref="mathic_2src_2divsim_2stdinc_8h" startline="53">ASSERT</references>
+        <references refid="class_item_ab41b5981b1f328c4ffb56ee7c04229f2_1ab41b5981b1f328c4ffb56ee7c04229f2" compoundref="_item_8h" startline="67" endline="69">Item::atEnd</references>
+        <references refid="class_item_ae499083cb99d1ef73385e17d0b1d23b4_1ae499083cb99d1ef73385e17d0b1d23b4" compoundref="_item_8h" startline="76" endline="83">Item::toNext</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_model_helper_a28d4ae42197f8d87705747f7998564e1_1a28d4ae42197f8d87705747f7998564e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DS</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref></type>
+        <definition>Value ModelHelper::pop</definition>
+        <argsstring>(DS &amp;ds, OnSpans&lt; 1 &gt;, UseDecreaseTop&lt; 1 &gt;)</argsstring>
+        <name>pop</name>
+        <qualifiedname>ModelHelper::pop</qualifiedname>
+        <param>
+          <type>DS &amp;</type>
+          <declname>ds</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_model_helper_1_1_on_spans" kindref="compound">OnSpans</ref>&lt; 1 &gt;</type>
+        </param>
+        <param>
+          <type><ref refid="struct_model_helper_1_1_use_decrease_top" kindref="compound">UseDecreaseTop</ref>&lt; 1 &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="158" column="16" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="158" bodyend="186" declfile="submodules/mathic/src/pqsim/Model.h" declline="22" declcolumn="16"/>
+        <references refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" compoundref="mathic_2src_2divsim_2stdinc_8h" startline="53">ASSERT</references>
+        <references refid="class_item_ab41b5981b1f328c4ffb56ee7c04229f2_1ab41b5981b1f328c4ffb56ee7c04229f2" compoundref="_item_8h" startline="67" endline="69">Item::atEnd</references>
+        <references refid="class_item_ae499083cb99d1ef73385e17d0b1d23b4_1ae499083cb99d1ef73385e17d0b1d23b4" compoundref="_item_8h" startline="76" endline="83">Item::toNext</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_model_helper_aae4ab6fcef2dbcf710154807d1cb8c96_1aae4ab6fcef2dbcf710154807d1cb8c96" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref></type>
+        <definition>Value ModelHelper::deduplicate</definition>
+        <argsstring>(std::vector&lt; Value &gt; &amp;pending, const Value &amp;a, const Value &amp;b)</argsstring>
+        <name>deduplicate</name>
+        <qualifiedname>ModelHelper::deduplicate</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref> &gt; &amp;</type>
+          <declname>pending</declname>
+        </param>
+        <param>
+          <type>const <ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="_item_8h_a02a81e4a7edf0b9517acd27d717cb828_1a02a81e4a7edf0b9517acd27d717cb828" kindref="member">Value</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="188" column="16" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="189" bodyend="191" declfile="submodules/mathic/src/pqsim/Model.h" declline="24" declcolumn="16"/>
+        <referencedby refid="class_model_1_1_configuration_a7619b0354ce5671fedb35068603d86b4_1a7619b0354ce5671fedb35068603d86b4" compoundref="_model_8h" startline="91" endline="94">Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration::deduplicate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_model_helper_ada66a8381b3a22586f3791ca16b1e513_1ada66a8381b3a22586f3791ca16b1e513" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_item" kindref="compound">Item</ref></type>
+        <definition>Item ModelHelper::deduplicate</definition>
+        <argsstring>(std::vector&lt; Item &gt; &amp;pending, const Item &amp;a, const Item &amp;b)</argsstring>
+        <name>deduplicate</name>
+        <qualifiedname>ModelHelper::deduplicate</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="class_item" kindref="compound">Item</ref> &gt; &amp;</type>
+          <declname>pending</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_item" kindref="compound">Item</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_item" kindref="compound">Item</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/pqsim/Model.h" line="192" column="15" bodyfile="submodules/mathic/src/pqsim/Model.h" bodystart="193" bodyend="199" declfile="submodules/mathic/src/pqsim/Model.h" declline="26" declcolumn="15"/>
+        <references refid="class_item_ab41b5981b1f328c4ffb56ee7c04229f2_1ab41b5981b1f328c4ffb56ee7c04229f2" compoundref="_item_8h" startline="67" endline="69">Item::atEnd</references>
+        <references refid="class_item_ae499083cb99d1ef73385e17d0b1d23b4_1ae499083cb99d1ef73385e17d0b1d23b4" compoundref="_item_8h" startline="76" endline="83">Item::toNext</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/pqsim/Model.h" line="7" column="1"/>
+  </compounddef>
+</doxygen>

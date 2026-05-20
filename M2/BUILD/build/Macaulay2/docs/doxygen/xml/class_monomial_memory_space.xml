@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monomial_memory_space" kind="class" language="C++" prot="public">
+    <compoundname>MonomialMemorySpace</compoundname>
+    <includes refid="monomial-sets_8hpp" local="no">monomial-sets.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_monomial_memory_space_a68fb0864499c83fe5e6da347826d695d_1a68fb0864499c83fe5e6da347826d695d" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t MonomialMemorySpace::mCount</definition>
+        <argsstring></argsstring>
+        <name>mCount</name>
+        <qualifiedname>MonomialMemorySpace::mCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="108" column="10" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="108" bodyend="-1"/>
+        <referencedby refid="class_monomial_memory_space_a18fb83f3bf2263ab3ebd6de0ce08cb56_1a18fb83f3bf2263ab3ebd6de0ce08cb56" compoundref="monomial-sets_8hpp" startline="84" endline="84">alloc</referencedby>
+        <referencedby refid="class_monomial_memory_space_a9324f4cfbfc28181bf33b101a326d6ab_1a9324f4cfbfc28181bf33b101a326d6ab" compoundref="monomial-sets_8hpp" startline="81" endline="81">MonomialMemorySpace</referencedby>
+        <referencedby refid="class_monomial_memory_space_ab3ba4d3a536186667fbb01c243b301e2_1ab3ba4d3a536186667fbb01c243b301e2" compoundref="monomial-sets_8hpp" startline="91" endline="91">popLastAlloc</referencedby>
+        <referencedby refid="class_monomial_memory_space_a66040895076fb7e1e06fb85300597193_1a66040895076fb7e1e06fb85300597193" compoundref="monomial-sets_8hpp" startline="102" endline="102">size</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_memory_space_aabdd8b65c6364a5a8c0a6caa7562f7eb_1aabdd8b65c6364a5a8c0a6caa7562f7eb" prot="private" static="no" mutable="no">
+        <type><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref></type>
+        <definition>memt::Arena MonomialMemorySpace::mArena</definition>
+        <argsstring></argsstring>
+        <name>mArena</name>
+        <qualifiedname>MonomialMemorySpace::mArena</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="109" column="15" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="109" bodyend="-1"/>
+        <referencedby refid="class_monomial_memory_space_a18fb83f3bf2263ab3ebd6de0ce08cb56_1a18fb83f3bf2263ab3ebd6de0ce08cb56" compoundref="monomial-sets_8hpp" startline="84" endline="84">alloc</referencedby>
+        <referencedby refid="class_monomial_memory_space_aee5cf1d291edd4a7ce1ff315b598585d_1aee5cf1d291edd4a7ce1ff315b598585d" compoundref="monomial-sets_8hpp" startline="104" endline="104">freeAllAllocs</referencedby>
+        <referencedby refid="class_monomial_memory_space_a0ad272aa353399ef786ba2054ad0ab80_1a0ad272aa353399ef786ba2054ad0ab80" compoundref="monomial-sets_8hpp" startline="106" endline="106">freeAllAllocsAndBackingMemory</referencedby>
+        <referencedby refid="class_monomial_memory_space_ab3ba4d3a536186667fbb01c243b301e2_1ab3ba4d3a536186667fbb01c243b301e2" compoundref="monomial-sets_8hpp" startline="91" endline="91">popLastAlloc</referencedby>
+        <referencedby refid="class_monomial_memory_space_a7caac63a4c3d9bdb21ff4e07acd2c1e4_1a7caac63a4c3d9bdb21ff4e07acd2c1e4" compoundref="monomial-sets_8hpp" startline="100" endline="100">shrinkLastAlloc</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_monomial_memory_space_a9324f4cfbfc28181bf33b101a326d6ab_1a9324f4cfbfc28181bf33b101a326d6ab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonomialMemorySpace::MonomialMemorySpace</definition>
+        <argsstring>()</argsstring>
+        <name>MonomialMemorySpace</name>
+        <qualifiedname>MonomialMemorySpace::MonomialMemorySpace</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="81" column="3" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="81" bodyend="81"/>
+        <references refid="class_monomial_memory_space_a68fb0864499c83fe5e6da347826d695d_1a68fb0864499c83fe5e6da347826d695d" compoundref="monomial-sets_8hpp" startline="108">mCount</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_memory_space_a18fb83f3bf2263ab3ebd6de0ce08cb56_1a18fb83f3bf2263ab3ebd6de0ce08cb56" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classint" kindref="compound">int</ref> *, <ref refid="classint" kindref="compound">int</ref> * &gt;</type>
+        <definition>std::pair&lt; int *, int * &gt; MonomialMemorySpace::alloc</definition>
+        <argsstring>(int size)</argsstring>
+        <name>alloc</name>
+        <qualifiedname>MonomialMemorySpace::alloc</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="84" column="13" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="84" bodyend="84"/>
+        <references refid="class_monomial_memory_space_aabdd8b65c6364a5a8c0a6caa7562f7eb_1aabdd8b65c6364a5a8c0a6caa7562f7eb" compoundref="monomial-sets_8hpp" startline="109">mArena</references>
+        <references refid="class_monomial_memory_space_a68fb0864499c83fe5e6da347826d695d_1a68fb0864499c83fe5e6da347826d695d" compoundref="monomial-sets_8hpp" startline="108">mCount</references>
+        <references refid="class_monomial_memory_space_a66040895076fb7e1e06fb85300597193_1a66040895076fb7e1e06fb85300597193" compoundref="monomial-sets_8hpp" startline="102" endline="102">size</references>
+        <referencedby refid="class_monomial_memory_space_a99f8fd5c02f8b470085f401e46a5f2eb_1a99f8fd5c02f8b470085f401e46a5f2eb" compoundref="monomial-sets_8hpp" startline="86" endline="86">allocate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_memory_space_a99f8fd5c02f8b470085f401e46a5f2eb_1a99f8fd5c02f8b470085f401e46a5f2eb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int * MonomialMemorySpace::allocate</definition>
+        <argsstring>(int size)</argsstring>
+        <name>allocate</name>
+        <qualifiedname>MonomialMemorySpace::allocate</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="86" column="7" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="86" bodyend="86"/>
+        <references refid="class_monomial_memory_space_a18fb83f3bf2263ab3ebd6de0ce08cb56_1a18fb83f3bf2263ab3ebd6de0ce08cb56" compoundref="monomial-sets_8hpp" startline="84" endline="84">alloc</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_monomial_memory_space_a66040895076fb7e1e06fb85300597193_1a66040895076fb7e1e06fb85300597193" compoundref="monomial-sets_8hpp" startline="102" endline="102">size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_memory_space_ab3ba4d3a536186667fbb01c243b301e2_1ab3ba4d3a536186667fbb01c243b301e2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialMemorySpace::popLastAlloc</definition>
+        <argsstring>(int *m)</argsstring>
+        <name>popLastAlloc</name>
+        <qualifiedname>MonomialMemorySpace::popLastAlloc</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="91" column="8" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="91" bodyend="91"/>
+        <references refid="class_monomial_memory_space_aabdd8b65c6364a5a8c0a6caa7562f7eb_1aabdd8b65c6364a5a8c0a6caa7562f7eb" compoundref="monomial-sets_8hpp" startline="109">mArena</references>
+        <references refid="class_monomial_memory_space_a68fb0864499c83fe5e6da347826d695d_1a68fb0864499c83fe5e6da347826d695d" compoundref="monomial-sets_8hpp" startline="108">mCount</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_memory_space_a7caac63a4c3d9bdb21ff4e07acd2c1e4_1a7caac63a4c3d9bdb21ff4e07acd2c1e4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialMemorySpace::shrinkLastAlloc</definition>
+        <argsstring>(int *m)</argsstring>
+        <name>shrinkLastAlloc</name>
+        <qualifiedname>MonomialMemorySpace::shrinkLastAlloc</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="100" column="8" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="100" bodyend="100"/>
+        <references refid="class_monomial_memory_space_aabdd8b65c6364a5a8c0a6caa7562f7eb_1aabdd8b65c6364a5a8c0a6caa7562f7eb" compoundref="monomial-sets_8hpp" startline="109">mArena</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_memory_space_a66040895076fb7e1e06fb85300597193_1a66040895076fb7e1e06fb85300597193" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t MonomialMemorySpace::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>MonomialMemorySpace::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="102" column="10" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="102" bodyend="102"/>
+        <references refid="class_monomial_memory_space_a68fb0864499c83fe5e6da347826d695d_1a68fb0864499c83fe5e6da347826d695d" compoundref="monomial-sets_8hpp" startline="108">mCount</references>
+        <referencedby refid="class_monomial_memory_space_a18fb83f3bf2263ab3ebd6de0ce08cb56_1a18fb83f3bf2263ab3ebd6de0ce08cb56" compoundref="monomial-sets_8hpp" startline="84" endline="84">alloc</referencedby>
+        <referencedby refid="class_monomial_memory_space_a99f8fd5c02f8b470085f401e46a5f2eb_1a99f8fd5c02f8b470085f401e46a5f2eb" compoundref="monomial-sets_8hpp" startline="86" endline="86">allocate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_memory_space_aee5cf1d291edd4a7ce1ff315b598585d_1aee5cf1d291edd4a7ce1ff315b598585d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialMemorySpace::freeAllAllocs</definition>
+        <argsstring>()</argsstring>
+        <name>freeAllAllocs</name>
+        <qualifiedname>MonomialMemorySpace::freeAllAllocs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="104" column="8" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="104" bodyend="104"/>
+        <references refid="class_monomial_memory_space_aabdd8b65c6364a5a8c0a6caa7562f7eb_1aabdd8b65c6364a5a8c0a6caa7562f7eb" compoundref="monomial-sets_8hpp" startline="109">mArena</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_memory_space_a0ad272aa353399ef786ba2054ad0ab80_1a0ad272aa353399ef786ba2054ad0ab80" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialMemorySpace::freeAllAllocsAndBackingMemory</definition>
+        <argsstring>()</argsstring>
+        <name>freeAllAllocsAndBackingMemory</name>
+        <qualifiedname>MonomialMemorySpace::freeAllAllocsAndBackingMemory</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="106" column="8" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="106" bodyend="106"/>
+        <references refid="class_monomial_memory_space_aabdd8b65c6364a5a8c0a6caa7562f7eb_1aabdd8b65c6364a5a8c0a6caa7562f7eb" compoundref="monomial-sets_8hpp" startline="109">mArena</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Bump-pointer arena for monomial storage, backed by a <computeroutput><ref refid="classmemt_1_1_arena" kindref="compound">memt::Arena</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Hands out contiguous <computeroutput><ref refid="classint" kindref="compound">int</ref></computeroutput> ranges via <computeroutput>alloc(size)</computeroutput> (returns <computeroutput>[<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>, <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)</computeroutput>). Supports LIFO <computeroutput><ref refid="class_monomial_memory_space_ab3ba4d3a536186667fbb01c243b301e2_1ab3ba4d3a536186667fbb01c243b301e2" kindref="member">popLastAlloc</ref></computeroutput> and <computeroutput><ref refid="class_monomial_memory_space_a7caac63a4c3d9bdb21ff4e07acd2c1e4_1a7caac63a4c3d9bdb21ff4e07acd2c1e4" kindref="member">shrinkLastAlloc</ref></computeroutput> so a monomial can be allocated at its maximum length, written in place, then trimmed <mdash/> the pattern the variable-size <computeroutput>Collection</computeroutput> classes use for intern-or-pop. The whole arena is reset with <computeroutput><ref refid="class_monomial_memory_space_aee5cf1d291edd4a7ce1ff315b598585d_1aee5cf1d291edd4a7ce1ff315b598585d" kindref="member">freeAllAllocs</ref></computeroutput> or released to the OS with <computeroutput><ref refid="class_monomial_memory_space_a0ad272aa353399ef786ba2054ad0ab80_1a0ad272aa353399ef786ba2054ad0ab80" kindref="member">freeAllAllocsAndBackingMemory</ref></computeroutput>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>MonomialMemorySpace</label>
+        <link refid="class_monomial_memory_space"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mCount</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>char</label>
+      </node>
+      <node id="3">
+        <label>memt::Arena</label>
+        <link refid="classmemt_1_1_arena"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_scratchArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>size_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/monomial-sets.hpp" line="78" column="1" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="79" bodyend="110"/>
+    <listofallmembers>
+      <member refid="class_monomial_memory_space_a18fb83f3bf2263ab3ebd6de0ce08cb56_1a18fb83f3bf2263ab3ebd6de0ce08cb56" prot="public" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>alloc</name></member>
+      <member refid="class_monomial_memory_space_a99f8fd5c02f8b470085f401e46a5f2eb_1a99f8fd5c02f8b470085f401e46a5f2eb" prot="public" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>allocate</name></member>
+      <member refid="class_monomial_memory_space_aee5cf1d291edd4a7ce1ff315b598585d_1aee5cf1d291edd4a7ce1ff315b598585d" prot="public" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>freeAllAllocs</name></member>
+      <member refid="class_monomial_memory_space_a0ad272aa353399ef786ba2054ad0ab80_1a0ad272aa353399ef786ba2054ad0ab80" prot="public" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>freeAllAllocsAndBackingMemory</name></member>
+      <member refid="class_monomial_memory_space_aabdd8b65c6364a5a8c0a6caa7562f7eb_1aabdd8b65c6364a5a8c0a6caa7562f7eb" prot="private" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>mArena</name></member>
+      <member refid="class_monomial_memory_space_a68fb0864499c83fe5e6da347826d695d_1a68fb0864499c83fe5e6da347826d695d" prot="private" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>mCount</name></member>
+      <member refid="class_monomial_memory_space_a9324f4cfbfc28181bf33b101a326d6ab_1a9324f4cfbfc28181bf33b101a326d6ab" prot="public" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>MonomialMemorySpace</name></member>
+      <member refid="class_monomial_memory_space_ab3ba4d3a536186667fbb01c243b301e2_1ab3ba4d3a536186667fbb01c243b301e2" prot="public" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>popLastAlloc</name></member>
+      <member refid="class_monomial_memory_space_a7caac63a4c3d9bdb21ff4e07acd2c1e4_1a7caac63a4c3d9bdb21ff4e07acd2c1e4" prot="public" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>shrinkLastAlloc</name></member>
+      <member refid="class_monomial_memory_space_a66040895076fb7e1e06fb85300597193_1a66040895076fb7e1e06fb85300597193" prot="public" virt="non-virtual"><scope>MonomialMemorySpace</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

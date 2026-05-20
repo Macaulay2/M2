@@ -1,0 +1,2427 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m2_1_1_a_ring_g_f_flint" kind="class" language="C++" prot="public">
+    <compoundname>M2::ARingGFFlint</compoundname>
+    <basecompoundref refid="class_m2_1_1_ring_interface" prot="public" virt="non-virtual">M2::RingInterface</basecompoundref>
+    <includes refid="aring-gf-flint_8hpp" local="no">aring-gf-flint.hpp</includes>
+    <innerclass refid="class_m2_1_1_a_ring_g_f_flint_1_1_element" prot="public">M2::ARingGFFlint::Element</innerclass>
+    <innerclass refid="class_m2_1_1_a_ring_g_f_flint_1_1_element_array" prot="public">M2::ARingGFFlint::ElementArray</innerclass>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" prot="public" static="no">
+        <type>fq_zech_struct</type>
+        <definition>typedef fq_zech_struct M2::ARingGFFlint::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>M2::ARingGFFlint::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="89" column="26" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_m2_1_1_a_ring_g_f_flint_a11023f1ae2a4a61caa47fbbe1fd7d27e_1a11023f1ae2a4a61caa47fbbe1fd7d27e" prot="public" static="no">
+        <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref></type>
+        <definition>typedef ElementType M2::ARingGFFlint::elem</definition>
+        <argsstring></argsstring>
+        <name>elem</name>
+        <qualifiedname>M2::ARingGFFlint::elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="90" column="23" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_m2_1_1_a_ring_g_f_flint_a4922336e4584a7357cfd0c056e84a5c3_1a4922336e4584a7357cfd0c056e84a5c3" prot="public" static="no">
+        <type>std::vector&lt; <ref refid="class_m2_1_1_a_ring_g_f_flint_a11023f1ae2a4a61caa47fbbe1fd7d27e_1a11023f1ae2a4a61caa47fbbe1fd7d27e" kindref="member">elem</ref> &gt;</type>
+        <definition>typedef std::vector&lt;elem&gt; M2::ARingGFFlint::ElementContainerType</definition>
+        <argsstring></argsstring>
+        <name>ElementContainerType</name>
+        <qualifiedname>M2::ARingGFFlint::ElementContainerType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="91" column="23" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="91" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_aa8115e0c2e5c97fd4289c2bc230d4b82_1aa8115e0c2e5c97fd4289c2bc230d4b82" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="group__rings_ga7579b18152595d75b0bce712fbd605df_1ga7579b18152595d75b0bce712fbd605df" kindref="member">RingID</ref></type>
+        <definition>const RingID M2::ARingGFFlint::ringID</definition>
+        <argsstring></argsstring>
+        <name>ringID</name>
+        <qualifiedname>M2::ARingGFFlint::ringID</qualifiedname>
+        <initializer>= <ref refid="group__rings_ga7579b18152595d75b0bce712fbd605df_1gga7579b18152595d75b0bce712fbd605dfa5f5da4f778a4e97318806b3ae28b422e" kindref="member">ring_GFFlintZech</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="88" column="23" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="88" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" prot="private" static="no" mutable="no">
+        <type>fq_zech_ctx_t</type>
+        <definition>fq_zech_ctx_t M2::ARingGFFlint::mContext</definition>
+        <argsstring></argsstring>
+        <name>mContext</name>
+        <qualifiedname>M2::ARingGFFlint::mContext</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="167" column="17" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="167" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a59ecaa23a86c68bbe809da2012dc91d5_1a59ecaa23a86c68bbe809da2012dc91d5" compoundref="aring-gf-flint_8hpp" startline="285" endline="291">add</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a475b55f8c818401260d34d9f00adb6d1_1a475b55f8c818401260d34d9f00adb6d1" compoundref="aring-gf-flint_8hpp" startline="232" endline="232">clear</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a3c93274cd315b52402c64d3290f70b25_1a3c93274cd315b52402c64d3290f70b25" compoundref="aring-gf-flint_8hpp" startline="220" endline="223">copy</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1ceab4fa70151e21e58784d52e194c5a_1a1ceab4fa70151e21e58784d52e194c5a" compoundref="aring-gf-flint_8hpp" startline="318" endline="345">divide</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a01c3213a871e48143e6f57dcf4357b34_1a01c3213a871e48143e6f57dcf4357b34" compoundref="aring-gf-flint_8hpp" startline="158" endline="158">flintContext</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_aea2b195ed2799de13be6111e0c188a9b_1aea2b195ed2799de13be6111e0c188a9b" compoundref="aring-gf-flint_8cpp" startline="86" endline="124">fromSmallIntegerCoefficients</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a049bdfe21c242433db12c30cef4e23fe_1a049bdfe21c242433db12c30cef4e23fe" compoundref="aring-gf-flint_8cpp" startline="126" endline="140">getGenerator</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a084dee1ed245efa65a759bfcd8d626f3_1a084dee1ed245efa65a759bfcd8d626f3" compoundref="aring-gf-flint_8cpp" startline="73" endline="84">getSmallIntegerCoefficients</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a23c03802ec3bbf4f7fd3592f87f3c6e2_1a23c03802ec3bbf4f7fd3592f87f3c6e2" compoundref="aring-gf-flint_8hpp" startline="224" endline="224">init</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_af5fba8d049dc15cf24dd83fe8dd7963b_1af5fba8d049dc15cf24dd83fe8dd7963b" compoundref="aring-gf-flint_8hpp" startline="278" endline="283">invert</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_af246717b24f3d24c9168607ad693f2b2_1af246717b24f3d24c9168607ad693f2b2" compoundref="aring-gf-flint_8hpp" startline="213" endline="216">is_equal</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_aa9c20b0e97fd7ef5c8766ec2d98bac48_1aa9c20b0e97fd7ef5c8766ec2d98bac48" compoundref="aring-gf-flint_8hpp" startline="209" endline="212">is_zero</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a3742c5719f5779dce1cd054094a352e6_1a3742c5719f5779dce1cd054094a352e6" compoundref="aring-gf-flint_8hpp" startline="311" endline="316">mult</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1ddc03070c64789ce7bc821a62279e0c_1a1ddc03070c64789ce7bc821a62279e0c" compoundref="aring-gf-flint_8hpp" startline="273" endline="276">negate</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_acade29661c4db2ee37409796188b3cdc_1acade29661c4db2ee37409796188b3cdc" compoundref="aring-gf-flint_8hpp" startline="347" endline="356">power</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_ac207f77127b9e3addbc3d5006e96402e_1ac207f77127b9e3addbc3d5006e96402e" compoundref="aring-gf-flint_8hpp" startline="358" endline="374">power_mpz</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_ada9a5a6e57de69ecbf3b82acdf6ffab9_1ada9a5a6e57de69ecbf3b82acdf6ffab9" compoundref="aring-gf-flint_8hpp" startline="233" endline="238">set_from_long</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a918d9d5c46f0fdd49115e7aed8d31374_1a918d9d5c46f0fdd49115e7aed8d31374" compoundref="aring-gf-flint_8hpp" startline="231" endline="231">set_zero</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_aedb6cab6fa4e1d6621a78818869377e9_1aedb6cab6fa4e1d6621a78818869377e9" compoundref="aring-gf-flint_8hpp" startline="293" endline="298">subtract</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_adeba120bcc1e84f062185c0c7e7df812_1adeba120bcc1e84f062185c0c7e7df812" compoundref="aring-gf-flint_8hpp" startline="376" endline="379">swap</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1c2c57610254cec0377e89511265a04d_1a1c2c57610254cec0377e89511265a04d" compoundref="aring-gf-flint_8cpp" startline="62" endline="71">~ARingGFFlint</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_a6c344c1729dfbd7ecff52d547d5c33fe_1a6c344c1729dfbd7ecff52d547d5c33fe" prot="private" static="no" mutable="no">
+        <type>fq_nmod_ctx_t</type>
+        <definition>fq_nmod_ctx_t M2::ARingGFFlint::mBigContext</definition>
+        <argsstring></argsstring>
+        <name>mBigContext</name>
+        <qualifiedname>M2::ARingGFFlint::mBigContext</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="168" column="17" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="168" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_aea2b195ed2799de13be6111e0c188a9b_1aea2b195ed2799de13be6111e0c188a9b" compoundref="aring-gf-flint_8cpp" startline="86" endline="124">fromSmallIntegerCoefficients</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a084dee1ed245efa65a759bfcd8d626f3_1a084dee1ed245efa65a759bfcd8d626f3" compoundref="aring-gf-flint_8cpp" startline="73" endline="84">getSmallIntegerCoefficients</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1c2c57610254cec0377e89511265a04d_1a1c2c57610254cec0377e89511265a04d" compoundref="aring-gf-flint_8cpp" startline="62" endline="71">~ARingGFFlint</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_aedb91a1d1a7ad0bc1c939295778d323d_1aedb91a1d1a7ad0bc1c939295778d323d" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> &amp;</type>
+        <definition>const PolynomialRing&amp; M2::ARingGFFlint::mOriginalRing</definition>
+        <argsstring></argsstring>
+        <name>mOriginalRing</name>
+        <qualifiedname>M2::ARingGFFlint::mOriginalRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="170" column="24" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="170" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_ad9efad39e91d10cdc3bde0c0c0040e60_1ad9efad39e91d10cdc3bde0c0c0040e60" compoundref="aring-gf-flint_8hpp" startline="161" endline="161">originalRing</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_ac1c0c4d6bcf9e85785919a5d62449499_1ac1c0c4d6bcf9e85785919a5d62449499" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>const RingElement* M2::ARingGFFlint::mPrimitiveElement</definition>
+        <argsstring></argsstring>
+        <name>mPrimitiveElement</name>
+        <qualifiedname>M2::ARingGFFlint::mPrimitiveElement</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="171" column="21" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="171" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1c2c57610254cec0377e89511265a04d_1a1c2c57610254cec0377e89511265a04d" compoundref="aring-gf-flint_8cpp" startline="62" endline="71">~ARingGFFlint</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_a9c64b8640761a0e6895506edf0f95fce_1a9c64b8640761a0e6895506edf0f95fce" prot="private" static="no" mutable="no">
+        <type><ref refid="comb_8cpp_a9c34ac44da309b004570530c8cec8a0e_1a9c34ac44da309b004570530c8cec8a0e" kindref="member">ulong</ref> *</type>
+        <definition>ulong* M2::ARingGFFlint::mPPowers</definition>
+        <argsstring></argsstring>
+        <name>mPPowers</name>
+        <qualifiedname>M2::ARingGFFlint::mPPowers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="173" column="7" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="173" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1c2c57610254cec0377e89511265a04d_1a1c2c57610254cec0377e89511265a04d" compoundref="aring-gf-flint_8cpp" startline="62" endline="71">~ARingGFFlint</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_aaa698bd737dcb677fe9c62f69a799079_1aaa698bd737dcb677fe9c62f69a799079" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long M2::ARingGFFlint::mCharacteristic</definition>
+        <argsstring></argsstring>
+        <name>mCharacteristic</name>
+        <qualifiedname>M2::ARingGFFlint::mCharacteristic</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="174" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="174" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_ae52a816d034d9bd98038715963263481_1ae52a816d034d9bd98038715963263481" compoundref="aring-gf-flint_8hpp" startline="159" endline="159">characteristic</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a049bdfe21c242433db12c30cef4e23fe_1a049bdfe21c242433db12c30cef4e23fe" compoundref="aring-gf-flint_8cpp" startline="126" endline="140">getGenerator</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_ab563a327be7691851e347c0d915136a1_1ab563a327be7691851e347c0d915136a1" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long M2::ARingGFFlint::mDimension</definition>
+        <argsstring></argsstring>
+        <name>mDimension</name>
+        <qualifiedname>M2::ARingGFFlint::mDimension</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="175" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="175" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a682a21efc5137a406bf7e853ae660508_1a682a21efc5137a406bf7e853ae660508" compoundref="aring-gf-flint_8hpp" startline="160" endline="160">dimension</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a049bdfe21c242433db12c30cef4e23fe_1a049bdfe21c242433db12c30cef4e23fe" compoundref="aring-gf-flint_8cpp" startline="126" endline="140">getGenerator</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_aa54f86a22f7c42b38bf611fc931b3c08_1aa54f86a22f7c42b38bf611fc931b3c08" prot="private" static="no" mutable="yes">
+        <type>flint_rand_t</type>
+        <definition>flint_rand_t M2::ARingGFFlint::mRandomState</definition>
+        <argsstring></argsstring>
+        <name>mRandomState</name>
+        <qualifiedname>M2::ARingGFFlint::mRandomState</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="176" column="24" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="176" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1c2c57610254cec0377e89511265a04d_1a1c2c57610254cec0377e89511265a04d" compoundref="aring-gf-flint_8cpp" startline="62" endline="71">~ARingGFFlint</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_ae5bce79c8b0ccb4d244b6f572b7c55ec_1ae5bce79c8b0ccb4d244b6f572b7c55ec" prot="private" static="no" mutable="yes">
+        <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref></type>
+        <definition>ElementType M2::ARingGFFlint::mCachedGenerator</definition>
+        <argsstring></argsstring>
+        <name>mCachedGenerator</name>
+        <qualifiedname>M2::ARingGFFlint::mCachedGenerator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="178" column="23" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="178" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a049bdfe21c242433db12c30cef4e23fe_1a049bdfe21c242433db12c30cef4e23fe" compoundref="aring-gf-flint_8cpp" startline="126" endline="140">getGenerator</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1c2c57610254cec0377e89511265a04d_1a1c2c57610254cec0377e89511265a04d" compoundref="aring-gf-flint_8cpp" startline="62" endline="71">~ARingGFFlint</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_a_ring_g_f_flint_ae0009e515c155c8f9b73a977c3ea5398_1ae0009e515c155c8f9b73a977c3ea5398" prot="private" static="no" mutable="yes">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingGFFlint::mGeneratorComputed</definition>
+        <argsstring></argsstring>
+        <name>mGeneratorComputed</name>
+        <qualifiedname>M2::ARingGFFlint::mGeneratorComputed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="179" column="16" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="179" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a049bdfe21c242433db12c30cef4e23fe_1a049bdfe21c242433db12c30cef4e23fe" compoundref="aring-gf-flint_8cpp" startline="126" endline="140">getGenerator</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1c2c57610254cec0377e89511265a04d_1a1c2c57610254cec0377e89511265a04d" compoundref="aring-gf-flint_8cpp" startline="62" endline="71">~ARingGFFlint</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>M2::ARingGFFlint::ARingGFFlint</definition>
+        <argsstring>(const PolynomialRing &amp;R, const ring_elem a)</argsstring>
+        <name>ARingGFFlint</name>
+        <qualifiedname>M2::ARingGFFlint::ARingGFFlint</qualifiedname>
+        <param>
+          <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> &amp;</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="154" column="3" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="10" bodyend="60"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae52a816d034d9bd98038715963263481_1ae52a816d034d9bd98038715963263481" compoundref="aring-gf-flint_8hpp" startline="159" endline="159">characteristic</references>
+        <references refid="class_ring_a7cd0d24169c1a88e6b93f3d7dbcd3387_1a7cd0d24169c1a88e6b93f3d7dbcd3387" compoundref="ring_8hpp" startline="157" endline="157">Ring::characteristic</references>
+        <references refid="class_ring_a84bd4fdbdd4e1e44b2b24ad800138e1c_1a84bd4fdbdd4e1e44b2b24ad800138e1c">Ring::copy</references>
+        <references refid="aring_8hpp_a9801650f790eaece59027a5bea988298_1a9801650f790eaece59027a5bea988298" compoundref="aring_8hpp" startline="57">FLINT_RAND_INIT</references>
+        <references refid="class_ring_element_ada89d3a964931f562c29adc27625c52d_1ada89d3a964931f562c29adc27625c52d" compoundref="relem_8cpp" startline="421" endline="460">RingElement::getSmallIntegerCoefficients</references>
+        <references refid="class_ring_element_ab978463e39096a4e0d1ecc0720f9acf3_1ab978463e39096a4e0d1ecc0720f9acf3" compoundref="relem_8cpp" startline="20" endline="23">RingElement::make_raw</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a6c344c1729dfbd7ecff52d547d5c33fe_1a6c344c1729dfbd7ecff52d547d5c33fe" compoundref="aring-gf-flint_8hpp" startline="168">mBigContext</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aaa698bd737dcb677fe9c62f69a799079_1aaa698bd737dcb677fe9c62f69a799079" compoundref="aring-gf-flint_8hpp" startline="174">mCharacteristic</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ab563a327be7691851e347c0d915136a1_1ab563a327be7691851e347c0d915136a1" compoundref="aring-gf-flint_8hpp" startline="175">mDimension</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae0009e515c155c8f9b73a977c3ea5398_1ae0009e515c155c8f9b73a977c3ea5398" compoundref="aring-gf-flint_8hpp" startline="179">mGeneratorComputed</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aedb91a1d1a7ad0bc1c939295778d323d_1aedb91a1d1a7ad0bc1c939295778d323d" compoundref="aring-gf-flint_8hpp" startline="170">mOriginalRing</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a9c64b8640761a0e6895506edf0f95fce_1a9c64b8640761a0e6895506edf0f95fce" compoundref="aring-gf-flint_8hpp" startline="173">mPPowers</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ac1c0c4d6bcf9e85785919a5d62449499_1ac1c0c4d6bcf9e85785919a5d62449499" compoundref="aring-gf-flint_8hpp" startline="171">mPrimitiveElement</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aa54f86a22f7c42b38bf611fc931b3c08_1aa54f86a22f7c42b38bf611fc931b3c08" compoundref="aring-gf-flint_8hpp" startline="176">mRandomState</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_1_1_element_aeb05187afaa70bd20c583eaffb680f2e_1aeb05187afaa70bd20c583eaffb680f2e" compoundref="aring-gf-flint_8hpp" startline="109" endline="112">M2::ARingGFFlint::Element::Element</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_1_1_element_acc6f6fbba954169dbe40a61e4956f172_1acc6f6fbba954169dbe40a61e4956f172" compoundref="aring-gf-flint_8hpp" startline="113" endline="116">M2::ARingGFFlint::Element::Element</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_1_1_element_array_a54d9d622b550294d4f510347efb1b4a8_1a54d9d622b550294d4f510347efb1b4a8" compoundref="aring-gf-flint_8hpp" startline="139" endline="143">M2::ARingGFFlint::ElementArray::ElementArray</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a1c2c57610254cec0377e89511265a04d_1a1c2c57610254cec0377e89511265a04d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>M2::ARingGFFlint::~ARingGFFlint</definition>
+        <argsstring>()</argsstring>
+        <name>~ARingGFFlint</name>
+        <qualifiedname>M2::ARingGFFlint::~ARingGFFlint</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="156" column="3" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="62" bodyend="71"/>
+        <references refid="aring_8hpp_ac3067693d1d14140bc412823ee50ec30_1ac3067693d1d14140bc412823ee50ec30" compoundref="aring_8hpp" startline="58">FLINT_RAND_CLEAR</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a6c344c1729dfbd7ecff52d547d5c33fe_1a6c344c1729dfbd7ecff52d547d5c33fe" compoundref="aring-gf-flint_8hpp" startline="168">mBigContext</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae5bce79c8b0ccb4d244b6f572b7c55ec_1ae5bce79c8b0ccb4d244b6f572b7c55ec" compoundref="aring-gf-flint_8hpp" startline="178">mCachedGenerator</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae0009e515c155c8f9b73a977c3ea5398_1ae0009e515c155c8f9b73a977c3ea5398" compoundref="aring-gf-flint_8hpp" startline="179">mGeneratorComputed</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a9c64b8640761a0e6895506edf0f95fce_1a9c64b8640761a0e6895506edf0f95fce" compoundref="aring-gf-flint_8hpp" startline="173">mPPowers</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ac1c0c4d6bcf9e85785919a5d62449499_1ac1c0c4d6bcf9e85785919a5d62449499" compoundref="aring-gf-flint_8hpp" startline="171">mPrimitiveElement</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aa54f86a22f7c42b38bf611fc931b3c08_1aa54f86a22f7c42b38bf611fc931b3c08" compoundref="aring-gf-flint_8hpp" startline="176">mRandomState</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a01c3213a871e48143e6f57dcf4357b34_1a01c3213a871e48143e6f57dcf4357b34" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const fq_zech_ctx_struct *</type>
+        <definition>const fq_zech_ctx_struct * M2::ARingGFFlint::flintContext</definition>
+        <argsstring>() const</argsstring>
+        <name>flintContext</name>
+        <qualifiedname>M2::ARingGFFlint::flintContext</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="158" column="28" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="158" bodyend="158"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <referencedby refid="namespace_matrix_ops_a854156b51e4f51387f86020a96617081_1a854156b51e4f51387f86020a96617081" compoundref="mat-linalg_8hpp" startline="978" endline="991">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a2cba96b6240ac33b5d35f4653215ea40_1a2cba96b6240ac33b5d35f4653215ea40" compoundref="mat-linalg_8hpp" startline="1008" endline="1022">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_aafdbd7ebf5b569fe10ecc723418d2663_1aafdbd7ebf5b569fe10ecc723418d2663" compoundref="mat-linalg_8hpp" startline="1024" endline="1035">MatrixOps::rowReducedEchelonForm</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1961893af623ca12cc830b0042321b21_1a1961893af623ca12cc830b0042321b21" compoundref="mat-linalg_8hpp" startline="993" endline="1006">MatrixOps::subtractMultipleTo</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_ae52a816d034d9bd98038715963263481_1ae52a816d034d9bd98038715963263481" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long M2::ARingGFFlint::characteristic</definition>
+        <argsstring>() const</argsstring>
+        <name>characteristic</name>
+        <qualifiedname>M2::ARingGFFlint::characteristic</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="159" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="159" bodyend="159"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aaa698bd737dcb677fe9c62f69a799079_1aaa698bd737dcb677fe9c62f69a799079" compoundref="aring-gf-flint_8hpp" startline="174">mCharacteristic</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" compoundref="aring-gf-flint_8cpp" startline="10" endline="60">ARingGFFlint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_aea2b195ed2799de13be6111e0c188a9b_1aea2b195ed2799de13be6111e0c188a9b" compoundref="aring-gf-flint_8cpp" startline="86" endline="124">fromSmallIntegerCoefficients</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_aff01b0bd6c9fd12f04cf75786fc8b2f0_1aff01b0bd6c9fd12f04cf75786fc8b2f0" compoundref="aring-gf-flint_8hpp" startline="402" endline="409">random</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_ada9a5a6e57de69ecbf3b82acdf6ffab9_1ada9a5a6e57de69ecbf3b82acdf6ffab9" compoundref="aring-gf-flint_8hpp" startline="233" endline="238">set_from_long</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_acb32f5d9ffd25cbf438f6879c6c9f7f8_1acb32f5d9ffd25cbf438f6879c6c9f7f8" compoundref="aring-gf-flint_8hpp" startline="248" endline="252">set_from_mpz</referencedby>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a4216e5bc2ce38eff72e1d7e47309b102_1a4216e5bc2ce38eff72e1d7e47309b102" compoundref="_a_ring_g_f_test_8cpp" startline="90" endline="128">TEST</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a097cacc6f2c0638656f93ee03b9ef139_1a097cacc6f2c0638656f93ee03b9ef139" compoundref="aring-gf-flint_8cpp" startline="186" endline="189">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a682a21efc5137a406bf7e853ae660508_1a682a21efc5137a406bf7e853ae660508" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long M2::ARingGFFlint::dimension</definition>
+        <argsstring>() const</argsstring>
+        <name>dimension</name>
+        <qualifiedname>M2::ARingGFFlint::dimension</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="160" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="160" bodyend="160"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ab563a327be7691851e347c0d915136a1_1ab563a327be7691851e347c0d915136a1" compoundref="aring-gf-flint_8hpp" startline="175">mDimension</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_aff01b0bd6c9fd12f04cf75786fc8b2f0_1aff01b0bd6c9fd12f04cf75786fc8b2f0" compoundref="aring-gf-flint_8hpp" startline="402" endline="409">random</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a097cacc6f2c0638656f93ee03b9ef139_1a097cacc6f2c0638656f93ee03b9ef139" compoundref="aring-gf-flint_8cpp" startline="186" endline="189">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_ad9efad39e91d10cdc3bde0c0c0040e60_1ad9efad39e91d10cdc3bde0c0c0040e60" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> &amp;</type>
+        <definition>const PolynomialRing &amp; M2::ARingGFFlint::originalRing</definition>
+        <argsstring>() const</argsstring>
+        <name>originalRing</name>
+        <qualifiedname>M2::ARingGFFlint::originalRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="161" column="24" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="161" bodyend="161"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aedb91a1d1a7ad0bc1c939295778d323d_1aedb91a1d1a7ad0bc1c939295778d323d" compoundref="aring-gf-flint_8hpp" startline="170">mOriginalRing</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a523a8f0659eba1e1d125039dacd44340_1a523a8f0659eba1e1d125039dacd44340" compoundref="aring-gf-flint_8cpp" startline="191" endline="205">elem_text_out</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_af3315bc1fa01748ebb004c48b8fe6c34_1af3315bc1fa01748ebb004c48b8fe6c34" compoundref="aring-gf-flint_8cpp" startline="163" endline="171">lift</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_adf0c3726fe8ced00abf208318981ab0f_1adf0c3726fe8ced00abf208318981ab0f" compoundref="aring-gf-flint_8cpp" startline="154" endline="161">lift_to_original_ring</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a4e9d7796a09febb268e8e8bacec88529_1a4e9d7796a09febb268e8e8bacec88529" compoundref="aring-gf-flint_8cpp" startline="142" endline="152">promote</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a049bdfe21c242433db12c30cef4e23fe_1a049bdfe21c242433db12c30cef4e23fe" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::getGenerator</definition>
+        <argsstring>(ElementType &amp;result_gen) const</argsstring>
+        <name>getGenerator</name>
+        <qualifiedname>M2::ARingGFFlint::getGenerator</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result_gen</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="162" column="8" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="126" bodyend="140"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a3c93274cd315b52402c64d3290f70b25_1a3c93274cd315b52402c64d3290f70b25" compoundref="aring-gf-flint_8hpp" startline="220" endline="223">copy</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae5bce79c8b0ccb4d244b6f572b7c55ec_1ae5bce79c8b0ccb4d244b6f572b7c55ec" compoundref="aring-gf-flint_8hpp" startline="178">mCachedGenerator</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aaa698bd737dcb677fe9c62f69a799079_1aaa698bd737dcb677fe9c62f69a799079" compoundref="aring-gf-flint_8hpp" startline="174">mCharacteristic</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ab563a327be7691851e347c0d915136a1_1ab563a327be7691851e347c0d915136a1" compoundref="aring-gf-flint_8hpp" startline="175">mDimension</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae0009e515c155c8f9b73a977c3ea5398_1ae0009e515c155c8f9b73a977c3ea5398" compoundref="aring-gf-flint_8hpp" startline="179">mGeneratorComputed</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ada9a5a6e57de69ecbf3b82acdf6ffab9_1ada9a5a6e57de69ecbf3b82acdf6ffab9" compoundref="aring-gf-flint_8hpp" startline="233" endline="238">set_from_long</references>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a3e0d9f2d590264966466734aac869f2a_1a3e0d9f2d590264966466734aac869f2a" compoundref="_a_ring_g_f_test_8cpp" startline="76" endline="88">getElement&lt; M2::ARingGFFlint &gt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a097cacc6f2c0638656f93ee03b9ef139_1a097cacc6f2c0638656f93ee03b9ef139" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>M2::ARingGFFlint::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="164" column="8" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="186" bodyend="189"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae52a816d034d9bd98038715963263481_1ae52a816d034d9bd98038715963263481" compoundref="aring-gf-flint_8hpp" startline="159" endline="159">characteristic</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a682a21efc5137a406bf7e853ae660508_1a682a21efc5137a406bf7e853ae660508" compoundref="aring-gf-flint_8hpp" startline="160" endline="160">dimension</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a3a8b38fd8b8d43196f70062446f063e0_1a3a8b38fd8b8d43196f70062446f063e0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int M2::ARingGFFlint::computeHashValue</definition>
+        <argsstring>(const elem &amp;a) const</argsstring>
+        <name>computeHashValue</name>
+        <qualifiedname>M2::ARingGFFlint::computeHashValue</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a11023f1ae2a4a61caa47fbbe1fd7d27e_1a11023f1ae2a4a61caa47fbbe1fd7d27e" kindref="member">elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Arithmetic functions ///////. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="186" column="16" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="186" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a2acc145ebd35e57b29365479cae0a8d6_1a2acc145ebd35e57b29365479cae0a8d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::to_ring_elem</definition>
+        <argsstring>(ring_elem &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>to_ring_elem</name>
+        <qualifiedname>M2::ARingGFFlint::to_ring_elem</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="191" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="191" bodyend="196"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_ac1435cb835dd447b4dc198417d9f5237_1ac1435cb835dd447b4dc198417d9f5237" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::from_ring_elem</definition>
+        <argsstring>(ElementType &amp;result, const ring_elem &amp;a) const</argsstring>
+        <name>from_ring_elem</name>
+        <qualifiedname>M2::ARingGFFlint::from_ring_elem</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="198" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="198" bodyend="201"/>
+        <references refid="unionring__elem_aef4bc99b676c369a6a0a05e13601ced3_1aef4bc99b676c369a6a0a05e13601ced3" compoundref="ringelem_8hpp" startline="122" endline="122">ring_elem::get_int</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a4e63c9541baa70a6bc09890c7469245e_1a4e63c9541baa70a6bc09890c7469245e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref></type>
+        <definition>ElementType M2::ARingGFFlint::from_ring_elem_const</definition>
+        <argsstring>(const ring_elem &amp;a) const</argsstring>
+        <name>from_ring_elem_const</name>
+        <qualifiedname>M2::ARingGFFlint::from_ring_elem_const</qualifiedname>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="203" column="15" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="203" bodyend="206"/>
+        <references refid="unionring__elem_aef4bc99b676c369a6a0a05e13601ced3_1aef4bc99b676c369a6a0a05e13601ced3" compoundref="ringelem_8hpp" startline="122" endline="122">ring_elem::get_int</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_abe312c0d24e1048f7a56cc8065c57d02_1abe312c0d24e1048f7a56cc8065c57d02" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingGFFlint::is_unit</definition>
+        <argsstring>(const ElementType &amp;f) const</argsstring>
+        <name>is_unit</name>
+        <qualifiedname>M2::ARingGFFlint::is_unit</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="208" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="208" bodyend="208"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aa9c20b0e97fd7ef5c8766ec2d98bac48_1aa9c20b0e97fd7ef5c8766ec2d98bac48" compoundref="aring-gf-flint_8hpp" startline="209" endline="212">is_zero</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_aa9c20b0e97fd7ef5c8766ec2d98bac48_1aa9c20b0e97fd7ef5c8766ec2d98bac48" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingGFFlint::is_zero</definition>
+        <argsstring>(const ElementType &amp;f) const</argsstring>
+        <name>is_zero</name>
+        <qualifiedname>M2::ARingGFFlint::is_zero</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="209" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="209" bodyend="212"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a523a8f0659eba1e1d125039dacd44340_1a523a8f0659eba1e1d125039dacd44340" compoundref="aring-gf-flint_8cpp" startline="191" endline="205">elem_text_out</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a63b93b95943d86b70f02f4ac705ca202_1a63b93b95943d86b70f02f4ac705ca202" compoundref="aring-gf-flint_8cpp" startline="173" endline="184">eval</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_af5fba8d049dc15cf24dd83fe8dd7963b_1af5fba8d049dc15cf24dd83fe8dd7963b" compoundref="aring-gf-flint_8hpp" startline="278" endline="283">invert</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_abe312c0d24e1048f7a56cc8065c57d02_1abe312c0d24e1048f7a56cc8065c57d02" compoundref="aring-gf-flint_8hpp" startline="208" endline="208">is_unit</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_afdff91e749409694d6c393bcfe0facf2_1afdff91e749409694d6c393bcfe0facf2" compoundref="aring-gf-flint_8hpp" startline="254" endline="264">set_from_mpq</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a971858b8354d0f08729bc723d012e72d_1a971858b8354d0f08729bc723d012e72d" compoundref="aring-gf-flint_8hpp" startline="387" endline="400">syzygy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_af246717b24f3d24c9168607ad693f2b2_1af246717b24f3d24c9168607ad693f2b2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingGFFlint::is_equal</definition>
+        <argsstring>(const ElementType &amp;f, const ElementType &amp;g) const</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>M2::ARingGFFlint::is_equal</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="213" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="213" bodyend="216"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_adba9c318194c14a534c3f46d810ebacb_1adba9c318194c14a534c3f46d810ebacb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int M2::ARingGFFlint::compare_elems</definition>
+        <argsstring>(const ElementType &amp;f, const ElementType &amp;g) const</argsstring>
+        <name>compare_elems</name>
+        <qualifiedname>M2::ARingGFFlint::compare_elems</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="218" column="7" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="207" bodyend="213"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_abaab8d42f075ee8ddc9b70951d3fd6cd_1abaab8d42f075ee8ddc9b70951d3fd6cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="19">EQ</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ab89310b3f2f97e4e9415fc5a51549612_1ab89310b3f2f97e4e9415fc5a51549612" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="20">GT</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aaf56b99cbe34023f42ce5b7878c827d8_1aaf56b99cbe34023f42ce5b7878c827d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="18">LT</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a3c93274cd315b52402c64d3290f70b25_1a3c93274cd315b52402c64d3290f70b25" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::copy</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>copy</name>
+        <qualifiedname>M2::ARingGFFlint::copy</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="220" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="220" bodyend="223"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a049bdfe21c242433db12c30cef4e23fe_1a049bdfe21c242433db12c30cef4e23fe" compoundref="aring-gf-flint_8cpp" startline="126" endline="140">getGenerator</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a12583ba8273ab0c2aded61017de082e4_1a12583ba8273ab0c2aded61017de082e4" compoundref="aring-gf-flint_8hpp" startline="225" endline="229">init_set</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_ac207f77127b9e3addbc3d5006e96402e_1ac207f77127b9e3addbc3d5006e96402e" compoundref="aring-gf-flint_8hpp" startline="358" endline="374">power_mpz</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_aaa461f641e9bf7ff113ad9f07979f53b_1aaa461f641e9bf7ff113ad9f07979f53b" compoundref="aring-gf-flint_8hpp" startline="230" endline="230">set</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a23c03802ec3bbf4f7fd3592f87f3c6e2_1a23c03802ec3bbf4f7fd3592f87f3c6e2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::init</definition>
+        <argsstring>(ElementType &amp;result) const</argsstring>
+        <name>init</name>
+        <qualifiedname>M2::ARingGFFlint::init</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="224" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="224" bodyend="224"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1ceab4fa70151e21e58784d52e194c5a_1a1ceab4fa70151e21e58784d52e194c5a" compoundref="aring-gf-flint_8hpp" startline="318" endline="345">divide</referencedby>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a3e0d9f2d590264966466734aac869f2a_1a3e0d9f2d590264966466734aac869f2a" compoundref="_a_ring_g_f_test_8cpp" startline="76" endline="88">getElement&lt; M2::ARingGFFlint &gt;</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a12583ba8273ab0c2aded61017de082e4_1a12583ba8273ab0c2aded61017de082e4" compoundref="aring-gf-flint_8hpp" startline="225" endline="229">init_set</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_afdff91e749409694d6c393bcfe0facf2_1afdff91e749409694d6c393bcfe0facf2" compoundref="aring-gf-flint_8hpp" startline="254" endline="264">set_from_mpq</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a5ce08bbbe54ff56fe81a6a2b80983f14_1a5ce08bbbe54ff56fe81a6a2b80983f14" compoundref="aring-gf-flint_8hpp" startline="300" endline="309">subtract_multiple</referencedby>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a4216e5bc2ce38eff72e1d7e47309b102_1a4216e5bc2ce38eff72e1d7e47309b102" compoundref="_a_ring_g_f_test_8cpp" startline="90" endline="128">TEST</referencedby>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a2e38bb5f89f186dc8fd5568008f0e306_1a2e38bb5f89f186dc8fd5568008f0e306" compoundref="_a_ring_g_f_test_8cpp" startline="130" endline="163">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a12583ba8273ab0c2aded61017de082e4_1a12583ba8273ab0c2aded61017de082e4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::init_set</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>init_set</name>
+        <qualifiedname>M2::ARingGFFlint::init_set</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="225" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="225" bodyend="229"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a3c93274cd315b52402c64d3290f70b25_1a3c93274cd315b52402c64d3290f70b25" compoundref="aring-gf-flint_8hpp" startline="220" endline="223">copy</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a23c03802ec3bbf4f7fd3592f87f3c6e2_1a23c03802ec3bbf4f7fd3592f87f3c6e2" compoundref="aring-gf-flint_8hpp" startline="224" endline="224">init</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_1_1_element_acc6f6fbba954169dbe40a61e4956f172_1acc6f6fbba954169dbe40a61e4956f172" compoundref="aring-gf-flint_8hpp" startline="113" endline="116">M2::ARingGFFlint::Element::Element</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_aaa461f641e9bf7ff113ad9f07979f53b_1aaa461f641e9bf7ff113ad9f07979f53b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::set</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>set</name>
+        <qualifiedname>M2::ARingGFFlint::set</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="230" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="230" bodyend="230"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a3c93274cd315b52402c64d3290f70b25_1a3c93274cd315b52402c64d3290f70b25" compoundref="aring-gf-flint_8hpp" startline="220" endline="223">copy</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a918d9d5c46f0fdd49115e7aed8d31374_1a918d9d5c46f0fdd49115e7aed8d31374" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::set_zero</definition>
+        <argsstring>(ElementType &amp;result) const</argsstring>
+        <name>set_zero</name>
+        <qualifiedname>M2::ARingGFFlint::set_zero</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="231" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="231" bodyend="231"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a475b55f8c818401260d34d9f00adb6d1_1a475b55f8c818401260d34d9f00adb6d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::clear</definition>
+        <argsstring>(ElementType &amp;result) const</argsstring>
+        <name>clear</name>
+        <qualifiedname>M2::ARingGFFlint::clear</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="232" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="232" bodyend="232"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1ceab4fa70151e21e58784d52e194c5a_1a1ceab4fa70151e21e58784d52e194c5a" compoundref="aring-gf-flint_8hpp" startline="318" endline="345">divide</referencedby>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a3e0d9f2d590264966466734aac869f2a_1a3e0d9f2d590264966466734aac869f2a" compoundref="_a_ring_g_f_test_8cpp" startline="76" endline="88">getElement&lt; M2::ARingGFFlint &gt;</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a5ce08bbbe54ff56fe81a6a2b80983f14_1a5ce08bbbe54ff56fe81a6a2b80983f14" compoundref="aring-gf-flint_8hpp" startline="300" endline="309">subtract_multiple</referencedby>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a4216e5bc2ce38eff72e1d7e47309b102_1a4216e5bc2ce38eff72e1d7e47309b102" compoundref="_a_ring_g_f_test_8cpp" startline="90" endline="128">TEST</referencedby>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a2e38bb5f89f186dc8fd5568008f0e306_1a2e38bb5f89f186dc8fd5568008f0e306" compoundref="_a_ring_g_f_test_8cpp" startline="130" endline="163">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_ada9a5a6e57de69ecbf3b82acdf6ffab9_1ada9a5a6e57de69ecbf3b82acdf6ffab9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::set_from_long</definition>
+        <argsstring>(ElementType &amp;result, long a) const</argsstring>
+        <name>set_from_long</name>
+        <qualifiedname>M2::ARingGFFlint::set_from_long</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="233" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="233" bodyend="238"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae52a816d034d9bd98038715963263481_1ae52a816d034d9bd98038715963263481" compoundref="aring-gf-flint_8hpp" startline="159" endline="159">characteristic</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a049bdfe21c242433db12c30cef4e23fe_1a049bdfe21c242433db12c30cef4e23fe" compoundref="aring-gf-flint_8cpp" startline="126" endline="140">getGenerator</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_acb32f5d9ffd25cbf438f6879c6c9f7f8_1acb32f5d9ffd25cbf438f6879c6c9f7f8" compoundref="aring-gf-flint_8hpp" startline="248" endline="252">set_from_mpz</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a90a31ee0e0c69db901bbeca5d4c3e916_1a90a31ee0e0c69db901bbeca5d4c3e916" compoundref="aring-gf-flint_8hpp" startline="240" endline="246">set_var</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a971858b8354d0f08729bc723d012e72d_1a971858b8354d0f08729bc723d012e72d" compoundref="aring-gf-flint_8hpp" startline="387" endline="400">syzygy</referencedby>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a4216e5bc2ce38eff72e1d7e47309b102_1a4216e5bc2ce38eff72e1d7e47309b102" compoundref="_a_ring_g_f_test_8cpp" startline="90" endline="128">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a90a31ee0e0c69db901bbeca5d4c3e916_1a90a31ee0e0c69db901bbeca5d4c3e916" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::set_var</definition>
+        <argsstring>(ElementType &amp;result, int v) const</argsstring>
+        <name>set_var</name>
+        <qualifiedname>M2::ARingGFFlint::set_var</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="240" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="240" bodyend="246"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aea2b195ed2799de13be6111e0c188a9b_1aea2b195ed2799de13be6111e0c188a9b" compoundref="aring-gf-flint_8cpp" startline="86" endline="124">fromSmallIntegerCoefficients</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ada9a5a6e57de69ecbf3b82acdf6ffab9_1ada9a5a6e57de69ecbf3b82acdf6ffab9" compoundref="aring-gf-flint_8hpp" startline="233" endline="238">set_from_long</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_acb32f5d9ffd25cbf438f6879c6c9f7f8_1acb32f5d9ffd25cbf438f6879c6c9f7f8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::set_from_mpz</definition>
+        <argsstring>(ElementType &amp;result, mpz_srcptr a) const</argsstring>
+        <name>set_from_mpz</name>
+        <qualifiedname>M2::ARingGFFlint::set_from_mpz</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="248" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="248" bodyend="252"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae52a816d034d9bd98038715963263481_1ae52a816d034d9bd98038715963263481" compoundref="aring-gf-flint_8hpp" startline="159" endline="159">characteristic</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ada9a5a6e57de69ecbf3b82acdf6ffab9_1ada9a5a6e57de69ecbf3b82acdf6ffab9" compoundref="aring-gf-flint_8hpp" startline="233" endline="238">set_from_long</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_afdff91e749409694d6c393bcfe0facf2_1afdff91e749409694d6c393bcfe0facf2" compoundref="aring-gf-flint_8hpp" startline="254" endline="264">set_from_mpq</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_afdff91e749409694d6c393bcfe0facf2_1afdff91e749409694d6c393bcfe0facf2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingGFFlint::set_from_mpq</definition>
+        <argsstring>(ElementType &amp;result, mpq_srcptr a) const</argsstring>
+        <name>set_from_mpq</name>
+        <qualifiedname>M2::ARingGFFlint::set_from_mpq</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>mpq_srcptr</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="254" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="254" bodyend="264"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a1ceab4fa70151e21e58784d52e194c5a_1a1ceab4fa70151e21e58784d52e194c5a" compoundref="aring-gf-flint_8hpp" startline="318" endline="345">divide</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a23c03802ec3bbf4f7fd3592f87f3c6e2_1a23c03802ec3bbf4f7fd3592f87f3c6e2" compoundref="aring-gf-flint_8hpp" startline="224" endline="224">init</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aa9c20b0e97fd7ef5c8766ec2d98bac48_1aa9c20b0e97fd7ef5c8766ec2d98bac48" compoundref="aring-gf-flint_8hpp" startline="209" endline="212">is_zero</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_acb32f5d9ffd25cbf438f6879c6c9f7f8_1acb32f5d9ffd25cbf438f6879c6c9f7f8" compoundref="aring-gf-flint_8hpp" startline="248" endline="252">set_from_mpz</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a98fbf903a95ad4d209b6ba87722c66e4_1a98fbf903a95ad4d209b6ba87722c66e4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingGFFlint::set_from_BigReal</definition>
+        <argsstring>(ElementType &amp;result, gmp_RR a) const</argsstring>
+        <name>set_from_BigReal</name>
+        <qualifiedname>M2::ARingGFFlint::set_from_BigReal</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="266" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="266" bodyend="271"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a1ddc03070c64789ce7bc821a62279e0c_1a1ddc03070c64789ce7bc821a62279e0c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::negate</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>negate</name>
+        <qualifiedname>M2::ARingGFFlint::negate</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="273" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="273" bodyend="276"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a971858b8354d0f08729bc723d012e72d_1a971858b8354d0f08729bc723d012e72d" compoundref="aring-gf-flint_8hpp" startline="387" endline="400">syzygy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_af5fba8d049dc15cf24dd83fe8dd7963b_1af5fba8d049dc15cf24dd83fe8dd7963b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::invert</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a) const</argsstring>
+        <name>invert</name>
+        <qualifiedname>M2::ARingGFFlint::invert</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="278" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="278" bodyend="283"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aa9c20b0e97fd7ef5c8766ec2d98bac48_1aa9c20b0e97fd7ef5c8766ec2d98bac48" compoundref="aring-gf-flint_8hpp" startline="209" endline="212">is_zero</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1ceab4fa70151e21e58784d52e194c5a_1a1ceab4fa70151e21e58784d52e194c5a" compoundref="aring-gf-flint_8hpp" startline="318" endline="345">divide</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_acade29661c4db2ee37409796188b3cdc_1acade29661c4db2ee37409796188b3cdc" compoundref="aring-gf-flint_8hpp" startline="347" endline="356">power</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_ac207f77127b9e3addbc3d5006e96402e_1ac207f77127b9e3addbc3d5006e96402e" compoundref="aring-gf-flint_8hpp" startline="358" endline="374">power_mpz</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a59ecaa23a86c68bbe809da2012dc91d5_1a59ecaa23a86c68bbe809da2012dc91d5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::add</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>add</name>
+        <qualifiedname>M2::ARingGFFlint::add</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="285" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="285" bodyend="291"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_aedb6cab6fa4e1d6621a78818869377e9_1aedb6cab6fa4e1d6621a78818869377e9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::subtract</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>subtract</name>
+        <qualifiedname>M2::ARingGFFlint::subtract</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="293" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="293" bodyend="298"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a5ce08bbbe54ff56fe81a6a2b80983f14_1a5ce08bbbe54ff56fe81a6a2b80983f14" compoundref="aring-gf-flint_8hpp" startline="300" endline="309">subtract_multiple</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a5ce08bbbe54ff56fe81a6a2b80983f14_1a5ce08bbbe54ff56fe81a6a2b80983f14" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::subtract_multiple</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>subtract_multiple</name>
+        <qualifiedname>M2::ARingGFFlint::subtract_multiple</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="300" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="300" bodyend="309"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a475b55f8c818401260d34d9f00adb6d1_1a475b55f8c818401260d34d9f00adb6d1" compoundref="aring-gf-flint_8hpp" startline="232" endline="232">clear</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a23c03802ec3bbf4f7fd3592f87f3c6e2_1a23c03802ec3bbf4f7fd3592f87f3c6e2" compoundref="aring-gf-flint_8hpp" startline="224" endline="224">init</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a3742c5719f5779dce1cd054094a352e6_1a3742c5719f5779dce1cd054094a352e6" compoundref="aring-gf-flint_8hpp" startline="311" endline="316">mult</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aedb6cab6fa4e1d6621a78818869377e9_1aedb6cab6fa4e1d6621a78818869377e9" compoundref="aring-gf-flint_8hpp" startline="293" endline="298">subtract</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a3742c5719f5779dce1cd054094a352e6_1a3742c5719f5779dce1cd054094a352e6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::mult</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>mult</name>
+        <qualifiedname>M2::ARingGFFlint::mult</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="311" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="311" bodyend="316"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a1ceab4fa70151e21e58784d52e194c5a_1a1ceab4fa70151e21e58784d52e194c5a" compoundref="aring-gf-flint_8hpp" startline="318" endline="345">divide</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a5ce08bbbe54ff56fe81a6a2b80983f14_1a5ce08bbbe54ff56fe81a6a2b80983f14" compoundref="aring-gf-flint_8hpp" startline="300" endline="309">subtract_multiple</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a1ceab4fa70151e21e58784d52e194c5a_1a1ceab4fa70151e21e58784d52e194c5a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::divide</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, const ElementType &amp;b) const</argsstring>
+        <name>divide</name>
+        <qualifiedname>M2::ARingGFFlint::divide</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="318" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="318" bodyend="345"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a475b55f8c818401260d34d9f00adb6d1_1a475b55f8c818401260d34d9f00adb6d1" compoundref="aring-gf-flint_8hpp" startline="232" endline="232">clear</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a23c03802ec3bbf4f7fd3592f87f3c6e2_1a23c03802ec3bbf4f7fd3592f87f3c6e2" compoundref="aring-gf-flint_8hpp" startline="224" endline="224">init</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_af5fba8d049dc15cf24dd83fe8dd7963b_1af5fba8d049dc15cf24dd83fe8dd7963b" compoundref="aring-gf-flint_8hpp" startline="278" endline="283">invert</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a3742c5719f5779dce1cd054094a352e6_1a3742c5719f5779dce1cd054094a352e6" compoundref="aring-gf-flint_8hpp" startline="311" endline="316">mult</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_afdff91e749409694d6c393bcfe0facf2_1afdff91e749409694d6c393bcfe0facf2" compoundref="aring-gf-flint_8hpp" startline="254" endline="264">set_from_mpq</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a971858b8354d0f08729bc723d012e72d_1a971858b8354d0f08729bc723d012e72d" compoundref="aring-gf-flint_8hpp" startline="387" endline="400">syzygy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_acade29661c4db2ee37409796188b3cdc_1acade29661c4db2ee37409796188b3cdc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::power</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, int n) const</argsstring>
+        <name>power</name>
+        <qualifiedname>M2::ARingGFFlint::power</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="347" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="347" bodyend="356"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_af5fba8d049dc15cf24dd83fe8dd7963b_1af5fba8d049dc15cf24dd83fe8dd7963b" compoundref="aring-gf-flint_8hpp" startline="278" endline="283">invert</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a3e0d9f2d590264966466734aac869f2a_1a3e0d9f2d590264966466734aac869f2a" compoundref="_a_ring_g_f_test_8cpp" startline="76" endline="88">getElement&lt; M2::ARingGFFlint &gt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_ac207f77127b9e3addbc3d5006e96402e_1ac207f77127b9e3addbc3d5006e96402e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::power_mpz</definition>
+        <argsstring>(ElementType &amp;result, const ElementType &amp;a, mpz_srcptr n) const</argsstring>
+        <name>power_mpz</name>
+        <qualifiedname>M2::ARingGFFlint::power_mpz</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="358" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="358" bodyend="374"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a3c93274cd315b52402c64d3290f70b25_1a3c93274cd315b52402c64d3290f70b25" compoundref="aring-gf-flint_8hpp" startline="220" endline="223">copy</references>
+        <references refid="m2-mem_8cpp_a56f8505bed332e006038ac98f852cb7b_1a56f8505bed332e006038ac98f852cb7b" compoundref="m2-mem_8cpp" startline="273">fn</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_af5fba8d049dc15cf24dd83fe8dd7963b_1af5fba8d049dc15cf24dd83fe8dd7963b" compoundref="aring-gf-flint_8hpp" startline="278" endline="283">invert</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_adeba120bcc1e84f062185c0c7e7df812_1adeba120bcc1e84f062185c0c7e7df812" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::swap</definition>
+        <argsstring>(ElementType &amp;a, ElementType &amp;b) const</argsstring>
+        <name>swap</name>
+        <qualifiedname>M2::ARingGFFlint::swap</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="376" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="376" bodyend="379"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a523a8f0659eba1e1d125039dacd44340_1a523a8f0659eba1e1d125039dacd44340" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::elem_text_out</definition>
+        <argsstring>(buffer &amp;o, const ElementType &amp;a, bool p_one=true, bool p_plus=false, bool p_parens=false) const</argsstring>
+        <name>elem_text_out</name>
+        <qualifiedname>M2::ARingGFFlint::elem_text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_one</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_plus</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_parens</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="381" column="8" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="191" bodyend="205"/>
+        <references refid="class_ring_a7681f099a40a51225f38f66386820c39_1a7681f099a40a51225f38f66386820c39">Ring::elem_text_out</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aa9c20b0e97fd7ef5c8766ec2d98bac48_1aa9c20b0e97fd7ef5c8766ec2d98bac48" compoundref="aring-gf-flint_8hpp" startline="209" endline="212">is_zero</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_af3315bc1fa01748ebb004c48b8fe6c34_1af3315bc1fa01748ebb004c48b8fe6c34" compoundref="aring-gf-flint_8cpp" startline="163" endline="171">lift</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad9efad39e91d10cdc3bde0c0c0040e60_1ad9efad39e91d10cdc3bde0c0c0040e60" compoundref="aring-gf-flint_8hpp" startline="161" endline="161">originalRing</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a971858b8354d0f08729bc723d012e72d_1a971858b8354d0f08729bc723d012e72d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::syzygy</definition>
+        <argsstring>(const ElementType &amp;a, const ElementType &amp;b, ElementType &amp;x, ElementType &amp;y) const</argsstring>
+        <name>syzygy</name>
+        <qualifiedname>M2::ARingGFFlint::syzygy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="387" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="387" bodyend="400"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a1ceab4fa70151e21e58784d52e194c5a_1a1ceab4fa70151e21e58784d52e194c5a" compoundref="aring-gf-flint_8hpp" startline="318" endline="345">divide</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aa9c20b0e97fd7ef5c8766ec2d98bac48_1aa9c20b0e97fd7ef5c8766ec2d98bac48" compoundref="aring-gf-flint_8hpp" startline="209" endline="212">is_zero</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a1ddc03070c64789ce7bc821a62279e0c_1a1ddc03070c64789ce7bc821a62279e0c" compoundref="aring-gf-flint_8hpp" startline="273" endline="276">negate</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ada9a5a6e57de69ecbf3b82acdf6ffab9_1ada9a5a6e57de69ecbf3b82acdf6ffab9" compoundref="aring-gf-flint_8hpp" startline="233" endline="238">set_from_long</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_aff01b0bd6c9fd12f04cf75786fc8b2f0_1aff01b0bd6c9fd12f04cf75786fc8b2f0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::random</definition>
+        <argsstring>(ElementType &amp;result) const</argsstring>
+        <name>random</name>
+        <qualifiedname>M2::ARingGFFlint::random</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="402" column="8" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="402" bodyend="409"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae52a816d034d9bd98038715963263481_1ae52a816d034d9bd98038715963263481" compoundref="aring-gf-flint_8hpp" startline="159" endline="159">characteristic</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a682a21efc5137a406bf7e853ae660508_1a682a21efc5137a406bf7e853ae660508" compoundref="aring-gf-flint_8hpp" startline="160" endline="160">dimension</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aea2b195ed2799de13be6111e0c188a9b_1aea2b195ed2799de13be6111e0c188a9b" compoundref="aring-gf-flint_8cpp" startline="86" endline="124">fromSmallIntegerCoefficients</references>
+        <references refid="random_8cpp_a66f2b93023d98b73c6f35e4a5b1d5584_1a66f2b93023d98b73c6f35e4a5b1d5584" compoundref="random_8cpp" startline="39" endline="42">rawRandomULong</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_g_f_test_8cpp_a2e38bb5f89f186dc8fd5568008f0e306_1a2e38bb5f89f186dc8fd5568008f0e306" compoundref="_a_ring_g_f_test_8cpp" startline="130" endline="163">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_aea2b195ed2799de13be6111e0c188a9b_1aea2b195ed2799de13be6111e0c188a9b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::fromSmallIntegerCoefficients</definition>
+        <argsstring>(ElementType &amp;result, const std::vector&lt; long &gt; &amp;poly) const</argsstring>
+        <name>fromSmallIntegerCoefficients</name>
+        <qualifiedname>M2::ARingGFFlint::fromSmallIntegerCoefficients</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; long &gt; &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="411" column="8" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="86" bodyend="124"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ae52a816d034d9bd98038715963263481_1ae52a816d034d9bd98038715963263481" compoundref="aring-gf-flint_8hpp" startline="159" endline="159">characteristic</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a6c344c1729dfbd7ecff52d547d5c33fe_1a6c344c1729dfbd7ecff52d547d5c33fe" compoundref="aring-gf-flint_8hpp" startline="168">mBigContext</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a4e9d7796a09febb268e8e8bacec88529_1a4e9d7796a09febb268e8e8bacec88529" compoundref="aring-gf-flint_8cpp" startline="142" endline="152">promote</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_aff01b0bd6c9fd12f04cf75786fc8b2f0_1aff01b0bd6c9fd12f04cf75786fc8b2f0" compoundref="aring-gf-flint_8hpp" startline="402" endline="409">random</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a90a31ee0e0c69db901bbeca5d4c3e916_1a90a31ee0e0c69db901bbeca5d4c3e916" compoundref="aring-gf-flint_8hpp" startline="240" endline="246">set_var</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a084dee1ed245efa65a759bfcd8d626f3_1a084dee1ed245efa65a759bfcd8d626f3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::getSmallIntegerCoefficients</definition>
+        <argsstring>(const ElementType &amp;a, std::vector&lt; long &gt; &amp;poly) const</argsstring>
+        <name>getSmallIntegerCoefficients</name>
+        <qualifiedname>M2::ARingGFFlint::getSmallIntegerCoefficients</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; long &gt; &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="414" column="8" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="73" bodyend="84"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a6c344c1729dfbd7ecff52d547d5c33fe_1a6c344c1729dfbd7ecff52d547d5c33fe" compoundref="aring-gf-flint_8hpp" startline="168">mBigContext</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" compoundref="aring-gf-flint_8hpp" startline="167">mContext</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_adf0c3726fe8ced00abf208318981ab0f_1adf0c3726fe8ced00abf208318981ab0f" compoundref="aring-gf-flint_8cpp" startline="154" endline="161">lift_to_original_ring</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a4e9d7796a09febb268e8e8bacec88529_1a4e9d7796a09febb268e8e8bacec88529" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingGFFlint::promote</definition>
+        <argsstring>(const Ring *Rf, const ring_elem f, ElementType &amp;result) const</argsstring>
+        <name>promote</name>
+        <qualifiedname>M2::ARingGFFlint::promote</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>Rf</declname>
+        </param>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="417" column="8" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="142" bodyend="152"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aea2b195ed2799de13be6111e0c188a9b_1aea2b195ed2799de13be6111e0c188a9b" compoundref="aring-gf-flint_8cpp" startline="86" endline="124">fromSmallIntegerCoefficients</references>
+        <references refid="class_ring_element_ada89d3a964931f562c29adc27625c52d_1ada89d3a964931f562c29adc27625c52d" compoundref="relem_8cpp" startline="421" endline="460">RingElement::getSmallIntegerCoefficients</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad9efad39e91d10cdc3bde0c0c0040e60_1ad9efad39e91d10cdc3bde0c0c0040e60" compoundref="aring-gf-flint_8hpp" startline="161" endline="161">originalRing</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_adf0c3726fe8ced00abf208318981ab0f_1adf0c3726fe8ced00abf208318981ab0f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::lift_to_original_ring</definition>
+        <argsstring>(ring_elem &amp;result, const ElementType &amp;f) const</argsstring>
+        <name>lift_to_original_ring</name>
+        <qualifiedname>M2::ARingGFFlint::lift_to_original_ring</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="419" column="8" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="154" bodyend="161"/>
+        <references refid="class_poly_ring_ad1a97a9d5a754a5dad10848c4e0d7db8_1ad1a97a9d5a754a5dad10848c4e0d7db8" compoundref="poly_8cpp" startline="2249" endline="2272">PolyRing::fromSmallIntegerCoefficients</references>
+        <references refid="class_polynomial_ring_ac19069c96d5d73fd89f3e436310a329c_1ac19069c96d5d73fd89f3e436310a329c" compoundref="_macaulay2_2e_2polyring_8hpp" startline="255" endline="255">PolynomialRing::getNumeratorRing</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_a084dee1ed245efa65a759bfcd8d626f3_1a084dee1ed245efa65a759bfcd8d626f3" compoundref="aring-gf-flint_8cpp" startline="73" endline="84">getSmallIntegerCoefficients</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad9efad39e91d10cdc3bde0c0c0040e60_1ad9efad39e91d10cdc3bde0c0c0040e60" compoundref="aring-gf-flint_8hpp" startline="161" endline="161">originalRing</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_af3315bc1fa01748ebb004c48b8fe6c34_1af3315bc1fa01748ebb004c48b8fe6c34" compoundref="aring-gf-flint_8cpp" startline="163" endline="171">lift</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_af3315bc1fa01748ebb004c48b8fe6c34_1af3315bc1fa01748ebb004c48b8fe6c34" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2::ARingGFFlint::lift</definition>
+        <argsstring>(const Ring *Rg, const ElementType &amp;f, ring_elem &amp;result) const</argsstring>
+        <name>lift</name>
+        <qualifiedname>M2::ARingGFFlint::lift</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>Rg</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="422" column="8" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="163" bodyend="171"/>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_adf0c3726fe8ced00abf208318981ab0f_1adf0c3726fe8ced00abf208318981ab0f" compoundref="aring-gf-flint_8cpp" startline="154" endline="161">lift_to_original_ring</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_ad9efad39e91d10cdc3bde0c0c0040e60_1ad9efad39e91d10cdc3bde0c0c0040e60" compoundref="aring-gf-flint_8hpp" startline="161" endline="161">originalRing</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_flint_a523a8f0659eba1e1d125039dacd44340_1a523a8f0659eba1e1d125039dacd44340" compoundref="aring-gf-flint_8cpp" startline="191" endline="205">elem_text_out</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_a_ring_g_f_flint_a63b93b95943d86b70f02f4ac705ca202_1a63b93b95943d86b70f02f4ac705ca202" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2::ARingGFFlint::eval</definition>
+        <argsstring>(const RingMap *map, const ElementType &amp;f, int first_var, ring_elem &amp;result) const</argsstring>
+        <name>eval</name>
+        <qualifiedname>M2::ARingGFFlint::eval</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring_map" kindref="compound">RingMap</ref> *</type>
+          <declname>map</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>first_var</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring-gf-flint.hpp" line="427" column="8" bodyfile="Macaulay2/e/aring-gf-flint.cpp" bodystart="173" bodyend="184"/>
+        <references refid="class_ring_map_a1887d092d738bf0ea8ddf27aaba8ae1e_1a1887d092d738bf0ea8ddf27aaba8ae1e" compoundref="ringmap_8hpp" startline="108" endline="113">RingMap::elem</references>
+        <references refid="class_ring_map_aa041dd8442eeac3e1fdf75e6e4d32bf8_1aa041dd8442eeac3e1fdf75e6e4d32bf8" compoundref="ringmap_8hpp" startline="105" endline="105">RingMap::get_ring</references>
+        <references refid="class_m2_1_1_a_ring_g_f_flint_aa9c20b0e97fd7ef5c8766ec2d98bac48_1aa9c20b0e97fd7ef5c8766ec2d98bac48" compoundref="aring-gf-flint_8hpp" startline="209" endline="212">is_zero</references>
+        <references refid="class_ring_ad53bd105b7dcfb35f91908bbec8f460f_1ad53bd105b7dcfb35f91908bbec8f460f" compoundref="ring_8cpp" startline="109" endline="164">Ring::power</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_ring_a56c4dbffcc7bba98da2103f70a0e8602_1a56c4dbffcc7bba98da2103f70a0e8602" compoundref="ring_8hpp" startline="357" endline="357">Ring::zero</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput>aring</computeroutput>-style adapter for FLINT&apos;s Zech-logarithm representation of small finite fields <computeroutput><ref refid="class_g_f" kindref="compound">GF(p^n)</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" kindref="member">ElementType</ref></computeroutput> is <computeroutput>fq_zech_struct</computeroutput> and every arithmetic call delegates to FLINT&apos;s <computeroutput>fq_zech_*</computeroutput> routines through the held <computeroutput><ref refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" kindref="member">mContext</ref></computeroutput> (<computeroutput>fq_zech_ctx_struct*</computeroutput>). The table-driven Zech representation makes addition fast, so this is the preferred <computeroutput><ref refid="class_g_f" kindref="compound">GF(p^n)</ref></computeroutput> backend when the field is small enough for the lookup tables to fit. <computeroutput><ref refid="class_m2_1_1_a_ring_g_f_flint_aa8115e0c2e5c97fd4289c2bc230d4b82_1aa8115e0c2e5c97fd4289c2bc230d4b82" kindref="member">ringID</ref> = <ref refid="group__rings_ga7579b18152595d75b0bce712fbd605df_1gga7579b18152595d75b0bce712fbd605dfa5f5da4f778a4e97318806b3ae28b422e" kindref="member">ring_GFFlintZech</ref></computeroutput> so <computeroutput><ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref></computeroutput> can dispatch to the matching concrete specialisation. For larger fields where the Zech tables would exceed memory, use <computeroutput><ref refid="class_m2_1_1_a_ring_g_f_flint_big" kindref="compound">ARingGFFlintBig</ref></computeroutput> instead. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>M2::ARingGFFlint</label>
+        <link refid="class_m2_1_1_a_ring_g_f_flint"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="17">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="68" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="77">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="77" relation="public-inheritance">
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="66">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>M2::ARingGFFlint</label>
+        <link refid="class_m2_1_1_a_ring_g_f_flint"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ringID</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mContext</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mBigContext</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mOriginalRing</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>mPrimitiveElement</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mPPowers</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+          <edgelabel>mDimension</edgelabel>
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>mRandomState</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="usage">
+          <edgelabel>mCachedGenerator</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>mGeneratorComputed</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="69" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="77" relation="public-inheritance">
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="46" relation="private-inheritance">
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="48" relation="public-inheritance">
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="42" relation="private-inheritance">
+        </childnode>
+        <childnode refid="45" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="33" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="33" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="56">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="48">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="49" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="38" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="40" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>CoefficientType</label>
+      </node>
+      <node id="81">
+        <label>RingElement</label>
+        <link refid="class_ring_element"/>
+        <childnode refid="77" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>val</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="37" relation="public-inheritance">
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>T</label>
+      </node>
+      <node id="74">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="37" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="31">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="29">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="33">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="27">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="22" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="29" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>char</label>
+      </node>
+      <node id="16">
+        <label>const ARing *</label>
+      </node>
+      <node id="32">
+        <label>const void *</label>
+      </node>
+      <node id="22">
+        <label>double</label>
+      </node>
+      <node id="65">
+        <label>overflow_type *</label>
+      </node>
+      <node id="83">
+        <label>flint_rand_t</label>
+      </node>
+      <node id="6">
+        <label>fq_nmod_ctx_t</label>
+      </node>
+      <node id="5">
+        <label>fq_zech_ctx_t</label>
+      </node>
+      <node id="84">
+        <label>fq_zech_struct</label>
+      </node>
+      <node id="62">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="64">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="80">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="11">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="21">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>long</label>
+      </node>
+      <node id="50">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="43" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="53" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="54" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>mon_part</label>
+      </node>
+      <node id="26">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="25">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="23">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="24">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="10">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="18">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>size_t</label>
+      </node>
+      <node id="71">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>spinLock</label>
+      </node>
+      <node id="70">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>static const RingID</label>
+      </node>
+      <node id="61">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="60">
+        <label>std::string</label>
+        <childnode refid="61" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="15" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="33" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="60" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="82">
+        <label>ulong *</label>
+      </node>
+      <node id="72">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/aring-gf-flint.hpp" line="85" column="1" bodyfile="Macaulay2/e/aring-gf-flint.hpp" bodystart="86" bodyend="431"/>
+    <listofallmembers>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a59ecaa23a86c68bbe809da2012dc91d5_1a59ecaa23a86c68bbe809da2012dc91d5" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>add</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a50ea3ba6fe4e524343dd59984c2f24ef_1a50ea3ba6fe4e524343dd59984c2f24ef" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>ARingGFFlint</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ae52a816d034d9bd98038715963263481_1ae52a816d034d9bd98038715963263481" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>characteristic</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a475b55f8c818401260d34d9f00adb6d1_1a475b55f8c818401260d34d9f00adb6d1" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>clear</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_adba9c318194c14a534c3f46d810ebacb_1adba9c318194c14a534c3f46d810ebacb" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>compare_elems</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a3a8b38fd8b8d43196f70062446f063e0_1a3a8b38fd8b8d43196f70062446f063e0" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>computeHashValue</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a3c93274cd315b52402c64d3290f70b25_1a3c93274cd315b52402c64d3290f70b25" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>copy</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a682a21efc5137a406bf7e853ae660508_1a682a21efc5137a406bf7e853ae660508" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>dimension</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a1ceab4fa70151e21e58784d52e194c5a_1a1ceab4fa70151e21e58784d52e194c5a" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>divide</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a11023f1ae2a4a61caa47fbbe1fd7d27e_1a11023f1ae2a4a61caa47fbbe1fd7d27e" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>elem</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a523a8f0659eba1e1d125039dacd44340_1a523a8f0659eba1e1d125039dacd44340" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>elem_text_out</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a4922336e4584a7357cfd0c056e84a5c3_1a4922336e4584a7357cfd0c056e84a5c3" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>ElementContainerType</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a1d6793f12ba7ff455e9e90348f303393_1a1d6793f12ba7ff455e9e90348f303393" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>ElementType</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a63b93b95943d86b70f02f4ac705ca202_1a63b93b95943d86b70f02f4ac705ca202" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>eval</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a01c3213a871e48143e6f57dcf4357b34_1a01c3213a871e48143e6f57dcf4357b34" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>flintContext</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ac1435cb835dd447b4dc198417d9f5237_1ac1435cb835dd447b4dc198417d9f5237" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>from_ring_elem</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a4e63c9541baa70a6bc09890c7469245e_1a4e63c9541baa70a6bc09890c7469245e" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>from_ring_elem_const</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_aea2b195ed2799de13be6111e0c188a9b_1aea2b195ed2799de13be6111e0c188a9b" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>fromSmallIntegerCoefficients</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a049bdfe21c242433db12c30cef4e23fe_1a049bdfe21c242433db12c30cef4e23fe" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>getGenerator</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a084dee1ed245efa65a759bfcd8d626f3_1a084dee1ed245efa65a759bfcd8d626f3" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>getSmallIntegerCoefficients</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a23c03802ec3bbf4f7fd3592f87f3c6e2_1a23c03802ec3bbf4f7fd3592f87f3c6e2" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>init</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a12583ba8273ab0c2aded61017de082e4_1a12583ba8273ab0c2aded61017de082e4" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>init_set</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_af5fba8d049dc15cf24dd83fe8dd7963b_1af5fba8d049dc15cf24dd83fe8dd7963b" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>invert</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_af246717b24f3d24c9168607ad693f2b2_1af246717b24f3d24c9168607ad693f2b2" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>is_equal</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_abe312c0d24e1048f7a56cc8065c57d02_1abe312c0d24e1048f7a56cc8065c57d02" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>is_unit</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_aa9c20b0e97fd7ef5c8766ec2d98bac48_1aa9c20b0e97fd7ef5c8766ec2d98bac48" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>is_zero</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_af3315bc1fa01748ebb004c48b8fe6c34_1af3315bc1fa01748ebb004c48b8fe6c34" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>lift</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_adf0c3726fe8ced00abf208318981ab0f_1adf0c3726fe8ced00abf208318981ab0f" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>lift_to_original_ring</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a6c344c1729dfbd7ecff52d547d5c33fe_1a6c344c1729dfbd7ecff52d547d5c33fe" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mBigContext</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ae5bce79c8b0ccb4d244b6f572b7c55ec_1ae5bce79c8b0ccb4d244b6f572b7c55ec" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mCachedGenerator</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_aaa698bd737dcb677fe9c62f69a799079_1aaa698bd737dcb677fe9c62f69a799079" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mCharacteristic</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ad4c7e36421be7df07b49a2e27b120364_1ad4c7e36421be7df07b49a2e27b120364" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mContext</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ab563a327be7691851e347c0d915136a1_1ab563a327be7691851e347c0d915136a1" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mDimension</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ae0009e515c155c8f9b73a977c3ea5398_1ae0009e515c155c8f9b73a977c3ea5398" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mGeneratorComputed</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_aedb91a1d1a7ad0bc1c939295778d323d_1aedb91a1d1a7ad0bc1c939295778d323d" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mOriginalRing</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a9c64b8640761a0e6895506edf0f95fce_1a9c64b8640761a0e6895506edf0f95fce" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mPPowers</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ac1c0c4d6bcf9e85785919a5d62449499_1ac1c0c4d6bcf9e85785919a5d62449499" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mPrimitiveElement</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_aa54f86a22f7c42b38bf611fc931b3c08_1aa54f86a22f7c42b38bf611fc931b3c08" prot="private" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mRandomState</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a3742c5719f5779dce1cd054094a352e6_1a3742c5719f5779dce1cd054094a352e6" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>mult</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a1ddc03070c64789ce7bc821a62279e0c_1a1ddc03070c64789ce7bc821a62279e0c" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>negate</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>operator new[]</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ad9efad39e91d10cdc3bde0c0c0040e60_1ad9efad39e91d10cdc3bde0c0c0040e60" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>originalRing</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_acade29661c4db2ee37409796188b3cdc_1acade29661c4db2ee37409796188b3cdc" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>power</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ac207f77127b9e3addbc3d5006e96402e_1ac207f77127b9e3addbc3d5006e96402e" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>power_mpz</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a4e9d7796a09febb268e8e8bacec88529_1a4e9d7796a09febb268e8e8bacec88529" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>promote</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_aff01b0bd6c9fd12f04cf75786fc8b2f0_1aff01b0bd6c9fd12f04cf75786fc8b2f0" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>random</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_aa8115e0c2e5c97fd4289c2bc230d4b82_1aa8115e0c2e5c97fd4289c2bc230d4b82" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>ringID</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_aaa461f641e9bf7ff113ad9f07979f53b_1aaa461f641e9bf7ff113ad9f07979f53b" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>set</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a98fbf903a95ad4d209b6ba87722c66e4_1a98fbf903a95ad4d209b6ba87722c66e4" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>set_from_BigReal</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_ada9a5a6e57de69ecbf3b82acdf6ffab9_1ada9a5a6e57de69ecbf3b82acdf6ffab9" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>set_from_long</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_afdff91e749409694d6c393bcfe0facf2_1afdff91e749409694d6c393bcfe0facf2" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>set_from_mpq</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_acb32f5d9ffd25cbf438f6879c6c9f7f8_1acb32f5d9ffd25cbf438f6879c6c9f7f8" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>set_from_mpz</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a90a31ee0e0c69db901bbeca5d4c3e916_1a90a31ee0e0c69db901bbeca5d4c3e916" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>set_var</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a918d9d5c46f0fdd49115e7aed8d31374_1a918d9d5c46f0fdd49115e7aed8d31374" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>set_zero</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_aedb6cab6fa4e1d6621a78818869377e9_1aedb6cab6fa4e1d6621a78818869377e9" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>subtract</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a5ce08bbbe54ff56fe81a6a2b80983f14_1a5ce08bbbe54ff56fe81a6a2b80983f14" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>subtract_multiple</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_adeba120bcc1e84f062185c0c7e7df812_1adeba120bcc1e84f062185c0c7e7df812" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>swap</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a971858b8354d0f08729bc723d012e72d_1a971858b8354d0f08729bc723d012e72d" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>syzygy</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a097cacc6f2c0638656f93ee03b9ef139_1a097cacc6f2c0638656f93ee03b9ef139" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>text_out</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a2acc145ebd35e57b29365479cae0a8d6_1a2acc145ebd35e57b29365479cae0a8d6" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>to_ring_elem</name></member>
+      <member refid="class_m2_1_1_a_ring_g_f_flint_a1c2c57610254cec0377e89511265a04d_1a1c2c57610254cec0377e89511265a04d" prot="public" virt="non-virtual"><scope>M2::ARingGFFlint</scope><name>~ARingGFFlint</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

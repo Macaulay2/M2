@@ -1,0 +1,846 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structmathic_1_1_geobucket_1_1_bucket" kind="struct" language="C++" prot="public">
+    <compoundname>mathic::Geobucket::Bucket</compoundname>
+    <includes refid="_geobucket_8h" local="no">Geobucket.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmathic_1_1_geobucket_1_1_bucket_a2e3bf1d2ae671bfe7a0f698e70b96c63_1a2e3bf1d2ae671bfe7a0f698e70b96c63" prot="public" static="no" mutable="no">
+        <type><ref refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" kindref="member">Bucket</ref> **</type>
+        <definition>Bucket** mathic::Geobucket&lt; C &gt;::Bucket::_frontPos</definition>
+        <argsstring></argsstring>
+        <name>_frontPos</name>
+        <qualifiedname>mathic::Geobucket::Bucket::_frontPos</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="265" column="10" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="265" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a9060955677575428605c7803ec216483_1a9060955677575428605c7803ec216483" compoundref="_geobucket_8h" startline="261" endline="261">mathic::Geobucket&lt; C &gt;::Bucket::getFrontToken</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a4279488570b7474f73d09933c25e8270_1a4279488570b7474f73d09933c25e8270" compoundref="_geobucket_8h" startline="262" endline="262">mathic::Geobucket&lt; C &gt;::Bucket::getFrontToken</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a5795b2ed82dcfe51a454567fd1255cc3_1a5795b2ed82dcfe51a454567fd1255cc3" compoundref="_geobucket_8h" startline="263" endline="263">mathic::Geobucket&lt; C &gt;::Bucket::setFrontToken</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="structmathic_1_1_geobucket_1_1_bucket_addeed7f82b85a1dae9c7ae55e4bcf9cb_1addeed7f82b85a1dae9c7ae55e4bcf9cb" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+        <definition>Entry* mathic::Geobucket&lt; C &gt;::Bucket::_otherBuffer</definition>
+        <argsstring></argsstring>
+        <name>_otherBuffer</name>
+        <qualifiedname>mathic::Geobucket::Bucket::_otherBuffer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="268" column="9" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="268" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a4767d78ce1584763080d0f436fbdceb1_1a4767d78ce1584763080d0f436fbdceb1" compoundref="_geobucket_8h" startline="225" endline="228">mathic::Geobucket&lt; C &gt;::Bucket::getOtherBuffer</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_ab83c921c743890d7f1c80c38035f3ce8_1ab83c921c743890d7f1c80c38035f3ce8" compoundref="_geobucket_8h" startline="221" endline="224">mathic::Geobucket&lt; C &gt;::Bucket::setOtherBuffer</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a2629db8f5ca39efd8dc8a7828a414e04_1a2629db8f5ca39efd8dc8a7828a414e04" compoundref="_geobucket_8h" startline="229" endline="235">mathic::Geobucket&lt; C &gt;::Bucket::switchToOtherBuffer</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref></type>
+        <definition>Entry mathic::Geobucket&lt; C &gt;::Bucket::_back</definition>
+        <argsstring></argsstring>
+        <name>_back</name>
+        <qualifiedname>mathic::Geobucket::Bucket::_back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="269" column="9" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="269" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a5e7370e1abf131bc7867f01b9989d40e_1a5e7370e1abf131bc7867f01b9989d40e" compoundref="_geobucket_8h" startline="240" endline="246">mathic::Geobucket&lt; C &gt;::Bucket::assign</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a43238548afc987cb7d7017e40e6b9b6f_1a43238548afc987cb7d7017e40e6b9b6f" compoundref="_geobucket_8h" startline="184" endline="187">mathic::Geobucket&lt; C &gt;::Bucket::back</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a3b1fca87a585b706e576ff98a6644b94_1a3b1fca87a585b706e576ff98a6644b94" compoundref="_geobucket_8h" startline="248" endline="253">mathic::Geobucket&lt; C &gt;::Bucket::merge</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8c62deb681fb900de5c08924d14dd034_1a8c62deb681fb900de5c08924d14dd034" compoundref="_geobucket_8h" startline="192" endline="197">mathic::Geobucket&lt; C &gt;::Bucket::pop_back</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8d4ce4d5df08d62ada92e357b7c004ba_1a8d4ce4d5df08d62ada92e357b7c004ba" compoundref="_geobucket_8h" startline="254" endline="260">mathic::Geobucket&lt; C &gt;::Bucket::push_back</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a75c286fce4d0114252b452c23e49af37_1a75c286fce4d0114252b452c23e49af37" compoundref="_geobucket_8h" startline="215" endline="220">mathic::Geobucket&lt; C &gt;::Bucket::setBufferWithNewEntries</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a29cf8b74413bffe2666438f6c96547c3_1a29cf8b74413bffe2666438f6c96547c3" compoundref="_geobucket_8h" startline="198" endline="203">mathic::Geobucket&lt; C &gt;::Bucket::setEntry</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a2629db8f5ca39efd8dc8a7828a414e04_1a2629db8f5ca39efd8dc8a7828a414e04" compoundref="_geobucket_8h" startline="229" endline="235">mathic::Geobucket&lt; C &gt;::Bucket::switchToOtherBuffer</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+        <definition>Entry* mathic::Geobucket&lt; C &gt;::Bucket::_begin</definition>
+        <argsstring></argsstring>
+        <name>_begin</name>
+        <qualifiedname>mathic::Geobucket::Bucket::_begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="270" column="9" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="270" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a5e7370e1abf131bc7867f01b9989d40e_1a5e7370e1abf131bc7867f01b9989d40e" compoundref="_geobucket_8h" startline="240" endline="246">mathic::Geobucket&lt; C &gt;::Bucket::assign</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" compoundref="_geobucket_8h" startline="179" endline="179">mathic::Geobucket&lt; C &gt;::Bucket::begin</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a4b06a7abbcdbc590fe0d21bdf5214d64_1a4b06a7abbcdbc590fe0d21bdf5214d64" compoundref="_geobucket_8h" startline="181" endline="181">mathic::Geobucket&lt; C &gt;::Bucket::begin</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a3b1fca87a585b706e576ff98a6644b94_1a3b1fca87a585b706e576ff98a6644b94" compoundref="_geobucket_8h" startline="248" endline="253">mathic::Geobucket&lt; C &gt;::Bucket::merge</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8d4ce4d5df08d62ada92e357b7c004ba_1a8d4ce4d5df08d62ada92e357b7c004ba" compoundref="_geobucket_8h" startline="254" endline="260">mathic::Geobucket&lt; C &gt;::Bucket::push_back</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a76a39acabe8042186a31c6f422359f00_1a76a39acabe8042186a31c6f422359f00" compoundref="_geobucket_8h" startline="211" endline="214">mathic::Geobucket&lt; C &gt;::Bucket::setBuffer</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a75c286fce4d0114252b452c23e49af37_1a75c286fce4d0114252b452c23e49af37" compoundref="_geobucket_8h" startline="215" endline="220">mathic::Geobucket&lt; C &gt;::Bucket::setBufferWithNewEntries</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a2629db8f5ca39efd8dc8a7828a414e04_1a2629db8f5ca39efd8dc8a7828a414e04" compoundref="_geobucket_8h" startline="229" endline="235">mathic::Geobucket&lt; C &gt;::Bucket::switchToOtherBuffer</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::Geobucket&lt; C &gt;::Bucket::_size</definition>
+        <argsstring></argsstring>
+        <name>_size</name>
+        <qualifiedname>mathic::Geobucket::Bucket::_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="271" column="10" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="271" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a5e7370e1abf131bc7867f01b9989d40e_1a5e7370e1abf131bc7867f01b9989d40e" compoundref="_geobucket_8h" startline="240" endline="246">mathic::Geobucket&lt; C &gt;::Bucket::assign</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a6ff3f155a77e9572382b4359fd0d8dd8_1a6ff3f155a77e9572382b4359fd0d8dd8" compoundref="_geobucket_8h" startline="236" endline="238">mathic::Geobucket&lt; C &gt;::Bucket::clear</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_ab92fae00c637979ad9cdf57ffc8947a5_1ab92fae00c637979ad9cdf57ffc8947a5" compoundref="_geobucket_8h" startline="204" endline="210">mathic::Geobucket&lt; C &gt;::Bucket::insertAtNotEnd</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a3b1fca87a585b706e576ff98a6644b94_1a3b1fca87a585b706e576ff98a6644b94" compoundref="_geobucket_8h" startline="248" endline="253">mathic::Geobucket&lt; C &gt;::Bucket::merge</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8c62deb681fb900de5c08924d14dd034_1a8c62deb681fb900de5c08924d14dd034" compoundref="_geobucket_8h" startline="192" endline="197">mathic::Geobucket&lt; C &gt;::Bucket::pop_back</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8d4ce4d5df08d62ada92e357b7c004ba_1a8d4ce4d5df08d62ada92e357b7c004ba" compoundref="_geobucket_8h" startline="254" endline="260">mathic::Geobucket&lt; C &gt;::Bucket::push_back</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a75c286fce4d0114252b452c23e49af37_1a75c286fce4d0114252b452c23e49af37" compoundref="_geobucket_8h" startline="215" endline="220">mathic::Geobucket&lt; C &gt;::Bucket::setBufferWithNewEntries</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a2629db8f5ca39efd8dc8a7828a414e04_1a2629db8f5ca39efd8dc8a7828a414e04" compoundref="_geobucket_8h" startline="229" endline="235">mathic::Geobucket&lt; C &gt;::Bucket::switchToOtherBuffer</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmathic_1_1_geobucket_1_1_bucket_a0cc52fbf92c956bb711003f15637e5fd_1a0cc52fbf92c956bb711003f15637e5fd" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::Geobucket&lt; C &gt;::Bucket::_capacity</definition>
+        <argsstring></argsstring>
+        <name>_capacity</name>
+        <qualifiedname>mathic::Geobucket::Bucket::_capacity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="272" column="10" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="272" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_aaeae19f01b15ed161302290ccbd1fb60_1aaeae19f01b15ed161302290ccbd1fb60" compoundref="_geobucket_8h" startline="178" endline="178">mathic::Geobucket&lt; C &gt;::Bucket::capacity</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mathic::Geobucket&lt; C &gt;::Bucket::Bucket</definition>
+        <argsstring>(size_t capacity, Entry *buffer, Entry *otherBuffer)</argsstring>
+        <name>Bucket</name>
+        <qualifiedname>mathic::Geobucket::Bucket::Bucket</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>capacity</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+          <declname>otherBuffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="176" column="3" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="775" bodyend="784"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" compoundref="_geobucket_8h" startline="269">mathic::Geobucket&lt; C &gt;::Bucket::_back</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" compoundref="_geobucket_8h" startline="270">mathic::Geobucket&lt; C &gt;::Bucket::_begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a0cc52fbf92c956bb711003f15637e5fd_1a0cc52fbf92c956bb711003f15637e5fd" compoundref="_geobucket_8h" startline="272">mathic::Geobucket&lt; C &gt;::Bucket::_capacity</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a2e3bf1d2ae671bfe7a0f698e70b96c63_1a2e3bf1d2ae671bfe7a0f698e70b96c63" compoundref="_geobucket_8h" startline="265">mathic::Geobucket&lt; C &gt;::Bucket::_frontPos</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_addeed7f82b85a1dae9c7ae55e4bcf9cb_1addeed7f82b85a1dae9c7ae55e4bcf9cb" compoundref="_geobucket_8h" startline="268">mathic::Geobucket&lt; C &gt;::Bucket::_otherBuffer</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aaeae19f01b15ed161302290ccbd1fb60_1aaeae19f01b15ed161302290ccbd1fb60" compoundref="_geobucket_8h" startline="178" endline="178">mathic::Geobucket&lt; C &gt;::Bucket::capacity</references>
+        <references refid="namespacemathic_ad2658f70702519d6e2fa504591e4d884_1ad2658f70702519d6e2fa504591e4d884a3f92250f05e3585fff083dae20a28e29" compoundref="_geobucket_8h" startline="14">mathic::GeoStoreDoubleBuffer</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a9060955677575428605c7803ec216483_1a9060955677575428605c7803ec216483" compoundref="_geobucket_8h" startline="261" endline="261">mathic::Geobucket&lt; C &gt;::Bucket::getFrontToken</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a4279488570b7474f73d09933c25e8270_1a4279488570b7474f73d09933c25e8270" compoundref="_geobucket_8h" startline="262" endline="262">mathic::Geobucket&lt; C &gt;::Bucket::getFrontToken</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a5795b2ed82dcfe51a454567fd1255cc3_1a5795b2ed82dcfe51a454567fd1255cc3" compoundref="_geobucket_8h" startline="263" endline="263">mathic::Geobucket&lt; C &gt;::Bucket::setFrontToken</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::Geobucket&lt; C &gt;::Bucket::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>mathic::Geobucket::Bucket::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="177" column="10" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="177" bodyend="177"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a5e7370e1abf131bc7867f01b9989d40e_1a5e7370e1abf131bc7867f01b9989d40e" compoundref="_geobucket_8h" startline="240" endline="246">mathic::Geobucket&lt; C &gt;::Bucket::assign</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a4c56c9bd04a20217654b8913a59b1914_1a4c56c9bd04a20217654b8913a59b1914" compoundref="_geobucket_8h" startline="183" endline="183">mathic::Geobucket&lt; C &gt;::Bucket::empty</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_aa356dee93f55ae8c2b5ef7eaf404995e_1aa356dee93f55ae8c2b5ef7eaf404995e" compoundref="_geobucket_8h" startline="182" endline="182">mathic::Geobucket&lt; C &gt;::Bucket::end</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5dacfcdefe66e4a0bec733890fefe07b_1a5dacfcdefe66e4a0bec733890fefe07b" compoundref="_geobucket_8h" startline="706" endline="739">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a82c808e173e3c70b0c0e53cce649ec9a_1a82c808e173e3c70b0c0e53cce649ec9a" compoundref="_geobucket_8h" startline="794" endline="817">mathic::Geobucket&lt; C &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5df953315a6b918cc667649cecc751e6_1a5df953315a6b918cc667649cecc751e6" compoundref="_geobucket_8h" startline="566" endline="576">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a334182a6f44ae5c137750fbc3c4ae9f5_1a334182a6f44ae5c137750fbc3c4ae9f5" compoundref="_geobucket_8h" startline="617" endline="632">mathic::Geobucket&lt; C &gt;::moveToEmpty</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8e4a9d80f5df7dc8e01cda617c7925e7_1a8e4a9d80f5df7dc8e01cda617c7925e7" compoundref="_geobucket_8h" startline="188" endline="191">mathic::Geobucket&lt; C &gt;::Bucket::operator[]</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8c62deb681fb900de5c08924d14dd034_1a8c62deb681fb900de5c08924d14dd034" compoundref="_geobucket_8h" startline="192" endline="197">mathic::Geobucket&lt; C &gt;::Bucket::pop_back</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8d4ce4d5df08d62ada92e357b7c004ba_1a8d4ce4d5df08d62ada92e357b7c004ba" compoundref="_geobucket_8h" startline="254" endline="260">mathic::Geobucket&lt; C &gt;::Bucket::push_back</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a75c286fce4d0114252b452c23e49af37_1a75c286fce4d0114252b452c23e49af37" compoundref="_geobucket_8h" startline="215" endline="220">mathic::Geobucket&lt; C &gt;::Bucket::setBufferWithNewEntries</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a2629db8f5ca39efd8dc8a7828a414e04_1a2629db8f5ca39efd8dc8a7828a414e04" compoundref="_geobucket_8h" startline="229" endline="235">mathic::Geobucket&lt; C &gt;::Bucket::switchToOtherBuffer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_aaeae19f01b15ed161302290ccbd1fb60_1aaeae19f01b15ed161302290ccbd1fb60" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::Geobucket&lt; C &gt;::Bucket::capacity</definition>
+        <argsstring>() const</argsstring>
+        <name>capacity</name>
+        <qualifiedname>mathic::Geobucket::Bucket::capacity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="178" column="10" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="178" bodyend="178"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a0cc52fbf92c956bb711003f15637e5fd_1a0cc52fbf92c956bb711003f15637e5fd" compoundref="_geobucket_8h" startline="272">mathic::Geobucket&lt; C &gt;::Bucket::_capacity</references>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5df953315a6b918cc667649cecc751e6_1a5df953315a6b918cc667649cecc751e6" compoundref="_geobucket_8h" startline="566" endline="576">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a334182a6f44ae5c137750fbc3c4ae9f5_1a334182a6f44ae5c137750fbc3c4ae9f5" compoundref="_geobucket_8h" startline="617" endline="632">mathic::Geobucket&lt; C &gt;::moveToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8d4ce4d5df08d62ada92e357b7c004ba_1a8d4ce4d5df08d62ada92e357b7c004ba" compoundref="_geobucket_8h" startline="254" endline="260">mathic::Geobucket&lt; C &gt;::Bucket::push_back</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+        <definition>Entry * mathic::Geobucket&lt; C &gt;::Bucket::begin</definition>
+        <argsstring>()</argsstring>
+        <name>begin</name>
+        <qualifiedname>mathic::Geobucket::Bucket::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="179" column="9" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="179" bodyend="179"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" compoundref="_geobucket_8h" startline="270">mathic::Geobucket&lt; C &gt;::Bucket::_begin</references>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a5e7370e1abf131bc7867f01b9989d40e_1a5e7370e1abf131bc7867f01b9989d40e" compoundref="_geobucket_8h" startline="240" endline="246">mathic::Geobucket&lt; C &gt;::Bucket::assign</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_aa356dee93f55ae8c2b5ef7eaf404995e_1aa356dee93f55ae8c2b5ef7eaf404995e" compoundref="_geobucket_8h" startline="182" endline="182">mathic::Geobucket&lt; C &gt;::Bucket::end</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_ab92fae00c637979ad9cdf57ffc8947a5_1ab92fae00c637979ad9cdf57ffc8947a5" compoundref="_geobucket_8h" startline="204" endline="210">mathic::Geobucket&lt; C &gt;::Bucket::insertAtNotEnd</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a82c808e173e3c70b0c0e53cce649ec9a_1a82c808e173e3c70b0c0e53cce649ec9a" compoundref="_geobucket_8h" startline="794" endline="817">mathic::Geobucket&lt; C &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5df953315a6b918cc667649cecc751e6_1a5df953315a6b918cc667649cecc751e6" compoundref="_geobucket_8h" startline="566" endline="576">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a334182a6f44ae5c137750fbc3c4ae9f5_1a334182a6f44ae5c137750fbc3c4ae9f5" compoundref="_geobucket_8h" startline="617" endline="632">mathic::Geobucket&lt; C &gt;::moveToEmpty</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8e4a9d80f5df7dc8e01cda617c7925e7_1a8e4a9d80f5df7dc8e01cda617c7925e7" compoundref="_geobucket_8h" startline="188" endline="191">mathic::Geobucket&lt; C &gt;::Bucket::operator[]</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a76a39acabe8042186a31c6f422359f00_1a76a39acabe8042186a31c6f422359f00" compoundref="_geobucket_8h" startline="211" endline="214">mathic::Geobucket&lt; C &gt;::Bucket::setBuffer</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a29cf8b74413bffe2666438f6c96547c3_1a29cf8b74413bffe2666438f6c96547c3" compoundref="_geobucket_8h" startline="198" endline="203">mathic::Geobucket&lt; C &gt;::Bucket::setEntry</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+        <definition>Entry * mathic::Geobucket&lt; C &gt;::Bucket::end</definition>
+        <argsstring>()</argsstring>
+        <name>end</name>
+        <qualifiedname>mathic::Geobucket::Bucket::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="180" column="9" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="180" bodyend="180"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" compoundref="_geobucket_8h" startline="179" endline="179">mathic::Geobucket&lt; C &gt;::Bucket::begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</references>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a5e7370e1abf131bc7867f01b9989d40e_1a5e7370e1abf131bc7867f01b9989d40e" compoundref="_geobucket_8h" startline="240" endline="246">mathic::Geobucket&lt; C &gt;::Bucket::assign</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a43238548afc987cb7d7017e40e6b9b6f_1a43238548afc987cb7d7017e40e6b9b6f" compoundref="_geobucket_8h" startline="184" endline="187">mathic::Geobucket&lt; C &gt;::Bucket::back</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_ab92fae00c637979ad9cdf57ffc8947a5_1ab92fae00c637979ad9cdf57ffc8947a5" compoundref="_geobucket_8h" startline="204" endline="210">mathic::Geobucket&lt; C &gt;::Bucket::insertAtNotEnd</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a82c808e173e3c70b0c0e53cce649ec9a_1a82c808e173e3c70b0c0e53cce649ec9a" compoundref="_geobucket_8h" startline="794" endline="817">mathic::Geobucket&lt; C &gt;::isValid</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a3b1fca87a585b706e576ff98a6644b94_1a3b1fca87a585b706e576ff98a6644b94" compoundref="_geobucket_8h" startline="248" endline="253">mathic::Geobucket&lt; C &gt;::Bucket::merge</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5df953315a6b918cc667649cecc751e6_1a5df953315a6b918cc667649cecc751e6" compoundref="_geobucket_8h" startline="566" endline="576">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a334182a6f44ae5c137750fbc3c4ae9f5_1a334182a6f44ae5c137750fbc3c4ae9f5" compoundref="_geobucket_8h" startline="617" endline="632">mathic::Geobucket&lt; C &gt;::moveToEmpty</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a8c62deb681fb900de5c08924d14dd034_1a8c62deb681fb900de5c08924d14dd034" compoundref="_geobucket_8h" startline="192" endline="197">mathic::Geobucket&lt; C &gt;::Bucket::pop_back</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a76a39acabe8042186a31c6f422359f00_1a76a39acabe8042186a31c6f422359f00" compoundref="_geobucket_8h" startline="211" endline="214">mathic::Geobucket&lt; C &gt;::Bucket::setBuffer</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a75c286fce4d0114252b452c23e49af37_1a75c286fce4d0114252b452c23e49af37" compoundref="_geobucket_8h" startline="215" endline="220">mathic::Geobucket&lt; C &gt;::Bucket::setBufferWithNewEntries</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a29cf8b74413bffe2666438f6c96547c3_1a29cf8b74413bffe2666438f6c96547c3" compoundref="_geobucket_8h" startline="198" endline="203">mathic::Geobucket&lt; C &gt;::Bucket::setEntry</referencedby>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a2629db8f5ca39efd8dc8a7828a414e04_1a2629db8f5ca39efd8dc8a7828a414e04" compoundref="_geobucket_8h" startline="229" endline="235">mathic::Geobucket&lt; C &gt;::Bucket::switchToOtherBuffer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a4b06a7abbcdbc590fe0d21bdf5214d64_1a4b06a7abbcdbc590fe0d21bdf5214d64" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+        <definition>const Entry * mathic::Geobucket&lt; C &gt;::Bucket::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>mathic::Geobucket::Bucket::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="181" column="15" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="181" bodyend="181"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" compoundref="_geobucket_8h" startline="270">mathic::Geobucket&lt; C &gt;::Bucket::_begin</references>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_aa356dee93f55ae8c2b5ef7eaf404995e_1aa356dee93f55ae8c2b5ef7eaf404995e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+        <definition>const Entry * mathic::Geobucket&lt; C &gt;::Bucket::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>mathic::Geobucket::Bucket::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="182" column="15" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="182" bodyend="182"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" compoundref="_geobucket_8h" startline="179" endline="179">mathic::Geobucket&lt; C &gt;::Bucket::begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</references>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a4c56c9bd04a20217654b8913a59b1914_1a4c56c9bd04a20217654b8913a59b1914" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::Geobucket&lt; C &gt;::Bucket::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>mathic::Geobucket::Bucket::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="183" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="183" bodyend="183"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</references>
+        <referencedby refid="structmathic_1_1_geobucket_1_1_bucket_a43238548afc987cb7d7017e40e6b9b6f_1a43238548afc987cb7d7017e40e6b9b6f" compoundref="_geobucket_8h" startline="184" endline="187">mathic::Geobucket&lt; C &gt;::Bucket::back</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5dacfcdefe66e4a0bec733890fefe07b_1a5dacfcdefe66e4a0bec733890fefe07b" compoundref="_geobucket_8h" startline="706" endline="739">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a82c808e173e3c70b0c0e53cce649ec9a_1a82c808e173e3c70b0c0e53cce649ec9a" compoundref="_geobucket_8h" startline="794" endline="817">mathic::Geobucket&lt; C &gt;::isValid</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5df953315a6b918cc667649cecc751e6_1a5df953315a6b918cc667649cecc751e6" compoundref="_geobucket_8h" startline="566" endline="576">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a334182a6f44ae5c137750fbc3c4ae9f5_1a334182a6f44ae5c137750fbc3c4ae9f5" compoundref="_geobucket_8h" startline="617" endline="632">mathic::Geobucket&lt; C &gt;::moveToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a43238548afc987cb7d7017e40e6b9b6f_1a43238548afc987cb7d7017e40e6b9b6f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> &amp;</type>
+        <definition>const Entry &amp; mathic::Geobucket&lt; C &gt;::Bucket::back</definition>
+        <argsstring>() const</argsstring>
+        <name>back</name>
+        <qualifiedname>mathic::Geobucket::Bucket::back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="184" column="15" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="184" bodyend="187"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" compoundref="_geobucket_8h" startline="269">mathic::Geobucket&lt; C &gt;::Bucket::_back</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4c56c9bd04a20217654b8913a59b1914_1a4c56c9bd04a20217654b8913a59b1914" compoundref="_geobucket_8h" startline="183" endline="183">mathic::Geobucket&lt; C &gt;::Bucket::empty</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="classmathic_1_1_geobucket_ad1fee0a0e4ab54c4cc954d0ec35337b6_1ad1fee0a0e4ab54c4cc954d0ec35337b6" compoundref="_geobucket_8h" startline="447" endline="456">mathic::Geobucket&lt; C &gt;::pop</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a8e4a9d80f5df7dc8e01cda617c7925e7_1a8e4a9d80f5df7dc8e01cda617c7925e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> &amp;</type>
+        <definition>const Entry &amp; mathic::Geobucket&lt; C &gt;::Bucket::operator[]</definition>
+        <argsstring>(size_t i) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>mathic::Geobucket::Bucket::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="188" column="15" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="188" bodyend="191"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" compoundref="_geobucket_8h" startline="179" endline="179">mathic::Geobucket&lt; C &gt;::Bucket::begin</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</references>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a8c62deb681fb900de5c08924d14dd034_1a8c62deb681fb900de5c08924d14dd034" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::pop_back</definition>
+        <argsstring>()</argsstring>
+        <name>pop_back</name>
+        <qualifiedname>mathic::Geobucket::Bucket::pop_back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="192" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="192" bodyend="197"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" compoundref="_geobucket_8h" startline="269">mathic::Geobucket&lt; C &gt;::Bucket::_back</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</references>
+        <referencedby refid="classmathic_1_1_geobucket_ad1fee0a0e4ab54c4cc954d0ec35337b6_1ad1fee0a0e4ab54c4cc954d0ec35337b6" compoundref="_geobucket_8h" startline="447" endline="456">mathic::Geobucket&lt; C &gt;::pop</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a29cf8b74413bffe2666438f6c96547c3_1a29cf8b74413bffe2666438f6c96547c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::setEntry</definition>
+        <argsstring>(Entry *pos, const Entry &amp;entry)</argsstring>
+        <name>setEntry</name>
+        <qualifiedname>mathic::Geobucket::Bucket::setEntry</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+          <declname>pos</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="198" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="198" bodyend="203"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" compoundref="_geobucket_8h" startline="269">mathic::Geobucket&lt; C &gt;::Bucket::_back</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" compoundref="_geobucket_8h" startline="179" endline="179">mathic::Geobucket&lt; C &gt;::Bucket::begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_ab92fae00c637979ad9cdf57ffc8947a5_1ab92fae00c637979ad9cdf57ffc8947a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::insertAtNotEnd</definition>
+        <argsstring>(Entry *pos, const Entry &amp;entry)</argsstring>
+        <name>insertAtNotEnd</name>
+        <qualifiedname>mathic::Geobucket::Bucket::insertAtNotEnd</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+          <declname>pos</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> &amp;</type>
+          <declname>entry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="204" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="204" bodyend="210"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" compoundref="_geobucket_8h" startline="179" endline="179">mathic::Geobucket&lt; C &gt;::Bucket::begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a76a39acabe8042186a31c6f422359f00_1a76a39acabe8042186a31c6f422359f00" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::setBuffer</definition>
+        <argsstring>(Entry *buffer)</argsstring>
+        <name>setBuffer</name>
+        <qualifiedname>mathic::Geobucket::Bucket::setBuffer</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+          <declname>buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="211" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="211" bodyend="214"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" compoundref="_geobucket_8h" startline="270">mathic::Geobucket&lt; C &gt;::Bucket::_begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" compoundref="_geobucket_8h" startline="179" endline="179">mathic::Geobucket&lt; C &gt;::Bucket::begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</references>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a75c286fce4d0114252b452c23e49af37_1a75c286fce4d0114252b452c23e49af37" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::setBufferWithNewEntries</definition>
+        <argsstring>(Entry *buffer, size_t size)</argsstring>
+        <name>setBufferWithNewEntries</name>
+        <qualifiedname>mathic::Geobucket::Bucket::setBufferWithNewEntries</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="215" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="215" bodyend="220"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" compoundref="_geobucket_8h" startline="269">mathic::Geobucket&lt; C &gt;::Bucket::_back</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" compoundref="_geobucket_8h" startline="270">mathic::Geobucket&lt; C &gt;::Bucket::_begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</references>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a334182a6f44ae5c137750fbc3c4ae9f5_1a334182a6f44ae5c137750fbc3c4ae9f5" compoundref="_geobucket_8h" startline="617" endline="632">mathic::Geobucket&lt; C &gt;::moveToEmpty</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_ab83c921c743890d7f1c80c38035f3ce8_1ab83c921c743890d7f1c80c38035f3ce8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::setOtherBuffer</definition>
+        <argsstring>(Entry *otherBuffer)</argsstring>
+        <name>setOtherBuffer</name>
+        <qualifiedname>mathic::Geobucket::Bucket::setOtherBuffer</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+          <declname>otherBuffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="221" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="221" bodyend="224"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_addeed7f82b85a1dae9c7ae55e4bcf9cb_1addeed7f82b85a1dae9c7ae55e4bcf9cb" compoundref="_geobucket_8h" startline="268">mathic::Geobucket&lt; C &gt;::Bucket::_otherBuffer</references>
+        <references refid="namespacemathic_ad2658f70702519d6e2fa504591e4d884_1ad2658f70702519d6e2fa504591e4d884a3f92250f05e3585fff083dae20a28e29" compoundref="_geobucket_8h" startline="14">mathic::GeoStoreDoubleBuffer</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a4767d78ce1584763080d0f436fbdceb1_1a4767d78ce1584763080d0f436fbdceb1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> *</type>
+        <definition>Entry * mathic::Geobucket&lt; C &gt;::Bucket::getOtherBuffer</definition>
+        <argsstring>()</argsstring>
+        <name>getOtherBuffer</name>
+        <qualifiedname>mathic::Geobucket::Bucket::getOtherBuffer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="225" column="9" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="225" bodyend="228"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_addeed7f82b85a1dae9c7ae55e4bcf9cb_1addeed7f82b85a1dae9c7ae55e4bcf9cb" compoundref="_geobucket_8h" startline="268">mathic::Geobucket&lt; C &gt;::Bucket::_otherBuffer</references>
+        <references refid="namespacemathic_ad2658f70702519d6e2fa504591e4d884_1ad2658f70702519d6e2fa504591e4d884a3f92250f05e3585fff083dae20a28e29" compoundref="_geobucket_8h" startline="14">mathic::GeoStoreDoubleBuffer</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a2629db8f5ca39efd8dc8a7828a414e04_1a2629db8f5ca39efd8dc8a7828a414e04" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::switchToOtherBuffer</definition>
+        <argsstring>(size_t size)</argsstring>
+        <name>switchToOtherBuffer</name>
+        <qualifiedname>mathic::Geobucket::Bucket::switchToOtherBuffer</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="229" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="229" bodyend="235"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" compoundref="_geobucket_8h" startline="269">mathic::Geobucket&lt; C &gt;::Bucket::_back</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" compoundref="_geobucket_8h" startline="270">mathic::Geobucket&lt; C &gt;::Bucket::_begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_addeed7f82b85a1dae9c7ae55e4bcf9cb_1addeed7f82b85a1dae9c7ae55e4bcf9cb" compoundref="_geobucket_8h" startline="268">mathic::Geobucket&lt; C &gt;::Bucket::_otherBuffer</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</references>
+        <references refid="namespacemathic_ad2658f70702519d6e2fa504591e4d884_1ad2658f70702519d6e2fa504591e4d884a3f92250f05e3585fff083dae20a28e29" compoundref="_geobucket_8h" startline="14">mathic::GeoStoreDoubleBuffer</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a6ff3f155a77e9572382b4359fd0d8dd8_1a6ff3f155a77e9572382b4359fd0d8dd8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>mathic::Geobucket::Bucket::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="236" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="236" bodyend="238"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5df953315a6b918cc667649cecc751e6_1a5df953315a6b918cc667649cecc751e6" compoundref="_geobucket_8h" startline="566" endline="576">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a334182a6f44ae5c137750fbc3c4ae9f5_1a334182a6f44ae5c137750fbc3c4ae9f5" compoundref="_geobucket_8h" startline="617" endline="632">mathic::Geobucket&lt; C &gt;::moveToEmpty</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a5e7370e1abf131bc7867f01b9989d40e_1a5e7370e1abf131bc7867f01b9989d40e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class It</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::assign</definition>
+        <argsstring>(It begin, It end, size_t size)</argsstring>
+        <name>assign</name>
+        <qualifiedname>mathic::Geobucket::Bucket::assign</qualifiedname>
+        <param>
+          <type>It</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>It</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="240" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="240" bodyend="246"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" compoundref="_geobucket_8h" startline="269">mathic::Geobucket&lt; C &gt;::Bucket::_back</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" compoundref="_geobucket_8h" startline="270">mathic::Geobucket&lt; C &gt;::Bucket::_begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" compoundref="_geobucket_8h" startline="179" endline="179">mathic::Geobucket&lt; C &gt;::Bucket::begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</references>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a5dacfcdefe66e4a0bec733890fefe07b_1a5dacfcdefe66e4a0bec733890fefe07b" compoundref="_geobucket_8h" startline="706" endline="739">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a334182a6f44ae5c137750fbc3c4ae9f5_1a334182a6f44ae5c137750fbc3c4ae9f5" compoundref="_geobucket_8h" startline="617" endline="632">mathic::Geobucket&lt; C &gt;::moveToEmpty</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a3b1fca87a585b706e576ff98a6644b94_1a3b1fca87a585b706e576ff98a6644b94" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class It1</type>
+          </param>
+          <param>
+            <type>class It2</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::merge</definition>
+        <argsstring>(Geobucket&lt; Configuration &gt; &amp;gb, It1 begin1, It1 end1, It2 begin2, It2 end2)</argsstring>
+        <name>merge</name>
+        <qualifiedname>mathic::Geobucket::Bucket::merge</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_geobucket_adf81b3fe4e26c372b7d34ef35448ebaf_1adf81b3fe4e26c372b7d34ef35448ebaf" kindref="member">Geobucket</ref>&lt; <ref refid="classmathic_1_1_geobucket_af4a413a59bc75c444ef7965f2d5130de_1af4a413a59bc75c444ef7965f2d5130de" kindref="member">Configuration</ref> &gt; &amp;</type>
+          <declname>gb</declname>
+        </param>
+        <param>
+          <type>It1</type>
+          <declname>begin1</declname>
+        </param>
+        <param>
+          <type>It1</type>
+          <declname>end1</declname>
+        </param>
+        <param>
+          <type>It2</type>
+          <declname>begin2</declname>
+        </param>
+        <param>
+          <type>It2</type>
+          <declname>end2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="248" column="6" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="248" bodyend="253"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" compoundref="_geobucket_8h" startline="269">mathic::Geobucket&lt; C &gt;::Bucket::_back</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" compoundref="_geobucket_8h" startline="270">mathic::Geobucket&lt; C &gt;::Bucket::_begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" compoundref="_geobucket_8h" startline="180" endline="180">mathic::Geobucket&lt; C &gt;::Bucket::end</references>
+        <references refid="franzi-gb_8cpp_a14e81b9d04537f8dd05a8cef7fb8563e_1a14e81b9d04537f8dd05a8cef7fb8563e" compoundref="franzi-gb_8cpp" startline="430" endline="471">gb</references>
+        <references refid="classmathic_1_1_geobucket_adf81b3fe4e26c372b7d34ef35448ebaf_1adf81b3fe4e26c372b7d34ef35448ebaf" compoundref="_geobucket_8h" startline="313" endline="324">mathic::Geobucket&lt; C &gt;::Geobucket</references>
+        <referencedby refid="classmathic_1_1_geobucket_a9e50d8c108ecbdba740a310881fbc59b_1a9e50d8c108ecbdba740a310881fbc59b" compoundref="_geobucket_8h" startline="604" endline="614">mathic::Geobucket&lt; C &gt;::mergeToEmpty</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a4effca5937b4f9a056da0ce1f45df25f_1a4effca5937b4f9a056da0ce1f45df25f" compoundref="_geobucket_8h" startline="580" endline="600">mathic::Geobucket&lt; C &gt;::mergeToNonEmpty</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a8d4ce4d5df08d62ada92e357b7c004ba_1a8d4ce4d5df08d62ada92e357b7c004ba" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::push_back</definition>
+        <argsstring>(const Entry &amp;e)</argsstring>
+        <name>push_back</name>
+        <qualifiedname>mathic::Geobucket::Bucket::push_back</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_geobucket_a5b93081bed91c2d317b7d9e3a8c0025d_1a5b93081bed91c2d317b7d9e3a8c0025d" kindref="member">Entry</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="254" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="254" bodyend="260"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" compoundref="_geobucket_8h" startline="269">mathic::Geobucket&lt; C &gt;::Bucket::_back</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" compoundref="_geobucket_8h" startline="270">mathic::Geobucket&lt; C &gt;::Bucket::_begin</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" compoundref="_geobucket_8h" startline="271">mathic::Geobucket&lt; C &gt;::Bucket::_size</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_aaeae19f01b15ed161302290ccbd1fb60_1aaeae19f01b15ed161302290ccbd1fb60" compoundref="_geobucket_8h" startline="178" endline="178">mathic::Geobucket&lt; C &gt;::Bucket::capacity</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" compoundref="_geobucket_8h" startline="177" endline="177">mathic::Geobucket&lt; C &gt;::Bucket::size</references>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a9060955677575428605c7803ec216483_1a9060955677575428605c7803ec216483" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" kindref="member">Bucket</ref> **</type>
+        <definition>Bucket ** mathic::Geobucket&lt; C &gt;::Bucket::getFrontToken</definition>
+        <argsstring>()</argsstring>
+        <name>getFrontToken</name>
+        <qualifiedname>mathic::Geobucket::Bucket::getFrontToken</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="261" column="10" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="261" bodyend="261"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a2e3bf1d2ae671bfe7a0f698e70b96c63_1a2e3bf1d2ae671bfe7a0f698e70b96c63" compoundref="_geobucket_8h" startline="265">mathic::Geobucket&lt; C &gt;::Bucket::_frontPos</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</references>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a4279488570b7474f73d09933c25e8270_1a4279488570b7474f73d09933c25e8270" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" kindref="member">Bucket</ref> **</type>
+        <definition>const Bucket ** mathic::Geobucket&lt; C &gt;::Bucket::getFrontToken</definition>
+        <argsstring>() const</argsstring>
+        <name>getFrontToken</name>
+        <qualifiedname>mathic::Geobucket::Bucket::getFrontToken</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="262" column="16" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="262" bodyend="262"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a2e3bf1d2ae671bfe7a0f698e70b96c63_1a2e3bf1d2ae671bfe7a0f698e70b96c63" compoundref="_geobucket_8h" startline="265">mathic::Geobucket&lt; C &gt;::Bucket::_frontPos</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</references>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_geobucket_1_1_bucket_a5795b2ed82dcfe51a454567fd1255cc3_1a5795b2ed82dcfe51a454567fd1255cc3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::Geobucket&lt; C &gt;::Bucket::setFrontToken</definition>
+        <argsstring>(Bucket **token)</argsstring>
+        <name>setFrontToken</name>
+        <qualifiedname>mathic::Geobucket::Bucket::setFrontToken</qualifiedname>
+        <param>
+          <type><ref refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" kindref="member">Bucket</ref> **</type>
+          <declname>token</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Geobucket.h" line="263" column="8" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="263" bodyend="263"/>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a2e3bf1d2ae671bfe7a0f698e70b96c63_1a2e3bf1d2ae671bfe7a0f698e70b96c63" compoundref="_geobucket_8h" startline="265">mathic::Geobucket&lt; C &gt;::Bucket::_frontPos</references>
+        <references refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" compoundref="_geobucket_8h" startline="775" endline="784">mathic::Geobucket&lt; C &gt;::Bucket::Bucket</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Entry</label>
+      </node>
+      <node id="3">
+        <label>Entry *</label>
+      </node>
+      <node id="2">
+        <label>mathic::Geobucket&lt; C &gt;::Bucket</label>
+        <link refid="structmathic_1_1_geobucket_1_1_bucket"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_frontPos</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_otherBuffer</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_back</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_capacity</edgelabel>
+          <edgelabel>_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::Geobucket&lt; C &gt;::Bucket</label>
+        <link refid="structmathic_1_1_geobucket_1_1_bucket"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_frontPos</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_otherBuffer</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_back</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_capacity</edgelabel>
+          <edgelabel>_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>size_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/Geobucket.h" line="175" column="1" bodyfile="submodules/mathic/src/mathic/Geobucket.h" bodystart="175" bodyend="273"/>
+    <listofallmembers>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_aa19407ba8c45ed7302fd62172feefbbd_1aa19407ba8c45ed7302fd62172feefbbd" prot="private" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>_back</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a861a91ad36c60771c0d95accd6a86555_1a861a91ad36c60771c0d95accd6a86555" prot="private" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>_begin</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a0cc52fbf92c956bb711003f15637e5fd_1a0cc52fbf92c956bb711003f15637e5fd" prot="private" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>_capacity</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a2e3bf1d2ae671bfe7a0f698e70b96c63_1a2e3bf1d2ae671bfe7a0f698e70b96c63" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>_frontPos</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_addeed7f82b85a1dae9c7ae55e4bcf9cb_1addeed7f82b85a1dae9c7ae55e4bcf9cb" prot="private" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>_otherBuffer</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_ad958029a3b22d9f64cabec8f8fb47062_1ad958029a3b22d9f64cabec8f8fb47062" prot="private" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>_size</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a5e7370e1abf131bc7867f01b9989d40e_1a5e7370e1abf131bc7867f01b9989d40e" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>assign</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a43238548afc987cb7d7017e40e6b9b6f_1a43238548afc987cb7d7017e40e6b9b6f" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>back</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_aa982f1916b5a3af2c89460672b6971f9_1aa982f1916b5a3af2c89460672b6971f9" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>begin</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a4b06a7abbcdbc590fe0d21bdf5214d64_1a4b06a7abbcdbc590fe0d21bdf5214d64" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>begin</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a61d867e8d961fa10351dc109ab21ac4c_1a61d867e8d961fa10351dc109ab21ac4c" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>Bucket</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_aaeae19f01b15ed161302290ccbd1fb60_1aaeae19f01b15ed161302290ccbd1fb60" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>capacity</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a6ff3f155a77e9572382b4359fd0d8dd8_1a6ff3f155a77e9572382b4359fd0d8dd8" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>clear</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a4c56c9bd04a20217654b8913a59b1914_1a4c56c9bd04a20217654b8913a59b1914" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>empty</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a3465781588fb2b52285e57dee4a9b8b9_1a3465781588fb2b52285e57dee4a9b8b9" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>end</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_aa356dee93f55ae8c2b5ef7eaf404995e_1aa356dee93f55ae8c2b5ef7eaf404995e" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>end</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a9060955677575428605c7803ec216483_1a9060955677575428605c7803ec216483" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>getFrontToken</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a4279488570b7474f73d09933c25e8270_1a4279488570b7474f73d09933c25e8270" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>getFrontToken</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a4767d78ce1584763080d0f436fbdceb1_1a4767d78ce1584763080d0f436fbdceb1" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>getOtherBuffer</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_ab92fae00c637979ad9cdf57ffc8947a5_1ab92fae00c637979ad9cdf57ffc8947a5" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>insertAtNotEnd</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a3b1fca87a585b706e576ff98a6644b94_1a3b1fca87a585b706e576ff98a6644b94" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>merge</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a8e4a9d80f5df7dc8e01cda617c7925e7_1a8e4a9d80f5df7dc8e01cda617c7925e7" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>operator[]</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a8c62deb681fb900de5c08924d14dd034_1a8c62deb681fb900de5c08924d14dd034" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>pop_back</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a8d4ce4d5df08d62ada92e357b7c004ba_1a8d4ce4d5df08d62ada92e357b7c004ba" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>push_back</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a76a39acabe8042186a31c6f422359f00_1a76a39acabe8042186a31c6f422359f00" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>setBuffer</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a75c286fce4d0114252b452c23e49af37_1a75c286fce4d0114252b452c23e49af37" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>setBufferWithNewEntries</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a29cf8b74413bffe2666438f6c96547c3_1a29cf8b74413bffe2666438f6c96547c3" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>setEntry</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a5795b2ed82dcfe51a454567fd1255cc3_1a5795b2ed82dcfe51a454567fd1255cc3" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>setFrontToken</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_ab83c921c743890d7f1c80c38035f3ce8_1ab83c921c743890d7f1c80c38035f3ce8" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>setOtherBuffer</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a4cbc772c29a2d4a111875a40aea29088_1a4cbc772c29a2d4a111875a40aea29088" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>size</name></member>
+      <member refid="structmathic_1_1_geobucket_1_1_bucket_a2629db8f5ca39efd8dc8a7828a414e04_1a2629db8f5ca39efd8dc8a7828a414e04" prot="public" virt="non-virtual"><scope>mathic::Geobucket::Bucket</scope><name>switchToOtherBuffer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,633 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_log_domain_8hpp" kind="file" language="C++">
+    <compoundname>LogDomain.hpp</compoundname>
+    <includes refid="mtbb_8hpp" local="yes">mtbb.hpp</includes>
+    <includes local="no">ostream</includes>
+    <includes local="no">ctime</includes>
+    <includes local="no">sstream</includes>
+    <includedby refid="_common_params_8cpp" local="yes">submodules/mathicgb/src/cli/CommonParams.cpp</includedby>
+    <includedby refid="b_2src_2cli_2_help_action_8cpp" local="yes">submodules/mathicgb/src/cli/HelpAction.cpp</includedby>
+    <includedby refid="_classic_g_b_alg_8cpp" local="yes">submodules/mathicgb/src/mathicgb/ClassicGBAlg.cpp</includedby>
+    <includedby refid="mathicgb_2_f4_matrix_builder_8cpp" local="yes">submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp</includedby>
+    <includedby refid="_f4_matrix_builder2_8cpp" local="yes">submodules/mathicgb/src/mathicgb/F4MatrixBuilder2.cpp</includedby>
+    <includedby refid="mathicgb_2_f4_matrix_reducer_8cpp" local="yes">submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp</includedby>
+    <includedby refid="_f4_reducer_8cpp" local="yes">submodules/mathicgb/src/mathicgb/F4Reducer.cpp</includedby>
+    <includedby refid="_log_domain_8cpp" local="yes">submodules/mathicgb/src/mathicgb/LogDomain.cpp</includedby>
+    <includedby refid="_log_domain_set_8hpp" local="yes">submodules/mathicgb/src/mathicgb/LogDomainSet.hpp</includedby>
+    <includedby refid="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp" local="yes">submodules/mathicgb/src/mathicgb/SPairs.cpp</includedby>
+    <includedby refid="_signature_g_b_8cpp" local="yes">submodules/mathicgb/src/mathicgb/SignatureGB.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/LogDomain.hpp</label>
+        <link refid="_log_domain_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mtbb.hpp</label>
+        <link refid="mtbb_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ctime</label>
+      </node>
+      <node id="5">
+        <label>mutex</label>
+      </node>
+      <node id="6">
+        <label>ostream</label>
+      </node>
+      <node id="8">
+        <label>sstream</label>
+      </node>
+      <node id="3">
+        <label>tbb/tbb.h</label>
+      </node>
+      <node id="4">
+        <label>thread</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>submodules/mathicgb/src/cli/CommonParams.cpp</label>
+        <link refid="_common_params_8cpp"/>
+      </node>
+      <node id="11">
+        <label>submodules/mathicgb/src/cli/GBMain.cpp</label>
+        <link refid="_g_b_main_8cpp"/>
+      </node>
+      <node id="3">
+        <label>submodules/mathicgb/src/cli/HelpAction.cpp</label>
+        <link refid="b_2src_2cli_2_help_action_8cpp"/>
+      </node>
+      <node id="12">
+        <label>submodules/mathicgb/src/mathicgb.cpp</label>
+        <link refid="mathicgb_8cpp"/>
+      </node>
+      <node id="4">
+        <label>submodules/mathicgb/src/mathicgb/ClassicGBAlg.cpp</label>
+        <link refid="_classic_g_b_alg_8cpp"/>
+      </node>
+      <node id="5">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp</label>
+        <link refid="mathicgb_2_f4_matrix_builder_8cpp"/>
+      </node>
+      <node id="6">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder2.cpp</label>
+        <link refid="_f4_matrix_builder2_8cpp"/>
+      </node>
+      <node id="7">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp</label>
+        <link refid="mathicgb_2_f4_matrix_reducer_8cpp"/>
+      </node>
+      <node id="8">
+        <label>submodules/mathicgb/src/mathicgb/F4Reducer.cpp</label>
+        <link refid="_f4_reducer_8cpp"/>
+      </node>
+      <node id="9">
+        <label>submodules/mathicgb/src/mathicgb/LogDomain.cpp</label>
+        <link refid="_log_domain_8cpp"/>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/LogDomain.hpp</label>
+        <link refid="_log_domain_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>submodules/mathicgb/src/mathicgb/LogDomainSet.cpp</label>
+        <link refid="_log_domain_set_8cpp"/>
+      </node>
+      <node id="10">
+        <label>submodules/mathicgb/src/mathicgb/LogDomainSet.hpp</label>
+        <link refid="_log_domain_set_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>submodules/mathicgb/src/mathicgb/SPairs.cpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp"/>
+      </node>
+      <node id="15">
+        <label>submodules/mathicgb/src/mathicgb/SignatureGB.cpp</label>
+        <link refid="_signature_g_b_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_log_domain" prot="public">LogDomain</innerclass>
+    <innerclass refid="class_log_domain_3_01true_01_4" prot="public">LogDomain&lt; true &gt;</innerclass>
+    <innerclass refid="struct_log_domain_3_01true_01_4_1_1_time_interval" prot="private">LogDomain&lt; true &gt;::TimeInterval</innerclass>
+    <innerclass refid="class_log_domain_3_01true_01_4_1_1_timer" prot="public">LogDomain&lt; true &gt;::Timer</innerclass>
+    <innerclass refid="class_log_domain_3_01false_01_4" prot="public">LogDomain&lt; false &gt;</innerclass>
+    <innerclass refid="class_log_domain_3_01false_01_4_1_1_timer" prot="public">LogDomain&lt; false &gt;::Timer</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_select_value" prot="public">LogDomainInternal::SelectValue</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_tag__" prot="public">LogDomainInternal::Tag_</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_tag__0" prot="public">LogDomainInternal::Tag_0</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_tag__1" prot="public">LogDomainInternal::Tag_1</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_select_value_3_01_tag__0_3_01int_01_4_00_01_default_01_4" prot="public">LogDomainInternal::SelectValue&lt; Tag_0&lt; int &gt;, Default &gt;</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_select_value_3_01_tag__1_3_01int_01_4_00_01_default_01_4" prot="public">LogDomainInternal::SelectValue&lt; Tag_1&lt; int &gt;, Default &gt;</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_lambda_runner" prot="public">LogDomainInternal::LambdaRunner</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_log_alias_registerer" prot="public">LogDomainInternal::LogAliasRegisterer</innerclass>
+    <innernamespace refid="namespace_log_domain_internal">LogDomainInternal</innernamespace>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="_log_domain_8hpp_a88ca992324a1711c5c3af8612886c13e_1a88ca992324a1711c5c3af8612886c13e" prot="public" static="no">
+        <name>MATHICGB_CAPTURE_LOG_ENABLED</name>
+        <param><defname>NAME</defname></param>
+        <param><defname>DEFAULT_VALUE</defname></param>
+        <initializer>  namespace <ref refid="namespacemgb" kindref="compound">mgb</ref>{namespace <ref refid="namespace_log_domain_internal" kindref="compound">LogDomainInternal</ref> {             \
+    template&lt;class&gt; struct Tag_MATHICGB_LOG_##NAME {}; \
+    typedef <ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a55b68885b6da0aa25ff641b2c063683e_1a55b68885b6da0aa25ff641b2c063683e" kindref="member">MATHICGB_CONCATENATE_AFTER_EXPANSION</ref>(Tag_, MATHICGB_LOG_##NAME)&lt;<ref refid="classint" kindref="compound">int</ref>&gt; \
+      SelectedTag_##NAME; \
+    static const <ref refid="classbool" kindref="compound">bool</ref> value_##NAME = \
+      SelectValue&lt;SelectedTag_##NAME, DEFAULT_VALUE&gt;::value; \
+  }}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Defines LogDomainInternal::value_##NAME to be equal to the value of the macro MATHICGB_LOG_##NAME if that macro expands to 0 or 1. Otherwise the macro MATHICGB_LOG_##NAME is ignored and instead DEFAULT_VALUE is used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="222" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="222" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_a146c7ea200fdb335fa4c61729137c557_1a146c7ea200fdb335fa4c61729137c557" prot="public" static="no">
+        <name>MATHICGB_DEFINE_LOG_DOMAIN_WITH_DEFAULTS</name>
+        <param><defname>NAME</defname></param>
+        <param><defname>DESCRIPTION</defname></param>
+        <param><defname>DEFAULT_RUNTIME_ENABLED</defname></param>
+        <param><defname>DEFAULT_RUNTIME_STREAM_ENABLED</defname></param>
+        <param><defname>DEFAULT_COMPILE_TIME_ENABLED</defname></param>
+        <initializer>  <ref refid="_log_domain_8hpp_a88ca992324a1711c5c3af8612886c13e_1a88ca992324a1711c5c3af8612886c13e" kindref="member">MATHICGB_CAPTURE_LOG_ENABLED</ref>(NAME, DEFAULT_COMPILE_TIME_ENABLED); \
+  namespace <ref refid="namespacemgb" kindref="compound">mgb</ref>{namespace logs {                                      \
+    typedef <ref refid="class_log_domain" kindref="compound">LogDomain</ref>&lt; ::mgb::LogDomainInternal::value_##NAME&gt; Type##NAME; \
+    Type##NAME NAME( \
+      #NAME, \
+      DESCRIPTION, \
+      DEFAULT_RUNTIME_ENABLED, \
+      DEFAULT_RUNTIME_STREAM_ENABLED \
+    ); \
+  }}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Defines a <ref refid="class_log_domain" kindref="compound">LogDomain</ref> with the given name and description.</para>
+<para>The logger is default compile-time enabled depending on MATHICGB_LOG_##NAME (see MATHICGB_CAPTURE_LOG_ENABLED) and it is initially runtime enabled depending on the value of DEFAULT_RUNTIME_ENABLED. It is default runtime enabled for streaming (when also enabled in general) depending on DEFAULT_RUNTIME_STREAM_ENABLED. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="243" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="238" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_ab56ed658f1ad3e60576cf3589d496f85_1ab56ed658f1ad3e60576cf3589d496f85" prot="public" static="no">
+        <name>MATHICGB_DEFINE_LOG_DOMAIN</name>
+        <param><defname>NAME</defname></param>
+        <param><defname>DESCRIPTION</defname></param>
+        <initializer>  <ref refid="_log_domain_8hpp_a146c7ea200fdb335fa4c61729137c557_1a146c7ea200fdb335fa4c61729137c557" kindref="member">MATHICGB_DEFINE_LOG_DOMAIN_WITH_DEFAULTS</ref>(NAME, DESCRIPTION, 0, 1, 1);</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Defines a <ref refid="class_log_domain" kindref="compound">LogDomain</ref> with the given name and description.</para>
+<para>The defaults for the logger are as follows. compile-time: enabled, runtime: disabled, runtime streaming: enabled (only takes effect if also enabled) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="261" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="261" bodyend="262"/>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_ad363cd4490c79b3224bfcaac023fe5b2_1ad363cd4490c79b3224bfcaac023fe5b2" prot="public" static="no">
+        <name>MATHICGB_DEFINE_LOG_ALIAS</name>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>OF</defname></param>
+        <initializer>  namespace <ref refid="namespacemgb" kindref="compound">mgb</ref>{namespace <ref refid="namespace_log_domain_internal" kindref="compound">LogDomainInternal</ref> {                           \
+    LogAliasRegisterer <ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a55b68885b6da0aa25ff641b2c063683e_1a55b68885b6da0aa25ff641b2c063683e" kindref="member">MATHICGB_CONCATENATE_AFTER_EXPANSION</ref>(reg_, __LINE__) \
+      (ALIAS, OF); \
+  }}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="264" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="264" bodyend="268"/>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_a12f2c3a34eae34487e7e5447839cfaa8_1a12f2c3a34eae34487e7e5447839cfaa8" prot="public" static="no">
+        <name>MATHICGB_LOGGER</name>
+        <param><defname>DOMAIN</defname></param>
+        <initializer>::mgb::logs::DOMAIN</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This expression yields an l-value reference to the indicated logger.</para>
+<para>Example: auto timer = <ref refid="_log_domain_8hpp_a12f2c3a34eae34487e7e5447839cfaa8_1a12f2c3a34eae34487e7e5447839cfaa8" kindref="member">MATHICGB_LOGGER(MyDomain)</ref>.<ref refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" kindref="member">timer()</ref>; </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="274" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_a2a99ea695a2d1e8539862b8b7d0bae69_1a2a99ea695a2d1e8539862b8b7d0bae69" prot="public" static="no">
+        <name>MATHICGB_LOGGER_TYPE</name>
+        <param><defname>DOMAIN</defname></param>
+        <initializer>::mgb::logs::Type##DOMAIN</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This expression yields the type of the indicated logger.</para>
+<para>Example: if (<ref refid="_log_domain_8hpp_a2a99ea695a2d1e8539862b8b7d0bae69_1a2a99ea695a2d1e8539862b8b7d0bae69" kindref="member">MATHICGB_LOGGER_TYPE(MyDomain)</ref>::compileTimeEnabled) std::ostream &lt;&lt; &quot;MyDomain is compiled time enabled&quot;; </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="281" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="281" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_a517283bf30ee4cc50da977aa6a401a9f_1a517283bf30ee4cc50da977aa6a401a9f" prot="public" static="no">
+        <name>MATHICGB_IF_STREAM_LOG</name>
+        <param><defname>DOMAIN</defname></param>
+        <initializer>  if (<ref refid="_log_domain_8hpp_a12f2c3a34eae34487e7e5447839cfaa8_1a12f2c3a34eae34487e7e5447839cfaa8" kindref="member">MATHICGB_LOGGER</ref>(DOMAIN).streamEnabled()) \
+    <ref refid="namespace_log_domain_internal_a29779d254f4b39661110f9f7a5d7e3fe_1a29779d254f4b39661110f9f7a5d7e3fe" kindref="member">LogDomainInternal::lambdaRunner</ref>(<ref refid="_log_domain_8hpp_a12f2c3a34eae34487e7e5447839cfaa8_1a12f2c3a34eae34487e7e5447839cfaa8" kindref="member">MATHICGB_LOGGER</ref>(DOMAIN)) + \
+      [&amp;](<ref refid="_log_domain_8hpp_a2a99ea695a2d1e8539862b8b7d0bae69_1a2a99ea695a2d1e8539862b8b7d0bae69" kindref="member">MATHICGB_LOGGER_TYPE</ref>(DOMAIN)&amp; log, std::ostream&amp; stream)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Runs the code in the following scope delimited by braces {} if the indicated logger is enabled for streaming - otherwise does nothing. Within the following scope there is a local reference variable log that refers to the indicated logger and a local reference variable stream that refers to log.stream().</para>
+<para>Example: <ref refid="_log_domain_8hpp_a517283bf30ee4cc50da977aa6a401a9f_1a517283bf30ee4cc50da977aa6a401a9f" kindref="member">MATHICGB_IF_STREAM_LOG(MyDomain)</ref> { std::string msg; expensiveFunction(msg); stream &lt;&lt; msg; // or log.stream() &lt;&lt; msg; } </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="295" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="295" bodyend="298"/>
+        <referencedby refid="class_classic_g_b_alg_af4c1130a2f69335a11354cc5c78fc4cb_1af4c1130a2f69335a11354cc5c78fc4cb" compoundref="_classic_g_b_alg_8cpp" startline="157" endline="226">ClassicGBAlg::insertPolys</referencedby>
+        <referencedby refid="class_s_pairs_a1829d629931caf9e7f1a4185f0951bdd_1a1829d629931caf9e7f1a4185f0951bdd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp" startline="70" endline="105">SPairs::pop</referencedby>
+        <referencedby refid="class_signature_g_b_a866a09ed0d5630a842e8dd10d7170813_1a866a09ed0d5630a842e8dd10d7170813" compoundref="_signature_g_b_8cpp" startline="145" endline="191">SignatureGB::processSPair</referencedby>
+        <referencedby refid="class_f4_matrix_reducer_a8bacb25401b0d24a63fb00cf2e66c230_1a8bacb25401b0d24a63fb00cf2e66c230" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="746" endline="771">F4MatrixReducer::reducedRowEchelonForm</referencedby>
+        <referencedby refid="class_f4_matrix_reducer_a3c79388bcb07ddec26db9b489188d4c5_1a3c79388bcb07ddec26db9b489188d4c5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="735" endline="744">F4MatrixReducer::reduceToBottomRight</referencedby>
+        <referencedby refid="class_signature_g_b_ab01d202b8ef8e8411d04fd40cf5be92d_1ab01d202b8ef8e8411d04fd40cf5be92d" compoundref="_signature_g_b_8cpp" startline="193" endline="271">SignatureGB::step</referencedby>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_a53149db82da6e28217426f0d5e4c4a5f_1a53149db82da6e28217426f0d5e4c4a5f" prot="public" static="no">
+        <name>MATHICGB_LOG</name>
+        <param><defname>DOMAIN</defname></param>
+        <initializer>  if (<ref refid="_log_domain_8hpp_a12f2c3a34eae34487e7e5447839cfaa8_1a12f2c3a34eae34487e7e5447839cfaa8" kindref="member">MATHICGB_LOGGER</ref>(DOMAIN).streamEnabled()) <ref refid="_log_domain_8hpp_a12f2c3a34eae34487e7e5447839cfaa8_1a12f2c3a34eae34487e7e5447839cfaa8" kindref="member">MATHICGB_LOGGER</ref>(DOMAIN).stream()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Display information to the log using &lt;&lt;. If domain is not enabled and stream enabled then the log message is not displayed and the code after &lt;&lt; is not executed.</para>
+<para>Example: (f() only called if logger is enabled) <ref refid="_log_domain_8hpp_a53149db82da6e28217426f0d5e4c4a5f_1a53149db82da6e28217426f0d5e4c4a5f" kindref="member">MATHICGB_LOG(domain)</ref> &lt;&lt; &quot;f() = &quot; &lt;&lt; f(); </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="306" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="306" bodyend="307"/>
+        <referencedby refid="class_signature_g_b_a866a09ed0d5630a842e8dd10d7170813_1a866a09ed0d5630a842e8dd10d7170813" compoundref="_signature_g_b_8cpp" startline="145" endline="191">SignatureGB::processSPair</referencedby>
+        <referencedby refid="class_classic_g_b_alg_a6edde4a86845fd64e8462047020d0398_1a6edde4a86845fd64e8462047020d0398" compoundref="_classic_g_b_alg_8cpp" startline="346" endline="417">ClassicGBAlg::step</referencedby>
+        <referencedby refid="classmgb_1_1_classic_g_b_alg_a6edde4a86845fd64e8462047020d0398_1a6edde4a86845fd64e8462047020d0398" compoundref="_m_e_s_classic_g_b_alg_8cpp" startline="328" endline="399">mgb::ClassicGBAlg::step</referencedby>
+        <referencedby refid="class_signature_g_b_ab01d202b8ef8e8411d04fd40cf5be92d_1ab01d202b8ef8e8411d04fd40cf5be92d" compoundref="_signature_g_b_8cpp" startline="193" endline="271">SignatureGB::step</referencedby>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_a4973e123e63273dd59529127a388ede6_1a4973e123e63273dd59529127a388ede6" prot="public" static="no">
+        <name>MATHICGB_LOG_TIME</name>
+        <param><defname>DOMAIN</defname></param>
+        <initializer>  auto <ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a55b68885b6da0aa25ff641b2c063683e_1a55b68885b6da0aa25ff641b2c063683e" kindref="member">MATHICGB_CONCATENATE_AFTER_EXPANSION</ref>( \
+    DOMAIN, <ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a55b68885b6da0aa25ff641b2c063683e_1a55b68885b6da0aa25ff641b2c063683e" kindref="member">MATHICGB_CONCATENATE_AFTER_EXPANSION</ref>(_timer_, __LINE__)) \
+  (<ref refid="_log_domain_8hpp_a12f2c3a34eae34487e7e5447839cfaa8_1a12f2c3a34eae34487e7e5447839cfaa8" kindref="member">MATHICGB_LOGGER</ref>(DOMAIN).<ref refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" kindref="member">timer</ref>()); \
+  <ref refid="_log_domain_8hpp_a53149db82da6e28217426f0d5e4c4a5f_1a53149db82da6e28217426f0d5e4c4a5f" kindref="member">MATHICGB_LOG</ref>(DOMAIN)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Will log the time to execute the remaining code in the current scope to the indicated domain. Also supports printing a message using &lt;&lt;. The message is printed right away while the time is printed when the scope ends.</para>
+<para>Example: MATHICGB_LOG_SCOPE_TIME(MyDomain) &lt;&lt; &quot;Starting timed task&quot;; </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="316" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="316" bodyend="320"/>
+        <referencedby refid="class_s_pairs_a589d4c2fc2026924f6cf6affcab711b5_1a589d4c2fc2026924f6cf6affcab711b5" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp" startline="200" endline="264">SPairs::addPairs</referencedby>
+        <referencedby refid="class_s_pairs_a0a0693104603742fcb5ae10a23073947_1a0a0693104603742fcb5ae10a23073947" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp" startline="143" endline="166">SPairs::addPairsAssumeAutoReduce</referencedby>
+        <referencedby refid="class_f4_matrix_builder2_1_1_builder_afb07cbff51bb53e2b6195cb873fe924c_1afb07cbff51bb53e2b6195cb873fe924c" compoundref="_f4_matrix_builder2_8cpp" startline="138" endline="266">F4MatrixBuilder2::Builder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">F4MatrixBuilder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_s_pairs_a04a49673fdd3ca0172411b50115aee0f_1a04a49673fdd3ca0172411b50115aee0f" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp" startline="41" endline="68">SPairs::pop</referencedby>
+        <referencedby refid="class_s_pairs_a1829d629931caf9e7f1a4185f0951bdd_1a1829d629931caf9e7f1a4185f0951bdd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp" startline="70" endline="105">SPairs::pop</referencedby>
+        <referencedby refid="class_f4_matrix_reducer_a8bacb25401b0d24a63fb00cf2e66c230_1a8bacb25401b0d24a63fb00cf2e66c230" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="746" endline="771">F4MatrixReducer::reducedRowEchelonForm</referencedby>
+        <referencedby refid="class_f4_matrix_reducer_a3c79388bcb07ddec26db9b489188d4c5_1a3c79388bcb07ddec26db9b489188d4c5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="735" endline="744">F4MatrixReducer::reduceToBottomRight</referencedby>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_a5552ea91020802d5be9f3cdfdcbdd6c4_1a5552ea91020802d5be9f3cdfdcbdd6c4" prot="public" static="no">
+        <name>MATHICGB_LOG_INCREMENT_BY</name>
+        <param><defname>DOMAIN</defname></param>
+        <param><defname>BY</defname></param>
+        <initializer>  do { \
+    auto&amp; MGBLOG_log = <ref refid="_log_domain_8hpp_a12f2c3a34eae34487e7e5447839cfaa8_1a12f2c3a34eae34487e7e5447839cfaa8" kindref="member">MATHICGB_LOGGER</ref>(DOMAIN); \
+    if (MGBLOG_log.enabled()) { \
+      MGBLOG_log.setCount(MGBLOG_log.count() + BY); \
+    } \
+  } while (false)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Increments the count of DOMAIN by the value of the expression BY. The expression BY is evaluated at most once and it is not evaluated if DOMAIN is disabled.</para>
+<para>Example: <ref refid="_log_domain_8hpp_a5552ea91020802d5be9f3cdfdcbdd6c4_1a5552ea91020802d5be9f3cdfdcbdd6c4" kindref="member">MATHICGB_LOG_INCREMENT_BY(MyDomain, 3)</ref>; </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="328" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="328" bodyend="334"/>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+      </memberdef>
+      <memberdef kind="define" id="_log_domain_8hpp_a9c5bdfe1667753fcc581fd2423585897_1a9c5bdfe1667753fcc581fd2423585897" prot="public" static="no">
+        <name>MATHICGB_LOG_INCREMENT</name>
+        <param><defname>DOMAIN</defname></param>
+        <initializer>  <ref refid="_log_domain_8hpp_a5552ea91020802d5be9f3cdfdcbdd6c4_1a5552ea91020802d5be9f3cdfdcbdd6c4" kindref="member">MATHICGB_LOG_INCREMENT_BY</ref>(DOMAIN, 1)</initializer>
+        <briefdescription>
+<para>Increments the count of DOMAIN by 1. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="337" column="9" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="337" bodyend="338"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>MathicGB<sp/>copyright<sp/>2012<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHICGB_LOG_DOMAIN_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_LOG_DOMAIN_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mtbb_8hpp" kindref="compound">mtbb.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ctime&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><ref refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n" kindref="compound">MATHICGB_NAMESPACE_BEGIN</ref></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CompileTimeEnabled&gt;</highlight></codeline>
+<codeline lineno="30" refid="class_log_domain" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_log_domain" kindref="compound">LogDomain</ref><sp/>{};</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="33" refid="class_log_domain_3_01true_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" kindref="member">LogDomain</ref>&lt;true&gt;<sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="35" refid="class_log_domain_3_01true_01_4_a53d416a6678efe231f224b3bc4c69c46_1a53d416a6678efe231f224b3bc4c69c46" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a53d416a6678efe231f224b3bc4c69c46_1a53d416a6678efe231f224b3bc4c69c46" kindref="member">compileTimeEnabled</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><ref refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" kindref="member">LogDomain</ref>(</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_aa4ac59fe187889c5d69b8a59e111ce51_1aa4ac59fe187889c5d69b8a59e111ce51" kindref="member">name</ref>,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_af9bfdbb53022b5cbe9a841076a37d604_1af9bfdbb53022b5cbe9a841076a37d604" kindref="member">description</ref>,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a7416055b2c39870fb3cde049519e673f_1a7416055b2c39870fb3cde049519e673f" kindref="member">enabled</ref>,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_acf23293ff56cad2ce3a0662ee9ff1743_1acf23293ff56cad2ce3a0662ee9ff1743" kindref="member">streamEnabled</ref></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="class_log_domain_3_01true_01_4_aa4ac59fe187889c5d69b8a59e111ce51_1aa4ac59fe187889c5d69b8a59e111ce51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="class_log_domain_3_01true_01_4_aa4ac59fe187889c5d69b8a59e111ce51_1aa4ac59fe187889c5d69b8a59e111ce51" kindref="member">name</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a1f98357f8f6eb2e2ab136c95e70cb3c2_1a1f98357f8f6eb2e2ab136c95e70cb3c2" kindref="member">mName</ref>;}</highlight></codeline>
+<codeline lineno="45" refid="class_log_domain_3_01true_01_4_af9bfdbb53022b5cbe9a841076a37d604_1af9bfdbb53022b5cbe9a841076a37d604" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="class_log_domain_3_01true_01_4_af9bfdbb53022b5cbe9a841076a37d604_1af9bfdbb53022b5cbe9a841076a37d604" kindref="member">description</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_ae3e2b3abd994a8360ff2a6890b2fb13d_1ae3e2b3abd994a8360ff2a6890b2fb13d" kindref="member">mDescription</ref>;}</highlight></codeline>
+<codeline lineno="46" refid="class_log_domain_3_01true_01_4_a7416055b2c39870fb3cde049519e673f_1a7416055b2c39870fb3cde049519e673f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a7416055b2c39870fb3cde049519e673f_1a7416055b2c39870fb3cde049519e673f" kindref="member">enabled</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_ae66daeea475f93c119ae99b54f8b3dc2_1ae66daeea475f93c119ae99b54f8b3dc2" kindref="member">mEnabled</ref>;}</highlight></codeline>
+<codeline lineno="47" refid="class_log_domain_3_01true_01_4_ab44b4818d821277e50bc13ab888b3619_1ab44b4818d821277e50bc13ab888b3619" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_ab44b4818d821277e50bc13ab888b3619_1ab44b4818d821277e50bc13ab888b3619" kindref="member">streamEnabledPure</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a8900667c4b2c4e8158ba0a90b232f27a_1a8900667c4b2c4e8158ba0a90b232f27a" kindref="member">mStreamEnabled</ref>;}</highlight></codeline>
+<codeline lineno="48" refid="class_log_domain_3_01true_01_4_acf23293ff56cad2ce3a0662ee9ff1743_1acf23293ff56cad2ce3a0662ee9ff1743" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_acf23293ff56cad2ce3a0662ee9ff1743_1acf23293ff56cad2ce3a0662ee9ff1743" kindref="member">streamEnabled</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a7416055b2c39870fb3cde049519e673f_1a7416055b2c39870fb3cde049519e673f" kindref="member">enabled</ref>()<sp/>&amp;&amp;<sp/><ref refid="class_log_domain_3_01true_01_4_ab44b4818d821277e50bc13ab888b3619_1ab44b4818d821277e50bc13ab888b3619" kindref="member">streamEnabledPure</ref>();}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="class_log_domain_3_01true_01_4_aec70b27d9598b60e03579f4372bfb5ca_1aec70b27d9598b60e03579f4372bfb5ca" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_aec70b27d9598b60e03579f4372bfb5ca_1aec70b27d9598b60e03579f4372bfb5ca" kindref="member">setEnabled</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a7416055b2c39870fb3cde049519e673f_1a7416055b2c39870fb3cde049519e673f" kindref="member">enabled</ref>)<sp/>{<ref refid="class_log_domain_3_01true_01_4_ae66daeea475f93c119ae99b54f8b3dc2_1ae66daeea475f93c119ae99b54f8b3dc2" kindref="member">mEnabled</ref><sp/>=<sp/><ref refid="class_log_domain_3_01true_01_4_a7416055b2c39870fb3cde049519e673f_1a7416055b2c39870fb3cde049519e673f" kindref="member">enabled</ref>;}</highlight></codeline>
+<codeline lineno="51" refid="class_log_domain_3_01true_01_4_ad1c105213d2c8dc63b348173005b0053_1ad1c105213d2c8dc63b348173005b0053" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_ad1c105213d2c8dc63b348173005b0053_1ad1c105213d2c8dc63b348173005b0053" kindref="member">setStreamEnabled</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a7416055b2c39870fb3cde049519e673f_1a7416055b2c39870fb3cde049519e673f" kindref="member">enabled</ref>)<sp/>{<ref refid="class_log_domain_3_01true_01_4_a8900667c4b2c4e8158ba0a90b232f27a_1a8900667c4b2c4e8158ba0a90b232f27a" kindref="member">mStreamEnabled</ref><sp/>=<sp/><ref refid="class_log_domain_3_01true_01_4_a7416055b2c39870fb3cde049519e673f_1a7416055b2c39870fb3cde049519e673f" kindref="member">enabled</ref>;}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/>stream();</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Timer;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>Timer<sp/><ref refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" kindref="member">timer</ref>();</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="class_log_domain_3_01true_01_4_a63c826c9c96d02baf9e94faa898bb9af_1a63c826c9c96d02baf9e94faa898bb9af" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a63c826c9c96d02baf9e94faa898bb9af_1a63c826c9c96d02baf9e94faa898bb9af" kindref="member">hasTime</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a86aded701a3e4d58f147696e232f3e4b_1a86aded701a3e4d58f147696e232f3e4b" kindref="member">mHasTime</ref>;}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>loggedSecondsReal()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="class_log_domain_3_01true_01_4_ae5bf3d796099824ba8bb1d43108cff1c_1ae5bf3d796099824ba8bb1d43108cff1c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_ae5bf3d796099824ba8bb1d43108cff1c_1ae5bf3d796099824ba8bb1d43108cff1c" kindref="member">Counter</ref>;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="class_log_domain_3_01true_01_4_a08533b0d8557f7a4e8fff7ce81e2bba5_1a08533b0d8557f7a4e8fff7ce81e2bba5" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_log_domain_3_01true_01_4_ae5bf3d796099824ba8bb1d43108cff1c_1ae5bf3d796099824ba8bb1d43108cff1c" kindref="member">Counter</ref><sp/><ref refid="class_log_domain_3_01true_01_4_a08533b0d8557f7a4e8fff7ce81e2bba5_1a08533b0d8557f7a4e8fff7ce81e2bba5" kindref="member">count</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_afefe7071d988ad6fd24947d06ccc4e42_1afefe7071d988ad6fd24947d06ccc4e42" kindref="member">mCount</ref>;}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="class_log_domain_3_01true_01_4_a78c8e14f820e37443597e8a6ced1aa99_1a78c8e14f820e37443597e8a6ced1aa99" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a78c8e14f820e37443597e8a6ced1aa99_1a78c8e14f820e37443597e8a6ced1aa99" kindref="member">setCount</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_ae5bf3d796099824ba8bb1d43108cff1c_1ae5bf3d796099824ba8bb1d43108cff1c" kindref="member">Counter</ref><sp/>counter)<sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_log_domain_3_01true_01_4_a7416055b2c39870fb3cde049519e673f_1a7416055b2c39870fb3cde049519e673f" kindref="member">enabled</ref>())<sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_log_domain_3_01true_01_4_afefe7071d988ad6fd24947d06ccc4e42_1afefe7071d988ad6fd24947d06ccc4e42" kindref="member">mCount</ref><sp/>=<sp/>counter;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_log_domain_3_01true_01_4_a3e8bb38753d2e7317bd91a6cac83ad66_1a3e8bb38753d2e7317bd91a6cac83ad66" kindref="member">mHasCount</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="class_log_domain_3_01true_01_4_aeb6911a0f6b022e325b9fe80e8b3e5b9_1aeb6911a0f6b022e325b9fe80e8b3e5b9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_aeb6911a0f6b022e325b9fe80e8b3e5b9_1aeb6911a0f6b022e325b9fe80e8b3e5b9" kindref="member">hasCount</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a3e8bb38753d2e7317bd91a6cac83ad66_1a3e8bb38753d2e7317bd91a6cac83ad66" kindref="member">mHasCount</ref>;}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reset();</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="88" refid="struct_log_domain_3_01true_01_4_1_1_time_interval" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_log_domain_3_01true_01_4_1_1_time_interval" kindref="compound">TimeInterval</ref><sp/>{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>todo:<sp/>support<sp/>user<sp/>time<sp/>too.<sp/>clock()<sp/>doesn&apos;t<sp/>seem<sp/>to<sp/>sum<sp/>the<sp/>time</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>all<sp/>threads,<sp/>so<sp/>that<sp/>didn&apos;t<sp/>work.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="struct_log_domain_3_01true_01_4_1_1_time_interval_a0296829a1d405383a4834bd059632e7b_1a0296829a1d405383a4834bd059632e7b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="struct_log_domain_3_01true_01_4_1_1_time_interval_a0296829a1d405383a4834bd059632e7b_1a0296829a1d405383a4834bd059632e7b" kindref="member">realSeconds</ref>;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="struct_log_domain_3_01true_01_4_1_1_time_interval_a6c483da7dfed6a66d4b560059d024525_1a6c483da7dfed6a66d4b560059d024525" kindref="member">print</ref>(std::ostream&amp;<sp/>out)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a9dd81c3a66e0dcb458b079a04fae2af8_1a9dd81c3a66e0dcb458b079a04fae2af8" kindref="member">recordTime</ref>(<ref refid="struct_log_domain_3_01true_01_4_1_1_time_interval" kindref="compound">TimeInterval</ref><sp/>interval);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="class_log_domain_3_01true_01_4_ae66daeea475f93c119ae99b54f8b3dc2_1ae66daeea475f93c119ae99b54f8b3dc2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_ae66daeea475f93c119ae99b54f8b3dc2_1ae66daeea475f93c119ae99b54f8b3dc2" kindref="member">mEnabled</ref>;</highlight></codeline>
+<codeline lineno="98" refid="class_log_domain_3_01true_01_4_a750576e7fb77c4fa1e3e93f9e6ecd626_1a750576e7fb77c4fa1e3e93f9e6ecd626" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a750576e7fb77c4fa1e3e93f9e6ecd626_1a750576e7fb77c4fa1e3e93f9e6ecd626" kindref="member">mOriginallyEnabled</ref>;</highlight></codeline>
+<codeline lineno="99" refid="class_log_domain_3_01true_01_4_a8900667c4b2c4e8158ba0a90b232f27a_1a8900667c4b2c4e8158ba0a90b232f27a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a8900667c4b2c4e8158ba0a90b232f27a_1a8900667c4b2c4e8158ba0a90b232f27a" kindref="member">mStreamEnabled</ref>;</highlight></codeline>
+<codeline lineno="100" refid="class_log_domain_3_01true_01_4_a1e84ce43fec0b2bbc2b6f11932f8fba1_1a1e84ce43fec0b2bbc2b6f11932f8fba1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a1e84ce43fec0b2bbc2b6f11932f8fba1_1a1e84ce43fec0b2bbc2b6f11932f8fba1" kindref="member">mOriginallyStreamEnabled</ref>;</highlight></codeline>
+<codeline lineno="101" refid="class_log_domain_3_01true_01_4_a1f98357f8f6eb2e2ab136c95e70cb3c2_1a1f98357f8f6eb2e2ab136c95e70cb3c2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="class_log_domain_3_01true_01_4_a1f98357f8f6eb2e2ab136c95e70cb3c2_1a1f98357f8f6eb2e2ab136c95e70cb3c2" kindref="member">mName</ref>;</highlight></codeline>
+<codeline lineno="102" refid="class_log_domain_3_01true_01_4_ae3e2b3abd994a8360ff2a6890b2fb13d_1ae3e2b3abd994a8360ff2a6890b2fb13d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><ref refid="class_log_domain_3_01true_01_4_ae3e2b3abd994a8360ff2a6890b2fb13d_1ae3e2b3abd994a8360ff2a6890b2fb13d" kindref="member">mDescription</ref>;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="class_log_domain_3_01true_01_4_a88abe688e96d82596b1ec007de2d230f_1a88abe688e96d82596b1ec007de2d230f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="struct_log_domain_3_01true_01_4_1_1_time_interval" kindref="compound">TimeInterval</ref><sp/><ref refid="class_log_domain_3_01true_01_4_a88abe688e96d82596b1ec007de2d230f_1a88abe688e96d82596b1ec007de2d230f" kindref="member">mInterval</ref>;<sp/></highlight></codeline>
+<codeline lineno="105" refid="class_log_domain_3_01true_01_4_a86aded701a3e4d58f147696e232f3e4b_1a86aded701a3e4d58f147696e232f3e4b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a86aded701a3e4d58f147696e232f3e4b_1a86aded701a3e4d58f147696e232f3e4b" kindref="member">mHasTime</ref>;<sp/></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="class_log_domain_3_01true_01_4_afefe7071d988ad6fd24947d06ccc4e42_1afefe7071d988ad6fd24947d06ccc4e42" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_log_domain_3_01true_01_4_ae5bf3d796099824ba8bb1d43108cff1c_1ae5bf3d796099824ba8bb1d43108cff1c" kindref="member">Counter</ref><sp/><ref refid="class_log_domain_3_01true_01_4_afefe7071d988ad6fd24947d06ccc4e42_1afefe7071d988ad6fd24947d06ccc4e42" kindref="member">mCount</ref>;</highlight></codeline>
+<codeline lineno="108" refid="class_log_domain_3_01true_01_4_a3e8bb38753d2e7317bd91a6cac83ad66_1a3e8bb38753d2e7317bd91a6cac83ad66" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_a3e8bb38753d2e7317bd91a6cac83ad66_1a3e8bb38753d2e7317bd91a6cac83ad66" kindref="member">mHasCount</ref>;<sp/></highlight></codeline>
+<codeline lineno="109"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="class_log_domain_3_01true_01_4_1_1_timer" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" kindref="member">LogDomain</ref>&lt;true&gt;::<ref refid="class_log_domain_3_01true_01_4_1_1_timer_a017f229396343eed605589ba6150499b_1a017f229396343eed605589ba6150499b" kindref="member">Timer</ref><sp/>{</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><ref refid="class_log_domain_3_01true_01_4_1_1_timer_a017f229396343eed605589ba6150499b_1a017f229396343eed605589ba6150499b" kindref="member">Timer</ref>(<ref refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" kindref="member">LogDomain&lt;true&gt;</ref>&amp;<sp/>logger);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><ref refid="class_log_domain_3_01true_01_4_1_1_timer_a017f229396343eed605589ba6150499b_1a017f229396343eed605589ba6150499b" kindref="member">~Timer</ref>();</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="class_log_domain_3_01true_01_4_1_1_timer_a3922fb5f07ed3daa157dc5e188330c31_1a3922fb5f07ed3daa157dc5e188330c31" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_1_1_timer_a3922fb5f07ed3daa157dc5e188330c31_1a3922fb5f07ed3daa157dc5e188330c31" kindref="member">running</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_1_1_timer_afc76cb191f756330915960683446e09e_1afc76cb191f756330915960683446e09e" kindref="member">mTimerRunning</ref>;}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>stop();</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>start();</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="136" refid="class_log_domain_3_01true_01_4_1_1_timer_a4a0a378daccb75d805ada36dd7beb545_1a4a0a378daccb75d805ada36dd7beb545" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" kindref="member">LogDomain&lt;true&gt;</ref>&amp;<sp/><ref refid="class_log_domain_3_01true_01_4_1_1_timer_a4a0a378daccb75d805ada36dd7beb545_1a4a0a378daccb75d805ada36dd7beb545" kindref="member">mLogger</ref>;</highlight></codeline>
+<codeline lineno="137" refid="class_log_domain_3_01true_01_4_1_1_timer_afc76cb191f756330915960683446e09e_1afc76cb191f756330915960683446e09e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01true_01_4_1_1_timer_afc76cb191f756330915960683446e09e_1afc76cb191f756330915960683446e09e" kindref="member">mTimerRunning</ref>;</highlight></codeline>
+<codeline lineno="138" refid="class_log_domain_3_01true_01_4_1_1_timer_a62f1ecfcd5c26669e7a46c131e71a8af_1a62f1ecfcd5c26669e7a46c131e71a8af" refkind="member"><highlight class="normal"><sp/><sp/>mtbb::tick_count<sp/><ref refid="class_log_domain_3_01true_01_4_1_1_timer_a62f1ecfcd5c26669e7a46c131e71a8af_1a62f1ecfcd5c26669e7a46c131e71a8af" kindref="member">mRealTicks</ref>;<sp/></highlight><highlight class="comment">//<sp/>high<sp/>precision</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="146" refid="class_log_domain_3_01false_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_log_domain_3_01false_01_4_a176c3271be84c52b7b3bbc03ed3dae0c_1a176c3271be84c52b7b3bbc03ed3dae0c" kindref="member">LogDomain</ref>&lt;false&gt;<sp/>{</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="148" refid="class_log_domain_3_01false_01_4_ab0b0d42037a5c927e4456e4cc8f713e0_1ab0b0d42037a5c927e4456e4cc8f713e0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_ab0b0d42037a5c927e4456e4cc8f713e0_1ab0b0d42037a5c927e4456e4cc8f713e0" kindref="member">compileTimeEnabled</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150" refid="class_log_domain_3_01false_01_4_a176c3271be84c52b7b3bbc03ed3dae0c_1a176c3271be84c52b7b3bbc03ed3dae0c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_log_domain_3_01false_01_4_a176c3271be84c52b7b3bbc03ed3dae0c_1a176c3271be84c52b7b3bbc03ed3dae0c" kindref="member">LogDomain</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">)<sp/>{}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152" refid="class_log_domain_3_01false_01_4_ad38923531d8ece9ad61cb6d9da020dc1_1ad38923531d8ece9ad61cb6d9da020dc1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_ad38923531d8ece9ad61cb6d9da020dc1_1ad38923531d8ece9ad61cb6d9da020dc1" kindref="member">enabled</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="153" refid="class_log_domain_3_01false_01_4_ac776b4348807800731cddbbbe05d362c_1ac776b4348807800731cddbbbe05d362c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_ac776b4348807800731cddbbbe05d362c_1ac776b4348807800731cddbbbe05d362c" kindref="member">streamEnabled</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="class_log_domain_3_01false_01_4_1_1_timer" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_log_domain_3_01false_01_4_1_1_timer_a18d38de46a7ff30825d8f43db8842359_1a18d38de46a7ff30825d8f43db8842359" kindref="member">Timer</ref><sp/>{</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="157" refid="class_log_domain_3_01false_01_4_1_1_timer_a18d38de46a7ff30825d8f43db8842359_1a18d38de46a7ff30825d8f43db8842359" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_log_domain_3_01false_01_4_1_1_timer_a18d38de46a7ff30825d8f43db8842359_1a18d38de46a7ff30825d8f43db8842359" kindref="member">Timer</ref>(<ref refid="class_log_domain_3_01false_01_4_a176c3271be84c52b7b3bbc03ed3dae0c_1a176c3271be84c52b7b3bbc03ed3dae0c" kindref="member">LogDomain&lt;false&gt;</ref>&amp;)<sp/>{}</highlight></codeline>
+<codeline lineno="158" refid="class_log_domain_3_01false_01_4_1_1_timer_a00414e75173a1e884de56119f7548cd2_1a00414e75173a1e884de56119f7548cd2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_1_1_timer_a00414e75173a1e884de56119f7548cd2_1a00414e75173a1e884de56119f7548cd2" kindref="member">running</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="159" refid="class_log_domain_3_01false_01_4_1_1_timer_aebff9f9c09b5623984737855b7bb7a79_1aebff9f9c09b5623984737855b7bb7a79" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_1_1_timer_aebff9f9c09b5623984737855b7bb7a79_1aebff9f9c09b5623984737855b7bb7a79" kindref="member">stop</ref>()<sp/>{<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="160" refid="class_log_domain_3_01false_01_4_1_1_timer_afa601d4968452e52656bc95f51517503_1afa601d4968452e52656bc95f51517503" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_1_1_timer_afa601d4968452e52656bc95f51517503_1afa601d4968452e52656bc95f51517503" kindref="member">start</ref>()<sp/>{<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="162" refid="class_log_domain_3_01false_01_4_ad2b83004ea37b685bc464c3f79521593_1ad2b83004ea37b685bc464c3f79521593" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_log_domain_3_01false_01_4_1_1_timer" kindref="compound">Timer</ref><sp/><ref refid="class_log_domain_3_01false_01_4_ad2b83004ea37b685bc464c3f79521593_1ad2b83004ea37b685bc464c3f79521593" kindref="member">timer</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_1_1_timer" kindref="compound">Timer</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167" refid="class_log_domain_3_01false_01_4_aedc641d76519456c31d6e6543180ecf0_1aedc641d76519456c31d6e6543180ecf0" refkind="member"><highlight class="normal"><sp/><sp/>std::ostream&amp;<sp/><ref refid="class_log_domain_3_01false_01_4_aedc641d76519456c31d6e6543180ecf0_1aedc641d76519456c31d6e6543180ecf0" kindref="member">stream</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>abort();</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//return<sp/>*static_cast&lt;<sp/>std::ostream*&gt;(0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173" refid="class_log_domain_3_01false_01_4_af056b9f148ed007da0e03bce7d9b2d04_1af056b9f148ed007da0e03bce7d9b2d04" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_af056b9f148ed007da0e03bce7d9b2d04_1af056b9f148ed007da0e03bce7d9b2d04" kindref="member">Counter</ref>;</highlight></codeline>
+<codeline lineno="174" refid="class_log_domain_3_01false_01_4_ae32460c870ea4d2ba4f14865514ff6ca_1ae32460c870ea4d2ba4f14865514ff6ca" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_log_domain_3_01false_01_4_af056b9f148ed007da0e03bce7d9b2d04_1af056b9f148ed007da0e03bce7d9b2d04" kindref="member">Counter</ref><sp/><ref refid="class_log_domain_3_01false_01_4_ae32460c870ea4d2ba4f14865514ff6ca_1ae32460c870ea4d2ba4f14865514ff6ca" kindref="member">count</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;}</highlight></codeline>
+<codeline lineno="175" refid="class_log_domain_3_01false_01_4_a0e1a7e318ccfc9221fd2d3d0f45465db_1a0e1a7e318ccfc9221fd2d3d0f45465db" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_a0e1a7e318ccfc9221fd2d3d0f45465db_1a0e1a7e318ccfc9221fd2d3d0f45465db" kindref="member">setCount</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_af056b9f148ed007da0e03bce7d9b2d04_1af056b9f148ed007da0e03bce7d9b2d04" kindref="member">Counter</ref><sp/>counter)</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>(void)counter;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="180" refid="class_log_domain_3_01false_01_4_af88b1f5636f5d569ff7da6454d465585_1af88b1f5636f5d569ff7da6454d465585" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_af88b1f5636f5d569ff7da6454d465585_1af88b1f5636f5d569ff7da6454d465585" kindref="member">hasCount</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="181" refid="class_log_domain_3_01false_01_4_acc61a3d3348e7ed42069d95c92382157_1acc61a3d3348e7ed42069d95c92382157" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_log_domain_3_01false_01_4_acc61a3d3348e7ed42069d95c92382157_1acc61a3d3348e7ed42069d95c92382157" kindref="member">reset</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="182"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184" refid="namespace_log_domain_internal" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_log_domain_internal" kindref="compound">LogDomainInternal</ref><sp/>{</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Helpers<sp/>for<sp/>the<sp/>logging<sp/>macroes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Tag,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Default&gt;</highlight></codeline>
+<codeline lineno="188" refid="struct_log_domain_internal_1_1_select_value_ae06e611727a1b9c5463a1a18063a656d_1ae06e611727a1b9c5463a1a18063a656d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_log_domain_internal_1_1_select_value" kindref="compound">SelectValue</ref><sp/>{</highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_log_domain_internal_1_1_select_value_ae06e611727a1b9c5463a1a18063a656d_1ae06e611727a1b9c5463a1a18063a656d" kindref="member">value</ref><sp/>=<sp/>Default;};</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190" refid="struct_log_domain_internal_1_1_tag__" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal">&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_log_domain_internal_1_1_tag__" kindref="compound">Tag_</ref><sp/>{};</highlight></codeline>
+<codeline lineno="191" refid="struct_log_domain_internal_1_1_tag__0" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal">&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_log_domain_internal_1_1_tag__0" kindref="compound">Tag_0</ref><sp/>{};</highlight></codeline>
+<codeline lineno="192" refid="struct_log_domain_internal_1_1_tag__1" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal">&gt;<sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_log_domain_internal_1_1_tag__1" kindref="compound">Tag_1</ref><sp/>{};</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Default&gt;</highlight></codeline>
+<codeline lineno="195" refid="struct_log_domain_internal_1_1_select_value_3_01_tag__0_3_01int_01_4_00_01_default_01_4_a1e281de4e5fe8acef73addfbe90a3c08_1a1e281de4e5fe8acef73addfbe90a3c08" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_log_domain_internal_1_1_select_value" kindref="compound">SelectValue</ref>&lt;<ref refid="struct_log_domain_internal_1_1_tag__0" kindref="compound">Tag_0</ref>&lt;<ref refid="classint" kindref="compound">int</ref>&gt;,<sp/>Default&gt;<sp/>{</highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_log_domain_internal_1_1_select_value_3_01_tag__0_3_01int_01_4_00_01_default_01_4_a1e281de4e5fe8acef73addfbe90a3c08_1a1e281de4e5fe8acef73addfbe90a3c08" kindref="member">value</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;};</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Default&gt;</highlight></codeline>
+<codeline lineno="198" refid="struct_log_domain_internal_1_1_select_value_3_01_tag__1_3_01int_01_4_00_01_default_01_4_ad00d0dcd0bc508b620f530e365425fcb_1ad00d0dcd0bc508b620f530e365425fcb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_log_domain_internal_1_1_select_value" kindref="compound">SelectValue</ref>&lt;<ref refid="struct_log_domain_internal_1_1_tag__1" kindref="compound">Tag_1</ref>&lt;<ref refid="classint" kindref="compound">int</ref>&gt;,<sp/>Default&gt;<sp/>{</highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_log_domain_internal_1_1_select_value_3_01_tag__1_3_01int_01_4_00_01_default_01_4_ad00d0dcd0bc508b620f530e365425fcb_1ad00d0dcd0bc508b620f530e365425fcb" kindref="member">value</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;};</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>L&gt;</highlight></codeline>
+<codeline lineno="201" refid="struct_log_domain_internal_1_1_lambda_runner_a67889a83edc6a86f5fe2f5c76a2906cf_1a67889a83edc6a86f5fe2f5c76a2906cf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_log_domain_internal_1_1_lambda_runner" kindref="compound">LambdaRunner</ref><sp/>{L&amp;<sp/><ref refid="struct_log_domain_internal_1_1_lambda_runner_a67889a83edc6a86f5fe2f5c76a2906cf_1a67889a83edc6a86f5fe2f5c76a2906cf" kindref="member">log</ref>;};</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>L&gt;</highlight></codeline>
+<codeline lineno="203" refid="namespace_log_domain_internal_a29779d254f4b39661110f9f7a5d7e3fe_1a29779d254f4b39661110f9f7a5d7e3fe" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="struct_log_domain_internal_1_1_lambda_runner" kindref="compound">LambdaRunner&lt;L&gt;</ref><sp/><ref refid="namespace_log_domain_internal_a29779d254f4b39661110f9f7a5d7e3fe_1a29779d254f4b39661110f9f7a5d7e3fe" kindref="member">lambdaRunner</ref>(L&amp;<sp/>l)<sp/>{</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_log_domain_internal_1_1_lambda_runner" kindref="compound">LambdaRunner&lt;L&gt;</ref><sp/>r<sp/>=<sp/>{l};</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>r;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>L,<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="208" refid="namespace_log_domain_internal_a9e16b152efb1aecd91e1b39647804200_1a9e16b152efb1aecd91e1b39647804200" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_log_domain_internal_a9e16b152efb1aecd91e1b39647804200_1a9e16b152efb1aecd91e1b39647804200" kindref="member">operator+</ref>(<ref refid="struct_log_domain_internal_1_1_lambda_runner" kindref="compound">LambdaRunner&lt;L&gt;</ref><sp/>runner,<sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>&amp;&amp;<sp/>lambda)<sp/>{</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>lambda(runner.<ref refid="struct_log_domain_internal_1_1_lambda_runner_a67889a83edc6a86f5fe2f5c76a2906cf_1a67889a83edc6a86f5fe2f5c76a2906cf" kindref="member">log</ref>,<sp/>runner.<ref refid="struct_log_domain_internal_1_1_lambda_runner_a67889a83edc6a86f5fe2f5c76a2906cf_1a67889a83edc6a86f5fe2f5c76a2906cf" kindref="member">log</ref>.stream());</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212" refid="struct_log_domain_internal_1_1_log_alias_registerer" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_log_domain_internal_1_1_log_alias_registerer_a694513b4562e5fe9ff3068680f9b9838_1a694513b4562e5fe9ff3068680f9b9838" kindref="member">LogAliasRegisterer</ref><sp/>{</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="struct_log_domain_internal_1_1_log_alias_registerer_a694513b4562e5fe9ff3068680f9b9838_1a694513b4562e5fe9ff3068680f9b9838" kindref="member">LogAliasRegisterer</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>alias,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>of);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="215"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a3dd074a16d8db719c612d38d30802066_1a3dd074a16d8db719c612d38d30802066" kindref="member">MATHICGB_NAMESPACE_END</ref></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="_log_domain_8hpp_a88ca992324a1711c5c3af8612886c13e_1a88ca992324a1711c5c3af8612886c13e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_CAPTURE_LOG_ENABLED(NAME,<sp/>DEFAULT_VALUE)<sp/>\</highlight></codeline>
+<codeline lineno="223"><highlight class="preprocessor"><sp/><sp/>namespace<sp/>mgb{namespace<sp/>LogDomainInternal<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="224"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>template&lt;class&gt;<sp/>struct<sp/>Tag_MATHICGB_LOG_##NAME<sp/>{};<sp/>\</highlight></codeline>
+<codeline lineno="225"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>typedef<sp/>MATHICGB_CONCATENATE_AFTER_EXPANSION(Tag_,<sp/>MATHICGB_LOG_##NAME)&lt;int&gt;<sp/>\</highlight></codeline>
+<codeline lineno="226"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>SelectedTag_##NAME;<sp/>\</highlight></codeline>
+<codeline lineno="227"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>static<sp/>const<sp/>bool<sp/>value_##NAME<sp/>=<sp/>\</highlight></codeline>
+<codeline lineno="228"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>SelectValue&lt;SelectedTag_##NAME,<sp/>DEFAULT_VALUE&gt;::value;<sp/>\</highlight></codeline>
+<codeline lineno="229"><highlight class="preprocessor"><sp/><sp/>}}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238" refid="_log_domain_8hpp_a146c7ea200fdb335fa4c61729137c557_1a146c7ea200fdb335fa4c61729137c557" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_DEFINE_LOG_DOMAIN_WITH_DEFAULTS(<sp/>\</highlight></codeline>
+<codeline lineno="239"><highlight class="preprocessor"><sp/><sp/>NAME,<sp/>DESCRIPTION,<sp/>\</highlight></codeline>
+<codeline lineno="240"><highlight class="preprocessor"><sp/><sp/>DEFAULT_RUNTIME_ENABLED,<sp/>\</highlight></codeline>
+<codeline lineno="241"><highlight class="preprocessor"><sp/><sp/>DEFAULT_RUNTIME_STREAM_ENABLED,<sp/>\</highlight></codeline>
+<codeline lineno="242"><highlight class="preprocessor"><sp/><sp/>DEFAULT_COMPILE_TIME_ENABLED<sp/>\</highlight></codeline>
+<codeline lineno="243"><highlight class="preprocessor">)<sp/>\</highlight></codeline>
+<codeline lineno="244"><highlight class="preprocessor"><sp/><sp/>MATHICGB_CAPTURE_LOG_ENABLED(NAME,<sp/>DEFAULT_COMPILE_TIME_ENABLED);<sp/>\</highlight></codeline>
+<codeline lineno="245"><highlight class="preprocessor"><sp/><sp/>namespace<sp/>mgb{namespace<sp/>logs<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="246"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>typedef<sp/>LogDomain&lt;<sp/>::mgb::LogDomainInternal::value_##NAME&gt;<sp/>Type##NAME;<sp/>\</highlight></codeline>
+<codeline lineno="247"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>Type##NAME<sp/>NAME(<sp/>\</highlight></codeline>
+<codeline lineno="248"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>#NAME,<sp/>\</highlight></codeline>
+<codeline lineno="249"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>DESCRIPTION,<sp/>\</highlight></codeline>
+<codeline lineno="250"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>DEFAULT_RUNTIME_ENABLED,<sp/>\</highlight></codeline>
+<codeline lineno="251"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>DEFAULT_RUNTIME_STREAM_ENABLED<sp/>\</highlight></codeline>
+<codeline lineno="252"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>);<sp/>\</highlight></codeline>
+<codeline lineno="253"><highlight class="preprocessor"><sp/><sp/>}}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261" refid="_log_domain_8hpp_ab56ed658f1ad3e60576cf3589d496f85_1ab56ed658f1ad3e60576cf3589d496f85" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_DEFINE_LOG_DOMAIN(NAME,<sp/>DESCRIPTION)<sp/>\</highlight></codeline>
+<codeline lineno="262"><highlight class="preprocessor"><sp/><sp/>MATHICGB_DEFINE_LOG_DOMAIN_WITH_DEFAULTS(NAME,<sp/>DESCRIPTION,<sp/>0,<sp/>1,<sp/>1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight></codeline>
+<codeline lineno="264" refid="_log_domain_8hpp_ad363cd4490c79b3224bfcaac023fe5b2_1ad363cd4490c79b3224bfcaac023fe5b2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_DEFINE_LOG_ALIAS(ALIAS,<sp/>OF)<sp/>\</highlight></codeline>
+<codeline lineno="265"><highlight class="preprocessor"><sp/><sp/>namespace<sp/>mgb{namespace<sp/>LogDomainInternal<sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="266"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>LogAliasRegisterer<sp/>MATHICGB_CONCATENATE_AFTER_EXPANSION(reg_,<sp/>__LINE__)<sp/>\</highlight></codeline>
+<codeline lineno="267"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>(ALIAS,<sp/>OF);<sp/>\</highlight></codeline>
+<codeline lineno="268"><highlight class="preprocessor"><sp/><sp/>}}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274" refid="_log_domain_8hpp_a12f2c3a34eae34487e7e5447839cfaa8_1a12f2c3a34eae34487e7e5447839cfaa8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_LOGGER(DOMAIN)<sp/>::mgb::logs::DOMAIN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight></codeline>
+<codeline lineno="281" refid="_log_domain_8hpp_a2a99ea695a2d1e8539862b8b7d0bae69_1a2a99ea695a2d1e8539862b8b7d0bae69" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_LOGGER_TYPE(DOMAIN)<sp/>::mgb::logs::Type##DOMAIN</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight></codeline>
+<codeline lineno="295" refid="_log_domain_8hpp_a517283bf30ee4cc50da977aa6a401a9f_1a517283bf30ee4cc50da977aa6a401a9f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_IF_STREAM_LOG(DOMAIN)<sp/>\</highlight></codeline>
+<codeline lineno="296"><highlight class="preprocessor"><sp/><sp/>if<sp/>(MATHICGB_LOGGER(DOMAIN).streamEnabled())<sp/>\</highlight></codeline>
+<codeline lineno="297"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>LogDomainInternal::lambdaRunner(MATHICGB_LOGGER(DOMAIN))<sp/>+<sp/>\</highlight></codeline>
+<codeline lineno="298"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>[&amp;](MATHICGB_LOGGER_TYPE(DOMAIN)&amp;<sp/>log,<sp/>std::ostream&amp;<sp/>stream)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306" refid="_log_domain_8hpp_a53149db82da6e28217426f0d5e4c4a5f_1a53149db82da6e28217426f0d5e4c4a5f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_LOG(DOMAIN)<sp/>\</highlight></codeline>
+<codeline lineno="307"><highlight class="preprocessor"><sp/><sp/>if<sp/>(MATHICGB_LOGGER(DOMAIN).streamEnabled())<sp/>MATHICGB_LOGGER(DOMAIN).stream()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316" refid="_log_domain_8hpp_a4973e123e63273dd59529127a388ede6_1a4973e123e63273dd59529127a388ede6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_LOG_TIME(DOMAIN)<sp/>\</highlight></codeline>
+<codeline lineno="317"><highlight class="preprocessor"><sp/><sp/>auto<sp/>MATHICGB_CONCATENATE_AFTER_EXPANSION(<sp/>\</highlight></codeline>
+<codeline lineno="318"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>DOMAIN,<sp/>MATHICGB_CONCATENATE_AFTER_EXPANSION(_timer_,<sp/>__LINE__))<sp/>\</highlight></codeline>
+<codeline lineno="319"><highlight class="preprocessor"><sp/><sp/>(MATHICGB_LOGGER(DOMAIN).timer());<sp/>\</highlight></codeline>
+<codeline lineno="320"><highlight class="preprocessor"><sp/><sp/>MATHICGB_LOG(DOMAIN)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight></codeline>
+<codeline lineno="328" refid="_log_domain_8hpp_a5552ea91020802d5be9f3cdfdcbdd6c4_1a5552ea91020802d5be9f3cdfdcbdd6c4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_LOG_INCREMENT_BY(DOMAIN,<sp/>BY)<sp/>\</highlight></codeline>
+<codeline lineno="329"><highlight class="preprocessor"><sp/><sp/>do<sp/>{<sp/>\</highlight></codeline>
+<codeline lineno="330"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>auto&amp;<sp/>MGBLOG_log<sp/>=<sp/>MATHICGB_LOGGER(DOMAIN);<sp/>\</highlight></codeline>
+<codeline lineno="331"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>if<sp/>(MGBLOG_log.enabled())<sp/>{<sp/>\</highlight></codeline>
+<codeline lineno="332"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>MGBLOG_log.setCount(MGBLOG_log.count()<sp/>+<sp/>BY);<sp/>\</highlight></codeline>
+<codeline lineno="333"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="334"><highlight class="preprocessor"><sp/><sp/>}<sp/>while<sp/>(false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="335"><highlight class="normal"></highlight></codeline>
+<codeline lineno="337" refid="_log_domain_8hpp_a9c5bdfe1667753fcc581fd2423585897_1a9c5bdfe1667753fcc581fd2423585897" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_LOG_INCREMENT(DOMAIN)<sp/>\</highlight></codeline>
+<codeline lineno="338"><highlight class="preprocessor"><sp/><sp/>MATHICGB_LOG_INCREMENT_BY(DOMAIN,<sp/>1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="339"><highlight class="normal"></highlight></codeline>
+<codeline lineno="340"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monomial_hash_and_eq_var_size" kind="class" language="C++" prot="public">
+    <compoundname>MonomialHashAndEqVarSize</compoundname>
+    <includes refid="monomial-sets_8hpp" local="no">monomial-sets.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_monomial_hash_and_eq_var_size_ac8f222b02d7d5aeb9a06766cf4808748_1ac8f222b02d7d5aeb9a06766cf4808748" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonomialHashAndEqVarSize::MonomialHashAndEqVarSize</definition>
+        <argsstring>()</argsstring>
+        <name>MonomialHashAndEqVarSize</name>
+        <qualifiedname>MonomialHashAndEqVarSize::MonomialHashAndEqVarSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="156" column="3" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="156" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_and_eq_var_size_abae522ac3859fae85f0528f68f98b435_1abae522ac3859fae85f0528f68f98b435" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t MonomialHashAndEqVarSize::operator()</definition>
+        <argsstring>(const int *m) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>MonomialHashAndEqVarSize::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="160" column="15" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="160" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_and_eq_var_size_a248cb5acbab14af3279cac22c97df4f0_1a248cb5acbab14af3279cac22c97df4f0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialHashAndEqVarSize::operator()</definition>
+        <argsstring>(const int *a, const int *b) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>MonomialHashAndEqVarSize::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="166" column="8" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="166" bodyend="170"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Combined hash + equality functor for variable-size monomials, plugged into the <computeroutput>std::unordered_set</computeroutput> inside <computeroutput><ref refid="class_monomial_set_var_size" kindref="compound">MonomialSetVarSize</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Reads the leading int of each monomial as its length, then compares the two ranges with <computeroutput>std::equal</computeroutput>. The hash is the same <computeroutput>TODO</computeroutput> stub that returns 0 as in the fixed-size variant. </para>
+    </detaileddescription>
+    <location file="Macaulay2/e/monomial-sets.hpp" line="153" column="1" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="154" bodyend="171"/>
+    <listofallmembers>
+      <member refid="class_monomial_hash_and_eq_var_size_ac8f222b02d7d5aeb9a06766cf4808748_1ac8f222b02d7d5aeb9a06766cf4808748" prot="public" virt="non-virtual"><scope>MonomialHashAndEqVarSize</scope><name>MonomialHashAndEqVarSize</name></member>
+      <member refid="class_monomial_hash_and_eq_var_size_abae522ac3859fae85f0528f68f98b435_1abae522ac3859fae85f0528f68f98b435" prot="public" virt="non-virtual"><scope>MonomialHashAndEqVarSize</scope><name>operator()</name></member>
+      <member refid="class_monomial_hash_and_eq_var_size_a248cb5acbab14af3279cac22c97df4f0_1a248cb5acbab14af3279cac22c97df4f0" prot="public" virt="non-virtual"><scope>MonomialHashAndEqVarSize</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

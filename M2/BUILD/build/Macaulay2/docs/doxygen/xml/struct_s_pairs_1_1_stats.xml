@@ -1,0 +1,201 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_s_pairs_1_1_stats" kind="struct" language="C++" prot="public">
+    <compoundname>SPairs::Stats</compoundname>
+    <includes refid="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" local="no">SPairs.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_s_pairs_1_1_stats_a3b795add6a8663b387993627a6ffbe76_1a3b795add6a8663b387993627a6ffbe76" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SPairs::Stats::sPairsConsidered</definition>
+        <argsstring></argsstring>
+        <name>sPairsConsidered</name>
+        <qualifiedname>SPairs::Stats::sPairsConsidered</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="102" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="102" bodyend="-1"/>
+        <referencedby refid="class_classic_g_b_alg_aa6fdb657d98ce8d2e7026c0767bc89f3_1aa6fdb657d98ce8d2e7026c0767bc89f3" compoundref="_classic_g_b_alg_8cpp" startline="440" endline="610">ClassicGBAlg::printStats</referencedby>
+        <referencedby refid="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="91" endline="100">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_s_pairs_1_1_stats_a2b91a8da9b22eec2ed0d4c22be74a783_1a2b91a8da9b22eec2ed0d4c22be74a783" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SPairs::Stats::relativelyPrimeHits</definition>
+        <argsstring></argsstring>
+        <name>relativelyPrimeHits</name>
+        <qualifiedname>SPairs::Stats::relativelyPrimeHits</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="103" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="103" bodyend="-1"/>
+        <referencedby refid="class_classic_g_b_alg_aa6fdb657d98ce8d2e7026c0767bc89f3_1aa6fdb657d98ce8d2e7026c0767bc89f3" compoundref="_classic_g_b_alg_8cpp" startline="440" endline="610">ClassicGBAlg::printStats</referencedby>
+        <referencedby refid="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="91" endline="100">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_s_pairs_1_1_stats_ae8d2c54af72498fb004c35f632b082aa_1ae8d2c54af72498fb004c35f632b082aa" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SPairs::Stats::buchbergerLcmSimpleHits</definition>
+        <argsstring></argsstring>
+        <name>buchbergerLcmSimpleHits</name>
+        <qualifiedname>SPairs::Stats::buchbergerLcmSimpleHits</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="104" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="104" bodyend="-1"/>
+        <referencedby refid="class_classic_g_b_alg_aa6fdb657d98ce8d2e7026c0767bc89f3_1aa6fdb657d98ce8d2e7026c0767bc89f3" compoundref="_classic_g_b_alg_8cpp" startline="440" endline="610">ClassicGBAlg::printStats</referencedby>
+        <referencedby refid="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="91" endline="100">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_s_pairs_1_1_stats_a8bf41652a19db9bdfed6fb93ac513f5e_1a8bf41652a19db9bdfed6fb93ac513f5e" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SPairs::Stats::buchbergerLcmAdvancedHits</definition>
+        <argsstring></argsstring>
+        <name>buchbergerLcmAdvancedHits</name>
+        <qualifiedname>SPairs::Stats::buchbergerLcmAdvancedHits</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="105" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="105" bodyend="-1"/>
+        <referencedby refid="class_classic_g_b_alg_aa6fdb657d98ce8d2e7026c0767bc89f3_1aa6fdb657d98ce8d2e7026c0767bc89f3" compoundref="_classic_g_b_alg_8cpp" startline="440" endline="610">ClassicGBAlg::printStats</referencedby>
+        <referencedby refid="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="91" endline="100">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_s_pairs_1_1_stats_a7b85b5c1b5f3c38cf4fffef627e9bd92_1a7b85b5c1b5f3c38cf4fffef627e9bd92" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SPairs::Stats::buchbergerLcmCacheHits</definition>
+        <argsstring></argsstring>
+        <name>buchbergerLcmCacheHits</name>
+        <qualifiedname>SPairs::Stats::buchbergerLcmCacheHits</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="106" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="106" bodyend="-1"/>
+        <referencedby refid="class_classic_g_b_alg_aa6fdb657d98ce8d2e7026c0767bc89f3_1aa6fdb657d98ce8d2e7026c0767bc89f3" compoundref="_classic_g_b_alg_8cpp" startline="440" endline="610">ClassicGBAlg::printStats</referencedby>
+        <referencedby refid="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="91" endline="100">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_s_pairs_1_1_stats_a3c3da7e9b682c0dadb54a65603476765_1a3c3da7e9b682c0dadb54a65603476765" prot="public" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SPairs::Stats::late</definition>
+        <argsstring></argsstring>
+        <name>late</name>
+        <qualifiedname>SPairs::Stats::late</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="107" column="10" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="107" bodyend="-1"/>
+        <referencedby refid="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="91" endline="100">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_s_pairs_1_1_stats_a235b82d79187cddc0879b67e3a64608b_1a235b82d79187cddc0879b67e3a64608b" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SPairs::Stats::buchbergerLcmSimpleHitsLate</definition>
+        <argsstring></argsstring>
+        <name>buchbergerLcmSimpleHitsLate</name>
+        <qualifiedname>SPairs::Stats::buchbergerLcmSimpleHitsLate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="108" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="108" bodyend="-1"/>
+        <referencedby refid="class_classic_g_b_alg_aa6fdb657d98ce8d2e7026c0767bc89f3_1aa6fdb657d98ce8d2e7026c0767bc89f3" compoundref="_classic_g_b_alg_8cpp" startline="440" endline="610">ClassicGBAlg::printStats</referencedby>
+        <referencedby refid="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="91" endline="100">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_s_pairs_1_1_stats_ab69ca713cc07918909e4a505151dea6a_1ab69ca713cc07918909e4a505151dea6a" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SPairs::Stats::buchbergerLcmCacheHitsLate</definition>
+        <argsstring></argsstring>
+        <name>buchbergerLcmCacheHitsLate</name>
+        <qualifiedname>SPairs::Stats::buchbergerLcmCacheHitsLate</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="109" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="109" bodyend="-1"/>
+        <referencedby refid="class_classic_g_b_alg_aa6fdb657d98ce8d2e7026c0767bc89f3_1aa6fdb657d98ce8d2e7026c0767bc89f3" compoundref="_classic_g_b_alg_8cpp" startline="440" endline="610">ClassicGBAlg::printStats</referencedby>
+        <referencedby refid="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="91" endline="100">Stats</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SPairs::Stats::Stats</definition>
+        <argsstring>()</argsstring>
+        <name>Stats</name>
+        <qualifiedname>SPairs::Stats::Stats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="91" column="5" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="91" bodyend="100"/>
+        <references refid="struct_s_pairs_1_1_stats_a8bf41652a19db9bdfed6fb93ac513f5e_1a8bf41652a19db9bdfed6fb93ac513f5e" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="105">buchbergerLcmAdvancedHits</references>
+        <references refid="struct_s_pairs_1_1_stats_a7b85b5c1b5f3c38cf4fffef627e9bd92_1a7b85b5c1b5f3c38cf4fffef627e9bd92" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="106">buchbergerLcmCacheHits</references>
+        <references refid="struct_s_pairs_1_1_stats_ab69ca713cc07918909e4a505151dea6a_1ab69ca713cc07918909e4a505151dea6a" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="109">buchbergerLcmCacheHitsLate</references>
+        <references refid="struct_s_pairs_1_1_stats_ae8d2c54af72498fb004c35f632b082aa_1ae8d2c54af72498fb004c35f632b082aa" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="104">buchbergerLcmSimpleHits</references>
+        <references refid="struct_s_pairs_1_1_stats_a235b82d79187cddc0879b67e3a64608b_1a235b82d79187cddc0879b67e3a64608b" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="108">buchbergerLcmSimpleHitsLate</references>
+        <references refid="struct_s_pairs_1_1_stats_a3c3da7e9b682c0dadb54a65603476765_1a3c3da7e9b682c0dadb54a65603476765" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="107">late</references>
+        <references refid="struct_s_pairs_1_1_stats_a2b91a8da9b22eec2ed0d4c22be74a783_1a2b91a8da9b22eec2ed0d4c22be74a783" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="103">relativelyPrimeHits</references>
+        <references refid="struct_s_pairs_1_1_stats_a3b795add6a8663b387993627a6ffbe76_1a3b795add6a8663b387993627a6ffbe76" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp" startline="102">sPairsConsidered</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>SPairs::Stats</label>
+        <link refid="struct_s_pairs_1_1_stats"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>buchbergerLcmAdvancedHits</edgelabel>
+          <edgelabel>buchbergerLcmCacheHits</edgelabel>
+          <edgelabel>buchbergerLcmCacheHitsLate</edgelabel>
+          <edgelabel>buchbergerLcmSimpleHits</edgelabel>
+          <edgelabel>buchbergerLcmSimpleHitsLate</edgelabel>
+          <edgelabel>relativelyPrimeHits</edgelabel>
+          <edgelabel>sPairsConsidered</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>late</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/SPairs.hpp" line="90" column="3" bodyfile="submodules/mathicgb/src/mathicgb/SPairs.hpp" bodystart="90" bodyend="110"/>
+    <listofallmembers>
+      <member refid="struct_s_pairs_1_1_stats_a8bf41652a19db9bdfed6fb93ac513f5e_1a8bf41652a19db9bdfed6fb93ac513f5e" prot="public" virt="non-virtual"><scope>SPairs::Stats</scope><name>buchbergerLcmAdvancedHits</name></member>
+      <member refid="struct_s_pairs_1_1_stats_a7b85b5c1b5f3c38cf4fffef627e9bd92_1a7b85b5c1b5f3c38cf4fffef627e9bd92" prot="public" virt="non-virtual"><scope>SPairs::Stats</scope><name>buchbergerLcmCacheHits</name></member>
+      <member refid="struct_s_pairs_1_1_stats_ab69ca713cc07918909e4a505151dea6a_1ab69ca713cc07918909e4a505151dea6a" prot="public" virt="non-virtual"><scope>SPairs::Stats</scope><name>buchbergerLcmCacheHitsLate</name></member>
+      <member refid="struct_s_pairs_1_1_stats_ae8d2c54af72498fb004c35f632b082aa_1ae8d2c54af72498fb004c35f632b082aa" prot="public" virt="non-virtual"><scope>SPairs::Stats</scope><name>buchbergerLcmSimpleHits</name></member>
+      <member refid="struct_s_pairs_1_1_stats_a235b82d79187cddc0879b67e3a64608b_1a235b82d79187cddc0879b67e3a64608b" prot="public" virt="non-virtual"><scope>SPairs::Stats</scope><name>buchbergerLcmSimpleHitsLate</name></member>
+      <member refid="struct_s_pairs_1_1_stats_a3c3da7e9b682c0dadb54a65603476765_1a3c3da7e9b682c0dadb54a65603476765" prot="public" virt="non-virtual"><scope>SPairs::Stats</scope><name>late</name></member>
+      <member refid="struct_s_pairs_1_1_stats_a2b91a8da9b22eec2ed0d4c22be74a783_1a2b91a8da9b22eec2ed0d4c22be74a783" prot="public" virt="non-virtual"><scope>SPairs::Stats</scope><name>relativelyPrimeHits</name></member>
+      <member refid="struct_s_pairs_1_1_stats_a3b795add6a8663b387993627a6ffbe76_1a3b795add6a8663b387993627a6ffbe76" prot="public" virt="non-virtual"><scope>SPairs::Stats</scope><name>sPairsConsidered</name></member>
+      <member refid="struct_s_pairs_1_1_stats_aa0a8c7a69a50589a34902f9792a142e3_1aa0a8c7a69a50589a34902f9792a142e3" prot="public" virt="non-virtual"><scope>SPairs::Stats</scope><name>Stats</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

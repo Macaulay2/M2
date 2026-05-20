@@ -1,0 +1,783 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_simulation" kind="class" language="C++" prot="public">
+    <compoundname>Simulation</compoundname>
+    <includes refid="_simulation_8h" local="no">Simulation.h</includes>
+    <innerclass refid="struct_simulation_1_1_sim_data" prot="private">Simulation::SimData</innerclass>
+    <innerclass refid="struct_simulation_1_1_event" prot="private">Simulation::Event</innerclass>
+    <innerclass refid="class_simulation_1_1_monomial_store" prot="public">Simulation::MonomialStore</innerclass>
+    <sectiondef kind="private-type">
+      <memberdef kind="enum" id="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52" prot="private" static="no" strong="no">
+        <type></type>
+        <name>EventType</name>
+        <qualifiedname>Simulation::EventType</qualifiedname>
+        <enumvalue id="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a7e84020e126a43bbac9cee98b33b991b" prot="private">
+          <name>InsertUnknown</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a09bff4b8976d0c45df681c0fd80436f3" prot="private">
+          <name>InsertKnown</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aacefc8b21f028a1bd4342adb158bea96" prot="private">
+          <name>QueryNoDivisor</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a131ebd642cdc518955ea1d57254751a2" prot="private">
+          <name>QueryHasDivisor</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aad9d899f46b9af60907cb2526a57ecda" prot="private">
+          <name>QueryUnknown</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aeb296c0ccbb5eaf34978d56ca954b37d" prot="private">
+          <name>StateUnknown</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52ae9a417f19670549fa6214b759f2e3317" prot="private">
+          <name>StateKnown</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="51" column="3" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="51" bodyend="59"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_simulation_a1ba3c595d1410d65dd2d6f7d82d4d94e_1a1ba3c595d1410d65dd2d6f7d82d4d94e" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Simulation::_findAll</definition>
+        <argsstring></argsstring>
+        <name>_findAll</name>
+        <qualifiedname>Simulation::_findAll</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="72" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="72" bodyend="-1"/>
+        <referencedby refid="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" compoundref="_simulation_8cpp" startline="16" endline="33">makeStandard</referencedby>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_simulation_a18c037fc09ce57c9546186831266bc68_1a18c037fc09ce57c9546186831266bc68" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_simulation_1_1_event" kindref="compound">Event</ref> &gt;</type>
+        <definition>std::vector&lt;Event&gt; Simulation::_events</definition>
+        <argsstring></argsstring>
+        <name>_events</name>
+        <qualifiedname>Simulation::_events</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="73" column="15" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="73" bodyend="-1"/>
+        <referencedby refid="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" compoundref="_simulation_8cpp" startline="16" endline="33">makeStandard</referencedby>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_simulation_abd8452bba709eac2c13d894ae3c3cf5e_1abd8452bba709eac2c13d894ae3c3cf5e" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_simulation_1_1_sim_data" kindref="compound">SimData</ref> &gt;</type>
+        <definition>std::vector&lt;SimData&gt; Simulation::_data</definition>
+        <argsstring></argsstring>
+        <name>_data</name>
+        <qualifiedname>Simulation::_data</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="74" column="15" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="74" bodyend="-1"/>
+        <referencedby refid="class_simulation_a1cf2790d4d7618af81eb1576c320dc55_1a1cf2790d4d7618af81eb1576c320dc55" compoundref="_simulation_8cpp" startline="35" endline="51">printData</referencedby>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t Simulation::_varCount</definition>
+        <argsstring></argsstring>
+        <name>_varCount</name>
+        <qualifiedname>Simulation::_varCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="75" column="10" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="75" bodyend="-1"/>
+        <referencedby refid="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" compoundref="_simulation_8cpp" startline="16" endline="33">makeStandard</referencedby>
+        <referencedby refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">run</referencedby>
+        <referencedby refid="class_simulation_a3ddee13acc75d95d679aa98a1f0f1f28_1a3ddee13acc75d95d679aa98a1f0f1f28" compoundref="_simulation_8h" startline="108" endline="111">run</referencedby>
+        <referencedby refid="class_simulation_a84b10bd22e95f17e405c92f8267e7533_1a84b10bd22e95f17e405c92f8267e7533" compoundref="_simulation_8h" startline="115" endline="118">run</referencedby>
+        <referencedby refid="class_simulation_a35b06e739480deaf5b16588a172a278c_1a35b06e739480deaf5b16588a172a278c" compoundref="_simulation_8h" startline="123" endline="127">run</referencedby>
+        <referencedby refid="class_simulation_a91df1bcb5c4fc1aa20fd42a667b334d1_1a91df1bcb5c4fc1aa20fd42a667b334d1" compoundref="_simulation_8h" startline="88" endline="91">run</referencedby>
+        <referencedby refid="class_simulation_ad68999df5b9b67261e963a6734eb5542_1ad68999df5b9b67261e963a6734eb5542" compoundref="_simulation_8h" startline="94" endline="97">run</referencedby>
+        <referencedby refid="class_simulation_ac65b0d406d1eb013147ff913fbe226ae_1ac65b0d406d1eb013147ff913fbe226ae" compoundref="_simulation_8h" startline="101" endline="104">run</referencedby>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_simulation_a17e07617db33bce6b8ebefc7c208815a_1a17e07617db33bce6b8ebefc7c208815a" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t Simulation::_repeats</definition>
+        <argsstring></argsstring>
+        <name>_repeats</name>
+        <qualifiedname>Simulation::_repeats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="76" column="10" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="76" bodyend="-1"/>
+        <referencedby refid="class_simulation_a1cf2790d4d7618af81eb1576c320dc55_1a1cf2790d4d7618af81eb1576c320dc55" compoundref="_simulation_8cpp" startline="35" endline="51">printData</referencedby>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">run</referencedby>
+        <referencedby refid="class_simulation_ab1c23b511d0541b72698e74ada06eb7b_1ab1c23b511d0541b72698e74ada06eb7b" compoundref="_simulation_8h" startline="13" endline="14">Simulation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_simulation_a554c7df7d6e00b8e3921c2ff44336b89_1a554c7df7d6e00b8e3921c2ff44336b89" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Simulation::_printPartialData</definition>
+        <argsstring></argsstring>
+        <name>_printPartialData</name>
+        <qualifiedname>Simulation::_printPartialData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="77" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="77" bodyend="-1"/>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">run</referencedby>
+        <referencedby refid="class_simulation_ab1c23b511d0541b72698e74ada06eb7b_1ab1c23b511d0541b72698e74ada06eb7b" compoundref="_simulation_8h" startline="13" endline="14">Simulation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_simulation_a48d5b910e0779ed96d46c4fdafcb28a7_1a48d5b910e0779ed96d46c4fdafcb28a7" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Simulation::_simType</definition>
+        <argsstring></argsstring>
+        <name>_simType</name>
+        <qualifiedname>Simulation::_simType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="78" column="15" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="78" bodyend="-1"/>
+        <referencedby refid="class_simulation_ab1c23b511d0541b72698e74ada06eb7b_1ab1c23b511d0541b72698e74ada06eb7b" compoundref="_simulation_8h" startline="13" endline="14">Simulation</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_simulation_ab1c23b511d0541b72698e74ada06eb7b_1ab1c23b511d0541b72698e74ada06eb7b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Simulation::Simulation</definition>
+        <argsstring>(size_t repeats, bool printPartialData)</argsstring>
+        <name>Simulation</name>
+        <qualifiedname>Simulation::Simulation</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>repeats</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>printPartialData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="13" column="3" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="13" bodyend="14"/>
+        <references refid="class_simulation_a554c7df7d6e00b8e3921c2ff44336b89_1a554c7df7d6e00b8e3921c2ff44336b89" compoundref="_simulation_8h" startline="77">_printPartialData</references>
+        <references refid="class_simulation_a17e07617db33bce6b8ebefc7c208815a_1a17e07617db33bce6b8ebefc7c208815a" compoundref="_simulation_8h" startline="76">_repeats</references>
+        <references refid="class_simulation_a48d5b910e0779ed96d46c4fdafcb28a7_1a48d5b910e0779ed96d46c4fdafcb28a7" compoundref="_simulation_8h" startline="78">_simType</references>
+      </memberdef>
+      <memberdef kind="function" id="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Simulation::makeStandard</definition>
+        <argsstring>(size_t varCount, size_t inserts, size_t queries, bool findAll)</argsstring>
+        <name>makeStandard</name>
+        <qualifiedname>Simulation::makeStandard</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>varCount</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>inserts</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>queries</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>findAll</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="16" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.cpp" bodystart="16" bodyend="33"/>
+        <references refid="class_simulation_a18c037fc09ce57c9546186831266bc68_1a18c037fc09ce57c9546186831266bc68" compoundref="_simulation_8h" startline="73">_events</references>
+        <references refid="class_simulation_a1ba3c595d1410d65dd2d6f7d82d4d94e_1a1ba3c595d1410d65dd2d6f7d82d4d94e" compoundref="_simulation_8h" startline="72">_findAll</references>
+        <references refid="struct_simulation_1_1_event_a24e47745393b348a541645fbe4ae640a_1a24e47745393b348a541645fbe4ae640a" compoundref="_simulation_8h" startline="62">Simulation::Event::_monomial</references>
+        <references refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" compoundref="_simulation_8h" startline="75">_varCount</references>
+        <references refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a7e84020e126a43bbac9cee98b33b991b" compoundref="_simulation_8h" startline="52">InsertUnknown</references>
+        <references refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aad9d899f46b9af60907cb2526a57ecda" compoundref="_simulation_8h" startline="56">QueryUnknown</references>
+        <referencedby refid="div_main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_1ae66f6b31b5ad750f1fe042a706a4e3d4" compoundref="div_main_8cpp" startline="9" endline="148">main</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DivFinder</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Simulation::run</definition>
+        <argsstring>()</argsstring>
+        <name>run</name>
+        <qualifiedname>Simulation::run</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="19" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="82" bodyend="85"/>
+        <references refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" compoundref="_simulation_8h" startline="75">_varCount</references>
+        <references refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">run</references>
+        <referencedby refid="div_main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_1ae66f6b31b5ad750f1fe042a706a4e3d4" compoundref="div_main_8cpp" startline="9" endline="148">main</referencedby>
+        <referencedby refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">run</referencedby>
+        <referencedby refid="class_simulation_a3ddee13acc75d95d679aa98a1f0f1f28_1a3ddee13acc75d95d679aa98a1f0f1f28" compoundref="_simulation_8h" startline="108" endline="111">run</referencedby>
+        <referencedby refid="class_simulation_a84b10bd22e95f17e405c92f8267e7533_1a84b10bd22e95f17e405c92f8267e7533" compoundref="_simulation_8h" startline="115" endline="118">run</referencedby>
+        <referencedby refid="class_simulation_a35b06e739480deaf5b16588a172a278c_1a35b06e739480deaf5b16588a172a278c" compoundref="_simulation_8h" startline="123" endline="127">run</referencedby>
+        <referencedby refid="class_simulation_a91df1bcb5c4fc1aa20fd42a667b334d1_1a91df1bcb5c4fc1aa20fd42a667b334d1" compoundref="_simulation_8h" startline="88" endline="91">run</referencedby>
+        <referencedby refid="class_simulation_ad68999df5b9b67261e963a6734eb5542_1ad68999df5b9b67261e963a6734eb5542" compoundref="_simulation_8h" startline="94" endline="97">run</referencedby>
+        <referencedby refid="class_simulation_ac65b0d406d1eb013147ff913fbe226ae_1ac65b0d406d1eb013147ff913fbe226ae" compoundref="_simulation_8h" startline="101" endline="104">run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_simulation_a91df1bcb5c4fc1aa20fd42a667b334d1_1a91df1bcb5c4fc1aa20fd42a667b334d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DivFinder</type>
+          </param>
+          <param>
+            <type>class Param1</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Simulation::run</definition>
+        <argsstring>(const Param1 &amp;param1)</argsstring>
+        <name>run</name>
+        <qualifiedname>Simulation::run</qualifiedname>
+        <param>
+          <type>const Param1 &amp;</type>
+          <declname>param1</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="21" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="88" bodyend="91"/>
+        <references refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" compoundref="_simulation_8h" startline="75">_varCount</references>
+        <references refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">run</references>
+      </memberdef>
+      <memberdef kind="function" id="class_simulation_ad68999df5b9b67261e963a6734eb5542_1ad68999df5b9b67261e963a6734eb5542" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DivFinder</type>
+          </param>
+          <param>
+            <type>class Param1</type>
+          </param>
+          <param>
+            <type>class Param2</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Simulation::run</definition>
+        <argsstring>(const Param1 &amp;param1, const Param2 &amp;param2)</argsstring>
+        <name>run</name>
+        <qualifiedname>Simulation::run</qualifiedname>
+        <param>
+          <type>const Param1 &amp;</type>
+          <declname>param1</declname>
+        </param>
+        <param>
+          <type>const Param2 &amp;</type>
+          <declname>param2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="23" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="94" bodyend="97"/>
+        <references refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" compoundref="_simulation_8h" startline="75">_varCount</references>
+        <references refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">run</references>
+      </memberdef>
+      <memberdef kind="function" id="class_simulation_ac65b0d406d1eb013147ff913fbe226ae_1ac65b0d406d1eb013147ff913fbe226ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DivFinder</type>
+          </param>
+          <param>
+            <type>class Param1</type>
+          </param>
+          <param>
+            <type>class Param2</type>
+          </param>
+          <param>
+            <type>class Param3</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Simulation::run</definition>
+        <argsstring>(const Param1 &amp;param1, const Param2 &amp;param2, const Param3 &amp;param3)</argsstring>
+        <name>run</name>
+        <qualifiedname>Simulation::run</qualifiedname>
+        <param>
+          <type>const Param1 &amp;</type>
+          <declname>param1</declname>
+        </param>
+        <param>
+          <type>const Param2 &amp;</type>
+          <declname>param2</declname>
+        </param>
+        <param>
+          <type>const Param3 &amp;</type>
+          <declname>param3</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="25" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="101" bodyend="104"/>
+        <references refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" compoundref="_simulation_8h" startline="75">_varCount</references>
+        <references refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">run</references>
+      </memberdef>
+      <memberdef kind="function" id="class_simulation_a3ddee13acc75d95d679aa98a1f0f1f28_1a3ddee13acc75d95d679aa98a1f0f1f28" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DivFinder</type>
+          </param>
+          <param>
+            <type>class P1</type>
+          </param>
+          <param>
+            <type>class P2</type>
+          </param>
+          <param>
+            <type>class P3</type>
+          </param>
+          <param>
+            <type>class P4</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Simulation::run</definition>
+        <argsstring>(const P1 &amp;p1, const P2 &amp;p2, const P3 &amp;param3, const P4 &amp;param4)</argsstring>
+        <name>run</name>
+        <qualifiedname>Simulation::run</qualifiedname>
+        <param>
+          <type>const P1 &amp;</type>
+          <declname>p1</declname>
+        </param>
+        <param>
+          <type>const P2 &amp;</type>
+          <declname>p2</declname>
+        </param>
+        <param>
+          <type>const P3 &amp;</type>
+          <declname>param3</declname>
+        </param>
+        <param>
+          <type>const P4 &amp;</type>
+          <declname>param4</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="27" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="108" bodyend="111"/>
+        <references refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" compoundref="_simulation_8h" startline="75">_varCount</references>
+        <references refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">run</references>
+      </memberdef>
+      <memberdef kind="function" id="class_simulation_a84b10bd22e95f17e405c92f8267e7533_1a84b10bd22e95f17e405c92f8267e7533" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DivFinder</type>
+          </param>
+          <param>
+            <type>class P1</type>
+          </param>
+          <param>
+            <type>class P2</type>
+          </param>
+          <param>
+            <type>class P3</type>
+          </param>
+          <param>
+            <type>class P4</type>
+          </param>
+          <param>
+            <type>class P5</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Simulation::run</definition>
+        <argsstring>(const P1 &amp;p1, const P2 &amp;p2, const P3 &amp;param3, const P4 &amp;param4, const P5 &amp;p5)</argsstring>
+        <name>run</name>
+        <qualifiedname>Simulation::run</qualifiedname>
+        <param>
+          <type>const P1 &amp;</type>
+          <declname>p1</declname>
+        </param>
+        <param>
+          <type>const P2 &amp;</type>
+          <declname>p2</declname>
+        </param>
+        <param>
+          <type>const P3 &amp;</type>
+          <declname>param3</declname>
+        </param>
+        <param>
+          <type>const P4 &amp;</type>
+          <declname>param4</declname>
+        </param>
+        <param>
+          <type>const P5 &amp;</type>
+          <declname>p5</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="29" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="115" bodyend="118"/>
+        <references refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" compoundref="_simulation_8h" startline="75">_varCount</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+        <references refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">run</references>
+      </memberdef>
+      <memberdef kind="function" id="class_simulation_a35b06e739480deaf5b16588a172a278c_1a35b06e739480deaf5b16588a172a278c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DivFinder</type>
+          </param>
+          <param>
+            <type>class P1</type>
+          </param>
+          <param>
+            <type>class P2</type>
+          </param>
+          <param>
+            <type>class P3</type>
+          </param>
+          <param>
+            <type>class P4</type>
+          </param>
+          <param>
+            <type>class P5</type>
+          </param>
+          <param>
+            <type>class P6</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Simulation::run</definition>
+        <argsstring>(const P1 &amp;p1, const P2 &amp;p2, const P3 &amp;param3, const P4 &amp;param4, const P5 &amp;p5, const P6 &amp;p6)</argsstring>
+        <name>run</name>
+        <qualifiedname>Simulation::run</qualifiedname>
+        <param>
+          <type>const P1 &amp;</type>
+          <declname>p1</declname>
+        </param>
+        <param>
+          <type>const P2 &amp;</type>
+          <declname>p2</declname>
+        </param>
+        <param>
+          <type>const P3 &amp;</type>
+          <declname>param3</declname>
+        </param>
+        <param>
+          <type>const P4 &amp;</type>
+          <declname>param4</declname>
+        </param>
+        <param>
+          <type>const P5 &amp;</type>
+          <declname>p5</declname>
+        </param>
+        <param>
+          <type>const P6 &amp;</type>
+          <declname>p6</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="33" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="123" bodyend="127"/>
+        <references refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" compoundref="_simulation_8h" startline="75">_varCount</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+        <references refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">run</references>
+      </memberdef>
+      <memberdef kind="function" id="class_simulation_a1cf2790d4d7618af81eb1576c320dc55_1a1cf2790d4d7618af81eb1576c320dc55" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Simulation::printData</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>printData</name>
+        <qualifiedname>Simulation::printData</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="36" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.cpp" bodystart="35" bodyend="51"/>
+        <references refid="class_simulation_abd8452bba709eac2c13d894ae3c3cf5e_1abd8452bba709eac2c13d894ae3c3cf5e" compoundref="_simulation_8h" startline="74">_data</references>
+        <references refid="class_simulation_a17e07617db33bce6b8ebefc7c208815a_1a17e07617db33bce6b8ebefc7c208815a" compoundref="_simulation_8h" startline="76">_repeats</references>
+        <references refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" compoundref="_column_printer_8cpp" startline="32" endline="43">mathic::ColumnPrinter::addColumn</references>
+        <references refid="classmathic_1_1_column_printer_a8274b1a0e3b12ea1a6cf4f16a5c123da_1a8274b1a0e3b12ea1a6cf4f16a5c123da" compoundref="_column_printer_8cpp" startline="65" endline="158">mathic::ColumnPrinter::print</references>
+        <referencedby refid="div_main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_1ae66f6b31b5ad750f1fe042a706a4e3d4" compoundref="div_main_8cpp" startline="9" endline="148">main</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class DivFinder</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Simulation::run</definition>
+        <argsstring>(DivFinder &amp;finder)</argsstring>
+        <name>run</name>
+        <qualifiedname>Simulation::run</qualifiedname>
+        <param>
+          <type>DivFinder &amp;</type>
+          <declname>finder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="49" column="8" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="238" bodyend="308"/>
+        <references refid="class_simulation_abd8452bba709eac2c13d894ae3c3cf5e_1abd8452bba709eac2c13d894ae3c3cf5e" compoundref="_simulation_8h" startline="74">_data</references>
+        <references refid="class_simulation_a18c037fc09ce57c9546186831266bc68_1a18c037fc09ce57c9546186831266bc68" compoundref="_simulation_8h" startline="73">_events</references>
+        <references refid="struct_simulation_1_1_sim_data_aa4defe4553681fdae0ea255fdee46bae_1aa4defe4553681fdae0ea255fdee46bae" compoundref="_simulation_8h" startline="45">Simulation::SimData::_expQueryCount</references>
+        <references refid="class_simulation_a1ba3c595d1410d65dd2d6f7d82d4d94e_1a1ba3c595d1410d65dd2d6f7d82d4d94e" compoundref="_simulation_8h" startline="72">_findAll</references>
+        <references refid="struct_simulation_1_1_event_a24e47745393b348a541645fbe4ae640a_1a24e47745393b348a541645fbe4ae640a" compoundref="_simulation_8h" startline="62">Simulation::Event::_monomial</references>
+        <references refid="struct_simulation_1_1_sim_data_ae62adb27565e1e9e726a9a307a05f03d_1ae62adb27565e1e9e726a9a307a05f03d" compoundref="_simulation_8h" startline="44">Simulation::SimData::_mseconds</references>
+        <references refid="struct_simulation_1_1_sim_data_a2d739ddd4ca7281234429d70f7aef530_1a2d739ddd4ca7281234429d70f7aef530" compoundref="_simulation_8h" startline="43">Simulation::SimData::_name</references>
+        <references refid="class_simulation_a554c7df7d6e00b8e3921c2ff44336b89_1a554c7df7d6e00b8e3921c2ff44336b89" compoundref="_simulation_8h" startline="77">_printPartialData</references>
+        <references refid="class_simulation_a17e07617db33bce6b8ebefc7c208815a_1a17e07617db33bce6b8ebefc7c208815a" compoundref="_simulation_8h" startline="76">_repeats</references>
+        <references refid="struct_simulation_1_1_event_a88635bcb655030cbdce1321df98917f7_1a88635bcb655030cbdce1321df98917f7" compoundref="_simulation_8h" startline="63">Simulation::Event::_state</references>
+        <references refid="struct_simulation_1_1_event_a4403f46d9bcf0f362c639838ff59ff0a_1a4403f46d9bcf0f362c639838ff59ff0a" compoundref="_simulation_8h" startline="61">Simulation::Event::_type</references>
+        <references refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" compoundref="_simulation_8h" startline="75">_varCount</references>
+        <references refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" compoundref="mathic_2src_2divsim_2stdinc_8h" startline="53">ASSERT</references>
+        <references refid="class_simulation_1_1_monomial_store_ad24ae6636536df0e99b595db70ec2586_1ad24ae6636536df0e99b595db70ec2586" compoundref="_simulation_8h" startline="153" endline="178">Simulation::MonomialStore::checkInsert</references>
+        <references refid="class_simulation_1_1_monomial_store_ade500eb47c96a759257eba8193c28ba4_1ade500eb47c96a759257eba8193c28ba4" compoundref="_simulation_8h" startline="181" endline="215">Simulation::MonomialStore::checkQuery</references>
+        <references refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a09bff4b8976d0c45df681c0fd80436f3" compoundref="_simulation_8h" startline="53">InsertKnown</references>
+        <references refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a7e84020e126a43bbac9cee98b33b991b" compoundref="_simulation_8h" startline="52">InsertUnknown</references>
+        <references refid="struct_simulation_1_1_sim_data_a458c61e55585f180108578a2d659905a_1a458c61e55585f180108578a2d659905a" compoundref="_simulation_8cpp" startline="53" endline="58">Simulation::SimData::print</references>
+        <references refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a131ebd642cdc518955ea1d57254751a2" compoundref="_simulation_8h" startline="55">QueryHasDivisor</references>
+        <references refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aacefc8b21f028a1bd4342adb158bea96" compoundref="_simulation_8h" startline="54">QueryNoDivisor</references>
+        <references refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52ae9a417f19670549fa6214b759f2e3317" compoundref="_simulation_8h" startline="58">StateKnown</references>
+        <references refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aeb296c0ccbb5eaf34978d56ca954b37d" compoundref="_simulation_8h" startline="57">StateUnknown</references>
+        <references refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" compoundref="timing_8hpp" startline="33" endline="36">timer</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>EventType</label>
+      </node>
+      <node id="1">
+        <label>Simulation</label>
+        <link refid="class_simulation"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_findAll</edgelabel>
+          <edgelabel>_printPartialData</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_events</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_data</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_repeats</edgelabel>
+          <edgelabel>_varCount</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_simType</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Simulation::Event</label>
+        <link refid="struct_simulation_1_1_event"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_type</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_monomial</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_state</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_monomialCount</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Simulation::SimData</label>
+        <link refid="struct_simulation_1_1_sim_data"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_expQueryCount</edgelabel>
+          <edgelabel>_mseconds</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="10">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="16">
+        <label>long</label>
+      </node>
+      <node id="11">
+        <label>size_t</label>
+      </node>
+      <node id="15">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="14">
+        <label>std::string</label>
+        <childnode refid="15" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::vector&lt; Simulation::Event &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; Simulation::Event &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::vector&lt; Simulation::SimData &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; Simulation::SimData &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>std::vector&lt; const int * &gt;</label>
+        <childnode refid="10" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; const int * &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/divsim/Simulation.h" line="11" column="1" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="11" bodyend="79"/>
+    <listofallmembers>
+      <member refid="class_simulation_abd8452bba709eac2c13d894ae3c3cf5e_1abd8452bba709eac2c13d894ae3c3cf5e" prot="private" virt="non-virtual"><scope>Simulation</scope><name>_data</name></member>
+      <member refid="class_simulation_a18c037fc09ce57c9546186831266bc68_1a18c037fc09ce57c9546186831266bc68" prot="private" virt="non-virtual"><scope>Simulation</scope><name>_events</name></member>
+      <member refid="class_simulation_a1ba3c595d1410d65dd2d6f7d82d4d94e_1a1ba3c595d1410d65dd2d6f7d82d4d94e" prot="private" virt="non-virtual"><scope>Simulation</scope><name>_findAll</name></member>
+      <member refid="class_simulation_a554c7df7d6e00b8e3921c2ff44336b89_1a554c7df7d6e00b8e3921c2ff44336b89" prot="private" virt="non-virtual"><scope>Simulation</scope><name>_printPartialData</name></member>
+      <member refid="class_simulation_a17e07617db33bce6b8ebefc7c208815a_1a17e07617db33bce6b8ebefc7c208815a" prot="private" virt="non-virtual"><scope>Simulation</scope><name>_repeats</name></member>
+      <member refid="class_simulation_a48d5b910e0779ed96d46c4fdafcb28a7_1a48d5b910e0779ed96d46c4fdafcb28a7" prot="private" virt="non-virtual"><scope>Simulation</scope><name>_simType</name></member>
+      <member refid="class_simulation_accec91eac606b1f98b7180b2d387fbaa_1accec91eac606b1f98b7180b2d387fbaa" prot="private" virt="non-virtual"><scope>Simulation</scope><name>_varCount</name></member>
+      <member refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52" prot="private" virt="non-virtual"><scope>Simulation</scope><name>EventType</name></member>
+      <member refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a09bff4b8976d0c45df681c0fd80436f3" prot="private" virt="non-virtual"><scope>Simulation</scope><name>InsertKnown</name></member>
+      <member refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a7e84020e126a43bbac9cee98b33b991b" prot="private" virt="non-virtual"><scope>Simulation</scope><name>InsertUnknown</name></member>
+      <member refid="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" prot="public" virt="non-virtual"><scope>Simulation</scope><name>makeStandard</name></member>
+      <member refid="class_simulation_a1cf2790d4d7618af81eb1576c320dc55_1a1cf2790d4d7618af81eb1576c320dc55" prot="public" virt="non-virtual"><scope>Simulation</scope><name>printData</name></member>
+      <member refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52a131ebd642cdc518955ea1d57254751a2" prot="private" virt="non-virtual"><scope>Simulation</scope><name>QueryHasDivisor</name></member>
+      <member refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aacefc8b21f028a1bd4342adb158bea96" prot="private" virt="non-virtual"><scope>Simulation</scope><name>QueryNoDivisor</name></member>
+      <member refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aad9d899f46b9af60907cb2526a57ecda" prot="private" virt="non-virtual"><scope>Simulation</scope><name>QueryUnknown</name></member>
+      <member refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" prot="public" virt="non-virtual"><scope>Simulation</scope><name>run</name></member>
+      <member refid="class_simulation_a91df1bcb5c4fc1aa20fd42a667b334d1_1a91df1bcb5c4fc1aa20fd42a667b334d1" prot="public" virt="non-virtual"><scope>Simulation</scope><name>run</name></member>
+      <member refid="class_simulation_ad68999df5b9b67261e963a6734eb5542_1ad68999df5b9b67261e963a6734eb5542" prot="public" virt="non-virtual"><scope>Simulation</scope><name>run</name></member>
+      <member refid="class_simulation_ac65b0d406d1eb013147ff913fbe226ae_1ac65b0d406d1eb013147ff913fbe226ae" prot="public" virt="non-virtual"><scope>Simulation</scope><name>run</name></member>
+      <member refid="class_simulation_a3ddee13acc75d95d679aa98a1f0f1f28_1a3ddee13acc75d95d679aa98a1f0f1f28" prot="public" virt="non-virtual"><scope>Simulation</scope><name>run</name></member>
+      <member refid="class_simulation_a84b10bd22e95f17e405c92f8267e7533_1a84b10bd22e95f17e405c92f8267e7533" prot="public" virt="non-virtual"><scope>Simulation</scope><name>run</name></member>
+      <member refid="class_simulation_a35b06e739480deaf5b16588a172a278c_1a35b06e739480deaf5b16588a172a278c" prot="public" virt="non-virtual"><scope>Simulation</scope><name>run</name></member>
+      <member refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" prot="private" virt="non-virtual"><scope>Simulation</scope><name>run</name></member>
+      <member refid="class_simulation_ab1c23b511d0541b72698e74ada06eb7b_1ab1c23b511d0541b72698e74ada06eb7b" prot="public" virt="non-virtual"><scope>Simulation</scope><name>Simulation</name></member>
+      <member refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52ae9a417f19670549fa6214b759f2e3317" prot="private" virt="non-virtual"><scope>Simulation</scope><name>StateKnown</name></member>
+      <member refid="class_simulation_a374629ef6fef3cf61fb61fc14c92fc52_1a374629ef6fef3cf61fb61fc14c92fc52aeb296c0ccbb5eaf34978d56ca954b37d" prot="private" virt="non-virtual"><scope>Simulation</scope><name>StateUnknown</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

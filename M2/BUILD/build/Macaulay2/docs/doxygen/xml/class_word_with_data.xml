@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_word_with_data" kind="class" language="C++" prot="public">
+    <compoundname>WordWithData</compoundname>
+    <includes refid="_word_8hpp" local="no">Word.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" prot="private" static="no" mutable="no">
+        <type><ref refid="class_word" kindref="compound">Word</ref></type>
+        <definition>Word WordWithData::mWord</definition>
+        <argsstring></argsstring>
+        <name>mWord</name>
+        <qualifiedname>WordWithData::mWord</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="154" column="8" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="154" bodyend="-1"/>
+        <referencedby refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" compoundref="_word_8hpp" startline="127" endline="132">init</referencedby>
+        <referencedby refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" compoundref="_word_8hpp" startline="137" endline="137">word</referencedby>
+        <referencedby refid="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" compoundref="_word_8hpp" startline="113" endline="113">WordWithData</referencedby>
+        <referencedby refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" compoundref="_word_8hpp" startline="115" endline="120">WordWithData</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int WordWithData::mEcartDegree</definition>
+        <argsstring></argsstring>
+        <name>mEcartDegree</name>
+        <qualifiedname>WordWithData::mEcartDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="156" column="7" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="156" bodyend="-1"/>
+        <referencedby refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" compoundref="_word_8hpp" startline="139" endline="139">ecartDegree</referencedby>
+        <referencedby refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" compoundref="_word_8hpp" startline="127" endline="132">init</referencedby>
+        <referencedby refid="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" compoundref="_word_8hpp" startline="113" endline="113">WordWithData</referencedby>
+        <referencedby refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" compoundref="_word_8hpp" startline="115" endline="120">WordWithData</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int WordWithData::mHeftDegree</definition>
+        <argsstring></argsstring>
+        <name>mHeftDegree</name>
+        <qualifiedname>WordWithData::mHeftDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="157" column="7" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="157" bodyend="-1"/>
+        <referencedby refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" compoundref="_word_8hpp" startline="140" endline="140">heftDegree</referencedby>
+        <referencedby refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" compoundref="_word_8hpp" startline="127" endline="132">init</referencedby>
+        <referencedby refid="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" compoundref="_word_8hpp" startline="113" endline="113">WordWithData</referencedby>
+        <referencedby refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" compoundref="_word_8hpp" startline="115" endline="120">WordWithData</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>WordWithData::WordWithData</definition>
+        <argsstring>()</argsstring>
+        <name>WordWithData</name>
+        <qualifiedname>WordWithData::WordWithData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="113" column="3" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="113" bodyend="113"/>
+        <references refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" compoundref="_word_8hpp" startline="156">mEcartDegree</references>
+        <references refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" compoundref="_word_8hpp" startline="157">mHeftDegree</references>
+        <references refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" compoundref="_word_8hpp" startline="154">mWord</references>
+        <referencedby refid="class_word_with_data_af2dce63bf7179af874580b92c5e2c720_1af2dce63bf7179af874580b92c5e2c720" compoundref="_word_8hpp" startline="144" endline="149">operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>WordWithData::WordWithData</definition>
+        <argsstring>(const int *begin, const int *end, int ecartDegree, int heftDegree)</argsstring>
+        <name>WordWithData</name>
+        <qualifiedname>WordWithData::WordWithData</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>ecartDegree</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>heftDegree</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="115" column="3" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="115" bodyend="120"/>
+        <references refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" compoundref="_word_8hpp" startline="134" endline="134">begin</references>
+        <references refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" compoundref="_word_8hpp" startline="139" endline="139">ecartDegree</references>
+        <references refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" compoundref="_word_8hpp" startline="135" endline="135">end</references>
+        <references refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" compoundref="_word_8hpp" startline="140" endline="140">heftDegree</references>
+        <references refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" compoundref="_word_8hpp" startline="156">mEcartDegree</references>
+        <references refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" compoundref="_word_8hpp" startline="157">mHeftDegree</references>
+        <references refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" compoundref="_word_8hpp" startline="154">mWord</references>
+      </memberdef>
+      <memberdef kind="function" id="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void WordWithData::init</definition>
+        <argsstring>(const int *begin, const int *end, int ecartDegree, int heftDegree)</argsstring>
+        <name>init</name>
+        <qualifiedname>WordWithData::init</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>ecartDegree</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>heftDegree</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="127" column="8" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="127" bodyend="132"/>
+        <references refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" compoundref="_word_8hpp" startline="134" endline="134">begin</references>
+        <references refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" compoundref="_word_8hpp" startline="139" endline="139">ecartDegree</references>
+        <references refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" compoundref="_word_8hpp" startline="135" endline="135">end</references>
+        <references refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" compoundref="_word_8hpp" startline="140" endline="140">heftDegree</references>
+        <references refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" compoundref="_word_8hpp" startline="156">mEcartDegree</references>
+        <references refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" compoundref="_word_8hpp" startline="157">mHeftDegree</references>
+        <references refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" compoundref="_word_8hpp" startline="154">mWord</references>
+      </memberdef>
+      <memberdef kind="function" id="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>const int * WordWithData::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>WordWithData::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="134" column="13" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="134" bodyend="134"/>
+        <references refid="class_word_a20e33cf76cae20a1b09c6419d6f71ad2_1a20e33cf76cae20a1b09c6419d6f71ad2" compoundref="_word_8hpp" startline="68" endline="68">Word::begin</references>
+        <references refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" compoundref="_word_8hpp" startline="137" endline="137">word</references>
+        <referencedby refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" compoundref="_word_8hpp" startline="127" endline="132">init</referencedby>
+        <referencedby refid="class_word_with_data_table_ab0fef2336d4adda8724d937d9604d365_1ab0fef2336d4adda8724d937d9604d365" compoundref="_word_table_8cpp" startline="344" endline="356">WordWithDataTable::isPrefixOf</referencedby>
+        <referencedby refid="class_word_with_data_table_ae0410251557517da44b1d88110ce1001_1ae0410251557517da44b1d88110ce1001" compoundref="_word_table_8cpp" startline="358" endline="374">WordWithDataTable::isSuffixOf</referencedby>
+        <referencedby refid="class_word_with_data_table_a11b55d80b8a15a9e7933eb8920b54772_1a11b55d80b8a15a9e7933eb8920b54772" compoundref="_word_table_8cpp" startline="477" endline="490">WordWithDataTable::overlaps</referencedby>
+        <referencedby refid="class_word_with_data_table_a7430d694122c347390ab48d22ef1de45_1a7430d694122c347390ab48d22ef1de45" compoundref="_word_table_8cpp" startline="316" endline="342">WordWithDataTable::subwordPosition</referencedby>
+        <referencedby refid="class_word_with_data_table_a2ebeed547ccb283aa49024b9c0a89d52_1a2ebeed547ccb283aa49024b9c0a89d52" compoundref="_word_table_8cpp" startline="294" endline="314">WordWithDataTable::subwordPositions</referencedby>
+        <referencedby refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" compoundref="_word_8hpp" startline="115" endline="120">WordWithData</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>const int * WordWithData::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>WordWithData::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="135" column="13" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="135" bodyend="135"/>
+        <references refid="class_word_a57a3bd2eb17ecc840adc2236a9cfb157_1a57a3bd2eb17ecc840adc2236a9cfb157" compoundref="_word_8hpp" startline="69" endline="69">Word::end</references>
+        <references refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" compoundref="_word_8hpp" startline="137" endline="137">word</references>
+        <referencedby refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" compoundref="_word_8hpp" startline="127" endline="132">init</referencedby>
+        <referencedby refid="class_word_with_data_table_a11b55d80b8a15a9e7933eb8920b54772_1a11b55d80b8a15a9e7933eb8920b54772" compoundref="_word_table_8cpp" startline="477" endline="490">WordWithDataTable::overlaps</referencedby>
+        <referencedby refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" compoundref="_word_8hpp" startline="115" endline="120">WordWithData</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_word" kindref="compound">Word</ref></type>
+        <definition>Word WordWithData::word</definition>
+        <argsstring>() const</argsstring>
+        <name>word</name>
+        <qualifiedname>WordWithData::word</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="137" column="8" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="137" bodyend="137"/>
+        <references refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" compoundref="_word_8hpp" startline="154">mWord</references>
+        <referencedby refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" compoundref="_word_8hpp" startline="134" endline="134">begin</referencedby>
+        <referencedby refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" compoundref="_word_8hpp" startline="135" endline="135">end</referencedby>
+        <referencedby refid="_word_8cpp_a9793ecb541d9fff8dc18605eaff42882_1a9793ecb541d9fff8dc18605eaff42882" compoundref="_word_8cpp" startline="20" endline="24">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_word_with_data_af2dce63bf7179af874580b92c5e2c720_1af2dce63bf7179af874580b92c5e2c720" compoundref="_word_8hpp" startline="144" endline="149">operator==</referencedby>
+        <referencedby refid="class_word_with_data_aef228c8a14e8d252ec8fa6a6a3e29ae0_1aef228c8a14e8d252ec8fa6a6a3e29ae0" compoundref="_word_8hpp" startline="142" endline="142">size</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int WordWithData::ecartDegree</definition>
+        <argsstring>() const</argsstring>
+        <name>ecartDegree</name>
+        <qualifiedname>WordWithData::ecartDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="139" column="7" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="139" bodyend="139"/>
+        <references refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" compoundref="_word_8hpp" startline="156">mEcartDegree</references>
+        <referencedby refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" compoundref="_word_8hpp" startline="127" endline="132">init</referencedby>
+        <referencedby refid="_word_8cpp_a9793ecb541d9fff8dc18605eaff42882_1a9793ecb541d9fff8dc18605eaff42882" compoundref="_word_8cpp" startline="20" endline="24">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_word_with_data_af2dce63bf7179af874580b92c5e2c720_1af2dce63bf7179af874580b92c5e2c720" compoundref="_word_8hpp" startline="144" endline="149">operator==</referencedby>
+        <referencedby refid="class_word_with_data_table_a7430d694122c347390ab48d22ef1de45_1a7430d694122c347390ab48d22ef1de45" compoundref="_word_table_8cpp" startline="316" endline="342">WordWithDataTable::subwordPosition</referencedby>
+        <referencedby refid="class_word_with_data_table_a2ebeed547ccb283aa49024b9c0a89d52_1a2ebeed547ccb283aa49024b9c0a89d52" compoundref="_word_table_8cpp" startline="294" endline="314">WordWithDataTable::subwordPositions</referencedby>
+        <referencedby refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" compoundref="_word_8hpp" startline="115" endline="120">WordWithData</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int WordWithData::heftDegree</definition>
+        <argsstring>() const</argsstring>
+        <name>heftDegree</name>
+        <qualifiedname>WordWithData::heftDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="140" column="7" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="140" bodyend="140"/>
+        <references refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" compoundref="_word_8hpp" startline="157">mHeftDegree</references>
+        <referencedby refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" compoundref="_word_8hpp" startline="127" endline="132">init</referencedby>
+        <referencedby refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" compoundref="_word_8hpp" startline="115" endline="120">WordWithData</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_with_data_aef228c8a14e8d252ec8fa6a6a3e29ae0_1aef228c8a14e8d252ec8fa6a6a3e29ae0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t WordWithData::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>WordWithData::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="142" column="10" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="142" bodyend="142"/>
+        <references refid="class_word_a58f370b1c978f3f73e9349629ab6dfd3_1a58f370b1c978f3f73e9349629ab6dfd3" compoundref="_word_8hpp" startline="70" endline="70">Word::size</references>
+        <references refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" compoundref="_word_8hpp" startline="137" endline="137">word</references>
+        <referencedby refid="class_word_with_data_table_ab0fef2336d4adda8724d937d9604d365_1ab0fef2336d4adda8724d937d9604d365" compoundref="_word_table_8cpp" startline="344" endline="356">WordWithDataTable::isPrefixOf</referencedby>
+        <referencedby refid="class_word_with_data_table_ae0410251557517da44b1d88110ce1001_1ae0410251557517da44b1d88110ce1001" compoundref="_word_table_8cpp" startline="358" endline="374">WordWithDataTable::isSuffixOf</referencedby>
+        <referencedby refid="class_word_with_data_table_a11b55d80b8a15a9e7933eb8920b54772_1a11b55d80b8a15a9e7933eb8920b54772" compoundref="_word_table_8cpp" startline="477" endline="490">WordWithDataTable::overlaps</referencedby>
+        <referencedby refid="class_word_with_data_table_a7430d694122c347390ab48d22ef1de45_1a7430d694122c347390ab48d22ef1de45" compoundref="_word_table_8cpp" startline="316" endline="342">WordWithDataTable::subwordPosition</referencedby>
+        <referencedby refid="class_word_with_data_table_a2ebeed547ccb283aa49024b9c0a89d52_1a2ebeed547ccb283aa49024b9c0a89d52" compoundref="_word_table_8cpp" startline="294" endline="314">WordWithDataTable::subwordPositions</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_word_with_data_af2dce63bf7179af874580b92c5e2c720_1af2dce63bf7179af874580b92c5e2c720" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool WordWithData::operator==</definition>
+        <argsstring>(WordWithData rhs)</argsstring>
+        <name>operator==</name>
+        <qualifiedname>WordWithData::operator==</qualifiedname>
+        <param>
+          <type><ref refid="class_word_with_data" kindref="compound">WordWithData</ref></type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="144" column="8" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="144" bodyend="149"/>
+        <references refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" compoundref="_word_8hpp" startline="139" endline="139">ecartDegree</references>
+        <references refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" compoundref="_word_8hpp" startline="137" endline="137">word</references>
+        <references refid="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" compoundref="_word_8hpp" startline="113" endline="113">WordWithData</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_word" kindref="compound">Word</ref></computeroutput> plus its ecart degree and heft degree <mdash/> the value type <computeroutput><ref refid="class_word_with_data_table" kindref="compound">WordWithDataTable</ref></computeroutput> stores. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" kindref="member">mEcartDegree</ref></computeroutput> records the power of an invisible homogenising variable so divisibility checks in <computeroutput><ref refid="class_word_with_data_table_a18978a08954516e567a7f34d57272997_1a18978a08954516e567a7f34d57272997" kindref="member">WordWithDataTable::subword</ref></computeroutput> can refuse matches whose ecart is wrong; <computeroutput><ref refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" kindref="member">mHeftDegree</ref></computeroutput> is the original heft degree the word entered with, kept for stable sorting. The underlying word is held by composition (<computeroutput><ref refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" kindref="member">mWord</ref></computeroutput>) rather than inheritance. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Word</label>
+        <link refid="class_word"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+          <edgelabel>mSize</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>WordWithData</label>
+        <link refid="class_word_with_data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mWord</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mEcartDegree</edgelabel>
+          <edgelabel>mHeftDegree</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/NCAlgebras/Word.hpp" line="109" column="1" bodyfile="Macaulay2/e/NCAlgebras/Word.hpp" bodystart="110" bodyend="158"/>
+    <listofallmembers>
+      <member refid="class_word_with_data_af47e95624e7860c8f5db525328bd5081_1af47e95624e7860c8f5db525328bd5081" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>begin</name></member>
+      <member refid="class_word_with_data_af8e8ae9219edc1ab9a203f4cce7e25b3_1af8e8ae9219edc1ab9a203f4cce7e25b3" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>ecartDegree</name></member>
+      <member refid="class_word_with_data_a578fe90860485dcc04b8c6731ccd4dff_1a578fe90860485dcc04b8c6731ccd4dff" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>end</name></member>
+      <member refid="class_word_with_data_a7362d2495d74389afce2c00b420a47e0_1a7362d2495d74389afce2c00b420a47e0" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>heftDegree</name></member>
+      <member refid="class_word_with_data_a7e5a3439b66cae9762f0258b835831ae_1a7e5a3439b66cae9762f0258b835831ae" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>init</name></member>
+      <member refid="class_word_with_data_afed4b70763866f32b942f9a3109060b4_1afed4b70763866f32b942f9a3109060b4" prot="private" virt="non-virtual"><scope>WordWithData</scope><name>mEcartDegree</name></member>
+      <member refid="class_word_with_data_a8b0e8157ba9ffc0e29341eb7640b29ff_1a8b0e8157ba9ffc0e29341eb7640b29ff" prot="private" virt="non-virtual"><scope>WordWithData</scope><name>mHeftDegree</name></member>
+      <member refid="class_word_with_data_aea75eed6a463c482bfb13644e0c1b670_1aea75eed6a463c482bfb13644e0c1b670" prot="private" virt="non-virtual"><scope>WordWithData</scope><name>mWord</name></member>
+      <member refid="class_word_with_data_af2dce63bf7179af874580b92c5e2c720_1af2dce63bf7179af874580b92c5e2c720" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>operator==</name></member>
+      <member refid="class_word_with_data_aef228c8a14e8d252ec8fa6a6a3e29ae0_1aef228c8a14e8d252ec8fa6a6a3e29ae0" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>size</name></member>
+      <member refid="class_word_with_data_a9b37a2730bfc92cebdc1019b961e50e5_1a9b37a2730bfc92cebdc1019b961e50e5" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>word</name></member>
+      <member refid="class_word_with_data_a4b70338a48eee86db04d28dc3dd28d13_1a4b70338a48eee86db04d28dc3dd28d13" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>WordWithData</name></member>
+      <member refid="class_word_with_data_a63ca8c6336ba6a027ac6682198fdc7d3_1a63ca8c6336ba6a027ac6682198fdc7d3" prot="public" virt="non-virtual"><scope>WordWithData</scope><name>WordWithData</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

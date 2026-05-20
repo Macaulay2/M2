@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_make" kind="struct" language="C++" prot="private">
+    <compoundname>MATHICGB_NAMESPACE_BEGIN::ConcreteFactory::Make</compoundname>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>UseKDTree</declname>
+        <defname>UseKDTree</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>AllowRemovals</declname>
+        <defname>AllowRemovals</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>UseDivMask</declname>
+        <defname>UseDivMask</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_make_a01da01b1877e16d0942ea6d5c6adbfcb_1a01da01b1877e16d0942ea6d5c6adbfcb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_mono_lookup" kindref="compound">MonoLookup</ref> &gt;</type>
+        <definition>static std::unique_ptr&lt; MonoLookup &gt; MATHICGB_NAMESPACE_BEGIN::ConcreteFactory::Make&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::make</definition>
+        <argsstring>(const Params &amp;params)</argsstring>
+        <name>make</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::ConcreteFactory::Make::make</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_params" kindref="compound">Params</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoLookup.cpp" line="156" column="30" bodyfile="submodules/mathicgb/src/mathicgb/MonoLookup.cpp" bodystart="156" bodyend="160"/>
+        <references refid="struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_params_aeecb02d38b4fc810f987c200590bea03_1aeecb02d38b4fc810f987c200590bea03" compoundref="_mono_lookup_8cpp" startline="149">MATHICGB_NAMESPACE_BEGIN::ConcreteFactory::Params::monoid</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_params_a156df1b09816a67744c886566ffb4bb8_1a156df1b09816a67744c886566ffb4bb8" compoundref="_mono_lookup_8cpp" startline="151">MATHICGB_NAMESPACE_BEGIN::ConcreteFactory::Params::preferSparseReducers</references>
+        <references refid="struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_params_af1bb7a9021eaf50ab0d2e69c6a175449_1af1bb7a9021eaf50ab0d2e69c6a175449" compoundref="_mono_lookup_8cpp" startline="150">MATHICGB_NAMESPACE_BEGIN::ConcreteFactory::Params::type</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb/MonoLookup.cpp" line="155" column="5" bodyfile="submodules/mathicgb/src/mathicgb/MonoLookup.cpp" bodystart="155" bodyend="161"/>
+    <listofallmembers>
+      <member refid="struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_make_a01da01b1877e16d0942ea6d5c6adbfcb_1a01da01b1877e16d0942ea6d5c6adbfcb" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::ConcreteFactory::Make</scope><name>make</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,489 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="div_main_8cpp" kind="file" language="C++">
+    <compoundname>divMain.cpp</compoundname>
+    <includes refid="mathic_2src_2divsim_2stdinc_8h" local="yes">stdinc.h</includes>
+    <includes refid="_div_list_model_8h" local="yes">DivListModel.h</includes>
+    <includes refid="_k_d_tree_model_8h" local="yes">KDTreeModel.h</includes>
+    <includes refid="_simulation_8h" local="yes">Simulation.h</includes>
+    <includes refid="_timer_8h" local="yes">mathic/Timer.h</includes>
+    <includes local="no">iostream</includes>
+    <incdepgraph>
+      <node id="5">
+        <label>DivListModel.h</label>
+        <link refid="_div_list_model_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>KDTreeModel.h</label>
+        <link refid="_k_d_tree_model_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Monomial.h</label>
+        <link refid="_monomial_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>Simulation.h</label>
+        <link refid="_simulation_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/divsim/divMain.cpp</label>
+        <link refid="div_main_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2divsim_2stdinc_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>BinaryKDTree.h</label>
+        <link refid="_binary_k_d_tree_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Comparer.h</label>
+        <link refid="_comparer_8h"/>
+      </node>
+      <node id="9">
+        <label>mathic/DivList.h</label>
+        <link refid="_div_list_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>DivMask.h</label>
+        <link refid="_div_mask_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>KDEntryArray.h</label>
+        <link refid="_k_d_entry_array_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>mathic/KDTree.h</label>
+        <link refid="_k_d_tree_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>PackedKDTree.h</label>
+        <link refid="_packed_k_d_tree_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>mathic/Timer.h</label>
+        <link refid="_timer_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>stdinc.h</label>
+        <link refid="mathic_2src_2mathic_2stdinc_8h"/>
+      </node>
+      <node id="15">
+        <label>memtailor.h</label>
+        <link refid="memtailor_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>memtailor/Arena.h</label>
+        <link refid="_arena_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>memtailor/ArenaVector.h</label>
+        <link refid="_arena_vector_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>memtailor/BufferPool.h</label>
+        <link refid="_buffer_pool_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>MemoryBlocks.h</label>
+        <link refid="_memory_blocks_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>stdinc.h</label>
+        <link refid="memtailor_2src_2memtailor_2stdinc_8h"/>
+      </node>
+      <node id="13">
+        <label>algorithm</label>
+      </node>
+      <node id="3">
+        <label>cstddef</label>
+      </node>
+      <node id="35">
+        <label>cstdio</label>
+      </node>
+      <node id="37">
+        <label>cstdlib</label>
+      </node>
+      <node id="34">
+        <label>ctime</label>
+      </node>
+      <node id="36">
+        <label>iostream</label>
+      </node>
+      <node id="31">
+        <label>iterator</label>
+      </node>
+      <node id="23">
+        <label>list</label>
+      </node>
+      <node id="4">
+        <label>memory</label>
+      </node>
+      <node id="19">
+        <label>new</label>
+      </node>
+      <node id="8">
+        <label>ostream</label>
+      </node>
+      <node id="24">
+        <label>sstream</label>
+      </node>
+      <node id="29">
+        <label>stdexcept</label>
+      </node>
+      <node id="22">
+        <label>string</label>
+      </node>
+      <node id="12">
+        <label>utility</label>
+      </node>
+      <node id="7">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="div_main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_1ae66f6b31b5ad750f1fe042a706a4e3d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int main</definition>
+        <argsstring>()</argsstring>
+        <name>main</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/divMain.cpp" line="9" column="5" bodyfile="submodules/mathic/src/divsim/divMain.cpp" bodystart="9" bodyend="148"/>
+        <references refid="mathic_2src_2divsim_2stdinc_8h_ab66b59128fbb3d5a428e94c374959b8e_1ab66b59128fbb3d5a428e94c374959b8e" compoundref="mathic_2src_2divsim_2stdinc_8h" startline="54">IF_DEBUG</references>
+        <references refid="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" compoundref="_simulation_8cpp" startline="16" endline="33">Simulation::makeStandard</references>
+        <references refid="class_simulation_a1cf2790d4d7618af81eb1576c320dc55_1a1cf2790d4d7618af81eb1576c320dc55" compoundref="_simulation_8cpp" startline="35" endline="51">Simulation::printData</references>
+        <references refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" compoundref="_simulation_8h" startline="82" endline="85">Simulation::run</references>
+        <references refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" compoundref="timing_8hpp" startline="33" endline="36">timer</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mathic_2src_2divsim_2stdinc_8h" kindref="compound">stdinc.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_div_list_model_8h" kindref="compound">DivListModel.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_k_d_tree_model_8h" kindref="compound">KDTreeModel.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_simulation_8h" kindref="compound">Simulation.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_timer_8h" kindref="compound">mathic/Timer.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="div_main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_1ae66f6b31b5ad750f1fe042a706a4e3d4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="div_main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_1ae66f6b31b5ad750f1fe042a706a4e3d4" kindref="member">main</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>repeats<sp/>=<sp/><ref refid="mathic_2src_2divsim_2stdinc_8h_ab66b59128fbb3d5a428e94c374959b8e_1ab66b59128fbb3d5a428e94c374959b8e" kindref="member">IF_DEBUG</ref>(</highlight><highlight class="keyword">true</highlight><highlight class="normal"><sp/>?<sp/>1<sp/>:)<sp/>1;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><ref refid="class_simulation" kindref="compound">Simulation</ref><sp/>sim(repeats,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><ref refid="classmathic_1_1_timer" kindref="compound">mic::Timer</ref><sp/><ref refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" kindref="member">timer</ref>;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Generating<sp/>simulation.<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>MATHIC_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" kindref="member">makeStandard</ref>(10,<sp/>400,<sp/>1000,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_ad0b8dc0b4a220697e46055d99a55f772_1ad0b8dc0b4a220697e46055d99a55f772" kindref="member">makeStandard</ref>(10,<sp/>5000,<sp/>2000000,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><ref refid="timing_8hpp_a6673ca4a7a00d76b3d84231eff1826a3_1a6673ca4a7a00d76b3d84231eff1826a3" kindref="member">timer</ref>.print(std::cout);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHIC_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,1,1,1,1&gt;</ref><sp/>&gt;(0,<sp/>0,<sp/>0,<sp/>1.0,<sp/>1000);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,1,1,1,0&gt;</ref><sp/>&gt;(0,<sp/>0,<sp/>0,<sp/>1.0,<sp/>1000);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;0,0,1,2,1&gt;</ref><sp/>&gt;(1,<sp/>0,<sp/>0,<sp/>0.0,<sp/>0);<sp/></highlight><highlight class="comment">//<sp/>best<sp/>tree,<sp/>no<sp/>mask</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;0,0,0,2,1&gt;</ref><sp/>&gt;(1,<sp/>0,<sp/>0,<sp/>0.0,<sp/>0);<sp/></highlight><highlight class="comment">//<sp/>best<sp/>tree,<sp/>no<sp/>mask</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;0,0,1,2,1&gt;</ref><sp/>&gt;(1,<sp/>0,<sp/>0,<sp/>1.0,<sp/>1000);<sp/></highlight><highlight class="comment">//<sp/>best<sp/>tree,<sp/>mask</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;0,0,0,2,1&gt;</ref><sp/>&gt;(1,<sp/>0,<sp/>0,<sp/>1.0,<sp/>1000);<sp/></highlight><highlight class="comment">//<sp/>best<sp/>tree,<sp/>mask</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_div_list_model" kindref="compound">DivListModel&lt;0, 0&gt;</ref><sp/>&gt;(1,<sp/>1,<sp/>0,<sp/>0.5,<sp/>500);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="41"><highlight class="comment"><sp/><sp/>for<sp/>(int<sp/>minimizeOnInsert<sp/>=<sp/>1;<sp/>minimizeOnInsert<sp/>&lt;=<sp/>1;<sp/>++minimizeOnInsert)<sp/>{</highlight></codeline>
+<codeline lineno="42"><highlight class="comment"><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>order<sp/>=<sp/>0;<sp/>order<sp/>&lt;=<sp/>2;<sp/>++order)<sp/>{</highlight></codeline>
+<codeline lineno="43"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>bool<sp/>moveDivisorToFront<sp/>=<sp/>(order<sp/>==<sp/>1);</highlight></codeline>
+<codeline lineno="44"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>bool<sp/>sortOnInsert<sp/>=<sp/>(order<sp/>==<sp/>2);</highlight></codeline>
+<codeline lineno="45"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;DivListModel&lt;1&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="46"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(minimizeOnInsert,<sp/>moveDivisorToFront,<sp/>sortOnInsert);</highlight></codeline>
+<codeline lineno="47"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;DivListModel&lt;0&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="48"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(minimizeOnInsert,<sp/>moveDivisorToFront,<sp/>sortOnInsert);</highlight></codeline>
+<codeline lineno="49"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="50"><highlight class="comment"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="comment"><sp/><sp/>//*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//sim.run&lt;DivListModel&lt;0,<sp/>0&gt;<sp/>&gt;(1,<sp/>0,<sp/>1,<sp/>0.0,<sp/>0);<sp/>//<sp/>best<sp/>array,<sp/>no<sp/>mask</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="55"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;0&gt;<sp/>&gt;(1,<sp/>0,<sp/>0)</highlight></codeline>
+<codeline lineno="56"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;0&gt;<sp/>&gt;(1,<sp/>1,<sp/>0);</highlight></codeline>
+<codeline lineno="57"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;0&gt;<sp/>&gt;(1,<sp/>0,<sp/>1);</highlight></codeline>
+<codeline lineno="58"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;1&gt;<sp/>&gt;(1,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="59"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;1&gt;<sp/>&gt;(1,<sp/>1,<sp/>0);</highlight></codeline>
+<codeline lineno="60"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;1&gt;<sp/>&gt;(1,<sp/>0,<sp/>1);</highlight></codeline>
+<codeline lineno="61"><highlight class="comment"><sp/><sp/>//*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;0,0,1,1,0&gt;</ref><sp/>&gt;(0,<sp/>0,<sp/>0,<sp/>0.0,<sp/>0);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_div_list_model" kindref="compound">DivListModel&lt;0,0&gt;</ref><sp/>&gt;(0,<sp/>1,<sp/>0,<sp/>0.5,<sp/>500);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mini<sp/>=<sp/>0;<sp/>mini<sp/>&lt;=<sp/>0;<sp/>++mini)<sp/>{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sortOnInsert<sp/>=<sp/>0;<sp/>sortOnInsert<sp/>&lt;=<sp/>1;<sp/>++sortOnInsert)<sp/>{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>useDivCache<sp/>=<sp/>0;<sp/>useDivCache<sp/>&lt;=<sp/>1;<sp/>++useDivCache)<sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,1,1,1,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,0,1,1,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;0,0,1,1,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,1,1,2,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,0,1,2,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;0,0,1,2,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,1,1,3,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,0,1,3,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;0,0,1,3,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,1,1,20,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,1,0,1,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,1,0,2,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.<ref refid="class_simulation_a2ba0ca58ce91080a72c3c9659446b3c0_1a2ba0ca58ce91080a72c3c9659446b3c0" kindref="member">run</ref>&lt;<ref refid="class_k_d_tree_model" kindref="compound">KDTreeModel&lt;1,1,0,40,0&gt;</ref><sp/>&gt;(mini,sortOnInsert,useDivCache,<sp/>0.5,<sp/>10);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="87"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(size_t<sp/>leafSize<sp/>=<sp/>5;<sp/>leafSize<sp/>&lt;=<sp/>15;<sp/>leafSize<sp/>+=<sp/>5)</highlight></codeline>
+<codeline lineno="88"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(size_t<sp/>start<sp/>=<sp/>0;<sp/>start<sp/>&lt;=<sp/>0;<sp/>start<sp/>+=<sp/>200)</highlight></codeline>
+<codeline lineno="89"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(double<sp/>ratio<sp/>=<sp/>0;<sp/>ratio<sp/>&lt;<sp/>0.1;<sp/>ratio<sp/>+=<sp/>0.2)</highlight></codeline>
+<codeline lineno="90"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;0,0&gt;<sp/>&gt;(leafSize,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>ratio,<sp/>start);</highlight></codeline>
+<codeline lineno="91"><highlight class="comment"></highlight></codeline>
+<codeline lineno="92"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*sim.run&lt;KDTreeModel&lt;0&gt;<sp/>&gt;(8,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="94"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;1&gt;<sp/>&gt;(8,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="95"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;0&gt;<sp/>&gt;(20,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="96"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;1&gt;<sp/>&gt;(20,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="97"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;0&gt;<sp/>&gt;(40,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="98"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;1&gt;<sp/>&gt;(40,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="99"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;0&gt;<sp/>&gt;(60,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0,<sp/>0);</highlight></codeline>
+<codeline lineno="100"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;1&gt;<sp/>&gt;(60,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0,<sp/>0);*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="103"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;1&gt;<sp/>&gt;(10,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0.001,<sp/>2000);</highlight></codeline>
+<codeline lineno="104"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;1&gt;<sp/>&gt;(10,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0.001,<sp/>4000);</highlight></codeline>
+<codeline lineno="105"><highlight class="comment"></highlight></codeline>
+<codeline lineno="106"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;0&gt;<sp/>&gt;(10,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0.001,<sp/>6000);</highlight></codeline>
+<codeline lineno="107"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;1&gt;<sp/>&gt;(10,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0.001,<sp/>6000);</highlight></codeline>
+<codeline lineno="108"><highlight class="comment"></highlight></codeline>
+<codeline lineno="109"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;1&gt;<sp/>&gt;(10,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0.001,<sp/>8000);</highlight></codeline>
+<codeline lineno="110"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;KDTreeModel&lt;1&gt;<sp/>&gt;(10,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0.001,<sp/>10000);*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//sim.run&lt;KDTreeModel&gt;(10,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>4,<sp/>2000);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//sim.run&lt;KDTreeModel&gt;(20,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0.75,<sp/>2000);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//sim.run&lt;KDTreeModel&gt;(8,<sp/>mini,sortOnInsert,useDivisorCache,<sp/>0.75,<sp/>2000);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="119"><highlight class="comment"><sp/><sp/>for<sp/>(int<sp/>mini<sp/>=<sp/>1;<sp/>mini<sp/>&lt;=<sp/>1;<sp/>++mini)<sp/>{</highlight></codeline>
+<codeline lineno="120"><highlight class="comment"><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>noneFrontSort<sp/>=<sp/>0;<sp/>noneFrontSort<sp/>&lt;=<sp/>2;<sp/>++noneFrontSort)<sp/>{</highlight></codeline>
+<codeline lineno="121"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>bool<sp/>tof<sp/>=<sp/>(noneFrontSort<sp/>==<sp/>1);</highlight></codeline>
+<codeline lineno="122"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>bool<sp/>sort<sp/>=<sp/>(noneFrontSort<sp/>==<sp/>2);</highlight></codeline>
+<codeline lineno="123"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="124"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(double<sp/>ratio<sp/>=<sp/>0.5;<sp/>ratio<sp/>&lt;<sp/>0.51;<sp/>ratio<sp/>+=<sp/>0.1)</highlight></codeline>
+<codeline lineno="125"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(size_t<sp/>start<sp/>=<sp/>500;<sp/>start<sp/>&lt;=<sp/>500;<sp/>start<sp/>+=<sp/>100)</highlight></codeline>
+<codeline lineno="126"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim.run&lt;DivListModel&lt;1,<sp/>1&gt;<sp/>&gt;(mini,<sp/>tof,<sp/>sort,<sp/>ratio,<sp/>start);</highlight></codeline>
+<codeline lineno="127"><highlight class="comment"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="128"><highlight class="comment"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="129"><highlight class="comment"><sp/><sp/>//*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>best<sp/>for<sp/>single<sp/>query<sp/>from<sp/>best<sp/>to<sp/>worst</highlight></codeline>
+<codeline lineno="132"><highlight class="comment"><sp/><sp/>sim.run&lt;KDTreeModel&lt;1,1&gt;<sp/>&gt;(40,<sp/>1,<sp/>0,<sp/>0,<sp/>1.0,<sp/>1000);<sp/>//<sp/>best<sp/>tree,<sp/>mask</highlight></codeline>
+<codeline lineno="133"><highlight class="comment"><sp/><sp/>sim.run&lt;KDTreeModel&lt;0,0&gt;<sp/>&gt;(15,<sp/>1,<sp/>0,<sp/>0,<sp/>0.0,<sp/>0);<sp/>//<sp/>best<sp/>tree,<sp/>no<sp/>mask</highlight></codeline>
+<codeline lineno="134"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;0,<sp/>1&gt;<sp/>&gt;(1,<sp/>1,<sp/>0,<sp/>0.5,<sp/>500);<sp/>//<sp/>best<sp/>array,<sp/>mask</highlight></codeline>
+<codeline lineno="135"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;1,<sp/>1&gt;<sp/>&gt;(1,<sp/>1,<sp/>0,<sp/>0.5,<sp/>500);<sp/>//<sp/>should<sp/>be<sp/>best<sp/>linked,<sp/>mask</highlight></codeline>
+<codeline lineno="136"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;0,<sp/>0&gt;<sp/>&gt;(1,<sp/>0,<sp/>1,<sp/>0.0,<sp/>0);<sp/>//<sp/>best<sp/>array,<sp/>no<sp/>mask</highlight></codeline>
+<codeline lineno="137"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;1,<sp/>0&gt;<sp/>&gt;(1,<sp/>0,<sp/>1,<sp/>0.0,<sp/>0);<sp/>//<sp/>best<sp/>linked,<sp/>no<sp/>mask</highlight></codeline>
+<codeline lineno="138"><highlight class="comment"><sp/><sp/>//*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>base<sp/>div<sp/>lists</highlight></codeline>
+<codeline lineno="141"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;0,<sp/>0&gt;<sp/>&gt;(1,<sp/>0,<sp/>0,<sp/>0.0,<sp/>0);<sp/>//<sp/>base<sp/>array</highlight></codeline>
+<codeline lineno="142"><highlight class="comment"><sp/><sp/>sim.run&lt;DivListModel&lt;1,<sp/>0&gt;<sp/>&gt;(1,<sp/>0,<sp/>0,<sp/>0.0,<sp/>0);<sp/>//<sp/>base<sp/>linked</highlight></codeline>
+<codeline lineno="143"><highlight class="comment"><sp/><sp/>//*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>sim.<ref refid="class_simulation_a1cf2790d4d7618af81eb1576c320dc55_1a1cf2790d4d7618af81eb1576c320dc55" kindref="member">printData</ref>(std::cout);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/divsim/divMain.cpp"/>
+  </compounddef>
+</doxygen>

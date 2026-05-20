@@ -1,0 +1,1777 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_hermite_computation" kind="class" language="C++" prot="public">
+    <compoundname>HermiteComputation</compoundname>
+    <basecompoundref refid="class_g_b_computation" prot="public" virt="non-virtual">GBComputation</basecompoundref>
+    <includes refid="hermite_8hpp" local="no">hermite.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_hermite_computation_ae972e9abb549c747e78ba1d54a384441_1ae972e9abb549c747e78ba1d54a384441" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int HermiteComputation::row</definition>
+        <argsstring></argsstring>
+        <name>row</name>
+        <qualifiedname>HermiteComputation::row</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="56" column="7" bodyfile="Macaulay2/e/hermite.hpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation</referencedby>
+        <referencedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" compoundref="hermite_8cpp" startline="260" endline="311">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_hermite_computation_a8f3b83e3d517935a89ff457714a59347_1a8f3b83e3d517935a89ff457714a59347" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix* HermiteComputation::gens</definition>
+        <argsstring></argsstring>
+        <name>gens</name>
+        <qualifiedname>HermiteComputation::gens</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="59" column="16" bodyfile="Macaulay2/e/hermite.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_a9fda50ce985a8f96ced0c5a734c33f52_1a9fda50ce985a8f96ced0c5a734c33f52" compoundref="hermite_8cpp" startline="317" endline="323">get_gb</referencedby>
+        <referencedby refid="class_hermite_computation_a48c246938a8ef59bd0ae1b0bf05c09a3_1a48c246938a8ef59bd0ae1b0bf05c09a3" compoundref="hermite_8cpp" startline="347" endline="357">get_initial</referencedby>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation</referencedby>
+        <referencedby refid="class_hermite_computation_add52915d977809127a3b2fba61b6eafe_1add52915d977809127a3b2fba61b6eafe" compoundref="hermite_8cpp" startline="485" endline="522">matrix_lift</referencedby>
+        <referencedby refid="class_hermite_computation_a0f38fb8e85d4c0671eb34551cc848caf_1a0f38fb8e85d4c0671eb34551cc848caf" compoundref="hermite_8cpp" startline="461" endline="483">matrix_remainder</referencedby>
+        <referencedby refid="class_hermite_computation_a2127e33cf682aabc6498f588accd5442_1a2127e33cf682aabc6498f588accd5442" compoundref="hermite_8cpp" startline="21" endline="41">new_gen</referencedby>
+        <referencedby refid="class_hermite_computation_a31662941ebf429ccb37bf61f6522356e_1a31662941ebf429ccb37bf61f6522356e" compoundref="hermite_8cpp" startline="359" endline="385">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_hermite_computation_ab2a39fa582d94959275b6e7b0f8ddccb_1ab2a39fa582d94959275b6e7b0f8ddccb" prot="private" static="no" mutable="no">
+        <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+        <definition>hm_elem* HermiteComputation::GB_list</definition>
+        <argsstring></argsstring>
+        <name>GB_list</name>
+        <qualifiedname>HermiteComputation::GB_list</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="61" column="11" bodyfile="Macaulay2/e/hermite.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_ad4f19b1cab95c4dbbe1221cfe3833389_1ad4f19b1cab95c4dbbe1221cfe3833389" compoundref="hermite_8cpp" startline="331" endline="337">get_change</referencedby>
+        <referencedby refid="class_hermite_computation_a9fda50ce985a8f96ced0c5a734c33f52_1a9fda50ce985a8f96ced0c5a734c33f52" compoundref="hermite_8cpp" startline="317" endline="323">get_gb</referencedby>
+        <referencedby refid="class_hermite_computation_a48c246938a8ef59bd0ae1b0bf05c09a3_1a48c246938a8ef59bd0ae1b0bf05c09a3" compoundref="hermite_8cpp" startline="347" endline="357">get_initial</referencedby>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation</referencedby>
+        <referencedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" compoundref="hermite_8cpp" startline="260" endline="311">start_computation</referencedby>
+        <referencedby refid="class_hermite_computation_a48af30122752f103fabb50db08142fcc_1a48af30122752f103fabb50db08142fcc" compoundref="hermite_8cpp" startline="90" endline="114">~HermiteComputation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_hermite_computation_a6cc8e86f4949619b2c2a4ac73d5d644b_1a6cc8e86f4949619b2c2a4ac73d5d644b" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule* HermiteComputation::Fsyz</definition>
+        <argsstring></argsstring>
+        <name>Fsyz</name>
+        <qualifiedname>HermiteComputation::Fsyz</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="62" column="20" bodyfile="Macaulay2/e/hermite.hpp" bodystart="62" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_ad4f19b1cab95c4dbbe1221cfe3833389_1ad4f19b1cab95c4dbbe1221cfe3833389" compoundref="hermite_8cpp" startline="331" endline="337">get_change</referencedby>
+        <referencedby refid="class_hermite_computation_a8f1384687a504630563e46ac1acec572_1a8f1384687a504630563e46ac1acec572" compoundref="hermite_8cpp" startline="339" endline="345">get_syzygies</referencedby>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation</referencedby>
+        <referencedby refid="class_hermite_computation_add52915d977809127a3b2fba61b6eafe_1add52915d977809127a3b2fba61b6eafe" compoundref="hermite_8cpp" startline="485" endline="522">matrix_lift</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_hermite_computation_a410ca40db2d428ef11f5bcb8b1223299_1a410ca40db2d428ef11f5bcb8b1223299" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int HermiteComputation::n_gb</definition>
+        <argsstring></argsstring>
+        <name>n_gb</name>
+        <qualifiedname>HermiteComputation::n_gb</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="65" column="7" bodyfile="Macaulay2/e/hermite.hpp" bodystart="65" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation</referencedby>
+        <referencedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" compoundref="hermite_8cpp" startline="260" endline="311">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_hermite_computation_a8c6901609e2f305955a890442c4a59fa_1a8c6901609e2f305955a890442c4a59fa" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int HermiteComputation::collect_syz</definition>
+        <argsstring></argsstring>
+        <name>collect_syz</name>
+        <qualifiedname>HermiteComputation::collect_syz</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="66" column="7" bodyfile="Macaulay2/e/hermite.hpp" bodystart="66" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation</referencedby>
+        <referencedby refid="class_hermite_computation_a8a20ee6a46d6a4a61ffa4003a2db2559_1a8a20ee6a46d6a4a61ffa4003a2db2559" compoundref="hermite_8cpp" startline="42" endline="57">insert</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_hermite_computation_a1e1b8ff45ae263271c22e51e30cd344f_1a1e1b8ff45ae263271c22e51e30cd344f" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int HermiteComputation::n_comps_per_syz</definition>
+        <argsstring></argsstring>
+        <name>n_comps_per_syz</name>
+        <qualifiedname>HermiteComputation::n_comps_per_syz</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="67" column="7" bodyfile="Macaulay2/e/hermite.hpp" bodystart="67" bodyend="-1"/>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation</referencedby>
+        <referencedby refid="class_hermite_computation_a2127e33cf682aabc6498f588accd5442_1a2127e33cf682aabc6498f588accd5442" compoundref="hermite_8cpp" startline="21" endline="41">new_gen</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_hermite_computation_aabf0f4cd1209fac3fae4c5063020ccf0_1aabf0f4cd1209fac3fae4c5063020ccf0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HermiteComputation::VECTOR</definition>
+        <argsstring>(hm_elem *) initial</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>HermiteComputation::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="57" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_aff9d45bcc8ab5956d5faa3a32cd4c81a_1aff9d45bcc8ab5956d5faa3a32cd4c81a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HermiteComputation::VECTOR</definition>
+        <argsstring>(vec) syz_list</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>HermiteComputation::VECTOR</qualifiedname>
+        <param>
+          <type>vec</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="63" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a2127e33cf682aabc6498f588accd5442_1a2127e33cf682aabc6498f588accd5442" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+        <definition>hm_elem * HermiteComputation::new_gen</definition>
+        <argsstring>(int i)</argsstring>
+        <name>new_gen</name>
+        <qualifiedname>HermiteComputation::new_gen</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="70" column="11" bodyfile="Macaulay2/e/hermite.cpp" bodystart="21" bodyend="41"/>
+        <references refid="class_hermite_computation_a8f3b83e3d517935a89ff457714a59347_1a8f3b83e3d517935a89ff457714a59347" compoundref="hermite_8hpp" startline="59">gens</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="class_hermite_computation_a1e1b8ff45ae263271c22e51e30cd344f_1a1e1b8ff45ae263271c22e51e30cd344f" compoundref="hermite_8hpp" startline="67">n_comps_per_syz</references>
+        <references refid="hermite_8cpp_adf969d5e7e2953b0d08cbe14aa79c948_1adf969d5e7e2953b0d08cbe14aa79c948" compoundref="hermite_8cpp" startline="10">nallocs_hm_elem</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a25928756126d0da2342146ea3db287a4_1a25928756126d0da2342146ea3db287a4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void HermiteComputation::remove_hm_elem</definition>
+        <argsstring>(hm_elem *&amp;p)</argsstring>
+        <name>remove_hm_elem</name>
+        <qualifiedname>HermiteComputation::remove_hm_elem</qualifiedname>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *&amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="71" column="8" bodyfile="Macaulay2/e/hermite.cpp" bodystart="81" bodyend="88"/>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <referencedby refid="class_hermite_computation_a48af30122752f103fabb50db08142fcc_1a48af30122752f103fabb50db08142fcc" compoundref="hermite_8cpp" startline="90" endline="114">~HermiteComputation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a8a20ee6a46d6a4a61ffa4003a2db2559_1a8a20ee6a46d6a4a61ffa4003a2db2559" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void HermiteComputation::insert</definition>
+        <argsstring>(hm_elem *p)</argsstring>
+        <name>insert</name>
+        <qualifiedname>HermiteComputation::insert</qualifiedname>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="72" column="8" bodyfile="Macaulay2/e/hermite.cpp" bodystart="42" bodyend="57"/>
+        <references refid="class_hermite_computation_a8c6901609e2f305955a890442c4a59fa_1a8c6901609e2f305955a890442c4a59fa" compoundref="hermite_8hpp" startline="66">collect_syz</references>
+        <references refid="hermite_8cpp_a9f1127c6ac324b9e77eb9da7e760e0a6_1a9f1127c6ac324b9e77eb9da7e760e0a6" compoundref="hermite_8cpp" startline="12">nfree_hm_elem</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation</referencedby>
+        <referencedby refid="class_hermite_computation_a992dc9f54ed8b8159c89c5061ce57674_1a992dc9f54ed8b8159c89c5061ce57674" compoundref="hermite_8cpp" startline="124" endline="183">merge</referencedby>
+        <referencedby refid="class_hermite_computation_a728abdccc619e66fd85da5bb0345ec41_1a728abdccc619e66fd85da5bb0345ec41" compoundref="hermite_8cpp" startline="210" endline="258">reduce</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a93bb467ccb738eafd172194a56ccc74d_1a93bb467ccb738eafd172194a56ccc74d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int HermiteComputation::compare_elems</definition>
+        <argsstring>(hm_elem *f, hm_elem *g) const</argsstring>
+        <name>compare_elems</name>
+        <qualifiedname>HermiteComputation::compare_elems</qualifiedname>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="74" column="7" bodyfile="Macaulay2/e/hermite.cpp" bodystart="116" bodyend="122"/>
+        <references refid="structhm__elem_a91b1e1a947d916ac6c1730b7dd902a71_1a91b1e1a947d916ac6c1730b7dd902a71" compoundref="hermite_8hpp" startline="43">hm_elem::lead</references>
+        <referencedby refid="class_hermite_computation_a992dc9f54ed8b8159c89c5061ce57674_1a992dc9f54ed8b8159c89c5061ce57674" compoundref="hermite_8cpp" startline="124" endline="183">merge</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a992dc9f54ed8b8159c89c5061ce57674_1a992dc9f54ed8b8159c89c5061ce57674" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+        <definition>hm_elem * HermiteComputation::merge</definition>
+        <argsstring>(hm_elem *f, hm_elem *g)</argsstring>
+        <name>merge</name>
+        <qualifiedname>HermiteComputation::merge</qualifiedname>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="75" column="11" bodyfile="Macaulay2/e/hermite.cpp" bodystart="124" bodyend="183"/>
+        <references refid="class_hermite_computation_a93bb467ccb738eafd172194a56ccc74d_1a93bb467ccb738eafd172194a56ccc74d" compoundref="hermite_8cpp" startline="116" endline="122">compare_elems</references>
+        <references refid="structhm__elem_a6c4e3a22776a82f0136f8aa8e83cd351_1a6c4e3a22776a82f0136f8aa8e83cd351" compoundref="hermite_8hpp" startline="44">hm_elem::f</references>
+        <references refid="structhm__elem_afbe611b8905d29f551e41521b2c7ecec_1afbe611b8905d29f551e41521b2c7ecec" compoundref="hermite_8hpp" startline="45">hm_elem::fsyz</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="class_hermite_computation_a8a20ee6a46d6a4a61ffa4003a2db2559_1a8a20ee6a46d6a4a61ffa4003a2db2559" compoundref="hermite_8cpp" startline="42" endline="57">insert</references>
+        <references refid="structhm__elem_a91b1e1a947d916ac6c1730b7dd902a71_1a91b1e1a947d916ac6c1730b7dd902a71" compoundref="hermite_8hpp" startline="43">hm_elem::lead</references>
+        <references refid="structhm__elem_a9fe91b83c7d7367fe85ff78c2b9d1d4d_1a9fe91b83c7d7367fe85ff78c2b9d1d4d" compoundref="hermite_8hpp" startline="42">hm_elem::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_hermite_computation_afc94471ae40cbcf6d996766b3e491f82_1afc94471ae40cbcf6d996766b3e491f82" compoundref="hermite_8cpp" startline="185" endline="208">sort</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_afc94471ae40cbcf6d996766b3e491f82_1afc94471ae40cbcf6d996766b3e491f82" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void HermiteComputation::sort</definition>
+        <argsstring>(hm_elem *&amp;p)</argsstring>
+        <name>sort</name>
+        <qualifiedname>HermiteComputation::sort</qualifiedname>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *&amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="76" column="8" bodyfile="Macaulay2/e/hermite.cpp" bodystart="185" bodyend="208"/>
+        <references refid="class_hermite_computation_a992dc9f54ed8b8159c89c5061ce57674_1a992dc9f54ed8b8159c89c5061ce57674" compoundref="hermite_8cpp" startline="124" endline="183">merge</references>
+        <references refid="structhm__elem_a9fe91b83c7d7367fe85ff78c2b9d1d4d_1a9fe91b83c7d7367fe85ff78c2b9d1d4d" compoundref="hermite_8hpp" startline="42">hm_elem::next</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+        <references refid="class_hermite_computation_afc94471ae40cbcf6d996766b3e491f82_1afc94471ae40cbcf6d996766b3e491f82" compoundref="hermite_8cpp" startline="185" endline="208">sort</references>
+        <referencedby refid="class_hermite_computation_afc94471ae40cbcf6d996766b3e491f82_1afc94471ae40cbcf6d996766b3e491f82" compoundref="hermite_8cpp" startline="185" endline="208">sort</referencedby>
+        <referencedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" compoundref="hermite_8cpp" startline="260" endline="311">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a728abdccc619e66fd85da5bb0345ec41_1a728abdccc619e66fd85da5bb0345ec41" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void HermiteComputation::reduce</definition>
+        <argsstring>(hm_elem *&amp;p, hm_elem *q)</argsstring>
+        <name>reduce</name>
+        <qualifiedname>HermiteComputation::reduce</qualifiedname>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *&amp;</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="structhm__elem" kindref="compound">hm_elem</ref> *</type>
+          <declname>q</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="77" column="8" bodyfile="Macaulay2/e/hermite.cpp" bodystart="210" bodyend="258"/>
+        <references refid="structhm__elem_a6c4e3a22776a82f0136f8aa8e83cd351_1a6c4e3a22776a82f0136f8aa8e83cd351" compoundref="hermite_8hpp" startline="44">hm_elem::f</references>
+        <references refid="structhm__elem_afbe611b8905d29f551e41521b2c7ecec_1afbe611b8905d29f551e41521b2c7ecec" compoundref="hermite_8hpp" startline="45">hm_elem::fsyz</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="class_hermite_computation_a8a20ee6a46d6a4a61ffa4003a2db2559_1a8a20ee6a46d6a4a61ffa4003a2db2559" compoundref="hermite_8cpp" startline="42" endline="57">insert</references>
+        <references refid="structhm__elem_a91b1e1a947d916ac6c1730b7dd902a71_1a91b1e1a947d916ac6c1730b7dd902a71" compoundref="hermite_8hpp" startline="43">hm_elem::lead</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+        <referencedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" compoundref="hermite_8cpp" startline="260" endline="311">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a905c2256c83102682eba846df0842718_1a905c2256c83102682eba846df0842718" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void HermiteComputation::gb_reduce</definition>
+        <argsstring>(vec &amp;f) const</argsstring>
+        <name>gb_reduce</name>
+        <qualifiedname>HermiteComputation::gb_reduce</qualifiedname>
+        <param>
+          <type>vec &amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="79" column="8" bodyfile="Macaulay2/e/hermite.cpp" bodystart="387" bodyend="421"/>
+        <references refid="structhm__elem_a6c4e3a22776a82f0136f8aa8e83cd351_1a6c4e3a22776a82f0136f8aa8e83cd351" compoundref="hermite_8hpp" startline="44">hm_elem::f</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="structvecterm_a0097010847a0593f115ad08738a72b3a_1a0097010847a0593f115ad08738a72b3a" compoundref="ringelem_8hpp" startline="164">vec::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_hermite_computation_a533b83ca7d1ef7e848ca58e3a3bdbffb_1a533b83ca7d1ef7e848ca58e3a3bdbffb" compoundref="hermite_8cpp" startline="524" endline="546">contains</referencedby>
+        <referencedby refid="class_hermite_computation_add52915d977809127a3b2fba61b6eafe_1add52915d977809127a3b2fba61b6eafe" compoundref="hermite_8cpp" startline="485" endline="522">matrix_lift</referencedby>
+        <referencedby refid="class_hermite_computation_a0f38fb8e85d4c0671eb34551cc848caf_1a0f38fb8e85d4c0671eb34551cc848caf" compoundref="hermite_8cpp" startline="461" endline="483">matrix_remainder</referencedby>
+        <referencedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" compoundref="hermite_8cpp" startline="260" endline="311">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_ab9165fb3d442836b0e5354b677247ee4_1ab9165fb3d442836b0e5354b677247ee4" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void HermiteComputation::gb_reduce</definition>
+        <argsstring>(vec &amp;f, vec &amp;fsyz) const</argsstring>
+        <name>gb_reduce</name>
+        <qualifiedname>HermiteComputation::gb_reduce</qualifiedname>
+        <param>
+          <type>vec &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>vec &amp;</type>
+          <declname>fsyz</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="80" column="8" bodyfile="Macaulay2/e/hermite.cpp" bodystart="423" bodyend="459"/>
+        <references refid="structhm__elem_a6c4e3a22776a82f0136f8aa8e83cd351_1a6c4e3a22776a82f0136f8aa8e83cd351" compoundref="hermite_8hpp" startline="44">hm_elem::f</references>
+        <references refid="structhm__elem_afbe611b8905d29f551e41521b2c7ecec_1afbe611b8905d29f551e41521b2c7ecec" compoundref="hermite_8hpp" startline="45">hm_elem::fsyz</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="structvecterm_a0097010847a0593f115ad08738a72b3a_1a0097010847a0593f115ad08738a72b3a" compoundref="ringelem_8hpp" startline="164">vec::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a6eea8fe9d4a7a1b59c38d04deb415f7c_1a6eea8fe9d4a7a1b59c38d04deb415f7c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool HermiteComputation::stop_conditions_ok</definition>
+        <argsstring>()</argsstring>
+        <name>stop_conditions_ok</name>
+        <qualifiedname>HermiteComputation::stop_conditions_ok</qualifiedname>
+        <reimplements refid="class_computation_ab75de3b5574c52e4f020d529759cc472_1ab75de3b5574c52e4f020d529759cc472">stop_conditions_ok</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="82" column="16" bodyfile="Macaulay2/e/hermite.hpp" bodystart="82" bodyend="82"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HermiteComputation::HermiteComputation</definition>
+        <argsstring>(const Matrix *m, int collect_syz, int n_syz)</argsstring>
+        <name>HermiteComputation</name>
+        <qualifiedname>HermiteComputation::HermiteComputation</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>collect_syz</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n_syz</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="85" column="3" bodyfile="Macaulay2/e/hermite.cpp" bodystart="59" bodyend="79"/>
+        <references refid="class_hermite_computation_a8c6901609e2f305955a890442c4a59fa_1a8c6901609e2f305955a890442c4a59fa" compoundref="hermite_8hpp" startline="66">collect_syz</references>
+        <references refid="class_matrix_aba7778b059d190d32428a475ef5abd47_1aba7778b059d190d32428a475ef5abd47" compoundref="matrix_8hpp" startline="141" endline="141">Matrix::cols</references>
+        <references refid="class_hermite_computation_a6cc8e86f4949619b2c2a4ac73d5d644b_1a6cc8e86f4949619b2c2a4ac73d5d644b" compoundref="hermite_8hpp" startline="62">Fsyz</references>
+        <references refid="class_hermite_computation_ab2a39fa582d94959275b6e7b0f8ddccb_1ab2a39fa582d94959275b6e7b0f8ddccb" compoundref="hermite_8hpp" startline="61">GB_list</references>
+        <references refid="class_hermite_computation_a8f3b83e3d517935a89ff457714a59347_1a8f3b83e3d517935a89ff457714a59347" compoundref="hermite_8hpp" startline="59">gens</references>
+        <references refid="class_hermite_computation_a8a20ee6a46d6a4a61ffa4003a2db2559_1a8a20ee6a46d6a4a61ffa4003a2db2559" compoundref="hermite_8cpp" startline="42" endline="57">insert</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+        <references refid="class_hermite_computation_a1e1b8ff45ae263271c22e51e30cd344f_1a1e1b8ff45ae263271c22e51e30cd344f" compoundref="hermite_8hpp" startline="67">n_comps_per_syz</references>
+        <references refid="class_hermite_computation_a410ca40db2d428ef11f5bcb8b1223299_1a410ca40db2d428ef11f5bcb8b1223299" compoundref="hermite_8hpp" startline="65">n_gb</references>
+        <references refid="class_matrix_a7d4293b74029beb92af3d47fdcb7c18c_1a7d4293b74029beb92af3d47fdcb7c18c" compoundref="matrix_8hpp" startline="142" endline="142">Matrix::n_rows</references>
+        <references refid="class_hermite_computation_a2127e33cf682aabc6498f588accd5442_1a2127e33cf682aabc6498f588accd5442" compoundref="hermite_8cpp" startline="21" endline="41">new_gen</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_hermite_computation_ae972e9abb549c747e78ba1d54a384441_1ae972e9abb549c747e78ba1d54a384441" compoundref="hermite_8hpp" startline="56">row</references>
+        <references refid="class_free_module_ac284d81e9e059f250499a1045fda03b9_1ac284d81e9e059f250499a1045fda03b9" compoundref="freemod_8cpp" startline="197" endline="209">FreeModule::sub_space</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a48af30122752f103fabb50db08142fcc_1a48af30122752f103fabb50db08142fcc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HermiteComputation::~HermiteComputation</definition>
+        <argsstring>()</argsstring>
+        <name>~HermiteComputation</name>
+        <qualifiedname>HermiteComputation::~HermiteComputation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="86" column="3" bodyfile="Macaulay2/e/hermite.cpp" bodystart="90" bodyend="114"/>
+        <references refid="class_hermite_computation_ab2a39fa582d94959275b6e7b0f8ddccb_1ab2a39fa582d94959275b6e7b0f8ddccb" compoundref="hermite_8hpp" startline="61">GB_list</references>
+        <references refid="structhm__elem_a9fe91b83c7d7367fe85ff78c2b9d1d4d_1a9fe91b83c7d7367fe85ff78c2b9d1d4d" compoundref="hermite_8hpp" startline="42">hm_elem::next</references>
+        <references refid="class_hermite_computation_a25928756126d0da2342146ea3db287a4_1a25928756126d0da2342146ea3db287a4" compoundref="hermite_8cpp" startline="81" endline="88">remove_hm_elem</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_ad03ef97883a746f61c471d58611dc21f_1ad03ef97883a746f61c471d58611dc21f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void HermiteComputation::remove_gb</definition>
+        <argsstring>()</argsstring>
+        <name>remove_gb</name>
+        <qualifiedname>HermiteComputation::remove_gb</qualifiedname>
+        <reimplements refid="class_g_b_computation_aaedf225d5aaf90a2582ff2372e9c6ccd_1aaedf225d5aaf90a2582ff2372e9c6ccd">remove_gb</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="88" column="16" bodyfile="Macaulay2/e/hermite.hpp" bodystart="88" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void HermiteComputation::start_computation</definition>
+        <argsstring>()</argsstring>
+        <name>start_computation</name>
+        <qualifiedname>HermiteComputation::start_computation</qualifiedname>
+        <reimplements refid="class_g_b_computation_aade792c61b1f857d7caba9e71f9b1755_1aade792c61b1f857d7caba9e71f9b1755">start_computation</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="89" column="16" bodyfile="Macaulay2/e/hermite.cpp" bodystart="260" bodyend="311"/>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="class_hermite_computation_ab2a39fa582d94959275b6e7b0f8ddccb_1ab2a39fa582d94959275b6e7b0f8ddccb" compoundref="hermite_8hpp" startline="61">GB_list</references>
+        <references refid="class_hermite_computation_a905c2256c83102682eba846df0842718_1a905c2256c83102682eba846df0842718" compoundref="hermite_8cpp" startline="387" endline="421">gb_reduce</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="class_hermite_computation_a410ca40db2d428ef11f5bcb8b1223299_1a410ca40db2d428ef11f5bcb8b1223299" compoundref="hermite_8hpp" startline="65">n_gb</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_hermite_computation_a728abdccc619e66fd85da5bb0345ec41_1a728abdccc619e66fd85da5bb0345ec41" compoundref="hermite_8cpp" startline="210" endline="258">reduce</references>
+        <references refid="class_hermite_computation_ae972e9abb549c747e78ba1d54a384441_1ae972e9abb549c747e78ba1d54a384441" compoundref="hermite_8hpp" startline="56">row</references>
+        <references refid="class_computation_a3d43eb6c869405fa62a9b9662f1bdb1d_1a3d43eb6c869405fa62a9b9662f1bdb1d" compoundref="comp_8cpp" startline="66" endline="77">Computation::set_status</references>
+        <references refid="class_hermite_computation_afc94471ae40cbcf6d996766b3e491f82_1afc94471ae40cbcf6d996766b3e491f82" compoundref="hermite_8cpp" startline="185" endline="208">sort</references>
+        <references refid="class_computation_a277e8e7771dccf6b37f5ab03edb2e503_1a277e8e7771dccf6b37f5ab03edb2e503" compoundref="comp_8hpp" startline="96" endline="96">Computation::status</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a225af0ec782ae419da6b727164c44560_1a225af0ec782ae419da6b727164c44560" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int HermiteComputation::complete_thru_degree</definition>
+        <argsstring>() const</argsstring>
+        <name>complete_thru_degree</name>
+        <qualifiedname>HermiteComputation::complete_thru_degree</qualifiedname>
+        <reimplements refid="class_g_b_computation_a0503bdcaf49883b7c8c0f4156110547d_1a0503bdcaf49883b7c8c0f4156110547d">complete_thru_degree</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="91" column="15" bodyfile="Macaulay2/e/hermite.cpp" bodystart="14" bodyend="19"/>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="class_computation_a277e8e7771dccf6b37f5ab03edb2e503_1a277e8e7771dccf6b37f5ab03edb2e503" compoundref="comp_8hpp" startline="96" endline="96">Computation::status</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a80be7e1fa96603b761916876f4f2f0d6_1a80be7e1fa96603b761916876f4f2f0d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>virtual Ring * HermiteComputation::get_ring</definition>
+        <argsstring>() const</argsstring>
+        <name>get_ring</name>
+        <qualifiedname>HermiteComputation::get_ring</qualifiedname>
+        <reimplements refid="class_g_b_computation_ac973a5d8f2c85d61ab462b76ae644548_1ac973a5d8f2c85d61ab462b76ae644548">get_ring</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="94" column="16" bodyfile="Macaulay2/e/hermite.hpp" bodystart="94" bodyend="94"/>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a9fda50ce985a8f96ced0c5a734c33f52_1a9fda50ce985a8f96ced0c5a734c33f52" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * HermiteComputation::get_gb</definition>
+        <argsstring>()</argsstring>
+        <name>get_gb</name>
+        <qualifiedname>HermiteComputation::get_gb</qualifiedname>
+        <reimplements refid="class_g_b_computation_aec4e42276a6b99aa1b9f58b538eed7d7_1aec4e42276a6b99aa1b9f58b538eed7d7">get_gb</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="98" column="25" bodyfile="Macaulay2/e/hermite.cpp" bodystart="317" bodyend="323"/>
+        <references refid="class_matrix_constructor_a6cac2dfdd6d7e76cb4be7ce3862fcaf6_1a6cac2dfdd6d7e76cb4be7ce3862fcaf6" compoundref="matrix-con_8cpp" startline="35" endline="42">MatrixConstructor::append</references>
+        <references refid="class_hermite_computation_ab2a39fa582d94959275b6e7b0f8ddccb_1ab2a39fa582d94959275b6e7b0f8ddccb" compoundref="hermite_8hpp" startline="61">GB_list</references>
+        <references refid="class_hermite_computation_a8f3b83e3d517935a89ff457714a59347_1a8f3b83e3d517935a89ff457714a59347" compoundref="hermite_8hpp" startline="59">gens</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+        <referencedby refid="class_hermite_computation_afc0c6ba7d56246dc74b1d3736df7d1b9_1afc0c6ba7d56246dc74b1d3736df7d1b9" compoundref="hermite_8cpp" startline="325" endline="329">get_mingens</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_afc0c6ba7d56246dc74b1d3736df7d1b9_1afc0c6ba7d56246dc74b1d3736df7d1b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * HermiteComputation::get_mingens</definition>
+        <argsstring>()</argsstring>
+        <name>get_mingens</name>
+        <qualifiedname>HermiteComputation::get_mingens</qualifiedname>
+        <reimplements refid="class_g_b_computation_a27d5e1cb251e9c6953a4055825e50a52_1a27d5e1cb251e9c6953a4055825e50a52">get_mingens</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="100" column="25" bodyfile="Macaulay2/e/hermite.cpp" bodystart="325" bodyend="329"/>
+        <references refid="class_hermite_computation_a9fda50ce985a8f96ced0c5a734c33f52_1a9fda50ce985a8f96ced0c5a734c33f52" compoundref="hermite_8cpp" startline="317" endline="323">get_gb</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_ad4f19b1cab95c4dbbe1221cfe3833389_1ad4f19b1cab95c4dbbe1221cfe3833389" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * HermiteComputation::get_change</definition>
+        <argsstring>()</argsstring>
+        <name>get_change</name>
+        <qualifiedname>HermiteComputation::get_change</qualifiedname>
+        <reimplements refid="class_g_b_computation_a0d9d2c4f31fde7fb1478e385bcb35b8c_1a0d9d2c4f31fde7fb1478e385bcb35b8c">get_change</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="102" column="25" bodyfile="Macaulay2/e/hermite.cpp" bodystart="331" bodyend="337"/>
+        <references refid="class_matrix_constructor_a6cac2dfdd6d7e76cb4be7ce3862fcaf6_1a6cac2dfdd6d7e76cb4be7ce3862fcaf6" compoundref="matrix-con_8cpp" startline="35" endline="42">MatrixConstructor::append</references>
+        <references refid="class_hermite_computation_a6cc8e86f4949619b2c2a4ac73d5d644b_1a6cc8e86f4949619b2c2a4ac73d5d644b" compoundref="hermite_8hpp" startline="62">Fsyz</references>
+        <references refid="class_hermite_computation_ab2a39fa582d94959275b6e7b0f8ddccb_1ab2a39fa582d94959275b6e7b0f8ddccb" compoundref="hermite_8hpp" startline="61">GB_list</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a8f1384687a504630563e46ac1acec572_1a8f1384687a504630563e46ac1acec572" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * HermiteComputation::get_syzygies</definition>
+        <argsstring>()</argsstring>
+        <name>get_syzygies</name>
+        <qualifiedname>HermiteComputation::get_syzygies</qualifiedname>
+        <reimplements refid="class_g_b_computation_ad3084a984a768ea6fc7b097b6877656e_1ad3084a984a768ea6fc7b097b6877656e">get_syzygies</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="104" column="25" bodyfile="Macaulay2/e/hermite.cpp" bodystart="339" bodyend="345"/>
+        <references refid="class_matrix_constructor_a6cac2dfdd6d7e76cb4be7ce3862fcaf6_1a6cac2dfdd6d7e76cb4be7ce3862fcaf6" compoundref="matrix-con_8cpp" startline="35" endline="42">MatrixConstructor::append</references>
+        <references refid="class_hermite_computation_a6cc8e86f4949619b2c2a4ac73d5d644b_1a6cc8e86f4949619b2c2a4ac73d5d644b" compoundref="hermite_8hpp" startline="62">Fsyz</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a48c246938a8ef59bd0ae1b0bf05c09a3_1a48c246938a8ef59bd0ae1b0bf05c09a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * HermiteComputation::get_initial</definition>
+        <argsstring>(int nparts)</argsstring>
+        <name>get_initial</name>
+        <qualifiedname>HermiteComputation::get_initial</qualifiedname>
+        <reimplements refid="class_g_b_computation_af19f73ab8f2e622a870d2bb9f532ff67_1af19f73ab8f2e622a870d2bb9f532ff67">get_initial</reimplements>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nparts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="106" column="25" bodyfile="Macaulay2/e/hermite.cpp" bodystart="347" bodyend="357"/>
+        <references refid="class_matrix_constructor_a6cac2dfdd6d7e76cb4be7ce3862fcaf6_1a6cac2dfdd6d7e76cb4be7ce3862fcaf6" compoundref="matrix-con_8cpp" startline="35" endline="42">MatrixConstructor::append</references>
+        <references refid="class_hermite_computation_ab2a39fa582d94959275b6e7b0f8ddccb_1ab2a39fa582d94959275b6e7b0f8ddccb" compoundref="hermite_8hpp" startline="61">GB_list</references>
+        <references refid="class_hermite_computation_a8f3b83e3d517935a89ff457714a59347_1a8f3b83e3d517935a89ff457714a59347" compoundref="hermite_8hpp" startline="59">gens</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a0f38fb8e85d4c0671eb34551cc848caf_1a0f38fb8e85d4c0671eb34551cc848caf" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * HermiteComputation::matrix_remainder</definition>
+        <argsstring>(const Matrix *m)</argsstring>
+        <name>matrix_remainder</name>
+        <qualifiedname>HermiteComputation::matrix_remainder</qualifiedname>
+        <reimplements refid="class_g_b_computation_a8059a1ac68ead3c80ee7d8ddd2175560_1a8059a1ac68ead3c80ee7d8ddd2175560">matrix_remainder</reimplements>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="112" column="25" bodyfile="Macaulay2/e/hermite.cpp" bodystart="461" bodyend="483"/>
+        <references refid="class_matrix_aba7778b059d190d32428a475ef5abd47_1aba7778b059d190d32428a475ef5abd47" compoundref="matrix_8hpp" startline="141" endline="141">Matrix::cols</references>
+        <references refid="class_matrix_a06fff1c55e11c5cadf8a5abd3f6c35cb_1a06fff1c55e11c5cadf8a5abd3f6c35cb" compoundref="matrix_8hpp" startline="145" endline="145">Matrix::degree_shift</references>
+        <references refid="class_matrix_a0dd3516d8526ad736fe69848aacd1406_1a0dd3516d8526ad736fe69848aacd1406" compoundref="matrix_8cpp" startline="307" endline="310">Matrix::elem</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_hermite_computation_a905c2256c83102682eba846df0842718_1a905c2256c83102682eba846df0842718" compoundref="hermite_8cpp" startline="387" endline="421">gb_reduce</references>
+        <references refid="class_hermite_computation_a8f3b83e3d517935a89ff457714a59347_1a8f3b83e3d517935a89ff457714a59347" compoundref="hermite_8hpp" startline="59">gens</references>
+        <references refid="class_matrix_a0bceb9b9d23e40a81ac64f6c112ef441_1a0bceb9b9d23e40a81ac64f6c112ef441" compoundref="matrix_8hpp" startline="130" endline="130">Matrix::get_ring</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+        <references refid="class_matrix_a7d4293b74029beb92af3d47fdcb7c18c_1a7d4293b74029beb92af3d47fdcb7c18c" compoundref="matrix_8hpp" startline="142" endline="142">Matrix::n_rows</references>
+        <references refid="class_matrix_a9837ac28e81ff230cd72f72573854272_1a9837ac28e81ff230cd72f72573854272" compoundref="matrix_8hpp" startline="140" endline="140">Matrix::rows</references>
+        <references refid="class_matrix_constructor_ac740b10a84a3ba4d3e910dd7ae3a16bb_1ac740b10a84a3ba4d3e910dd7ae3a16bb" compoundref="matrix-con_8cpp" startline="58" endline="58">MatrixConstructor::set_column</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_add52915d977809127a3b2fba61b6eafe_1add52915d977809127a3b2fba61b6eafe" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool HermiteComputation::matrix_lift</definition>
+        <argsstring>(const Matrix *m, const Matrix **result_remainder, const Matrix **result_quotient)</argsstring>
+        <name>matrix_lift</name>
+        <qualifiedname>HermiteComputation::matrix_lift</qualifiedname>
+        <reimplements refid="class_g_b_computation_a4eabd2c18c4c8b1382077b2b77c77cf9_1a4eabd2c18c4c8b1382077b2b77c77cf9">matrix_lift</reimplements>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> **</type>
+          <declname>result_remainder</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> **</type>
+          <declname>result_quotient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="114" column="19" bodyfile="Macaulay2/e/hermite.cpp" bodystart="485" bodyend="522"/>
+        <references refid="class_matrix_aba7778b059d190d32428a475ef5abd47_1aba7778b059d190d32428a475ef5abd47" compoundref="matrix_8hpp" startline="141" endline="141">Matrix::cols</references>
+        <references refid="class_matrix_a06fff1c55e11c5cadf8a5abd3f6c35cb_1a06fff1c55e11c5cadf8a5abd3f6c35cb" compoundref="matrix_8hpp" startline="145" endline="145">Matrix::degree_shift</references>
+        <references refid="class_matrix_a0dd3516d8526ad736fe69848aacd1406_1a0dd3516d8526ad736fe69848aacd1406" compoundref="matrix_8cpp" startline="307" endline="310">Matrix::elem</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_hermite_computation_a6cc8e86f4949619b2c2a4ac73d5d644b_1a6cc8e86f4949619b2c2a4ac73d5d644b" compoundref="hermite_8hpp" startline="62">Fsyz</references>
+        <references refid="class_hermite_computation_a905c2256c83102682eba846df0842718_1a905c2256c83102682eba846df0842718" compoundref="hermite_8cpp" startline="387" endline="421">gb_reduce</references>
+        <references refid="class_hermite_computation_a8f3b83e3d517935a89ff457714a59347_1a8f3b83e3d517935a89ff457714a59347" compoundref="hermite_8hpp" startline="59">gens</references>
+        <references refid="class_matrix_a0bceb9b9d23e40a81ac64f6c112ef441_1a0bceb9b9d23e40a81ac64f6c112ef441" compoundref="matrix_8hpp" startline="130" endline="130">Matrix::get_ring</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+        <references refid="class_matrix_a7d4293b74029beb92af3d47fdcb7c18c_1a7d4293b74029beb92af3d47fdcb7c18c" compoundref="matrix_8hpp" startline="142" endline="142">Matrix::n_rows</references>
+        <references refid="class_matrix_a9837ac28e81ff230cd72f72573854272_1a9837ac28e81ff230cd72f72573854272" compoundref="matrix_8hpp" startline="140" endline="140">Matrix::rows</references>
+        <references refid="class_matrix_constructor_ac740b10a84a3ba4d3e910dd7ae3a16bb_1ac740b10a84a3ba4d3e910dd7ae3a16bb" compoundref="matrix-con_8cpp" startline="58" endline="58">MatrixConstructor::set_column</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a533b83ca7d1ef7e848ca58e3a3bdbffb_1a533b83ca7d1ef7e848ca58e3a3bdbffb" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int HermiteComputation::contains</definition>
+        <argsstring>(const Matrix *m)</argsstring>
+        <name>contains</name>
+        <qualifiedname>HermiteComputation::contains</qualifiedname>
+        <reimplements refid="class_g_b_computation_acdd07facd6f3229c2a3a92d71eeb16f2_1acdd07facd6f3229c2a3a92d71eeb16f2">contains</reimplements>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="118" column="15" bodyfile="Macaulay2/e/hermite.cpp" bodystart="524" bodyend="546"/>
+        <references refid="class_matrix_a0dd3516d8526ad736fe69848aacd1406_1a0dd3516d8526ad736fe69848aacd1406" compoundref="matrix_8cpp" startline="307" endline="310">Matrix::elem</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_hermite_computation_a905c2256c83102682eba846df0842718_1a905c2256c83102682eba846df0842718" compoundref="hermite_8cpp" startline="387" endline="421">gb_reduce</references>
+        <references refid="class_matrix_a0bceb9b9d23e40a81ac64f6c112ef441_1a0bceb9b9d23e40a81ac64f6c112ef441" compoundref="matrix_8hpp" startline="130" endline="130">Matrix::get_ring</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+      </memberdef>
+      <memberdef kind="function" id="class_hermite_computation_a31662941ebf429ccb37bf61f6522356e_1a31662941ebf429ccb37bf61f6522356e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void HermiteComputation::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>HermiteComputation::text_out</qualifiedname>
+        <reimplements refid="class_g_b_computation_acbef71459db840e734cf998f1da596bb_1acbef71459db840e734cf998f1da596bb">text_out</reimplements>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hermite.hpp" line="124" column="16" bodyfile="Macaulay2/e/hermite.cpp" bodystart="359" bodyend="385"/>
+        <references refid="text-io_8cpp_a1e7b478e82eddaeefd0aa4a2799b3aa9_1a1e7b478e82eddaeefd0aa4a2799b3aa9" compoundref="text-io_8cpp" startline="12" endline="24">bignum_text_out</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="class_hermite_computation_a8f3b83e3d517935a89ff457714a59347_1a8f3b83e3d517935a89ff457714a59347" compoundref="hermite_8hpp" startline="59">gens</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_computation_a277e8e7771dccf6b37f5ab03edb2e503_1a277e8e7771dccf6b37f5ab03edb2e503" compoundref="comp_8hpp" startline="96" endline="96">Computation::status</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Slow Hermite normal form computation over <ref refid="ringelem_8hpp_afea72c39052b53d15e7acad8d36847c1_1afea72c39052b53d15e7acad8d36847c1" kindref="member">ZZ</ref>. Replace. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>Computation</label>
+        <link refid="class_computation"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GBComputation</label>
+        <link refid="class_g_b_computation"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>HermiteComputation</label>
+        <link refid="class_hermite_computation"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="25">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Computation</label>
+        <link refid="class_computation"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>computation_status</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>stop_</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GBComputation</label>
+        <link refid="class_g_b_computation"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>HermiteComputation</label>
+        <link refid="class_hermite_computation"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>collect_syz</edgelabel>
+          <edgelabel>n_comps_per_syz</edgelabel>
+          <edgelabel>n_gb</edgelabel>
+          <edgelabel>row</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>gens</edgelabel>
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>GB_list</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>Fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+        <childnode refid="66" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>M2_arrayint</label>
+        <link refid="class_m2__arrayint"/>
+      </node>
+      <node id="12">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="54" relation="private-inheritance">
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="56" relation="public-inheritance">
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="50" relation="private-inheritance">
+        </childnode>
+        <childnode refid="53" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="41" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="41" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="73">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="56">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="57" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="27" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="46" relation="public-inheritance">
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="19" relation="public-inheritance">
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="48" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>CoefficientType</label>
+      </node>
+      <node id="16">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="45" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>StopConditions</label>
+        <link refid="struct_stop_conditions"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>always_stop</edgelabel>
+          <edgelabel>just_min_gens</edgelabel>
+          <edgelabel>stop_after_degree</edgelabel>
+          <edgelabel>use_codim_limit</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>degree_limit</edgelabel>
+          <edgelabel>length_limit</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>basis_element_limit</edgelabel>
+          <edgelabel>codim_limit</edgelabel>
+          <edgelabel>pair_limit</edgelabel>
+          <edgelabel>subring_limit</edgelabel>
+          <edgelabel>syzygy_limit</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>T</label>
+      </node>
+      <node id="71">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="45" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="37">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="41">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="35">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="30" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>char</label>
+      </node>
+      <node id="24">
+        <label>const ARing *</label>
+      </node>
+      <node id="40">
+        <label>const void *</label>
+      </node>
+      <node id="30">
+        <label>double</label>
+      </node>
+      <node id="8">
+        <label>enum ComputationStatusCode</label>
+      </node>
+      <node id="81">
+        <label>overflow_type *</label>
+      </node>
+      <node id="79">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="15">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="82">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="83">
+        <label>hm_elem</label>
+        <link refid="structhm__elem"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="usage">
+          <edgelabel>lead</edgelabel>
+        </childnode>
+        <childnode refid="85" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="29">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="26" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>long</label>
+      </node>
+      <node id="58">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="59" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="61" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>mon_part</label>
+      </node>
+      <node id="34">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="33">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="31">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="32">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="84">
+        <label>mpz_t</label>
+      </node>
+      <node id="5">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="26">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="27" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>size_t</label>
+      </node>
+      <node id="68">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>spinLock</label>
+      </node>
+      <node id="67">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="77">
+        <label>std::string</label>
+        <childnode refid="78" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="23" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="22" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="41" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="22" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="77" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="85">
+        <label>vec</label>
+      </node>
+      <node id="69">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/hermite.hpp" line="53" column="1" bodyfile="Macaulay2/e/hermite.hpp" bodystart="54" bodyend="127"/>
+    <listofallmembers>
+      <member refid="class_g_b_computation_aa0c496181f65544c4c7d3896360245a4_1aa0c496181f65544c4c7d3896360245a4" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>cast_to_GBComputation</name></member>
+      <member refid="class_computation_a4d7b512061b6d0cfe740ee06e160bba9_1a4d7b512061b6d0cfe740ee06e160bba9" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>cast_to_ResolutionComputation</name></member>
+      <member refid="class_g_b_computation_aaff7a8f858cded7550f977b4bf34f01b_1aaff7a8f858cded7550f977b4bf34f01b" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>choose_gb</name></member>
+      <member refid="class_hermite_computation_a8c6901609e2f305955a890442c4a59fa_1a8c6901609e2f305955a890442c4a59fa" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>collect_syz</name></member>
+      <member refid="class_hermite_computation_a93bb467ccb738eafd172194a56ccc74d_1a93bb467ccb738eafd172194a56ccc74d" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>compare_elems</name></member>
+      <member refid="class_hermite_computation_a225af0ec782ae419da6b727164c44560_1a225af0ec782ae419da6b727164c44560" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>complete_thru_degree</name></member>
+      <member refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" prot="protected" virt="non-virtual"><scope>HermiteComputation</scope><name>Computation</name></member>
+      <member refid="class_computation_a16a66d725f6681f25a4b36670818633b_1a16a66d725f6681f25a4b36670818633b" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>computation_status</name></member>
+      <member refid="class_hermite_computation_a533b83ca7d1ef7e848ca58e3a3bdbffb_1a533b83ca7d1ef7e848ca58e3a3bdbffb" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>contains</name></member>
+      <member refid="class_hermite_computation_a6cc8e86f4949619b2c2a4ac73d5d644b_1a6cc8e86f4949619b2c2a4ac73d5d644b" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>Fsyz</name></member>
+      <member refid="class_hermite_computation_ab2a39fa582d94959275b6e7b0f8ddccb_1ab2a39fa582d94959275b6e7b0f8ddccb" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>GB_list</name></member>
+      <member refid="class_hermite_computation_a905c2256c83102682eba846df0842718_1a905c2256c83102682eba846df0842718" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>gb_reduce</name></member>
+      <member refid="class_hermite_computation_ab9165fb3d442836b0e5354b677247ee4_1ab9165fb3d442836b0e5354b677247ee4" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>gb_reduce</name></member>
+      <member refid="class_g_b_computation_a79fd4b4b3d036051a3b6b08ab15c6e5f_1a79fd4b4b3d036051a3b6b08ab15c6e5f" prot="protected" virt="non-virtual"><scope>HermiteComputation</scope><name>GBComputation</name></member>
+      <member refid="class_hermite_computation_a8f3b83e3d517935a89ff457714a59347_1a8f3b83e3d517935a89ff457714a59347" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>gens</name></member>
+      <member refid="class_hermite_computation_ad4f19b1cab95c4dbbe1221cfe3833389_1ad4f19b1cab95c4dbbe1221cfe3833389" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>get_change</name></member>
+      <member refid="class_hermite_computation_a9fda50ce985a8f96ced0c5a734c33f52_1a9fda50ce985a8f96ced0c5a734c33f52" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>get_gb</name></member>
+      <member refid="class_hermite_computation_a48c246938a8ef59bd0ae1b0bf05c09a3_1a48c246938a8ef59bd0ae1b0bf05c09a3" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>get_initial</name></member>
+      <member refid="class_hermite_computation_afc0c6ba7d56246dc74b1d3736df7d1b9_1afc0c6ba7d56246dc74b1d3736df7d1b9" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>get_mingens</name></member>
+      <member refid="class_g_b_computation_ad21c5976a3c291f7e67f27fa12fd7a38_1ad21c5976a3c291f7e67f27fa12fd7a38" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>get_parallel_lead_terms</name></member>
+      <member refid="class_hermite_computation_a80be7e1fa96603b761916876f4f2f0d6_1a80be7e1fa96603b761916876f4f2f0d6" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>get_ring</name></member>
+      <member refid="class_hermite_computation_a8f1384687a504630563e46ac1acec572_1a8f1384687a504630563e46ac1acec572" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>get_syzygies</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>hash</name></member>
+      <member refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>HermiteComputation</name></member>
+      <member refid="class_hermite_computation_a8a20ee6a46d6a4a61ffa4003a2db2559_1a8a20ee6a46d6a4a61ffa4003a2db2559" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>insert</name></member>
+      <member refid="class_hermite_computation_add52915d977809127a3b2fba61b6eafe_1add52915d977809127a3b2fba61b6eafe" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>matrix_lift</name></member>
+      <member refid="class_hermite_computation_a0f38fb8e85d4c0671eb34551cc848caf_1a0f38fb8e85d4c0671eb34551cc848caf" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>matrix_remainder</name></member>
+      <member refid="class_hermite_computation_a992dc9f54ed8b8159c89c5061ce57674_1a992dc9f54ed8b8159c89c5061ce57674" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>merge</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>mHashValue</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>MutableEngineObject</name></member>
+      <member refid="class_hermite_computation_a1e1b8ff45ae263271c22e51e30cd344f_1a1e1b8ff45ae263271c22e51e30cd344f" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>n_comps_per_syz</name></member>
+      <member refid="class_hermite_computation_a410ca40db2d428ef11f5bcb8b1223299_1a410ca40db2d428ef11f5bcb8b1223299" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>n_gb</name></member>
+      <member refid="class_hermite_computation_a2127e33cf682aabc6498f588accd5442_1a2127e33cf682aabc6498f588accd5442" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>new_gen</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_hermite_computation_a728abdccc619e66fd85da5bb0345ec41_1a728abdccc619e66fd85da5bb0345ec41" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>reduce</name></member>
+      <member refid="class_hermite_computation_ad03ef97883a746f61c471d58611dc21f_1ad03ef97883a746f61c471d58611dc21f" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>remove_gb</name></member>
+      <member refid="class_hermite_computation_a25928756126d0da2342146ea3db287a4_1a25928756126d0da2342146ea3db287a4" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>remove_hm_elem</name></member>
+      <member refid="class_hermite_computation_ae972e9abb549c747e78ba1d54a384441_1ae972e9abb549c747e78ba1d54a384441" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>row</name></member>
+      <member refid="class_g_b_computation_a06654fcd4834e0599e4b6b3d58d3d81e_1a06654fcd4834e0599e4b6b3d58d3d81e" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>set_hilbert_function</name></member>
+      <member refid="class_computation_a3d43eb6c869405fa62a9b9662f1bdb1d_1a3d43eb6c869405fa62a9b9662f1bdb1d" prot="protected" virt="non-virtual"><scope>HermiteComputation</scope><name>set_status</name></member>
+      <member refid="class_computation_a19ec1bd9578a00958d0a042793471775_1a19ec1bd9578a00958d0a042793471775" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>set_stop_conditions</name></member>
+      <member refid="class_computation_adff8240febcd395f34ede78c797c7ac8_1adff8240febcd395f34ede78c797c7ac8" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>show</name></member>
+      <member refid="class_hermite_computation_afc94471ae40cbcf6d996766b3e491f82_1afc94471ae40cbcf6d996766b3e491f82" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>sort</name></member>
+      <member refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>start_computation</name></member>
+      <member refid="class_computation_a277e8e7771dccf6b37f5ab03edb2e503_1a277e8e7771dccf6b37f5ab03edb2e503" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>status</name></member>
+      <member refid="class_computation_a3e6f044f649095c4907660aa0c36b3a4_1a3e6f044f649095c4907660aa0c36b3a4" prot="protected" virt="non-virtual"><scope>HermiteComputation</scope><name>stop_</name></member>
+      <member refid="class_hermite_computation_a6eea8fe9d4a7a1b59c38d04deb415f7c_1a6eea8fe9d4a7a1b59c38d04deb415f7c" prot="private" virt="virtual"><scope>HermiteComputation</scope><name>stop_conditions_ok</name></member>
+      <member refid="class_hermite_computation_a31662941ebf429ccb37bf61f6522356e_1a31662941ebf429ccb37bf61f6522356e" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>text_out</name></member>
+      <member refid="class_hermite_computation_aabf0f4cd1209fac3fae4c5063020ccf0_1aabf0f4cd1209fac3fae4c5063020ccf0" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>VECTOR</name></member>
+      <member refid="class_hermite_computation_aff9d45bcc8ab5956d5faa3a32cd4c81a_1aff9d45bcc8ab5956d5faa3a32cd4c81a" prot="private" virt="non-virtual"><scope>HermiteComputation</scope><name>VECTOR</name></member>
+      <member refid="class_computation_aad14e9593597150e351ee5d3a9a87ebe_1aad14e9593597150e351ee5d3a9a87ebe" prot="protected" virt="virtual"><scope>HermiteComputation</scope><name>~Computation</name></member>
+      <member refid="class_g_b_computation_a279d5f9b9161e846c7e6afd10badb59a_1a279d5f9b9161e846c7e6afd10badb59a" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>~GBComputation</name></member>
+      <member refid="class_hermite_computation_a48af30122752f103fabb50db08142fcc_1a48af30122752f103fabb50db08142fcc" prot="public" virt="non-virtual"><scope>HermiteComputation</scope><name>~HermiteComputation</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>HermiteComputation</scope><name>~our_gc_cleanup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,462 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4" kind="class" language="C++" prot="public">
+    <compoundname>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</compoundname>
+    <basecompoundref refid="class_homotopy" prot="public" virt="non-virtual">Homotopy</basecompoundref>
+    <basecompoundref refid="class_homotopy" prot="public" virt="non-virtual">Homotopy</basecompoundref>
+    <includes refid="_s_l_p-defs_8hpp" local="no">SLP-defs.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename RT</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a6b61b6f3a162726d2b8e73f6d52b4f1a_1a6b61b6f3a162726d2b8e73f6d52b4f1a" prot="public" static="no">
+        <type><ref refid="class_s_l_evaluator_concrete" kindref="compound">SLEvaluatorConcrete</ref>&lt; RT &gt;</type>
+        <definition>typedef SLEvaluatorConcrete&lt;RT&gt; HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::EType</definition>
+        <argsstring></argsstring>
+        <name>EType</name>
+        <qualifiedname>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::EType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="390" column="31" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="390" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a445c3eaa035da924d362d60c95c78a5c_1a445c3eaa035da924d362d60c95c78a5c" prot="private" static="no" mutable="no">
+        <type><ref refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a6b61b6f3a162726d2b8e73f6d52b4f1a_1a6b61b6f3a162726d2b8e73f6d52b4f1a" kindref="member">EType</ref> &amp;</type>
+        <definition>EType&amp; HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::mHx</definition>
+        <argsstring></argsstring>
+        <name>mHx</name>
+        <qualifiedname>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::mHx</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="409" column="9" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="409" bodyend="-1"/>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_acdc290dbd892095ebb5715289a94bde4_1acdc290dbd892095ebb5715289a94bde4" compoundref="_s_l_p-imp_8hpp" startline="836" endline="842">HomotopyConcrete</referencedby>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_aaadf30d50842f99a1474e8642f159904_1aaadf30d50842f99a1474e8642f159904" compoundref="_s_l_p-imp_8hpp" startline="845" endline="855">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3f7c91b427972aafc125c90b137ae1fd_1a3f7c91b427972aafc125c90b137ae1fd" prot="private" static="no" mutable="no">
+        <type><ref refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a6b61b6f3a162726d2b8e73f6d52b4f1a_1a6b61b6f3a162726d2b8e73f6d52b4f1a" kindref="member">EType</ref> &amp;</type>
+        <definition>EType &amp; HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::mHxt</definition>
+        <argsstring></argsstring>
+        <name>mHxt</name>
+        <qualifiedname>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::mHxt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="409" column="13" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="409" bodyend="-1"/>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_acdc290dbd892095ebb5715289a94bde4_1acdc290dbd892095ebb5715289a94bde4" compoundref="_s_l_p-imp_8hpp" startline="836" endline="842">HomotopyConcrete</referencedby>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_aaadf30d50842f99a1474e8642f159904_1aaadf30d50842f99a1474e8642f159904" compoundref="_s_l_p-imp_8hpp" startline="845" endline="855">text_out</referencedby>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3b9bca2865f35bb84a20d66e13f64880_1a3b9bca2865f35bb84a20d66e13f64880" compoundref="_s_l_p-imp_8hpp" startline="381" endline="803">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_ae64b0e83f26af414df052037ca974f7e_1ae64b0e83f26af414df052037ca974f7e" prot="private" static="no" mutable="no">
+        <type><ref refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a6b61b6f3a162726d2b8e73f6d52b4f1a_1a6b61b6f3a162726d2b8e73f6d52b4f1a" kindref="member">EType</ref> &amp;</type>
+        <definition>EType &amp; HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::mHxH</definition>
+        <argsstring></argsstring>
+        <name>mHxH</name>
+        <qualifiedname>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::mHxH</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="409" column="18" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="409" bodyend="-1"/>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_acdc290dbd892095ebb5715289a94bde4_1acdc290dbd892095ebb5715289a94bde4" compoundref="_s_l_p-imp_8hpp" startline="836" endline="842">HomotopyConcrete</referencedby>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_aaadf30d50842f99a1474e8642f159904_1aaadf30d50842f99a1474e8642f159904" compoundref="_s_l_p-imp_8hpp" startline="845" endline="855">text_out</referencedby>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3b9bca2865f35bb84a20d66e13f64880_1a3b9bca2865f35bb84a20d66e13f64880" compoundref="_s_l_p-imp_8hpp" startline="381" endline="803">track</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_acdc290dbd892095ebb5715289a94bde4_1acdc290dbd892095ebb5715289a94bde4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::HomotopyConcrete</definition>
+        <argsstring>(EType &amp;Hx, EType &amp;Hxt, EType &amp;HxH)</argsstring>
+        <name>HomotopyConcrete</name>
+        <qualifiedname>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::HomotopyConcrete</qualifiedname>
+        <param>
+          <type><ref refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a6b61b6f3a162726d2b8e73f6d52b4f1a_1a6b61b6f3a162726d2b8e73f6d52b4f1a" kindref="member">EType</ref> &amp;</type>
+          <declname>Hx</declname>
+        </param>
+        <param>
+          <type><ref refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a6b61b6f3a162726d2b8e73f6d52b4f1a_1a6b61b6f3a162726d2b8e73f6d52b4f1a" kindref="member">EType</ref> &amp;</type>
+          <declname>Hxt</declname>
+        </param>
+        <param>
+          <type><ref refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a6b61b6f3a162726d2b8e73f6d52b4f1a_1a6b61b6f3a162726d2b8e73f6d52b4f1a" kindref="member">EType</ref> &amp;</type>
+          <declname>HxH</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="391" column="3" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="836" bodyend="842"/>
+        <references refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a445c3eaa035da924d362d60c95c78a5c_1a445c3eaa035da924d362d60c95c78a5c" compoundref="_s_l_p-defs_8hpp" startline="409">mHx</references>
+        <references refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_ae64b0e83f26af414df052037ca974f7e_1ae64b0e83f26af414df052037ca974f7e" compoundref="_s_l_p-defs_8hpp" startline="409">mHxH</references>
+        <references refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3f7c91b427972aafc125c90b137ae1fd_1a3f7c91b427972aafc125c90b137ae1fd" compoundref="_s_l_p-defs_8hpp" startline="409">mHxt</references>
+      </memberdef>
+      <memberdef kind="function" id="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3b9bca2865f35bb84a20d66e13f64880_1a3b9bca2865f35bb84a20d66e13f64880" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::track</definition>
+        <argsstring>(const MutableMatrix *inputs, MutableMatrix *outputs, MutableMatrix *output_extras, gmp_RR init_dt, gmp_RR min_dt, gmp_RR epsilon, int max_corr_steps, gmp_RR infinity_threshold, bool checkPrecision)</argsstring>
+        <name>track</name>
+        <qualifiedname>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::track</qualifiedname>
+        <reimplements refid="class_homotopy_a8cdcc093f711671949312489f2e55134_1a8cdcc093f711671949312489f2e55134">track</reimplements>
+        <param>
+          <type>const <ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>inputs</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>outputs</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>output_extras</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>init_dt</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>min_dt</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>epsilon</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>max_corr_steps</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>infinity_threshold</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>checkPrecision</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>!! R.add(dx_norm2,dx_norm2,x_norm2); // ||J^{-1}|| + ||x||</para>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="397" column="8" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="381" bodyend="803"/>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3ba7fce4767a511b4e198abec2a4c99b188" compoundref="_s_l_p-imp_8hpp" startline="360">DECREASE_PRECISION</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_mutable_matrix_ad146cd609596d0a9476679ac859257a3_1ad146cd609596d0a9476679ac859257a3">MutableMatrix::get_ring</references>
+        <references refid="class_mutable_mat_a2d83fecb0d5b500f2ce90c0994862bfd_1a2d83fecb0d5b500f2ce90c0994862bfd" compoundref="mutablemat-defs_8hpp" startline="273" endline="273">MutableMat&lt; Mat &gt;::getMat</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3ba7e490774ea33868f8f15abd72b885601" compoundref="_s_l_p-imp_8hpp" startline="359">INCREASE_PRECISION</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3ba6aef281d04152700e72226d365f7f21c" compoundref="_s_l_p-imp_8hpp" startline="356">INFINITY_FAILED</references>
+        <references refid="m2-types_8cpp_a099fb8bd772a630aba17fdb2c8af6869_1a099fb8bd772a630aba17fdb2c8af6869" compoundref="m2-types_8cpp" startline="53">M2_numericalAlgebraicGeometryTrace</references>
+        <references refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_ae64b0e83f26af414df052037ca974f7e_1ae64b0e83f26af414df052037ca974f7e" compoundref="_s_l_p-defs_8hpp" startline="409">mHxH</references>
+        <references refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3f7c91b427972aafc125c90b137ae1fd_1a3f7c91b427972aafc125c90b137ae1fd" compoundref="_s_l_p-defs_8hpp" startline="409">mHxt</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3badb94e0fd59b502e454978d8c134b427c" compoundref="_s_l_p-imp_8hpp" startline="357">MIN_STEP_FAILED</references>
+        <references refid="namespace_matrix_ops_a1fddce779e82000363d19934f65dbf89_1a1fddce779e82000363d19934f65dbf89" compoundref="mat-arith_8hpp" startline="239" endline="245">MatrixOps::negateInPlace</references>
+        <references refid="_s_l_p-imp_8hpp_a957305e8d4212e0a7001ae91d8184dc1_1a957305e8d4212e0a7001ae91d8184dc1" compoundref="_s_l_p-imp_8hpp" startline="336" endline="349">norm2</references>
+        <references refid="mat-arith_8hpp_ac51d49a3a5196503f93ad746a9463a39_1ac51d49a3a5196503f93ad746a9463a39" compoundref="mat-arith_8hpp" startline="181" endline="194">normSquared</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3ba72bd415dfee195dc4ab80b84d6b341d7" compoundref="_s_l_p-imp_8hpp" startline="358">ORIGIN_FAILED</references>
+        <references refid="_s_l_p-imp_8hpp_a69795473eba620d69533472f55d338b0_1a69795473eba620d69533472f55d338b0">PRECISION_SAFETY_BITS</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3ba5ca0e553fcdd1c2b214d73f36b486087" compoundref="_s_l_p-imp_8hpp" startline="353">PROCESSING</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3bafc488491175a6dac9e5881e363ad4c41" compoundref="_s_l_p-imp_8hpp" startline="354">REGULAR</references>
+        <references refid="classbuffer_a766e85d3b4488fbf3c6579398d8bb0f4_1a766e85d3b4488fbf3c6579398d8bb0f4" compoundref="buffer_8hpp" startline="67" endline="67">buffer::reset</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3baf920417d178960fce2227218e7857e83" compoundref="_s_l_p-imp_8hpp" startline="355">SINGULAR</references>
+        <references refid="namespace_matrix_ops_aa40d16a3b137a6750cd46b55bc572c1a_1aa40d16a3b137a6750cd46b55bc572c1a" compoundref="mat-linalg_8hpp" startline="228" endline="235">MatrixOps::solveLinear</references>
+        <references refid="classbuffer_a39972fb7c929bb9e42ed60cddbc1109f_1a39972fb7c929bb9e42ed60cddbc1109f" compoundref="buffer_8hpp" startline="70" endline="74">buffer::str</references>
+        <references refid="mat-arith_8hpp_af3525d02f3098a60b9e93c66531abd6f_1af3525d02f3098a60b9e93c66531abd6f" compoundref="mat-arith_8hpp" startline="197" endline="200">submatrix</references>
+        <references refid="timing_8hpp_a40ee0070225dce08ec51411d10accc20_1a40ee0070225dce08ec51411d10accc20" compoundref="timing_8hpp" startline="65" endline="71">TIME</references>
+      </memberdef>
+      <memberdef kind="function" id="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_aaadf30d50842f99a1474e8642f159904_1aaadf30d50842f99a1474e8642f159904" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::text_out</qualifiedname>
+        <reimplements refid="class_homotopy_a08a864ddbe591a8a30ad252a8ee1314a_1a08a864ddbe591a8a30ad252a8ee1314a">text_out</reimplements>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="406" column="8" bodyfile="Macaulay2/e/SLP-imp.hpp" bodystart="845" bodyend="855"/>
+        <references refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a445c3eaa035da924d362d60c95c78a5c_1a445c3eaa035da924d362d60c95c78a5c" compoundref="_s_l_p-defs_8hpp" startline="409">mHx</references>
+        <references refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_ae64b0e83f26af414df052037ca974f7e_1ae64b0e83f26af414df052037ca974f7e" compoundref="_s_l_p-defs_8hpp" startline="409">mHxH</references>
+        <references refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3f7c91b427972aafc125c90b137ae1fd_1a3f7c91b427972aafc125c90b137ae1fd" compoundref="_s_l_p-defs_8hpp" startline="409">mHxt</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Homotopy</label>
+        <link refid="class_homotopy"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>HomotopyConcrete&lt; RT, Algorithm &gt;</label>
+        <link refid="class_homotopy_concrete"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</label>
+        <link refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="17">
+        <label>ElementType</label>
+      </node>
+      <node id="21">
+        <label>ElementType *</label>
+      </node>
+      <node id="2">
+        <label>Homotopy</label>
+        <link refid="class_homotopy"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>HomotopyConcrete&lt; RT, Algorithm &gt;</label>
+        <link refid="class_homotopy_concrete"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mHx</edgelabel>
+          <edgelabel>mHxH</edgelabel>
+          <edgelabel>mHxt</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</label>
+        <link refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mHx</edgelabel>
+          <edgelabel>mHxH</edgelabel>
+          <edgelabel>mHxt</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="template-instance">
+          <edgelabel>&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>SLEvaluator</label>
+        <link refid="class_s_l_evaluator"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>slp</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>inputPositionsIt</edgelabel>
+          <edgelabel>numInputsIt</edgelabel>
+          <edgelabel>varsPos</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>nIt</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>SLEvaluatorConcrete&lt; RT &gt;</label>
+        <link refid="class_s_l_evaluator_concrete"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>vIt</edgelabel>
+          <edgelabel>values</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>isCompiled</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>nInputs</edgelabel>
+          <edgelabel>nOutputs</edgelabel>
+          <edgelabel>nParams</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>compiled_fn</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>parametersAndInputs</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>SLProgram</label>
+        <link refid="class_s_l_program"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mNodes</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mInputPositions</edgelabel>
+          <edgelabel>mNumInputs</edgelabel>
+          <edgelabel>mOutputPositions</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>inputCounter</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>GATE_TYPE</label>
+      </node>
+      <node id="13">
+        <label>T</label>
+      </node>
+      <node id="19">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="18">
+        <label>const RT &amp;</label>
+      </node>
+      <node id="6">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="12">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>std::vector&lt; ElementType &gt;</label>
+        <childnode refid="17" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; ElementType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; GATE_TYPE &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>std::vector&lt; SLProgram::GATE_TYPE &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; SLProgram::GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>void(*)(ElementType const *, ElementType *)</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/SLP-defs.hpp" line="387" column="1" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="388" bodyend="415"/>
+    <listofallmembers>
+      <member refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a6b61b6f3a162726d2b8e73f6d52b4f1a_1a6b61b6f3a162726d2b8e73f6d52b4f1a" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>EType</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>hash</name></member>
+      <member refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_acdc290dbd892095ebb5715289a94bde4_1acdc290dbd892095ebb5715289a94bde4" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>HomotopyConcrete</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>mHashValue</name></member>
+      <member refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a445c3eaa035da924d362d60c95c78a5c_1a445c3eaa035da924d362d60c95c78a5c" prot="private" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>mHx</name></member>
+      <member refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_ae64b0e83f26af414df052037ca974f7e_1ae64b0e83f26af414df052037ca974f7e" prot="private" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>mHxH</name></member>
+      <member refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3f7c91b427972aafc125c90b137ae1fd_1a3f7c91b427972aafc125c90b137ae1fd" prot="private" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>mHxt</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>MutableEngineObject</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_aaadf30d50842f99a1474e8642f159904_1aaadf30d50842f99a1474e8642f159904" prot="public" virt="virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>text_out</name></member>
+      <member refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3b9bca2865f35bb84a20d66e13f64880_1a3b9bca2865f35bb84a20d66e13f64880" prot="public" virt="virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>track</name></member>
+      <member refid="class_homotopy_af7c8eb9f40708ad7830a5a9b2b4cdfc1_1af7c8eb9f40708ad7830a5a9b2b4cdfc1" prot="public" virt="virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>~Homotopy</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;</scope><name>~our_gc_cleanup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

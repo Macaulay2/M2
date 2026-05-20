@@ -1,0 +1,1375 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m2_free_algebra_or_quotient" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>M2FreeAlgebraOrQuotient</compoundname>
+    <basecompoundref refid="class_ring" prot="public" virt="non-virtual">Ring</basecompoundref>
+    <derivedcompoundref refid="class_m2_free_algebra" prot="public" virt="non-virtual">M2FreeAlgebra</derivedcompoundref>
+    <derivedcompoundref refid="class_m2_free_algebra_quotient" prot="public" virt="non-virtual">M2FreeAlgebraQuotient</derivedcompoundref>
+    <includes refid="_m2_free_algebra_8hpp" local="no">M2FreeAlgebra.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_a17d151d6307a7ee456f9a138e02cab99_1a17d151d6307a7ee456f9a138e02cab99" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_poly" kindref="compound">Poly</ref> *</type>
+        <definition>const Poly * M2FreeAlgebraOrQuotient::toPoly</definition>
+        <argsstring>(const ring_elem f) const</argsstring>
+        <name>toPoly</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::toPoly</qualifiedname>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="76" column="14" bodyfile="Macaulay2/e/M2FreeAlgebra.hpp" bodystart="76" bodyend="76"/>
+        <references refid="unionring__elem_af1b89d106cf5a41f44c69092b44a8871_1af1b89d106cf5a41f44c69092b44a8871" compoundref="ringelem_8hpp" startline="126" endline="126">ring_elem::get_Poly</references>
+        <referencedby refid="matrix_8cpp_a952b9f1778e801313177caaf14a9fa17_1a952b9f1778e801313177caaf14a9fa17" compoundref="matrix_8cpp" startline="1639" endline="1670">NCCoefficientMatrix</referencedby>
+        <referencedby refid="matrix_8cpp_a7fed768cf3caefe3d8b49539e5fb98c3_1a7fed768cf3caefe3d8b49539e5fb98c3" compoundref="matrix_8cpp" startline="1593" endline="1611">NCMonomials</referencedby>
+        <referencedby refid="class_matrix_a5ece789b657b9e79e585011588443142_1a5ece789b657b9e79e585011588443142" compoundref="matrix_8cpp" startline="922" endline="992">Matrix::support</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_a12b0104d0655ae4f1158d9388c134d87_1a12b0104d0655ae4f1158d9388c134d87" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem M2FreeAlgebraOrQuotient::fromPoly</definition>
+        <argsstring>(Poly *f) const</argsstring>
+        <name>fromPoly</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::fromPoly</qualifiedname>
+        <param>
+          <type><ref refid="class_poly" kindref="compound">Poly</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="78" column="13" bodyfile="Macaulay2/e/M2FreeAlgebra.hpp" bodystart="78" bodyend="78"/>
+        <referencedby refid="class_m2_free_algebra_or_quotient_a8f6b47d8267660f4dd01355628d440d5_1a8f6b47d8267660f4dd01355628d440d5" compoundref="_m2_free_algebra_8cpp" startline="36" endline="41">fromModuleMonom</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_a73c08cfe4dfdbca5087c7df3385fdbbe_1a73c08cfe4dfdbca5087c7df3385fdbbe" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void M2FreeAlgebraOrQuotient::appendFromModuleMonom</definition>
+        <argsstring>(Poly &amp;f, const ModuleMonom &amp;m) const</argsstring>
+        <name>appendFromModuleMonom</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::appendFromModuleMonom</qualifiedname>
+        <param>
+          <type><ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_module_monom" kindref="compound">ModuleMonom</ref> &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="80" column="8" bodyfile="Macaulay2/e/M2FreeAlgebra.cpp" bodystart="29" bodyend="34"/>
+        <references refid="_polynomial_8hpp_aeee8ed3853f30ec2ec7dc18210e5cc8f_1aeee8ed3853f30ec2ec7dc18210e5cc8f" compoundref="_polynomial_8hpp" startline="194" endline="200">appendModuleMonomToMonom</references>
+        <references refid="class_m2_free_algebra_or_quotient_acf8b35f77568afe481fc5d4704fc3d62_1acf8b35f77568afe481fc5d4704fc3d62">coefficientRing</references>
+        <references refid="class_ring_a6f6b08df2379200116484876c4fd2d87_1a6f6b08df2379200116484876c4fd2d87">Ring::from_long</references>
+        <referencedby refid="class_m2_free_algebra_or_quotient_a8f6b47d8267660f4dd01355628d440d5_1a8f6b47d8267660f4dd01355628d440d5" compoundref="_m2_free_algebra_8cpp" startline="36" endline="41">fromModuleMonom</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_a8f6b47d8267660f4dd01355628d440d5_1a8f6b47d8267660f4dd01355628d440d5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem M2FreeAlgebraOrQuotient::fromModuleMonom</definition>
+        <argsstring>(const ModuleMonom &amp;m) const</argsstring>
+        <name>fromModuleMonom</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::fromModuleMonom</qualifiedname>
+        <param>
+          <type>const <ref refid="class_module_monom" kindref="compound">ModuleMonom</ref> &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="82" column="13" bodyfile="Macaulay2/e/M2FreeAlgebra.cpp" bodystart="36" bodyend="41"/>
+        <references refid="class_m2_free_algebra_or_quotient_a73c08cfe4dfdbca5087c7df3385fdbbe_1a73c08cfe4dfdbca5087c7df3385fdbbe" compoundref="_m2_free_algebra_8cpp" startline="29" endline="34">appendFromModuleMonom</references>
+        <references refid="class_m2_free_algebra_or_quotient_a12b0104d0655ae4f1158d9388c134d87_1a12b0104d0655ae4f1158d9388c134d87" compoundref="_m2_free_algebra_8hpp" startline="78" endline="78">fromPoly</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="matrix_8cpp_a4f13d3c8e74445cda518d947eae7032f_1a4f13d3c8e74445cda518d947eae7032f" compoundref="matrix_8cpp" startline="1615" endline="1637">NCMonomialMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_ac66576250262ac0cdbabee12387d075f_1ac66576250262ac0cdbabee12387d075f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>const <ref refid="class_free_algebra" kindref="compound">FreeAlgebra</ref> &amp;</type>
+        <definition>virtual const FreeAlgebra &amp; M2FreeAlgebraOrQuotient::freeAlgebra</definition>
+        <argsstring>() const =0</argsstring>
+        <name>freeAlgebra</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::freeAlgebra</qualifiedname>
+        <reimplementedby refid="class_m2_free_algebra_a5dc8ed403e1126aca5b3d56c5f63b374_1a5dc8ed403e1126aca5b3d56c5f63b374">freeAlgebra</reimplementedby>
+        <reimplementedby refid="class_m2_free_algebra_quotient_a4e3b884dd6a46fc51d7e295a2ab40b7a_1a4e3b884dd6a46fc51d7e295a2ab40b7a">freeAlgebra</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="85" column="29"/>
+        <referencedby refid="_m2_free_algebra_8cpp_a4a116dabef5fc374f622bd0cc144d700_1a4a116dabef5fc374f622bd0cc144d700" compoundref="_m2_free_algebra_8cpp" startline="14" endline="27">copyPolyVector</referencedby>
+        <referencedby refid="class_matrix_a5ece789b657b9e79e585011588443142_1a5ece789b657b9e79e585011588443142" compoundref="matrix_8cpp" startline="922" endline="992">Matrix::support</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_a60c80bd232b6add775c56c1d7e39660f_1a60c80bd232b6add775c56c1d7e39660f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>virtual int M2FreeAlgebraOrQuotient::n_vars</definition>
+        <argsstring>() const =0</argsstring>
+        <name>n_vars</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::n_vars</qualifiedname>
+        <reimplementedby refid="class_m2_free_algebra_a1e23fd4be1079a2d3902c88417cf1bc2_1a1e23fd4be1079a2d3902c88417cf1bc2">n_vars</reimplementedby>
+        <reimplementedby refid="class_m2_free_algebra_quotient_a42be6f31fbfed1200f9f0118bd1784f7_1a42be6f31fbfed1200f9f0118bd1784f7">n_vars</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="87" column="15"/>
+        <referencedby refid="class_matrix_af953eb5dd592f28b182853d8683cff0b_1af953eb5dd592f28b182853d8683cff0b" compoundref="matrix_8cpp" startline="1852" endline="1923">Matrix::coeffs</referencedby>
+        <referencedby refid="class_matrix_a6c889f744b576633a501899aed9c4829_1a6c889f744b576633a501899aed9c4829" compoundref="matrix_8cpp" startline="1699" endline="1786">Matrix::monomials</referencedby>
+        <referencedby refid="matrix_8cpp_ab98e0e3a363839f466cfbc454ee61917_1ab98e0e3a363839f466cfbc454ee61917" compoundref="matrix_8cpp" startline="1673" endline="1690">NCCoefficientMatrix</referencedby>
+        <referencedby refid="class_matrix_a5ece789b657b9e79e585011588443142_1a5ece789b657b9e79e585011588443142" compoundref="matrix_8cpp" startline="922" endline="992">Matrix::support</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_acf8b35f77568afe481fc5d4704fc3d62_1acf8b35f77568afe481fc5d4704fc3d62" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>virtual const Ring * M2FreeAlgebraOrQuotient::coefficientRing</definition>
+        <argsstring>() const =0</argsstring>
+        <name>coefficientRing</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::coefficientRing</qualifiedname>
+        <reimplementedby refid="class_m2_free_algebra_a68b2cdd7d70ac34918617b60f4811248_1a68b2cdd7d70ac34918617b60f4811248">coefficientRing</reimplementedby>
+        <reimplementedby refid="class_m2_free_algebra_quotient_a916835d3a4d8d2fa22cb0604c925aaf8_1a916835d3a4d8d2fa22cb0604c925aaf8">coefficientRing</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="89" column="22"/>
+        <references refid="class_ring_afc47f40ab072db783126111b70693e49_1afc47f40ab072db783126111b70693e49" compoundref="ring_8hpp" startline="134" endline="146">Ring::Ring</references>
+        <referencedby refid="class_m2_free_algebra_or_quotient_a73c08cfe4dfdbca5087c7df3385fdbbe_1a73c08cfe4dfdbca5087c7df3385fdbbe" compoundref="_m2_free_algebra_8cpp" startline="29" endline="34">appendFromModuleMonom</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_a169f64ffc27f9928b77184dd9af11cdc_1a169f64ffc27f9928b77184dd9af11cdc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>virtual ring_elem M2FreeAlgebraOrQuotient::from_coefficient</definition>
+        <argsstring>(const ring_elem a) const =0</argsstring>
+        <name>from_coefficient</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::from_coefficient</qualifiedname>
+        <reimplementedby refid="class_m2_free_algebra_a138a1c64c525b8e8a9b95512525394a1_1a138a1c64c525b8e8a9b95512525394a1">from_coefficient</reimplementedby>
+        <reimplementedby refid="class_m2_free_algebra_quotient_a7b3ffb1c1de3579372e5c4fdd8174a47_1a7b3ffb1c1de3579372e5c4fdd8174a47">from_coefficient</reimplementedby>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="91" column="21"/>
+        <referencedby refid="matrix_8cpp_a952b9f1778e801313177caaf14a9fa17_1a952b9f1778e801313177caaf14a9fa17" compoundref="matrix_8cpp" startline="1639" endline="1670">NCCoefficientMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_aa9d22611d63333836aac8454f6ae9e31_1aa9d22611d63333836aac8454f6ae9e31" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>virtual ring_elem M2FreeAlgebraOrQuotient::makeTerm</definition>
+        <argsstring>(const ring_elem a, const_varpower monom) const =0</argsstring>
+        <name>makeTerm</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::makeTerm</qualifiedname>
+        <param>
+          <type>const <ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="_exponent_list_8hpp_a32c7462759c905470880b0dba58f00ad_1a32c7462759c905470880b0dba58f00ad" kindref="member">const_varpower</ref></type>
+          <declname>monom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="93" column="21"/>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_a48f0f0d643d86fa095ff7d5077de23cd_1a48f0f0d643d86fa095ff7d5077de23cd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>const <ref refid="class_m2_free_algebra_or_quotient" kindref="compound">M2FreeAlgebraOrQuotient</ref> *</type>
+        <definition>virtual const M2FreeAlgebraOrQuotient * M2FreeAlgebraOrQuotient::cast_to_M2FreeAlgebraOrQuotient</definition>
+        <argsstring>() const</argsstring>
+        <name>cast_to_M2FreeAlgebraOrQuotient</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::cast_to_M2FreeAlgebraOrQuotient</qualifiedname>
+        <reimplements refid="class_ring_a286aabec438ab60130a28d32e97f45e8_1a286aabec438ab60130a28d32e97f45e8">cast_to_M2FreeAlgebraOrQuotient</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="96" column="42" bodyfile="Macaulay2/e/M2FreeAlgebra.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_a975c540e73c4d40ba5a03e5363d9fa1f_1a975c540e73c4d40ba5a03e5363d9fa1f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_m2_free_algebra_or_quotient" kindref="compound">M2FreeAlgebraOrQuotient</ref> *</type>
+        <definition>virtual M2FreeAlgebraOrQuotient * M2FreeAlgebraOrQuotient::cast_to_M2FreeAlgebraOrQuotient</definition>
+        <argsstring>()</argsstring>
+        <name>cast_to_M2FreeAlgebraOrQuotient</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::cast_to_M2FreeAlgebraOrQuotient</qualifiedname>
+        <reimplements refid="class_ring_aa9f624cb89535780c20845a29c4501aa_1aa9f624cb89535780c20845a29c4501aa">cast_to_M2FreeAlgebraOrQuotient</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="97" column="42" bodyfile="Macaulay2/e/M2FreeAlgebra.hpp" bodystart="97" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_free_algebra_or_quotient_a93b8d9ab10bafaf14bf1873b38920975_1a93b8d9ab10bafaf14bf1873b38920975" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool M2FreeAlgebraOrQuotient::is_commutative_ring</definition>
+        <argsstring>() const</argsstring>
+        <name>is_commutative_ring</name>
+        <qualifiedname>M2FreeAlgebraOrQuotient::is_commutative_ring</qualifiedname>
+        <reimplements refid="class_ring_a55f6f16ce0a6e984c2994d60265c594e_1a55f6f16ce0a6e984c2994d60265c594e">is_commutative_ring</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="99" column="8" bodyfile="Macaulay2/e/M2FreeAlgebra.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Abstract <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput> subclass that lifts either a <computeroutput><ref refid="class_free_algebra" kindref="compound">FreeAlgebra</ref></computeroutput> or a <computeroutput><ref refid="class_free_algebra_quotient" kindref="compound">FreeAlgebraQuotient</ref></computeroutput> into the engine&apos;s <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput> hierarchy. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The common base of <computeroutput><ref refid="class_m2_free_algebra" kindref="compound">M2FreeAlgebra</ref></computeroutput> (the unquotiented case) and <computeroutput><ref refid="class_m2_free_algebra_quotient" kindref="compound">M2FreeAlgebraQuotient</ref></computeroutput>. Provides the <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput> overrides that dispatch to the underlying <computeroutput><ref refid="class_m2_free_algebra_or_quotient_ac66576250262ac0cdbabee12387d075f_1ac66576250262ac0cdbabee12387d075f" kindref="member">freeAlgebra()</ref></computeroutput> and the type-safe cast helpers (<computeroutput><ref refid="class_m2_free_algebra_or_quotient_a17d151d6307a7ee456f9a138e02cab99_1a17d151d6307a7ee456f9a138e02cab99" kindref="member">toPoly</ref></computeroutput> / <computeroutput><ref refid="class_m2_free_algebra_or_quotient_a12b0104d0655ae4f1158d9388c134d87_1a12b0104d0655ae4f1158d9388c134d87" kindref="member">fromPoly</ref></computeroutput> / <computeroutput><ref refid="class_m2_free_algebra_or_quotient_a73c08cfe4dfdbca5087c7df3385fdbbe_1a73c08cfe4dfdbca5087c7df3385fdbbe" kindref="member">appendFromModuleMonom</ref></computeroutput>) the rest of the engine uses to convert between opaque <computeroutput><ref refid="unionring__elem" kindref="compound">ring_elem</ref></computeroutput> handles and concrete <computeroutput>Poly*</computeroutput> values. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="6">
+        <label>M2FreeAlgebra</label>
+        <link refid="class_m2_free_algebra"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>M2FreeAlgebraOrQuotient</label>
+        <link refid="class_m2_free_algebra_or_quotient"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>M2FreeAlgebraQuotient</label>
+        <link refid="class_m2_free_algebra_quotient"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="80">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="66" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="67" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="67" relation="public-inheritance">
+        </childnode>
+        <childnode refid="68" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>M2FreeAlgebraOrQuotient</label>
+        <link refid="class_m2_free_algebra_or_quotient"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="74">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="29" relation="private-inheritance">
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="31" relation="public-inheritance">
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="24" relation="private-inheritance">
+        </childnode>
+        <childnode refid="28" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="53">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="31">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="32" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>CoefficientType</label>
+      </node>
+      <node id="77">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="49">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="9">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="47">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="42" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>char</label>
+      </node>
+      <node id="79">
+        <label>const ARing *</label>
+      </node>
+      <node id="21">
+        <label>const void *</label>
+      </node>
+      <node id="42">
+        <label>double</label>
+      </node>
+      <node id="63">
+        <label>overflow_type *</label>
+      </node>
+      <node id="60">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="62">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="78">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="6">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="41">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="38" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>long</label>
+      </node>
+      <node id="33">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="34" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>mon_part</label>
+      </node>
+      <node id="46">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="45">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="43">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="44">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="4">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="38">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>size_t</label>
+      </node>
+      <node id="70">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>spinLock</label>
+      </node>
+      <node id="69">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="57">
+        <label>std::string</label>
+        <childnode refid="58" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="17" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="57" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>unsigned</label>
+      </node>
+      <node id="18">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="22">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/M2FreeAlgebra.hpp" line="73" column="1" bodyfile="Macaulay2/e/M2FreeAlgebra.hpp" bodystart="74" bodyend="101"/>
+    <listofallmembers>
+      <member refid="class_ring_ac5e9bd3e5bd7e2415c1fb3d9833270c6_1ac5e9bd3e5bd7e2415c1fb3d9833270c6" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>_isfield</name></member>
+      <member refid="class_ring_ac8ec4b4da9a18f60fca0c1caccc271df_1ac8ec4b4da9a18f60fca0c1caccc271df" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>_non_unit</name></member>
+      <member refid="class_ring_a42c4388ce795defc9623eb717f5bbbe4_1a42c4388ce795defc9623eb717f5bbbe4" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>add</name></member>
+      <member refid="class_ring_acf98d2d1f7fd61fd52af3c0a17d9d225_1acf98d2d1f7fd61fd52af3c0a17d9d225" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>add_to</name></member>
+      <member refid="class_ring_a2d0064f7d1877548f72015358f32b9ad_1a2d0064f7d1877548f72015358f32b9ad" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>add_vec</name></member>
+      <member refid="class_ring_ac3bf5e7ce2fc181cc6944e8614ca86c1_1ac3bf5e7ce2fc181cc6944e8614ca86c1" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>add_vec_to</name></member>
+      <member refid="class_ring_a91c9c1b47e0968110b4858c3681473e5_1a91c9c1b47e0968110b4858c3681473e5" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>antipode</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_a73c08cfe4dfdbca5087c7df3385fdbbe_1a73c08cfe4dfdbca5087c7df3385fdbbe" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>appendFromModuleMonom</name></member>
+      <member refid="class_ring_ac9e36e18256f782da9a718d44166205d_1ac9e36e18256f782da9a718d44166205d" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>AR</name></member>
+      <member refid="class_ring_aaba7c2b2888d68da40f607b8cd080c83_1aaba7c2b2888d68da40f607b8cd080c83" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_CCC</name></member>
+      <member refid="class_ring_ae52cabc7a69b37fdd83e19536500d2b6_1ae52cabc7a69b37fdd83e19536500d2b6" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_CCC</name></member>
+      <member refid="class_ring_abac24f11adbfb7546d7ee6a4828ed437_1abac24f11adbfb7546d7ee6a4828ed437" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_FractionField</name></member>
+      <member refid="class_ring_a1fb11fa6353e5e36561a9b01cc9f2d20_1a1fb11fa6353e5e36561a9b01cc9f2d20" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_FractionField</name></member>
+      <member refid="class_ring_a818bdd402400742b8311518be00eef0e_1a818bdd402400742b8311518be00eef0e" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_GF</name></member>
+      <member refid="class_ring_aee847ac326cb77cce0d985a7e77a77aa_1aee847ac326cb77cce0d985a7e77a77aa" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_GF</name></member>
+      <member refid="class_ring_a80f38d20ffdbd9761dde59eb667b0f88_1a80f38d20ffdbd9761dde59eb667b0f88" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_LocalRing</name></member>
+      <member refid="class_ring_a49da97e00d54309c23fc16c355263f28_1a49da97e00d54309c23fc16c355263f28" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_LocalRing</name></member>
+      <member refid="class_ring_ab2a7cce4d1d8e95b41ad1e671464cae4_1ab2a7cce4d1d8e95b41ad1e671464cae4" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_M2FreeAlgebra</name></member>
+      <member refid="class_ring_a379f9d040522a242df6542269f10ceb7_1a379f9d040522a242df6542269f10ceb7" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_M2FreeAlgebra</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_a48f0f0d643d86fa095ff7d5077de23cd_1a48f0f0d643d86fa095ff7d5077de23cd" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_M2FreeAlgebraOrQuotient</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_a975c540e73c4d40ba5a03e5363d9fa1f_1a975c540e73c4d40ba5a03e5363d9fa1f" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_M2FreeAlgebraOrQuotient</name></member>
+      <member refid="class_ring_ae36769cd80a4d5dde599decb42148258_1ae36769cd80a4d5dde599decb42148258" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_M2FreeAlgebraQuotient</name></member>
+      <member refid="class_ring_ae025d54cb685db5b0654accddfaa3867_1ae025d54cb685db5b0654accddfaa3867" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_M2FreeAlgebraQuotient</name></member>
+      <member refid="class_ring_a73bec90f6a8598b3c5cdc201b068589a_1a73bec90f6a8598b3c5cdc201b068589a" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_PolynomialRing</name></member>
+      <member refid="class_ring_a66a508d54f7fdfe02cf64121f6106236_1a66a508d54f7fdfe02cf64121f6106236" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_PolynomialRing</name></member>
+      <member refid="class_ring_a633e1853e941b3db3efdcfa957f5a9dd_1a633e1853e941b3db3efdcfa957f5a9dd" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_PolyQQ</name></member>
+      <member refid="class_ring_a2423c0028c9f59eafabd699c10f8502e_1a2423c0028c9f59eafabd699c10f8502e" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_PolyQQ</name></member>
+      <member refid="class_ring_a5865f77be73c587eb610137880c3ad83_1a5865f77be73c587eb610137880c3ad83" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_PolyRing</name></member>
+      <member refid="class_ring_a0d6e48cd1cb6bb3bea94ace27707129a_1a0d6e48cd1cb6bb3bea94ace27707129a" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_PolyRing</name></member>
+      <member refid="class_ring_a0ce467b696529ad81f065db91039e327_1a0ce467b696529ad81f065db91039e327" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_PolyRingFlat</name></member>
+      <member refid="class_ring_a823c6a536017e7de869fb3b5d8d88d66_1a823c6a536017e7de869fb3b5d8d88d66" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_PolyRingFlat</name></member>
+      <member refid="class_ring_a936e5db9bd5557091bf58a4eb85dea7a_1a936e5db9bd5557091bf58a4eb85dea7a" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_RingZZ</name></member>
+      <member refid="class_ring_a2e0756c7ebf0c7f78f005237cb2210ee_1a2e0756c7ebf0c7f78f005237cb2210ee" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_RingZZ</name></member>
+      <member refid="class_ring_ac2e8a112b1ac67b09e5e9b85bc6f5e62_1ac2e8a112b1ac67b09e5e9b85bc6f5e62" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_RRi</name></member>
+      <member refid="class_ring_a2a18b1414f13b5a35ee57670c173bec4_1a2a18b1414f13b5a35ee57670c173bec4" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_RRi</name></member>
+      <member refid="class_ring_af7efcd50a2c19dfce6f1fdb580ad98e2_1af7efcd50a2c19dfce6f1fdb580ad98e2" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_RRR</name></member>
+      <member refid="class_ring_a80deb359a178d16c5659001278b58f1d_1a80deb359a178d16c5659001278b58f1d" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_RRR</name></member>
+      <member refid="class_ring_af38b874a5a235b2cd03816471371908f_1af38b874a5a235b2cd03816471371908f" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SchurRing</name></member>
+      <member refid="class_ring_a6e433c64e41386e300ab97d562108f8c_1a6e433c64e41386e300ab97d562108f8c" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SchurRing</name></member>
+      <member refid="class_ring_a2acc0205bd15c6529c1c92319e274b8e_1a2acc0205bd15c6529c1c92319e274b8e" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SchurRing2</name></member>
+      <member refid="class_ring_a1b42c2eb2d8930bac31c85842731ee0e_1a1b42c2eb2d8930bac31c85842731ee0e" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SchurRing2</name></member>
+      <member refid="class_ring_a1f73d5a15475904a20bcb69e503682a0_1a1f73d5a15475904a20bcb69e503682a0" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SchurSnRing</name></member>
+      <member refid="class_ring_ad4200b4ab038508ab52f379fb390c358_1ad4200b4ab038508ab52f379fb390c358" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SchurSnRing</name></member>
+      <member refid="class_ring_a529f658255bd3bea346554af199d016f_1a529f658255bd3bea346554af199d016f" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SkewPolynomialRing</name></member>
+      <member refid="class_ring_a628d0257ad367b9e87ae6706e531b95e_1a628d0257ad367b9e87ae6706e531b95e" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SkewPolynomialRing</name></member>
+      <member refid="class_ring_a648505f7067ef8840614df6824a8e2db_1a648505f7067ef8840614df6824a8e2db" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SolvableAlgebra</name></member>
+      <member refid="class_ring_a646e4db68d5b10caab4320b9a2fd1713_1a646e4db68d5b10caab4320b9a2fd1713" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_SolvableAlgebra</name></member>
+      <member refid="class_ring_afc5332a0192792c7f5bcb93e50c2fdb6_1afc5332a0192792c7f5bcb93e50c2fdb6" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_Tower</name></member>
+      <member refid="class_ring_a82654370d6323a1745382d59962e52f6_1a82654370d6323a1745382d59962e52f6" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_Tower</name></member>
+      <member refid="class_ring_aadf9260e1d99f0b08e3ed003f5308892_1aadf9260e1d99f0b08e3ed003f5308892" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_WeylAlgebra</name></member>
+      <member refid="class_ring_afb361d60c3594b4119c75ef3c9fc39b9_1afb361d60c3594b4119c75ef3c9fc39b9" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_Z_mod</name></member>
+      <member refid="class_ring_ae8e586b1344424c11ffed9d3061dc4ff_1ae8e586b1344424c11ffed9d3061dc4ff" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cast_to_Z_mod</name></member>
+      <member refid="class_ring_a7cd0d24169c1a88e6b93f3d7dbcd3387_1a7cd0d24169c1a88e6b93f3d7dbcd3387" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>characteristic</name></member>
+      <member refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532dab05d5f638a953b716e0701ba454ddf13" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>COEFF_BASIC</name></member>
+      <member refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532da2271da0c782d50ac47467d67b7fc64ce" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>COEFF_QQ</name></member>
+      <member refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532da76f8086b75bdd0581c27856e8881671a" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>COEFF_ZZ</name></member>
+      <member refid="class_ring_add08b7838779d3f97d159add46889c87_1add08b7838779d3f97d159add46889c87" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>coefficient_type</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_acf8b35f77568afe481fc5d4704fc3d62_1acf8b35f77568afe481fc5d4704fc3d62" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>coefficientRing</name></member>
+      <member refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532d" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>CoefficientType</name></member>
+      <member refid="class_ring_a3d64baae17fd73c1e9b0ed62898e558f_1a3d64baae17fd73c1e9b0ed62898e558f" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>coerceToLongInteger</name></member>
+      <member refid="class_ring_ac7003d0bc8d7d274777ccfb0bd3ec229_1ac7003d0bc8d7d274777ccfb0bd3ec229" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>compare_elems</name></member>
+      <member refid="class_ring_ac7b396105799bf0b67780b8d8b772e5d_1ac7b396105799bf0b67780b8d8b772e5d" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>compare_vecs</name></member>
+      <member refid="class_ring_a03119f391a83b5d4aa09b61c2153c6ab_1a03119f391a83b5d4aa09b61c2153c6ab" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>component_shift</name></member>
+      <member refid="class_ring_a3b6fc1b8f37189988d93646fab3eac08_1a3b6fc1b8f37189988d93646fab3eac08" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>computeHashValue</name></member>
+      <member refid="class_ring_a0ab7570d01b0e4b18fcfdf72668b91e7_1a0ab7570d01b0e4b18fcfdf72668b91e7" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>content</name></member>
+      <member refid="class_ring_a46fe6b3a58388e34b172b986f6be03ea_1a46fe6b3a58388e34b172b986f6be03ea" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>content</name></member>
+      <member refid="class_ring_a84bd4fdbdd4e1e44b2b24ad800138e1c_1a84bd4fdbdd4e1e44b2b24ad800138e1c" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>copy</name></member>
+      <member refid="class_ring_aef0dd726d2923b97198ae701dc3406a6_1aef0dd726d2923b97198ae701dc3406a6" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>copy_vec</name></member>
+      <member refid="class_ring_acc300658ceae4094ac946e8b5cfce1bc_1acc300658ceae4094ac946e8b5cfce1bc" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>cR</name></member>
+      <member refid="class_ring_a98ef2f8ada27c36827d94e335621c70d_1a98ef2f8ada27c36827d94e335621c70d" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>declare_field</name></member>
+      <member refid="class_ring_a6d663532d7b3b017e4cbe2a0e5ba28f7_1a6d663532d7b3b017e4cbe2a0e5ba28f7" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>degree</name></member>
+      <member refid="class_ring_af6404c989f5555bba318266e64effbb0_1af6404c989f5555bba318266e64effbb0" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>degree_monoid</name></member>
+      <member refid="class_ring_a4e183811e66298270c5f9dd77277f578_1a4e183811e66298270c5f9dd77277f578" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>degree_of_var</name></member>
+      <member refid="class_ring_ad78d8ea1a78b3ad976f028ac76c8d7c2_1ad78d8ea1a78b3ad976f028ac76c8d7c2" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>degree_ring</name></member>
+      <member refid="class_ring_a36c52e277f95e718d0ea56d1c3f0b799_1a36c52e277f95e718d0ea56d1c3f0b799" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>degree_weights</name></member>
+      <member refid="class_ring_aaa29b73bd6988f789e56afdc266816d9_1aaa29b73bd6988f789e56afdc266816d9" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>diff</name></member>
+      <member refid="class_ring_aae34ad2fae6aaadf8895d3c6abe81d6b_1aae34ad2fae6aaadf8895d3c6abe81d6b" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>discreteLog</name></member>
+      <member refid="class_ring_a2b8cbd8d5bfa9610f5f1070e390ef2c8_1a2b8cbd8d5bfa9610f5f1070e390ef2c8" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>divide</name></member>
+      <member refid="class_ring_a5d4ec37ff9c9cfe80a643f210730cb32_1a5d4ec37ff9c9cfe80a643f210730cb32" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>divide_by_content</name></member>
+      <member refid="class_ring_a00425962be22e15c9933f78bd6dedf80_1a00425962be22e15c9933f78bd6dedf80" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>divide_by_expvector</name></member>
+      <member refid="class_ring_a4a1ef4f6242a3231f998fce85fa76717_1a4a1ef4f6242a3231f998fce85fa76717" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>divide_by_given_content</name></member>
+      <member refid="class_ring_a9506152db714ef40d2f7acf8773a8d7a_1a9506152db714ef40d2f7acf8773a8d7a" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>divide_by_var</name></member>
+      <member refid="class_ring_a52f9b58452ad1b821cb2d0bb0a5761c5_1a52f9b58452ad1b821cb2d0bb0a5761c5" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>divide_row</name></member>
+      <member refid="class_ring_a7a57a30263273b99105c15817749aa02_1a7a57a30263273b99105c15817749aa02" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>divide_vec_to</name></member>
+      <member refid="class_ring_ae46d51a29fe69f2e0931a2a34c31a8ed_1ae46d51a29fe69f2e0931a2a34c31a8ed" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>dot_product</name></member>
+      <member refid="class_ring_af4273c605af5eb38c425447035801330_1af4273c605af5eb38c425447035801330" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>e_sub_i</name></member>
+      <member refid="class_ring_a7681f099a40a51225f38f66386820c39_1a7681f099a40a51225f38f66386820c39" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>elem_text_out</name></member>
+      <member refid="class_ring_ae73829237c339809a6e9c6dd90897a14_1ae73829237c339809a6e9c6dd90897a14" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>eval</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_ac66576250262ac0cdbabee12387d075f_1ac66576250262ac0cdbabee12387d075f" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>freeAlgebra</name></member>
+      <member refid="class_ring_a627647d4e37d375a95f7308fa57565aa_1a627647d4e37d375a95f7308fa57565aa" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_BigComplex</name></member>
+      <member refid="class_ring_a21be379569c91492bf6b1f61c1e1d3d2_1a21be379569c91492bf6b1f61c1e1d3d2" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_BigReal</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_a169f64ffc27f9928b77184dd9af11cdc_1a169f64ffc27f9928b77184dd9af11cdc" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_coefficient</name></member>
+      <member refid="class_ring_a8e5ba3ccbc81ca858dc7907a6167b225_1a8e5ba3ccbc81ca858dc7907a6167b225" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_complex_double</name></member>
+      <member refid="class_ring_a47decefbc3228ac363e3adcaba71544a_1a47decefbc3228ac363e3adcaba71544a" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_ComplexInterval</name></member>
+      <member refid="class_ring_a94e77fa14d8cfeef323da02290cb4448_1a94e77fa14d8cfeef323da02290cb4448" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_double</name></member>
+      <member refid="class_ring_acffb3aa37f626fa37bfa72dd6de4733d_1acffb3aa37f626fa37bfa72dd6de4733d" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_int</name></member>
+      <member refid="class_ring_a28c61dd3bd079e86e155df7f72d94864_1a28c61dd3bd079e86e155df7f72d94864" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_Interval</name></member>
+      <member refid="class_ring_a6f6b08df2379200116484876c4fd2d87_1a6f6b08df2379200116484876c4fd2d87" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_long</name></member>
+      <member refid="class_ring_afb7c55b4135b669cf01c0134da82114f_1afb7c55b4135b669cf01c0134da82114f" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>from_rational</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_a8f6b47d8267660f4dd01355628d440d5_1a8f6b47d8267660f4dd01355628d440d5" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>fromModuleMonom</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_a12b0104d0655ae4f1158d9388c134d87_1a12b0104d0655ae4f1158d9388c134d87" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>fromPoly</name></member>
+      <member refid="class_ring_aaef445fe5a6fd99cd99a9d0df7634259_1aaef445fe5a6fd99cd99a9d0df7634259" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>get_degree_ring</name></member>
+      <member refid="class_ring_a4c02ff76c48c1de195f9cb548226b014_1a4c02ff76c48c1de195f9cb548226b014" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>get_entry</name></member>
+      <member refid="class_ring_a76dd5f26bf190ef2fa425105f90e684a_1a76dd5f26bf190ef2fa425105f90e684a" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>get_entry</name></member>
+      <member refid="class_ring_af900248dad41d314fd08f9b1aed8ef8e_1af900248dad41d314fd08f9b1aed8ef8e" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>get_heft_vector</name></member>
+      <member refid="class_ring_a8478e119cbd0dacb879407882ec4e130_1a8478e119cbd0dacb879407882ec4e130" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>get_non_unit</name></member>
+      <member refid="class_ring_a62bb710ec47481354070de00bb2dcddb_1a62bb710ec47481354070de00bb2dcddb" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>get_precision</name></member>
+      <member refid="class_ring_a1074a67d5581c83ccc0a3399123d14a2_1a1074a67d5581c83ccc0a3399123d14a2" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>getARing</name></member>
+      <member refid="class_ring_ad006397e7bbe3de8a1cc9feb5d042613_1ad006397e7bbe3de8a1cc9feb5d042613" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>getCoefficientRingR</name></member>
+      <member refid="class_ring_a7cd92ebc63203e96c746333270ada5d8_1a7cd92ebc63203e96c746333270ada5d8" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>getGenerator</name></member>
+      <member refid="class_ring_a37e8d2a9cb5f10eb944df5a81e9540a8_1a37e8d2a9cb5f10eb944df5a81e9540a8" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>getMinimalPolynomial</name></member>
+      <member refid="class_ring_aacb3c9f8ff2b79282d9e24b2625b57f3_1aacb3c9f8ff2b79282d9e24b2625b57f3" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>getRepresentation</name></member>
+      <member refid="class_ring_a49295daf51d50cfb48bb55bab23c636d_1a49295daf51d50cfb48bb55bab23c636d" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>has_associate_divisors</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>hash</name></member>
+      <member refid="class_ring_a61515513c778acee662326896bd29a3d_1a61515513c778acee662326896bd29a3d" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>homogenize</name></member>
+      <member refid="class_ring_ac5d423eee0e735dfc6781e3da86bc0ad_1ac5d423eee0e735dfc6781e3da86bc0ad" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>homogenize</name></member>
+      <member refid="class_ring_a52ffb06bc101f548106f6cfcfc9fa2ab_1a52ffb06bc101f548106f6cfcfc9fa2ab" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>in_subring</name></member>
+      <member refid="class_ring_a308925e8ca2bc536ea6456f99bad0e90_1a308925e8ca2bc536ea6456f99bad0e90" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>increase_maxnorm</name></member>
+      <member refid="class_ring_a921ad93c8e17f2cae123b5d1bf206402_1a921ad93c8e17f2cae123b5d1bf206402" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>index_of_var</name></member>
+      <member refid="class_ring_a57db5364300d12a9e778ef9794f61962_1a57db5364300d12a9e778ef9794f61962" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>initialize_ring</name></member>
+      <member refid="class_ring_a6e158a0a10dbc5ab15f38be603ba8d88_1a6e158a0a10dbc5ab15f38be603ba8d88" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>invert</name></member>
+      <member refid="class_ring_a67c2f7ed10e29d390ca4146d5da11a5d_1a67c2f7ed10e29d390ca4146d5da11a5d" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_basic_ring</name></member>
+      <member refid="class_ring_aa6d007e7619fa67da71dd28c0f1ac918_1aa6d007e7619fa67da71dd28c0f1ac918" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_CCC</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_a93b8d9ab10bafaf14bf1873b38920975_1a93b8d9ab10bafaf14bf1873b38920975" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_commutative_ring</name></member>
+      <member refid="class_ring_a516b8836188a168b3b35a8c8a624aecb_1a516b8836188a168b3b35a8c8a624aecb" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_equal</name></member>
+      <member refid="class_ring_a097aacc5f17010b3a43ac07234285bb8_1a097aacc5f17010b3a43ac07234285bb8" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_equal</name></member>
+      <member refid="class_ring_a4bd5368c6048e976c2f5c36d833fc316_1a4bd5368c6048e976c2f5c36d833fc316" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_field</name></member>
+      <member refid="class_ring_a708546eeda3fed8df48f5db0c68929dc_1a708546eeda3fed8df48f5db0c68929dc" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_fraction_field</name></member>
+      <member refid="class_ring_a3fa6b7ffef50d5832bcc63ee3b804c6f_1a3fa6b7ffef50d5832bcc63ee3b804c6f" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_fraction_poly_ring</name></member>
+      <member refid="class_ring_ae268317cbc20ab577f1cf0579d5b1e48_1ae268317cbc20ab577f1cf0579d5b1e48" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_graded</name></member>
+      <member refid="class_ring_a46368bd91bd0f73cf8221f5148cebef6_1a46368bd91bd0f73cf8221f5148cebef6" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_homogeneous</name></member>
+      <member refid="class_ring_ac6a082359b7ffd28970f2d036c84d4b8_1ac6a082359b7ffd28970f2d036c84d4b8" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_poly_ring</name></member>
+      <member refid="class_ring_ab17d633d9abc0ddad22e829d3e3955fd_1ab17d633d9abc0ddad22e829d3e3955fd" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_QQ</name></member>
+      <member refid="class_ring_a2027986d645f9e3f67625296528bb611_1a2027986d645f9e3f67625296528bb611" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_quotient_ring</name></member>
+      <member refid="class_ring_ac99b7a1eae74fdf90f3968e0bde7354e_1ac99b7a1eae74fdf90f3968e0bde7354e" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_RRi</name></member>
+      <member refid="class_ring_ada23d8e47b734faf0e1c9ebc07f5f610_1ada23d8e47b734faf0e1c9ebc07f5f610" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_RRR</name></member>
+      <member refid="class_ring_aceacd6d0179513a6afdb49e10b89d4eb_1aceacd6d0179513a6afdb49e10b89d4eb" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_skew_commutative_ring</name></member>
+      <member refid="class_ring_ad8a613ac4c023abb900d58534dfbe4ce_1ad8a613ac4c023abb900d58534dfbe4ce" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_solvable_algebra</name></member>
+      <member refid="class_ring_a2d03e8e7a2dc7b935d00c0ed4357cf05_1a2d03e8e7a2dc7b935d00c0ed4357cf05" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_unit</name></member>
+      <member refid="class_ring_afb2a34d6c74108ebb7ff6986cdd66404_1afb2a34d6c74108ebb7ff6986cdd66404" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_weyl_algebra</name></member>
+      <member refid="class_ring_aa8d762a00cdea91f8d26cea2b52ebce0_1aa8d762a00cdea91f8d26cea2b52ebce0" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_zero</name></member>
+      <member refid="class_ring_a0029ed30ca6f682c9d0fe4748a32d32e_1a0029ed30ca6f682c9d0fe4748a32d32e" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>is_ZZ</name></member>
+      <member refid="class_ring_add1e694a2f0b834c4708476ec237644e_1add1e694a2f0b834c4708476ec237644e" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>isFinitePrimeField</name></member>
+      <member refid="class_ring_a3d16bc30b0b00f7bd2988de9b012a253_1a3d16bc30b0b00f7bd2988de9b012a253" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>isGaloisField</name></member>
+      <member refid="class_ring_a6d3d042f950ad9d90bb4ac65814789a1_1a6d3d042f950ad9d90bb4ac65814789a1" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>lift</name></member>
+      <member refid="class_ring_ad71b29f2be9c4982f10a4df88e53367c_1ad71b29f2be9c4982f10a4df88e53367c" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>lower_associate_divisor</name></member>
+      <member refid="class_ring_a6cf572cc4135a4d6c406cd9b05dd4f88_1a6cf572cc4135a4d6c406cd9b05dd4f88" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>lower_content</name></member>
+      <member refid="class_ring_a246965acb6f313f82aa3059a7c43091a_1a246965acb6f313f82aa3059a7c43091a" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>make_FreeModule</name></member>
+      <member refid="class_ring_a9215276b28d8885bf1d3f8c1bb441e36_1a9215276b28d8885bf1d3f8c1bb441e36" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>make_FreeModule</name></member>
+      <member refid="class_ring_aa87774c0e44911bd5096df29377f1f58_1aa87774c0e44911bd5096df29377f1f58" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>make_Schreyer_FreeModule</name></member>
+      <member refid="class_ring_afdf9776b22c9fc94f2e820fc8843622f_1afdf9776b22c9fc94f2e820fc8843622f" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>make_SumCollector</name></member>
+      <member refid="class_ring_a2ab579eb49ebe28eed42e2a083c96c03_1a2ab579eb49ebe28eed42e2a083c96c03" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>make_vec</name></member>
+      <member refid="class_ring_a79476d2e8273d0eeaa27dba624bede72_1a79476d2e8273d0eeaa27dba624bede72" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>make_vec_from_array</name></member>
+      <member refid="class_ring_a38e23eb4c2c328b8f0ba677496f78877_1a38e23eb4c2c328b8f0ba677496f78877" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>makeMutableMatrix</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_aa9d22611d63333836aac8454f6ae9e31_1aa9d22611d63333836aac8454f6ae9e31" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>makeTerm</name></member>
+      <member refid="class_ring_a2e972f2fc43cb10295c8b8b3e3e35ab9_1a2e972f2fc43cb10295c8b8b3e3e35ab9" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mCharacteristic</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mHashValue</name></member>
+      <member refid="class_ring_ab6c42f432e2ca2766eb5a13285b7448a_1ab6c42f432e2ca2766eb5a13285b7448a" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mHeftVector</name></member>
+      <member refid="class_ring_a7355d1c74a399f6ef8f23a46c5193ed2_1a7355d1c74a399f6ef8f23a46c5193ed2" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>minus_one</name></member>
+      <member refid="class_ring_a565bd372dea4814e6d775012e45de005_1a565bd372dea4814e6d775012e45de005" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>minus_oneV</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_ring_a06fa9e35ab941e918b2f02463eba094a_1a06fa9e35ab941e918b2f02463eba094a" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>monomial_divisor</name></member>
+      <member refid="class_ring_ada0ae7428fbb2d3c0de7d835997d454a_1ada0ae7428fbb2d3c0de7d835997d454a" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mult</name></member>
+      <member refid="class_ring_ad1ec0e0f648e9f070aef7afd6dc271db_1ad1ec0e0f648e9f070aef7afd6dc271db" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mult_row</name></member>
+      <member refid="class_ring_ad03d14925b01de133086ac7c61fb53dd_1ad03d14925b01de133086ac7c61fb53dd" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mult_to</name></member>
+      <member refid="class_ring_a01a93e6c7a54792a0f15125e8ce6534e_1a01a93e6c7a54792a0f15125e8ce6534e" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mult_vec</name></member>
+      <member refid="class_ring_a0fdac951bc6883230d2a1f87fd9c7ef8_1a0fdac951bc6883230d2a1f87fd9c7ef8" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mult_vec</name></member>
+      <member refid="class_ring_a510e9873649c738eab6e9af531fd4624_1a510e9873649c738eab6e9af531fd4624" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mult_vec_matrix</name></member>
+      <member refid="class_ring_a7e69dd9e350769debce345a1467001fe_1a7e69dd9e350769debce345a1467001fe" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>mult_vec_to</name></member>
+      <member refid="class_ring_a98dd442aad0b0337e0da58b8a631bd92_1a98dd442aad0b0337e0da58b8a631bd92" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>multi_degree</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>MutableEngineObject</name></member>
+      <member refid="class_ring_a40a55300b502aa41989314e7a5c9c705_1a40a55300b502aa41989314e7a5c9c705" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>n_nonzero_terms</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_a60c80bd232b6add775c56c1d7e39660f_1a60c80bd232b6add775c56c1d7e39660f" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>n_vars</name></member>
+      <member refid="class_ring_a739975e5afce5075181edab6c4714cb4_1a739975e5afce5075181edab6c4714cb4" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>negate</name></member>
+      <member refid="class_ring_a25329b83562f816d1935003d78971a8d_1a25329b83562f816d1935003d78971a8d" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>negate_to</name></member>
+      <member refid="class_ring_a68ff3df4e232e272c2629cb3e88181c3_1a68ff3df4e232e272c2629cb3e88181c3" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>negate_vec</name></member>
+      <member refid="class_ring_aa1a3bff97b8dae10e2616a3db6a83ac2_1aa1a3bff97b8dae10e2616a3db6a83ac2" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>negate_vec_to</name></member>
+      <member refid="class_ring_afe8591877ff12e2221b8774625fe79f2_1afe8591877ff12e2221b8774625fe79f2" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>new_vec</name></member>
+      <member refid="class_ring_a480f948242b890421b63365d1ef8d7b8_1a480f948242b890421b63365d1ef8d7b8" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>one</name></member>
+      <member refid="class_ring_a8f7daf1d07ca87b567292d44b6bc5b72_1a8f7daf1d07ca87b567292d44b6bc5b72" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>oneV</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_ring_ad53bd105b7dcfb35f91908bbec8f460f_1ad53bd105b7dcfb35f91908bbec8f460f" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>power</name></member>
+      <member refid="class_ring_a9ebfd5efdaae368a94214ba2ff30fd14_1a9ebfd5efdaae368a94214ba2ff30fd14" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>power</name></member>
+      <member refid="class_ring_a8200fe69c120fece13337cf01b17c425_1a8200fe69c120fece13337cf01b17c425" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>preferred_associate</name></member>
+      <member refid="class_ring_a03f908e0bed75b2c59bfc5cc900a21c6_1a03f908e0bed75b2c59bfc5cc900a21c6" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>promote</name></member>
+      <member refid="class_ring_a4b918d25c757b314f4626655210a4c2b_1a4b918d25c757b314f4626655210a4c2b" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>quotient</name></member>
+      <member refid="class_ring_acb4a4be06b249fcb3d0cf332bb1cc9cf_1acb4a4be06b249fcb3d0cf332bb1cc9cf" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>random</name></member>
+      <member refid="class_ring_ae7697d17c5a77dccd21bfb43f57f58ae_1ae7697d17c5a77dccd21bfb43f57f58ae" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>remainder</name></member>
+      <member refid="class_ring_a5d5a83a2a025ade33c8ded49e39e9312_1a5d5a83a2a025ade33c8ded49e39e9312" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>remainderAndQuotient</name></member>
+      <member refid="class_ring_a01cb95f67031f0ee729eb3ac65c3ce68_1a01cb95f67031f0ee729eb3ac65c3ce68" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>remove</name></member>
+      <member refid="class_ring_a54898084da41b2130f8a8f844043ca6d_1a54898084da41b2130f8a8f844043ca6d" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>remove_vec</name></member>
+      <member refid="class_ring_a310e247bc4db676e4641f02cf2177474_1a310e247bc4db676e4641f02cf2177474" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>remove_vec_node</name></member>
+      <member refid="class_ring_a805c7ac6e925771891752bc32b9eeb1d_1a805c7ac6e925771891752bc32b9eeb1d" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>rightmult_vec</name></member>
+      <member refid="class_ring_afc47f40ab072db783126111b70693e49_1afc47f40ab072db783126111b70693e49" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>Ring</name></member>
+      <member refid="class_ring_a277ca4bbc15f78b3f640ecce7e88a272_1a277ca4bbc15f78b3f640ecce7e88a272" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>ringID</name></member>
+      <member refid="class_ring_a58afa47f15c732860a8cec8e9fffe089_1a58afa47f15c732860a8cec8e9fffe089" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>set_entry</name></member>
+      <member refid="class_ring_a03304d6eb2cf49691f19f28a8b20aed9_1a03304d6eb2cf49691f19f28a8b20aed9" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>set_non_unit</name></member>
+      <member refid="class_ring_adfda77eb5a7123ec96fa7f1a4259eac8_1adfda77eb5a7123ec96fa7f1a4259eac8" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>split_off_content</name></member>
+      <member refid="class_ring_a22f25be687e5c5476b1977f617d56ab8_1a22f25be687e5c5476b1977f617d56ab8" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>sub_vector</name></member>
+      <member refid="class_ring_a3b38783c970fe2174ad23f33bef6ea70_1a3b38783c970fe2174ad23f33bef6ea70" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>subtract</name></member>
+      <member refid="class_ring_a21f43ee1828608e451512238255f8514_1a21f43ee1828608e451512238255f8514" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>subtract_to</name></member>
+      <member refid="class_ring_a85825ce323f1faa59db2ed82280d3baf_1a85825ce323f1faa59db2ed82280d3baf" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>subtract_vec</name></member>
+      <member refid="class_ring_a7cc9dae3e74c326607674bd2f083e1ae_1a7cc9dae3e74c326607674bd2f083e1ae" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>subtract_vec_to</name></member>
+      <member refid="class_ring_af5323271605df916d765d2cc9284ded8_1af5323271605df916d765d2cc9284ded8" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>support</name></member>
+      <member refid="class_ring_acb90afe84ece5bc3d5afa8d9ccc12e9d_1acb90afe84ece5bc3d5afa8d9ccc12e9d" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>syzygy</name></member>
+      <member refid="class_ring_a3066e897194274a63a1b58a66935b6d8_1a3066e897194274a63a1b58a66935b6d8" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>tensor</name></member>
+      <member refid="class_ring_a554cc18fe3706c83c142fab92f7039d2_1a554cc18fe3706c83c142fab92f7039d2" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>tensor_shift</name></member>
+      <member refid="class_ring_a434aa7fb20f8f3937ae009acb29fdc1b_1a434aa7fb20f8f3937ae009acb29fdc1b" prot="public" virt="pure-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>text_out</name></member>
+      <member refid="class_m2_free_algebra_or_quotient_a17d151d6307a7ee456f9a138e02cab99_1a17d151d6307a7ee456f9a138e02cab99" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>toPoly</name></member>
+      <member refid="class_ring_a0947d5cf2b215abb3432bd300e5fefbe_1a0947d5cf2b215abb3432bd300e5fefbe" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>var</name></member>
+      <member refid="class_ring_ac1f72c90ba0f65dcd2ed238809a4436b_1ac1f72c90ba0f65dcd2ed238809a4436b" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_content</name></member>
+      <member refid="class_ring_aa5474e4319c97c0bc7e0514e17511de8_1aa5474e4319c97c0bc7e0514e17511de8" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_degree_of_var</name></member>
+      <member refid="class_ring_ab87f80ce23664fb2f9ceff5e0cf2b413_1ab87f80ce23664fb2f9ceff5e0cf2b413" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_degree_weights</name></member>
+      <member refid="class_ring_ace4e99008221eece447482a913b91d6e_1ace4e99008221eece447482a913b91d6e" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_diff</name></member>
+      <member refid="class_ring_a4e9099443139ab3fe157a9b887e8d25d_1a4e9099443139ab3fe157a9b887e8d25d" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_divide_by_content</name></member>
+      <member refid="class_ring_ae2e64ec33c0311633bda2ef736a9283c_1ae2e64ec33c0311633bda2ef736a9283c" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_divide_by_expvector</name></member>
+      <member refid="class_ring_a90262b2802488987e553fb60b262ef73_1a90262b2802488987e553fb60b262ef73" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_divide_by_given_content</name></member>
+      <member refid="class_ring_a99764aad7596e897826901072a5819d2_1a99764aad7596e897826901072a5819d2" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_divide_by_var</name></member>
+      <member refid="class_ring_a9c70b217dab9985bc1f222cc05b7fbef_1a9c70b217dab9985bc1f222cc05b7fbef" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_eval</name></member>
+      <member refid="class_ring_a1d2957844a21a06dde77176572ff5eac_1a1d2957844a21a06dde77176572ff5eac" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_homogenize</name></member>
+      <member refid="class_ring_a0e4efa6a0cb1d80b6f594dd970550d81_1a0e4efa6a0cb1d80b6f594dd970550d81" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_homogenize</name></member>
+      <member refid="class_ring_a61d4bfd2af05a757e3e23b584db70704_1a61d4bfd2af05a757e3e23b584db70704" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_in_subring</name></member>
+      <member refid="class_ring_a9badb9c8d993b0e1cc82d7af9f24b0dc_1a9badb9c8d993b0e1cc82d7af9f24b0dc" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_increase_maxnorm</name></member>
+      <member refid="class_ring_a9636ecda53db3a0e2be48df5db565a12_1a9636ecda53db3a0e2be48df5db565a12" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_is_homogeneous</name></member>
+      <member refid="class_ring_abc3a4dad081c84e3f09edc8077d579f9_1abc3a4dad081c84e3f09edc8077d579f9" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_is_scalar_multiple</name></member>
+      <member refid="class_ring_a8a44bf8b79e2c3a17f76efd5a1c36553_1a8a44bf8b79e2c3a17f76efd5a1c36553" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_lead_term</name></member>
+      <member refid="class_ring_a12273ebca945689a1984578745f228b6_1a12273ebca945689a1984578745f228b6" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_multi_degree</name></member>
+      <member refid="class_ring_a629f09fa842540aca946bcec51719ca4_1a629f09fa842540aca946bcec51719ca4" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_remove_monomial_factors</name></member>
+      <member refid="class_ring_a5c7f6a3a5258e114dae1e8010598739e_1a5c7f6a3a5258e114dae1e8010598739e" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_sort</name></member>
+      <member refid="class_ring_ad2ff5984ae0a757dcd52b02f2a869fc4_1ad2ff5984ae0a757dcd52b02f2a869fc4" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_split_off_content</name></member>
+      <member refid="class_ring_a4174e8d94768d8afe82820b6e43269bb_1a4174e8d94768d8afe82820b6e43269bb" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_text_out</name></member>
+      <member refid="class_ring_a4ee9e3796bd24d3ccb662cd45a8d0a16_1a4ee9e3796bd24d3ccb662cd45a8d0a16" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>vec_zeroize_tiny</name></member>
+      <member refid="class_ring_a56c4dbffcc7bba98da2103f70a0e8602_1a56c4dbffcc7bba98da2103f70a0e8602" prot="public" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>zero</name></member>
+      <member refid="class_ring_a9ee59996c167e760c72ace9dacff0ce3_1a9ee59996c167e760c72ace9dacff0ce3" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>zeroize_tiny</name></member>
+      <member refid="class_ring_afa3a12a60383e4ca91e1e3bf39c74404_1afa3a12a60383e4ca91e1e3bf39c74404" prot="protected" virt="non-virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>zeroV</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>~our_gc_cleanup</name></member>
+      <member refid="class_ring_a515a41c0803bcdd921712d6f5047e101_1a515a41c0803bcdd921712d6f5047e101" prot="public" virt="virtual"><scope>M2FreeAlgebraOrQuotient</scope><name>~Ring</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,573 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monomial_hash_table" kind="class" language="C++" prot="public">
+    <compoundname>MonomialHashTable</compoundname>
+    <includes refid="monhashtable_8hpp" local="no">monhashtable.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename ValueType</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_monomial_hash_table_a71f89e6c4f29940ac93c44a36fcc7689_1a71f89e6c4f29940ac93c44a36fcc7689" prot="private" static="no">
+        <type>ValueType::value</type>
+        <definition>typedef ValueType::value MonomialHashTable&lt; ValueType &gt;::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <qualifiedname>MonomialHashTable::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="150" column="37" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="150" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_monomial_hash_table_a4d29137ca3f676e944716f20ad52e430_1a4d29137ca3f676e944716f20ad52e430" prot="private" static="no" mutable="no">
+        <type>const ValueType *</type>
+        <definition>const ValueType* MonomialHashTable&lt; ValueType &gt;::M</definition>
+        <argsstring></argsstring>
+        <name>M</name>
+        <qualifiedname>MonomialHashTable::M</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="153" column="19" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="153" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3575c5df3c49ea8a44cdfa6dafb033b6_1a3575c5df3c49ea8a44cdfa6dafb033b6" compoundref="monhashtable_8cpp" startline="139" endline="160">MonomialHashTable&lt; ValueType &gt;::show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_a2b3373e28e1263d38a379e0d3e6970bf_1a2b3373e28e1263d38a379e0d3e6970bf" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_monomial_hash_table_a71f89e6c4f29940ac93c44a36fcc7689_1a71f89e6c4f29940ac93c44a36fcc7689" kindref="member">value</ref>[]&gt;</type>
+        <definition>std::unique_ptr&lt;value[]&gt; MonomialHashTable&lt; ValueType &gt;::hashtab</definition>
+        <argsstring></argsstring>
+        <name>hashtab</name>
+        <qualifiedname>MonomialHashTable::hashtab</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="154" column="19" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="154" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a80be58ddc37e42f36d2deea2485e7855_1a80be58ddc37e42f36d2deea2485e7855" compoundref="monhashtable_8cpp" startline="83" endline="123">MonomialHashTable&lt; ValueType &gt;::find_or_insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a66bef3935b8427b06aff72dea845a1b5_1a66bef3935b8427b06aff72dea845a1b5" compoundref="monhashtable_8cpp" startline="52" endline="61">MonomialHashTable&lt; ValueType &gt;::grow</referencedby>
+        <referencedby refid="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" compoundref="monhashtable_8cpp" startline="24" endline="34">MonomialHashTable&lt; ValueType &gt;::initialize</referencedby>
+        <referencedby refid="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" compoundref="monhashtable_8cpp" startline="37" endline="49">MonomialHashTable&lt; ValueType &gt;::insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+        <referencedby refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" compoundref="monhashtable_8cpp" startline="11" endline="21">MonomialHashTable&lt; ValueType &gt;::reset</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3575c5df3c49ea8a44cdfa6dafb033b6_1a3575c5df3c49ea8a44cdfa6dafb033b6" compoundref="monhashtable_8cpp" startline="139" endline="160">MonomialHashTable&lt; ValueType &gt;::show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialHashTable&lt; ValueType &gt;::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <qualifiedname>MonomialHashTable::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="156" column="17" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="156" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a8325816c4556b7c14a3ee76946fa6054_1a8325816c4556b7c14a3ee76946fa6054" compoundref="monhashtable_8cpp" startline="126" endline="136">MonomialHashTable&lt; ValueType &gt;::dump</referencedby>
+        <referencedby refid="class_monomial_hash_table_a80be58ddc37e42f36d2deea2485e7855_1a80be58ddc37e42f36d2deea2485e7855" compoundref="monhashtable_8cpp" startline="83" endline="123">MonomialHashTable&lt; ValueType &gt;::find_or_insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a66bef3935b8427b06aff72dea845a1b5_1a66bef3935b8427b06aff72dea845a1b5" compoundref="monhashtable_8cpp" startline="52" endline="61">MonomialHashTable&lt; ValueType &gt;::grow</referencedby>
+        <referencedby refid="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" compoundref="monhashtable_8cpp" startline="24" endline="34">MonomialHashTable&lt; ValueType &gt;::initialize</referencedby>
+        <referencedby refid="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" compoundref="monhashtable_8cpp" startline="37" endline="49">MonomialHashTable&lt; ValueType &gt;::insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+        <referencedby refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" compoundref="monhashtable_8cpp" startline="11" endline="21">MonomialHashTable&lt; ValueType &gt;::reset</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3575c5df3c49ea8a44cdfa6dafb033b6_1a3575c5df3c49ea8a44cdfa6dafb033b6" compoundref="monhashtable_8cpp" startline="139" endline="160">MonomialHashTable&lt; ValueType &gt;::show</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_a026ca22e1ee477e68cd70118526e1ca6_1a026ca22e1ee477e68cd70118526e1ca6" prot="private" static="no" mutable="no">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int MonomialHashTable&lt; ValueType &gt;::logsize</definition>
+        <argsstring></argsstring>
+        <name>logsize</name>
+        <qualifiedname>MonomialHashTable::logsize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="157" column="16" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="157" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a66bef3935b8427b06aff72dea845a1b5_1a66bef3935b8427b06aff72dea845a1b5" compoundref="monhashtable_8cpp" startline="52" endline="61">MonomialHashTable&lt; ValueType &gt;::grow</referencedby>
+        <referencedby refid="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" compoundref="monhashtable_8cpp" startline="24" endline="34">MonomialHashTable&lt; ValueType &gt;::initialize</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_ae33f75de19515f1c69d0b5ac54e8f597_1ae33f75de19515f1c69d0b5ac54e8f597" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialHashTable&lt; ValueType &gt;::hashmask</definition>
+        <argsstring></argsstring>
+        <name>hashmask</name>
+        <qualifiedname>MonomialHashTable::hashmask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="158" column="17" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="158" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a80be58ddc37e42f36d2deea2485e7855_1a80be58ddc37e42f36d2deea2485e7855" compoundref="monhashtable_8cpp" startline="83" endline="123">MonomialHashTable&lt; ValueType &gt;::find_or_insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" compoundref="monhashtable_8cpp" startline="24" endline="34">MonomialHashTable&lt; ValueType &gt;::initialize</referencedby>
+        <referencedby refid="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" compoundref="monhashtable_8cpp" startline="37" endline="49">MonomialHashTable&lt; ValueType &gt;::insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_a3f277006d23c1cd27292ada8962ac661_1a3f277006d23c1cd27292ada8962ac661" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialHashTable&lt; ValueType &gt;::threshold</definition>
+        <argsstring></argsstring>
+        <name>threshold</name>
+        <qualifiedname>MonomialHashTable::threshold</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="159" column="17" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="159" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a80be58ddc37e42f36d2deea2485e7855_1a80be58ddc37e42f36d2deea2485e7855" compoundref="monhashtable_8cpp" startline="83" endline="123">MonomialHashTable&lt; ValueType &gt;::find_or_insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" compoundref="monhashtable_8cpp" startline="24" endline="34">MonomialHashTable&lt; ValueType &gt;::initialize</referencedby>
+        <referencedby refid="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" compoundref="monhashtable_8cpp" startline="37" endline="49">MonomialHashTable&lt; ValueType &gt;::insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_aa003a7ada3be616d58797e036113e0ab_1aa003a7ada3be616d58797e036113e0ab" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialHashTable&lt; ValueType &gt;::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <qualifiedname>MonomialHashTable::count</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="161" column="17" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="161" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a8325816c4556b7c14a3ee76946fa6054_1a8325816c4556b7c14a3ee76946fa6054" compoundref="monhashtable_8cpp" startline="126" endline="136">MonomialHashTable&lt; ValueType &gt;::dump</referencedby>
+        <referencedby refid="class_monomial_hash_table_a80be58ddc37e42f36d2deea2485e7855_1a80be58ddc37e42f36d2deea2485e7855" compoundref="monhashtable_8cpp" startline="83" endline="123">MonomialHashTable&lt; ValueType &gt;::find_or_insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" compoundref="monhashtable_8cpp" startline="37" endline="49">MonomialHashTable&lt; ValueType &gt;::insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+        <referencedby refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" compoundref="monhashtable_8cpp" startline="11" endline="21">MonomialHashTable&lt; ValueType &gt;::reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_acd62454210c08cea93037180aac73528_1acd62454210c08cea93037180aac73528" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialHashTable&lt; ValueType &gt;::nfind_or_insert</definition>
+        <argsstring></argsstring>
+        <name>nfind_or_insert</name>
+        <qualifiedname>MonomialHashTable::nfind_or_insert</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="163" column="17" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="163" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a8325816c4556b7c14a3ee76946fa6054_1a8325816c4556b7c14a3ee76946fa6054" compoundref="monhashtable_8cpp" startline="126" endline="136">MonomialHashTable&lt; ValueType &gt;::dump</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+        <referencedby refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" compoundref="monhashtable_8cpp" startline="11" endline="21">MonomialHashTable&lt; ValueType &gt;::reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_a3e2a70362319be87abbeed6006a655b7_1a3e2a70362319be87abbeed6006a655b7" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialHashTable&lt; ValueType &gt;::nclashes</definition>
+        <argsstring></argsstring>
+        <name>nclashes</name>
+        <qualifiedname>MonomialHashTable::nclashes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="164" column="17" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="164" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a8325816c4556b7c14a3ee76946fa6054_1a8325816c4556b7c14a3ee76946fa6054" compoundref="monhashtable_8cpp" startline="126" endline="136">MonomialHashTable&lt; ValueType &gt;::dump</referencedby>
+        <referencedby refid="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" compoundref="monhashtable_8cpp" startline="37" endline="49">MonomialHashTable&lt; ValueType &gt;::insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+        <referencedby refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" compoundref="monhashtable_8cpp" startline="11" endline="21">MonomialHashTable&lt; ValueType &gt;::reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_ab1bcc8b10d9481c6187326b4ad478f2e_1ab1bcc8b10d9481c6187326b4ad478f2e" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialHashTable&lt; ValueType &gt;::max_run_length</definition>
+        <argsstring></argsstring>
+        <name>max_run_length</name>
+        <qualifiedname>MonomialHashTable::max_run_length</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="165" column="17" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="165" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a8325816c4556b7c14a3ee76946fa6054_1a8325816c4556b7c14a3ee76946fa6054" compoundref="monhashtable_8cpp" startline="126" endline="136">MonomialHashTable&lt; ValueType &gt;::dump</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+        <referencedby refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" compoundref="monhashtable_8cpp" startline="11" endline="21">MonomialHashTable&lt; ValueType &gt;::reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_a1f1b67dd9976ba48ded5804ff59c4759_1a1f1b67dd9976ba48ded5804ff59c4759" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialHashTable&lt; ValueType &gt;::monequal_count</definition>
+        <argsstring></argsstring>
+        <name>monequal_count</name>
+        <qualifiedname>MonomialHashTable::monequal_count</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="166" column="17" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="166" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a8325816c4556b7c14a3ee76946fa6054_1a8325816c4556b7c14a3ee76946fa6054" compoundref="monhashtable_8cpp" startline="126" endline="136">MonomialHashTable&lt; ValueType &gt;::dump</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+        <referencedby refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" compoundref="monhashtable_8cpp" startline="11" endline="21">MonomialHashTable&lt; ValueType &gt;::reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_monomial_hash_table_a4453b495f327b7bb5578e1e7438791e1_1a4453b495f327b7bb5578e1e7438791e1" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long MonomialHashTable&lt; ValueType &gt;::monequal_fails</definition>
+        <argsstring></argsstring>
+        <name>monequal_fails</name>
+        <qualifiedname>MonomialHashTable::monequal_fails</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="167" column="17" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="167" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_table_a8325816c4556b7c14a3ee76946fa6054_1a8325816c4556b7c14a3ee76946fa6054" compoundref="monhashtable_8cpp" startline="126" endline="136">MonomialHashTable&lt; ValueType &gt;::dump</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+        <referencedby refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" compoundref="monhashtable_8cpp" startline="11" endline="21">MonomialHashTable&lt; ValueType &gt;::reset</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialHashTable&lt; ValueType &gt;::insert</definition>
+        <argsstring>(value m)</argsstring>
+        <name>insert</name>
+        <qualifiedname>MonomialHashTable::insert</qualifiedname>
+        <param>
+          <type><ref refid="class_monomial_hash_table_a71f89e6c4f29940ac93c44a36fcc7689_1a71f89e6c4f29940ac93c44a36fcc7689" kindref="member">value</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="169" column="8" bodyfile="Macaulay2/e/f4/monhashtable.cpp" bodystart="37" bodyend="49"/>
+        <references refid="class_monomial_hash_table_aa003a7ada3be616d58797e036113e0ab_1aa003a7ada3be616d58797e036113e0ab" compoundref="monhashtable_8hpp" startline="161">MonomialHashTable&lt; ValueType &gt;::count</references>
+        <references refid="class_monomial_hash_table_a66bef3935b8427b06aff72dea845a1b5_1a66bef3935b8427b06aff72dea845a1b5" compoundref="monhashtable_8cpp" startline="52" endline="61">MonomialHashTable&lt; ValueType &gt;::grow</references>
+        <references refid="class_monomial_hash_table_ae33f75de19515f1c69d0b5ac54e8f597_1ae33f75de19515f1c69d0b5ac54e8f597" compoundref="monhashtable_8hpp" startline="158">MonomialHashTable&lt; ValueType &gt;::hashmask</references>
+        <references refid="class_monomial_hash_table_a2b3373e28e1263d38a379e0d3e6970bf_1a2b3373e28e1263d38a379e0d3e6970bf" compoundref="monhashtable_8hpp" startline="154">MonomialHashTable&lt; ValueType &gt;::hashtab</references>
+        <references refid="monhashtable_8cpp_a8932dd3839d6c30143c720657a240cac_1a8932dd3839d6c30143c720657a240cac" compoundref="monhashtable_8cpp" startline="7">HASHVALUE</references>
+        <references refid="class_monomial_hash_table_a3e2a70362319be87abbeed6006a655b7_1a3e2a70362319be87abbeed6006a655b7" compoundref="monhashtable_8hpp" startline="164">MonomialHashTable&lt; ValueType &gt;::nclashes</references>
+        <references refid="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" compoundref="monhashtable_8hpp" startline="156">MonomialHashTable&lt; ValueType &gt;::size</references>
+        <references refid="class_monomial_hash_table_a3f277006d23c1cd27292ada8962ac661_1a3f277006d23c1cd27292ada8962ac661" compoundref="monhashtable_8hpp" startline="159">MonomialHashTable&lt; ValueType &gt;::threshold</references>
+        <referencedby refid="class_monomial_hash_table_a66bef3935b8427b06aff72dea845a1b5_1a66bef3935b8427b06aff72dea845a1b5" compoundref="monhashtable_8cpp" startline="52" endline="61">MonomialHashTable&lt; ValueType &gt;::grow</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_table_a66bef3935b8427b06aff72dea845a1b5_1a66bef3935b8427b06aff72dea845a1b5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialHashTable&lt; ValueType &gt;::grow</definition>
+        <argsstring>()</argsstring>
+        <name>grow</name>
+        <qualifiedname>MonomialHashTable::grow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="170" column="8" bodyfile="Macaulay2/e/f4/monhashtable.cpp" bodystart="52" bodyend="61"/>
+        <references refid="class_monomial_hash_table_a2b3373e28e1263d38a379e0d3e6970bf_1a2b3373e28e1263d38a379e0d3e6970bf" compoundref="monhashtable_8hpp" startline="154">MonomialHashTable&lt; ValueType &gt;::hashtab</references>
+        <references refid="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" compoundref="monhashtable_8cpp" startline="24" endline="34">MonomialHashTable&lt; ValueType &gt;::initialize</references>
+        <references refid="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" compoundref="monhashtable_8cpp" startline="37" endline="49">MonomialHashTable&lt; ValueType &gt;::insert</references>
+        <references refid="class_monomial_hash_table_a026ca22e1ee477e68cd70118526e1ca6_1a026ca22e1ee477e68cd70118526e1ca6" compoundref="monhashtable_8hpp" startline="157">MonomialHashTable&lt; ValueType &gt;::logsize</references>
+        <references refid="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" compoundref="monhashtable_8hpp" startline="156">MonomialHashTable&lt; ValueType &gt;::size</references>
+        <referencedby refid="class_monomial_hash_table_a80be58ddc37e42f36d2deea2485e7855_1a80be58ddc37e42f36d2deea2485e7855" compoundref="monhashtable_8cpp" startline="83" endline="123">MonomialHashTable&lt; ValueType &gt;::find_or_insert</referencedby>
+        <referencedby refid="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" compoundref="monhashtable_8cpp" startline="37" endline="49">MonomialHashTable&lt; ValueType &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialHashTable&lt; ValueType &gt;::initialize</definition>
+        <argsstring>(int logsize0)</argsstring>
+        <name>initialize</name>
+        <qualifiedname>MonomialHashTable::initialize</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>logsize0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="171" column="8" bodyfile="Macaulay2/e/f4/monhashtable.cpp" bodystart="24" bodyend="34"/>
+        <references refid="class_monomial_hash_table_ae33f75de19515f1c69d0b5ac54e8f597_1ae33f75de19515f1c69d0b5ac54e8f597" compoundref="monhashtable_8hpp" startline="158">MonomialHashTable&lt; ValueType &gt;::hashmask</references>
+        <references refid="class_monomial_hash_table_a2b3373e28e1263d38a379e0d3e6970bf_1a2b3373e28e1263d38a379e0d3e6970bf" compoundref="monhashtable_8hpp" startline="154">MonomialHashTable&lt; ValueType &gt;::hashtab</references>
+        <references refid="class_monomial_hash_table_a026ca22e1ee477e68cd70118526e1ca6_1a026ca22e1ee477e68cd70118526e1ca6" compoundref="monhashtable_8hpp" startline="157">MonomialHashTable&lt; ValueType &gt;::logsize</references>
+        <references refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" compoundref="monhashtable_8cpp" startline="11" endline="21">MonomialHashTable&lt; ValueType &gt;::reset</references>
+        <references refid="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" compoundref="monhashtable_8hpp" startline="156">MonomialHashTable&lt; ValueType &gt;::size</references>
+        <references refid="class_monomial_hash_table_a3f277006d23c1cd27292ada8962ac661_1a3f277006d23c1cd27292ada8962ac661" compoundref="monhashtable_8hpp" startline="159">MonomialHashTable&lt; ValueType &gt;::threshold</references>
+        <referencedby refid="class_monomial_hash_table_a66bef3935b8427b06aff72dea845a1b5_1a66bef3935b8427b06aff72dea845a1b5" compoundref="monhashtable_8cpp" startline="52" endline="61">MonomialHashTable&lt; ValueType &gt;::grow</referencedby>
+        <referencedby refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" compoundref="monhashtable_8cpp" startline="64" endline="80">MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MonomialHashTable&lt; ValueType &gt;::MonomialHashTable</definition>
+        <argsstring>(const ValueType *M0, int logsize=24)</argsstring>
+        <name>MonomialHashTable</name>
+        <qualifiedname>MonomialHashTable::MonomialHashTable</qualifiedname>
+        <param>
+          <type>const ValueType *</type>
+          <declname>M0</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>logsize</declname>
+          <defval>24</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="174" column="3" bodyfile="Macaulay2/e/f4/monhashtable.cpp" bodystart="64" bodyend="80"/>
+        <references refid="class_monomial_hash_table_aa003a7ada3be616d58797e036113e0ab_1aa003a7ada3be616d58797e036113e0ab" compoundref="monhashtable_8hpp" startline="161">MonomialHashTable&lt; ValueType &gt;::count</references>
+        <references refid="class_monomial_hash_table_ae33f75de19515f1c69d0b5ac54e8f597_1ae33f75de19515f1c69d0b5ac54e8f597" compoundref="monhashtable_8hpp" startline="158">MonomialHashTable&lt; ValueType &gt;::hashmask</references>
+        <references refid="class_monomial_hash_table_a2b3373e28e1263d38a379e0d3e6970bf_1a2b3373e28e1263d38a379e0d3e6970bf" compoundref="monhashtable_8hpp" startline="154">MonomialHashTable&lt; ValueType &gt;::hashtab</references>
+        <references refid="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" compoundref="monhashtable_8cpp" startline="24" endline="34">MonomialHashTable&lt; ValueType &gt;::initialize</references>
+        <references refid="class_monomial_hash_table_a026ca22e1ee477e68cd70118526e1ca6_1a026ca22e1ee477e68cd70118526e1ca6" compoundref="monhashtable_8hpp" startline="157">MonomialHashTable&lt; ValueType &gt;::logsize</references>
+        <references refid="class_monomial_hash_table_a4d29137ca3f676e944716f20ad52e430_1a4d29137ca3f676e944716f20ad52e430" compoundref="monhashtable_8hpp" startline="153">MonomialHashTable&lt; ValueType &gt;::M</references>
+        <references refid="class_monomial_hash_table_ab1bcc8b10d9481c6187326b4ad478f2e_1ab1bcc8b10d9481c6187326b4ad478f2e" compoundref="monhashtable_8hpp" startline="165">MonomialHashTable&lt; ValueType &gt;::max_run_length</references>
+        <references refid="class_monomial_hash_table_a1f1b67dd9976ba48ded5804ff59c4759_1a1f1b67dd9976ba48ded5804ff59c4759" compoundref="monhashtable_8hpp" startline="166">MonomialHashTable&lt; ValueType &gt;::monequal_count</references>
+        <references refid="class_monomial_hash_table_a4453b495f327b7bb5578e1e7438791e1_1a4453b495f327b7bb5578e1e7438791e1" compoundref="monhashtable_8hpp" startline="167">MonomialHashTable&lt; ValueType &gt;::monequal_fails</references>
+        <references refid="class_monomial_hash_table_a3e2a70362319be87abbeed6006a655b7_1a3e2a70362319be87abbeed6006a655b7" compoundref="monhashtable_8hpp" startline="164">MonomialHashTable&lt; ValueType &gt;::nclashes</references>
+        <references refid="class_monomial_hash_table_acd62454210c08cea93037180aac73528_1acd62454210c08cea93037180aac73528" compoundref="monhashtable_8hpp" startline="163">MonomialHashTable&lt; ValueType &gt;::nfind_or_insert</references>
+        <references refid="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" compoundref="monhashtable_8hpp" startline="156">MonomialHashTable&lt; ValueType &gt;::size</references>
+        <references refid="class_monomial_hash_table_a3f277006d23c1cd27292ada8962ac661_1a3f277006d23c1cd27292ada8962ac661" compoundref="monhashtable_8hpp" startline="159">MonomialHashTable&lt; ValueType &gt;::threshold</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_table_a3b52d02bd74d243a0ef861bae4c71d92_1a3b52d02bd74d243a0ef861bae4c71d92" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonomialHashTable&lt; ValueType &gt;::~MonomialHashTable</definition>
+        <argsstring>()</argsstring>
+        <name>~MonomialHashTable</name>
+        <qualifiedname>MonomialHashTable::~MonomialHashTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="178" column="3" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="178" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialHashTable&lt; ValueType &gt;::reset</definition>
+        <argsstring>()</argsstring>
+        <name>reset</name>
+        <qualifiedname>MonomialHashTable::reset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="180" column="8" bodyfile="Macaulay2/e/f4/monhashtable.cpp" bodystart="11" bodyend="21"/>
+        <references refid="class_monomial_hash_table_aa003a7ada3be616d58797e036113e0ab_1aa003a7ada3be616d58797e036113e0ab" compoundref="monhashtable_8hpp" startline="161">MonomialHashTable&lt; ValueType &gt;::count</references>
+        <references refid="class_monomial_hash_table_a2b3373e28e1263d38a379e0d3e6970bf_1a2b3373e28e1263d38a379e0d3e6970bf" compoundref="monhashtable_8hpp" startline="154">MonomialHashTable&lt; ValueType &gt;::hashtab</references>
+        <references refid="class_monomial_hash_table_ab1bcc8b10d9481c6187326b4ad478f2e_1ab1bcc8b10d9481c6187326b4ad478f2e" compoundref="monhashtable_8hpp" startline="165">MonomialHashTable&lt; ValueType &gt;::max_run_length</references>
+        <references refid="class_monomial_hash_table_a1f1b67dd9976ba48ded5804ff59c4759_1a1f1b67dd9976ba48ded5804ff59c4759" compoundref="monhashtable_8hpp" startline="166">MonomialHashTable&lt; ValueType &gt;::monequal_count</references>
+        <references refid="class_monomial_hash_table_a4453b495f327b7bb5578e1e7438791e1_1a4453b495f327b7bb5578e1e7438791e1" compoundref="monhashtable_8hpp" startline="167">MonomialHashTable&lt; ValueType &gt;::monequal_fails</references>
+        <references refid="class_monomial_hash_table_a3e2a70362319be87abbeed6006a655b7_1a3e2a70362319be87abbeed6006a655b7" compoundref="monhashtable_8hpp" startline="164">MonomialHashTable&lt; ValueType &gt;::nclashes</references>
+        <references refid="class_monomial_hash_table_acd62454210c08cea93037180aac73528_1acd62454210c08cea93037180aac73528" compoundref="monhashtable_8hpp" startline="163">MonomialHashTable&lt; ValueType &gt;::nfind_or_insert</references>
+        <references refid="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" compoundref="monhashtable_8hpp" startline="156">MonomialHashTable&lt; ValueType &gt;::size</references>
+        <referencedby refid="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" compoundref="monhashtable_8cpp" startline="24" endline="34">MonomialHashTable&lt; ValueType &gt;::initialize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_table_a80be58ddc37e42f36d2deea2485e7855_1a80be58ddc37e42f36d2deea2485e7855" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialHashTable&lt; ValueType &gt;::find_or_insert</definition>
+        <argsstring>(value m, value &amp;result)</argsstring>
+        <name>find_or_insert</name>
+        <qualifiedname>MonomialHashTable::find_or_insert</qualifiedname>
+        <param>
+          <type><ref refid="class_monomial_hash_table_a71f89e6c4f29940ac93c44a36fcc7689_1a71f89e6c4f29940ac93c44a36fcc7689" kindref="member">value</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="class_monomial_hash_table_a71f89e6c4f29940ac93c44a36fcc7689_1a71f89e6c4f29940ac93c44a36fcc7689" kindref="member">value</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="185" column="8" bodyfile="Macaulay2/e/f4/monhashtable.cpp" bodystart="83" bodyend="123"/>
+        <references refid="class_monomial_hash_table_aa003a7ada3be616d58797e036113e0ab_1aa003a7ada3be616d58797e036113e0ab" compoundref="monhashtable_8hpp" startline="161">MonomialHashTable&lt; ValueType &gt;::count</references>
+        <references refid="class_monomial_hash_table_a66bef3935b8427b06aff72dea845a1b5_1a66bef3935b8427b06aff72dea845a1b5" compoundref="monhashtable_8cpp" startline="52" endline="61">MonomialHashTable&lt; ValueType &gt;::grow</references>
+        <references refid="class_monomial_hash_table_ae33f75de19515f1c69d0b5ac54e8f597_1ae33f75de19515f1c69d0b5ac54e8f597" compoundref="monhashtable_8hpp" startline="158">MonomialHashTable&lt; ValueType &gt;::hashmask</references>
+        <references refid="class_monomial_hash_table_a2b3373e28e1263d38a379e0d3e6970bf_1a2b3373e28e1263d38a379e0d3e6970bf" compoundref="monhashtable_8hpp" startline="154">MonomialHashTable&lt; ValueType &gt;::hashtab</references>
+        <references refid="monhashtable_8cpp_a8932dd3839d6c30143c720657a240cac_1a8932dd3839d6c30143c720657a240cac" compoundref="monhashtable_8cpp" startline="7">HASHVALUE</references>
+        <references refid="monhashtable_8cpp_af5f8a49d39e87d18d91228d7c2499b15_1af5f8a49d39e87d18d91228d7c2499b15" compoundref="monhashtable_8cpp" startline="8">MONOMIAL_EQUAL</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" compoundref="monhashtable_8hpp" startline="156">MonomialHashTable&lt; ValueType &gt;::size</references>
+        <references refid="class_monomial_hash_table_a3f277006d23c1cd27292ada8962ac661_1a3f277006d23c1cd27292ada8962ac661" compoundref="monhashtable_8hpp" startline="159">MonomialHashTable&lt; ValueType &gt;::threshold</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_table_a8325816c4556b7c14a3ee76946fa6054_1a8325816c4556b7c14a3ee76946fa6054" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialHashTable&lt; ValueType &gt;::dump</definition>
+        <argsstring>() const</argsstring>
+        <name>dump</name>
+        <qualifiedname>MonomialHashTable::dump</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="190" column="8" bodyfile="Macaulay2/e/f4/monhashtable.cpp" bodystart="126" bodyend="136"/>
+        <references refid="class_monomial_hash_table_aa003a7ada3be616d58797e036113e0ab_1aa003a7ada3be616d58797e036113e0ab" compoundref="monhashtable_8hpp" startline="161">MonomialHashTable&lt; ValueType &gt;::count</references>
+        <references refid="class_monomial_hash_table_ab1bcc8b10d9481c6187326b4ad478f2e_1ab1bcc8b10d9481c6187326b4ad478f2e" compoundref="monhashtable_8hpp" startline="165">MonomialHashTable&lt; ValueType &gt;::max_run_length</references>
+        <references refid="class_monomial_hash_table_a1f1b67dd9976ba48ded5804ff59c4759_1a1f1b67dd9976ba48ded5804ff59c4759" compoundref="monhashtable_8hpp" startline="166">MonomialHashTable&lt; ValueType &gt;::monequal_count</references>
+        <references refid="class_monomial_hash_table_a4453b495f327b7bb5578e1e7438791e1_1a4453b495f327b7bb5578e1e7438791e1" compoundref="monhashtable_8hpp" startline="167">MonomialHashTable&lt; ValueType &gt;::monequal_fails</references>
+        <references refid="class_monomial_hash_table_a3e2a70362319be87abbeed6006a655b7_1a3e2a70362319be87abbeed6006a655b7" compoundref="monhashtable_8hpp" startline="164">MonomialHashTable&lt; ValueType &gt;::nclashes</references>
+        <references refid="class_monomial_hash_table_acd62454210c08cea93037180aac73528_1acd62454210c08cea93037180aac73528" compoundref="monhashtable_8hpp" startline="163">MonomialHashTable&lt; ValueType &gt;::nfind_or_insert</references>
+        <references refid="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" compoundref="monhashtable_8hpp" startline="156">MonomialHashTable&lt; ValueType &gt;::size</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_table_a3575c5df3c49ea8a44cdfa6dafb033b6_1a3575c5df3c49ea8a44cdfa6dafb033b6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialHashTable&lt; ValueType &gt;::show</definition>
+        <argsstring>() const</argsstring>
+        <name>show</name>
+        <qualifiedname>MonomialHashTable::show</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="194" column="8" bodyfile="Macaulay2/e/f4/monhashtable.cpp" bodystart="139" bodyend="160"/>
+        <references refid="class_monomial_hash_table_a2b3373e28e1263d38a379e0d3e6970bf_1a2b3373e28e1263d38a379e0d3e6970bf" compoundref="monhashtable_8hpp" startline="154">MonomialHashTable&lt; ValueType &gt;::hashtab</references>
+        <references refid="class_monomial_hash_table_a4d29137ca3f676e944716f20ad52e430_1a4d29137ca3f676e944716f20ad52e430" compoundref="monhashtable_8hpp" startline="153">MonomialHashTable&lt; ValueType &gt;::M</references>
+        <references refid="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" compoundref="monhashtable_8hpp" startline="156">MonomialHashTable&lt; ValueType &gt;::size</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>MonomialHashTable&lt; MonomialInfo &gt;</label>
+        <link refid="class_monomial_hash_table"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; MonomialInfo &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MonomialHashTable&lt; ResMonomialsWithComponent &gt;</label>
+        <link refid="class_monomial_hash_table"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; ResMonomialsWithComponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>MonomialHashTable&lt; ValueType &gt;</label>
+        <link refid="class_monomial_hash_table"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>MonomialHashTable&lt; ValueType &gt;</label>
+        <link refid="class_monomial_hash_table"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>hashtab</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>count</edgelabel>
+          <edgelabel>hashmask</edgelabel>
+          <edgelabel>max_run_length</edgelabel>
+          <edgelabel>monequal_count</edgelabel>
+          <edgelabel>monequal_fails</edgelabel>
+          <edgelabel>nclashes</edgelabel>
+          <edgelabel>nfind_or_insert</edgelabel>
+          <edgelabel>size</edgelabel>
+          <edgelabel>threshold</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>logsize</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>const ValueType *</label>
+      </node>
+      <node id="8">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="7">
+        <label>long</label>
+      </node>
+      <node id="5">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::unique_ptr&lt; value[]&gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; value[]&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>value</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/monhashtable.hpp" line="148" column="1" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="149" bodyend="198"/>
+    <listofallmembers>
+      <member refid="class_monomial_hash_table_aa003a7ada3be616d58797e036113e0ab_1aa003a7ada3be616d58797e036113e0ab" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>count</name></member>
+      <member refid="class_monomial_hash_table_a8325816c4556b7c14a3ee76946fa6054_1a8325816c4556b7c14a3ee76946fa6054" prot="public" virt="non-virtual"><scope>MonomialHashTable</scope><name>dump</name></member>
+      <member refid="class_monomial_hash_table_a80be58ddc37e42f36d2deea2485e7855_1a80be58ddc37e42f36d2deea2485e7855" prot="public" virt="non-virtual"><scope>MonomialHashTable</scope><name>find_or_insert</name></member>
+      <member refid="class_monomial_hash_table_a66bef3935b8427b06aff72dea845a1b5_1a66bef3935b8427b06aff72dea845a1b5" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>grow</name></member>
+      <member refid="class_monomial_hash_table_ae33f75de19515f1c69d0b5ac54e8f597_1ae33f75de19515f1c69d0b5ac54e8f597" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>hashmask</name></member>
+      <member refid="class_monomial_hash_table_a2b3373e28e1263d38a379e0d3e6970bf_1a2b3373e28e1263d38a379e0d3e6970bf" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>hashtab</name></member>
+      <member refid="class_monomial_hash_table_a5cf071349ce955ccb4f00e1db193edd6_1a5cf071349ce955ccb4f00e1db193edd6" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>initialize</name></member>
+      <member refid="class_monomial_hash_table_ab50c3041e177747a5e0d0790dd774a1a_1ab50c3041e177747a5e0d0790dd774a1a" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>insert</name></member>
+      <member refid="class_monomial_hash_table_a026ca22e1ee477e68cd70118526e1ca6_1a026ca22e1ee477e68cd70118526e1ca6" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>logsize</name></member>
+      <member refid="class_monomial_hash_table_a4d29137ca3f676e944716f20ad52e430_1a4d29137ca3f676e944716f20ad52e430" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>M</name></member>
+      <member refid="class_monomial_hash_table_ab1bcc8b10d9481c6187326b4ad478f2e_1ab1bcc8b10d9481c6187326b4ad478f2e" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>max_run_length</name></member>
+      <member refid="class_monomial_hash_table_a1f1b67dd9976ba48ded5804ff59c4759_1a1f1b67dd9976ba48ded5804ff59c4759" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>monequal_count</name></member>
+      <member refid="class_monomial_hash_table_a4453b495f327b7bb5578e1e7438791e1_1a4453b495f327b7bb5578e1e7438791e1" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>monequal_fails</name></member>
+      <member refid="class_monomial_hash_table_a3dfa464bc67ed0a48b602b250659d5c2_1a3dfa464bc67ed0a48b602b250659d5c2" prot="public" virt="non-virtual"><scope>MonomialHashTable</scope><name>MonomialHashTable</name></member>
+      <member refid="class_monomial_hash_table_a3e2a70362319be87abbeed6006a655b7_1a3e2a70362319be87abbeed6006a655b7" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>nclashes</name></member>
+      <member refid="class_monomial_hash_table_acd62454210c08cea93037180aac73528_1acd62454210c08cea93037180aac73528" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>nfind_or_insert</name></member>
+      <member refid="class_monomial_hash_table_acea615cf45c53a323437241c89719572_1acea615cf45c53a323437241c89719572" prot="public" virt="non-virtual"><scope>MonomialHashTable</scope><name>reset</name></member>
+      <member refid="class_monomial_hash_table_a3575c5df3c49ea8a44cdfa6dafb033b6_1a3575c5df3c49ea8a44cdfa6dafb033b6" prot="public" virt="non-virtual"><scope>MonomialHashTable</scope><name>show</name></member>
+      <member refid="class_monomial_hash_table_a2c476ae3bbcd26f05e640ea49e9afb04_1a2c476ae3bbcd26f05e640ea49e9afb04" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>size</name></member>
+      <member refid="class_monomial_hash_table_a3f277006d23c1cd27292ada8962ac661_1a3f277006d23c1cd27292ada8962ac661" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>threshold</name></member>
+      <member refid="class_monomial_hash_table_a71f89e6c4f29940ac93c44a36fcc7689_1a71f89e6c4f29940ac93c44a36fcc7689" prot="private" virt="non-virtual"><scope>MonomialHashTable</scope><name>value</name></member>
+      <member refid="class_monomial_hash_table_a3b52d02bd74d243a0ef861bae4c71d92_1a3b52d02bd74d243a0ef861bae4c71d92" prot="public" virt="non-virtual"><scope>MonomialHashTable</scope><name>~MonomialHashTable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

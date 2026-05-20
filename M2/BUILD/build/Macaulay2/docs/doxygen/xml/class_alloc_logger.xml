@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_alloc_logger" kind="class" language="C++" prot="public">
+    <compoundname>AllocLogger</compoundname>
+    <includes refid="myalloc_8hpp" local="no">myalloc.hpp</includes>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_alloc_logger_af7bf5fe7168d05a22c0e7b3fcf5bb14a_1af7bf5fe7168d05a22c0e7b3fcf5bb14a" prot="public" static="yes" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t AllocLogger::mNumAllocs</definition>
+        <argsstring></argsstring>
+        <name>mNumAllocs</name>
+        <qualifiedname>AllocLogger::mNumAllocs</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/myalloc.hpp" line="61" column="17" bodyfile="Macaulay2/e/myalloc.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="class_alloc_logger_ab8baf7d79cc01fe70cd7969099f6bd67_1ab8baf7d79cc01fe70cd7969099f6bd67" compoundref="myalloc_8hpp" startline="75" endline="83">logAlloc</referencedby>
+        <referencedby refid="myalloc_8cpp_a2d93fdae5150ff54cb531c02e4be379a_1a2d93fdae5150ff54cb531c02e4be379a" compoundref="myalloc_8cpp" startline="9" endline="15">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_alloc_logger_ac307252ec51609f133ab2e504d02f75a_1ac307252ec51609f133ab2e504d02f75a" compoundref="myalloc_8hpp" startline="67" endline="73">reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_alloc_logger_aa756006f79111b20bf10fcf1bc6e6439_1aa756006f79111b20bf10fcf1bc6e6439" prot="public" static="yes" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t AllocLogger::mAllocSize</definition>
+        <argsstring></argsstring>
+        <name>mAllocSize</name>
+        <qualifiedname>AllocLogger::mAllocSize</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/myalloc.hpp" line="62" column="17" bodyfile="Macaulay2/e/myalloc.hpp" bodystart="62" bodyend="-1"/>
+        <referencedby refid="class_alloc_logger_ab8baf7d79cc01fe70cd7969099f6bd67_1ab8baf7d79cc01fe70cd7969099f6bd67" compoundref="myalloc_8hpp" startline="75" endline="83">logAlloc</referencedby>
+        <referencedby refid="myalloc_8cpp_a2d93fdae5150ff54cb531c02e4be379a_1a2d93fdae5150ff54cb531c02e4be379a" compoundref="myalloc_8cpp" startline="9" endline="15">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_alloc_logger_ac307252ec51609f133ab2e504d02f75a_1ac307252ec51609f133ab2e504d02f75a" compoundref="myalloc_8hpp" startline="67" endline="73">reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_alloc_logger_a2e4e5e0ede8f97caac4e56d06247eaf1_1a2e4e5e0ede8f97caac4e56d06247eaf1" prot="public" static="yes" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t AllocLogger::mNumDeallocs</definition>
+        <argsstring></argsstring>
+        <name>mNumDeallocs</name>
+        <qualifiedname>AllocLogger::mNumDeallocs</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/myalloc.hpp" line="63" column="17" bodyfile="Macaulay2/e/myalloc.hpp" bodystart="63" bodyend="-1"/>
+        <referencedby refid="class_alloc_logger_af9c6b46dbd1b16e054a09ebe9c6be0f9_1af9c6b46dbd1b16e054a09ebe9c6be0f9" compoundref="myalloc_8hpp" startline="85" endline="90">logDealloc</referencedby>
+        <referencedby refid="myalloc_8cpp_a2d93fdae5150ff54cb531c02e4be379a_1a2d93fdae5150ff54cb531c02e4be379a" compoundref="myalloc_8cpp" startline="9" endline="15">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_alloc_logger_ac307252ec51609f133ab2e504d02f75a_1ac307252ec51609f133ab2e504d02f75a" compoundref="myalloc_8hpp" startline="67" endline="73">reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_alloc_logger_a6dd47aa0a04870e729d040d82b42cd5c_1a6dd47aa0a04870e729d040d82b42cd5c" prot="public" static="yes" mutable="no">
+        <type>long</type>
+        <definition>long AllocLogger::mCurrentAllocSize</definition>
+        <argsstring></argsstring>
+        <name>mCurrentAllocSize</name>
+        <qualifiedname>AllocLogger::mCurrentAllocSize</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/myalloc.hpp" line="64" column="15" bodyfile="Macaulay2/e/myalloc.hpp" bodystart="64" bodyend="-1"/>
+        <referencedby refid="class_alloc_logger_ab8baf7d79cc01fe70cd7969099f6bd67_1ab8baf7d79cc01fe70cd7969099f6bd67" compoundref="myalloc_8hpp" startline="75" endline="83">logAlloc</referencedby>
+        <referencedby refid="class_alloc_logger_af9c6b46dbd1b16e054a09ebe9c6be0f9_1af9c6b46dbd1b16e054a09ebe9c6be0f9" compoundref="myalloc_8hpp" startline="85" endline="90">logDealloc</referencedby>
+        <referencedby refid="myalloc_8cpp_a2d93fdae5150ff54cb531c02e4be379a_1a2d93fdae5150ff54cb531c02e4be379a" compoundref="myalloc_8cpp" startline="9" endline="15">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_alloc_logger_ac307252ec51609f133ab2e504d02f75a_1ac307252ec51609f133ab2e504d02f75a" compoundref="myalloc_8hpp" startline="67" endline="73">reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_alloc_logger_ad3aec269607bbd4959bc902923cf8691_1ad3aec269607bbd4959bc902923cf8691" prot="public" static="yes" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t AllocLogger::mHighWater</definition>
+        <argsstring></argsstring>
+        <name>mHighWater</name>
+        <qualifiedname>AllocLogger::mHighWater</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/myalloc.hpp" line="65" column="17" bodyfile="Macaulay2/e/myalloc.hpp" bodystart="65" bodyend="-1"/>
+        <referencedby refid="class_alloc_logger_ab8baf7d79cc01fe70cd7969099f6bd67_1ab8baf7d79cc01fe70cd7969099f6bd67" compoundref="myalloc_8hpp" startline="75" endline="83">logAlloc</referencedby>
+        <referencedby refid="myalloc_8cpp_a2d93fdae5150ff54cb531c02e4be379a_1a2d93fdae5150ff54cb531c02e4be379a" compoundref="myalloc_8cpp" startline="9" endline="15">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_alloc_logger_ac307252ec51609f133ab2e504d02f75a_1ac307252ec51609f133ab2e504d02f75a" compoundref="myalloc_8hpp" startline="67" endline="73">reset</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_alloc_logger_ac307252ec51609f133ab2e504d02f75a_1ac307252ec51609f133ab2e504d02f75a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AllocLogger::reset</definition>
+        <argsstring>()</argsstring>
+        <name>reset</name>
+        <qualifiedname>AllocLogger::reset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/myalloc.hpp" line="67" column="15" bodyfile="Macaulay2/e/myalloc.hpp" bodystart="67" bodyend="73"/>
+        <references refid="class_alloc_logger_aa756006f79111b20bf10fcf1bc6e6439_1aa756006f79111b20bf10fcf1bc6e6439" compoundref="myalloc_8hpp" startline="62">mAllocSize</references>
+        <references refid="class_alloc_logger_a6dd47aa0a04870e729d040d82b42cd5c_1a6dd47aa0a04870e729d040d82b42cd5c" compoundref="myalloc_8hpp" startline="64">mCurrentAllocSize</references>
+        <references refid="class_alloc_logger_ad3aec269607bbd4959bc902923cf8691_1ad3aec269607bbd4959bc902923cf8691" compoundref="myalloc_8hpp" startline="65">mHighWater</references>
+        <references refid="class_alloc_logger_af7bf5fe7168d05a22c0e7b3fcf5bb14a_1af7bf5fe7168d05a22c0e7b3fcf5bb14a" compoundref="myalloc_8hpp" startline="61">mNumAllocs</references>
+        <references refid="class_alloc_logger_a2e4e5e0ede8f97caac4e56d06247eaf1_1a2e4e5e0ede8f97caac4e56d06247eaf1" compoundref="myalloc_8hpp" startline="63">mNumDeallocs</references>
+      </memberdef>
+      <memberdef kind="function" id="class_alloc_logger_ab8baf7d79cc01fe70cd7969099f6bd67_1ab8baf7d79cc01fe70cd7969099f6bd67" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AllocLogger::logAlloc</definition>
+        <argsstring>(size_t num, size_t sz)</argsstring>
+        <name>logAlloc</name>
+        <qualifiedname>AllocLogger::logAlloc</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>num</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>sz</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/myalloc.hpp" line="75" column="15" bodyfile="Macaulay2/e/myalloc.hpp" bodystart="75" bodyend="83"/>
+        <references refid="class_alloc_logger_aa756006f79111b20bf10fcf1bc6e6439_1aa756006f79111b20bf10fcf1bc6e6439" compoundref="myalloc_8hpp" startline="62">mAllocSize</references>
+        <references refid="class_alloc_logger_a6dd47aa0a04870e729d040d82b42cd5c_1a6dd47aa0a04870e729d040d82b42cd5c" compoundref="myalloc_8hpp" startline="64">mCurrentAllocSize</references>
+        <references refid="class_alloc_logger_ad3aec269607bbd4959bc902923cf8691_1ad3aec269607bbd4959bc902923cf8691" compoundref="myalloc_8hpp" startline="65">mHighWater</references>
+        <references refid="class_alloc_logger_af7bf5fe7168d05a22c0e7b3fcf5bb14a_1af7bf5fe7168d05a22c0e7b3fcf5bb14a" compoundref="myalloc_8hpp" startline="61">mNumAllocs</references>
+        <referencedby refid="class_stats_allocator_a230d777fb803ccbd6ffe5204618c3310_1a230d777fb803ccbd6ffe5204618c3310" compoundref="myalloc_8hpp" startline="110" endline="114">StatsAllocator&lt; T &gt;::allocate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_alloc_logger_af9c6b46dbd1b16e054a09ebe9c6be0f9_1af9c6b46dbd1b16e054a09ebe9c6be0f9" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AllocLogger::logDealloc</definition>
+        <argsstring>(size_t num, size_t sz)</argsstring>
+        <name>logDealloc</name>
+        <qualifiedname>AllocLogger::logDealloc</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>num</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>sz</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/myalloc.hpp" line="85" column="15" bodyfile="Macaulay2/e/myalloc.hpp" bodystart="85" bodyend="90"/>
+        <references refid="class_alloc_logger_a6dd47aa0a04870e729d040d82b42cd5c_1a6dd47aa0a04870e729d040d82b42cd5c" compoundref="myalloc_8hpp" startline="64">mCurrentAllocSize</references>
+        <references refid="class_alloc_logger_a2e4e5e0ede8f97caac4e56d06247eaf1_1a2e4e5e0ede8f97caac4e56d06247eaf1" compoundref="myalloc_8hpp" startline="63">mNumDeallocs</references>
+        <referencedby refid="class_stats_allocator_afe14055602acade6c39627468597611d_1afe14055602acade6c39627468597611d" compoundref="myalloc_8hpp" startline="116" endline="120">StatsAllocator&lt; T &gt;::deallocate</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Process-wide allocation counter used by <computeroutput><ref refid="class_stats_allocator" kindref="compound">StatsAllocator</ref></computeroutput> for debugging and benchmarking. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>All counters (<computeroutput><ref refid="class_alloc_logger_af7bf5fe7168d05a22c0e7b3fcf5bb14a_1af7bf5fe7168d05a22c0e7b3fcf5bb14a" kindref="member">mNumAllocs</ref></computeroutput>, <computeroutput><ref refid="class_alloc_logger_aa756006f79111b20bf10fcf1bc6e6439_1aa756006f79111b20bf10fcf1bc6e6439" kindref="member">mAllocSize</ref></computeroutput>, <computeroutput><ref refid="class_alloc_logger_a2e4e5e0ede8f97caac4e56d06247eaf1_1a2e4e5e0ede8f97caac4e56d06247eaf1" kindref="member">mNumDeallocs</ref></computeroutput>, <computeroutput><ref refid="class_alloc_logger_a6dd47aa0a04870e729d040d82b42cd5c_1a6dd47aa0a04870e729d040d82b42cd5c" kindref="member">mCurrentAllocSize</ref></computeroutput>, <computeroutput><ref refid="class_alloc_logger_ad3aec269607bbd4959bc902923cf8691_1ad3aec269607bbd4959bc902923cf8691" kindref="member">mHighWater</ref></computeroutput>) are <computeroutput>static</computeroutput>, so the logger tracks every <computeroutput><ref refid="class_stats_allocator" kindref="compound">StatsAllocator</ref></computeroutput>-mediated allocation in the process at once. <computeroutput><ref refid="class_alloc_logger_ab8baf7d79cc01fe70cd7969099f6bd67_1ab8baf7d79cc01fe70cd7969099f6bd67" kindref="member">logAlloc</ref></computeroutput> / <computeroutput><ref refid="class_alloc_logger_af9c6b46dbd1b16e054a09ebe9c6be0f9_1af9c6b46dbd1b16e054a09ebe9c6be0f9" kindref="member">logDealloc</ref></computeroutput> are called from the allocator hooks; <computeroutput><ref refid="class_alloc_logger_ac307252ec51609f133ab2e504d02f75a_1ac307252ec51609f133ab2e504d02f75a" kindref="member">reset()</ref></computeroutput> zeroes everything for a fresh measurement. Not thread-safe <mdash/> intended only for diagnostic runs. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>AllocLogger</label>
+        <link refid="class_alloc_logger"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mAllocSize</edgelabel>
+          <edgelabel>mHighWater</edgelabel>
+          <edgelabel>mNumAllocs</edgelabel>
+          <edgelabel>mNumDeallocs</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mCurrentAllocSize</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>size_t</label>
+      </node>
+      <node id="3">
+        <label>static long</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/myalloc.hpp" line="58" column="1" bodyfile="Macaulay2/e/myalloc.hpp" bodystart="59" bodyend="91"/>
+    <listofallmembers>
+      <member refid="class_alloc_logger_ab8baf7d79cc01fe70cd7969099f6bd67_1ab8baf7d79cc01fe70cd7969099f6bd67" prot="public" virt="non-virtual"><scope>AllocLogger</scope><name>logAlloc</name></member>
+      <member refid="class_alloc_logger_af9c6b46dbd1b16e054a09ebe9c6be0f9_1af9c6b46dbd1b16e054a09ebe9c6be0f9" prot="public" virt="non-virtual"><scope>AllocLogger</scope><name>logDealloc</name></member>
+      <member refid="class_alloc_logger_aa756006f79111b20bf10fcf1bc6e6439_1aa756006f79111b20bf10fcf1bc6e6439" prot="public" virt="non-virtual"><scope>AllocLogger</scope><name>mAllocSize</name></member>
+      <member refid="class_alloc_logger_a6dd47aa0a04870e729d040d82b42cd5c_1a6dd47aa0a04870e729d040d82b42cd5c" prot="public" virt="non-virtual"><scope>AllocLogger</scope><name>mCurrentAllocSize</name></member>
+      <member refid="class_alloc_logger_ad3aec269607bbd4959bc902923cf8691_1ad3aec269607bbd4959bc902923cf8691" prot="public" virt="non-virtual"><scope>AllocLogger</scope><name>mHighWater</name></member>
+      <member refid="class_alloc_logger_af7bf5fe7168d05a22c0e7b3fcf5bb14a_1af7bf5fe7168d05a22c0e7b3fcf5bb14a" prot="public" virt="non-virtual"><scope>AllocLogger</scope><name>mNumAllocs</name></member>
+      <member refid="class_alloc_logger_a2e4e5e0ede8f97caac4e56d06247eaf1_1a2e4e5e0ede8f97caac4e56d06247eaf1" prot="public" virt="non-virtual"><scope>AllocLogger</scope><name>mNumDeallocs</name></member>
+      <member refid="class_alloc_logger_ac307252ec51609f133ab2e504d02f75a_1ac307252ec51609f133ab2e504d02f75a" prot="public" virt="non-virtual"><scope>AllocLogger</scope><name>reset</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

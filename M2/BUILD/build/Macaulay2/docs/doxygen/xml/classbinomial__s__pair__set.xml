@@ -1,0 +1,1391 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classbinomial__s__pair__set" kind="class" language="C++" prot="public">
+    <compoundname>binomial_s_pair_set</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="gb-toric_8hpp" local="no">gb-toric.hpp</includes>
+    <innerclass refid="structbinomial__s__pair__set_1_1s__pair__degree__list" prot="private">binomial_s_pair_set::s_pair_degree_list</innerclass>
+    <innerclass refid="structbinomial__s__pair__set_1_1s__pair__lcm__list" prot="private">binomial_s_pair_set::s_pair_lcm_list</innerclass>
+    <innerclass refid="structbinomial__s__pair__set_1_1s__pair__elem" prot="private">binomial_s_pair_set::s_pair_elem</innerclass>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classbinomial__ring" kindref="compound">binomial_ring</ref> *</type>
+        <definition>const binomial_ring* binomial_s_pair_set::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>binomial_s_pair_set::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="194" column="23" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="194" bodyend="-1"/>
+        <referencedby refid="classbinomial__s__pair__set_a7b960208ebdbd67168485da01fdad6a4_1a7b960208ebdbd67168485da01fdad6a4" compoundref="gb-toric_8cpp" startline="441" endline="447">binomial_s_pair_set</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_acd26d583d97a86a5b89b57974a9b0a7f_1acd26d583d97a86a5b89b57974a9b0a7f" compoundref="gb-toric_8cpp" startline="449" endline="461">enlarge</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a32028bfd8077a4fa9070162e7ae87a84_1a32028bfd8077a4fa9070162e7ae87a84" compoundref="gb-toric_8cpp" startline="527" endline="532">insert</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_af095038ac9317327b80280421542a3f7_1af095038ac9317327b80280421542a3f7" compoundref="gb-toric_8cpp" startline="534" endline="568">insert</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a2e04ded21c1e852fc1dcae58ed175959_1a2e04ded21c1e852fc1dcae58ed175959" compoundref="gb-toric_8cpp" startline="495" endline="525">insert_pair</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a4bf91baf2b9cb98da9f74bdc6672e3cc_1a4bf91baf2b9cb98da9f74bdc6672e3cc" compoundref="gb-toric_8cpp" startline="570" endline="610">next</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a5cf49c4a71718e25b9f45834433fa15c_1a5cf49c4a71718e25b9f45834433fa15c" compoundref="gb-toric_8cpp" startline="463" endline="473">remove_lcm_list</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a2f17184e39cf390ab2bb056fc53b1b7f_1a2f17184e39cf390ab2bb056fc53b1b7f" compoundref="gb-toric_8cpp" startline="484" endline="493">~binomial_s_pair_set</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classbinomial__s__pair__set_afc203f62abc2a5aa625c6a550f871b1d_1afc203f62abc2a5aa625c6a550f871b1d" prot="private" static="no" mutable="no">
+        <type><ref refid="gb-toric_8hpp_a3667498ea82610ba25996f8ccd3d1dc5_1a3667498ea82610ba25996f8ccd3d1dc5" kindref="member">monomial0</ref></type>
+        <definition>monomial0 binomial_s_pair_set::_prev_lcm</definition>
+        <argsstring></argsstring>
+        <name>_prev_lcm</name>
+        <qualifiedname>binomial_s_pair_set::_prev_lcm</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="195" column="13" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="195" bodyend="-1"/>
+        <referencedby refid="classbinomial__s__pair__set_a7b960208ebdbd67168485da01fdad6a4_1a7b960208ebdbd67168485da01fdad6a4" compoundref="gb-toric_8cpp" startline="441" endline="447">binomial_s_pair_set</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_acd26d583d97a86a5b89b57974a9b0a7f_1acd26d583d97a86a5b89b57974a9b0a7f" compoundref="gb-toric_8cpp" startline="449" endline="461">enlarge</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a4bf91baf2b9cb98da9f74bdc6672e3cc_1a4bf91baf2b9cb98da9f74bdc6672e3cc" compoundref="gb-toric_8cpp" startline="570" endline="610">next</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a2f17184e39cf390ab2bb056fc53b1b7f_1a2f17184e39cf390ab2bb056fc53b1b7f" compoundref="gb-toric_8cpp" startline="484" endline="493">~binomial_s_pair_set</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classbinomial__s__pair__set_acb340858c91a945325552cd91e9deea5_1acb340858c91a945325552cd91e9deea5" prot="private" static="no" mutable="no">
+        <type><ref refid="structbinomial__s__pair__set_1_1s__pair__degree__list" kindref="compound">s_pair_degree_list</ref> *</type>
+        <definition>s_pair_degree_list* binomial_s_pair_set::_pairs</definition>
+        <argsstring></argsstring>
+        <name>_pairs</name>
+        <qualifiedname>binomial_s_pair_set::_pairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="196" column="22" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="196" bodyend="-1"/>
+        <referencedby refid="classbinomial__s__pair__set_a7b960208ebdbd67168485da01fdad6a4_1a7b960208ebdbd67168485da01fdad6a4" compoundref="gb-toric_8cpp" startline="441" endline="447">binomial_s_pair_set</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_acd26d583d97a86a5b89b57974a9b0a7f_1acd26d583d97a86a5b89b57974a9b0a7f" compoundref="gb-toric_8cpp" startline="449" endline="461">enlarge</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_af095038ac9317327b80280421542a3f7_1af095038ac9317327b80280421542a3f7" compoundref="gb-toric_8cpp" startline="534" endline="568">insert</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a759596ac3fdafe2841d566be64b7357d_1a759596ac3fdafe2841d566be64b7357d" compoundref="gb-toric_8cpp" startline="612" endline="616">lowest_degree</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a6ba080b3d8764d9b540d0a47c9d1c1f1_1a6ba080b3d8764d9b540d0a47c9d1c1f1" compoundref="gb-toric_8cpp" startline="618" endline="624">n_elems</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a4bf91baf2b9cb98da9f74bdc6672e3cc_1a4bf91baf2b9cb98da9f74bdc6672e3cc" compoundref="gb-toric_8cpp" startline="570" endline="610">next</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a2f17184e39cf390ab2bb056fc53b1b7f_1a2f17184e39cf390ab2bb056fc53b1b7f" compoundref="gb-toric_8cpp" startline="484" endline="493">~binomial_s_pair_set</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classbinomial__s__pair__set_a7a9a74ff74e5cce7c19701d6fc6db344_1a7a9a74ff74e5cce7c19701d6fc6db344" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int binomial_s_pair_set::_n_elems</definition>
+        <argsstring></argsstring>
+        <name>_n_elems</name>
+        <qualifiedname>binomial_s_pair_set::_n_elems</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="197" column="7" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="197" bodyend="-1"/>
+        <referencedby refid="classbinomial__s__pair__set_a7b960208ebdbd67168485da01fdad6a4_1a7b960208ebdbd67168485da01fdad6a4" compoundref="gb-toric_8cpp" startline="441" endline="447">binomial_s_pair_set</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_af095038ac9317327b80280421542a3f7_1af095038ac9317327b80280421542a3f7" compoundref="gb-toric_8cpp" startline="534" endline="568">insert</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a24824d93831eaf98455543807c58be30_1a24824d93831eaf98455543807c58be30" compoundref="gb-toric_8cpp" startline="626" endline="626">n_elems</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a4bf91baf2b9cb98da9f74bdc6672e3cc_1a4bf91baf2b9cb98da9f74bdc6672e3cc" compoundref="gb-toric_8cpp" startline="570" endline="610">next</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classbinomial__s__pair__set_a8bc9507bd090d111ead0af684bfc24ea_1a8bc9507bd090d111ead0af684bfc24ea" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int binomial_s_pair_set::_max_degree</definition>
+        <argsstring></argsstring>
+        <name>_max_degree</name>
+        <qualifiedname>binomial_s_pair_set::_max_degree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="200" column="7" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="200" bodyend="-1"/>
+        <referencedby refid="classbinomial__s__pair__set_a7b960208ebdbd67168485da01fdad6a4_1a7b960208ebdbd67168485da01fdad6a4" compoundref="gb-toric_8cpp" startline="441" endline="447">binomial_s_pair_set</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_af095038ac9317327b80280421542a3f7_1af095038ac9317327b80280421542a3f7" compoundref="gb-toric_8cpp" startline="534" endline="568">insert</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a498737610d51afe68fb1a06cc9fc93aa_1a498737610d51afe68fb1a06cc9fc93aa" compoundref="gb-toric_8cpp" startline="627" endline="657">stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classbinomial__s__pair__set_aa4b4d045c43209d18c07281e19837708_1aa4b4d045c43209d18c07281e19837708" prot="private" static="no" mutable="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>gc_vector&lt;int&gt; binomial_s_pair_set::_npairs</definition>
+        <argsstring></argsstring>
+        <name>_npairs</name>
+        <qualifiedname>binomial_s_pair_set::_npairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="202" column="13" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="202" bodyend="-1"/>
+        <referencedby refid="classbinomial__s__pair__set_a7b960208ebdbd67168485da01fdad6a4_1a7b960208ebdbd67168485da01fdad6a4" compoundref="gb-toric_8cpp" startline="441" endline="447">binomial_s_pair_set</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_af095038ac9317327b80280421542a3f7_1af095038ac9317327b80280421542a3f7" compoundref="gb-toric_8cpp" startline="534" endline="568">insert</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a4bf91baf2b9cb98da9f74bdc6672e3cc_1a4bf91baf2b9cb98da9f74bdc6672e3cc" compoundref="gb-toric_8cpp" startline="570" endline="610">next</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a498737610d51afe68fb1a06cc9fc93aa_1a498737610d51afe68fb1a06cc9fc93aa" compoundref="gb-toric_8cpp" startline="627" endline="657">stats</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classbinomial__s__pair__set_a5cf49c4a71718e25b9f45834433fa15c_1a5cf49c4a71718e25b9f45834433fa15c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void binomial_s_pair_set::remove_lcm_list</definition>
+        <argsstring>(s_pair_lcm_list *p)</argsstring>
+        <name>remove_lcm_list</name>
+        <qualifiedname>binomial_s_pair_set::remove_lcm_list</qualifiedname>
+        <param>
+          <type><ref refid="structbinomial__s__pair__set_1_1s__pair__lcm__list" kindref="compound">s_pair_lcm_list</ref> *</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="204" column="8" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="463" bodyend="473"/>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__elem_a6e852039fbc3b0daf475253adff8213c_1a6e852039fbc3b0daf475253adff8213c" compoundref="gb-toric_8hpp" startline="185">binomial_s_pair_set::s_pair_elem::next</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" compoundref="gb-toric_8hpp" startline="194">R</references>
+        <referencedby refid="classbinomial__s__pair__set_a935a7dcaa7d19603335f3367def329b9_1a935a7dcaa7d19603335f3367def329b9" compoundref="gb-toric_8cpp" startline="474" endline="483">remove_pair_list</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_a935a7dcaa7d19603335f3367def329b9_1a935a7dcaa7d19603335f3367def329b9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void binomial_s_pair_set::remove_pair_list</definition>
+        <argsstring>(s_pair_degree_list *p)</argsstring>
+        <name>remove_pair_list</name>
+        <qualifiedname>binomial_s_pair_set::remove_pair_list</qualifiedname>
+        <param>
+          <type><ref refid="structbinomial__s__pair__set_1_1s__pair__degree__list" kindref="compound">s_pair_degree_list</ref> *</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="205" column="8" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="474" bodyend="483"/>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__lcm__list_ab592c41b0a1e7f4c5cdff879ec4628d6_1ab592c41b0a1e7f4c5cdff879ec4628d6" compoundref="gb-toric_8hpp" startline="178">binomial_s_pair_set::s_pair_lcm_list::next</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="classbinomial__s__pair__set_a5cf49c4a71718e25b9f45834433fa15c_1a5cf49c4a71718e25b9f45834433fa15c" compoundref="gb-toric_8cpp" startline="463" endline="473">remove_lcm_list</references>
+        <referencedby refid="classbinomial__s__pair__set_a2f17184e39cf390ab2bb056fc53b1b7f_1a2f17184e39cf390ab2bb056fc53b1b7f" compoundref="gb-toric_8cpp" startline="484" endline="493">~binomial_s_pair_set</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_a2e04ded21c1e852fc1dcae58ed175959_1a2e04ded21c1e852fc1dcae58ed175959" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void binomial_s_pair_set::insert_pair</definition>
+        <argsstring>(s_pair_degree_list *q, binomial_s_pair &amp;s)</argsstring>
+        <name>insert_pair</name>
+        <qualifiedname>binomial_s_pair_set::insert_pair</qualifiedname>
+        <param>
+          <type><ref refid="structbinomial__s__pair__set_1_1s__pair__degree__list" kindref="compound">s_pair_degree_list</ref> *</type>
+          <declname>q</declname>
+        </param>
+        <param>
+          <type><ref refid="structbinomial__s__pair" kindref="compound">binomial_s_pair</ref> &amp;</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="206" column="8" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="495" bodyend="525"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_abaab8d42f075ee8ddc9b70951d3fd6cd_1abaab8d42f075ee8ddc9b70951d3fd6cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="19">EQ</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ab89310b3f2f97e4e9415fc5a51549612_1ab89310b3f2f97e4e9415fc5a51549612" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="20">GT</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__lcm__list_addfc0ccfbd0e2392392be8dee7d719ab_1addfc0ccfbd0e2392392be8dee7d719ab" compoundref="gb-toric_8hpp" startline="179">binomial_s_pair_set::s_pair_lcm_list::lcm</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__elem_a6e852039fbc3b0daf475253adff8213c_1a6e852039fbc3b0daf475253adff8213c" compoundref="gb-toric_8hpp" startline="185">binomial_s_pair_set::s_pair_elem::next</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__lcm__list_ab592c41b0a1e7f4c5cdff879ec4628d6_1ab592c41b0a1e7f4c5cdff879ec4628d6" compoundref="gb-toric_8hpp" startline="178">binomial_s_pair_set::s_pair_lcm_list::next</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_a30e1fb217be98cdbb0718b0573b0181a_1a30e1fb217be98cdbb0718b0573b0181a" compoundref="gb-toric_8hpp" startline="172">binomial_s_pair_set::s_pair_degree_list::pairs</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__lcm__list_a0fd91c1edd871b01ee1a78210c0fbd0e_1a0fd91c1edd871b01ee1a78210c0fbd0e" compoundref="gb-toric_8hpp" startline="180">binomial_s_pair_set::s_pair_lcm_list::pairs</references>
+        <references refid="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" compoundref="gb-toric_8hpp" startline="194">R</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <referencedby refid="classbinomial__s__pair__set_af095038ac9317327b80280421542a3f7_1af095038ac9317327b80280421542a3f7" compoundref="gb-toric_8cpp" startline="534" endline="568">insert</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classbinomial__s__pair__set_a7b960208ebdbd67168485da01fdad6a4_1a7b960208ebdbd67168485da01fdad6a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>binomial_s_pair_set::binomial_s_pair_set</definition>
+        <argsstring>(const binomial_ring *R)</argsstring>
+        <name>binomial_s_pair_set</name>
+        <qualifiedname>binomial_s_pair_set::binomial_s_pair_set</qualifiedname>
+        <param>
+          <type>const <ref refid="classbinomial__ring" kindref="compound">binomial_ring</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="209" column="3" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="441" bodyend="447"/>
+        <references refid="classbinomial__s__pair__set_a8bc9507bd090d111ead0af684bfc24ea_1a8bc9507bd090d111ead0af684bfc24ea" compoundref="gb-toric_8hpp" startline="200">_max_degree</references>
+        <references refid="classbinomial__s__pair__set_a7a9a74ff74e5cce7c19701d6fc6db344_1a7a9a74ff74e5cce7c19701d6fc6db344" compoundref="gb-toric_8hpp" startline="197">_n_elems</references>
+        <references refid="classbinomial__s__pair__set_aa4b4d045c43209d18c07281e19837708_1aa4b4d045c43209d18c07281e19837708" compoundref="gb-toric_8hpp" startline="202">_npairs</references>
+        <references refid="classbinomial__s__pair__set_acb340858c91a945325552cd91e9deea5_1acb340858c91a945325552cd91e9deea5" compoundref="gb-toric_8hpp" startline="196">_pairs</references>
+        <references refid="classbinomial__s__pair__set_afc203f62abc2a5aa625c6a550f871b1d_1afc203f62abc2a5aa625c6a550f871b1d" compoundref="gb-toric_8hpp" startline="195">_prev_lcm</references>
+        <references refid="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" compoundref="gb-toric_8hpp" startline="194">R</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_a2f17184e39cf390ab2bb056fc53b1b7f_1a2f17184e39cf390ab2bb056fc53b1b7f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>binomial_s_pair_set::~binomial_s_pair_set</definition>
+        <argsstring>()</argsstring>
+        <name>~binomial_s_pair_set</name>
+        <qualifiedname>binomial_s_pair_set::~binomial_s_pair_set</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="210" column="3" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="484" bodyend="493"/>
+        <references refid="classbinomial__s__pair__set_acb340858c91a945325552cd91e9deea5_1acb340858c91a945325552cd91e9deea5" compoundref="gb-toric_8hpp" startline="196">_pairs</references>
+        <references refid="classbinomial__s__pair__set_afc203f62abc2a5aa625c6a550f871b1d_1afc203f62abc2a5aa625c6a550f871b1d" compoundref="gb-toric_8hpp" startline="195">_prev_lcm</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_adbfb3bf468e95b5211dcd9f5b2a494dc_1adbfb3bf468e95b5211dcd9f5b2a494dc" compoundref="gb-toric_8hpp" startline="170">binomial_s_pair_set::s_pair_degree_list::next</references>
+        <references refid="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" compoundref="gb-toric_8hpp" startline="194">R</references>
+        <references refid="classbinomial__s__pair__set_a935a7dcaa7d19603335f3367def329b9_1a935a7dcaa7d19603335f3367def329b9" compoundref="gb-toric_8cpp" startline="474" endline="483">remove_pair_list</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_acd26d583d97a86a5b89b57974a9b0a7f_1acd26d583d97a86a5b89b57974a9b0a7f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void binomial_s_pair_set::enlarge</definition>
+        <argsstring>(const binomial_ring *R)</argsstring>
+        <name>enlarge</name>
+        <qualifiedname>binomial_s_pair_set::enlarge</qualifiedname>
+        <param>
+          <type>const <ref refid="classbinomial__ring" kindref="compound">binomial_ring</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="212" column="8" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="449" bodyend="461"/>
+        <references refid="classbinomial__s__pair__set_acb340858c91a945325552cd91e9deea5_1acb340858c91a945325552cd91e9deea5" compoundref="gb-toric_8hpp" startline="196">_pairs</references>
+        <references refid="classbinomial__s__pair__set_afc203f62abc2a5aa625c6a550f871b1d_1afc203f62abc2a5aa625c6a550f871b1d" compoundref="gb-toric_8hpp" startline="195">_prev_lcm</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__elem_a6e852039fbc3b0daf475253adff8213c_1a6e852039fbc3b0daf475253adff8213c" compoundref="gb-toric_8hpp" startline="185">binomial_s_pair_set::s_pair_elem::next</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__lcm__list_a0fd91c1edd871b01ee1a78210c0fbd0e_1a0fd91c1edd871b01ee1a78210c0fbd0e" compoundref="gb-toric_8hpp" startline="180">binomial_s_pair_set::s_pair_lcm_list::pairs</references>
+        <references refid="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" compoundref="gb-toric_8hpp" startline="194">R</references>
+        <references refid="classbinomial__ring_acd69f43992136be4ba8379449822ebdf_1acd69f43992136be4ba8379449822ebdf" compoundref="gb-toric_8cpp" startline="54" endline="59">binomial_ring::remove_monomial</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_a32028bfd8077a4fa9070162e7ae87a84_1a32028bfd8077a4fa9070162e7ae87a84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void binomial_s_pair_set::insert</definition>
+        <argsstring>(binomial_gb_elem *p)</argsstring>
+        <name>insert</name>
+        <qualifiedname>binomial_s_pair_set::insert</qualifiedname>
+        <param>
+          <type><ref refid="structbinomial__gb__elem" kindref="compound">binomial_gb_elem</ref> *</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="214" column="8" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="527" bodyend="532"/>
+        <references refid="classbinomial__s__pair__set_a32028bfd8077a4fa9070162e7ae87a84_1a32028bfd8077a4fa9070162e7ae87a84" compoundref="gb-toric_8cpp" startline="527" endline="532">insert</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" compoundref="gb-toric_8hpp" startline="194">R</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <referencedby refid="classbinomial__s__pair__set_a32028bfd8077a4fa9070162e7ae87a84_1a32028bfd8077a4fa9070162e7ae87a84" compoundref="gb-toric_8cpp" startline="527" endline="532">insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_af095038ac9317327b80280421542a3f7_1af095038ac9317327b80280421542a3f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void binomial_s_pair_set::insert</definition>
+        <argsstring>(binomial_s_pair p)</argsstring>
+        <name>insert</name>
+        <qualifiedname>binomial_s_pair_set::insert</qualifiedname>
+        <param>
+          <type><ref refid="structbinomial__s__pair" kindref="compound">binomial_s_pair</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="215" column="8" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="534" bodyend="568"/>
+        <references refid="classbinomial__s__pair__set_a8bc9507bd090d111ead0af684bfc24ea_1a8bc9507bd090d111ead0af684bfc24ea" compoundref="gb-toric_8hpp" startline="200">_max_degree</references>
+        <references refid="classbinomial__s__pair__set_a7a9a74ff74e5cce7c19701d6fc6db344_1a7a9a74ff74e5cce7c19701d6fc6db344" compoundref="gb-toric_8hpp" startline="197">_n_elems</references>
+        <references refid="classbinomial__s__pair__set_aa4b4d045c43209d18c07281e19837708_1aa4b4d045c43209d18c07281e19837708" compoundref="gb-toric_8hpp" startline="202">_npairs</references>
+        <references refid="classbinomial__s__pair__set_acb340858c91a945325552cd91e9deea5_1acb340858c91a945325552cd91e9deea5" compoundref="gb-toric_8hpp" startline="196">_pairs</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_a730cc3a13d32a844ddfeaffdd6dfcd3d_1a730cc3a13d32a844ddfeaffdd6dfcd3d" compoundref="gb-toric_8hpp" startline="171">binomial_s_pair_set::s_pair_degree_list::deg</references>
+        <references refid="classbinomial__s__pair__set_a2e04ded21c1e852fc1dcae58ed175959_1a2e04ded21c1e852fc1dcae58ed175959" compoundref="gb-toric_8cpp" startline="495" endline="525">insert_pair</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_a6ef0f604e0d212f02b52060a1b76e8d8_1a6ef0f604e0d212f02b52060a1b76e8d8" compoundref="gb-toric_8hpp" startline="173">binomial_s_pair_set::s_pair_degree_list::n_elems</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_adbfb3bf468e95b5211dcd9f5b2a494dc_1adbfb3bf468e95b5211dcd9f5b2a494dc" compoundref="gb-toric_8hpp" startline="170">binomial_s_pair_set::s_pair_degree_list::next</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_a30e1fb217be98cdbb0718b0573b0181a_1a30e1fb217be98cdbb0718b0573b0181a" compoundref="gb-toric_8hpp" startline="172">binomial_s_pair_set::s_pair_degree_list::pairs</references>
+        <references refid="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" compoundref="gb-toric_8hpp" startline="194">R</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_a4bf91baf2b9cb98da9f74bdc6672e3cc_1a4bf91baf2b9cb98da9f74bdc6672e3cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool binomial_s_pair_set::next</definition>
+        <argsstring>(const int *d, binomial_s_pair &amp;result, int &amp;result_deg)</argsstring>
+        <name>next</name>
+        <qualifiedname>binomial_s_pair_set::next</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type><ref refid="structbinomial__s__pair" kindref="compound">binomial_s_pair</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>result_deg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="217" column="8" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="570" bodyend="610"/>
+        <references refid="classbinomial__s__pair__set_a7a9a74ff74e5cce7c19701d6fc6db344_1a7a9a74ff74e5cce7c19701d6fc6db344" compoundref="gb-toric_8hpp" startline="197">_n_elems</references>
+        <references refid="classbinomial__s__pair__set_aa4b4d045c43209d18c07281e19837708_1aa4b4d045c43209d18c07281e19837708" compoundref="gb-toric_8hpp" startline="202">_npairs</references>
+        <references refid="classbinomial__s__pair__set_acb340858c91a945325552cd91e9deea5_1acb340858c91a945325552cd91e9deea5" compoundref="gb-toric_8hpp" startline="196">_pairs</references>
+        <references refid="classbinomial__s__pair__set_afc203f62abc2a5aa625c6a550f871b1d_1afc203f62abc2a5aa625c6a550f871b1d" compoundref="gb-toric_8hpp" startline="195">_prev_lcm</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_a730cc3a13d32a844ddfeaffdd6dfcd3d_1a730cc3a13d32a844ddfeaffdd6dfcd3d" compoundref="gb-toric_8hpp" startline="171">binomial_s_pair_set::s_pair_degree_list::deg</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__lcm__list_addfc0ccfbd0e2392392be8dee7d719ab_1addfc0ccfbd0e2392392be8dee7d719ab" compoundref="gb-toric_8hpp" startline="179">binomial_s_pair_set::s_pair_lcm_list::lcm</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_a6ef0f604e0d212f02b52060a1b76e8d8_1a6ef0f604e0d212f02b52060a1b76e8d8" compoundref="gb-toric_8hpp" startline="173">binomial_s_pair_set::s_pair_degree_list::n_elems</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_adbfb3bf468e95b5211dcd9f5b2a494dc_1adbfb3bf468e95b5211dcd9f5b2a494dc" compoundref="gb-toric_8hpp" startline="170">binomial_s_pair_set::s_pair_degree_list::next</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__lcm__list_ab592c41b0a1e7f4c5cdff879ec4628d6_1ab592c41b0a1e7f4c5cdff879ec4628d6" compoundref="gb-toric_8hpp" startline="178">binomial_s_pair_set::s_pair_lcm_list::next</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__degree__list_a30e1fb217be98cdbb0718b0573b0181a_1a30e1fb217be98cdbb0718b0573b0181a" compoundref="gb-toric_8hpp" startline="172">binomial_s_pair_set::s_pair_degree_list::pairs</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__lcm__list_a0fd91c1edd871b01ee1a78210c0fbd0e_1a0fd91c1edd871b01ee1a78210c0fbd0e" compoundref="gb-toric_8hpp" startline="180">binomial_s_pair_set::s_pair_lcm_list::pairs</references>
+        <references refid="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" compoundref="gb-toric_8hpp" startline="194">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_a759596ac3fdafe2841d566be64b7357d_1a759596ac3fdafe2841d566be64b7357d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int binomial_s_pair_set::lowest_degree</definition>
+        <argsstring>() const</argsstring>
+        <name>lowest_degree</name>
+        <qualifiedname>binomial_s_pair_set::lowest_degree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="221" column="7" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="612" bodyend="616"/>
+        <references refid="classbinomial__s__pair__set_acb340858c91a945325552cd91e9deea5_1acb340858c91a945325552cd91e9deea5" compoundref="gb-toric_8hpp" startline="196">_pairs</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_a6ba080b3d8764d9b540d0a47c9d1c1f1_1a6ba080b3d8764d9b540d0a47c9d1c1f1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int binomial_s_pair_set::n_elems</definition>
+        <argsstring>(int d) const</argsstring>
+        <name>n_elems</name>
+        <qualifiedname>binomial_s_pair_set::n_elems</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="222" column="7" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="618" bodyend="624"/>
+        <references refid="classbinomial__s__pair__set_acb340858c91a945325552cd91e9deea5_1acb340858c91a945325552cd91e9deea5" compoundref="gb-toric_8hpp" startline="196">_pairs</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_a24824d93831eaf98455543807c58be30_1a24824d93831eaf98455543807c58be30" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int binomial_s_pair_set::n_elems</definition>
+        <argsstring>() const</argsstring>
+        <name>n_elems</name>
+        <qualifiedname>binomial_s_pair_set::n_elems</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="223" column="7" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="626" bodyend="626"/>
+        <references refid="classbinomial__s__pair__set_a7a9a74ff74e5cce7c19701d6fc6db344_1a7a9a74ff74e5cce7c19701d6fc6db344" compoundref="gb-toric_8hpp" startline="197">_n_elems</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial__s__pair__set_a498737610d51afe68fb1a06cc9fc93aa_1a498737610d51afe68fb1a06cc9fc93aa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void binomial_s_pair_set::stats</definition>
+        <argsstring>() const</argsstring>
+        <name>stats</name>
+        <qualifiedname>binomial_s_pair_set::stats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="224" column="8" bodyfile="Macaulay2/e/gb-toric.cpp" bodystart="627" bodyend="657"/>
+        <references refid="classbinomial__s__pair__set_a8bc9507bd090d111ead0af684bfc24ea_1a8bc9507bd090d111ead0af684bfc24ea" compoundref="gb-toric_8hpp" startline="200">_max_degree</references>
+        <references refid="classbinomial__s__pair__set_aa4b4d045c43209d18c07281e19837708_1aa4b4d045c43209d18c07281e19837708" compoundref="gb-toric_8hpp" startline="202">_npairs</references>
+        <references refid="text-io_8cpp_a5bd0b57b7653fb12e1dcaa8c4d09ce4e_1a5bd0b57b7653fb12e1dcaa8c4d09ce4e" compoundref="text-io_8cpp" startline="41" endline="45">emit</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <references refid="classbuffer_a951d0ac37be11c66758cd97298c052d9_1a951d0ac37be11c66758cd97298c052d9" compoundref="buffer_8cpp" startline="35" endline="35">buffer::put</references>
+        <references refid="classbuffer_a39972fb7c929bb9e42ed60cddbc1109f_1a39972fb7c929bb9e42ed60cddbc1109f" compoundref="buffer_8hpp" startline="70" endline="74">buffer::str</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>binomial_s_pair_set</label>
+        <link refid="classbinomial__s__pair__set"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="14">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="66" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="66" relation="public-inheritance">
+        </childnode>
+        <childnode refid="67" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="43" relation="private-inheritance">
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="45" relation="public-inheritance">
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="39" relation="private-inheritance">
+        </childnode>
+        <childnode refid="42" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="30" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="30" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="53">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="45">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="46" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="35" relation="public-inheritance">
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="37" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>CoefficientType</label>
+      </node>
+      <node id="77">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="31">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>T</label>
+      </node>
+      <node id="72">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="26">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="83">
+        <label>binomial</label>
+        <link refid="structbinomial"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>lead</edgelabel>
+          <edgelabel>tail</edgelabel>
+        </childnode>
+      </node>
+      <node id="82">
+        <label>binomial_gb_elem</label>
+        <link refid="structbinomial__gb__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>next</edgelabel>
+          <edgelabel>smaller</edgelabel>
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>f</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>binomial_ring</label>
+        <link refid="classbinomial__ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>F</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>degrees</edgelabel>
+          <edgelabel>nslots</edgelabel>
+          <edgelabel>nvars</edgelabel>
+          <edgelabel>weights</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>have_weights</edgelabel>
+          <edgelabel>revlex</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>monstash</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>binomial_s_pair_set</label>
+        <link refid="classbinomial__s__pair__set"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_max_degree</edgelabel>
+          <edgelabel>_n_elems</edgelabel>
+          <edgelabel>_prev_lcm</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>_pairs</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>_npairs</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>binomial_s_pair_set::s_pair_degree_list</label>
+        <link refid="structbinomial__s__pair__set_1_1s__pair__degree__list"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>deg</edgelabel>
+          <edgelabel>n_elems</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>pairs</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>binomial_s_pair_set::s_pair_elem</label>
+        <link refid="structbinomial__s__pair__set_1_1s__pair__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>f1</edgelabel>
+          <edgelabel>f2</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>binomial_s_pair_set::s_pair_lcm_list</label>
+        <link refid="structbinomial__s__pair__set_1_1s__pair__lcm__list"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>lcm</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>pairs</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="24">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="26" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="28" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>char</label>
+      </node>
+      <node id="13">
+        <label>const ARing *</label>
+      </node>
+      <node id="29">
+        <label>const void *</label>
+      </node>
+      <node id="19">
+        <label>double</label>
+      </node>
+      <node id="62">
+        <label>overflow_type *</label>
+      </node>
+      <node id="59">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="61">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="78">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="8">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="18">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>long</label>
+      </node>
+      <node id="47">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="40" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="48" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="50" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>mon_part</label>
+      </node>
+      <node id="23">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="22">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="20">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="21">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="7">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="15">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>size_t</label>
+      </node>
+      <node id="69">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>spinLock</label>
+      </node>
+      <node id="68">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="57">
+        <label>std::string</label>
+        <childnode refid="58" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="12" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="30" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="57" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-toric.hpp" line="163" column="1" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="164" bodyend="225"/>
+    <listofallmembers>
+      <member refid="classbinomial__s__pair__set_a8bc9507bd090d111ead0af684bfc24ea_1a8bc9507bd090d111ead0af684bfc24ea" prot="private" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>_max_degree</name></member>
+      <member refid="classbinomial__s__pair__set_a7a9a74ff74e5cce7c19701d6fc6db344_1a7a9a74ff74e5cce7c19701d6fc6db344" prot="private" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>_n_elems</name></member>
+      <member refid="classbinomial__s__pair__set_aa4b4d045c43209d18c07281e19837708_1aa4b4d045c43209d18c07281e19837708" prot="private" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>_npairs</name></member>
+      <member refid="classbinomial__s__pair__set_acb340858c91a945325552cd91e9deea5_1acb340858c91a945325552cd91e9deea5" prot="private" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>_pairs</name></member>
+      <member refid="classbinomial__s__pair__set_afc203f62abc2a5aa625c6a550f871b1d_1afc203f62abc2a5aa625c6a550f871b1d" prot="private" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>_prev_lcm</name></member>
+      <member refid="classbinomial__s__pair__set_a7b960208ebdbd67168485da01fdad6a4_1a7b960208ebdbd67168485da01fdad6a4" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>binomial_s_pair_set</name></member>
+      <member refid="classbinomial__s__pair__set_acd26d583d97a86a5b89b57974a9b0a7f_1acd26d583d97a86a5b89b57974a9b0a7f" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>enlarge</name></member>
+      <member refid="classbinomial__s__pair__set_a32028bfd8077a4fa9070162e7ae87a84_1a32028bfd8077a4fa9070162e7ae87a84" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>insert</name></member>
+      <member refid="classbinomial__s__pair__set_af095038ac9317327b80280421542a3f7_1af095038ac9317327b80280421542a3f7" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>insert</name></member>
+      <member refid="classbinomial__s__pair__set_a2e04ded21c1e852fc1dcae58ed175959_1a2e04ded21c1e852fc1dcae58ed175959" prot="private" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>insert_pair</name></member>
+      <member refid="classbinomial__s__pair__set_a759596ac3fdafe2841d566be64b7357d_1a759596ac3fdafe2841d566be64b7357d" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>lowest_degree</name></member>
+      <member refid="classbinomial__s__pair__set_a6ba080b3d8764d9b540d0a47c9d1c1f1_1a6ba080b3d8764d9b540d0a47c9d1c1f1" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>n_elems</name></member>
+      <member refid="classbinomial__s__pair__set_a24824d93831eaf98455543807c58be30_1a24824d93831eaf98455543807c58be30" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>n_elems</name></member>
+      <member refid="classbinomial__s__pair__set_a4bf91baf2b9cb98da9f74bdc6672e3cc_1a4bf91baf2b9cb98da9f74bdc6672e3cc" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>next</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>operator new[]</name></member>
+      <member refid="classbinomial__s__pair__set_a4499629b927e616035b107e4e8177c35_1a4499629b927e616035b107e4e8177c35" prot="private" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>R</name></member>
+      <member refid="classbinomial__s__pair__set_a5cf49c4a71718e25b9f45834433fa15c_1a5cf49c4a71718e25b9f45834433fa15c" prot="private" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>remove_lcm_list</name></member>
+      <member refid="classbinomial__s__pair__set_a935a7dcaa7d19603335f3367def329b9_1a935a7dcaa7d19603335f3367def329b9" prot="private" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>remove_pair_list</name></member>
+      <member refid="classbinomial__s__pair__set_a498737610d51afe68fb1a06cc9fc93aa_1a498737610d51afe68fb1a06cc9fc93aa" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>stats</name></member>
+      <member refid="classbinomial__s__pair__set_a2f17184e39cf390ab2bb056fc53b1b7f_1a2f17184e39cf390ab2bb056fc53b1b7f" prot="public" virt="non-virtual"><scope>binomial_s_pair_set</scope><name>~binomial_s_pair_set</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

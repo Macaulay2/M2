@@ -1,0 +1,353 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_columns_sorter" kind="class" language="C++" prot="public">
+    <compoundname>ColumnsSorter</compoundname>
+    <includes refid="f4-types_8hpp" local="no">f4-types.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_columns_sorter_a55209f88ca39fda8c8714f70a2fb0eb6_1a55209f88ca39fda8c8714f70a2fb0eb6" prot="public" static="no">
+        <type><ref refid="class_monomial_info_a4bdc8e786f751aaa4c37688c2b10f48e_1a4bdc8e786f751aaa4c37688c2b10f48e" kindref="member">MonomialInfo::value</ref></type>
+        <definition>typedef MonomialInfo::value ColumnsSorter::monomial</definition>
+        <argsstring></argsstring>
+        <name>monomial</name>
+        <qualifiedname>ColumnsSorter::monomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="193" column="31" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_columns_sorter_af934354069b35c39cca31a6398e7bc2c_1af934354069b35c39cca31a6398e7bc2c" prot="public" static="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>typedef int ColumnsSorter::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <qualifiedname>ColumnsSorter::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="194" column="15" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="194" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_columns_sorter_a7ddbb3a5a0441a738100ba58fb686cfe_1a7ddbb3a5a0441a738100ba58fb686cfe" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref> *</type>
+        <definition>const MonomialInfo* ColumnsSorter::M</definition>
+        <argsstring></argsstring>
+        <name>M</name>
+        <qualifiedname>ColumnsSorter::M</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="197" column="22" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="197" bodyend="-1"/>
+        <referencedby refid="class_columns_sorter_acb6a51095138885fe244aba2fc981b05_1acb6a51095138885fe244aba2fc981b05" compoundref="f4-types_8hpp" startline="215" endline="219">ColumnsSorter</referencedby>
+        <referencedby refid="class_columns_sorter_a26fd5751e29cd38010beeb4ad0abecdb_1a26fd5751e29cd38010beeb4ad0abecdb" compoundref="f4-types_8hpp" startline="203" endline="207">compare</referencedby>
+        <referencedby refid="class_columns_sorter_a7f4400852f9b606454200d4629ba8f6a_1a7f4400852f9b606454200d4629ba8f6a" compoundref="f4-types_8hpp" startline="209" endline="213">operator()</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_columns_sorter_ab6ef97393ccce6044e29bef7f26168e9_1ab6ef97393ccce6044e29bef7f26168e9" prot="private" static="no" mutable="no">
+        <type>const <ref refid="structcoefficient__matrix_a02790f98af01f59e724ad99a5f7eee75_1a02790f98af01f59e724ad99a5f7eee75" kindref="member">coefficient_matrix::column_array</ref> &amp;</type>
+        <definition>const coefficient_matrix::column_array&amp; ColumnsSorter::cols</definition>
+        <argsstring></argsstring>
+        <name>cols</name>
+        <qualifiedname>ColumnsSorter::cols</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="198" column="42" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="198" bodyend="-1"/>
+        <referencedby refid="class_columns_sorter_acb6a51095138885fe244aba2fc981b05_1acb6a51095138885fe244aba2fc981b05" compoundref="f4-types_8hpp" startline="215" endline="219">ColumnsSorter</referencedby>
+        <referencedby refid="class_columns_sorter_a26fd5751e29cd38010beeb4ad0abecdb_1a26fd5751e29cd38010beeb4ad0abecdb" compoundref="f4-types_8hpp" startline="203" endline="207">compare</referencedby>
+        <referencedby refid="class_columns_sorter_a7f4400852f9b606454200d4629ba8f6a_1a7f4400852f9b606454200d4629ba8f6a" compoundref="f4-types_8hpp" startline="209" endline="213">operator()</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="class_columns_sorter_a3e1bf30c9fae9269c6ccda628222e433_1a3e1bf30c9fae9269c6ccda628222e433" prot="private" static="yes" mutable="no">
+        <type>long</type>
+        <definition>long ColumnsSorter::ncmps</definition>
+        <argsstring></argsstring>
+        <name>ncmps</name>
+        <qualifiedname>ColumnsSorter::ncmps</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="200" column="15" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="200" bodyend="-1"/>
+        <referencedby refid="class_columns_sorter_aeb8ac10765aaf0ef2c8ddb918b14df04_1aeb8ac10765aaf0ef2c8ddb918b14df04" compoundref="f4-types_8hpp" startline="221" endline="221">ncomparisons</referencedby>
+        <referencedby refid="class_columns_sorter_a2cc953e2076ee0a47cc0ace50b9cd1ff_1a2cc953e2076ee0a47cc0ace50b9cd1ff" compoundref="f4-types_8hpp" startline="223" endline="227">reset_ncomparisons</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_columns_sorter_a136349c50dc577574e2472a7f13d0bf2_1a136349c50dc577574e2472a7f13d0bf2" prot="private" static="yes" mutable="no">
+        <type>long</type>
+        <definition>long ColumnsSorter::ncmps0</definition>
+        <argsstring></argsstring>
+        <name>ncmps0</name>
+        <qualifiedname>ColumnsSorter::ncmps0</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="201" column="15" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="201" bodyend="-1"/>
+        <referencedby refid="class_columns_sorter_a690742af695a09e2b3f6f5d37d7337ee_1a690742af695a09e2b3f6f5d37d7337ee" compoundref="f4-types_8hpp" startline="222" endline="222">ncomparisons0</referencedby>
+        <referencedby refid="class_columns_sorter_a2cc953e2076ee0a47cc0ace50b9cd1ff_1a2cc953e2076ee0a47cc0ace50b9cd1ff" compoundref="f4-types_8hpp" startline="223" endline="227">reset_ncomparisons</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_columns_sorter_a26fd5751e29cd38010beeb4ad0abecdb_1a26fd5751e29cd38010beeb4ad0abecdb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ColumnsSorter::compare</definition>
+        <argsstring>(value a, value b)</argsstring>
+        <name>compare</name>
+        <qualifiedname>ColumnsSorter::compare</qualifiedname>
+        <param>
+          <type><ref refid="class_columns_sorter_af934354069b35c39cca31a6398e7bc2c_1af934354069b35c39cca31a6398e7bc2c" kindref="member">value</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_columns_sorter_af934354069b35c39cca31a6398e7bc2c_1af934354069b35c39cca31a6398e7bc2c" kindref="member">value</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="203" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="203" bodyend="207"/>
+        <references refid="class_columns_sorter_ab6ef97393ccce6044e29bef7f26168e9_1ab6ef97393ccce6044e29bef7f26168e9" compoundref="f4-types_8hpp" startline="198">cols</references>
+        <references refid="class_columns_sorter_a7ddbb3a5a0441a738100ba58fb686cfe_1a7ddbb3a5a0441a738100ba58fb686cfe" compoundref="f4-types_8hpp" startline="197">M</references>
+      </memberdef>
+      <memberdef kind="function" id="class_columns_sorter_a7f4400852f9b606454200d4629ba8f6a_1a7f4400852f9b606454200d4629ba8f6a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ColumnsSorter::operator()</definition>
+        <argsstring>(value a, value b)</argsstring>
+        <name>operator()</name>
+        <qualifiedname>ColumnsSorter::operator()</qualifiedname>
+        <param>
+          <type><ref refid="class_columns_sorter_af934354069b35c39cca31a6398e7bc2c_1af934354069b35c39cca31a6398e7bc2c" kindref="member">value</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_columns_sorter_af934354069b35c39cca31a6398e7bc2c_1af934354069b35c39cca31a6398e7bc2c" kindref="member">value</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="209" column="8" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="209" bodyend="213"/>
+        <references refid="class_columns_sorter_ab6ef97393ccce6044e29bef7f26168e9_1ab6ef97393ccce6044e29bef7f26168e9" compoundref="f4-types_8hpp" startline="198">cols</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ab89310b3f2f97e4e9415fc5a51549612_1ab89310b3f2f97e4e9415fc5a51549612" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="20">GT</references>
+        <references refid="class_columns_sorter_a7ddbb3a5a0441a738100ba58fb686cfe_1a7ddbb3a5a0441a738100ba58fb686cfe" compoundref="f4-types_8hpp" startline="197">M</references>
+      </memberdef>
+      <memberdef kind="function" id="class_columns_sorter_acb6a51095138885fe244aba2fc981b05_1acb6a51095138885fe244aba2fc981b05" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ColumnsSorter::ColumnsSorter</definition>
+        <argsstring>(const MonomialInfo *M0, const coefficient_matrix *mat0)</argsstring>
+        <name>ColumnsSorter</name>
+        <qualifiedname>ColumnsSorter::ColumnsSorter</qualifiedname>
+        <param>
+          <type>const <ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref> *</type>
+          <declname>M0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structcoefficient__matrix" kindref="compound">coefficient_matrix</ref> *</type>
+          <declname>mat0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="215" column="3" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="215" bodyend="219"/>
+        <references refid="class_columns_sorter_ab6ef97393ccce6044e29bef7f26168e9_1ab6ef97393ccce6044e29bef7f26168e9" compoundref="f4-types_8hpp" startline="198">cols</references>
+        <references refid="class_columns_sorter_a7ddbb3a5a0441a738100ba58fb686cfe_1a7ddbb3a5a0441a738100ba58fb686cfe" compoundref="f4-types_8hpp" startline="197">M</references>
+      </memberdef>
+      <memberdef kind="function" id="class_columns_sorter_aeb8ac10765aaf0ef2c8ddb918b14df04_1aeb8ac10765aaf0ef2c8ddb918b14df04" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long ColumnsSorter::ncomparisons</definition>
+        <argsstring>() const</argsstring>
+        <name>ncomparisons</name>
+        <qualifiedname>ColumnsSorter::ncomparisons</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="221" column="8" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="221" bodyend="221"/>
+        <references refid="class_columns_sorter_a3e1bf30c9fae9269c6ccda628222e433_1a3e1bf30c9fae9269c6ccda628222e433" compoundref="f4-types_8hpp" startline="200">ncmps</references>
+      </memberdef>
+      <memberdef kind="function" id="class_columns_sorter_a690742af695a09e2b3f6f5d37d7337ee_1a690742af695a09e2b3f6f5d37d7337ee" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long ColumnsSorter::ncomparisons0</definition>
+        <argsstring>() const</argsstring>
+        <name>ncomparisons0</name>
+        <qualifiedname>ColumnsSorter::ncomparisons0</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="222" column="8" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="222" bodyend="222"/>
+        <references refid="class_columns_sorter_a136349c50dc577574e2472a7f13d0bf2_1a136349c50dc577574e2472a7f13d0bf2" compoundref="f4-types_8hpp" startline="201">ncmps0</references>
+      </memberdef>
+      <memberdef kind="function" id="class_columns_sorter_a2cc953e2076ee0a47cc0ace50b9cd1ff_1a2cc953e2076ee0a47cc0ace50b9cd1ff" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ColumnsSorter::reset_ncomparisons</definition>
+        <argsstring>()</argsstring>
+        <name>reset_ncomparisons</name>
+        <qualifiedname>ColumnsSorter::reset_ncomparisons</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="223" column="8" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="223" bodyend="227"/>
+        <references refid="class_columns_sorter_a3e1bf30c9fae9269c6ccda628222e433_1a3e1bf30c9fae9269c6ccda628222e433" compoundref="f4-types_8hpp" startline="200">ncmps</references>
+        <references refid="class_columns_sorter_a136349c50dc577574e2472a7f13d0bf2_1a136349c50dc577574e2472a7f13d0bf2" compoundref="f4-types_8hpp" startline="201">ncmps0</references>
+      </memberdef>
+      <memberdef kind="function" id="class_columns_sorter_a9a4e323658da28f48a37fb3562e9fa4b_1a9a4e323658da28f48a37fb3562e9fa4b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ColumnsSorter::~ColumnsSorter</definition>
+        <argsstring>()</argsstring>
+        <name>~ColumnsSorter</name>
+        <qualifiedname>ColumnsSorter::~ColumnsSorter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="229" column="3" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="229" bodyend="229"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Comparator that orders Macaulay-matrix column indices by the monomial each column represents, using the ambient <computeroutput><ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Fed to <computeroutput>std::sort</computeroutput> so the F4 matrix builder can put the columns into the monoid&apos;s order before reduction. Keeps two static counters (<computeroutput><ref refid="class_columns_sorter_a3e1bf30c9fae9269c6ccda628222e433_1a3e1bf30c9fae9269c6ccda628222e433" kindref="member">ncmps</ref></computeroutput>, <computeroutput><ref refid="class_columns_sorter_a136349c50dc577574e2472a7f13d0bf2_1a136349c50dc577574e2472a7f13d0bf2" kindref="member">ncmps0</ref></computeroutput>) to let profiling code report how many comparisons the sort took. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ColumnsSorter</label>
+        <link refid="class_columns_sorter"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>cols</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>ncmps</edgelabel>
+          <edgelabel>ncmps0</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MonomialInfo</label>
+        <link refid="class_monomial_info"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>firstvar</edgelabel>
+          <edgelabel>mComponentLoc</edgelabel>
+          <edgelabel>mNumWeights</edgelabel>
+          <edgelabel>mPositionUp</edgelabel>
+          <edgelabel>nslots</edgelabel>
+          <edgelabel>nvars</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>hashfcn</edgelabel>
+          <edgelabel>mask</edgelabel>
+          <edgelabel>ncalls_compare</edgelabel>
+          <edgelabel>ncalls_divide</edgelabel>
+          <edgelabel>ncalls_from_expvector</edgelabel>
+          <edgelabel>ncalls_from_varpower</edgelabel>
+          <edgelabel>ncalls_get_component</edgelabel>
+          <edgelabel>ncalls_is_equal</edgelabel>
+          <edgelabel>ncalls_is_equal_true</edgelabel>
+          <edgelabel>ncalls_mult</edgelabel>
+          <edgelabel>  ...</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mModuleHeftDegrees</edgelabel>
+          <edgelabel>mWeightVectors</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mTieBreakerIsRevLex</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>T</label>
+      </node>
+      <node id="9">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="5">
+        <label>long</label>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; column_elem &gt;</label>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; column_elem &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/f4-types.hpp" line="190" column="1" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="191" bodyend="230"/>
+    <listofallmembers>
+      <member refid="class_columns_sorter_ab6ef97393ccce6044e29bef7f26168e9_1ab6ef97393ccce6044e29bef7f26168e9" prot="private" virt="non-virtual"><scope>ColumnsSorter</scope><name>cols</name></member>
+      <member refid="class_columns_sorter_acb6a51095138885fe244aba2fc981b05_1acb6a51095138885fe244aba2fc981b05" prot="public" virt="non-virtual"><scope>ColumnsSorter</scope><name>ColumnsSorter</name></member>
+      <member refid="class_columns_sorter_a26fd5751e29cd38010beeb4ad0abecdb_1a26fd5751e29cd38010beeb4ad0abecdb" prot="public" virt="non-virtual"><scope>ColumnsSorter</scope><name>compare</name></member>
+      <member refid="class_columns_sorter_a7ddbb3a5a0441a738100ba58fb686cfe_1a7ddbb3a5a0441a738100ba58fb686cfe" prot="private" virt="non-virtual"><scope>ColumnsSorter</scope><name>M</name></member>
+      <member refid="class_columns_sorter_a55209f88ca39fda8c8714f70a2fb0eb6_1a55209f88ca39fda8c8714f70a2fb0eb6" prot="public" virt="non-virtual"><scope>ColumnsSorter</scope><name>monomial</name></member>
+      <member refid="class_columns_sorter_a3e1bf30c9fae9269c6ccda628222e433_1a3e1bf30c9fae9269c6ccda628222e433" prot="private" virt="non-virtual"><scope>ColumnsSorter</scope><name>ncmps</name></member>
+      <member refid="class_columns_sorter_a136349c50dc577574e2472a7f13d0bf2_1a136349c50dc577574e2472a7f13d0bf2" prot="private" virt="non-virtual"><scope>ColumnsSorter</scope><name>ncmps0</name></member>
+      <member refid="class_columns_sorter_aeb8ac10765aaf0ef2c8ddb918b14df04_1aeb8ac10765aaf0ef2c8ddb918b14df04" prot="public" virt="non-virtual"><scope>ColumnsSorter</scope><name>ncomparisons</name></member>
+      <member refid="class_columns_sorter_a690742af695a09e2b3f6f5d37d7337ee_1a690742af695a09e2b3f6f5d37d7337ee" prot="public" virt="non-virtual"><scope>ColumnsSorter</scope><name>ncomparisons0</name></member>
+      <member refid="class_columns_sorter_a7f4400852f9b606454200d4629ba8f6a_1a7f4400852f9b606454200d4629ba8f6a" prot="public" virt="non-virtual"><scope>ColumnsSorter</scope><name>operator()</name></member>
+      <member refid="class_columns_sorter_a2cc953e2076ee0a47cc0ace50b9cd1ff_1a2cc953e2076ee0a47cc0ace50b9cd1ff" prot="public" virt="non-virtual"><scope>ColumnsSorter</scope><name>reset_ncomparisons</name></member>
+      <member refid="class_columns_sorter_af934354069b35c39cca31a6398e7bc2c_1af934354069b35c39cca31a6398e7bc2c" prot="public" virt="non-virtual"><scope>ColumnsSorter</scope><name>value</name></member>
+      <member refid="class_columns_sorter_a9a4e323658da28f48a37fb3562e9fa4b_1a9a4e323658da28f48a37fb3562e9fa4b" prot="public" virt="non-virtual"><scope>ColumnsSorter</scope><name>~ColumnsSorter</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

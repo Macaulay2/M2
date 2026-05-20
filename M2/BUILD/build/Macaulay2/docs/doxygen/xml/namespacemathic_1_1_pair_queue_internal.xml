@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespacemathic_1_1_pair_queue_internal" kind="namespace" language="C++">
+    <compoundname>mathic::PairQueueInternal</compoundname>
+    <innerclass refid="classmathic_1_1_pair_queue_internal_1_1_support_retirement" prot="public">mathic::PairQueueInternal::SupportRetirement</innerclass>
+    <innerclass refid="classmathic_1_1_pair_queue_internal_1_1_support_retirement_3_01false_01_4" prot="public">mathic::PairQueueInternal::SupportRetirement&lt; false &gt;</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/mathic/PairQueue.h" line="139" column="3"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,422 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespacenewf4" kind="namespace" language="C++">
+    <compoundname>newf4</compoundname>
+    <innerclass refid="classnewf4_1_1_basis" prot="public">newf4::Basis</innerclass>
+    <innerclass refid="classnewf4_1_1_g_b_f4_computation" prot="public">newf4::GBF4Computation</innerclass>
+    <innerclass refid="classnewf4_1_1_g_b_f4_interface" prot="public">newf4::GBF4Interface</innerclass>
+    <innerclass refid="classnewf4_1_1_macaulay_matrix" prot="public">newf4::MacaulayMatrix</innerclass>
+    <innerclass refid="structnewf4_1_1_column" prot="public">newf4::Column</innerclass>
+    <innerclass refid="structnewf4_1_1_row" prot="public">newf4::Row</innerclass>
+    <innerclass refid="classnewf4_1_1_monomial_hash_function" prot="public">newf4::MonomialHashFunction</innerclass>
+    <innerclass refid="structnewf4_1_1_hash_table_stats" prot="public">newf4::HashTableStats</innerclass>
+    <innerclass refid="classnewf4_1_1_monomial_hash_table" prot="public">newf4::MonomialHashTable</innerclass>
+    <innerclass refid="structnewf4_1_1_monomial_info" prot="public">newf4::MonomialInfo</innerclass>
+    <innerclass refid="classnewf4_1_1_monomial_lookup_table" prot="public">newf4::MonomialLookupTable</innerclass>
+    <innerclass refid="classnewf4_1_1_monomial_view" prot="public">newf4::MonomialView</innerclass>
+    <innerclass refid="classnewf4_1_1_polynomial_list" prot="public">newf4::PolynomialList</innerclass>
+    <innerclass refid="classnewf4_1_1_polynomial" prot="public">newf4::Polynomial</innerclass>
+    <innerclass refid="classnewf4_1_1_polynomial_list_stream_collector" prot="public">newf4::PolynomialListStreamCollector</innerclass>
+    <innerclass refid="structnewf4_1_1_s_pair" prot="public">newf4::SPair</innerclass>
+    <innerclass refid="classnewf4_1_1_s_pair_set" prot="public">newf4::SPairSet</innerclass>
+    <sectiondef kind="enum">
+      <memberdef kind="enum" id="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fd" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>GBPolyStatus</name>
+        <qualifiedname>newf4::GBPolyStatus</qualifiedname>
+        <enumvalue id="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fda4804dc3c133b11589338a62893ae614c" prot="public">
+          <name>Gen</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fda5505402676e57f108994297e3a0e28a7" prot="public">
+          <name>MinGen</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fda2cc898084720c4007deb757e66a2e5f1" prot="public">
+          <name>MinGB</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fdafdb269f1455ee90262100a15668bf0e1" prot="public">
+          <name>NonMinGB</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fdad109ac74df282488efd1dd7621a847d2" prot="public">
+          <name>Retired</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/Basis.hpp" line="44" column="1" bodyfile="Macaulay2/e/gb-f4/Basis.hpp" bodystart="44" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="enum" id="namespacenewf4_ada356c272bb077493d6b4256bcb94a8b_1ada356c272bb077493d6b4256bcb94a8b" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>Strategy</name>
+        <qualifiedname>newf4::Strategy</qualifiedname>
+        <enumvalue id="namespacenewf4_ada356c272bb077493d6b4256bcb94a8b_1ada356c272bb077493d6b4256bcb94a8ba960b44c579bc2f6818d2daaf9e4c16f0" prot="public">
+          <name>Normal</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/GBF4Interface.hpp" line="58" column="1" bodyfile="Macaulay2/e/gb-f4/GBF4Interface.hpp" bodystart="58" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="enum" id="namespacenewf4_a608e9c0414cad32f86a5c5863679612b_1a608e9c0414cad32f86a5c5863679612b" prot="public" static="no" strong="yes">
+        <type></type>
+        <name>SPairType</name>
+        <qualifiedname>newf4::SPairType</qualifiedname>
+        <enumvalue id="namespacenewf4_a608e9c0414cad32f86a5c5863679612b_1a608e9c0414cad32f86a5c5863679612bad4db177c94738b72bf9ce61e988ab1f1" prot="public">
+          <name>Ring</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacenewf4_a608e9c0414cad32f86a5c5863679612b_1a608e9c0414cad32f86a5c5863679612bad9b3dceaf520ba1fa45c371c498c6baf" prot="public">
+          <name>Exterior</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacenewf4_a608e9c0414cad32f86a5c5863679612b_1a608e9c0414cad32f86a5c5863679612ba8d650713b92db5b830c9701260d0ebe2" prot="public">
+          <name>SPair</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacenewf4_a608e9c0414cad32f86a5c5863679612b_1a608e9c0414cad32f86a5c5863679612ba4804dc3c133b11589338a62893ae614c" prot="public">
+          <name>Gen</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/SPairs.hpp" line="85" column="1" bodyfile="Macaulay2/e/gb-f4/SPairs.hpp" bodystart="85" bodyend="85"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacenewf4_a365f1a6336bfa6a997de0b85c2e3e195_1a365f1a6336bfa6a997de0b85c2e3e195" prot="public" static="no">
+        <type>int32_t</type>
+        <definition>using newf4::Index =  int32_t</definition>
+        <argsstring></argsstring>
+        <name>Index</name>
+        <qualifiedname>newf4::Index</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialTypes.hpp" line="35" column="1" bodyfile="Macaulay2/e/gb-f4/MonomialTypes.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacenewf4_aba19c95e568814516ee6fac87ffeaee2_1aba19c95e568814516ee6fac87ffeaee2" prot="public" static="no">
+        <type>int32_t</type>
+        <definition>using newf4::MonomialIndex =  int32_t</definition>
+        <argsstring></argsstring>
+        <name>MonomialIndex</name>
+        <qualifiedname>newf4::MonomialIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialTypes.hpp" line="40" column="1" bodyfile="Macaulay2/e/gb-f4/MonomialTypes.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" prot="public" static="no">
+        <type>int32_t</type>
+        <definition>using newf4::MonomialInt =  int32_t</definition>
+        <argsstring></argsstring>
+        <name>MonomialInt</name>
+        <qualifiedname>newf4::MonomialInt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialTypes.hpp" line="45" column="1" bodyfile="Macaulay2/e/gb-f4/MonomialTypes.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacenewf4_a7d1132cbbbc46ccb470b32940b1ed4fa_1a7d1132cbbbc46ccb470b32940b1ed4fa" prot="public" static="no">
+        <type>int32_t</type>
+        <definition>using newf4::ComponentIndex =  int32_t</definition>
+        <argsstring></argsstring>
+        <name>ComponentIndex</name>
+        <qualifiedname>newf4::ComponentIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialTypes.hpp" line="48" column="1" bodyfile="Macaulay2/e/gb-f4/MonomialTypes.hpp" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacenewf4_a31d40ce79f2399c9bf4f0c3846f6e04a_1a31d40ce79f2399c9bf4f0c3846f6e04a" prot="public" static="no">
+        <type>uint64_t</type>
+        <definition>using newf4::HashInt =  uint64_t</definition>
+        <argsstring></argsstring>
+        <name>HashInt</name>
+        <qualifiedname>newf4::HashInt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialTypes.hpp" line="51" column="1" bodyfile="Macaulay2/e/gb-f4/MonomialTypes.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacenewf4_afd3339ebe18e9dc2d4e025b6ca053ec6_1afd3339ebe18e9dc2d4e025b6ca053ec6" prot="public" static="no">
+        <type>uint64_t</type>
+        <definition>using newf4::MonomialMask =  uint64_t</definition>
+        <argsstring></argsstring>
+        <name>MonomialMask</name>
+        <qualifiedname>newf4::MonomialMask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialTypes.hpp" line="54" column="1" bodyfile="Macaulay2/e/gb-f4/MonomialTypes.hpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacenewf4_a37f4c03cc78c9f4747896179286b0ccf_1a37f4c03cc78c9f4747896179286b0ccf" prot="public" static="no">
+        <type>int32_t</type>
+        <definition>using newf4::Coefficient =  int32_t</definition>
+        <argsstring></argsstring>
+        <name>Coefficient</name>
+        <qualifiedname>newf4::Coefficient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/PolynomialStream.hpp" line="33" column="1" bodyfile="Macaulay2/e/PolynomialStream.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacenewf4_a959003966ce097f2447b6e5aff12bec1_1a959003966ce097f2447b6e5aff12bec1" prot="public" static="no">
+        <type>int32_t</type>
+        <definition>using newf4::VarIndex =  int32_t</definition>
+        <argsstring></argsstring>
+        <name>VarIndex</name>
+        <qualifiedname>newf4::VarIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/PolynomialStream.hpp" line="34" column="1" bodyfile="Macaulay2/e/PolynomialStream.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacenewf4_ae2a5a257624c84d1500e54e5fff9cbba_1ae2a5a257624c84d1500e54e5fff9cbba" prot="public" static="no">
+        <type>int32_t</type>
+        <definition>using newf4::Exponent =  int32_t</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>newf4::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/PolynomialStream.hpp" line="35" column="1" bodyfile="Macaulay2/e/PolynomialStream.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacenewf4_a190b9ed42fb455841dece2e5e35fed55_1a190b9ed42fb455841dece2e5e35fed55" prot="public" static="no">
+        <type>int32_t</type>
+        <definition>using newf4::Component =  int32_t</definition>
+        <argsstring></argsstring>
+        <name>Component</name>
+        <qualifiedname>newf4::Component</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/PolynomialStream.hpp" line="36" column="1" bodyfile="Macaulay2/e/PolynomialStream.hpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacenewf4_a69afb67421ddcf7b400ab2cce89f32c9_1a69afb67421ddcf7b400ab2cce89f32c9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string newf4::toString</definition>
+        <argsstring>(GBPolyStatus status)</argsstring>
+        <name>toString</name>
+        <qualifiedname>newf4::toString</qualifiedname>
+        <param>
+          <type><ref refid="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fd" kindref="member">GBPolyStatus</ref></type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/Basis.hpp" line="46" column="20" bodyfile="Macaulay2/e/gb-f4/Basis.hpp" bodystart="46" bodyend="55"/>
+        <references refid="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fda4804dc3c133b11589338a62893ae614c" compoundref="_macaulay2_2e_2gb-f4_2_basis_8hpp" startline="44">Gen</references>
+        <references refid="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fda2cc898084720c4007deb757e66a2e5f1" compoundref="_macaulay2_2e_2gb-f4_2_basis_8hpp" startline="44">MinGB</references>
+        <references refid="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fda5505402676e57f108994297e3a0e28a7" compoundref="_macaulay2_2e_2gb-f4_2_basis_8hpp" startline="44">MinGen</references>
+        <references refid="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fdafdb269f1455ee90262100a15668bf0e1" compoundref="_macaulay2_2e_2gb-f4_2_basis_8hpp" startline="44">NonMinGB</references>
+        <references refid="namespacenewf4_ae28d864db4655c501feaf1de1c26f8fd_1ae28d864db4655c501feaf1de1c26f8fdad109ac74df282488efd1dd7621a847d2" compoundref="_macaulay2_2e_2gb-f4_2_basis_8hpp" startline="44">Retired</references>
+        <referencedby refid="classnewf4_1_1_g_b_f4_computation_adef2eab64f80fc4e5dcb6aa71316c982_1adef2eab64f80fc4e5dcb6aa71316c982" compoundref="_g_b_f4_computation_8cpp" startline="60" endline="68">newf4::GBF4Computation::showGBStatusArray</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacenewf4_ad9e87c7e43c34703405b5af98a539f93_1ad9e87c7e43c34703405b5af98a539f93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref> *</type>
+        <definition>GBComputation * newf4::createGBF4Interface</definition>
+        <argsstring>(const Matrix *inputMatrix, const std::vector&lt; int &gt; &amp;variableWeights, Strategy strategy, int numThreads)</argsstring>
+        <name>createGBF4Interface</name>
+        <qualifiedname>newf4::createGBF4Interface</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>inputMatrix</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classint" kindref="compound">int</ref> &gt; &amp;</type>
+          <declname>variableWeights</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenewf4_ada356c272bb077493d6b4256bcb94a8b_1ada356c272bb077493d6b4256bcb94a8b" kindref="member">Strategy</ref></type>
+          <declname>strategy</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>numThreads</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/GBF4Interface.cpp" line="22" column="6" bodyfile="Macaulay2/e/gb-f4/GBF4Interface.cpp" bodystart="22" bodyend="38" declfile="Macaulay2/e/gb-f4/GBF4Interface.hpp" declline="61" declcolumn="6"/>
+        <references refid="class_polynomial_ring_a9556719b870ca5bc7f1f8dbbadc3278e_1a9556719b870ca5bc7f1f8dbbadc3278e" compoundref="_macaulay2_2e_2polyring_8hpp" startline="300" endline="300">PolynomialRing::cast_to_PolynomialRing</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <referencedby refid="_g_b_f4_interface_8cpp_ab1cb8cad73ca973a3c5e3537c7fd92b8_1ab1cb8cad73ca973a3c5e3537c7fd92b8" compoundref="_g_b_f4_interface_8cpp" startline="10" endline="18">createGBF4Interface</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacenewf4_afcb3100a47c86e0a55790661d866255b_1afcb3100a47c86e0a55790661d866255b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::populateComputation</definition>
+        <argsstring>(const Matrix *M, GBF4Computation &amp;C)</argsstring>
+        <name>populateComputation</name>
+        <qualifiedname>newf4::populateComputation</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <param>
+          <type><ref refid="classnewf4_1_1_g_b_f4_computation" kindref="compound">GBF4Computation</ref> &amp;</type>
+          <declname>C</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/GBF4Interface.hpp" line="66" column="6" declfile="Macaulay2/e/gb-f4/GBF4Interface.hpp" declline="66" declcolumn="6"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacenewf4_ad588941e32659bb184078af8a8612da8_1ad588941e32659bb184078af8a8612da8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * newf4::toMatrix</definition>
+        <argsstring>(const FreeModule *target, const PolynomialList &amp;Fs)</argsstring>
+        <name>toMatrix</name>
+        <qualifiedname>newf4::toMatrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_polynomial_list" kindref="compound">PolynomialList</ref> &amp;</type>
+          <declname>Fs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/GBF4Interface.hpp" line="167" column="21" bodyfile="Macaulay2/e/gb-f4/GBF4Interface.hpp" bodystart="167" bodyend="172"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="namespacenewf4_ab0f2bf6487cec9e3f6f82435f2b15246_1ab0f2bf6487cec9e3f6f82435f2b15246" compoundref="_polynomial_list_8hpp" startline="295" endline="321">toStream</references>
+        <references refid="class_matrix_stream_aea27949d7fc72a95165364bddf465b66_1aea27949d7fc72a95165364bddf465b66" compoundref="matrix-stream_8hpp" startline="91" endline="94">MatrixStream::value</references>
+        <referencedby refid="classnewf4_1_1_g_b_f4_computation_a6ea31efcadbf712a51e85430cacd8add_1a6ea31efcadbf712a51e85430cacd8add" compoundref="_g_b_f4_computation_8cpp" startline="51" endline="58">newf4::GBF4Computation::showInput</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacenewf4_ab0f2bf6487cec9e3f6f82435f2b15246_1ab0f2bf6487cec9e3f6f82435f2b15246" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename S</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void newf4::toStream</definition>
+        <argsstring>(const PolynomialList &amp;Fs, S &amp;str)</argsstring>
+        <name>toStream</name>
+        <qualifiedname>newf4::toStream</qualifiedname>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_polynomial_list" kindref="compound">PolynomialList</ref> &amp;</type>
+          <declname>Fs</declname>
+        </param>
+        <param>
+          <type>S &amp;</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/PolynomialList.hpp" line="295" column="6" bodyfile="Macaulay2/e/gb-f4/PolynomialList.hpp" bodystart="295" bodyend="321"/>
+        <references refid="classnewf4_1_1_monomial_view_a713ad7180edaecbd813181327d9f4273_1a713ad7180edaecbd813181327d9f4273" compoundref="_monomial_view_8hpp" startline="214" endline="214">newf4::MonomialView::begin</references>
+        <references refid="classnewf4_1_1_monomial_view_a8cc3f7e15991947a17025d991516b041_1a8cc3f7e15991947a17025d991516b041" compoundref="_monomial_view_8hpp" startline="215" endline="215">newf4::MonomialView::end</references>
+        <references refid="classnewf4_1_1_monomial_hash_table_aea871e639e0799e1f60141fe2095c3e1_1aea871e639e0799e1f60141fe2095c3e1" compoundref="_monomial_hash_table_8hpp" startline="184" endline="188">newf4::MonomialHashTable::monomialAt</references>
+        <references refid="classnewf4_1_1_polynomial_list_a5dd05ce568ca22a51e7f77f9e2ab9758_1a5dd05ce568ca22a51e7f77f9e2ab9758" compoundref="_polynomial_list_8hpp" startline="61" endline="61">newf4::PolynomialList::monomialHashTable</references>
+        <references refid="classnewf4_1_1_polynomial_list_a533f08df3654a36205f9673e055a3100_1a533f08df3654a36205f9673e055a3100" compoundref="_polynomial_list_8hpp" startline="69" endline="69">newf4::PolynomialList::size</references>
+        <references refid="class_vector_arithmetic_a7c64cfde521935ccb7f8414dac8d1828_1a7c64cfde521935ccb7f8414dac8d1828" compoundref="_vector_arithmetic_8hpp" startline="885" endline="888">VectorArithmetic::to_modp_long</references>
+        <references refid="classnewf4_1_1_polynomial_list_a5b30061d07ad0f1ff55d9870d6d7ce05_1a5b30061d07ad0f1ff55d9870d6d7ce05" compoundref="_polynomial_list_8hpp" startline="64" endline="64">newf4::PolynomialList::vectorArithmetic</references>
+        <referencedby refid="classnewf4_1_1_g_b_f4_computation_a8bbaa3fb40422f52c71e9376e9bd7199_1a8bbaa3fb40422f52c71e9376e9bd7199" compoundref="_g_b_f4_computation_8cpp" startline="36" endline="43">newf4::GBF4Computation::initializeWithBasicPolyList</referencedby>
+        <referencedby refid="namespacenewf4_ad588941e32659bb184078af8a8612da8_1ad588941e32659bb184078af8a8612da8" compoundref="_g_b_f4_interface_8hpp" startline="167" endline="172">toMatrix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/gb-f4/Basis.hpp" line="41" column="1"/>
+  </compounddef>
+</doxygen>

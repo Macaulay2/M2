@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_buffer_pool_8cpp" kind="file" language="C++">
+    <compoundname>BufferPool.cpp</compoundname>
+    <includes refid="_buffer_pool_8h" local="yes">BufferPool.h</includes>
+    <includes local="no">utility</includes>
+    <includes local="no">limits</includes>
+    <includes local="no">algorithm</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/memtailor/src/memtailor/BufferPool.cpp</label>
+        <link refid="_buffer_pool_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>BufferPool.h</label>
+        <link refid="_buffer_pool_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>MemoryBlocks.h</label>
+        <link refid="_memory_blocks_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>stdinc.h</label>
+        <link refid="memtailor_2src_2memtailor_2stdinc_8h"/>
+      </node>
+      <node id="9">
+        <label>algorithm</label>
+      </node>
+      <node id="5">
+        <label>cstddef</label>
+      </node>
+      <node id="8">
+        <label>limits</label>
+      </node>
+      <node id="6">
+        <label>memory</label>
+      </node>
+      <node id="7">
+        <label>utility</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacememt">memt</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*<sp/>Copyright<sp/>(C)<sp/>2011<sp/>Bjarke<sp/>Hammersholt<sp/>Roune<sp/>(www.broune.com)</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/><sp/><sp/>MemTailor<sp/>is<sp/>distributed<sp/>under<sp/>the<sp/>Modified<sp/>BSD<sp/>License.<sp/>See<sp/>license.txt.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_buffer_pool_8h" kindref="compound">BufferPool.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;utility&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;limits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;algorithm&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacememt" kindref="compound">memt</ref><sp/>{</highlight></codeline>
+<codeline lineno="10" refid="classmemt_1_1_buffer_pool_a942f1071bb9204d984d6d069d2604ace_1a942f1071bb9204d984d6d069d2604ace" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmemt_1_1_buffer_pool_a801d57a30ccad3a5ae94250f2d53ed19_1a801d57a30ccad3a5ae94250f2d53ed19" kindref="member">BufferPool::BufferPool</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>bufferSize):</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_buffer_pool_a357337dfe1893a700f2157e7d6544101_1a357337dfe1893a700f2157e7d6544101" kindref="member">_bufferSize</ref>(<ref refid="classmemt_1_1_memory_blocks" kindref="compound">MemoryBlocks</ref>::alignThrowOnOverflow(</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::<ref refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" kindref="member">max</ref>(bufferSize,<sp/>sizeof(<ref refid="structmemt_1_1_buffer_pool_1_1_free_node" kindref="compound">FreeNode</ref>)))),</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_buffer_pool_a9c1775673162f4cee5a49270c51accd9_1a9c1775673162f4cee5a49270c51accd9" kindref="member">_free</ref>(0),</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_buffer_pool_ab039fd67a03eb47a0943939316ee2223_1ab039fd67a03eb47a0943939316ee2223" kindref="member">_blocks</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="classmemt_1_1_buffer_pool_ad4c49e1e4419dfbc686789d89b28457c_1ad4c49e1e4419dfbc686789d89b28457c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_buffer_pool_ad4c49e1e4419dfbc686789d89b28457c_1ad4c49e1e4419dfbc686789d89b28457c" kindref="member">BufferPool::growCapacity</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>**<sp/>Calcuate<sp/>size<sp/>of<sp/>block<sp/>(doubles<sp/>capacity)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size<sp/>=<sp/><ref refid="classmemt_1_1_buffer_pool_a22e3f18c00fea3770e43943188df194b_1a22e3f18c00fea3770e43943188df194b" kindref="member">block</ref>().<ref refid="classmemt_1_1_memory_blocks_1_1_block_a9cd1da52f91896b566dff981a092405d_1a9cd1da52f91896b566dff981a092405d" kindref="member">getBytesInBlock</ref>();</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(size<sp/>==<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>start<sp/>out<sp/>at<sp/>10<sp/>buffers</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="memtailor_2src_2memtailor_2stdinc_8h_ad057ce2973a5f2b80fd818c9cb2954e5_1ad057ce2973a5f2b80fd818c9cb2954e5" kindref="member">MEMT_ASSERT</ref>(<ref refid="classmemt_1_1_buffer_pool_a22e3f18c00fea3770e43943188df194b_1a22e3f18c00fea3770e43943188df194b" kindref="member">block</ref>().isNull());</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classmemt_1_1_buffer_pool_a357337dfe1893a700f2157e7d6544101_1a357337dfe1893a700f2157e7d6544101" kindref="member">_bufferSize</ref><sp/>&gt;<sp/>std::numeric_limits&lt;size_t&gt;::max()<sp/>/<sp/>10)</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::bad_alloc();<sp/></highlight><highlight class="comment">//<sp/>_bufferSize<sp/>*<sp/>10<sp/>overflows</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>size<sp/>=<sp/><ref refid="classmemt_1_1_buffer_pool_a357337dfe1893a700f2157e7d6544101_1a357337dfe1893a700f2157e7d6544101" kindref="member">_bufferSize</ref><sp/>*<sp/>10;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>double<sp/>the<sp/>size</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(size<sp/>&gt;<sp/>std::numeric_limits&lt;size_t&gt;::max()<sp/>/<sp/>2)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::bad_alloc();<sp/></highlight><highlight class="comment">//<sp/>size<sp/>*<sp/>2<sp/>overflows</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>size<sp/>*=<sp/>2;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>**<sp/>Allocate<sp/>next<sp/>block</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="memtailor_2src_2memtailor_2stdinc_8h_ad057ce2973a5f2b80fd818c9cb2954e5_1ad057ce2973a5f2b80fd818c9cb2954e5" kindref="member">MEMT_ASSERT</ref>(<ref refid="classmemt_1_1_memory_blocks_a3b07816c8ea4e348c113c26736bcaaca_1a3b07816c8ea4e348c113c26736bcaaca" kindref="member">MemoryBlocks::alignNoOverflow</ref>(size)<sp/>==<sp/>size);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="memtailor_2src_2memtailor_2stdinc_8h_ad057ce2973a5f2b80fd818c9cb2954e5_1ad057ce2973a5f2b80fd818c9cb2954e5" kindref="member">MEMT_ASSERT</ref>(size<sp/>&gt;<sp/><ref refid="classmemt_1_1_buffer_pool_a22e3f18c00fea3770e43943188df194b_1a22e3f18c00fea3770e43943188df194b" kindref="member">block</ref>().getBytesInBlock());</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_buffer_pool_ab039fd67a03eb47a0943939316ee2223_1ab039fd67a03eb47a0943939316ee2223" kindref="member">_blocks</ref>.allocBlock(size);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="classmemt_1_1_buffer_pool_ada2badee14ffcb036f7ac4a8c79d80cb_1ada2badee14ffcb036f7ac4a8c79d80cb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_buffer_pool_ada2badee14ffcb036f7ac4a8c79d80cb_1ada2badee14ffcb036f7ac4a8c79d80cb" kindref="member">BufferPool::freeAllBuffers</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_buffer_pool_a9c1775673162f4cee5a49270c51accd9_1a9c1775673162f4cee5a49270c51accd9" kindref="member">_free</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_buffer_pool_ab039fd67a03eb47a0943939316ee2223_1ab039fd67a03eb47a0943939316ee2223" kindref="member">_blocks</ref>.freeAllPreviousBlocks();</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="classmemt_1_1_buffer_pool_a1d3b15a836ea24cf1f7a794cf9933b4d_1a1d3b15a836ea24cf1f7a794cf9933b4d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_buffer_pool_a1d3b15a836ea24cf1f7a794cf9933b4d_1a1d3b15a836ea24cf1f7a794cf9933b4d" kindref="member">BufferPool::freeAllBuffersAndBackingMemory</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_buffer_pool_a9c1775673162f4cee5a49270c51accd9_1a9c1775673162f4cee5a49270c51accd9" kindref="member">_free</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_buffer_pool_ab039fd67a03eb47a0943939316ee2223_1ab039fd67a03eb47a0943939316ee2223" kindref="member">_blocks</ref>.freeAllBlocks();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="classmemt_1_1_buffer_pool_a3232f096aa86d463497a07da59f25b5e_1a3232f096aa86d463497a07da59f25b5e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmemt_1_1_buffer_pool_a3232f096aa86d463497a07da59f25b5e_1a3232f096aa86d463497a07da59f25b5e" kindref="member">BufferPool::fromPool</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmemt_1_1_memory_blocks_1_1_block" kindref="compound">MemoryBlocks::Block</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">*<sp/><ref refid="classmemt_1_1_buffer_pool_a22e3f18c00fea3770e43943188df194b_1a22e3f18c00fea3770e43943188df194b" kindref="member">block</ref><sp/>=<sp/><ref refid="classmemt_1_1_buffer_pool_ab039fd67a03eb47a0943939316ee2223_1ab039fd67a03eb47a0943939316ee2223" kindref="member">_blocks</ref>.blockOf(ptr);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classmemt_1_1_buffer_pool_a22e3f18c00fea3770e43943188df194b_1a22e3f18c00fea3770e43943188df194b" kindref="member">block</ref><sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>MEMT_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>offset<sp/>=</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">size_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keyword">const<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(ptr)<sp/>-<sp/><ref refid="classmemt_1_1_buffer_pool_a22e3f18c00fea3770e43943188df194b_1a22e3f18c00fea3770e43943188df194b" kindref="member">block</ref>-&gt;begin());</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="memtailor_2src_2memtailor_2stdinc_8h_ad057ce2973a5f2b80fd818c9cb2954e5_1ad057ce2973a5f2b80fd818c9cb2954e5" kindref="member">MEMT_ASSERT</ref>(offset<sp/>%<sp/><ref refid="classmemt_1_1_buffer_pool_a357337dfe1893a700f2157e7d6544101_1a357337dfe1893a700f2157e7d6544101" kindref="member">_bufferSize</ref><sp/>==<sp/>0);<sp/></highlight><highlight class="comment">//<sp/>otherwise<sp/>not<sp/>a<sp/>valid<sp/>pointer</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/memtailor/src/memtailor/BufferPool.cpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1904 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_g_b_walker" kind="class" language="C++" prot="public">
+    <compoundname>GBWalker</compoundname>
+    <basecompoundref refid="class_g_b_computation" prot="public" virt="non-virtual">GBComputation</basecompoundref>
+    <includes refid="gb-walk_8hpp" local="no">gb-walk.hpp</includes>
+    <sectiondef kind="private-type">
+      <memberdef kind="enum" id="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90" prot="private" static="no" strong="no">
+        <type></type>
+        <name></name>
+        <qualifiedname>GBWalker</qualifiedname>
+        <enumvalue id="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90ac8536ff35cf1e880ecc4bc346477357a" prot="private">
+          <name>STATE_compute_w</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90a7f9bd09a0101057b15f02680242afdbf" prot="private">
+          <name>STATE_do_gb</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90a1313200a5dbb1136798d7fa8df030549" prot="private">
+          <name>STATE_reduce</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90ae40c4eccb501212c4f62730609c47dd5" prot="private">
+          <name>STATE_autoreduce</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90af607093292fd910e22e975b7108045d6" prot="private">
+          <name>STATE_done</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="73" column="3" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="73" bodyend="79"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_g_b_walker_ad8709849db165cc26c693e024d542f64_1ad8709849db165cc26c693e024d542f64" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_g_b_ring" kindref="compound">GBRing</ref> *</type>
+        <definition>const GBRing* GBWalker::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>GBWalker::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="57" column="16" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_abc9e6635e648e8250e786ff469126f47_1abc9e6635e648e8250e786ff469126f47" compoundref="gb-walk_8cpp" startline="63" endline="73">GBWalker</referencedby>
+        <referencedby refid="class_g_b_walker_a0b5029d4f6267df977f8ba70c2e1ef4c_1a0b5029d4f6267df977f8ba70c2e1ef4c" compoundref="gb-walk_8cpp" startline="100" endline="127">make_gb</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_a58f4cfd79c74ff60678c4502d26a2ba6_1a58f4cfd79c74ff60678c4502d26a2ba6" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+        <definition>const FreeModule* GBWalker::F</definition>
+        <argsstring></argsstring>
+        <name>F</name>
+        <qualifiedname>GBWalker::F</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="58" column="20" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_abc9e6635e648e8250e786ff469126f47_1abc9e6635e648e8250e786ff469126f47" compoundref="gb-walk_8cpp" startline="63" endline="73">GBWalker</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_a805f4a5a3c6c54d637980e880f50dc63_1a805f4a5a3c6c54d637980e880f50dc63" prot="private" static="no" mutable="no">
+        <type><ref refid="class_marked_g_b" kindref="compound">MarkedGB</ref> *</type>
+        <definition>MarkedGB* GBWalker::G</definition>
+        <argsstring></argsstring>
+        <name>G</name>
+        <qualifiedname>GBWalker::G</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="59" column="12" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_abc9e6635e648e8250e786ff469126f47_1abc9e6635e648e8250e786ff469126f47" compoundref="gb-walk_8cpp" startline="63" endline="73">GBWalker</referencedby>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_a8bf28f357f73f1ada3bffb1f6f495ea1_1a8bf28f357f73f1ada3bffb1f6f495ea1" prot="private" static="no" mutable="no">
+        <type>long **</type>
+        <definition>long** GBWalker::monorder1</definition>
+        <argsstring></argsstring>
+        <name>monorder1</name>
+        <qualifiedname>GBWalker::monorder1</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="63" column="8" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="63" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_abc9e6635e648e8250e786ff469126f47_1abc9e6635e648e8250e786ff469126f47" compoundref="gb-walk_8cpp" startline="63" endline="73">GBWalker</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_a5ee1e63ed9ca0f6d4ea3728c22188591_1a5ee1e63ed9ca0f6d4ea3728c22188591" prot="private" static="no" mutable="no">
+        <type>long **</type>
+        <definition>long** GBWalker::monorder2</definition>
+        <argsstring></argsstring>
+        <name>monorder2</name>
+        <qualifiedname>GBWalker::monorder2</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="64" column="8" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="64" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_abc9e6635e648e8250e786ff469126f47_1abc9e6635e648e8250e786ff469126f47" compoundref="gb-walk_8cpp" startline="63" endline="73">GBWalker</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_a931ee8f75795dd8a53f960f6292c8f7d_1a931ee8f75795dd8a53f960f6292c8f7d" prot="private" static="no" mutable="no">
+        <type>enum <ref refid="class_g_b_walker" kindref="compound">GBWalker</ref></type>
+        <definition>enum GBWalker GBWalker::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <qualifiedname>GBWalker::state</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="79" column="9"/>
+        <referencedby refid="class_g_b_walker_a888b8b679a4c096f09d85ea8ae9b9fee_1a888b8b679a4c096f09d85ea8ae9b9fee" compoundref="gb-walk_8cpp" startline="129" endline="139">initialize</referencedby>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_aa33bf94fccac102946c200fee868a2d6_1aa33bf94fccac102946c200fee868a2d6" prot="private" static="no" mutable="no">
+        <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        <definition>M2_arrayint GBWalker::ww</definition>
+        <argsstring></argsstring>
+        <name>ww</name>
+        <qualifiedname>GBWalker::ww</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="80" column="15" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="80" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_abc9e6635e648e8250e786ff469126f47_1abc9e6635e648e8250e786ff469126f47" compoundref="gb-walk_8cpp" startline="63" endline="73">GBWalker</referencedby>
+        <referencedby refid="class_g_b_walker_a888b8b679a4c096f09d85ea8ae9b9fee_1a888b8b679a4c096f09d85ea8ae9b9fee" compoundref="gb-walk_8cpp" startline="129" endline="139">initialize</referencedby>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_ad675de3eee9a04d32616a459f347286a_1ad675de3eee9a04d32616a459f347286a" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix* GBWalker::inwwG</definition>
+        <argsstring></argsstring>
+        <name>inwwG</name>
+        <qualifiedname>GBWalker::inwwG</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="81" column="16" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="81" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_a888b8b679a4c096f09d85ea8ae9b9fee_1a888b8b679a4c096f09d85ea8ae9b9fee" compoundref="gb-walk_8cpp" startline="129" endline="139">initialize</referencedby>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_a541c9af30e308dbde1252f5aab4eebbc_1a541c9af30e308dbde1252f5aab4eebbc" prot="private" static="no" mutable="no">
+        <type><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref> *</type>
+        <definition>GBComputation* GBWalker::gb_inwwG</definition>
+        <argsstring></argsstring>
+        <name>gb_inwwG</name>
+        <qualifiedname>GBWalker::gb_inwwG</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="82" column="17" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="82" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_a888b8b679a4c096f09d85ea8ae9b9fee_1a888b8b679a4c096f09d85ea8ae9b9fee" compoundref="gb-walk_8cpp" startline="129" endline="139">initialize</referencedby>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_a24d16518c6f3c3e22ad619f72247e346_1a24d16518c6f3c3e22ad619f72247e346" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int GBWalker::next_to_reduce</definition>
+        <argsstring></argsstring>
+        <name>next_to_reduce</name>
+        <qualifiedname>GBWalker::next_to_reduce</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="83" column="7" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="83" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_a888b8b679a4c096f09d85ea8ae9b9fee_1a888b8b679a4c096f09d85ea8ae9b9fee" compoundref="gb-walk_8cpp" startline="129" endline="139">initialize</referencedby>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_a8f18618634e0016a9aa6d7750cd43026_1a8f18618634e0016a9aa6d7750cd43026" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix* GBWalker::H</definition>
+        <argsstring></argsstring>
+        <name>H</name>
+        <qualifiedname>GBWalker::H</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="84" column="16" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="84" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_g_b_walker_a1a3c68322c8876ca1257245fa10595ba_1a1a3c68322c8876ca1257245fa10595ba" prot="private" static="no" mutable="no">
+        <type><ref refid="class_marked_g_b" kindref="compound">MarkedGB</ref> *</type>
+        <definition>MarkedGB* GBWalker::G1</definition>
+        <argsstring></argsstring>
+        <name>G1</name>
+        <qualifiedname>GBWalker::G1</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="87" column="12" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="87" bodyend="-1"/>
+        <referencedby refid="class_g_b_walker_a888b8b679a4c096f09d85ea8ae9b9fee_1a888b8b679a4c096f09d85ea8ae9b9fee" compoundref="gb-walk_8cpp" startline="129" endline="139">initialize</referencedby>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_g_b_walker_a67618bf999e84ec2024f01be6e035352_1a67618bf999e84ec2024f01be6e035352" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GBWalker::VECTOR</definition>
+        <argsstring>(M2_arrayint) w_history</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>GBWalker::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="61" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a888b8b679a4c096f09d85ea8ae9b9fee_1a888b8b679a4c096f09d85ea8ae9b9fee" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void GBWalker::initialize</definition>
+        <argsstring>()</argsstring>
+        <name>initialize</name>
+        <qualifiedname>GBWalker::initialize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="66" column="8" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="129" bodyend="139"/>
+        <references refid="class_g_b_walker_a1a3c68322c8876ca1257245fa10595ba_1a1a3c68322c8876ca1257245fa10595ba" compoundref="gb-walk_8hpp" startline="87">G1</references>
+        <references refid="class_g_b_walker_a541c9af30e308dbde1252f5aab4eebbc_1a541c9af30e308dbde1252f5aab4eebbc" compoundref="gb-walk_8hpp" startline="82">gb_inwwG</references>
+        <references refid="class_g_b_walker_ad675de3eee9a04d32616a459f347286a_1ad675de3eee9a04d32616a459f347286a" compoundref="gb-walk_8hpp" startline="81">inwwG</references>
+        <references refid="class_g_b_walker_a24d16518c6f3c3e22ad619f72247e346_1a24d16518c6f3c3e22ad619f72247e346" compoundref="gb-walk_8hpp" startline="83">next_to_reduce</references>
+        <references refid="class_g_b_walker_a931ee8f75795dd8a53f960f6292c8f7d_1a931ee8f75795dd8a53f960f6292c8f7d">state</references>
+        <references refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90ac8536ff35cf1e880ecc4bc346477357a" compoundref="gb-walk_8hpp" startline="74">STATE_compute_w</references>
+        <references refid="class_g_b_walker_aa33bf94fccac102946c200fee868a2d6_1aa33bf94fccac102946c200fee868a2d6" compoundref="gb-walk_8hpp" startline="80">ww</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a0b5029d4f6267df977f8ba70c2e1ef4c_1a0b5029d4f6267df977f8ba70c2e1ef4c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref> *</type>
+        <definition>GBComputation * GBWalker::make_gb</definition>
+        <argsstring>(const Matrix *M) const</argsstring>
+        <name>make_gb</name>
+        <qualifiedname>GBWalker::make_gb</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="68" column="17" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="100" bodyend="127"/>
+        <references refid="class_g_b_computation_aaff7a8f858cded7550f977b4bf34f01b_1aaff7a8f858cded7550f977b4bf34f01b" compoundref="comp-gb_8cpp" startline="39" endline="206">GBComputation::choose_gb</references>
+        <references refid="class_g_b_computation_a79fd4b4b3d036051a3b6b08ab15c6e5f_1a79fd4b4b3d036051a3b6b08ab15c6e5f" compoundref="comp-gb_8hpp" startline="70" endline="70">GBComputation::GBComputation</references>
+        <references refid="m2-types_8cpp_a84a8e7c0bac25be533dcc0125ff14c50_1a84a8e7c0bac25be533dcc0125ff14c50" compoundref="m2-types_8cpp" startline="6" endline="12">M2_makearrayint</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_g_b_walker_ad8709849db165cc26c693e024d542f64_1ad8709849db165cc26c693e024d542f64" compoundref="gb-walk_8hpp" startline="57">R</references>
+        <references refid="class_computation_a19ec1bd9578a00958d0a042793471775_1a19ec1bd9578a00958d0a042793471775" compoundref="comp_8cpp" startline="11" endline="38">Computation::set_stop_conditions</references>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_ababd89937495566d892d97aea0673b0d_1ababd89937495566d892d97aea0673b0d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool GBWalker::compute_next_w</definition>
+        <argsstring>()</argsstring>
+        <name>compute_next_w</name>
+        <qualifiedname>GBWalker::compute_next_w</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="70" column="8" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="141" bodyend="149"/>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_aecc954ccd7d582a550dba798ed2d7e73_1aecc954ccd7d582a550dba798ed2d7e73" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GBWalker::VECTOR</definition>
+        <argsstring>(gbvector *) leadterms</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>GBWalker::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="structgbvector" kindref="compound">gbvector</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="85" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_af36a0ea71dc10d61f4b325aee39a7ed7_1af36a0ea71dc10d61f4b325aee39a7ed7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GBWalker::VECTOR</definition>
+        <argsstring>(POLY) polys</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>GBWalker::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="struct_p_o_l_y" kindref="compound">POLY</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="86" column="3"/>
+        <references refid="poly_8cpp_af4c97ae01895f6d3290e9c2ec19a5809_1af4c97ae01895f6d3290e9c2ec19a5809" compoundref="poly_8cpp" startline="23">POLY</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_g_b_walker_a62de4cc75f11c688ec2a06bd8aec1eb0_1a62de4cc75f11c688ec2a06bd8aec1eb0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool GBWalker::stop_conditions_ok</definition>
+        <argsstring>()</argsstring>
+        <name>stop_conditions_ok</name>
+        <qualifiedname>GBWalker::stop_conditions_ok</qualifiedname>
+        <reimplements refid="class_computation_ab75de3b5574c52e4f020d529759cc472_1ab75de3b5574c52e4f020d529759cc472">stop_conditions_ok</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="89" column="16" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="94" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a64e7cb43411f0a156feeba5de76bd788_1a64e7cb43411f0a156feeba5de76bd788" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GBWalker::GBWalker</definition>
+        <argsstring>(const Matrix *gb_under_order1, const MonomialOrdering *order1)</argsstring>
+        <name>GBWalker</name>
+        <qualifiedname>GBWalker::GBWalker</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>gb_under_order1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+          <declname>order1</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="91" column="3" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="75" bodyend="80"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <referencedby refid="class_g_b_walker_a6a5213e2c77196dd9227fb5d4bb77ba3_1a6a5213e2c77196dd9227fb5d4bb77ba3" compoundref="gb-walk_8cpp" startline="82" endline="87">create</referencedby>
+        <referencedby refid="class_g_b_walker_acd8e4fed2aaf000a1898a4abe615534d_1acd8e4fed2aaf000a1898a4abe615534d">create</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_abc9e6635e648e8250e786ff469126f47_1abc9e6635e648e8250e786ff469126f47" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GBWalker::GBWalker</definition>
+        <argsstring>(MarkedGB *G0, long **order1, long **order2)</argsstring>
+        <name>GBWalker</name>
+        <qualifiedname>GBWalker::GBWalker</qualifiedname>
+        <param>
+          <type><ref refid="class_marked_g_b" kindref="compound">MarkedGB</ref> *</type>
+          <declname>G0</declname>
+        </param>
+        <param>
+          <type>long **</type>
+          <declname>order1</declname>
+        </param>
+        <param>
+          <type>long **</type>
+          <declname>order2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="93" column="3" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="63" bodyend="73"/>
+        <references refid="class_g_b_walker_a58f4cfd79c74ff60678c4502d26a2ba6_1a58f4cfd79c74ff60678c4502d26a2ba6" compoundref="gb-walk_8hpp" startline="58">F</references>
+        <references refid="class_g_b_walker_a805f4a5a3c6c54d637980e880f50dc63_1a805f4a5a3c6c54d637980e880f50dc63" compoundref="gb-walk_8hpp" startline="59">G</references>
+        <references refid="class_g_b_walker_a8bf28f357f73f1ada3bffb1f6f495ea1_1a8bf28f357f73f1ada3bffb1f6f495ea1" compoundref="gb-walk_8hpp" startline="63">monorder1</references>
+        <references refid="class_g_b_walker_a5ee1e63ed9ca0f6d4ea3728c22188591_1a5ee1e63ed9ca0f6d4ea3728c22188591" compoundref="gb-walk_8hpp" startline="64">monorder2</references>
+        <references refid="class_g_b_walker_ad8709849db165cc26c693e024d542f64_1ad8709849db165cc26c693e024d542f64" compoundref="gb-walk_8hpp" startline="57">R</references>
+        <references refid="class_g_b_walker_aa33bf94fccac102946c200fee868a2d6_1aa33bf94fccac102946c200fee868a2d6" compoundref="gb-walk_8hpp" startline="80">ww</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_g_b_walker_acd8e4fed2aaf000a1898a4abe615534d_1acd8e4fed2aaf000a1898a4abe615534d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_g_b_walker" kindref="compound">GBWalker</ref> *</type>
+        <definition>static GBWalker * GBWalker::create</definition>
+        <argsstring>(MarkedGB *G0, long **order1, long **order2)</argsstring>
+        <name>create</name>
+        <qualifiedname>GBWalker::create</qualifiedname>
+        <param>
+          <type><ref refid="class_marked_g_b" kindref="compound">MarkedGB</ref> *</type>
+          <declname>G0</declname>
+        </param>
+        <param>
+          <type>long **</type>
+          <declname>order1</declname>
+        </param>
+        <param>
+          <type>long **</type>
+          <declname>order2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="96" column="19"/>
+        <references refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" compoundref="comp_8cpp" startline="40" endline="55">Computation::Computation</references>
+        <references refid="class_g_b_walker_a64e7cb43411f0a156feeba5de76bd788_1a64e7cb43411f0a156feeba5de76bd788" compoundref="gb-walk_8cpp" startline="75" endline="80">GBWalker</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <referencedby refid="groebner_8cpp_aa36d087811dd37dc2307b222a5e6a9cf_1aa36d087811dd37dc2307b222a5e6a9cf" compoundref="groebner_8cpp" startline="218" endline="229">rawGroebnerWalk</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a6a5213e2c77196dd9227fb5d4bb77ba3_1a6a5213e2c77196dd9227fb5d4bb77ba3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_g_b_walker" kindref="compound">GBWalker</ref> *</type>
+        <definition>GBWalker * GBWalker::create</definition>
+        <argsstring>(const Matrix *gb_under_order1, const MonomialOrdering *order1)</argsstring>
+        <name>create</name>
+        <qualifiedname>GBWalker::create</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>gb_under_order1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="struct_monomial_ordering" kindref="compound">MonomialOrdering</ref> *</type>
+          <declname>order1</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="98" column="19" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="82" bodyend="87"/>
+        <references refid="class_g_b_walker_a64e7cb43411f0a156feeba5de76bd788_1a64e7cb43411f0a156feeba5de76bd788" compoundref="gb-walk_8cpp" startline="75" endline="80">GBWalker</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_g_b_walker_a46e58838db69ecfe743b62e6be34cda9_1a46e58838db69ecfe743b62e6be34cda9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>GBWalker::~GBWalker</definition>
+        <argsstring>()</argsstring>
+        <name>~GBWalker</name>
+        <qualifiedname>GBWalker::~GBWalker</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="101" column="11" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="89" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a9d691a920126b25aa29668554bf9160a_1a9d691a920126b25aa29668554bf9160a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void GBWalker::remove_gb</definition>
+        <argsstring>()</argsstring>
+        <name>remove_gb</name>
+        <qualifiedname>GBWalker::remove_gb</qualifiedname>
+        <reimplements refid="class_g_b_computation_aaedf225d5aaf90a2582ff2372e9c6ccd_1aaedf225d5aaf90a2582ff2372e9c6ccd">remove_gb</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="104" column="16" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="154" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void GBWalker::start_computation</definition>
+        <argsstring>()</argsstring>
+        <name>start_computation</name>
+        <qualifiedname>GBWalker::start_computation</qualifiedname>
+        <reimplements refid="class_g_b_computation_aade792c61b1f857d7caba9e71f9b1755_1aade792c61b1f857d7caba9e71f9b1755">start_computation</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="106" column="16" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="159" bodyend="206"/>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213af7f83acff45b8cb3944b17a21c048b06" compoundref="computation_8h" startline="55">COMP_INTERRUPTED</references>
+        <references refid="class_g_b_walker_ababd89937495566d892d97aea0673b0d_1ababd89937495566d892d97aea0673b0d" compoundref="gb-walk_8cpp" startline="141" endline="149">compute_next_w</references>
+        <references refid="class_g_b_declared_aea432b33354c0a6452749a5614060e24_1aea432b33354c0a6452749a5614060e24" compoundref="comp-gb-declared_8cpp" startline="90" endline="115">GBDeclared::create</references>
+        <references refid="class_g_b_walker_a805f4a5a3c6c54d637980e880f50dc63_1a805f4a5a3c6c54d637980e880f50dc63" compoundref="gb-walk_8hpp" startline="59">G</references>
+        <references refid="class_g_b_walker_a1a3c68322c8876ca1257245fa10595ba_1a1a3c68322c8876ca1257245fa10595ba" compoundref="gb-walk_8hpp" startline="87">G1</references>
+        <references refid="class_g_b_walker_a541c9af30e308dbde1252f5aab4eebbc_1a541c9af30e308dbde1252f5aab4eebbc" compoundref="gb-walk_8hpp" startline="82">gb_inwwG</references>
+        <references refid="class_g_b_walker_a8f18618634e0016a9aa6d7750cd43026_1a8f18618634e0016a9aa6d7750cd43026" compoundref="gb-walk_8hpp" startline="84">H</references>
+        <references refid="class_g_b_walker_ad675de3eee9a04d32616a459f347286a_1ad675de3eee9a04d32616a459f347286a" compoundref="gb-walk_8hpp" startline="81">inwwG</references>
+        <references refid="class_g_b_walker_a0b5029d4f6267df977f8ba70c2e1ef4c_1a0b5029d4f6267df977f8ba70c2e1ef4c" compoundref="gb-walk_8cpp" startline="100" endline="127">make_gb</references>
+        <references refid="class_g_b_walker_a24d16518c6f3c3e22ad619f72247e346_1a24d16518c6f3c3e22ad619f72247e346" compoundref="gb-walk_8hpp" startline="83">next_to_reduce</references>
+        <references refid="class_computation_a3d43eb6c869405fa62a9b9662f1bdb1d_1a3d43eb6c869405fa62a9b9662f1bdb1d" compoundref="comp_8cpp" startline="66" endline="77">Computation::set_status</references>
+        <references refid="class_g_b_walker_a931ee8f75795dd8a53f960f6292c8f7d_1a931ee8f75795dd8a53f960f6292c8f7d">state</references>
+        <references refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90ae40c4eccb501212c4f62730609c47dd5" compoundref="gb-walk_8hpp" startline="77">STATE_autoreduce</references>
+        <references refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90ac8536ff35cf1e880ecc4bc346477357a" compoundref="gb-walk_8hpp" startline="74">STATE_compute_w</references>
+        <references refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90a7f9bd09a0101057b15f02680242afdbf" compoundref="gb-walk_8hpp" startline="75">STATE_do_gb</references>
+        <references refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90af607093292fd910e22e975b7108045d6" compoundref="gb-walk_8hpp" startline="78">STATE_done</references>
+        <references refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90a1313200a5dbb1136798d7fa8df030549" compoundref="gb-walk_8hpp" startline="76">STATE_reduce</references>
+        <references refid="class_computation_a3e6f044f649095c4907660aa0c36b3a4_1a3e6f044f649095c4907660aa0c36b3a4" compoundref="comp_8hpp" startline="71">Computation::stop_</references>
+        <references refid="class_g_b_walker_aa33bf94fccac102946c200fee868a2d6_1aa33bf94fccac102946c200fee868a2d6" compoundref="gb-walk_8hpp" startline="80">ww</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_ad2e7e1b22fd9f8ddd846b0f5ef9ab511_1ad2e7e1b22fd9f8ddd846b0f5ef9ab511" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+        <definition>const PolynomialRing * GBWalker::get_ring</definition>
+        <argsstring>() const</argsstring>
+        <name>get_ring</name>
+        <qualifiedname>GBWalker::get_ring</qualifiedname>
+        <reimplements refid="class_g_b_computation_ac973a5d8f2c85d61ab462b76ae644548_1ac973a5d8f2c85d61ab462b76ae644548">get_ring</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="108" column="32" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="208" bodyend="212"/>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_ae04ece679721697eeb6f152defd689c6_1ae04ece679721697eeb6f152defd689c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="class_computation" kindref="compound">Computation</ref> *</type>
+        <definition>Computation * GBWalker::set_hilbert_function</definition>
+        <argsstring>(const RingElement *h)</argsstring>
+        <name>set_hilbert_function</name>
+        <qualifiedname>GBWalker::set_hilbert_function</qualifiedname>
+        <reimplements refid="class_g_b_computation_a06654fcd4834e0599e4b6b3d58d3d81e_1a06654fcd4834e0599e4b6b3d58d3d81e">set_hilbert_function</reimplements>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+          <declname>h</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="110" column="24" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="214" bodyend="219"/>
+        <references refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" compoundref="comp_8cpp" startline="40" endline="55">Computation::Computation</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_abfb60f3ff882221e8ca08a161b3921dc_1abfb60f3ff882221e8ca08a161b3921dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * GBWalker::get_gb</definition>
+        <argsstring>()</argsstring>
+        <name>get_gb</name>
+        <qualifiedname>GBWalker::get_gb</qualifiedname>
+        <reimplements refid="class_g_b_computation_aec4e42276a6b99aa1b9f58b538eed7d7_1aec4e42276a6b99aa1b9f58b538eed7d7">get_gb</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="112" column="25" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="221" bodyend="225"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a18fe5d6b6ae381fe29502042b9754555_1a18fe5d6b6ae381fe29502042b9754555" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * GBWalker::get_mingens</definition>
+        <argsstring>()</argsstring>
+        <name>get_mingens</name>
+        <qualifiedname>GBWalker::get_mingens</qualifiedname>
+        <reimplements refid="class_g_b_computation_a27d5e1cb251e9c6953a4055825e50a52_1a27d5e1cb251e9c6953a4055825e50a52">get_mingens</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="114" column="25" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="227" bodyend="231"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a5caee532d6f70b4558744978b82b56fe_1a5caee532d6f70b4558744978b82b56fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * GBWalker::get_change</definition>
+        <argsstring>()</argsstring>
+        <name>get_change</name>
+        <qualifiedname>GBWalker::get_change</qualifiedname>
+        <reimplements refid="class_g_b_computation_a0d9d2c4f31fde7fb1478e385bcb35b8c_1a0d9d2c4f31fde7fb1478e385bcb35b8c">get_change</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="116" column="25" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="233" bodyend="237"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a63a9bb8e216401af0f5acb5407ac875e_1a63a9bb8e216401af0f5acb5407ac875e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * GBWalker::get_syzygies</definition>
+        <argsstring>()</argsstring>
+        <name>get_syzygies</name>
+        <qualifiedname>GBWalker::get_syzygies</qualifiedname>
+        <reimplements refid="class_g_b_computation_ad3084a984a768ea6fc7b097b6877656e_1ad3084a984a768ea6fc7b097b6877656e">get_syzygies</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="118" column="25" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="239" bodyend="243"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a177371ccccec01bf99085b6abfd58d90_1a177371ccccec01bf99085b6abfd58d90" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * GBWalker::get_initial</definition>
+        <argsstring>(int nparts)</argsstring>
+        <name>get_initial</name>
+        <qualifiedname>GBWalker::get_initial</qualifiedname>
+        <reimplements refid="class_g_b_computation_af19f73ab8f2e622a870d2bb9f532ff67_1af19f73ab8f2e622a870d2bb9f532ff67">get_initial</reimplements>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nparts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="120" column="25" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="245" bodyend="250"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a544b1e5a6bee1a02f5317face5577d36_1a544b1e5a6bee1a02f5317face5577d36" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * GBWalker::get_parallel_lead_terms</definition>
+        <argsstring>(M2_arrayint w)</argsstring>
+        <name>get_parallel_lead_terms</name>
+        <qualifiedname>GBWalker::get_parallel_lead_terms</qualifiedname>
+        <reimplements refid="class_g_b_computation_ad21c5976a3c291f7e67f27fa12fd7a38_1ad21c5976a3c291f7e67f27fa12fd7a38">get_parallel_lead_terms</reimplements>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="122" column="25" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="252" bodyend="257"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_ab52be29c69fc2151f11fc1c5c1730daa_1ab52be29c69fc2151f11fc1c5c1730daa" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * GBWalker::matrix_remainder</definition>
+        <argsstring>(const Matrix *m)</argsstring>
+        <name>matrix_remainder</name>
+        <qualifiedname>GBWalker::matrix_remainder</qualifiedname>
+        <reimplements refid="class_g_b_computation_a8059a1ac68ead3c80ee7d8ddd2175560_1a8059a1ac68ead3c80ee7d8ddd2175560">matrix_remainder</reimplements>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="124" column="25" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="259" bodyend="264"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a7e86fdbcb4eac73e73973ec1cf63dc49_1a7e86fdbcb4eac73e73973ec1cf63dc49" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool GBWalker::matrix_lift</definition>
+        <argsstring>(const Matrix *m, const Matrix **result_remainder, const Matrix **result_quotient)</argsstring>
+        <name>matrix_lift</name>
+        <qualifiedname>GBWalker::matrix_lift</qualifiedname>
+        <reimplements refid="class_g_b_computation_a4eabd2c18c4c8b1382077b2b77c77cf9_1a4eabd2c18c4c8b1382077b2b77c77cf9">matrix_lift</reimplements>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> **</type>
+          <declname>result_remainder</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> **</type>
+          <declname>result_quotient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="126" column="19" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="266" bodyend="276"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a9a726250007c7c588b27ff024dc5b0f0_1a9a726250007c7c588b27ff024dc5b0f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int GBWalker::contains</definition>
+        <argsstring>(const Matrix *m)</argsstring>
+        <name>contains</name>
+        <qualifiedname>GBWalker::contains</qualifiedname>
+        <reimplements refid="class_g_b_computation_acdd07facd6f3229c2a3a92d71eeb16f2_1acdd07facd6f3229c2a3a92d71eeb16f2">contains</reimplements>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="130" column="15" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="278" bodyend="283"/>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a902a51c5af86c25ae74d03d21114c7fa_1a902a51c5af86c25ae74d03d21114c7fa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void GBWalker::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>GBWalker::text_out</qualifiedname>
+        <reimplements refid="class_g_b_computation_acbef71459db840e734cf998f1da596bb_1acbef71459db840e734cf998f1da596bb">text_out</reimplements>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="132" column="16" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="285" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a09cf85854b55a790cd7bd7204f4d8f2d_1a09cf85854b55a790cd7bd7204f4d8f2d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int GBWalker::complete_thru_degree</definition>
+        <argsstring>() const</argsstring>
+        <name>complete_thru_degree</name>
+        <qualifiedname>GBWalker::complete_thru_degree</qualifiedname>
+        <reimplements refid="class_g_b_computation_a0503bdcaf49883b7c8c0f4156110547d_1a0503bdcaf49883b7c8c0f4156110547d">complete_thru_degree</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="136" column="15" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="300" bodyend="305"/>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a088f59c6b7d8d98728ac69c9aad70370_1a088f59c6b7d8d98728ac69c9aad70370" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void GBWalker::show</definition>
+        <argsstring>() const</argsstring>
+        <name>show</name>
+        <qualifiedname>GBWalker::show</qualifiedname>
+        <reimplements refid="class_computation_adff8240febcd395f34ede78c797c7ac8_1adff8240febcd395f34ede78c797c7ac8">show</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="140" column="16" bodyfile="Macaulay2/e/gb-walk.cpp" bodystart="293" bodyend="298"/>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_walker_a595ba898f23ee40fa3cd2996ccd39a0c_1a595ba898f23ee40fa3cd2996ccd39a0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void GBWalker::show_mem_usage</definition>
+        <argsstring>()</argsstring>
+        <name>show_mem_usage</name>
+        <qualifiedname>GBWalker::show_mem_usage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-walk.hpp" line="141" column="8"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>The generic Groebner walk algorithm. Not yet working? </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>Computation</label>
+        <link refid="class_computation"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GBComputation</label>
+        <link refid="class_g_b_computation"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>GBWalker</label>
+        <link refid="class_g_b_walker"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="22">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="68">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="69" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Computation</label>
+        <link refid="class_computation"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>computation_status</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>stop_</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="79" relation="public-inheritance">
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GBComputation</label>
+        <link refid="class_g_b_computation"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>GBWalker</label>
+        <link refid="class_g_b_walker"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>F</edgelabel>
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>G</edgelabel>
+          <edgelabel>G1</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>monorder1</edgelabel>
+          <edgelabel>monorder2</edgelabel>
+        </childnode>
+        <childnode refid="89" relation="usage">
+          <edgelabel>state</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>ww</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>H</edgelabel>
+          <edgelabel>inwwG</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>gb_inwwG</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>next_to_reduce</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="70" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="70" relation="public-inheritance">
+        </childnode>
+        <childnode refid="71" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>M2_arrayint</label>
+        <link refid="class_m2__arrayint"/>
+      </node>
+      <node id="83">
+        <label>MarkedGB</label>
+        <link refid="class_marked_g_b"/>
+        <childnode refid="84" relation="public-inheritance">
+        </childnode>
+        <childnode refid="85" relation="usage">
+          <edgelabel>T</edgelabel>
+        </childnode>
+        <childnode refid="88" relation="usage">
+          <edgelabel>leadterms</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="79" relation="public-inheritance">
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="50" relation="private-inheritance">
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="52" relation="public-inheritance">
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="46" relation="private-inheritance">
+        </childnode>
+        <childnode refid="49" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="58">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="85">
+        <label>MonomialTable</label>
+        <link refid="class_monomial_table"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>mon_term_stash</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_count</edgelabel>
+          <edgelabel>_last_match_comp</edgelabel>
+          <edgelabel>_nvars</edgelabel>
+        </childnode>
+        <childnode refid="86" relation="usage">
+          <edgelabel>_last_match</edgelabel>
+        </childnode>
+      </node>
+      <node id="86">
+        <label>MonomialTable::mon_term</label>
+        <link refid="struct_monomial_table_1_1mon__term"/>
+        <childnode refid="86" relation="usage">
+          <edgelabel>_next</edgelabel>
+          <edgelabel>_prev</edgelabel>
+        </childnode>
+        <childnode refid="87" relation="usage">
+          <edgelabel>_lead</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_mask</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_val</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="52">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="53" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="24" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="42" relation="public-inheritance">
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="15" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="16" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="44" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="84">
+        <label>ReducedGB</label>
+        <link refid="class_reduced_g_b"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>originalR</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>F</edgelabel>
+          <edgelabel>Fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>CoefficientType</label>
+      </node>
+      <node id="81">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="77">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="41" relation="public-inheritance">
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>StopConditions</label>
+        <link refid="struct_stop_conditions"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>always_stop</edgelabel>
+          <edgelabel>just_min_gens</edgelabel>
+          <edgelabel>stop_after_degree</edgelabel>
+          <edgelabel>use_codim_limit</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>degree_limit</edgelabel>
+          <edgelabel>length_limit</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>basis_element_limit</edgelabel>
+          <edgelabel>codim_limit</edgelabel>
+          <edgelabel>pair_limit</edgelabel>
+          <edgelabel>subring_limit</edgelabel>
+          <edgelabel>syzygy_limit</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>T</label>
+      </node>
+      <node id="76">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="41" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="34">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="89">
+        <label>anonymous:state</label>
+      </node>
+      <node id="13">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="32">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="27" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="34" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="36" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>char</label>
+      </node>
+      <node id="21">
+        <label>const ARing *</label>
+      </node>
+      <node id="37">
+        <label>const void *</label>
+      </node>
+      <node id="27">
+        <label>double</label>
+      </node>
+      <node id="8">
+        <label>enum ComputationStatusCode</label>
+      </node>
+      <node id="67">
+        <label>overflow_type *</label>
+      </node>
+      <node id="87">
+        <label>Exponents</label>
+      </node>
+      <node id="88">
+        <label>gbvector</label>
+        <link refid="structgbvector"/>
+        <childnode refid="88" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>comp</edgelabel>
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="66">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="82">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="7">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="26">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="23" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>long</label>
+      </node>
+      <node id="54">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="47" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="55" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="57" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>mon_part</label>
+      </node>
+      <node id="31">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="30">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="28">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="29">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="5">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="23">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="24" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>size_t</label>
+      </node>
+      <node id="73">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>spinLock</label>
+      </node>
+      <node id="72">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="62">
+        <label>std::string</label>
+        <childnode refid="63" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="20" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="19" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="19" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="62" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-walk.hpp" line="55" column="1" bodyfile="Macaulay2/e/gb-walk.hpp" bodystart="56" bodyend="142"/>
+    <listofallmembers>
+      <member refid="class_g_b_computation_aa0c496181f65544c4c7d3896360245a4_1aa0c496181f65544c4c7d3896360245a4" prot="public" virt="virtual"><scope>GBWalker</scope><name>cast_to_GBComputation</name></member>
+      <member refid="class_computation_a4d7b512061b6d0cfe740ee06e160bba9_1a4d7b512061b6d0cfe740ee06e160bba9" prot="public" virt="virtual"><scope>GBWalker</scope><name>cast_to_ResolutionComputation</name></member>
+      <member refid="class_g_b_computation_aaff7a8f858cded7550f977b4bf34f01b_1aaff7a8f858cded7550f977b4bf34f01b" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>choose_gb</name></member>
+      <member refid="class_g_b_walker_a09cf85854b55a790cd7bd7204f4d8f2d_1a09cf85854b55a790cd7bd7204f4d8f2d" prot="public" virt="virtual"><scope>GBWalker</scope><name>complete_thru_degree</name></member>
+      <member refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" prot="protected" virt="non-virtual"><scope>GBWalker</scope><name>Computation</name></member>
+      <member refid="class_computation_a16a66d725f6681f25a4b36670818633b_1a16a66d725f6681f25a4b36670818633b" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>computation_status</name></member>
+      <member refid="class_g_b_walker_ababd89937495566d892d97aea0673b0d_1ababd89937495566d892d97aea0673b0d" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>compute_next_w</name></member>
+      <member refid="class_g_b_walker_a9a726250007c7c588b27ff024dc5b0f0_1a9a726250007c7c588b27ff024dc5b0f0" prot="public" virt="virtual"><scope>GBWalker</scope><name>contains</name></member>
+      <member refid="class_g_b_walker_acd8e4fed2aaf000a1898a4abe615534d_1acd8e4fed2aaf000a1898a4abe615534d" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>create</name></member>
+      <member refid="class_g_b_walker_a6a5213e2c77196dd9227fb5d4bb77ba3_1a6a5213e2c77196dd9227fb5d4bb77ba3" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>create</name></member>
+      <member refid="class_g_b_walker_a58f4cfd79c74ff60678c4502d26a2ba6_1a58f4cfd79c74ff60678c4502d26a2ba6" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>F</name></member>
+      <member refid="class_g_b_walker_a805f4a5a3c6c54d637980e880f50dc63_1a805f4a5a3c6c54d637980e880f50dc63" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>G</name></member>
+      <member refid="class_g_b_walker_a1a3c68322c8876ca1257245fa10595ba_1a1a3c68322c8876ca1257245fa10595ba" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>G1</name></member>
+      <member refid="class_g_b_walker_a541c9af30e308dbde1252f5aab4eebbc_1a541c9af30e308dbde1252f5aab4eebbc" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>gb_inwwG</name></member>
+      <member refid="class_g_b_computation_a79fd4b4b3d036051a3b6b08ab15c6e5f_1a79fd4b4b3d036051a3b6b08ab15c6e5f" prot="protected" virt="non-virtual"><scope>GBWalker</scope><name>GBComputation</name></member>
+      <member refid="class_g_b_walker_a64e7cb43411f0a156feeba5de76bd788_1a64e7cb43411f0a156feeba5de76bd788" prot="protected" virt="non-virtual"><scope>GBWalker</scope><name>GBWalker</name></member>
+      <member refid="class_g_b_walker_abc9e6635e648e8250e786ff469126f47_1abc9e6635e648e8250e786ff469126f47" prot="protected" virt="non-virtual"><scope>GBWalker</scope><name>GBWalker</name></member>
+      <member refid="class_g_b_walker_a5caee532d6f70b4558744978b82b56fe_1a5caee532d6f70b4558744978b82b56fe" prot="public" virt="virtual"><scope>GBWalker</scope><name>get_change</name></member>
+      <member refid="class_g_b_walker_abfb60f3ff882221e8ca08a161b3921dc_1abfb60f3ff882221e8ca08a161b3921dc" prot="public" virt="virtual"><scope>GBWalker</scope><name>get_gb</name></member>
+      <member refid="class_g_b_walker_a177371ccccec01bf99085b6abfd58d90_1a177371ccccec01bf99085b6abfd58d90" prot="public" virt="virtual"><scope>GBWalker</scope><name>get_initial</name></member>
+      <member refid="class_g_b_walker_a18fe5d6b6ae381fe29502042b9754555_1a18fe5d6b6ae381fe29502042b9754555" prot="public" virt="virtual"><scope>GBWalker</scope><name>get_mingens</name></member>
+      <member refid="class_g_b_walker_a544b1e5a6bee1a02f5317face5577d36_1a544b1e5a6bee1a02f5317face5577d36" prot="public" virt="virtual"><scope>GBWalker</scope><name>get_parallel_lead_terms</name></member>
+      <member refid="class_g_b_walker_ad2e7e1b22fd9f8ddd846b0f5ef9ab511_1ad2e7e1b22fd9f8ddd846b0f5ef9ab511" prot="public" virt="virtual"><scope>GBWalker</scope><name>get_ring</name></member>
+      <member refid="class_g_b_walker_a63a9bb8e216401af0f5acb5407ac875e_1a63a9bb8e216401af0f5acb5407ac875e" prot="public" virt="virtual"><scope>GBWalker</scope><name>get_syzygies</name></member>
+      <member refid="class_g_b_walker_a8f18618634e0016a9aa6d7750cd43026_1a8f18618634e0016a9aa6d7750cd43026" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>H</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>hash</name></member>
+      <member refid="class_g_b_walker_a888b8b679a4c096f09d85ea8ae9b9fee_1a888b8b679a4c096f09d85ea8ae9b9fee" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>initialize</name></member>
+      <member refid="class_g_b_walker_ad675de3eee9a04d32616a459f347286a_1ad675de3eee9a04d32616a459f347286a" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>inwwG</name></member>
+      <member refid="class_g_b_walker_a0b5029d4f6267df977f8ba70c2e1ef4c_1a0b5029d4f6267df977f8ba70c2e1ef4c" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>make_gb</name></member>
+      <member refid="class_g_b_walker_a7e86fdbcb4eac73e73973ec1cf63dc49_1a7e86fdbcb4eac73e73973ec1cf63dc49" prot="public" virt="virtual"><scope>GBWalker</scope><name>matrix_lift</name></member>
+      <member refid="class_g_b_walker_ab52be29c69fc2151f11fc1c5c1730daa_1ab52be29c69fc2151f11fc1c5c1730daa" prot="public" virt="virtual"><scope>GBWalker</scope><name>matrix_remainder</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>mHashValue</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_g_b_walker_a8bf28f357f73f1ada3bffb1f6f495ea1_1a8bf28f357f73f1ada3bffb1f6f495ea1" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>monorder1</name></member>
+      <member refid="class_g_b_walker_a5ee1e63ed9ca0f6d4ea3728c22188591_1a5ee1e63ed9ca0f6d4ea3728c22188591" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>monorder2</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>MutableEngineObject</name></member>
+      <member refid="class_g_b_walker_a24d16518c6f3c3e22ad619f72247e346_1a24d16518c6f3c3e22ad619f72247e346" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>next_to_reduce</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_g_b_walker_ad8709849db165cc26c693e024d542f64_1ad8709849db165cc26c693e024d542f64" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>R</name></member>
+      <member refid="class_g_b_walker_a9d691a920126b25aa29668554bf9160a_1a9d691a920126b25aa29668554bf9160a" prot="public" virt="virtual"><scope>GBWalker</scope><name>remove_gb</name></member>
+      <member refid="class_g_b_walker_ae04ece679721697eeb6f152defd689c6_1ae04ece679721697eeb6f152defd689c6" prot="public" virt="virtual"><scope>GBWalker</scope><name>set_hilbert_function</name></member>
+      <member refid="class_computation_a3d43eb6c869405fa62a9b9662f1bdb1d_1a3d43eb6c869405fa62a9b9662f1bdb1d" prot="protected" virt="non-virtual"><scope>GBWalker</scope><name>set_status</name></member>
+      <member refid="class_computation_a19ec1bd9578a00958d0a042793471775_1a19ec1bd9578a00958d0a042793471775" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>set_stop_conditions</name></member>
+      <member refid="class_g_b_walker_a088f59c6b7d8d98728ac69c9aad70370_1a088f59c6b7d8d98728ac69c9aad70370" prot="public" virt="virtual"><scope>GBWalker</scope><name>show</name></member>
+      <member refid="class_g_b_walker_a595ba898f23ee40fa3cd2996ccd39a0c_1a595ba898f23ee40fa3cd2996ccd39a0c" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>show_mem_usage</name></member>
+      <member refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" prot="public" virt="virtual"><scope>GBWalker</scope><name>start_computation</name></member>
+      <member refid="class_g_b_walker_a931ee8f75795dd8a53f960f6292c8f7d_1a931ee8f75795dd8a53f960f6292c8f7d" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>state</name></member>
+      <member refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90ae40c4eccb501212c4f62730609c47dd5" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>STATE_autoreduce</name></member>
+      <member refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90ac8536ff35cf1e880ecc4bc346477357a" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>STATE_compute_w</name></member>
+      <member refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90a7f9bd09a0101057b15f02680242afdbf" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>STATE_do_gb</name></member>
+      <member refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90af607093292fd910e22e975b7108045d6" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>STATE_done</name></member>
+      <member refid="class_g_b_walker_ad5cb4e45247185eee803e531d2d8ef90_1ad5cb4e45247185eee803e531d2d8ef90a1313200a5dbb1136798d7fa8df030549" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>STATE_reduce</name></member>
+      <member refid="class_computation_a277e8e7771dccf6b37f5ab03edb2e503_1a277e8e7771dccf6b37f5ab03edb2e503" prot="public" virt="non-virtual"><scope>GBWalker</scope><name>status</name></member>
+      <member refid="class_computation_a3e6f044f649095c4907660aa0c36b3a4_1a3e6f044f649095c4907660aa0c36b3a4" prot="protected" virt="non-virtual"><scope>GBWalker</scope><name>stop_</name></member>
+      <member refid="class_g_b_walker_a62de4cc75f11c688ec2a06bd8aec1eb0_1a62de4cc75f11c688ec2a06bd8aec1eb0" prot="protected" virt="virtual"><scope>GBWalker</scope><name>stop_conditions_ok</name></member>
+      <member refid="class_g_b_walker_a902a51c5af86c25ae74d03d21114c7fa_1a902a51c5af86c25ae74d03d21114c7fa" prot="public" virt="virtual"><scope>GBWalker</scope><name>text_out</name></member>
+      <member refid="class_g_b_walker_a67618bf999e84ec2024f01be6e035352_1a67618bf999e84ec2024f01be6e035352" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>VECTOR</name></member>
+      <member refid="class_g_b_walker_aecc954ccd7d582a550dba798ed2d7e73_1aecc954ccd7d582a550dba798ed2d7e73" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>VECTOR</name></member>
+      <member refid="class_g_b_walker_af36a0ea71dc10d61f4b325aee39a7ed7_1af36a0ea71dc10d61f4b325aee39a7ed7" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>VECTOR</name></member>
+      <member refid="class_g_b_walker_aa33bf94fccac102946c200fee868a2d6_1aa33bf94fccac102946c200fee868a2d6" prot="private" virt="non-virtual"><scope>GBWalker</scope><name>ww</name></member>
+      <member refid="class_computation_aad14e9593597150e351ee5d3a9a87ebe_1aad14e9593597150e351ee5d3a9a87ebe" prot="protected" virt="virtual"><scope>GBWalker</scope><name>~Computation</name></member>
+      <member refid="class_g_b_computation_a279d5f9b9161e846c7e6afd10badb59a_1a279d5f9b9161e846c7e6afd10badb59a" prot="public" virt="virtual"><scope>GBWalker</scope><name>~GBComputation</name></member>
+      <member refid="class_g_b_walker_a46e58838db69ecfe743b62e6be34cda9_1a46e58838db69ecfe743b62e6be34cda9" prot="public" virt="virtual"><scope>GBWalker</scope><name>~GBWalker</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>GBWalker</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>GBWalker</scope><name>~our_gc_cleanup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_cli_parameter" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>mathic::CliParameter</compoundname>
+    <derivedcompoundref refid="classmathic_1_1_bool_parameter" prot="public" virt="non-virtual">mathic::BoolParameter</derivedcompoundref>
+    <derivedcompoundref refid="classmathic_1_1_integer_parameter" prot="public" virt="non-virtual">mathic::IntegerParameter</derivedcompoundref>
+    <derivedcompoundref refid="classmathic_1_1_string_parameter" prot="public" virt="non-virtual">mathic::StringParameter</derivedcompoundref>
+    <includes refid="_cli_parameter_8h" local="no">CliParameter.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_cli_parameter_a3809c08c9235f077d11ac0f492217fd5_1a3809c08c9235f077d11ac0f492217fd5" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string mathic::CliParameter::_name</definition>
+        <argsstring></argsstring>
+        <name>_name</name>
+        <qualifiedname>mathic::CliParameter::_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="24" column="17" bodyfile="submodules/mathic/src/mathic/CliParameter.h" bodystart="24" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_cli_parameter_ab9a72dc27af0562cb89d2cd98fd7e03e_1ab9a72dc27af0562cb89d2cd98fd7e03e" compoundref="_cli_parameter_8cpp" startline="5" endline="11">CliParameter</referencedby>
+        <referencedby refid="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" compoundref="_cli_parameter_8h" startline="12" endline="12">name</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_cli_parameter_ada746b890510312b812dca07d2586d12_1ada746b890510312b812dca07d2586d12" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string mathic::CliParameter::_description</definition>
+        <argsstring></argsstring>
+        <name>_description</name>
+        <qualifiedname>mathic::CliParameter::_description</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="25" column="17" bodyfile="submodules/mathic/src/mathic/CliParameter.h" bodystart="25" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_cli_parameter_a0bd972d637aa610401539cf2b2aed635_1a0bd972d637aa610401539cf2b2aed635" compoundref="_cli_parameter_8cpp" startline="16" endline="18">appendToDescription</referencedby>
+        <referencedby refid="classmathic_1_1_cli_parameter_ab9a72dc27af0562cb89d2cd98fd7e03e_1ab9a72dc27af0562cb89d2cd98fd7e03e" compoundref="_cli_parameter_8cpp" startline="5" endline="11">CliParameter</referencedby>
+        <referencedby refid="classmathic_1_1_cli_parameter_aeade79559d7d88d8820a15a0b2cea6a9_1aeade79559d7d88d8820a15a0b2cea6a9" compoundref="_cli_parameter_8h" startline="13" endline="13">description</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_cli_parameter_a1991428fd3fcc221a1a4469ec9b47412_1a1991428fd3fcc221a1a4469ec9b47412" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>mathic::CliParameter::~CliParameter</definition>
+        <argsstring>()</argsstring>
+        <name>~CliParameter</name>
+        <qualifiedname>mathic::CliParameter::~CliParameter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="10" column="13" bodyfile="submodules/mathic/src/mathic/CliParameter.cpp" bodystart="13" bodyend="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; mathic::CliParameter::name</definition>
+        <argsstring>() const</argsstring>
+        <name>name</name>
+        <qualifiedname>mathic::CliParameter::name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="12" column="23" bodyfile="submodules/mathic/src/mathic/CliParameter.h" bodystart="12" bodyend="12"/>
+        <references refid="classmathic_1_1_cli_parameter_a3809c08c9235f077d11ac0f492217fd5_1a3809c08c9235f077d11ac0f492217fd5" compoundref="_cli_parameter_8h" startline="24">_name</references>
+        <referencedby refid="classmathic_1_1_bool_parameter_a4f9a5db61d7df7439c39a9a776447a90_1a4f9a5db61d7df7439c39a9a776447a90" compoundref="_bool_parameter_8cpp" startline="6" endline="11">mathic::BoolParameter::BoolParameter</referencedby>
+        <referencedby refid="classmathic_1_1_cli_parameter_ab9a72dc27af0562cb89d2cd98fd7e03e_1ab9a72dc27af0562cb89d2cd98fd7e03e" compoundref="_cli_parameter_8cpp" startline="5" endline="11">CliParameter</referencedby>
+        <referencedby refid="classmathic_1_1_integer_parameter_a3a019a2672c28ba188d929a5c8a243b0_1a3a019a2672c28ba188d929a5c8a243b0" compoundref="_integer_parameter_8cpp" startline="8" endline="13">mathic::IntegerParameter::IntegerParameter</referencedby>
+        <referencedby refid="classmathic_1_1_bool_parameter_a8f16164ff253d1a7799371ff848e223f_1a8f16164ff253d1a7799371ff848e223f" compoundref="_bool_parameter_8cpp" startline="21" endline="30">mathic::BoolParameter::processArgument</referencedby>
+        <referencedby refid="classmathic_1_1_cli_parameter_a42c78d3c65ef9015576eaeeade7b1a9d_1a42c78d3c65ef9015576eaeeade7b1a9d">processArgument</referencedby>
+        <referencedby refid="classmathic_1_1_integer_parameter_a2bb3b9c599096a250fd9aa26e58cc3e3_1a2bb3b9c599096a250fd9aa26e58cc3e3" compoundref="_integer_parameter_8cpp" startline="25" endline="35">mathic::IntegerParameter::processArgument</referencedby>
+        <referencedby refid="classmathic_1_1_string_parameter_a8ca4b1d15fcf5dad1820195b1704661f_1a8ca4b1d15fcf5dad1820195b1704661f" compoundref="_string_parameter_8cpp" startline="4" endline="9">mathic::StringParameter::StringParameter</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_cli_parameter_aeade79559d7d88d8820a15a0b2cea6a9_1aeade79559d7d88d8820a15a0b2cea6a9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; mathic::CliParameter::description</definition>
+        <argsstring>() const</argsstring>
+        <name>description</name>
+        <qualifiedname>mathic::CliParameter::description</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="13" column="23" bodyfile="submodules/mathic/src/mathic/CliParameter.h" bodystart="13" bodyend="13"/>
+        <references refid="classmathic_1_1_cli_parameter_ada746b890510312b812dca07d2586d12_1ada746b890510312b812dca07d2586d12" compoundref="_cli_parameter_8h" startline="25">_description</references>
+        <referencedby refid="classmathic_1_1_bool_parameter_a4f9a5db61d7df7439c39a9a776447a90_1a4f9a5db61d7df7439c39a9a776447a90" compoundref="_bool_parameter_8cpp" startline="6" endline="11">mathic::BoolParameter::BoolParameter</referencedby>
+        <referencedby refid="classmathic_1_1_cli_parameter_ab9a72dc27af0562cb89d2cd98fd7e03e_1ab9a72dc27af0562cb89d2cd98fd7e03e" compoundref="_cli_parameter_8cpp" startline="5" endline="11">CliParameter</referencedby>
+        <referencedby refid="classmathic_1_1_integer_parameter_a3a019a2672c28ba188d929a5c8a243b0_1a3a019a2672c28ba188d929a5c8a243b0" compoundref="_integer_parameter_8cpp" startline="8" endline="13">mathic::IntegerParameter::IntegerParameter</referencedby>
+        <referencedby refid="classmathic_1_1_cli_parameter_a42c78d3c65ef9015576eaeeade7b1a9d_1a42c78d3c65ef9015576eaeeade7b1a9d">processArgument</referencedby>
+        <referencedby refid="classmathic_1_1_string_parameter_a8ca4b1d15fcf5dad1820195b1704661f_1a8ca4b1d15fcf5dad1820195b1704661f" compoundref="_string_parameter_8cpp" startline="4" endline="9">mathic::StringParameter::StringParameter</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_cli_parameter_a0bd972d637aa610401539cf2b2aed635_1a0bd972d637aa610401539cf2b2aed635" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::CliParameter::appendToDescription</definition>
+        <argsstring>(const std::string &amp;str)</argsstring>
+        <name>appendToDescription</name>
+        <qualifiedname>mathic::CliParameter::appendToDescription</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="14" column="10" bodyfile="submodules/mathic/src/mathic/CliParameter.cpp" bodystart="16" bodyend="18"/>
+        <references refid="classmathic_1_1_cli_parameter_ada746b890510312b812dca07d2586d12_1ada746b890510312b812dca07d2586d12" compoundref="_cli_parameter_8h" startline="25">_description</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_cli_parameter_aaa9e493c0d1bd6806586dcc66c496dfc_1aaa9e493c0d1bd6806586dcc66c496dfc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::string</type>
+        <definition>virtual std::string mathic::CliParameter::argumentType</definition>
+        <argsstring>() const =0</argsstring>
+        <name>argumentType</name>
+        <qualifiedname>mathic::CliParameter::argumentType</qualifiedname>
+        <reimplementedby refid="classmathic_1_1_bool_parameter_ae7963642833c2efafcfebc6f01ded1ba_1ae7963642833c2efafcfebc6f01ded1ba">argumentType</reimplementedby>
+        <reimplementedby refid="classmathic_1_1_integer_parameter_aec40d97934c97f6f67aa4a65770683d8_1aec40d97934c97f6f67aa4a65770683d8">argumentType</reimplementedby>
+        <reimplementedby refid="classmathic_1_1_string_parameter_a119c982beea8023cca47a336fe809a53_1a119c982beea8023cca47a336fe809a53">argumentType</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="16" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_cli_parameter_ab6d7a77511b34c6012f282ae631bc736_1ab6d7a77511b34c6012f282ae631bc736" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::string</type>
+        <definition>virtual std::string mathic::CliParameter::valueAsString</definition>
+        <argsstring>() const =0</argsstring>
+        <name>valueAsString</name>
+        <qualifiedname>mathic::CliParameter::valueAsString</qualifiedname>
+        <reimplementedby refid="classmathic_1_1_bool_parameter_a8972fe63ceb74929959d249656811bdd_1a8972fe63ceb74929959d249656811bdd">valueAsString</reimplementedby>
+        <reimplementedby refid="classmathic_1_1_integer_parameter_a89bfb68af2d57daff9d5f629f4e42632_1a89bfb68af2d57daff9d5f629f4e42632">valueAsString</reimplementedby>
+        <reimplementedby refid="classmathic_1_1_string_parameter_a1ca93eea74a32e866ec04f57a5b2f2a5_1a1ca93eea74a32e866ec04f57a5b2f2a5">valueAsString</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="17" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_cli_parameter_a42c78d3c65ef9015576eaeeade7b1a9d_1a42c78d3c65ef9015576eaeeade7b1a9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void mathic::CliParameter::processArgument</definition>
+        <argsstring>(const std::string &amp;argument)=0</argsstring>
+        <name>processArgument</name>
+        <qualifiedname>mathic::CliParameter::processArgument</qualifiedname>
+        <reimplementedby refid="classmathic_1_1_bool_parameter_a8f16164ff253d1a7799371ff848e223f_1a8f16164ff253d1a7799371ff848e223f">processArgument</reimplementedby>
+        <reimplementedby refid="classmathic_1_1_integer_parameter_a2bb3b9c599096a250fd9aa26e58cc3e3_1a2bb3b9c599096a250fd9aa26e58cc3e3">processArgument</reimplementedby>
+        <reimplementedby refid="classmathic_1_1_string_parameter_a865d5bd95cd052a8b3b4d310fef98b18_1a865d5bd95cd052a8b3b4d310fef98b18">processArgument</reimplementedby>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>argument</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="18" column="18"/>
+        <references refid="classmathic_1_1_cli_parameter_aeade79559d7d88d8820a15a0b2cea6a9_1aeade79559d7d88d8820a15a0b2cea6a9" compoundref="_cli_parameter_8h" startline="13" endline="13">description</references>
+        <references refid="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" compoundref="_cli_parameter_8h" startline="12" endline="12">name</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classmathic_1_1_cli_parameter_ab9a72dc27af0562cb89d2cd98fd7e03e_1ab9a72dc27af0562cb89d2cd98fd7e03e" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mathic::CliParameter::CliParameter</definition>
+        <argsstring>(const std::string &amp;name, const std::string &amp;description)</argsstring>
+        <name>CliParameter</name>
+        <qualifiedname>mathic::CliParameter::CliParameter</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>description</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/CliParameter.h" line="21" column="5" bodyfile="submodules/mathic/src/mathic/CliParameter.cpp" bodystart="5" bodyend="11"/>
+        <references refid="classmathic_1_1_cli_parameter_ada746b890510312b812dca07d2586d12_1ada746b890510312b812dca07d2586d12" compoundref="_cli_parameter_8h" startline="25">_description</references>
+        <references refid="classmathic_1_1_cli_parameter_a3809c08c9235f077d11ac0f492217fd5_1a3809c08c9235f077d11ac0f492217fd5" compoundref="_cli_parameter_8h" startline="24">_name</references>
+        <references refid="classmathic_1_1_cli_parameter_aeade79559d7d88d8820a15a0b2cea6a9_1aeade79559d7d88d8820a15a0b2cea6a9" compoundref="_cli_parameter_8h" startline="13" endline="13">description</references>
+        <references refid="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" compoundref="_cli_parameter_8h" startline="12" endline="12">name</references>
+        <referencedby refid="classmathic_1_1_bool_parameter_a4f9a5db61d7df7439c39a9a776447a90_1a4f9a5db61d7df7439c39a9a776447a90" compoundref="_bool_parameter_8cpp" startline="6" endline="11">mathic::BoolParameter::BoolParameter</referencedby>
+        <referencedby refid="classmathic_1_1_integer_parameter_a3a019a2672c28ba188d929a5c8a243b0_1a3a019a2672c28ba188d929a5c8a243b0" compoundref="_integer_parameter_8cpp" startline="8" endline="13">mathic::IntegerParameter::IntegerParameter</referencedby>
+        <referencedby refid="classmathic_1_1_string_parameter_a8ca4b1d15fcf5dad1820195b1704661f_1a8ca4b1d15fcf5dad1820195b1704661f" compoundref="_string_parameter_8cpp" startline="4" endline="9">mathic::StringParameter::StringParameter</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>mathic::BoolParameter</label>
+        <link refid="classmathic_1_1_bool_parameter"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::CliParameter</label>
+        <link refid="classmathic_1_1_cli_parameter"/>
+      </node>
+      <node id="3">
+        <label>mathic::IntegerParameter</label>
+        <link refid="classmathic_1_1_integer_parameter"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mathic::StringParameter</label>
+        <link refid="classmathic_1_1_string_parameter"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>mathic::CliParameter</label>
+        <link refid="classmathic_1_1_cli_parameter"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_description</edgelabel>
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="2">
+        <label>std::string</label>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/CliParameter.h" line="8" column="3" bodyfile="submodules/mathic/src/mathic/CliParameter.h" bodystart="8" bodyend="26"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_cli_parameter_ada746b890510312b812dca07d2586d12_1ada746b890510312b812dca07d2586d12" prot="private" virt="non-virtual"><scope>mathic::CliParameter</scope><name>_description</name></member>
+      <member refid="classmathic_1_1_cli_parameter_a3809c08c9235f077d11ac0f492217fd5_1a3809c08c9235f077d11ac0f492217fd5" prot="private" virt="non-virtual"><scope>mathic::CliParameter</scope><name>_name</name></member>
+      <member refid="classmathic_1_1_cli_parameter_a0bd972d637aa610401539cf2b2aed635_1a0bd972d637aa610401539cf2b2aed635" prot="public" virt="non-virtual"><scope>mathic::CliParameter</scope><name>appendToDescription</name></member>
+      <member refid="classmathic_1_1_cli_parameter_aaa9e493c0d1bd6806586dcc66c496dfc_1aaa9e493c0d1bd6806586dcc66c496dfc" prot="public" virt="pure-virtual"><scope>mathic::CliParameter</scope><name>argumentType</name></member>
+      <member refid="classmathic_1_1_cli_parameter_ab9a72dc27af0562cb89d2cd98fd7e03e_1ab9a72dc27af0562cb89d2cd98fd7e03e" prot="protected" virt="non-virtual"><scope>mathic::CliParameter</scope><name>CliParameter</name></member>
+      <member refid="classmathic_1_1_cli_parameter_aeade79559d7d88d8820a15a0b2cea6a9_1aeade79559d7d88d8820a15a0b2cea6a9" prot="public" virt="non-virtual"><scope>mathic::CliParameter</scope><name>description</name></member>
+      <member refid="classmathic_1_1_cli_parameter_a2d9c7585f2a5a9919fd9b9cb3788b4c2_1a2d9c7585f2a5a9919fd9b9cb3788b4c2" prot="public" virt="non-virtual"><scope>mathic::CliParameter</scope><name>name</name></member>
+      <member refid="classmathic_1_1_cli_parameter_a42c78d3c65ef9015576eaeeade7b1a9d_1a42c78d3c65ef9015576eaeeade7b1a9d" prot="public" virt="pure-virtual"><scope>mathic::CliParameter</scope><name>processArgument</name></member>
+      <member refid="classmathic_1_1_cli_parameter_ab6d7a77511b34c6012f282ae631bc736_1ab6d7a77511b34c6012f282ae631bc736" prot="public" virt="pure-virtual"><scope>mathic::CliParameter</scope><name>valueAsString</name></member>
+      <member refid="classmathic_1_1_cli_parameter_a1991428fd3fcc221a1a4469ec9b47412_1a1991428fd3fcc221a1a4469ec9b47412" prot="public" virt="virtual"><scope>mathic::CliParameter</scope><name>~CliParameter</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

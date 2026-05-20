@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_log_domain_3_01true_01_4_1_1_timer" kind="class" language="C++" prot="public">
+    <compoundname>LogDomain&lt; true &gt;::Timer</compoundname>
+    <includes refid="_log_domain_8hpp" local="no">LogDomain.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_log_domain_3_01true_01_4_1_1_timer_a4a0a378daccb75d805ada36dd7beb545_1a4a0a378daccb75d805ada36dd7beb545" prot="private" static="no" mutable="no">
+        <type><ref refid="class_log_domain" kindref="compound">LogDomain</ref>&lt; true &gt; &amp;</type>
+        <definition>LogDomain&lt;true&gt;&amp; LogDomain&lt; true &gt;::Timer::mLogger</definition>
+        <argsstring></argsstring>
+        <name>mLogger</name>
+        <qualifiedname>LogDomain&lt; true &gt;::Timer::mLogger</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="136" column="13" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="136" bodyend="-1"/>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a7770c73d6bba5b6a80fa28d78c3111d9_1a7770c73d6bba5b6a80fa28d78c3111d9" compoundref="_log_domain_8cpp" startline="104" endline="109">start</referencedby>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a935acd5ade0d3f34592b215af20bffb3_1a935acd5ade0d3f34592b215af20bffb3" compoundref="_log_domain_8cpp" startline="92" endline="102">stop</referencedby>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a017f229396343eed605589ba6150499b_1a017f229396343eed605589ba6150499b" compoundref="_log_domain_8cpp" startline="80" endline="86">Timer</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_log_domain_3_01true_01_4_1_1_timer_afc76cb191f756330915960683446e09e_1afc76cb191f756330915960683446e09e" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool LogDomain&lt; true &gt;::Timer::mTimerRunning</definition>
+        <argsstring></argsstring>
+        <name>mTimerRunning</name>
+        <qualifiedname>LogDomain&lt; true &gt;::Timer::mTimerRunning</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="137" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="137" bodyend="-1"/>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a3922fb5f07ed3daa157dc5e188330c31_1a3922fb5f07ed3daa157dc5e188330c31" compoundref="_log_domain_8hpp" startline="121" endline="121">running</referencedby>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a7770c73d6bba5b6a80fa28d78c3111d9_1a7770c73d6bba5b6a80fa28d78c3111d9" compoundref="_log_domain_8cpp" startline="104" endline="109">start</referencedby>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a935acd5ade0d3f34592b215af20bffb3_1a935acd5ade0d3f34592b215af20bffb3" compoundref="_log_domain_8cpp" startline="92" endline="102">stop</referencedby>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a017f229396343eed605589ba6150499b_1a017f229396343eed605589ba6150499b" compoundref="_log_domain_8cpp" startline="80" endline="86">Timer</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_log_domain_3_01true_01_4_1_1_timer_a62f1ecfcd5c26669e7a46c131e71a8af_1a62f1ecfcd5c26669e7a46c131e71a8af" prot="private" static="no" mutable="no">
+        <type>mtbb::tick_count</type>
+        <definition>mtbb::tick_count LogDomain&lt; true &gt;::Timer::mRealTicks</definition>
+        <argsstring></argsstring>
+        <name>mRealTicks</name>
+        <qualifiedname>LogDomain&lt; true &gt;::Timer::mRealTicks</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="138" column="20" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="138" bodyend="-1"/>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a7770c73d6bba5b6a80fa28d78c3111d9_1a7770c73d6bba5b6a80fa28d78c3111d9" compoundref="_log_domain_8cpp" startline="104" endline="109">start</referencedby>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a935acd5ade0d3f34592b215af20bffb3_1a935acd5ade0d3f34592b215af20bffb3" compoundref="_log_domain_8cpp" startline="92" endline="102">stop</referencedby>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a017f229396343eed605589ba6150499b_1a017f229396343eed605589ba6150499b" compoundref="_log_domain_8cpp" startline="80" endline="86">Timer</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_log_domain_3_01true_01_4_1_1_timer_a017f229396343eed605589ba6150499b_1a017f229396343eed605589ba6150499b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LogDomain&lt; true &gt;::Timer::Timer</definition>
+        <argsstring>(LogDomain&lt; true &gt; &amp;logger)</argsstring>
+        <name>Timer</name>
+        <qualifiedname>LogDomain&lt; true &gt;::Timer::Timer</qualifiedname>
+        <param>
+          <type><ref refid="class_log_domain" kindref="compound">LogDomain</ref>&lt; true &gt; &amp;</type>
+          <declname>logger</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Start the timer running. The elapsed time will be logged to the logger once the timer is stopped or destructed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="115" column="3" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.cpp" bodystart="80" bodyend="86"/>
+        <references refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" compoundref="_log_domain_8cpp" startline="14" endline="32">LogDomain&lt; true &gt;::LogDomain</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_a4a0a378daccb75d805ada36dd7beb545_1a4a0a378daccb75d805ada36dd7beb545" compoundref="_log_domain_8hpp" startline="136">mLogger</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_a62f1ecfcd5c26669e7a46c131e71a8af_1a62f1ecfcd5c26669e7a46c131e71a8af" compoundref="_log_domain_8hpp" startline="138">mRealTicks</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_afc76cb191f756330915960683446e09e_1afc76cb191f756330915960683446e09e" compoundref="_log_domain_8hpp" startline="137">mTimerRunning</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_a7770c73d6bba5b6a80fa28d78c3111d9_1a7770c73d6bba5b6a80fa28d78c3111d9" compoundref="_log_domain_8cpp" startline="104" endline="109">start</references>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01true_01_4_1_1_timer_a9e45fc09130057a84b3d81726f401495_1a9e45fc09130057a84b3d81726f401495" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LogDomain&lt; true &gt;::Timer::~Timer</definition>
+        <argsstring>()</argsstring>
+        <name>~Timer</name>
+        <qualifiedname>LogDomain&lt; true &gt;::Timer::~Timer</qualifiedname>
+        <briefdescription>
+<para>Stops the timer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="118" column="3" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.cpp" bodystart="88" bodyend="90"/>
+        <references refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" compoundref="_log_domain_8cpp" startline="14" endline="32">LogDomain&lt; true &gt;::LogDomain</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_a935acd5ade0d3f34592b215af20bffb3_1a935acd5ade0d3f34592b215af20bffb3" compoundref="_log_domain_8cpp" startline="92" endline="102">stop</references>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01true_01_4_1_1_timer_a3922fb5f07ed3daa157dc5e188330c31_1a3922fb5f07ed3daa157dc5e188330c31" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool LogDomain&lt; true &gt;::Timer::running</definition>
+        <argsstring>() const</argsstring>
+        <name>running</name>
+        <qualifiedname>LogDomain&lt; true &gt;::Timer::running</qualifiedname>
+        <briefdescription>
+<para>Returns true if the timer is currently recording time. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="121" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="121" bodyend="121"/>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_afc76cb191f756330915960683446e09e_1afc76cb191f756330915960683446e09e" compoundref="_log_domain_8hpp" startline="137">mTimerRunning</references>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a935acd5ade0d3f34592b215af20bffb3_1a935acd5ade0d3f34592b215af20bffb3" compoundref="_log_domain_8cpp" startline="92" endline="102">stop</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01true_01_4_1_1_timer_a935acd5ade0d3f34592b215af20bffb3_1a935acd5ade0d3f34592b215af20bffb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LogDomain&lt; true &gt;::Timer::stop</definition>
+        <argsstring>()</argsstring>
+        <name>stop</name>
+        <qualifiedname>LogDomain&lt; true &gt;::Timer::stop</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Stops recording time and logs the elapsed time to the logger.</para>
+<para>This is a no-op if the timer is not running. If the logger is disabled then no time is logged. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="127" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.cpp" bodystart="92" bodyend="102"/>
+        <references refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" compoundref="_log_domain_8cpp" startline="14" endline="32">LogDomain&lt; true &gt;::LogDomain</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_a4a0a378daccb75d805ada36dd7beb545_1a4a0a378daccb75d805ada36dd7beb545" compoundref="_log_domain_8hpp" startline="136">mLogger</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_a62f1ecfcd5c26669e7a46c131e71a8af_1a62f1ecfcd5c26669e7a46c131e71a8af" compoundref="_log_domain_8hpp" startline="138">mRealTicks</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_afc76cb191f756330915960683446e09e_1afc76cb191f756330915960683446e09e" compoundref="_log_domain_8hpp" startline="137">mTimerRunning</references>
+        <references refid="struct_log_domain_3_01true_01_4_1_1_time_interval_a0296829a1d405383a4834bd059632e7b_1a0296829a1d405383a4834bd059632e7b" compoundref="_log_domain_8hpp" startline="91">LogDomain&lt; true &gt;::TimeInterval::realSeconds</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_a3922fb5f07ed3daa157dc5e188330c31_1a3922fb5f07ed3daa157dc5e188330c31" compoundref="_log_domain_8hpp" startline="121" endline="121">running</references>
+        <references refid="timing_8hpp_add027aa52d21445f5476ec1376730c32_1add027aa52d21445f5476ec1376730c32" compoundref="timing_8hpp" startline="57" endline="63">seconds</references>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a9e45fc09130057a84b3d81726f401495_1a9e45fc09130057a84b3d81726f401495" compoundref="_log_domain_8cpp" startline="88" endline="90">~Timer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_log_domain_3_01true_01_4_1_1_timer_a7770c73d6bba5b6a80fa28d78c3111d9_1a7770c73d6bba5b6a80fa28d78c3111d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LogDomain&lt; true &gt;::Timer::start</definition>
+        <argsstring>()</argsstring>
+        <name>start</name>
+        <qualifiedname>LogDomain&lt; true &gt;::Timer::start</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Start recording time on a stopped timer.</para>
+<para>This is a no-op if the timer is already running or if the logger is disabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="133" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.cpp" bodystart="104" bodyend="109"/>
+        <references refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" compoundref="_log_domain_8cpp" startline="14" endline="32">LogDomain&lt; true &gt;::LogDomain</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_a4a0a378daccb75d805ada36dd7beb545_1a4a0a378daccb75d805ada36dd7beb545" compoundref="_log_domain_8hpp" startline="136">mLogger</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_a62f1ecfcd5c26669e7a46c131e71a8af_1a62f1ecfcd5c26669e7a46c131e71a8af" compoundref="_log_domain_8hpp" startline="138">mRealTicks</references>
+        <references refid="class_log_domain_3_01true_01_4_1_1_timer_afc76cb191f756330915960683446e09e_1afc76cb191f756330915960683446e09e" compoundref="_log_domain_8hpp" startline="137">mTimerRunning</references>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a017f229396343eed605589ba6150499b_1a017f229396343eed605589ba6150499b" compoundref="_log_domain_8cpp" startline="80" endline="86">Timer</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="8">
+        <label>LogDomain&lt; CompileTimeEnabled &gt;</label>
+        <link refid="class_log_domain"/>
+      </node>
+      <node id="2">
+        <label>LogDomain&lt; true &gt;</label>
+        <link refid="class_log_domain_3_01true_01_4"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>compileTimeEnabled</edgelabel>
+          <edgelabel>mEnabled</edgelabel>
+          <edgelabel>mHasCount</edgelabel>
+          <edgelabel>mHasTime</edgelabel>
+          <edgelabel>mOriginallyEnabled</edgelabel>
+          <edgelabel>mOriginallyStreamEnabled</edgelabel>
+          <edgelabel>mStreamEnabled</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mDescription</edgelabel>
+          <edgelabel>mName</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mInterval</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mCount</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="template-instance">
+          <edgelabel>&lt; true &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>LogDomain&lt; true &gt;::TimeInterval</label>
+        <link refid="struct_log_domain_3_01true_01_4_1_1_time_interval"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>realSeconds</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>LogDomain&lt; true &gt;::Timer</label>
+        <link refid="class_log_domain_3_01true_01_4_1_1_timer"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mLogger</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mTimerRunning</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mRealTicks</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="4">
+        <label>char</label>
+      </node>
+      <node id="6">
+        <label>double</label>
+      </node>
+      <node id="7">
+        <label>long</label>
+      </node>
+      <node id="9">
+        <label>tick_count</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="111" column="1" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="111" bodyend="139"/>
+    <listofallmembers>
+      <member refid="class_log_domain_3_01true_01_4_1_1_timer_a4a0a378daccb75d805ada36dd7beb545_1a4a0a378daccb75d805ada36dd7beb545" prot="private" virt="non-virtual"><scope>LogDomain&lt; true &gt;::Timer</scope><name>mLogger</name></member>
+      <member refid="class_log_domain_3_01true_01_4_1_1_timer_a62f1ecfcd5c26669e7a46c131e71a8af_1a62f1ecfcd5c26669e7a46c131e71a8af" prot="private" virt="non-virtual"><scope>LogDomain&lt; true &gt;::Timer</scope><name>mRealTicks</name></member>
+      <member refid="class_log_domain_3_01true_01_4_1_1_timer_afc76cb191f756330915960683446e09e_1afc76cb191f756330915960683446e09e" prot="private" virt="non-virtual"><scope>LogDomain&lt; true &gt;::Timer</scope><name>mTimerRunning</name></member>
+      <member refid="class_log_domain_3_01true_01_4_1_1_timer_a3922fb5f07ed3daa157dc5e188330c31_1a3922fb5f07ed3daa157dc5e188330c31" prot="public" virt="non-virtual"><scope>LogDomain&lt; true &gt;::Timer</scope><name>running</name></member>
+      <member refid="class_log_domain_3_01true_01_4_1_1_timer_a7770c73d6bba5b6a80fa28d78c3111d9_1a7770c73d6bba5b6a80fa28d78c3111d9" prot="public" virt="non-virtual"><scope>LogDomain&lt; true &gt;::Timer</scope><name>start</name></member>
+      <member refid="class_log_domain_3_01true_01_4_1_1_timer_a935acd5ade0d3f34592b215af20bffb3_1a935acd5ade0d3f34592b215af20bffb3" prot="public" virt="non-virtual"><scope>LogDomain&lt; true &gt;::Timer</scope><name>stop</name></member>
+      <member refid="class_log_domain_3_01true_01_4_1_1_timer_a017f229396343eed605589ba6150499b_1a017f229396343eed605589ba6150499b" prot="public" virt="non-virtual"><scope>LogDomain&lt; true &gt;::Timer</scope><name>Timer</name></member>
+      <member refid="class_log_domain_3_01true_01_4_1_1_timer_a9e45fc09130057a84b3d81726f401495_1a9e45fc09130057a84b3d81726f401495" prot="public" virt="non-virtual"><scope>LogDomain&lt; true &gt;::Timer</scope><name>~Timer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

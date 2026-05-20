@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['ideals_2ecpp_0',['ideals.cpp',['../ideals_8cpp.html',1,'']]],
+  ['ideals_2ehpp_1',['ideals.hpp',['../ideals_8hpp.html',1,'']]],
+  ['imonorder_2ecpp_2',['imonorder.cpp',['../imonorder_8cpp.html',1,'']]],
+  ['imonorder_2ehpp_3',['imonorder.hpp',['../imonorder_8hpp.html',1,'']]],
+  ['int_2dbag_2ecpp_4',['int-bag.cpp',['../int-bag_8cpp.html',1,'']]],
+  ['int_2dbag_2ehpp_5',['int-bag.hpp',['../int-bag_8hpp.html',1,'']]],
+  ['integerparameter_2ecpp_6',['IntegerParameter.cpp',['../_integer_parameter_8cpp.html',1,'']]],
+  ['integerparameter_2eh_7',['IntegerParameter.h',['../_integer_parameter_8h.html',1,'']]],
+  ['interreduce_2ecpp_8',['interreduce.cpp',['../interreduce_8cpp.html',1,'']]],
+  ['interreduce_2ehpp_9',['interreduce.hpp',['../interreduce_8hpp.html',1,'']]],
+  ['interrupted_2ecpp_10',['interrupted.cpp',['../interrupted_8cpp.html',1,'']]],
+  ['interrupted_2ehpp_11',['interrupted.hpp',['../interrupted_8hpp.html',1,'']]],
+  ['involutive_2ehpp_12',['involutive.hpp',['../involutive_8hpp.html',1,'']]],
+  ['io_2dutil_2ecpp_13',['io-util.cpp',['../io-util_8cpp.html',1,'']]],
+  ['io_2dutil_2ehpp_14',['io-util.hpp',['../io-util_8hpp.html',1,'']]],
+  ['item_2ecpp_15',['Item.cpp',['../_item_8cpp.html',1,'']]],
+  ['item_2eh_16',['Item.h',['../_item_8h.html',1,'']]]
+];

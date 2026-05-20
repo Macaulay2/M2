@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_matrix_window" kind="struct" language="C++" prot="public">
+    <compoundname>MatrixWindow</compoundname>
+    <includes refid="mat-arith_8hpp" local="no">mat-arith.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_matrix_window_a28e420572b41f51e2aa1bcd263af257d_1a28e420572b41f51e2aa1bcd263af257d" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long MatrixWindow::begin_row</definition>
+        <argsstring></argsstring>
+        <name>begin_row</name>
+        <qualifiedname>MatrixWindow::begin_row</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="59" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="namespace_matrix_ops_a2100eeba95e52ce0e249ae03e9365b54_1a2100eeba95e52ce0e249ae03e9365b54" compoundref="mat-arith_8hpp" startline="340" endline="361">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a809afbf836783d510ee57648fd09343c_1a809afbf836783d510ee57648fd09343c" compoundref="mat-arith_8hpp" startline="321" endline="336">MatrixOps::addTo</referencedby>
+        <referencedby refid="struct_matrix_window_a876aed68a5d54ff08f5b7c33bacb1c26_1a876aed68a5d54ff08f5b7c33bacb1c26" compoundref="mat-arith_8hpp" startline="63" endline="67">MatrixWindow</referencedby>
+        <referencedby refid="struct_matrix_window_a2b69eefd4962201b010cd1bdb7c33376_1a2b69eefd4962201b010cd1bdb7c33376" compoundref="mat-arith_8hpp" startline="69" endline="73">sameSize</referencedby>
+        <referencedby refid="namespace_matrix_ops_a08c5d448b55c37f010e5a33674f46c9a_1a08c5d448b55c37f010e5a33674f46c9a" compoundref="mat-arith_8hpp" startline="365" endline="383">MatrixOps::scalarMult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1af6bad8d4b5f937d4bd4aae7465f7ab_1a1af6bad8d4b5f937d4bd4aae7465f7ab" compoundref="mat-arith_8hpp" startline="387" endline="401">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a282f886010aee601304c4860fb1af33f_1a282f886010aee601304c4860fb1af33f" compoundref="mat-arith_8hpp" startline="305" endline="317">MatrixOps::set</referencedby>
+        <referencedby refid="namespace_matrix_ops_a4cb69fe10c896de643645b4e78ca8fe9_1a4cb69fe10c896de643645b4e78ca8fe9" compoundref="mat-arith_8hpp" startline="287" endline="292">MatrixOps::setZero</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_matrix_window_aaeddef38d2caece2c319418a57744e1c_1aaeddef38d2caece2c319418a57744e1c" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long MatrixWindow::begin_column</definition>
+        <argsstring></argsstring>
+        <name>begin_column</name>
+        <qualifiedname>MatrixWindow::begin_column</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="60" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="namespace_matrix_ops_a2100eeba95e52ce0e249ae03e9365b54_1a2100eeba95e52ce0e249ae03e9365b54" compoundref="mat-arith_8hpp" startline="340" endline="361">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a809afbf836783d510ee57648fd09343c_1a809afbf836783d510ee57648fd09343c" compoundref="mat-arith_8hpp" startline="321" endline="336">MatrixOps::addTo</referencedby>
+        <referencedby refid="struct_matrix_window_a876aed68a5d54ff08f5b7c33bacb1c26_1a876aed68a5d54ff08f5b7c33bacb1c26" compoundref="mat-arith_8hpp" startline="63" endline="67">MatrixWindow</referencedby>
+        <referencedby refid="struct_matrix_window_a2b69eefd4962201b010cd1bdb7c33376_1a2b69eefd4962201b010cd1bdb7c33376" compoundref="mat-arith_8hpp" startline="69" endline="73">sameSize</referencedby>
+        <referencedby refid="namespace_matrix_ops_a08c5d448b55c37f010e5a33674f46c9a_1a08c5d448b55c37f010e5a33674f46c9a" compoundref="mat-arith_8hpp" startline="365" endline="383">MatrixOps::scalarMult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1af6bad8d4b5f937d4bd4aae7465f7ab_1a1af6bad8d4b5f937d4bd4aae7465f7ab" compoundref="mat-arith_8hpp" startline="387" endline="401">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a282f886010aee601304c4860fb1af33f_1a282f886010aee601304c4860fb1af33f" compoundref="mat-arith_8hpp" startline="305" endline="317">MatrixOps::set</referencedby>
+        <referencedby refid="namespace_matrix_ops_a4cb69fe10c896de643645b4e78ca8fe9_1a4cb69fe10c896de643645b4e78ca8fe9" compoundref="mat-arith_8hpp" startline="287" endline="292">MatrixOps::setZero</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_matrix_window_a584c42fb825aa67dc88d4bdcd5eb3bb1_1a584c42fb825aa67dc88d4bdcd5eb3bb1" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long MatrixWindow::end_row</definition>
+        <argsstring></argsstring>
+        <name>end_row</name>
+        <qualifiedname>MatrixWindow::end_row</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="61" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="namespace_matrix_ops_a2100eeba95e52ce0e249ae03e9365b54_1a2100eeba95e52ce0e249ae03e9365b54" compoundref="mat-arith_8hpp" startline="340" endline="361">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a809afbf836783d510ee57648fd09343c_1a809afbf836783d510ee57648fd09343c" compoundref="mat-arith_8hpp" startline="321" endline="336">MatrixOps::addTo</referencedby>
+        <referencedby refid="struct_matrix_window_a876aed68a5d54ff08f5b7c33bacb1c26_1a876aed68a5d54ff08f5b7c33bacb1c26" compoundref="mat-arith_8hpp" startline="63" endline="67">MatrixWindow</referencedby>
+        <referencedby refid="struct_matrix_window_a2b69eefd4962201b010cd1bdb7c33376_1a2b69eefd4962201b010cd1bdb7c33376" compoundref="mat-arith_8hpp" startline="69" endline="73">sameSize</referencedby>
+        <referencedby refid="namespace_matrix_ops_a08c5d448b55c37f010e5a33674f46c9a_1a08c5d448b55c37f010e5a33674f46c9a" compoundref="mat-arith_8hpp" startline="365" endline="383">MatrixOps::scalarMult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1af6bad8d4b5f937d4bd4aae7465f7ab_1a1af6bad8d4b5f937d4bd4aae7465f7ab" compoundref="mat-arith_8hpp" startline="387" endline="401">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a282f886010aee601304c4860fb1af33f_1a282f886010aee601304c4860fb1af33f" compoundref="mat-arith_8hpp" startline="305" endline="317">MatrixOps::set</referencedby>
+        <referencedby refid="namespace_matrix_ops_a4cb69fe10c896de643645b4e78ca8fe9_1a4cb69fe10c896de643645b4e78ca8fe9" compoundref="mat-arith_8hpp" startline="287" endline="292">MatrixOps::setZero</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_matrix_window_a836795a2cad0883204348f2d5023c5de_1a836795a2cad0883204348f2d5023c5de" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long MatrixWindow::end_column</definition>
+        <argsstring></argsstring>
+        <name>end_column</name>
+        <qualifiedname>MatrixWindow::end_column</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="62" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="62" bodyend="-1"/>
+        <referencedby refid="namespace_matrix_ops_a2100eeba95e52ce0e249ae03e9365b54_1a2100eeba95e52ce0e249ae03e9365b54" compoundref="mat-arith_8hpp" startline="340" endline="361">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a809afbf836783d510ee57648fd09343c_1a809afbf836783d510ee57648fd09343c" compoundref="mat-arith_8hpp" startline="321" endline="336">MatrixOps::addTo</referencedby>
+        <referencedby refid="struct_matrix_window_a876aed68a5d54ff08f5b7c33bacb1c26_1a876aed68a5d54ff08f5b7c33bacb1c26" compoundref="mat-arith_8hpp" startline="63" endline="67">MatrixWindow</referencedby>
+        <referencedby refid="struct_matrix_window_a2b69eefd4962201b010cd1bdb7c33376_1a2b69eefd4962201b010cd1bdb7c33376" compoundref="mat-arith_8hpp" startline="69" endline="73">sameSize</referencedby>
+        <referencedby refid="namespace_matrix_ops_a08c5d448b55c37f010e5a33674f46c9a_1a08c5d448b55c37f010e5a33674f46c9a" compoundref="mat-arith_8hpp" startline="365" endline="383">MatrixOps::scalarMult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1af6bad8d4b5f937d4bd4aae7465f7ab_1a1af6bad8d4b5f937d4bd4aae7465f7ab" compoundref="mat-arith_8hpp" startline="387" endline="401">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a282f886010aee601304c4860fb1af33f_1a282f886010aee601304c4860fb1af33f" compoundref="mat-arith_8hpp" startline="305" endline="317">MatrixOps::set</referencedby>
+        <referencedby refid="namespace_matrix_ops_a4cb69fe10c896de643645b4e78ca8fe9_1a4cb69fe10c896de643645b4e78ca8fe9" compoundref="mat-arith_8hpp" startline="287" endline="292">MatrixOps::setZero</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_matrix_window_a876aed68a5d54ff08f5b7c33bacb1c26_1a876aed68a5d54ff08f5b7c33bacb1c26" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MatrixWindow::MatrixWindow</definition>
+        <argsstring>(long x, long y, long nrows, long ncols)</argsstring>
+        <name>MatrixWindow</name>
+        <qualifiedname>MatrixWindow::MatrixWindow</qualifiedname>
+        <param>
+          <type>long</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>nrows</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>ncols</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="63" column="3" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="63" bodyend="67"/>
+        <references refid="struct_matrix_window_aaeddef38d2caece2c319418a57744e1c_1aaeddef38d2caece2c319418a57744e1c" compoundref="mat-arith_8hpp" startline="60">begin_column</references>
+        <references refid="struct_matrix_window_a28e420572b41f51e2aa1bcd263af257d_1a28e420572b41f51e2aa1bcd263af257d" compoundref="mat-arith_8hpp" startline="59">begin_row</references>
+        <references refid="struct_matrix_window_a836795a2cad0883204348f2d5023c5de_1a836795a2cad0883204348f2d5023c5de" compoundref="mat-arith_8hpp" startline="62">end_column</references>
+        <references refid="struct_matrix_window_a584c42fb825aa67dc88d4bdcd5eb3bb1_1a584c42fb825aa67dc88d4bdcd5eb3bb1" compoundref="mat-arith_8hpp" startline="61">end_row</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="struct_matrix_window_a2b69eefd4962201b010cd1bdb7c33376_1a2b69eefd4962201b010cd1bdb7c33376" compoundref="mat-arith_8hpp" startline="69" endline="73">sameSize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_matrix_window_a2b69eefd4962201b010cd1bdb7c33376_1a2b69eefd4962201b010cd1bdb7c33376" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MatrixWindow::sameSize</definition>
+        <argsstring>(const MatrixWindow &amp;b) const</argsstring>
+        <name>sameSize</name>
+        <qualifiedname>MatrixWindow::sameSize</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_matrix_window" kindref="compound">MatrixWindow</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mat-arith.hpp" line="69" column="8" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="69" bodyend="73"/>
+        <references refid="struct_matrix_window_aaeddef38d2caece2c319418a57744e1c_1aaeddef38d2caece2c319418a57744e1c" compoundref="mat-arith_8hpp" startline="60">begin_column</references>
+        <references refid="struct_matrix_window_a28e420572b41f51e2aa1bcd263af257d_1a28e420572b41f51e2aa1bcd263af257d" compoundref="mat-arith_8hpp" startline="59">begin_row</references>
+        <references refid="struct_matrix_window_a836795a2cad0883204348f2d5023c5de_1a836795a2cad0883204348f2d5023c5de" compoundref="mat-arith_8hpp" startline="62">end_column</references>
+        <references refid="struct_matrix_window_a584c42fb825aa67dc88d4bdcd5eb3bb1_1a584c42fb825aa67dc88d4bdcd5eb3bb1" compoundref="mat-arith_8hpp" startline="61">end_row</references>
+        <references refid="struct_matrix_window_a876aed68a5d54ff08f5b7c33bacb1c26_1a876aed68a5d54ff08f5b7c33bacb1c26" compoundref="mat-arith_8hpp" startline="63" endline="67">MatrixWindow</references>
+        <referencedby refid="namespace_matrix_ops_a2100eeba95e52ce0e249ae03e9365b54_1a2100eeba95e52ce0e249ae03e9365b54" compoundref="mat-arith_8hpp" startline="340" endline="361">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a809afbf836783d510ee57648fd09343c_1a809afbf836783d510ee57648fd09343c" compoundref="mat-arith_8hpp" startline="321" endline="336">MatrixOps::addTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a08c5d448b55c37f010e5a33674f46c9a_1a08c5d448b55c37f010e5a33674f46c9a" compoundref="mat-arith_8hpp" startline="365" endline="383">MatrixOps::scalarMult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a282f886010aee601304c4860fb1af33f_1a282f886010aee601304c4860fb1af33f" compoundref="mat-arith_8hpp" startline="305" endline="317">MatrixOps::set</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Half-open rectangular submatrix descriptor: <computeroutput>[<ref refid="struct_matrix_window_a28e420572b41f51e2aa1bcd263af257d_1a28e420572b41f51e2aa1bcd263af257d" kindref="member">begin_row</ref>, <ref refid="struct_matrix_window_a584c42fb825aa67dc88d4bdcd5eb3bb1_1a584c42fb825aa67dc88d4bdcd5eb3bb1" kindref="member">end_row</ref>) <ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref> [<ref refid="struct_matrix_window_aaeddef38d2caece2c319418a57744e1c_1aaeddef38d2caece2c319418a57744e1c" kindref="member">begin_column</ref>, <ref refid="struct_matrix_window_a836795a2cad0883204348f2d5023c5de_1a836795a2cad0883204348f2d5023c5de" kindref="member">end_column</ref>)</computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Constructed as <computeroutput><ref refid="struct_matrix_window" kindref="compound">MatrixWindow(first_row, first_col, nrows, ncols)</ref></computeroutput> to make caller-side window math read naturally. Used by the dense / sparse matrix arithmetic templates to restrict an operation to a rectangular block without materialising a copy. <computeroutput><ref refid="struct_matrix_window_a2b69eefd4962201b010cd1bdb7c33376_1a2b69eefd4962201b010cd1bdb7c33376" kindref="member">sameSize</ref></computeroutput> returns true when two windows have matching dimensions, the precondition for entrywise add / subtract / copy. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>MatrixWindow</label>
+        <link refid="struct_matrix_window"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>begin_column</edgelabel>
+          <edgelabel>begin_row</edgelabel>
+          <edgelabel>end_column</edgelabel>
+          <edgelabel>end_row</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/mat-arith.hpp" line="57" column="1" bodyfile="Macaulay2/e/mat-arith.hpp" bodystart="58" bodyend="74"/>
+    <listofallmembers>
+      <member refid="struct_matrix_window_aaeddef38d2caece2c319418a57744e1c_1aaeddef38d2caece2c319418a57744e1c" prot="public" virt="non-virtual"><scope>MatrixWindow</scope><name>begin_column</name></member>
+      <member refid="struct_matrix_window_a28e420572b41f51e2aa1bcd263af257d_1a28e420572b41f51e2aa1bcd263af257d" prot="public" virt="non-virtual"><scope>MatrixWindow</scope><name>begin_row</name></member>
+      <member refid="struct_matrix_window_a836795a2cad0883204348f2d5023c5de_1a836795a2cad0883204348f2d5023c5de" prot="public" virt="non-virtual"><scope>MatrixWindow</scope><name>end_column</name></member>
+      <member refid="struct_matrix_window_a584c42fb825aa67dc88d4bdcd5eb3bb1_1a584c42fb825aa67dc88d4bdcd5eb3bb1" prot="public" virt="non-virtual"><scope>MatrixWindow</scope><name>end_row</name></member>
+      <member refid="struct_matrix_window_a876aed68a5d54ff08f5b7c33bacb1c26_1a876aed68a5d54ff08f5b7c33bacb1c26" prot="public" virt="non-virtual"><scope>MatrixWindow</scope><name>MatrixWindow</name></member>
+      <member refid="struct_matrix_window_a2b69eefd4962201b010cd1bdb7c33376_1a2b69eefd4962201b010cd1bdb7c33376" prot="public" virt="non-virtual"><scope>MatrixWindow</scope><name>sameSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

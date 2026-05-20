@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_module_mono_set_1_1_entry_output" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>ModuleMonoSet::EntryOutput</compoundname>
+    <includes refid="_module_mono_set_8hpp" local="no">ModuleMonoSet.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_module_mono_set_1_1_entry_output_ac6331527d318635fc56767da5db9bf03_1ac6331527d318635fc56767da5db9bf03" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void ModuleMonoSet::EntryOutput::proceed</definition>
+        <argsstring>(ConstMonoRef mono)=0</argsstring>
+        <name>proceed</name>
+        <qualifiedname>ModuleMonoSet::EntryOutput::proceed</qualifiedname>
+        <param>
+          <type><ref refid="class_module_mono_set_a315870cd5f8090965c62abdf5a04247d_1a315870cd5f8090965c62abdf5a04247d" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.hpp" line="42" column="18"/>
+        <referencedby refid="class_concrete_module_mono_set_a383ac234ade789b26df4732fffad720f_1a383ac234ade789b26df4732fffad720f" compoundref="_module_mono_set_8cpp" startline="94" endline="102">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::forAllVirtual</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.hpp" line="40" column="3" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.hpp" bodystart="40" bodyend="43"/>
+    <listofallmembers>
+      <member refid="class_module_mono_set_1_1_entry_output_ac6331527d318635fc56767da5db9bf03_1ac6331527d318635fc56767da5db9bf03" prot="public" virt="pure-virtual"><scope>ModuleMonoSet::EntryOutput</scope><name>proceed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

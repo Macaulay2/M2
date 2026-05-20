@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_b44e7d18dd252f51afd477176d6a1823" kind="dir">
+    <compoundname>submodules/mathicgb/src/cli</compoundname>
+    <innerfile refid="_common_params_8cpp">CommonParams.cpp</innerfile>
+    <innerfile refid="_common_params_8hpp">CommonParams.hpp</innerfile>
+    <innerfile refid="_g_b_action_8cpp">GBAction.cpp</innerfile>
+    <innerfile refid="_g_b_action_8hpp">GBAction.hpp</innerfile>
+    <innerfile refid="_g_b_common_params_8cpp">GBCommonParams.cpp</innerfile>
+    <innerfile refid="_g_b_common_params_8hpp">GBCommonParams.hpp</innerfile>
+    <innerfile refid="_g_b_main_8cpp">GBMain.cpp</innerfile>
+    <innerfile refid="b_2src_2cli_2_help_action_8cpp">HelpAction.cpp</innerfile>
+    <innerfile refid="_help_action_8hpp">HelpAction.hpp</innerfile>
+    <innerfile refid="_matrix_action_8cpp">MatrixAction.cpp</innerfile>
+    <innerfile refid="_matrix_action_8hpp">MatrixAction.hpp</innerfile>
+    <innerfile refid="_sig_g_b_action_8cpp">SigGBAction.cpp</innerfile>
+    <innerfile refid="_sig_g_b_action_8hpp">SigGBAction.hpp</innerfile>
+    <innerfile refid="_version_action_8cpp">VersionAction.cpp</innerfile>
+    <innerfile refid="_version_action_8hpp">VersionAction.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/cli/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,27 @@
+var res_a0_8hpp =
+[
+    [ "auto_reduce_node", "structauto__reduce__node.html", "structauto__reduce__node" ],
+    [ "res2_level", "structres2__level.html", "structres2__level" ],
+    [ "COMPARE_LEX", "res-a0_8hpp_a0faacaf3b9252559f166f36c731b035e.html#a0faacaf3b9252559f166f36c731b035e", null ],
+    [ "COMPARE_LEX_EXTENDED", "res-a0_8hpp_a3d4f77f31099e4881191db2150caae07.html#a3d4f77f31099e4881191db2150caae07", null ],
+    [ "COMPARE_LEX_EXTENDED2", "res-a0_8hpp_a7dd261d1ca1bcb368f46548803c4c868.html#a7dd261d1ca1bcb368f46548803c4c868", null ],
+    [ "COMPARE_MONORDER", "res-a0_8hpp_a05a84b8ab4d5f230720cb29cc311f230.html#a05a84b8ab4d5f230720cb29cc311f230", null ],
+    [ "COMPARE_ORDER", "res-a0_8hpp_abd8fabaaf127371943dbf197524c4adf.html#abd8fabaaf127371943dbf197524c4adf", null ],
+    [ "COMPUTE_MONOMIAL_RES", "res-a0_8hpp_a5ee89dc0d12ad9092a75e23c8b8bf0f0.html#a5ee89dc0d12ad9092a75e23c8b8bf0f0", null ],
+    [ "COMPUTE_MONORDER", "res-a0_8hpp_aa8ea545e242681db7cf3f2f9f240835c.html#aa8ea545e242681db7cf3f2f9f240835c", null ],
+    [ "COMPUTE_RES", "res-a0_8hpp_a32391d5c77032e04bbb993f914c45be4.html#a32391d5c77032e04bbb993f914c45be4", null ],
+    [ "COMPUTE_SKELETON", "res-a0_8hpp_a67ee361ff0940aced27dbe93b1aea473.html#a67ee361ff0940aced27dbe93b1aea473", null ],
+    [ "FLAGS_AUTO", "res-a0_8hpp_acb8a86dd700783429dd7f69a585f127f.html#acb8a86dd700783429dd7f69a585f127f", null ],
+    [ "FLAGS_DEGREE", "res-a0_8hpp_a82cb48d7cf51f6340f732273e25fcae8.html#a82cb48d7cf51f6340f732273e25fcae8", null ],
+    [ "FLAGS_DEGREELEVEL", "res-a0_8hpp_a9d905c793692a3a89cd2e1148fff3b83.html#a9d905c793692a3a89cd2e1148fff3b83", null ],
+    [ "FLAGS_DESCEND", "res-a0_8hpp_a88ef6d64ba065ad9e3d10f13668548db.html#a88ef6d64ba065ad9e3d10f13668548db", null ],
+    [ "FLAGS_GEO", "res-a0_8hpp_a9007b08b4ce7c04f8f1bcb63ba68d9c7.html#a9007b08b4ce7c04f8f1bcb63ba68d9c7", null ],
+    [ "FLAGS_LEVEL", "res-a0_8hpp_aff656129ebd4120f33aacb2c5fd8acce.html#aff656129ebd4120f33aacb2c5fd8acce", null ],
+    [ "FLAGS_LEVEL_STRIP", "res-a0_8hpp_a9e9f901608ed7f7e4dc9c2cef461dd57.html#a9e9f901608ed7f7e4dc9c2cef461dd57", null ],
+    [ "FLAGS_REVERSE", "res-a0_8hpp_abfd0dcd9d123cbff7c30ffad4b5662a3.html#abfd0dcd9d123cbff7c30ffad4b5662a3", null ],
+    [ "FLAGS_SORT", "res-a0_8hpp_a900b0f3a4b9260087623236621a461a0.html#a900b0f3a4b9260087623236621a461a0", null ],
+    [ "SHIFT_AUTO", "res-a0_8hpp_a5b49a0ce83fbb55c6aeeda960018120d.html#a5b49a0ce83fbb55c6aeeda960018120d", null ],
+    [ "SORT_MONORDER", "res-a0_8hpp_a399e95e1f68b5d16ff4a5d6294f58602.html#a399e95e1f68b5d16ff4a5d6294f58602", null ],
+    [ "SORT_REDUCTIONS", "res-a0_8hpp_a4b19c7fb39d1f01d194ab64f09c3e90a.html#a4b19c7fb39d1f01d194ab64f09c3e90a", null ],
+    [ "SORT_SKELETON", "res-a0_8hpp_a55535843cdd78bc8abde1ec38db646d7.html#a55535843cdd78bc8abde1ec38db646d7", null ]
+];

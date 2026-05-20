@@ -1,0 +1,375 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_const_monomial" kind="class" language="C++" prot="public">
+    <compoundname>ConstMonomial</compoundname>
+    <derivedcompoundref refid="class_monomial" prot="public" virt="non-virtual">Monomial</derivedcompoundref>
+    <includes refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" local="no">PolyRing.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_const_monomial_a704594279ea0fa9e05bc5c96c05ee24f_1a704594279ea0fa9e05bc5c96c05ee24f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class PolyRing</definition>
+        <argsstring></argsstring>
+        <name>PolyRing</name>
+        <qualifiedname>ConstMonomial::PolyRing</qualifiedname>
+        <param>
+          <type><ref refid="class_poly_ring" kindref="compound">PolyRing</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="108" column="16" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="108" bodyend="-1"/>
+        <references refid="class_const_monomial_a704594279ea0fa9e05bc5c96c05ee24f_1a704594279ea0fa9e05bc5c96c05ee24f" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="108">PolyRing</references>
+        <referencedby refid="class_const_monomial_a704594279ea0fa9e05bc5c96c05ee24f_1a704594279ea0fa9e05bc5c96c05ee24f" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="108">PolyRing</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_const_monomial_afc4df075deddb1eeb88e845bd61bd2e9_1afc4df075deddb1eeb88e845bd61bd2e9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class OrderA</definition>
+        <argsstring></argsstring>
+        <name>OrderA</name>
+        <qualifiedname>ConstMonomial::OrderA</qualifiedname>
+        <param>
+          <type>OrderA</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="109" column="16" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="109" bodyend="-1"/>
+        <references refid="class_const_monomial_afc4df075deddb1eeb88e845bd61bd2e9_1afc4df075deddb1eeb88e845bd61bd2e9" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="109">OrderA</references>
+        <referencedby refid="class_const_monomial_afc4df075deddb1eeb88e845bd61bd2e9_1afc4df075deddb1eeb88e845bd61bd2e9" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="109">OrderA</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_const_monomial_a0a8cd263e5cd443af163e8f4d28538df_1a0a8cd263e5cd443af163e8f4d28538df" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class OrderB</definition>
+        <argsstring></argsstring>
+        <name>OrderB</name>
+        <qualifiedname>ConstMonomial::OrderB</qualifiedname>
+        <param>
+          <type>OrderB</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="110" column="16" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="110" bodyend="-1"/>
+        <references refid="class_const_monomial_a0a8cd263e5cd443af163e8f4d28538df_1a0a8cd263e5cd443af163e8f4d28538df" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="110">OrderB</references>
+        <referencedby refid="class_const_monomial_a0a8cd263e5cd443af163e8f4d28538df_1a0a8cd263e5cd443af163e8f4d28538df" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="110">OrderB</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_const_monomial_a83b7680ca9a8e61bef236e2f240abc57_1a83b7680ca9a8e61bef236e2f240abc57" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class OrderC</definition>
+        <argsstring></argsstring>
+        <name>OrderC</name>
+        <qualifiedname>ConstMonomial::OrderC</qualifiedname>
+        <param>
+          <type>OrderC</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="111" column="16" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="111" bodyend="-1"/>
+        <references refid="class_const_monomial_a83b7680ca9a8e61bef236e2f240abc57_1a83b7680ca9a8e61bef236e2f240abc57" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="111">OrderC</references>
+        <referencedby refid="class_const_monomial_a83b7680ca9a8e61bef236e2f240abc57_1a83b7680ca9a8e61bef236e2f240abc57" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="111">OrderC</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_const_monomial_afa9fa03d03a9bf3696dac1179445a75d_1afa9fa03d03a9bf3696dac1179445a75d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class OrderD</definition>
+        <argsstring></argsstring>
+        <name>OrderD</name>
+        <qualifiedname>ConstMonomial::OrderD</qualifiedname>
+        <param>
+          <type>OrderD</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="112" column="16" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="112" bodyend="-1"/>
+        <references refid="class_const_monomial_afa9fa03d03a9bf3696dac1179445a75d_1afa9fa03d03a9bf3696dac1179445a75d" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="112">OrderD</references>
+        <referencedby refid="class_const_monomial_afa9fa03d03a9bf3696dac1179445a75d_1afa9fa03d03a9bf3696dac1179445a75d" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="112">OrderD</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_const_monomial_a0c8c12ae88a668b0205186124e7a9e90_1a0c8c12ae88a668b0205186124e7a9e90" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class OrderE</definition>
+        <argsstring></argsstring>
+        <name>OrderE</name>
+        <qualifiedname>ConstMonomial::OrderE</qualifiedname>
+        <param>
+          <type>OrderE</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="113" column="16" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="113" bodyend="-1"/>
+        <references refid="class_const_monomial_a0c8c12ae88a668b0205186124e7a9e90_1a0c8c12ae88a668b0205186124e7a9e90" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="113">OrderE</references>
+        <referencedby refid="class_const_monomial_a0c8c12ae88a668b0205186124e7a9e90_1a0c8c12ae88a668b0205186124e7a9e90" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="113">OrderE</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" prot="protected" static="no" mutable="no">
+        <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a1efe19df2fcd8857762c3020006d410f_1a1efe19df2fcd8857762c3020006d410f" kindref="member">exponent</ref> const  *</type>
+        <definition>exponent const* ConstMonomial::mValue</definition>
+        <argsstring></argsstring>
+        <name>mValue</name>
+        <qualifiedname>ConstMonomial::mValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="144" column="18" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="144" bodyend="-1"/>
+        <referencedby refid="class_const_monomial_aba76ab3b3d375b325b8fe28fb1489f68_1aba76ab3b3d375b325b8fe28fb1489f68" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="129" endline="129">component</referencedby>
+        <referencedby refid="class_const_monomial_a6a4c3f053102c0a930ba9b2733136180_1a6a4c3f053102c0a930ba9b2733136180" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="119" endline="119">ConstMonomial</referencedby>
+        <referencedby refid="class_const_monomial_acd080c990c02c3a4ab9be8bdb40704b0_1acd080c990c02c3a4ab9be8bdb40704b0" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="120" endline="120">ConstMonomial</referencedby>
+        <referencedby refid="class_const_monomial_ab05c73783a3fac67408c5ed3a5a84762_1ab05c73783a3fac67408c5ed3a5a84762" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="124" endline="124">isNull</referencedby>
+        <referencedby refid="class_poly_ring_a11c316f46c18d74cdbc1d728bdf3c813_1a11c316f46c18d74cdbc1d728bdf3c813" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8cpp" startline="163" endline="187">PolyRing::monomialDisplay</referencedby>
+        <referencedby refid="class_poly_ring_ae2ff763bd010e0df15db9f534afd950f_1ae2ff763bd010e0df15db9f534afd950f" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="405" endline="405">PolyRing::monomialGetComponent</referencedby>
+        <referencedby refid="class_const_monomial_a1a48bcb21c20b579ffff2ebf0d81ce25_1a1a48bcb21c20b579ffff2ebf0d81ce25" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="135" endline="137">operator Monoid::ConstMonoPtr</referencedby>
+        <referencedby refid="class_const_monomial_aab3fd9880ecb31b563f76827be582246_1aab3fd9880ecb31b563f76827be582246" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="131" endline="134">operator Monoid::ConstMonoRef</referencedby>
+        <referencedby refid="class_const_monomial_a2e54a78f192df2afbc24543f2bff72d6_1a2e54a78f192df2afbc24543f2bff72d6" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="141" endline="141">operator*</referencedby>
+        <referencedby refid="class_monomial_a33445572ff843f13756d34c01a44a239_1a33445572ff843f13756d34c01a44a239" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="183" endline="183">Monomial::operator*</referencedby>
+        <referencedby refid="class_monomial_a3403de2735827471c532fd3f125bc8d1_1a3403de2735827471c532fd3f125bc8d1" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="182" endline="182">Monomial::operator*</referencedby>
+        <referencedby refid="class_const_monomial_a510b5f7ba8e3b12ebbb4031f1116628a_1a510b5f7ba8e3b12ebbb4031f1116628a" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="140" endline="140">operator[]</referencedby>
+        <referencedby refid="class_monomial_aa106b5e03c5ec2fc03877d1c1de20ac5_1aa106b5e03c5ec2fc03877d1c1de20ac5" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="179" endline="179">Monomial::operator[]</referencedby>
+        <referencedby refid="class_monomial_af326ab080458217a68536c51f69e2c8e_1af326ab080458217a68536c51f69e2c8e" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="163" endline="165">Monomial::swap</referencedby>
+        <referencedby refid="class_const_monomial_a0de643bad48d877708032bc8883dbc6b_1a0de643bad48d877708032bc8883dbc6b" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="126" endline="126">unsafeGetRepresentation</referencedby>
+        <referencedby refid="class_monomial_a523132a64f76ed4f8b1e323c9b77b41d_1a523132a64f76ed4f8b1e323c9b77b41d" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="167" endline="167">Monomial::unsafeGetRepresentation</referencedby>
+        <referencedby refid="class_monomial_a16def47856badce25fe7cb0bec22fdec_1a16def47856badce25fe7cb0bec22fdec" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="168" endline="168">Monomial::unsafeGetRepresentation</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_const_monomial_a6a4c3f053102c0a930ba9b2733136180_1a6a4c3f053102c0a930ba9b2733136180" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ConstMonomial::ConstMonomial</definition>
+        <argsstring>()</argsstring>
+        <name>ConstMonomial</name>
+        <qualifiedname>ConstMonomial::ConstMonomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="119" column="3" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="119" bodyend="119"/>
+        <references refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="144">mValue</references>
+        <referencedby refid="class_monomial_ac80d5b20f63ff48cfbf4d67cacacf4f7_1ac80d5b20f63ff48cfbf4d67cacacf4f7" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="160" endline="160">Monomial::Monomial</referencedby>
+        <referencedby refid="class_monomial_a4359020fd29924b1ca68cda377baec38_1a4359020fd29924b1ca68cda377baec38" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="161" endline="161">Monomial::Monomial</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_const_monomial_acd080c990c02c3a4ab9be8bdb40704b0_1acd080c990c02c3a4ab9be8bdb40704b0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ConstMonomial::ConstMonomial</definition>
+        <argsstring>(const exponent *val)</argsstring>
+        <name>ConstMonomial</name>
+        <qualifiedname>ConstMonomial::ConstMonomial</qualifiedname>
+        <param>
+          <type>const <ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a1efe19df2fcd8857762c3020006d410f_1a1efe19df2fcd8857762c3020006d410f" kindref="member">exponent</ref> *</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="120" column="3" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="120" bodyend="120"/>
+        <references refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="144">mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="class_const_monomial_a35841def66a2ad2457825f353e60839a_1a35841def66a2ad2457825f353e60839a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+        <definition>const Monomial &amp; ConstMonomial::castAwayConst</definition>
+        <argsstring>() const</argsstring>
+        <name>castAwayConst</name>
+        <qualifiedname>ConstMonomial::castAwayConst</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="122" column="25" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="186" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="function" id="class_const_monomial_ab05c73783a3fac67408c5ed3a5a84762_1ab05c73783a3fac67408c5ed3a5a84762" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ConstMonomial::isNull</definition>
+        <argsstring>() const</argsstring>
+        <name>isNull</name>
+        <qualifiedname>ConstMonomial::isNull</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="124" column="8" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="124" bodyend="124"/>
+        <references refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="144">mValue</references>
+        <referencedby refid="class_const_monomial_aab3fd9880ecb31b563f76827be582246_1aab3fd9880ecb31b563f76827be582246" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="131" endline="134">operator Monoid::ConstMonoRef</referencedby>
+        <referencedby refid="class_monomial_a78c34c0b0871f6c493b5d0e5ea7b38fe_1a78c34c0b0871f6c493b5d0e5ea7b38fe" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="170" endline="173">Monomial::operator Monoid::MonoRef</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_const_monomial_a0de643bad48d877708032bc8883dbc6b_1a0de643bad48d877708032bc8883dbc6b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a1efe19df2fcd8857762c3020006d410f_1a1efe19df2fcd8857762c3020006d410f" kindref="member">exponent</ref> const *</type>
+        <definition>exponent const  * ConstMonomial::unsafeGetRepresentation</definition>
+        <argsstring>() const</argsstring>
+        <name>unsafeGetRepresentation</name>
+        <qualifiedname>ConstMonomial::unsafeGetRepresentation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="126" column="19" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="126" bodyend="126"/>
+        <references refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="144">mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="class_const_monomial_aba76ab3b3d375b325b8fe28fb1489f68_1aba76ab3b3d375b325b8fe28fb1489f68" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a1efe19df2fcd8857762c3020006d410f_1a1efe19df2fcd8857762c3020006d410f" kindref="member">exponent</ref></type>
+        <definition>exponent ConstMonomial::component</definition>
+        <argsstring>() const</argsstring>
+        <name>component</name>
+        <qualifiedname>ConstMonomial::component</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="129" column="12" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="129" bodyend="129"/>
+        <references refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="144">mValue</references>
+        <referencedby refid="class_poly_ring_a0006822c62a71f821bdc5af190dbe4b2_1a0006822c62a71f821bdc5af190dbe4b2" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8cpp" startline="189" endline="215">PolyRing::monomialDisplay</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_const_monomial_aab3fd9880ecb31b563f76827be582246_1aab3fd9880ecb31b563f76827be582246" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ConstMonomial::operator Monoid::ConstMonoRef</definition>
+        <argsstring>() const</argsstring>
+        <name>operator Monoid::ConstMonoRef</name>
+        <qualifiedname>ConstMonomial::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="131" column="3" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="131" bodyend="134"/>
+        <references refid="class_const_monomial_ab05c73783a3fac67408c5ed3a5a84762_1ab05c73783a3fac67408c5ed3a5a84762" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="124" endline="124">isNull</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="144">mValue</references>
+        <references refid="class_mono_monoid_a3bb6bae27b293de7898ef0ffe463dcdf_1a3bb6bae27b293de7898ef0ffe463dcdf" compoundref="_mono_monoid_8hpp" startline="372" endline="372">MonoMonoid&lt; exponent &gt;::toRef</references>
+      </memberdef>
+      <memberdef kind="function" id="class_const_monomial_a1a48bcb21c20b579ffff2ebf0d81ce25_1a1a48bcb21c20b579ffff2ebf0d81ce25" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ConstMonomial::operator Monoid::ConstMonoPtr</definition>
+        <argsstring>() const</argsstring>
+        <name>operator Monoid::ConstMonoPtr</name>
+        <qualifiedname>ConstMonomial::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="135" column="3" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="135" bodyend="137"/>
+        <references refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="144">mValue</references>
+        <references refid="class_mono_monoid_a3bb6bae27b293de7898ef0ffe463dcdf_1a3bb6bae27b293de7898ef0ffe463dcdf" compoundref="_mono_monoid_8hpp" startline="372" endline="372">MonoMonoid&lt; exponent &gt;::toRef</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_const_monomial_a510b5f7ba8e3b12ebbb4031f1116628a_1a510b5f7ba8e3b12ebbb4031f1116628a" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a1efe19df2fcd8857762c3020006d410f_1a1efe19df2fcd8857762c3020006d410f" kindref="member">exponent</ref> &amp;</type>
+        <definition>const exponent &amp; ConstMonomial::operator[]</definition>
+        <argsstring>(size_t index) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>ConstMonomial::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="140" column="18" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="140" bodyend="140"/>
+        <references refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="144">mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="class_const_monomial_a2e54a78f192df2afbc24543f2bff72d6_1a2e54a78f192df2afbc24543f2bff72d6" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a1efe19df2fcd8857762c3020006d410f_1a1efe19df2fcd8857762c3020006d410f" kindref="member">exponent</ref> &amp;</type>
+        <definition>const exponent &amp; ConstMonomial::operator*</definition>
+        <argsstring>() const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>ConstMonomial::operator*</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="141" column="18" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="141" bodyend="141"/>
+        <references refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="144">mValue</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>ConstMonomial</label>
+        <link refid="class_const_monomial"/>
+      </node>
+      <node id="2">
+        <label>Monomial</label>
+        <link refid="class_monomial"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>ConstMonomial</label>
+        <link refid="class_const_monomial"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>exponent const *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="106" column="1" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="107" bodyend="145"/>
+    <listofallmembers>
+      <member refid="class_const_monomial_a35841def66a2ad2457825f353e60839a_1a35841def66a2ad2457825f353e60839a" prot="public" virt="non-virtual"><scope>ConstMonomial</scope><name>castAwayConst</name></member>
+      <member refid="class_const_monomial_aba76ab3b3d375b325b8fe28fb1489f68_1aba76ab3b3d375b325b8fe28fb1489f68" prot="public" virt="non-virtual"><scope>ConstMonomial</scope><name>component</name></member>
+      <member refid="class_const_monomial_a6a4c3f053102c0a930ba9b2733136180_1a6a4c3f053102c0a930ba9b2733136180" prot="public" virt="non-virtual"><scope>ConstMonomial</scope><name>ConstMonomial</name></member>
+      <member refid="class_const_monomial_acd080c990c02c3a4ab9be8bdb40704b0_1acd080c990c02c3a4ab9be8bdb40704b0" prot="public" virt="non-virtual"><scope>ConstMonomial</scope><name>ConstMonomial</name></member>
+      <member refid="class_const_monomial_ab05c73783a3fac67408c5ed3a5a84762_1ab05c73783a3fac67408c5ed3a5a84762" prot="public" virt="non-virtual"><scope>ConstMonomial</scope><name>isNull</name></member>
+      <member refid="class_const_monomial_a1faf213002dab87fcb0d7697c883ab9c_1a1faf213002dab87fcb0d7697c883ab9c" prot="protected" virt="non-virtual"><scope>ConstMonomial</scope><name>mValue</name></member>
+      <member refid="class_const_monomial_a1a48bcb21c20b579ffff2ebf0d81ce25_1a1a48bcb21c20b579ffff2ebf0d81ce25" prot="public" virt="non-virtual"><scope>ConstMonomial</scope><name>operator Monoid::ConstMonoPtr</name></member>
+      <member refid="class_const_monomial_aab3fd9880ecb31b563f76827be582246_1aab3fd9880ecb31b563f76827be582246" prot="public" virt="non-virtual"><scope>ConstMonomial</scope><name>operator Monoid::ConstMonoRef</name></member>
+      <member refid="class_const_monomial_a2e54a78f192df2afbc24543f2bff72d6_1a2e54a78f192df2afbc24543f2bff72d6" prot="private" virt="non-virtual"><scope>ConstMonomial</scope><name>operator*</name></member>
+      <member refid="class_const_monomial_a510b5f7ba8e3b12ebbb4031f1116628a_1a510b5f7ba8e3b12ebbb4031f1116628a" prot="private" virt="non-virtual"><scope>ConstMonomial</scope><name>operator[]</name></member>
+      <member refid="class_const_monomial_afc4df075deddb1eeb88e845bd61bd2e9_1afc4df075deddb1eeb88e845bd61bd2e9" prot="private" virt="non-virtual"><scope>ConstMonomial</scope><name>OrderA</name></member>
+      <member refid="class_const_monomial_a0a8cd263e5cd443af163e8f4d28538df_1a0a8cd263e5cd443af163e8f4d28538df" prot="private" virt="non-virtual"><scope>ConstMonomial</scope><name>OrderB</name></member>
+      <member refid="class_const_monomial_a83b7680ca9a8e61bef236e2f240abc57_1a83b7680ca9a8e61bef236e2f240abc57" prot="private" virt="non-virtual"><scope>ConstMonomial</scope><name>OrderC</name></member>
+      <member refid="class_const_monomial_afa9fa03d03a9bf3696dac1179445a75d_1afa9fa03d03a9bf3696dac1179445a75d" prot="private" virt="non-virtual"><scope>ConstMonomial</scope><name>OrderD</name></member>
+      <member refid="class_const_monomial_a0c8c12ae88a668b0205186124e7a9e90_1a0c8c12ae88a668b0205186124e7a9e90" prot="private" virt="non-virtual"><scope>ConstMonomial</scope><name>OrderE</name></member>
+      <member refid="class_const_monomial_a704594279ea0fa9e05bc5c96c05ee24f_1a704594279ea0fa9e05bc5c96c05ee24f" prot="private" virt="non-virtual"><scope>ConstMonomial</scope><name>PolyRing</name></member>
+      <member refid="class_const_monomial_a0de643bad48d877708032bc8883dbc6b_1a0de643bad48d877708032bc8883dbc6b" prot="public" virt="non-virtual"><scope>ConstMonomial</scope><name>unsafeGetRepresentation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

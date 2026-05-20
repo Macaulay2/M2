@@ -1,0 +1,700 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_computation" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Computation</compoundname>
+    <basecompoundref refid="class_mutable_engine_object" prot="public" virt="non-virtual">MutableEngineObject</basecompoundref>
+    <derivedcompoundref refid="class_g_b_computation" prot="public" virt="non-virtual">GBComputation</derivedcompoundref>
+    <derivedcompoundref refid="class_g_b_kernel_computation" prot="public" virt="non-virtual">GBKernelComputation</derivedcompoundref>
+    <derivedcompoundref refid="class_resolution_computation" prot="public" virt="non-virtual">ResolutionComputation</derivedcompoundref>
+    <includes refid="comp_8hpp" local="no">comp.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_computation_a16a66d725f6681f25a4b36670818633b_1a16a66d725f6681f25a4b36670818633b" prot="private" static="no" mutable="no">
+        <type>enum <ref refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213" kindref="member">ComputationStatusCode</ref></type>
+        <definition>enum ComputationStatusCode Computation::computation_status</definition>
+        <argsstring></argsstring>
+        <name>computation_status</name>
+        <qualifiedname>Computation::computation_status</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="68" column="29" bodyfile="Macaulay2/e/comp.hpp" bodystart="68" bodyend="-1"/>
+        <referencedby refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" compoundref="comp_8cpp" startline="40" endline="55">Computation</referencedby>
+        <referencedby refid="class_computation_a3d43eb6c869405fa62a9b9662f1bdb1d_1a3d43eb6c869405fa62a9b9662f1bdb1d" compoundref="comp_8cpp" startline="66" endline="77">set_status</referencedby>
+        <referencedby refid="class_computation_a277e8e7771dccf6b37f5ab03edb2e503_1a277e8e7771dccf6b37f5ab03edb2e503" compoundref="comp_8hpp" startline="96" endline="96">status</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="class_computation_a3e6f044f649095c4907660aa0c36b3a4_1a3e6f044f649095c4907660aa0c36b3a4" prot="protected" static="no" mutable="no">
+        <type><ref refid="struct_stop_conditions" kindref="compound">StopConditions</ref></type>
+        <definition>StopConditions Computation::stop_</definition>
+        <argsstring></argsstring>
+        <name>stop_</name>
+        <qualifiedname>Computation::stop_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="71" column="18" bodyfile="Macaulay2/e/comp.hpp" bodystart="71" bodyend="-1"/>
+        <referencedby refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" compoundref="comp_8cpp" startline="40" endline="55">Computation</referencedby>
+        <referencedby refid="class_g_binhom__comp_ae1fc3031bfe88366d35d48a26687bc07_1ae1fc3031bfe88366d35d48a26687bc07" compoundref="gb-sugarless_8cpp" startline="750" endline="762">GBinhom_comp::computation_complete</referencedby>
+        <referencedby refid="class_g_b__comp_ab76e115aa300dfdef91be56e82704dba_1ab76e115aa300dfdef91be56e82704dba" compoundref="gb-homog2_8cpp" startline="739" endline="760">GB_comp::computation_is_complete</referencedby>
+        <referencedby refid="classgb_a_a02ada28a71a99cc341f3516499328b0b_1a02ada28a71a99cc341f3516499328b0b" compoundref="gb-default_8cpp" startline="2352" endline="2372">gbA::computation_is_complete</referencedby>
+        <referencedby refid="classgb_a_ab2bc5a2ed6c4e647bed584475f7fb7d5_1ab2bc5a2ed6c4e647bed584475f7fb7d5" compoundref="gb-default_8cpp" startline="2396" endline="2608">gbA::do_computation</referencedby>
+        <referencedby refid="classres2__comp_ac5ab141d3e1dc99524cd9b3c2784ac2e_1ac5ab141d3e1dc99524cd9b3c2784ac2e" compoundref="res-a0_8cpp" startline="109" endline="149">res2_comp::do_pairs</referencedby>
+        <referencedby refid="classres2__comp_a484ed48a1da3595e73a890cd88674157_1a484ed48a1da3595e73a890cd88674157" compoundref="res-a0_8cpp" startline="214" endline="254">res2_comp::do_pairs_by_degree</referencedby>
+        <referencedby refid="classres2__comp_a599c68d4526ea9dbe9c31d86f2163f15_1a599c68d4526ea9dbe9c31d86f2163f15" compoundref="res-a0_8cpp" startline="151" endline="212">res2_comp::do_pairs_by_level</referencedby>
+        <referencedby refid="classres__comp_a57d51687cb6bb86761b7abcef5ed4b14_1a57d51687cb6bb86761b7abcef5ed4b14" compoundref="res-a1_8cpp" startline="964" endline="995">res_comp::gens</referencedby>
+        <referencedby refid="classres__comp_a22bd0345a7d4308d3c7cb065fcce3181_1a22bd0345a7d4308d3c7cb065fcce3181" compoundref="res-a1_8cpp" startline="1024" endline="1051">res_comp::reductions</referencedby>
+        <referencedby refid="class_computation_a19ec1bd9578a00958d0a042793471775_1a19ec1bd9578a00958d0a042793471775" compoundref="comp_8cpp" startline="11" endline="38">set_stop_conditions</referencedby>
+        <referencedby refid="classbinomial_g_b__comp_a41760cd05c532b1ec0dbe24fd9010af7_1a41760cd05c532b1ec0dbe24fd9010af7" compoundref="gb-toric_8cpp" startline="1165" endline="1186">binomialGB_comp::start_computation</referencedby>
+        <referencedby refid="class_f4_computation_a47d50958b502e157b15fdc89afa61a3e_1a47d50958b502e157b15fdc89afa61a3e" compoundref="f4-computation_8cpp" startline="132" endline="132">F4Computation::start_computation</referencedby>
+        <referencedby refid="class_f4_res_computation_a084aeea2884d4a4ac06a276a169720bf_1a084aeea2884d4a4ac06a276a169720bf" compoundref="res-f4-computation_8cpp" startline="200" endline="200">F4ResComputation::start_computation</referencedby>
+        <referencedby refid="class_gauss_elim_computation_ad04e59468cc16a96bbb4ca40ad8355cc_1ad04e59468cc16a96bbb4ca40ad8355cc" compoundref="gauss_8cpp" startline="216" endline="275">GaussElimComputation::start_computation</referencedby>
+        <referencedby refid="class_g_b__comp_a14b1b8f16312e3b92ec569a77f9d93c0_1a14b1b8f16312e3b92ec569a77f9d93c0" compoundref="gb-homog2_8cpp" startline="796" endline="961">GB_comp::start_computation</referencedby>
+        <referencedby refid="classgbres__comp_a023916308a16df2f8f87f22143ad5ab6_1a023916308a16df2f8f87f22143ad5ab6" compoundref="res-a2_8cpp" startline="191" endline="227">gbres_comp::start_computation</referencedby>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">GBWalker::start_computation</referencedby>
+        <referencedby refid="classres2__comp_afd43374a56d9f08824fcecce27f29484_1afd43374a56d9f08824fcecce27f29484" compoundref="res-a0_8cpp" startline="266" endline="414">res2_comp::start_computation</referencedby>
+        <referencedby refid="classres__comp_ae2ca3cfc2e2ae772f94c48db0f1ceec8_1ae2ca3cfc2e2ae772f94c48db0f1ceec8" compoundref="res-a1_8cpp" startline="917" endline="962">res_comp::start_computation</referencedby>
+        <referencedby refid="class_g_b_proxy_a3d4de2ab9bd05ad90a1882b619759f8d_1a3d4de2ab9bd05ad90a1882b619759f8d" compoundref="comp-gb-proxy_8hpp" startline="50" endline="54">GBProxy::stop_conditions_ok</referencedby>
+        <referencedby refid="classgbres__comp_a99c259945f38966a7fece85467f95d6a_1a99c259945f38966a7fece85467f95d6a" compoundref="res-a2_8cpp" startline="181" endline="189">gbres_comp::stop_conditions_ok</referencedby>
+        <referencedby refid="classres2__comp_ae5b4b2cea10ee1cb804d9658fe36cb05_1ae5b4b2cea10ee1cb804d9658fe36cb05" compoundref="res-a0_8cpp" startline="15" endline="22">res2_comp::stop_conditions_ok</referencedby>
+        <referencedby refid="classres__comp_af3da9a36a311889f156cf47cb8e4f847_1af3da9a36a311889f156cf47cb8e4f847" compoundref="res-a1_8cpp" startline="879" endline="893">res_comp::stop_conditions_ok</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Computation::Computation</definition>
+        <argsstring>()</argsstring>
+        <name>Computation</name>
+        <qualifiedname>Computation::Computation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="73" column="3" bodyfile="Macaulay2/e/comp.cpp" bodystart="40" bodyend="55"/>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213add9050b79b7da6ae876299c3d09dc6b7" compoundref="computation_8h" startline="56">COMP_NOT_STARTED</references>
+        <references refid="class_computation_a16a66d725f6681f25a4b36670818633b_1a16a66d725f6681f25a4b36670818633b" compoundref="comp_8hpp" startline="68">computation_status</references>
+        <references refid="class_computation_a3e6f044f649095c4907660aa0c36b3a4_1a3e6f044f649095c4907660aa0c36b3a4" compoundref="comp_8hpp" startline="71">stop_</references>
+        <referencedby refid="class_g_b_walker_acd8e4fed2aaf000a1898a4abe615534d_1acd8e4fed2aaf000a1898a4abe615534d">GBWalker::create</referencedby>
+        <referencedby refid="class_g_b_computation_ac973a5d8f2c85d61ab462b76ae644548_1ac973a5d8f2c85d61ab462b76ae644548">GBComputation::get_ring</referencedby>
+        <referencedby refid="class_f4_computation_aba8ed42bc0d5b4def6f33ff0b7de03e0_1aba8ed42bc0d5b4def6f33ff0b7de03e0" compoundref="f4-computation_8cpp" startline="134" endline="139">F4Computation::set_hilbert_function</referencedby>
+        <referencedby refid="class_g_b__comp_ab700dbc1f1e023c3e923ad5847f221a6_1ab700dbc1f1e023c3e923ad5847f221a6" compoundref="gb-homog2_8cpp" startline="989" endline="1000">GB_comp::set_hilbert_function</referencedby>
+        <referencedby refid="classgb_a_aeade4f35ce1d6fca91e9c6dc06688756_1aeade4f35ce1d6fca91e9c6dc06688756" compoundref="gb-default_8cpp" startline="2682" endline="2709">gbA::set_hilbert_function</referencedby>
+        <referencedby refid="class_g_b_computation_a06654fcd4834e0599e4b6b3d58d3d81e_1a06654fcd4834e0599e4b6b3d58d3d81e" compoundref="comp-gb_8cpp" startline="208" endline="216">GBComputation::set_hilbert_function</referencedby>
+        <referencedby refid="class_g_b_proxy_ad57601346bb0fade5c4bb7afcf1e8826_1ad57601346bb0fade5c4bb7afcf1e8826" compoundref="comp-gb-proxy_8hpp" startline="73" endline="76">GBProxy::set_hilbert_function</referencedby>
+        <referencedby refid="class_g_b_walker_ae04ece679721697eeb6f152defd689c6_1ae04ece679721697eeb6f152defd689c6" compoundref="gb-walk_8cpp" startline="214" endline="219">GBWalker::set_hilbert_function</referencedby>
+        <referencedby refid="classnewf4_1_1_g_b_f4_interface_a11b930a18ec236e47f407834ba16e590_1a11b930a18ec236e47f407834ba16e590" compoundref="_g_b_f4_interface_8hpp" startline="110" endline="114">newf4::GBF4Interface::set_hilbert_function</referencedby>
+        <referencedby refid="class_computation_a19ec1bd9578a00958d0a042793471775_1a19ec1bd9578a00958d0a042793471775" compoundref="comp_8cpp" startline="11" endline="38">set_stop_conditions</referencedby>
+        <referencedby refid="class_computation_ab75de3b5574c52e4f020d529759cc472_1ab75de3b5574c52e4f020d529759cc472">stop_conditions_ok</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_a3d43eb6c869405fa62a9b9662f1bdb1d_1a3d43eb6c869405fa62a9b9662f1bdb1d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>enum <ref refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213" kindref="member">ComputationStatusCode</ref></type>
+        <definition>enum ComputationStatusCode Computation::set_status</definition>
+        <argsstring>(enum ComputationStatusCode)</argsstring>
+        <name>set_status</name>
+        <qualifiedname>Computation::set_status</qualifiedname>
+        <param>
+          <type>enum</type>
+          <declname>ComputationStatusCode</declname>
+          <defname>c</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="75" column="29" bodyfile="Macaulay2/e/comp.cpp" bodystart="66" bodyend="77"/>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a49f22946709723be5aaab5c88dca9639" compoundref="computation_8h" startline="70">COMP_OVERFLOWED</references>
+        <references refid="class_computation_a16a66d725f6681f25a4b36670818633b_1a16a66d725f6681f25a4b36670818633b" compoundref="comp_8hpp" startline="68">computation_status</references>
+        <referencedby refid="classbinomial_g_b__comp_af009b2c896e946cdebcfef5b18610053_1af009b2c896e946cdebcfef5b18610053" compoundref="gb-toric_8cpp" startline="972" endline="991">binomialGB_comp::binomialGB_comp</referencedby>
+        <referencedby refid="classgb_a_ab2bc5a2ed6c4e647bed584475f7fb7d5_1ab2bc5a2ed6c4e647bed584475f7fb7d5" compoundref="gb-default_8cpp" startline="2396" endline="2608">gbA::do_computation</referencedby>
+        <referencedby refid="class_g_b_declared_abf1325cd6bf4a13df5d282d2bda93d43_1abf1325cd6bf4a13df5d282d2bda93d43" compoundref="comp-gb-declared_8cpp" startline="46" endline="88">GBDeclared::GBDeclared</referencedby>
+        <referencedby refid="class_g_b_declared_af0018cd7db9cea6dc0f1934f76b281ac_1af0018cd7db9cea6dc0f1934f76b281ac" compoundref="comp-gb-declared_8cpp" startline="7" endline="44">GBDeclared::GBDeclared</referencedby>
+        <referencedby refid="classgb_a_a73821a3ec777b0edfabef3b1ebe87f6f_1a73821a3ec777b0edfabef3b1ebe87f6f" compoundref="gb-default_8cpp" startline="99" endline="224">gbA::initialize</referencedby>
+        <referencedby refid="classres2__comp_a893620d9087a9c6307043b62b4bc53a4_1a893620d9087a9c6307043b62b4bc53a4" compoundref="res-a0_8cpp" startline="420" endline="528">res2_comp::initialize</referencedby>
+        <referencedby refid="class_reduced_g_b_afb440d8ed7bbd8d179a63cfff470cc85_1afb440d8ed7bbd8d179a63cfff470cc85" compoundref="reducedgb_8cpp" startline="35" endline="42">ReducedGB::ReducedGB</referencedby>
+        <referencedby refid="class_g_b_proxy_aee810e9920395f2acd49129324378e24_1aee810e9920395f2acd49129324378e24" compoundref="comp-gb-proxy_8hpp" startline="63" endline="69">GBProxy::replace_GB</referencedby>
+        <referencedby refid="classbinomial_g_b__comp_a41760cd05c532b1ec0dbe24fd9010af7_1a41760cd05c532b1ec0dbe24fd9010af7" compoundref="gb-toric_8cpp" startline="1165" endline="1186">binomialGB_comp::start_computation</referencedby>
+        <referencedby refid="class_gauss_elim_computation_ad04e59468cc16a96bbb4ca40ad8355cc_1ad04e59468cc16a96bbb4ca40ad8355cc" compoundref="gauss_8cpp" startline="216" endline="275">GaussElimComputation::start_computation</referencedby>
+        <referencedby refid="class_g_b__comp_a14b1b8f16312e3b92ec569a77f9d93c0_1a14b1b8f16312e3b92ec569a77f9d93c0" compoundref="gb-homog2_8cpp" startline="796" endline="961">GB_comp::start_computation</referencedby>
+        <referencedby refid="class_g_binhom__comp_ac1e209e9c40b43d91f8ac055c75dcd1f_1ac1e209e9c40b43d91f8ac055c75dcd1f" compoundref="gb-sugarless_8cpp" startline="766" endline="832">GBinhom_comp::start_computation</referencedby>
+        <referencedby refid="class_g_b_proxy_a5a4c2a7b9e9b1e929160aa0a8afcc9a6_1a5a4c2a7b9e9b1e929160aa0a8afcc9a6" compoundref="comp-gb-proxy_8hpp" startline="80" endline="84">GBProxy::start_computation</referencedby>
+        <referencedby refid="classgbres__comp_a023916308a16df2f8f87f22143ad5ab6_1a023916308a16df2f8f87f22143ad5ab6" compoundref="res-a2_8cpp" startline="191" endline="227">gbres_comp::start_computation</referencedby>
+        <referencedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0" compoundref="gb-walk_8cpp" startline="159" endline="206">GBWalker::start_computation</referencedby>
+        <referencedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" compoundref="hermite_8cpp" startline="260" endline="311">HermiteComputation::start_computation</referencedby>
+        <referencedby refid="classres2__comp_afd43374a56d9f08824fcecce27f29484_1afd43374a56d9f08824fcecce27f29484" compoundref="res-a0_8cpp" startline="266" endline="414">res2_comp::start_computation</referencedby>
+        <referencedby refid="classres__comp_ae2ca3cfc2e2ae772f94c48db0f1ceec8_1ae2ca3cfc2e2ae772f94c48db0f1ceec8" compoundref="res-a1_8cpp" startline="917" endline="962">res_comp::start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_ab75de3b5574c52e4f020d529759cc472_1ab75de3b5574c52e4f020d529759cc472" prot="protected" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool Computation::stop_conditions_ok</definition>
+        <argsstring>()=0</argsstring>
+        <name>stop_conditions_ok</name>
+        <qualifiedname>Computation::stop_conditions_ok</qualifiedname>
+        <reimplementedby refid="classbinomial_g_b__comp_a8268444557aee72c23932dd02ae06028_1a8268444557aee72c23932dd02ae06028">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_f4_computation_a35c58e01d451c74bf7ec3fd4f7a704f1_1a35c58e01d451c74bf7ec3fd4f7a704f1">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_f4_res_computation_a38a6ef5ad308f39c5e712c9752d78a6c_1a38a6ef5ad308f39c5e712c9752d78a6c">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_gauss_elim_computation_aed6651f281d0cb4a1b968478a6beda47_1aed6651f281d0cb4a1b968478a6beda47">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_g_b__comp_a61ac6f0cf0bff4c18bf072b0e79a95e2_1a61ac6f0cf0bff4c18bf072b0e79a95e2">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="classgb_a_a3b33721d4b38cad403f48f888b4dd6d3_1a3b33721d4b38cad403f48f888b4dd6d3">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_g_b_declared_addbf34b2a31d841e063e73b758a73b5b_1addbf34b2a31d841e063e73b758a73b5b">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_g_binhom__comp_ad1d7144db73abec80f0bfba5987495eb_1ad1d7144db73abec80f0bfba5987495eb">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_g_b_kernel_computation_a282caec69be72e0471e6e56d5873d2b4_1a282caec69be72e0471e6e56d5873d2b4">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_g_b_proxy_a3d4de2ab9bd05ad90a1882b619759f8d_1a3d4de2ab9bd05ad90a1882b619759f8d">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="classgbres__comp_a99c259945f38966a7fece85467f95d6a_1a99c259945f38966a7fece85467f95d6a">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_g_b_walker_a62de4cc75f11c688ec2a06bd8aec1eb0_1a62de4cc75f11c688ec2a06bd8aec1eb0">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_hermite_computation_a6eea8fe9d4a7a1b59c38d04deb415f7c_1a6eea8fe9d4a7a1b59c38d04deb415f7c">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_n_c_res_computation_ab00a29e9d36e4c4dd5ee0fbe0e8984b3_1ab00a29e9d36e4c4dd5ee0fbe0e8984b3">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="classnewf4_1_1_g_b_f4_interface_aeabb45684e864dedcb972bb76e76b13f_1aeabb45684e864dedcb972bb76e76b13f">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_reduced_g_b_a703faf0c35e35a71ae9721a9595c2621_1a703faf0c35e35a71ae9721a9595c2621">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="classres2__comp_ae5b4b2cea10ee1cb804d9658fe36cb05_1ae5b4b2cea10ee1cb804d9658fe36cb05">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="classres__comp_af3da9a36a311889f156cf47cb8e4f847_1af3da9a36a311889f156cf47cb8e4f847">stop_conditions_ok</reimplementedby>
+        <reimplementedby refid="class_resolution_computation_a92d27e7ce3083daff0b6c352a2b25fb6_1a92d27e7ce3083daff0b6c352a2b25fb6">stop_conditions_ok</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="77" column="16"/>
+        <references refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" compoundref="comp_8cpp" startline="40" endline="55">Computation</references>
+        <referencedby refid="class_computation_a19ec1bd9578a00958d0a042793471775_1a19ec1bd9578a00958d0a042793471775" compoundref="comp_8cpp" startline="11" endline="38">set_stop_conditions</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_aad14e9593597150e351ee5d3a9a87ebe_1aad14e9593597150e351ee5d3a9a87ebe" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>Computation::~Computation</definition>
+        <argsstring>()</argsstring>
+        <name>~Computation</name>
+        <qualifiedname>Computation::~Computation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="81" column="11" bodyfile="Macaulay2/e/comp.cpp" bodystart="57" bodyend="57"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_computation_a19ec1bd9578a00958d0a042793471775_1a19ec1bd9578a00958d0a042793471775" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_computation" kindref="compound">Computation</ref> *</type>
+        <definition>Computation * Computation::set_stop_conditions</definition>
+        <argsstring>(M2_bool always_stop, M2_arrayint degree_limit, int basis_element_limit, int syzygy_limit, int pair_limit, int codim_limit, int subring_limit, M2_bool just_min_gens, M2_arrayint length_limit)</argsstring>
+        <name>set_stop_conditions</name>
+        <qualifiedname>Computation::set_stop_conditions</qualifiedname>
+        <param>
+          <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+          <declname>always_stop</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>degree_limit</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>basis_element_limit</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>syzygy_limit</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>pair_limit</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>codim_limit</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>subring_limit</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+          <declname>just_min_gens</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>length_limit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="84" column="16" bodyfile="Macaulay2/e/comp.cpp" bodystart="11" bodyend="38"/>
+        <references refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" compoundref="comp_8cpp" startline="40" endline="55">Computation</references>
+        <references refid="class_computation_a3e6f044f649095c4907660aa0c36b3a4_1a3e6f044f649095c4907660aa0c36b3a4" compoundref="comp_8hpp" startline="71">stop_</references>
+        <references refid="class_computation_ab75de3b5574c52e4f020d529759cc472_1ab75de3b5574c52e4f020d529759cc472">stop_conditions_ok</references>
+        <referencedby refid="class_g_b_walker_a0b5029d4f6267df977f8ba70c2e1ef4c_1a0b5029d4f6267df977f8ba70c2e1ef4c" compoundref="gb-walk_8cpp" startline="100" endline="127">GBWalker::make_gb</referencedby>
+        <referencedby refid="class_schreyer_frame_a1a1c594b87e15a4eda3460540aac3b64_1a1a1c594b87e15a4eda3460540aac3b64" compoundref="res-f4-m2-interface_8cpp" startline="603" endline="633">SchreyerFrame::rankUsingSparseMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_a277e8e7771dccf6b37f5ab03edb2e503_1a277e8e7771dccf6b37f5ab03edb2e503" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>enum <ref refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213" kindref="member">ComputationStatusCode</ref></type>
+        <definition>enum ComputationStatusCode Computation::status</definition>
+        <argsstring>() const</argsstring>
+        <name>status</name>
+        <qualifiedname>Computation::status</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="96" column="29" bodyfile="Macaulay2/e/comp.hpp" bodystart="96" bodyend="96"/>
+        <references refid="class_computation_a16a66d725f6681f25a4b36670818633b_1a16a66d725f6681f25a4b36670818633b" compoundref="comp_8hpp" startline="68">computation_status</references>
+        <referencedby refid="class_gauss_elim_computation_a60697b6577d2e94e0761482d8662be5d_1a60697b6577d2e94e0761482d8662be5d" compoundref="gauss_8cpp" startline="13" endline="18">GaussElimComputation::complete_thru_degree</referencedby>
+        <referencedby refid="class_hermite_computation_a225af0ec782ae419da6b727164c44560_1a225af0ec782ae419da6b727164c44560" compoundref="hermite_8cpp" startline="14" endline="19">HermiteComputation::complete_thru_degree</referencedby>
+        <referencedby refid="class_gauss_elim_computation_ad04e59468cc16a96bbb4ca40ad8355cc_1ad04e59468cc16a96bbb4ca40ad8355cc" compoundref="gauss_8cpp" startline="216" endline="275">GaussElimComputation::start_computation</referencedby>
+        <referencedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" compoundref="hermite_8cpp" startline="260" endline="311">HermiteComputation::start_computation</referencedby>
+        <referencedby refid="classres2__comp_afd43374a56d9f08824fcecce27f29484_1afd43374a56d9f08824fcecce27f29484" compoundref="res-a0_8cpp" startline="266" endline="414">res2_comp::start_computation</referencedby>
+        <referencedby refid="classres__comp_ae2ca3cfc2e2ae772f94c48db0f1ceec8_1ae2ca3cfc2e2ae772f94c48db0f1ceec8" compoundref="res-a1_8cpp" startline="917" endline="962">res_comp::start_computation</referencedby>
+        <referencedby refid="class_hermite_computation_a31662941ebf429ccb37bf61f6522356e_1a31662941ebf429ccb37bf61f6522356e" compoundref="hermite_8cpp" startline="359" endline="385">HermiteComputation::text_out</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_ad23c72f9c8ce83ae162a496033f3cc50_1ad23c72f9c8ce83ae162a496033f3cc50" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>virtual int Computation::complete_thru_degree</definition>
+        <argsstring>() const =0</argsstring>
+        <name>complete_thru_degree</name>
+        <qualifiedname>Computation::complete_thru_degree</qualifiedname>
+        <reimplementedby refid="classbinomial_g_b__comp_a7759c5ae29984e8469c2ed5451f4f1ab_1a7759c5ae29984e8469c2ed5451f4f1ab">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_f4_computation_a6fd1548b75b94364b91d583c06432598_1a6fd1548b75b94364b91d583c06432598">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_f4_res_computation_a271affe3d01f792813181eda40e854ef_1a271affe3d01f792813181eda40e854ef">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_gauss_elim_computation_a60697b6577d2e94e0761482d8662be5d_1a60697b6577d2e94e0761482d8662be5d">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_g_b__comp_a819d473550a53303db73dd1b7aed881c_1a819d473550a53303db73dd1b7aed881c">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="classgb_a_a600bb24bf0fed648538b5b7fb91208e9_1a600bb24bf0fed648538b5b7fb91208e9">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_g_b_computation_a0503bdcaf49883b7c8c0f4156110547d_1a0503bdcaf49883b7c8c0f4156110547d">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_g_b_declared_a0c44eca671fa707ba30ea59e07c245e6_1a0c44eca671fa707ba30ea59e07c245e6">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_g_binhom__comp_a3ec817db677dd7b6f3f55989ba07bb38_1a3ec817db677dd7b6f3f55989ba07bb38">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_g_b_kernel_computation_abb047637359e27db466ff7cea7b1708f_1abb047637359e27db466ff7cea7b1708f">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_g_b_proxy_a9f3c775a0dc29702467a250aba5b03ee_1a9f3c775a0dc29702467a250aba5b03ee">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="classgbres__comp_af278fa3f91a1c8aac3b64913afb03829_1af278fa3f91a1c8aac3b64913afb03829">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_g_b_walker_a09cf85854b55a790cd7bd7204f4d8f2d_1a09cf85854b55a790cd7bd7204f4d8f2d">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_hermite_computation_a225af0ec782ae419da6b727164c44560_1a225af0ec782ae419da6b727164c44560">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_n_c_res_computation_a563c6861b19d4f72763e662ee1d9765d_1a563c6861b19d4f72763e662ee1d9765d">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="classnewf4_1_1_g_b_f4_interface_a2538a80b0d9cfe220014aec5656aed73_1a2538a80b0d9cfe220014aec5656aed73">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_reduced_g_b_aea695e0672c1346c4cdf298cf9c61c06_1aea695e0672c1346c4cdf298cf9c61c06">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="classres2__comp_a366bf47f0710ef80d26ab8fecafe3c25_1a366bf47f0710ef80d26ab8fecafe3c25">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="classres__comp_a779e164562175f569183d780d167e470_1a779e164562175f569183d780d167e470">complete_thru_degree</reimplementedby>
+        <reimplementedby refid="class_resolution_computation_acecdccdf466a8b838dd4348559d0e939_1acecdccdf466a8b838dd4348559d0e939">complete_thru_degree</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="97" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_a7f5c6fb2cbdb51dcc230978a54dc6867_1a7f5c6fb2cbdb51dcc230978a54dc6867" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Computation::start_computation</definition>
+        <argsstring>()=0</argsstring>
+        <name>start_computation</name>
+        <qualifiedname>Computation::start_computation</qualifiedname>
+        <reimplementedby refid="classbinomial_g_b__comp_a41760cd05c532b1ec0dbe24fd9010af7_1a41760cd05c532b1ec0dbe24fd9010af7">start_computation</reimplementedby>
+        <reimplementedby refid="class_f4_computation_a47d50958b502e157b15fdc89afa61a3e_1a47d50958b502e157b15fdc89afa61a3e">start_computation</reimplementedby>
+        <reimplementedby refid="class_f4_res_computation_a084aeea2884d4a4ac06a276a169720bf_1a084aeea2884d4a4ac06a276a169720bf">start_computation</reimplementedby>
+        <reimplementedby refid="class_gauss_elim_computation_ad04e59468cc16a96bbb4ca40ad8355cc_1ad04e59468cc16a96bbb4ca40ad8355cc">start_computation</reimplementedby>
+        <reimplementedby refid="class_g_b__comp_a14b1b8f16312e3b92ec569a77f9d93c0_1a14b1b8f16312e3b92ec569a77f9d93c0">start_computation</reimplementedby>
+        <reimplementedby refid="classgb_a_a9ea8efa12dbfe9ce0a057c82a38e8b38_1a9ea8efa12dbfe9ce0a057c82a38e8b38">start_computation</reimplementedby>
+        <reimplementedby refid="class_g_b_computation_aade792c61b1f857d7caba9e71f9b1755_1aade792c61b1f857d7caba9e71f9b1755">start_computation</reimplementedby>
+        <reimplementedby refid="class_g_b_declared_ade6d85098add04603862116aee6a0ec7_1ade6d85098add04603862116aee6a0ec7">start_computation</reimplementedby>
+        <reimplementedby refid="class_g_binhom__comp_ac1e209e9c40b43d91f8ac055c75dcd1f_1ac1e209e9c40b43d91f8ac055c75dcd1f">start_computation</reimplementedby>
+        <reimplementedby refid="class_g_b_kernel_computation_a6d9ddf45ec4739706469de70a122e987_1a6d9ddf45ec4739706469de70a122e987">start_computation</reimplementedby>
+        <reimplementedby refid="class_g_b_proxy_a5a4c2a7b9e9b1e929160aa0a8afcc9a6_1a5a4c2a7b9e9b1e929160aa0a8afcc9a6">start_computation</reimplementedby>
+        <reimplementedby refid="classgbres__comp_a023916308a16df2f8f87f22143ad5ab6_1a023916308a16df2f8f87f22143ad5ab6">start_computation</reimplementedby>
+        <reimplementedby refid="class_g_b_walker_ae961d0b6f9bdc03a9600d6d2223794d0_1ae961d0b6f9bdc03a9600d6d2223794d0">start_computation</reimplementedby>
+        <reimplementedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557">start_computation</reimplementedby>
+        <reimplementedby refid="class_n_c_res_computation_aa500dad1e29dd8bdf70a2fd49cf12331_1aa500dad1e29dd8bdf70a2fd49cf12331">start_computation</reimplementedby>
+        <reimplementedby refid="classnewf4_1_1_g_b_f4_interface_ab94811c7620ddc2d152f07ce90efa979_1ab94811c7620ddc2d152f07ce90efa979">start_computation</reimplementedby>
+        <reimplementedby refid="class_reduced_g_b_ac5fa14c58ca5da227c6293e57af598a8_1ac5fa14c58ca5da227c6293e57af598a8">start_computation</reimplementedby>
+        <reimplementedby refid="classres2__comp_afd43374a56d9f08824fcecce27f29484_1afd43374a56d9f08824fcecce27f29484">start_computation</reimplementedby>
+        <reimplementedby refid="classres__comp_ae2ca3cfc2e2ae772f94c48db0f1ceec8_1ae2ca3cfc2e2ae772f94c48db0f1ceec8">start_computation</reimplementedby>
+        <reimplementedby refid="class_resolution_computation_a8d436d01bf663feb20223b211f5716eb_1a8d436d01bf663feb20223b211f5716eb">start_computation</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="103" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_a4d7c8c55b077b6fd526373d6a5b00681_1a4d7c8c55b077b6fd526373d6a5b00681" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref> *</type>
+        <definition>virtual GBComputation * Computation::cast_to_GBComputation</definition>
+        <argsstring>()</argsstring>
+        <name>cast_to_GBComputation</name>
+        <qualifiedname>Computation::cast_to_GBComputation</qualifiedname>
+        <reimplementedby refid="class_g_b_computation_aa0c496181f65544c4c7d3896360245a4_1aa0c496181f65544c4c7d3896360245a4">cast_to_GBComputation</reimplementedby>
+        <reimplementedby refid="class_g_b_declared_acee028df5368e06b3df6e083719d899b_1acee028df5368e06b3df6e083719d899b">cast_to_GBComputation</reimplementedby>
+        <reimplementedby refid="class_g_b_proxy_a04b69e6d98423a39b58f2d3d77a34e5b_1a04b69e6d98423a39b58f2d3d77a34e5b">cast_to_GBComputation</reimplementedby>
+        <reimplementedby refid="class_reduced_g_b_ad74c0f708a36dc1b3afe44ba302f4b63_1ad74c0f708a36dc1b3afe44ba302f4b63">cast_to_GBComputation</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="107" column="25" bodyfile="Macaulay2/e/comp.hpp" bodystart="107" bodyend="107"/>
+        <referencedby refid="groebner_8cpp_ad8c03a741da2e849ee6d5c6892a8d384_1ad8c03a741da2e849ee6d5c6892a8d384" compoundref="groebner_8cpp" startline="669" endline="694">rawSubduction1</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_a4d7b512061b6d0cfe740ee06e160bba9_1a4d7b512061b6d0cfe740ee06e160bba9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_resolution_computation" kindref="compound">ResolutionComputation</ref> *</type>
+        <definition>virtual ResolutionComputation * Computation::cast_to_ResolutionComputation</definition>
+        <argsstring>()</argsstring>
+        <name>cast_to_ResolutionComputation</name>
+        <qualifiedname>Computation::cast_to_ResolutionComputation</qualifiedname>
+        <reimplementedby refid="class_resolution_computation_adc5f18fb0c3006a2026608ebe7c5c75b_1adc5f18fb0c3006a2026608ebe7c5c75b">cast_to_ResolutionComputation</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="108" column="33" bodyfile="Macaulay2/e/comp.hpp" bodystart="108" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_a3722be360c164c043de50b558a4ae553_1a3722be360c164c043de50b558a4ae553" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Computation::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>Computation::text_out</qualifiedname>
+        <reimplementedby refid="classbinomial_g_b__comp_a6fd09b8981d3d7be4863c8bce5cb8e39_1a6fd09b8981d3d7be4863c8bce5cb8e39">text_out</reimplementedby>
+        <reimplementedby refid="class_f4_computation_add152c63c999ea0cfd850b6e2d198bd4_1add152c63c999ea0cfd850b6e2d198bd4">text_out</reimplementedby>
+        <reimplementedby refid="class_f4_res_computation_a8cc8494c8451c05b19622f20ab8cf890_1a8cc8494c8451c05b19622f20ab8cf890">text_out</reimplementedby>
+        <reimplementedby refid="class_gauss_elim_computation_ae08293d4d0c21012884d0226f87868ad_1ae08293d4d0c21012884d0226f87868ad">text_out</reimplementedby>
+        <reimplementedby refid="class_g_b__comp_a7bec55706788c7e0de6cf44738c1d239_1a7bec55706788c7e0de6cf44738c1d239">text_out</reimplementedby>
+        <reimplementedby refid="classgb_a_a578bd94ad01af9db7d3cc13c6df8defb_1a578bd94ad01af9db7d3cc13c6df8defb">text_out</reimplementedby>
+        <reimplementedby refid="class_g_b_computation_acbef71459db840e734cf998f1da596bb_1acbef71459db840e734cf998f1da596bb">text_out</reimplementedby>
+        <reimplementedby refid="class_g_b_declared_a55c1e3888c34c3dd0abbd9a13b257064_1a55c1e3888c34c3dd0abbd9a13b257064">text_out</reimplementedby>
+        <reimplementedby refid="class_g_binhom__comp_a3d4b5528c3dd5235436f141f652afb53_1a3d4b5528c3dd5235436f141f652afb53">text_out</reimplementedby>
+        <reimplementedby refid="class_g_b_proxy_ab3249ffb45a6676950137d084bd7cfe0_1ab3249ffb45a6676950137d084bd7cfe0">text_out</reimplementedby>
+        <reimplementedby refid="classgbres__comp_a6dccc419eee1bee774809952bb2163d4_1a6dccc419eee1bee774809952bb2163d4">text_out</reimplementedby>
+        <reimplementedby refid="class_g_b_walker_a902a51c5af86c25ae74d03d21114c7fa_1a902a51c5af86c25ae74d03d21114c7fa">text_out</reimplementedby>
+        <reimplementedby refid="class_hermite_computation_a31662941ebf429ccb37bf61f6522356e_1a31662941ebf429ccb37bf61f6522356e">text_out</reimplementedby>
+        <reimplementedby refid="class_n_c_res_computation_a56db279f215ea6f0f7b4c8e42b7733da_1a56db279f215ea6f0f7b4c8e42b7733da">text_out</reimplementedby>
+        <reimplementedby refid="classnewf4_1_1_g_b_f4_interface_a7018227c18dc44808393f10ed8aff569_1a7018227c18dc44808393f10ed8aff569">text_out</reimplementedby>
+        <reimplementedby refid="class_reduced_g_b_a5ff129bf27bd00885dd8bc848dbef33a_1a5ff129bf27bd00885dd8bc848dbef33a">text_out</reimplementedby>
+        <reimplementedby refid="classres2__comp_a4c9cd12dcae7ca23a308baa67049ed46_1a4c9cd12dcae7ca23a308baa67049ed46">text_out</reimplementedby>
+        <reimplementedby refid="classres__comp_a60cbd39fba32778f180f0ebd19f620fe_1a60cbd39fba32778f180f0ebd19f620fe">text_out</reimplementedby>
+        <reimplementedby refid="class_resolution_computation_a52ff0f49eb1c8a266d7d2e3090e22430_1a52ff0f49eb1c8a266d7d2e3090e22430">text_out</reimplementedby>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="109" column="16" bodyfile="Macaulay2/e/comp.cpp" bodystart="59" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="class_computation_adff8240febcd395f34ede78c797c7ac8_1adff8240febcd395f34ede78c797c7ac8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Computation::show</definition>
+        <argsstring>() const</argsstring>
+        <name>show</name>
+        <qualifiedname>Computation::show</qualifiedname>
+        <reimplementedby refid="class_f4_computation_a8d93ae992e4b27777d61e67099411b08_1a8d93ae992e4b27777d61e67099411b08">show</reimplementedby>
+        <reimplementedby refid="classgb_a_a6d9d76a2764f6553952e92cf1171b234_1a6d9d76a2764f6553952e92cf1171b234">show</reimplementedby>
+        <reimplementedby refid="class_g_b_proxy_a472d3e9d267989cf59878de26928c689_1a472d3e9d267989cf59878de26928c689">show</reimplementedby>
+        <reimplementedby refid="class_g_b_walker_a088f59c6b7d8d98728ac69c9aad70370_1a088f59c6b7d8d98728ac69c9aad70370">show</reimplementedby>
+        <reimplementedby refid="classnewf4_1_1_g_b_f4_interface_a135f83c06380fe7d71705cfae008d8d3_1a135f83c06380fe7d71705cfae008d8d3">show</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/comp.hpp" line="111" column="16" bodyfile="Macaulay2/e/comp.cpp" bodystart="61" bodyend="64"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Abstract base for long-running, resumable engine computations (<computeroutput><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref></computeroutput>, <computeroutput><ref refid="class_resolution_computation" kindref="compound">ResolutionComputation</ref></computeroutput>, <computeroutput><ref refid="class_mutable_complex" kindref="compound">MutableComplex</ref></computeroutput>, <computeroutput><ref refid="class_g_b_kernel_computation" kindref="compound">GBKernelComputation</ref></computeroutput>, ...). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Manages a <computeroutput><ref refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213" kindref="member">ComputationStatusCode</ref></computeroutput> state machine plus a <computeroutput><ref refid="struct_stop_conditions" kindref="compound">StopConditions</ref></computeroutput> record so callers can ask for partial progress (degree limit, basis-element limit, syzygy limit, wall-clock deadline, ...) without losing what has already been computed. Subclasses implement <computeroutput><ref refid="class_computation_ab75de3b5574c52e4f020d529759cc472_1ab75de3b5574c52e4f020d529759cc472" kindref="member">stop_conditions_ok()</ref></computeroutput> to vet the request and <computeroutput><ref refid="class_computation_a7f5c6fb2cbdb51dcc230978a54dc6867_1a7f5c6fb2cbdb51dcc230978a54dc6867" kindref="member">start_computation()</ref></computeroutput> to do the work; <computeroutput><ref refid="class_computation_a3d43eb6c869405fa62a9b9662f1bdb1d_1a3d43eb6c869405fa62a9b9662f1bdb1d" kindref="member">set_status()</ref></computeroutput> is the single chokepoint that updates the visible state. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Computation</label>
+        <link refid="class_computation"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>F4Computation</label>
+        <link refid="class_f4_computation"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>F4ResComputation</label>
+        <link refid="class_f4_res_computation"/>
+        <childnode refid="23" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>GBComputation</label>
+        <link refid="class_g_b_computation"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>GBDeclared</label>
+        <link refid="class_g_b_declared"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>GBKernelComputation</label>
+        <link refid="class_g_b_kernel_computation"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>GBProxy</label>
+        <link refid="class_g_b_proxy"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>GBWalker</label>
+        <link refid="class_g_b_walker"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>GB_comp</label>
+        <link refid="class_g_b__comp"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>GBinhom_comp</label>
+        <link refid="class_g_binhom__comp"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>GaussElimComputation</label>
+        <link refid="class_gauss_elim_computation"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>HermiteComputation</label>
+        <link refid="class_hermite_computation"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>MarkedGB</label>
+        <link refid="class_marked_g_b"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>NCResComputation</label>
+        <link refid="class_n_c_res_computation"/>
+        <childnode refid="23" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ReducedGB</label>
+        <link refid="class_reduced_g_b"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>ReducedGB_Field</label>
+        <link refid="class_reduced_g_b___field"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>ReducedGB_Field_Local</label>
+        <link refid="class_reduced_g_b___field___local"/>
+        <childnode refid="16" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>ReducedGB_ZZ</label>
+        <link refid="class_reduced_g_b___z_z"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>ResolutionComputation</label>
+        <link refid="class_resolution_computation"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>binomialGB_comp</label>
+        <link refid="classbinomial_g_b__comp"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>gbA</label>
+        <link refid="classgb_a"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>gbres_comp</label>
+        <link refid="classgbres__comp"/>
+        <childnode refid="23" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>newf4::GBF4Interface</label>
+        <link refid="classnewf4_1_1_g_b_f4_interface"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="27">
+        <label>res2_comp</label>
+        <link refid="classres2__comp"/>
+        <childnode refid="23" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>res_comp</label>
+        <link refid="classres__comp"/>
+        <childnode refid="23" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Computation</label>
+        <link refid="class_computation"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>computation_status</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>stop_</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>M2_arrayint</label>
+        <link refid="class_m2__arrayint"/>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>StopConditions</label>
+        <link refid="struct_stop_conditions"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>always_stop</edgelabel>
+          <edgelabel>just_min_gens</edgelabel>
+          <edgelabel>stop_after_degree</edgelabel>
+          <edgelabel>use_codim_limit</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>degree_limit</edgelabel>
+          <edgelabel>length_limit</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>basis_element_limit</edgelabel>
+          <edgelabel>codim_limit</edgelabel>
+          <edgelabel>pair_limit</edgelabel>
+          <edgelabel>subring_limit</edgelabel>
+          <edgelabel>syzygy_limit</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>char</label>
+      </node>
+      <node id="6">
+        <label>enum ComputationStatusCode</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/comp.hpp" line="65" column="1" bodyfile="Macaulay2/e/comp.hpp" bodystart="66" bodyend="112"/>
+    <listofallmembers>
+      <member refid="class_computation_a4d7c8c55b077b6fd526373d6a5b00681_1a4d7c8c55b077b6fd526373d6a5b00681" prot="public" virt="virtual"><scope>Computation</scope><name>cast_to_GBComputation</name></member>
+      <member refid="class_computation_a4d7b512061b6d0cfe740ee06e160bba9_1a4d7b512061b6d0cfe740ee06e160bba9" prot="public" virt="virtual"><scope>Computation</scope><name>cast_to_ResolutionComputation</name></member>
+      <member refid="class_computation_ad23c72f9c8ce83ae162a496033f3cc50_1ad23c72f9c8ce83ae162a496033f3cc50" prot="public" virt="pure-virtual"><scope>Computation</scope><name>complete_thru_degree</name></member>
+      <member refid="class_computation_acbf52cbe89710bfcf9a49b63a13f9040_1acbf52cbe89710bfcf9a49b63a13f9040" prot="protected" virt="non-virtual"><scope>Computation</scope><name>Computation</name></member>
+      <member refid="class_computation_a16a66d725f6681f25a4b36670818633b_1a16a66d725f6681f25a4b36670818633b" prot="private" virt="non-virtual"><scope>Computation</scope><name>computation_status</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>Computation</scope><name>hash</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>Computation</scope><name>mHashValue</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>Computation</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>Computation</scope><name>MutableEngineObject</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>Computation</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>Computation</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>Computation</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>Computation</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>Computation</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>Computation</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>Computation</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>Computation</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>Computation</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_computation_a3d43eb6c869405fa62a9b9662f1bdb1d_1a3d43eb6c869405fa62a9b9662f1bdb1d" prot="protected" virt="non-virtual"><scope>Computation</scope><name>set_status</name></member>
+      <member refid="class_computation_a19ec1bd9578a00958d0a042793471775_1a19ec1bd9578a00958d0a042793471775" prot="public" virt="non-virtual"><scope>Computation</scope><name>set_stop_conditions</name></member>
+      <member refid="class_computation_adff8240febcd395f34ede78c797c7ac8_1adff8240febcd395f34ede78c797c7ac8" prot="public" virt="virtual"><scope>Computation</scope><name>show</name></member>
+      <member refid="class_computation_a7f5c6fb2cbdb51dcc230978a54dc6867_1a7f5c6fb2cbdb51dcc230978a54dc6867" prot="public" virt="pure-virtual"><scope>Computation</scope><name>start_computation</name></member>
+      <member refid="class_computation_a277e8e7771dccf6b37f5ab03edb2e503_1a277e8e7771dccf6b37f5ab03edb2e503" prot="public" virt="non-virtual"><scope>Computation</scope><name>status</name></member>
+      <member refid="class_computation_a3e6f044f649095c4907660aa0c36b3a4_1a3e6f044f649095c4907660aa0c36b3a4" prot="protected" virt="non-virtual"><scope>Computation</scope><name>stop_</name></member>
+      <member refid="class_computation_ab75de3b5574c52e4f020d529759cc472_1ab75de3b5574c52e4f020d529759cc472" prot="protected" virt="pure-virtual"><scope>Computation</scope><name>stop_conditions_ok</name></member>
+      <member refid="class_computation_a3722be360c164c043de50b558a4ae553_1a3722be360c164c043de50b558a4ae553" prot="public" virt="virtual"><scope>Computation</scope><name>text_out</name></member>
+      <member refid="class_computation_aad14e9593597150e351ee5d3a9a87ebe_1aad14e9593597150e351ee5d3a9a87ebe" prot="protected" virt="virtual"><scope>Computation</scope><name>~Computation</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>Computation</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>Computation</scope><name>~our_gc_cleanup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1796 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_sig_s_pairs" kind="class" language="C++" prot="public">
+    <compoundname>SigSPairs</compoundname>
+    <includes refid="_sig_s_pairs_8hpp" local="no">SigSPairs.hpp</includes>
+    <innerclass refid="struct_sig_s_pairs_1_1_stats" prot="public">SigSPairs::Stats</innerclass>
+    <innerclass refid="struct_sig_s_pairs_1_1_base_divisor" prot="private">SigSPairs::BaseDivisor</innerclass>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_sig_s_pairs_ac99051abeafcfc22c5b787955c970d74_1ac99051abeafcfc22c5b787955c970d74" prot="public" static="no">
+        <type><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref></type>
+        <definition>typedef PolyRing::Monoid SigSPairs::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>SigSPairs::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="25" column="28" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sig_s_pairs_a495ffab0b7e92393ecb2965b0469922b_1a495ffab0b7e92393ecb2965b0469922b" prot="public" static="no">
+        <type>Monoid::Mono</type>
+        <definition>typedef Monoid::Mono SigSPairs::Mono</definition>
+        <argsstring></argsstring>
+        <name>Mono</name>
+        <qualifiedname>SigSPairs::Mono</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="26" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sig_s_pairs_a9f4c04dec6bbcfd642724e4fbe527afc_1a9f4c04dec6bbcfd642724e4fbe527afc" prot="public" static="no">
+        <type>Monoid::MonoRef</type>
+        <definition>typedef Monoid::MonoRef SigSPairs::MonoRef</definition>
+        <argsstring></argsstring>
+        <name>MonoRef</name>
+        <qualifiedname>SigSPairs::MonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="27" column="27" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sig_s_pairs_ab0deee042aa097c569c533d8f3189bca_1ab0deee042aa097c569c533d8f3189bca" prot="public" static="no">
+        <type>Monoid::ConstMonoRef</type>
+        <definition>typedef Monoid::ConstMonoRef SigSPairs::ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>SigSPairs::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="28" column="32" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sig_s_pairs_a09ab2ca54cdfd1c2c1331facf6586856_1a09ab2ca54cdfd1c2c1331facf6586856" prot="public" static="no">
+        <type>Monoid::MonoPtr</type>
+        <definition>typedef Monoid::MonoPtr SigSPairs::MonoPtr</definition>
+        <argsstring></argsstring>
+        <name>MonoPtr</name>
+        <qualifiedname>SigSPairs::MonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="29" column="27" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sig_s_pairs_a557d1a2d2c8b74f561431f6988f98acf_1a557d1a2d2c8b74f561431f6988f98acf" prot="public" static="no">
+        <type>Monoid::ConstMonoPtr</type>
+        <definition>typedef Monoid::ConstMonoPtr SigSPairs::ConstMonoPtr</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoPtr</name>
+        <qualifiedname>SigSPairs::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="30" column="32" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sig_s_pairs_a5e7cc743c6c481a6a0f9b821584c8056_1a5e7cc743c6c481a6a0f9b821584c8056" prot="public" static="no">
+        <type>std::vector&lt; std::pair&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref>, <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &gt;</type>
+        <definition>typedef std::vector&lt;std::pair&lt;size_t, size_t&gt; &gt; SigSPairs::PairContainer</definition>
+        <argsstring></argsstring>
+        <name>PairContainer</name>
+        <qualifiedname>SigSPairs::PairContainer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="43" column="23" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_sig_s_pairs_a35ad3b5518ab920b59020721e4527717_1a35ad3b5518ab920b59020721e4527717" prot="private" static="no">
+        <type>std::vector&lt; <ref refid="struct_sig_s_pairs_1_1_base_divisor" kindref="compound">BaseDivisor</ref> &gt;</type>
+        <definition>typedef std::vector&lt;BaseDivisor&gt; SigSPairs::BaseDivContainer</definition>
+        <argsstring></argsstring>
+        <name>BaseDivContainer</name>
+        <qualifiedname>SigSPairs::BaseDivContainer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="102" column="23" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sig_s_pairs_adcdd479808ce3238c71518759df80395_1adcdd479808ce3238c71518759df80395" prot="private" static="no">
+        <type>std::vector&lt; <ref refid="struct_pre_s_pair" kindref="compound">PreSPair</ref> &gt;</type>
+        <definition>typedef std::vector&lt;PreSPair&gt; SigSPairs::PrePairContainer</definition>
+        <argsstring></argsstring>
+        <name>PrePairContainer</name>
+        <qualifiedname>SigSPairs::PrePairContainer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="132" column="23" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="132" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_sig_s_pairs_acc96d3e23afc661bbbc1862596bd48cb_1acc96d3e23afc661bbbc1862596bd48cb" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> *</type>
+        <definition>const PolyRing* SigSPairs::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>SigSPairs::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="109" column="18" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="109" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_afa11193db03ff2be0f72c4dad68beed3_1afa11193db03ff2be0f72c4dad68beed3" compoundref="_sig_s_pairs_8hpp" startline="89" endline="89">ring</referencedby>
+        <referencedby refid="class_sig_s_pairs_ac6780b187e89a9c747e7ca867bf4ffeb_1ac6780b187e89a9c747e7ca867bf4ffeb" compoundref="_sig_s_pairs_8cpp" startline="65" endline="141">setupBaseDivisors</referencedby>
+        <referencedby refid="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" compoundref="_sig_s_pairs_8cpp" startline="15" endline="37">SigSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_aacd67628adb3a9bc1cbf9b472ccec2db_1aacd67628adb3a9bc1cbf9b472ccec2db" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref> const</type>
+        <definition>bool const SigSPairs::mUseSingularCriterionEarly</definition>
+        <argsstring></argsstring>
+        <name>mUseSingularCriterionEarly</name>
+        <qualifiedname>SigSPairs::mUseSingularCriterionEarly</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="112" column="14" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="112" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" compoundref="_sig_s_pairs_8cpp" startline="15" endline="37">SigSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_a6dbec8ee2429c2616a00dc642514bf0a_1a6dbec8ee2429c2616a00dc642514bf0a" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool SigSPairs::mUseBaseDivisors</definition>
+        <argsstring></argsstring>
+        <name>mUseBaseDivisors</name>
+        <qualifiedname>SigSPairs::mUseBaseDivisors</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="115" column="14" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="115" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_ab46aba55e9d8504e02fc8a4ff3f516cd_1ab46aba55e9d8504e02fc8a4ff3f516cd" compoundref="_sig_s_pairs_8cpp" startline="54" endline="63">newPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_a7cfe19ab64b131ee50c151e33a3bff44_1a7cfe19ab64b131ee50c151e33a3bff44" compoundref="_sig_s_pairs_8cpp" startline="294" endline="299">setKnownSyzygies</referencedby>
+        <referencedby refid="class_sig_s_pairs_a849055062c60d130da724b625f3f4f67_1a849055062c60d130da724b625f3f4f67" compoundref="_sig_s_pairs_8cpp" startline="301" endline="307">setKnownSyzygy</referencedby>
+        <referencedby refid="class_sig_s_pairs_ac6780b187e89a9c747e7ca867bf4ffeb_1ac6780b187e89a9c747e7ca867bf4ffeb" compoundref="_sig_s_pairs_8cpp" startline="65" endline="141">setupBaseDivisors</referencedby>
+        <referencedby refid="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" compoundref="_sig_s_pairs_8cpp" startline="15" endline="37">SigSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_a3cac62d843aec68b0718bd661c76afee_1a3cac62d843aec68b0718bd661c76afee" compoundref="_sig_s_pairs_8cpp" startline="39" endline="42">~SigSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_a2f744a875f1699a533ecd8977e46e0bf_1a2f744a875f1699a533ecd8977e46e0bf" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool SigSPairs::mUseHighBaseDivisors</definition>
+        <argsstring></argsstring>
+        <name>mUseHighBaseDivisors</name>
+        <qualifiedname>SigSPairs::mUseHighBaseDivisors</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="119" column="14" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="119" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_ab46aba55e9d8504e02fc8a4ff3f516cd_1ab46aba55e9d8504e02fc8a4ff3f516cd" compoundref="_sig_s_pairs_8cpp" startline="54" endline="63">newPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_a7cfe19ab64b131ee50c151e33a3bff44_1a7cfe19ab64b131ee50c151e33a3bff44" compoundref="_sig_s_pairs_8cpp" startline="294" endline="299">setKnownSyzygies</referencedby>
+        <referencedby refid="class_sig_s_pairs_a849055062c60d130da724b625f3f4f67_1a849055062c60d130da724b625f3f4f67" compoundref="_sig_s_pairs_8cpp" startline="301" endline="307">setKnownSyzygy</referencedby>
+        <referencedby refid="class_sig_s_pairs_ac6780b187e89a9c747e7ca867bf4ffeb_1ac6780b187e89a9c747e7ca867bf4ffeb" compoundref="_sig_s_pairs_8cpp" startline="65" endline="141">setupBaseDivisors</referencedby>
+        <referencedby refid="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" compoundref="_sig_s_pairs_8cpp" startline="15" endline="37">SigSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_a3cac62d843aec68b0718bd661c76afee_1a3cac62d843aec68b0718bd661c76afee" compoundref="_sig_s_pairs_8cpp" startline="39" endline="42">~SigSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_ab57692d990b87a3b7ce9330a4d7c887a_1ab57692d990b87a3b7ce9330a4d7c887a" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_bit_triangle" kindref="compound">mathic::BitTriangle</ref></type>
+        <definition>mathic::BitTriangle SigSPairs::mKnownSyzygyTri</definition>
+        <argsstring></argsstring>
+        <name>mKnownSyzygyTri</name>
+        <qualifiedname>SigSPairs::mKnownSyzygyTri</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="124" column="23" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="124" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_ab45d56780c335ae7c99445f06f6fabda_1ab45d56780c335ae7c99445f06f6fabda" compoundref="_sig_s_pairs_8cpp" startline="322" endline="324">getKnownSyzygyBitsMemoryUse</referencedby>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_ab46aba55e9d8504e02fc8a4ff3f516cd_1ab46aba55e9d8504e02fc8a4ff3f516cd" compoundref="_sig_s_pairs_8cpp" startline="54" endline="63">newPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_a849055062c60d130da724b625f3f4f67_1a849055062c60d130da724b625f3f4f67" compoundref="_sig_s_pairs_8cpp" startline="301" endline="307">setKnownSyzygy</referencedby>
+        <referencedby refid="class_sig_s_pairs_ac6780b187e89a9c747e7ca867bf4ffeb_1ac6780b187e89a9c747e7ca867bf4ffeb" compoundref="_sig_s_pairs_8cpp" startline="65" endline="141">setupBaseDivisors</referencedby>
+        <referencedby refid="class_sig_s_pairs_a3cac62d843aec68b0718bd661c76afee_1a3cac62d843aec68b0718bd661c76afee" compoundref="_sig_s_pairs_8cpp" startline="39" endline="42">~SigSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_ab599e02ca0943e6b58b0994e54561e81_1ab599e02ca0943e6b58b0994e54561e81" prot="private" static="no" mutable="no">
+        <type><ref refid="class_module_mono_set" kindref="compound">ModuleMonoSet</ref> *</type>
+        <definition>ModuleMonoSet* SigSPairs::Hsyz</definition>
+        <argsstring></argsstring>
+        <name>Hsyz</name>
+        <qualifiedname>SigSPairs::Hsyz</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="127" column="17" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="127" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" compoundref="_sig_s_pairs_8cpp" startline="15" endline="37">SigSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_a66fc4e27f4d6bfa45c2c7f5090362f47_1a66fc4e27f4d6bfa45c2c7f5090362f47" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_sig_poly_basis" kindref="compound">SigPolyBasis</ref> *</type>
+        <definition>const SigPolyBasis* SigSPairs::GB</definition>
+        <argsstring></argsstring>
+        <name>GB</name>
+        <qualifiedname>SigSPairs::GB</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="128" column="22" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="128" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_ac6780b187e89a9c747e7ca867bf4ffeb_1ac6780b187e89a9c747e7ca867bf4ffeb" compoundref="_sig_s_pairs_8cpp" startline="65" endline="141">setupBaseDivisors</referencedby>
+        <referencedby refid="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" compoundref="_sig_s_pairs_8cpp" startline="15" endline="37">SigSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_abba0ca2a7912d185cf41d132a5b17aef_1abba0ca2a7912d185cf41d132a5b17aef" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool SigSPairs::mPostponeKoszuls</definition>
+        <argsstring></argsstring>
+        <name>mPostponeKoszuls</name>
+        <qualifiedname>SigSPairs::mPostponeKoszuls</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="130" column="14" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="130" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" compoundref="_sig_s_pairs_8cpp" startline="15" endline="37">SigSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_a0ae07d0b107b409cf32d6a097680ba55_1a0ae07d0b107b409cf32d6a097680ba55" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_sig_s_pair_queue" kindref="compound">SigSPairQueue</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;SigSPairQueue&gt; SigSPairs::mQueue</definition>
+        <argsstring></argsstring>
+        <name>mQueue</name>
+        <qualifiedname>SigSPairs::mQueue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="134" column="19" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="134" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a537be9023bd05a05b8c48566544fdff8_1a537be9023bd05a05b8c48566544fdff8" compoundref="_sig_s_pairs_8cpp" startline="317" endline="320">getMemoryUse</referencedby>
+        <referencedby refid="class_sig_s_pairs_ae7e7e56ca5dd5a3f5b1e7a669bb2d922_1ae7e7e56ca5dd5a3f5b1e7a669bb2d922" compoundref="_sig_s_pairs_8cpp" startline="313" endline="315">name</referencedby>
+        <referencedby refid="class_sig_s_pairs_ab46aba55e9d8504e02fc8a4ff3f516cd_1ab46aba55e9d8504e02fc8a4ff3f516cd" compoundref="_sig_s_pairs_8cpp" startline="54" endline="63">newPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_a60363354ec0bd63ea68fe42aa6cb6335_1a60363354ec0bd63ea68fe42aa6cb6335" compoundref="_sig_s_pairs_8cpp" startline="309" endline="311">pairCount</referencedby>
+        <referencedby refid="class_sig_s_pairs_ab6393272bab6f6d57a1607dd3859f528_1ab6393272bab6f6d57a1607dd3859f528" compoundref="_sig_s_pairs_8cpp" startline="44" endline="52">popSignature</referencedby>
+        <referencedby refid="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" compoundref="_sig_s_pairs_8cpp" startline="15" endline="37">SigSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_aa088b9d198670fa54bec48b744e371d3_1aa088b9d198670fa54bec48b744e371d3" prot="private" static="no" mutable="no">
+        <type><ref refid="class_sig_s_pair_queue_a212edf7790db80646addbfbd980729e8_1a212edf7790db80646addbfbd980729e8" kindref="member">SigSPairQueue::IndexSigs</ref></type>
+        <definition>SigSPairQueue::IndexSigs SigSPairs::mIndexSigs</definition>
+        <argsstring></argsstring>
+        <name>mIndexSigs</name>
+        <qualifiedname>SigSPairs::mIndexSigs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="135" column="28" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="135" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_ab46aba55e9d8504e02fc8a4ff3f516cd_1ab46aba55e9d8504e02fc8a4ff3f516cd" compoundref="_sig_s_pairs_8cpp" startline="54" endline="63">newPairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sig_s_pairs_a96235c8b0a22d50dcc349ae866ac07b7_1a96235c8b0a22d50dcc349ae866ac07b7" prot="private" static="no" mutable="yes">
+        <type><ref refid="struct_sig_s_pairs_1_1_stats" kindref="compound">Stats</ref></type>
+        <definition>Stats SigSPairs::mStats</definition>
+        <argsstring></argsstring>
+        <name>mStats</name>
+        <qualifiedname>SigSPairs::mStats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="137" column="17" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="137" bodyend="-1"/>
+        <referencedby refid="class_sig_s_pairs_a09dd4bd592c2da1b3329d7d58a6557e8_1a09dd4bd592c2da1b3329d7d58a6557e8" compoundref="_sig_s_pairs_8hpp" startline="77" endline="77">getStats</referencedby>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+        <referencedby refid="class_sig_s_pairs_ab6393272bab6f6d57a1607dd3859f528_1ab6393272bab6f6d57a1607dd3859f528" compoundref="_sig_s_pairs_8cpp" startline="44" endline="52">popSignature</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MATHICGB_NAMESPACE_BEGIN SigSPairs::SigSPairs</definition>
+        <argsstring>(const PolyRing *R0, const SigPolyBasis *GB0, ModuleMonoSet *Hsyz0, Reducer *reducer, bool postponeKoszuls, bool useBaseDivisors, bool useSingularCriterionEarly, size_t queueType)</argsstring>
+        <name>SigSPairs</name>
+        <qualifiedname>SigSPairs::SigSPairs</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> *</type>
+          <declname>R0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sig_poly_basis" kindref="compound">SigPolyBasis</ref> *</type>
+          <declname>GB0</declname>
+        </param>
+        <param>
+          <type><ref refid="class_module_mono_set" kindref="compound">ModuleMonoSet</ref> *</type>
+          <declname>Hsyz0</declname>
+        </param>
+        <param>
+          <type><ref refid="class_reducer" kindref="compound">Reducer</ref> *</type>
+          <declname>reducer</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>postponeKoszuls</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>useBaseDivisors</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>useSingularCriterionEarly</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>queueType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="32" column="3" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="15" bodyend="37"/>
+        <references refid="class_sig_s_pairs_a66fc4e27f4d6bfa45c2c7f5090362f47_1a66fc4e27f4d6bfa45c2c7f5090362f47" compoundref="_sig_s_pairs_8hpp" startline="128">GB</references>
+        <references refid="class_sig_s_pairs_ab599e02ca0943e6b58b0994e54561e81_1ab599e02ca0943e6b58b0994e54561e81" compoundref="_sig_s_pairs_8hpp" startline="127">Hsyz</references>
+        <references refid="class_sig_s_pairs_abba0ca2a7912d185cf41d132a5b17aef_1abba0ca2a7912d185cf41d132a5b17aef" compoundref="_sig_s_pairs_8hpp" startline="130">mPostponeKoszuls</references>
+        <references refid="class_sig_s_pairs_a0ae07d0b107b409cf32d6a097680ba55_1a0ae07d0b107b409cf32d6a097680ba55" compoundref="_sig_s_pairs_8hpp" startline="134">mQueue</references>
+        <references refid="class_sig_s_pairs_a6dbec8ee2429c2616a00dc642514bf0a_1a6dbec8ee2429c2616a00dc642514bf0a" compoundref="_sig_s_pairs_8hpp" startline="115">mUseBaseDivisors</references>
+        <references refid="class_sig_s_pairs_a2f744a875f1699a533ecd8977e46e0bf_1a2f744a875f1699a533ecd8977e46e0bf" compoundref="_sig_s_pairs_8hpp" startline="119">mUseHighBaseDivisors</references>
+        <references refid="class_sig_s_pairs_aacd67628adb3a9bc1cbf9b472ccec2db_1aacd67628adb3a9bc1cbf9b472ccec2db" compoundref="_sig_s_pairs_8hpp" startline="112">mUseSingularCriterionEarly</references>
+        <references refid="class_sig_s_pairs_acc96d3e23afc661bbbc1862596bd48cb_1acc96d3e23afc661bbbc1862596bd48cb" compoundref="_sig_s_pairs_8hpp" startline="109">R</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_a3cac62d843aec68b0718bd661c76afee_1a3cac62d843aec68b0718bd661c76afee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SigSPairs::~SigSPairs</definition>
+        <argsstring>()</argsstring>
+        <name>~SigSPairs</name>
+        <qualifiedname>SigSPairs::~SigSPairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="41" column="3" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="39" bodyend="42"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_sig_s_pairs_ab57692d990b87a3b7ce9330a4d7c887a_1ab57692d990b87a3b7ce9330a4d7c887a" compoundref="_sig_s_pairs_8hpp" startline="124">mKnownSyzygyTri</references>
+        <references refid="class_sig_s_pairs_a6dbec8ee2429c2616a00dc642514bf0a_1a6dbec8ee2429c2616a00dc642514bf0a" compoundref="_sig_s_pairs_8hpp" startline="115">mUseBaseDivisors</references>
+        <references refid="class_sig_s_pairs_a2f744a875f1699a533ecd8977e46e0bf_1a2f744a875f1699a533ecd8977e46e0bf" compoundref="_sig_s_pairs_8hpp" startline="119">mUseHighBaseDivisors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_ab6393272bab6f6d57a1607dd3859f528_1ab6393272bab6f6d57a1607dd3859f528" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_sig_s_pairs_a495ffab0b7e92393ecb2965b0469922b_1a495ffab0b7e92393ecb2965b0469922b" kindref="member">Mono</ref></type>
+        <definition>auto SigSPairs::popSignature</definition>
+        <argsstring>(PairContainer &amp;pairs)</argsstring>
+        <name>popSignature</name>
+        <qualifiedname>SigSPairs::popSignature</qualifiedname>
+        <param>
+          <type><ref refid="class_sig_s_pairs_a5e7cc743c6c481a6a0f9b821584c8056_1a5e7cc743c6c481a6a0f9b821584c8056" kindref="member">PairContainer</ref> &amp;</type>
+          <declname>pairs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="44" column="8" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="44" bodyend="52"/>
+        <references refid="class_sig_s_pairs_a0ae07d0b107b409cf32d6a097680ba55_1a0ae07d0b107b409cf32d6a097680ba55" compoundref="_sig_s_pairs_8hpp" startline="134">mQueue</references>
+        <references refid="class_sig_s_pairs_a96235c8b0a22d50dcc349ae866ac07b7_1a96235c8b0a22d50dcc349ae866ac07b7" compoundref="_sig_s_pairs_8hpp" startline="137">mStats</references>
+        <references refid="class_sig_s_pairs_a60363354ec0bd63ea68fe42aa6cb6335_1a60363354ec0bd63ea68fe42aa6cb6335" compoundref="_sig_s_pairs_8cpp" startline="309" endline="311">pairCount</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_ab46aba55e9d8504e02fc8a4ff3f516cd_1ab46aba55e9d8504e02fc8a4ff3f516cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SigSPairs::newPairs</definition>
+        <argsstring>(size_t i)</argsstring>
+        <name>newPairs</name>
+        <qualifiedname>SigSPairs::newPairs</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="47" column="8" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="54" bodyend="63"/>
+        <references refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_sig_s_pairs_aa088b9d198670fa54bec48b744e371d3_1aa088b9d198670fa54bec48b744e371d3" compoundref="_sig_s_pairs_8hpp" startline="135">mIndexSigs</references>
+        <references refid="class_sig_s_pairs_ab57692d990b87a3b7ce9330a4d7c887a_1ab57692d990b87a3b7ce9330a4d7c887a" compoundref="_sig_s_pairs_8hpp" startline="124">mKnownSyzygyTri</references>
+        <references refid="class_sig_s_pairs_a0ae07d0b107b409cf32d6a097680ba55_1a0ae07d0b107b409cf32d6a097680ba55" compoundref="_sig_s_pairs_8hpp" startline="134">mQueue</references>
+        <references refid="class_sig_s_pairs_a6dbec8ee2429c2616a00dc642514bf0a_1a6dbec8ee2429c2616a00dc642514bf0a" compoundref="_sig_s_pairs_8hpp" startline="115">mUseBaseDivisors</references>
+        <references refid="class_sig_s_pairs_a2f744a875f1699a533ecd8977e46e0bf_1a2f744a875f1699a533ecd8977e46e0bf" compoundref="_sig_s_pairs_8hpp" startline="119">mUseHighBaseDivisors</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_a09dd4bd592c2da1b3329d7d58a6557e8_1a09dd4bd592c2da1b3329d7d58a6557e8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="struct_sig_s_pairs_1_1_stats" kindref="compound">Stats</ref></type>
+        <definition>Stats SigSPairs::getStats</definition>
+        <argsstring>() const</argsstring>
+        <name>getStats</name>
+        <qualifiedname>SigSPairs::getStats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="77" column="9" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="77" bodyend="77"/>
+        <references refid="class_sig_s_pairs_a96235c8b0a22d50dcc349ae866ac07b7_1a96235c8b0a22d50dcc349ae866ac07b7" compoundref="_sig_s_pairs_8hpp" startline="137">mStats</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_a60363354ec0bd63ea68fe42aa6cb6335_1a60363354ec0bd63ea68fe42aa6cb6335" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t SigSPairs::pairCount</definition>
+        <argsstring>() const</argsstring>
+        <name>pairCount</name>
+        <qualifiedname>SigSPairs::pairCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="79" column="10" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="309" bodyend="311"/>
+        <references refid="class_sig_s_pairs_a0ae07d0b107b409cf32d6a097680ba55_1a0ae07d0b107b409cf32d6a097680ba55" compoundref="_sig_s_pairs_8hpp" startline="134">mQueue</references>
+        <referencedby refid="class_sig_s_pairs_ab6393272bab6f6d57a1607dd3859f528_1ab6393272bab6f6d57a1607dd3859f528" compoundref="_sig_s_pairs_8cpp" startline="44" endline="52">popSignature</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_a537be9023bd05a05b8c48566544fdff8_1a537be9023bd05a05b8c48566544fdff8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t SigSPairs::getMemoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>getMemoryUse</name>
+        <qualifiedname>SigSPairs::getMemoryUse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="81" column="10" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="317" bodyend="320"/>
+        <references refid="class_sig_s_pairs_ab45d56780c335ae7c99445f06f6fabda_1ab45d56780c335ae7c99445f06f6fabda" compoundref="_sig_s_pairs_8cpp" startline="322" endline="324">getKnownSyzygyBitsMemoryUse</references>
+        <references refid="class_sig_s_pairs_a0ae07d0b107b409cf32d6a097680ba55_1a0ae07d0b107b409cf32d6a097680ba55" compoundref="_sig_s_pairs_8hpp" startline="134">mQueue</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_ab45d56780c335ae7c99445f06f6fabda_1ab45d56780c335ae7c99445f06f6fabda" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t SigSPairs::getKnownSyzygyBitsMemoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>getKnownSyzygyBitsMemoryUse</name>
+        <qualifiedname>SigSPairs::getKnownSyzygyBitsMemoryUse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="82" column="10" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="322" bodyend="324"/>
+        <references refid="class_sig_s_pairs_ab57692d990b87a3b7ce9330a4d7c887a_1ab57692d990b87a3b7ce9330a4d7c887a" compoundref="_sig_s_pairs_8hpp" startline="124">mKnownSyzygyTri</references>
+        <referencedby refid="class_sig_s_pairs_a537be9023bd05a05b8c48566544fdff8_1a537be9023bd05a05b8c48566544fdff8" compoundref="_sig_s_pairs_8cpp" startline="317" endline="320">getMemoryUse</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_a849055062c60d130da724b625f3f4f67_1a849055062c60d130da724b625f3f4f67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SigSPairs::setKnownSyzygy</definition>
+        <argsstring>(size_t gen1, size_t gen2)</argsstring>
+        <name>setKnownSyzygy</name>
+        <qualifiedname>SigSPairs::setKnownSyzygy</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>gen1</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>gen2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="86" column="8" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="301" bodyend="307"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_sig_s_pairs_ab57692d990b87a3b7ce9330a4d7c887a_1ab57692d990b87a3b7ce9330a4d7c887a" compoundref="_sig_s_pairs_8hpp" startline="124">mKnownSyzygyTri</references>
+        <references refid="class_sig_s_pairs_a6dbec8ee2429c2616a00dc642514bf0a_1a6dbec8ee2429c2616a00dc642514bf0a" compoundref="_sig_s_pairs_8hpp" startline="115">mUseBaseDivisors</references>
+        <references refid="class_sig_s_pairs_a2f744a875f1699a533ecd8977e46e0bf_1a2f744a875f1699a533ecd8977e46e0bf" compoundref="_sig_s_pairs_8hpp" startline="119">mUseHighBaseDivisors</references>
+        <referencedby refid="class_sig_s_pairs_a7cfe19ab64b131ee50c151e33a3bff44_1a7cfe19ab64b131ee50c151e33a3bff44" compoundref="_sig_s_pairs_8cpp" startline="294" endline="299">setKnownSyzygies</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_a7cfe19ab64b131ee50c151e33a3bff44_1a7cfe19ab64b131ee50c151e33a3bff44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SigSPairs::setKnownSyzygies</definition>
+        <argsstring>(std::vector&lt; std::pair&lt; size_t, size_t &gt; &gt; &amp;pairs)</argsstring>
+        <name>setKnownSyzygies</name>
+        <qualifiedname>SigSPairs::setKnownSyzygies</qualifiedname>
+        <param>
+          <type>std::vector&lt; std::pair&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref>, <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &gt; &amp;</type>
+          <declname>pairs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="87" column="8" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="294" bodyend="299"/>
+        <references refid="class_sig_s_pairs_a6dbec8ee2429c2616a00dc642514bf0a_1a6dbec8ee2429c2616a00dc642514bf0a" compoundref="_sig_s_pairs_8hpp" startline="115">mUseBaseDivisors</references>
+        <references refid="class_sig_s_pairs_a2f744a875f1699a533ecd8977e46e0bf_1a2f744a875f1699a533ecd8977e46e0bf" compoundref="_sig_s_pairs_8hpp" startline="119">mUseHighBaseDivisors</references>
+        <references refid="class_sig_s_pairs_a849055062c60d130da724b625f3f4f67_1a849055062c60d130da724b625f3f4f67" compoundref="_sig_s_pairs_8cpp" startline="301" endline="307">setKnownSyzygy</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_afa11193db03ff2be0f72c4dad68beed3_1afa11193db03ff2be0f72c4dad68beed3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+        <definition>const PolyRing &amp; SigSPairs::ring</definition>
+        <argsstring>()</argsstring>
+        <name>ring</name>
+        <qualifiedname>SigSPairs::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="89" column="18" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="89" bodyend="89"/>
+        <references refid="class_sig_s_pairs_acc96d3e23afc661bbbc1862596bd48cb_1acc96d3e23afc661bbbc1862596bd48cb" compoundref="_sig_s_pairs_8hpp" startline="109">R</references>
+        <referencedby refid="class_sig_s_pairs_a7ce65056f3544507d1be54273bd39b4a_1a7ce65056f3544507d1be54273bd39b4a" compoundref="_sig_s_pairs_8hpp" startline="90" endline="90">monoid</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_a7ce65056f3544507d1be54273bd39b4a_1a7ce65056f3544507d1be54273bd39b4a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_sig_s_pairs_ac99051abeafcfc22c5b787955c970d74_1ac99051abeafcfc22c5b787955c970d74" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+        <definition>const Monoid &amp; SigSPairs::monoid</definition>
+        <argsstring>()</argsstring>
+        <name>monoid</name>
+        <qualifiedname>SigSPairs::monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="90" column="16" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="90" bodyend="90"/>
+        <references refid="class_poly_ring_af2410633daff4cfc0687d62433fcaf3e_1af2410633daff4cfc0687d62433fcaf3e" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="505" endline="505">PolyRing::monoid</references>
+        <references refid="class_sig_s_pairs_afa11193db03ff2be0f72c4dad68beed3_1afa11193db03ff2be0f72c4dad68beed3" compoundref="_sig_s_pairs_8hpp" startline="89" endline="89">ring</references>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_ae7e7e56ca5dd5a3f5b1e7a669bb2d922_1ae7e7e56ca5dd5a3f5b1e7a669bb2d922" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string SigSPairs::name</definition>
+        <argsstring>()</argsstring>
+        <name>name</name>
+        <qualifiedname>SigSPairs::name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="92" column="15" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="313" bodyend="315"/>
+        <references refid="class_sig_s_pairs_a0ae07d0b107b409cf32d6a097680ba55_1a0ae07d0b107b409cf32d6a097680ba55" compoundref="_sig_s_pairs_8hpp" startline="134">mQueue</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SigSPairs::makePreSPairs</definition>
+        <argsstring>(size_t newGen)</argsstring>
+        <name>makePreSPairs</name>
+        <qualifiedname>SigSPairs::makePreSPairs</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>newGen</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="95" column="8" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="143" bodyend="292"/>
+        <references refid="struct_sig_s_pairs_1_1_base_divisor_a575cd1032e6ee2dbad0e9415a0400e0d_1a575cd1032e6ee2dbad0e9415a0400e0d" compoundref="_sig_s_pairs_8hpp" startline="98">SigSPairs::BaseDivisor::baseDivisor</references>
+        <references refid="struct_sig_s_pairs_1_1_base_divisor_a39f33d877a77dd0a06d4b35946bde6a0_1a39f33d877a77dd0a06d4b35946bde6a0" compoundref="_sig_s_pairs_8hpp" startline="100">SigSPairs::BaseDivisor::baseMonomial</references>
+        <references refid="class_mono_monoid_ad187d98947541d1d63bb8a27a2b58726_1ad187d98947541d1d63bb8a27a2b58726" compoundref="_mono_monoid_8hpp" startline="1099" endline="1120">MonoMonoid&lt; E, HC, SH, SO &gt;::colonMultiply</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_abaab8d42f075ee8ddc9b70951d3fd6cd_1abaab8d42f075ee8ddc9b70951d3fd6cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="19">EQ</references>
+        <references refid="class_sig_s_pairs_a66fc4e27f4d6bfa45c2c7f5090362f47_1a66fc4e27f4d6bfa45c2c7f5090362f47" compoundref="_sig_s_pairs_8hpp" startline="128">GB</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ab89310b3f2f97e4e9415fc5a51549612_1ab89310b3f2f97e4e9415fc5a51549612" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="20">GT</references>
+        <references refid="class_sig_s_pairs_ab599e02ca0943e6b58b0994e54561e81_1ab599e02ca0943e6b58b0994e54561e81" compoundref="_sig_s_pairs_8hpp" startline="127">Hsyz</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aaf56b99cbe34023f42ce5b7878c827d8_1aaf56b99cbe34023f42ce5b7878c827d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="18">LT</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_sig_s_pairs_aa088b9d198670fa54bec48b744e371d3_1aa088b9d198670fa54bec48b744e371d3" compoundref="_sig_s_pairs_8hpp" startline="135">mIndexSigs</references>
+        <references refid="class_sig_s_pairs_ab57692d990b87a3b7ce9330a4d7c887a_1ab57692d990b87a3b7ce9330a4d7c887a" compoundref="_sig_s_pairs_8hpp" startline="124">mKnownSyzygyTri</references>
+        <references refid="class_sig_s_pairs_a7ce65056f3544507d1be54273bd39b4a_1a7ce65056f3544507d1be54273bd39b4a" compoundref="_sig_s_pairs_8hpp" startline="90" endline="90">monoid</references>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+        <references refid="class_sig_s_pairs_abba0ca2a7912d185cf41d132a5b17aef_1abba0ca2a7912d185cf41d132a5b17aef" compoundref="_sig_s_pairs_8hpp" startline="130">mPostponeKoszuls</references>
+        <references refid="class_sig_s_pairs_a96235c8b0a22d50dcc349ae866ac07b7_1a96235c8b0a22d50dcc349ae866ac07b7" compoundref="_sig_s_pairs_8hpp" startline="137">mStats</references>
+        <references refid="class_mono_monoid_a077e4ed825cf3a56f8358e4568e99957_1a077e4ed825cf3a56f8358e4568e99957" compoundref="_mono_monoid_8hpp" startline="1035" endline="1043">MonoMonoid&lt; E, HC, SH, SO &gt;::multiply</references>
+        <references refid="class_sig_s_pairs_a6dbec8ee2429c2616a00dc642514bf0a_1a6dbec8ee2429c2616a00dc642514bf0a" compoundref="_sig_s_pairs_8hpp" startline="115">mUseBaseDivisors</references>
+        <references refid="class_sig_s_pairs_a2f744a875f1699a533ecd8977e46e0bf_1a2f744a875f1699a533ecd8977e46e0bf" compoundref="_sig_s_pairs_8hpp" startline="119">mUseHighBaseDivisors</references>
+        <references refid="class_sig_s_pairs_aacd67628adb3a9bc1cbf9b472ccec2db_1aacd67628adb3a9bc1cbf9b472ccec2db" compoundref="_sig_s_pairs_8hpp" startline="112">mUseSingularCriterionEarly</references>
+        <references refid="class_sig_s_pairs_acc96d3e23afc661bbbc1862596bd48cb_1acc96d3e23afc661bbbc1862596bd48cb" compoundref="_sig_s_pairs_8hpp" startline="109">R</references>
+        <references refid="struct_sig_s_pairs_1_1_base_divisor_abf1583b41f822dc8141cf562d7f01173_1abf1583b41f822dc8141cf562d7f01173" compoundref="_sig_s_pairs_8hpp" startline="99">SigSPairs::BaseDivisor::ratioLessThan</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_sig_s_pairs_ac6780b187e89a9c747e7ca867bf4ffeb_1ac6780b187e89a9c747e7ca867bf4ffeb" compoundref="_sig_s_pairs_8cpp" startline="65" endline="141">setupBaseDivisors</references>
+        <referencedby refid="class_sig_s_pairs_ab46aba55e9d8504e02fc8a4ff3f516cd_1ab46aba55e9d8504e02fc8a4ff3f516cd" compoundref="_sig_s_pairs_8cpp" startline="54" endline="63">newPairs</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_sig_s_pairs_ac6780b187e89a9c747e7ca867bf4ffeb_1ac6780b187e89a9c747e7ca867bf4ffeb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SigSPairs::setupBaseDivisors</definition>
+        <argsstring>(BaseDivisor &amp;divisor1, BaseDivisor &amp;divisor2, size_t &amp;highDivisorCmp, size_t newGenerator)</argsstring>
+        <name>setupBaseDivisors</name>
+        <qualifiedname>SigSPairs::setupBaseDivisors</qualifiedname>
+        <param>
+          <type><ref refid="struct_sig_s_pairs_1_1_base_divisor" kindref="compound">BaseDivisor</ref> &amp;</type>
+          <declname>divisor1</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_sig_s_pairs_1_1_base_divisor" kindref="compound">BaseDivisor</ref> &amp;</type>
+          <declname>divisor2</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &amp;</type>
+          <declname>highDivisorCmp</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>newGenerator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="103" column="8" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.cpp" bodystart="65" bodyend="141"/>
+        <references refid="struct_sig_s_pairs_1_1_base_divisor_a575cd1032e6ee2dbad0e9415a0400e0d_1a575cd1032e6ee2dbad0e9415a0400e0d" compoundref="_sig_s_pairs_8hpp" startline="98">SigSPairs::BaseDivisor::baseDivisor</references>
+        <references refid="struct_sig_s_pairs_1_1_base_divisor_a39f33d877a77dd0a06d4b35946bde6a0_1a39f33d877a77dd0a06d4b35946bde6a0" compoundref="_sig_s_pairs_8hpp" startline="100">SigSPairs::BaseDivisor::baseMonomial</references>
+        <references refid="class_sig_s_pairs_a66fc4e27f4d6bfa45c2c7f5090362f47_1a66fc4e27f4d6bfa45c2c7f5090362f47" compoundref="_sig_s_pairs_8hpp" startline="128">GB</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ab89310b3f2f97e4e9415fc5a51549612_1ab89310b3f2f97e4e9415fc5a51549612" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="20">GT</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aaf56b99cbe34023f42ce5b7878c827d8_1aaf56b99cbe34023f42ce5b7878c827d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="18">LT</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_sig_s_pairs_ab57692d990b87a3b7ce9330a4d7c887a_1ab57692d990b87a3b7ce9330a4d7c887a" compoundref="_sig_s_pairs_8hpp" startline="124">mKnownSyzygyTri</references>
+        <references refid="class_sig_s_pairs_a6dbec8ee2429c2616a00dc642514bf0a_1a6dbec8ee2429c2616a00dc642514bf0a" compoundref="_sig_s_pairs_8hpp" startline="115">mUseBaseDivisors</references>
+        <references refid="class_sig_s_pairs_a2f744a875f1699a533ecd8977e46e0bf_1a2f744a875f1699a533ecd8977e46e0bf" compoundref="_sig_s_pairs_8hpp" startline="119">mUseHighBaseDivisors</references>
+        <references refid="class_sig_s_pairs_acc96d3e23afc661bbbc1862596bd48cb_1acc96d3e23afc661bbbc1862596bd48cb" compoundref="_sig_s_pairs_8hpp" startline="109">R</references>
+        <references refid="struct_sig_s_pairs_1_1_base_divisor_abf1583b41f822dc8141cf562d7f01173_1abf1583b41f822dc8141cf562d7f01173" compoundref="_sig_s_pairs_8hpp" startline="99">SigSPairs::BaseDivisor::ratioLessThan</references>
+        <references refid="class_mono_monoid_afe4948ac84c8bbe59ad6140622c4a6ae_1afe4948ac84c8bbe59ad6140622c4a6ae" compoundref="_mono_monoid_8hpp" startline="374" endline="374">MonoMonoid&lt; exponent &gt;::toOld</references>
+        <referencedby refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" compoundref="_sig_s_pairs_8cpp" startline="143" endline="292">makePreSPairs</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="15">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="60" relation="public-inheritance">
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="89">
+        <label>K</label>
+      </node>
+      <node id="50">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="50" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="50" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="60" relation="public-inheritance">
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>ModuleMonoSet</label>
+        <link refid="class_module_mono_set"/>
+      </node>
+      <node id="92">
+        <label>MonoLookup</label>
+        <link refid="class_mono_lookup"/>
+      </node>
+      <node id="83">
+        <label>MonoLookup::Factory</label>
+        <link refid="class_mono_lookup_1_1_factory"/>
+      </node>
+      <node id="69">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="70" relation="private-inheritance">
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="72" relation="public-inheritance">
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="66">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="67" relation="private-inheritance">
+        </childnode>
+        <childnode refid="69" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="86">
+        <label>MonoMonoid&lt; exponent &gt;::MonoPtr</label>
+      </node>
+      <node id="99">
+        <label>MonoMonoid&lt; exponent &gt;::MonoVector</label>
+      </node>
+      <node id="70">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="37">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="72">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="73" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="97">
+        <label>Poly</label>
+        <link refid="class_poly"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="98" relation="usage">
+          <edgelabel>mCoefs</edgelabel>
+        </childnode>
+        <childnode refid="99" relation="usage">
+          <edgelabel>mMonos</edgelabel>
+        </childnode>
+      </node>
+      <node id="94">
+        <label>PolyBasis</label>
+        <link refid="class_poly_basis"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="93" relation="usage">
+          <edgelabel>mMonoLookup</edgelabel>
+        </childnode>
+        <childnode refid="95" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="96">
+        <label>PolyBasis::Entry</label>
+        <link refid="class_poly_basis_1_1_entry"/>
+        <childnode refid="97" relation="usage">
+          <edgelabel>poly</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>leadMinimal</edgelabel>
+          <edgelabel>retired</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>nonSignatureReducerCount</edgelabel>
+          <edgelabel>possibleReducerCount</edgelabel>
+          <edgelabel>usedAsReducerCount</edgelabel>
+          <edgelabel>usedAsStartCount</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="65" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>CoefficientType</label>
+      </node>
+      <node id="62">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>SigPolyBasis</label>
+        <link refid="class_sig_poly_basis"/>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mMonoLookupFactory</edgelabel>
+        </childnode>
+        <childnode refid="85" relation="usage">
+          <edgelabel>mSigLeadRatio</edgelabel>
+          <edgelabel>mSignatures</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mPreferSparseReducers</edgelabel>
+          <edgelabel>mUseRatioRank</edgelabel>
+          <edgelabel>mUseStoredRatioRank</edgelabel>
+        </childnode>
+        <childnode refid="87" relation="usage">
+          <edgelabel>mRatioSorted</edgelabel>
+        </childnode>
+        <childnode refid="90" relation="usage">
+          <edgelabel>mRatioRanks</edgelabel>
+        </childnode>
+        <childnode refid="91" relation="usage">
+          <edgelabel>mSignatureLookup</edgelabel>
+        </childnode>
+        <childnode refid="93" relation="usage">
+          <edgelabel>mMinimalMonoLookup</edgelabel>
+        </childnode>
+        <childnode refid="94" relation="usage">
+          <edgelabel>mBasis</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mTmp</edgelabel>
+        </childnode>
+      </node>
+      <node id="101">
+        <label>SigSPairQueue</label>
+        <link refid="class_sig_s_pair_queue"/>
+      </node>
+      <node id="1">
+        <label>SigSPairs</label>
+        <link refid="class_sig_s_pairs"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mPostponeKoszuls</edgelabel>
+          <edgelabel>mUseBaseDivisors</edgelabel>
+          <edgelabel>mUseHighBaseDivisors</edgelabel>
+          <edgelabel>mUseSingularCriterionEarly</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mKnownSyzygyTri</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>Hsyz</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>GB</edgelabel>
+        </childnode>
+        <childnode refid="100" relation="usage">
+          <edgelabel>mQueue</edgelabel>
+        </childnode>
+        <childnode refid="102" relation="usage">
+          <edgelabel>mIndexSigs</edgelabel>
+        </childnode>
+        <childnode refid="103" relation="usage">
+          <edgelabel>mStats</edgelabel>
+        </childnode>
+      </node>
+      <node id="103">
+        <label>SigSPairs::Stats</label>
+        <link refid="struct_sig_s_pairs_1_1_stats"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>duplicateSignatures</edgelabel>
+          <edgelabel>earlyRelativelyPrimePairs</edgelabel>
+          <edgelabel>earlySingularCriterionPairs</edgelabel>
+          <edgelabel>hasHighBaseDivisor</edgelabel>
+          <edgelabel>hasLowBaseDivisor</edgelabel>
+          <edgelabel>highBaseDivisorHits</edgelabel>
+          <edgelabel>lowBaseDivisorHits</edgelabel>
+          <edgelabel>nonregularSPairs</edgelabel>
+          <edgelabel>queuedPairs</edgelabel>
+          <edgelabel>spairsConstructed</edgelabel>
+          <edgelabel>  ...</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>T</label>
+      </node>
+      <node id="57">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="27">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="31">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="25">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="27" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="29" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>char</label>
+      </node>
+      <node id="14">
+        <label>const ARing *</label>
+      </node>
+      <node id="30">
+        <label>const void *</label>
+      </node>
+      <node id="20">
+        <label>double</label>
+      </node>
+      <node id="46">
+        <label>overflow_type *</label>
+      </node>
+      <node id="43">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="45">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="63">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="9">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="19">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>long</label>
+      </node>
+      <node id="78">
+        <label>mathic::BitTriangle</label>
+        <link refid="classmathic_1_1_bit_triangle"/>
+        <childnode refid="79" relation="usage">
+          <edgelabel>mColumns</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="75" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="77" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="77">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="53" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>mon_part</label>
+      </node>
+      <node id="24">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="23">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="21">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="22">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="7">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="16">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>size_t</label>
+      </node>
+      <node id="54">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>spinLock</label>
+      </node>
+      <node id="52">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="88">
+        <label>std::multiset&lt; K &gt;</label>
+        <childnode refid="89" relation="usage">
+          <edgelabel>keys</edgelabel>
+        </childnode>
+      </node>
+      <node id="87">
+        <label>std::multiset&lt; size_t, RatioOrder &gt;</label>
+        <childnode refid="88" relation="template-instance">
+          <edgelabel>&lt; size_t, RatioOrder &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>std::string</label>
+        <childnode refid="42" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="84">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="93">
+        <label>std::unique_ptr&lt; MonoLookup &gt;</label>
+        <childnode refid="92" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="template-instance">
+          <edgelabel>&lt; MonoLookup &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="82">
+        <label>std::unique_ptr&lt; MonoLookup::Factory const &gt;</label>
+        <childnode refid="83" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="template-instance">
+          <edgelabel>&lt; MonoLookup::Factory const &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="100">
+        <label>std::unique_ptr&lt; SigSPairQueue &gt;</label>
+        <childnode refid="101" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="template-instance">
+          <edgelabel>&lt; SigSPairQueue &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="98">
+        <label>std::vector&lt; Element &gt;</label>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; Element &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="68">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="102">
+        <label>std::vector&lt; IndexSig &gt;</label>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; IndexSig &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="91">
+        <label>std::vector&lt; MonoLookup * &gt;</label>
+        <childnode refid="92" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; MonoLookup * &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="85">
+        <label>std::vector&lt; MonoPtr &gt;</label>
+        <childnode refid="86" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; MonoPtr &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="95">
+        <label>std::vector&lt; PolyBasis::Entry &gt;</label>
+        <childnode refid="96" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; PolyBasis::Entry &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="31" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="90">
+        <label>std::vector&lt; size_t &gt;</label>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; size_t &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="41" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>std::vector&lt; std::vector&lt; bool &gt; &gt;</label>
+        <childnode refid="44" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; std::vector&lt; bool &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="22" column="1" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="23" bodyend="138"/>
+    <listofallmembers>
+      <member refid="class_sig_s_pairs_a35ad3b5518ab920b59020721e4527717_1a35ad3b5518ab920b59020721e4527717" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>BaseDivContainer</name></member>
+      <member refid="class_sig_s_pairs_a557d1a2d2c8b74f561431f6988f98acf_1a557d1a2d2c8b74f561431f6988f98acf" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_sig_s_pairs_ab0deee042aa097c569c533d8f3189bca_1ab0deee042aa097c569c533d8f3189bca" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>ConstMonoRef</name></member>
+      <member refid="class_sig_s_pairs_a66fc4e27f4d6bfa45c2c7f5090362f47_1a66fc4e27f4d6bfa45c2c7f5090362f47" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>GB</name></member>
+      <member refid="class_sig_s_pairs_ab45d56780c335ae7c99445f06f6fabda_1ab45d56780c335ae7c99445f06f6fabda" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>getKnownSyzygyBitsMemoryUse</name></member>
+      <member refid="class_sig_s_pairs_a537be9023bd05a05b8c48566544fdff8_1a537be9023bd05a05b8c48566544fdff8" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>getMemoryUse</name></member>
+      <member refid="class_sig_s_pairs_a09dd4bd592c2da1b3329d7d58a6557e8_1a09dd4bd592c2da1b3329d7d58a6557e8" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>getStats</name></member>
+      <member refid="class_sig_s_pairs_ab599e02ca0943e6b58b0994e54561e81_1ab599e02ca0943e6b58b0994e54561e81" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>Hsyz</name></member>
+      <member refid="class_sig_s_pairs_a918c176cc1545bf6e0a9626aa3a8b86c_1a918c176cc1545bf6e0a9626aa3a8b86c" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>makePreSPairs</name></member>
+      <member refid="class_sig_s_pairs_aa088b9d198670fa54bec48b744e371d3_1aa088b9d198670fa54bec48b744e371d3" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>mIndexSigs</name></member>
+      <member refid="class_sig_s_pairs_ab57692d990b87a3b7ce9330a4d7c887a_1ab57692d990b87a3b7ce9330a4d7c887a" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>mKnownSyzygyTri</name></member>
+      <member refid="class_sig_s_pairs_a495ffab0b7e92393ecb2965b0469922b_1a495ffab0b7e92393ecb2965b0469922b" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>Mono</name></member>
+      <member refid="class_sig_s_pairs_ac99051abeafcfc22c5b787955c970d74_1ac99051abeafcfc22c5b787955c970d74" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>Monoid</name></member>
+      <member refid="class_sig_s_pairs_a7ce65056f3544507d1be54273bd39b4a_1a7ce65056f3544507d1be54273bd39b4a" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>monoid</name></member>
+      <member refid="class_sig_s_pairs_a09ab2ca54cdfd1c2c1331facf6586856_1a09ab2ca54cdfd1c2c1331facf6586856" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>MonoPtr</name></member>
+      <member refid="class_sig_s_pairs_a9f4c04dec6bbcfd642724e4fbe527afc_1a9f4c04dec6bbcfd642724e4fbe527afc" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>MonoRef</name></member>
+      <member refid="class_sig_s_pairs_abba0ca2a7912d185cf41d132a5b17aef_1abba0ca2a7912d185cf41d132a5b17aef" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>mPostponeKoszuls</name></member>
+      <member refid="class_sig_s_pairs_a0ae07d0b107b409cf32d6a097680ba55_1a0ae07d0b107b409cf32d6a097680ba55" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>mQueue</name></member>
+      <member refid="class_sig_s_pairs_a96235c8b0a22d50dcc349ae866ac07b7_1a96235c8b0a22d50dcc349ae866ac07b7" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>mStats</name></member>
+      <member refid="class_sig_s_pairs_a6dbec8ee2429c2616a00dc642514bf0a_1a6dbec8ee2429c2616a00dc642514bf0a" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>mUseBaseDivisors</name></member>
+      <member refid="class_sig_s_pairs_a2f744a875f1699a533ecd8977e46e0bf_1a2f744a875f1699a533ecd8977e46e0bf" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>mUseHighBaseDivisors</name></member>
+      <member refid="class_sig_s_pairs_aacd67628adb3a9bc1cbf9b472ccec2db_1aacd67628adb3a9bc1cbf9b472ccec2db" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>mUseSingularCriterionEarly</name></member>
+      <member refid="class_sig_s_pairs_ae7e7e56ca5dd5a3f5b1e7a669bb2d922_1ae7e7e56ca5dd5a3f5b1e7a669bb2d922" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>name</name></member>
+      <member refid="class_sig_s_pairs_ab46aba55e9d8504e02fc8a4ff3f516cd_1ab46aba55e9d8504e02fc8a4ff3f516cd" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>newPairs</name></member>
+      <member refid="class_sig_s_pairs_a5e7cc743c6c481a6a0f9b821584c8056_1a5e7cc743c6c481a6a0f9b821584c8056" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>PairContainer</name></member>
+      <member refid="class_sig_s_pairs_a60363354ec0bd63ea68fe42aa6cb6335_1a60363354ec0bd63ea68fe42aa6cb6335" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>pairCount</name></member>
+      <member refid="class_sig_s_pairs_ab6393272bab6f6d57a1607dd3859f528_1ab6393272bab6f6d57a1607dd3859f528" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>popSignature</name></member>
+      <member refid="class_sig_s_pairs_adcdd479808ce3238c71518759df80395_1adcdd479808ce3238c71518759df80395" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>PrePairContainer</name></member>
+      <member refid="class_sig_s_pairs_acc96d3e23afc661bbbc1862596bd48cb_1acc96d3e23afc661bbbc1862596bd48cb" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>R</name></member>
+      <member refid="class_sig_s_pairs_afa11193db03ff2be0f72c4dad68beed3_1afa11193db03ff2be0f72c4dad68beed3" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>ring</name></member>
+      <member refid="class_sig_s_pairs_a7cfe19ab64b131ee50c151e33a3bff44_1a7cfe19ab64b131ee50c151e33a3bff44" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>setKnownSyzygies</name></member>
+      <member refid="class_sig_s_pairs_a849055062c60d130da724b625f3f4f67_1a849055062c60d130da724b625f3f4f67" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>setKnownSyzygy</name></member>
+      <member refid="class_sig_s_pairs_ac6780b187e89a9c747e7ca867bf4ffeb_1ac6780b187e89a9c747e7ca867bf4ffeb" prot="private" virt="non-virtual"><scope>SigSPairs</scope><name>setupBaseDivisors</name></member>
+      <member refid="class_sig_s_pairs_a309ab7df06b22dcc1059e6313566b728_1a309ab7df06b22dcc1059e6313566b728" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>SigSPairs</name></member>
+      <member refid="class_sig_s_pairs_a3cac62d843aec68b0718bd661c76afee_1a3cac62d843aec68b0718bd661c76afee" prot="public" virt="non-virtual"><scope>SigSPairs</scope><name>~SigSPairs</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

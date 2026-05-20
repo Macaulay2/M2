@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structpre__spair" kind="struct" language="C++" prot="public">
+    <compoundname>pre_spair</compoundname>
+    <includes refid="f4-types_8hpp" local="no">f4-types.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structpre__spair_a5f2e3cb69c3e6ade0f0af5f351e3936d_1a5f2e3cb69c3e6ade0f0af5f351e3936d" prot="public" static="no" mutable="no">
+        <type><ref refid="f4-types_8hpp_ae9790f5914af2c375b70fb21b924cf42_1ae9790f5914af2c375b70fb21b924cf42" kindref="member">SPairType</ref></type>
+        <definition>SPairType pre_spair::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <qualifiedname>pre_spair::type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="112" column="13" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpre__spair_aea15453a36824e9f25c4f360ef85e477_1aea15453a36824e9f25c4f360ef85e477" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int pre_spair::deg1</definition>
+        <argsstring></argsstring>
+        <name>deg1</name>
+        <qualifiedname>pre_spair::deg1</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="113" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpre__spair_ad15f5e47e8e1c01841ec65061c7f4e05_1ad15f5e47e8e1c01841ec65061c7f4e05" prot="public" static="no" mutable="no">
+        <type><ref refid="varpower-monomial_8hpp_a157ac534e5ec3ea071fa7e5928ad2db5_1a157ac534e5ec3ea071fa7e5928ad2db5" kindref="member">varpower_monomial</ref></type>
+        <definition>varpower_monomial pre_spair::quot</definition>
+        <argsstring></argsstring>
+        <name>quot</name>
+        <qualifiedname>pre_spair::quot</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="114" column="21" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="114" bodyend="-1"/>
+        <referencedby refid="class_pre_s_pair_sorter_abc7cb13171c7023ed24b6b5fe7f2e40e_1abc7cb13171c7023ed24b6b5fe7f2e40e" compoundref="f4-types_8hpp" startline="298" endline="302">PreSPairSorter::compare</referencedby>
+        <referencedby refid="class_f4_s_pair_set_a013c0429f3ad8bc8a44d86a0e29a8e76_1a013c0429f3ad8bc8a44d86a0e29a8e76" compoundref="f4-spairs_8cpp" startline="246" endline="321">F4SPairSet::construct_pairs</referencedby>
+        <referencedby refid="class_pre_s_pair_sorter_aaea0e1e6879de5af280c6e9126ad7e44_1aaea0e1e6879de5af280c6e9126ad7e44" compoundref="f4-types_8hpp" startline="304" endline="308">PreSPairSorter::operator()</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structpre__spair_aea3d361688eedf6c631f66600970f64b_1aea3d361688eedf6c631f66600970f64b" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int pre_spair::j</definition>
+        <argsstring></argsstring>
+        <name>j</name>
+        <qualifiedname>pre_spair::j</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="115" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structpre__spair_ac931c3c9b899ca3d2be1b13822bdfd14_1ac931c3c9b899ca3d2be1b13822bdfd14" prot="public" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool pre_spair::are_disjoint</definition>
+        <argsstring></argsstring>
+        <name>are_disjoint</name>
+        <qualifiedname>pre_spair::are_disjoint</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="116" column="8" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="116" bodyend="-1"/>
+        <referencedby refid="class_f4_s_pair_set_a013c0429f3ad8bc8a44d86a0e29a8e76_1a013c0429f3ad8bc8a44d86a0e29a8e76" compoundref="f4-spairs_8cpp" startline="246" endline="321">F4SPairSet::construct_pairs</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>SPairType</label>
+      </node>
+      <node id="5">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="1">
+        <label>pre_spair</label>
+        <link refid="structpre__spair"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>deg1</edgelabel>
+          <edgelabel>j</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>quot</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>are_disjoint</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>varpower_word *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/f4-types.hpp" line="109" column="1" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="110" bodyend="117"/>
+    <listofallmembers>
+      <member refid="structpre__spair_ac931c3c9b899ca3d2be1b13822bdfd14_1ac931c3c9b899ca3d2be1b13822bdfd14" prot="public" virt="non-virtual"><scope>pre_spair</scope><name>are_disjoint</name></member>
+      <member refid="structpre__spair_aea15453a36824e9f25c4f360ef85e477_1aea15453a36824e9f25c4f360ef85e477" prot="public" virt="non-virtual"><scope>pre_spair</scope><name>deg1</name></member>
+      <member refid="structpre__spair_aea3d361688eedf6c631f66600970f64b_1aea3d361688eedf6c631f66600970f64b" prot="public" virt="non-virtual"><scope>pre_spair</scope><name>j</name></member>
+      <member refid="structpre__spair_ad15f5e47e8e1c01841ec65061c7f4e05_1ad15f5e47e8e1c01841ec65061c7f4e05" prot="public" virt="non-virtual"><scope>pre_spair</scope><name>quot</name></member>
+      <member refid="structpre__spair_a5f2e3cb69c3e6ade0f0af5f351e3936d_1a5f2e3cb69c3e6ade0f0af5f351e3936d" prot="public" virt="non-virtual"><scope>pre_spair</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

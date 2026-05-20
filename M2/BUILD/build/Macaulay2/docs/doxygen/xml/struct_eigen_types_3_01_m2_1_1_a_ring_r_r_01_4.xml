@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>EigenTypes&lt; M2::ARingRR &gt;</compoundname>
+    <includes refid="mutablemat-defs_8hpp" local="no">mutablemat-defs.hpp</includes>
+    <templateparamlist>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_a987d269a008e819888def4847d6ca361_1a987d269a008e819888def4847d6ca361" prot="public" static="no">
+        <type><ref refid="class_m2_1_1_a_ring_c_c" kindref="compound">M2::ARingCC</ref></type>
+        <definition>typedef M2::ARingCC EigenTypes&lt; M2::ARingRR &gt;::EigenvalueType</definition>
+        <argsstring></argsstring>
+        <name>EigenvalueType</name>
+        <qualifiedname>EigenTypes&lt; M2::ARingRR &gt;::EigenvalueType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablemat-defs.hpp" line="92" column="23" bodyfile="Macaulay2/e/mutablemat-defs.hpp" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_a0e8248ff509276526b1748aed1da07be_1a0e8248ff509276526b1748aed1da07be" prot="public" static="no">
+        <type><ref refid="class_m2_1_1_a_ring_c_c" kindref="compound">M2::ARingCC</ref></type>
+        <definition>typedef M2::ARingCC EigenTypes&lt; M2::ARingRR &gt;::EigenvectorType</definition>
+        <argsstring></argsstring>
+        <name>EigenvectorType</name>
+        <qualifiedname>EigenTypes&lt; M2::ARingRR &gt;::EigenvectorType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablemat-defs.hpp" line="93" column="23" bodyfile="Macaulay2/e/mutablemat-defs.hpp" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_a55b29c56abb56570f0951b9699a22bae_1a55b29c56abb56570f0951b9699a22bae" prot="public" static="no">
+        <type><ref refid="class_m2_1_1_a_ring_r_r" kindref="compound">M2::ARingRR</ref></type>
+        <definition>typedef M2::ARingRR EigenTypes&lt; M2::ARingRR &gt;::HermitianEigenvalueType</definition>
+        <argsstring></argsstring>
+        <name>HermitianEigenvalueType</name>
+        <qualifiedname>EigenTypes&lt; M2::ARingRR &gt;::HermitianEigenvalueType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablemat-defs.hpp" line="94" column="23" bodyfile="Macaulay2/e/mutablemat-defs.hpp" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_aabd19a19bc5933ef59783d6d4af047e9_1aabd19a19bc5933ef59783d6d4af047e9" prot="public" static="no">
+        <type><ref refid="class_m2_1_1_a_ring_r_r" kindref="compound">M2::ARingRR</ref></type>
+        <definition>typedef M2::ARingRR EigenTypes&lt; M2::ARingRR &gt;::HermitianEigenvectorType</definition>
+        <argsstring></argsstring>
+        <name>HermitianEigenvectorType</name>
+        <qualifiedname>EigenTypes&lt; M2::ARingRR &gt;::HermitianEigenvectorType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablemat-defs.hpp" line="95" column="23" bodyfile="Macaulay2/e/mutablemat-defs.hpp" bodystart="95" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="struct_eigen_types" kindref="compound">EigenTypes</ref></computeroutput> specialisation for double-precision real matrices. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>A general (non-Hermitian) <computeroutput>ARingRR</computeroutput> matrix has complex eigenvalues and eigenvectors <mdash/> both are promoted to <computeroutput><ref refid="class_m2_1_1_a_ring_c_c" kindref="compound">M2::ARingCC</ref></computeroutput>. The Hermitian path stays real, so <computeroutput><ref refid="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_a55b29c56abb56570f0951b9699a22bae_1a55b29c56abb56570f0951b9699a22bae" kindref="member">HermitianEigenvalueType</ref></computeroutput> and <computeroutput><ref refid="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_aabd19a19bc5933ef59783d6d4af047e9_1aabd19a19bc5933ef59783d6d4af047e9" kindref="member">HermitianEigenvectorType</ref></computeroutput> remain <computeroutput><ref refid="class_m2_1_1_a_ring_r_r" kindref="compound">M2::ARingRR</ref></computeroutput>. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>EigenTypes&lt; RT &gt;</label>
+        <link refid="struct_eigen_types"/>
+      </node>
+      <node id="1">
+        <label>EigenTypes&lt; M2::ARingRR &gt;</label>
+        <link refid="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; M2::ARingRR &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>EigenTypes&lt; RT &gt;</label>
+        <link refid="struct_eigen_types"/>
+      </node>
+      <node id="1">
+        <label>EigenTypes&lt; M2::ARingRR &gt;</label>
+        <link refid="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; M2::ARingRR &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/mutablemat-defs.hpp" line="90" column="1" bodyfile="Macaulay2/e/mutablemat-defs.hpp" bodystart="91" bodyend="96"/>
+    <listofallmembers>
+      <member refid="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_a987d269a008e819888def4847d6ca361_1a987d269a008e819888def4847d6ca361" prot="public" virt="non-virtual"><scope>EigenTypes&lt; M2::ARingRR &gt;</scope><name>EigenvalueType</name></member>
+      <member refid="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_a0e8248ff509276526b1748aed1da07be_1a0e8248ff509276526b1748aed1da07be" prot="public" virt="non-virtual"><scope>EigenTypes&lt; M2::ARingRR &gt;</scope><name>EigenvectorType</name></member>
+      <member refid="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_a55b29c56abb56570f0951b9699a22bae_1a55b29c56abb56570f0951b9699a22bae" prot="public" virt="non-virtual"><scope>EigenTypes&lt; M2::ARingRR &gt;</scope><name>HermitianEigenvalueType</name></member>
+      <member refid="struct_eigen_types_3_01_m2_1_1_a_ring_r_r_01_4_aabd19a19bc5933ef59783d6d4af047e9_1aabd19a19bc5933ef59783d6d4af047e9" prot="public" virt="non-virtual"><scope>EigenTypes&lt; M2::ARingRR &gt;</scope><name>HermitianEigenvectorType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

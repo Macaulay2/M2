@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_simulation_1_1_sim_data" kind="struct" language="C++" prot="private">
+    <compoundname>Simulation::SimData</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_simulation_1_1_sim_data_a2d739ddd4ca7281234429d70f7aef530_1a2d739ddd4ca7281234429d70f7aef530" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Simulation::SimData::_name</definition>
+        <argsstring></argsstring>
+        <name>_name</name>
+        <qualifiedname>Simulation::SimData::_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="43" column="17" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="43" bodyend="-1"/>
+        <referencedby refid="struct_simulation_1_1_sim_data_a458c61e55585f180108578a2d659905a_1a458c61e55585f180108578a2d659905a" compoundref="_simulation_8cpp" startline="53" endline="58">print</referencedby>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">Simulation::run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_simulation_1_1_sim_data_ae62adb27565e1e9e726a9a307a05f03d_1ae62adb27565e1e9e726a9a307a05f03d" prot="public" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long Simulation::SimData::_mseconds</definition>
+        <argsstring></argsstring>
+        <name>_mseconds</name>
+        <qualifiedname>Simulation::SimData::_mseconds</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="44" column="19" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="44" bodyend="-1"/>
+        <referencedby refid="struct_simulation_1_1_sim_data_a088bb61bbb3da386b95033b5f6d69994_1a088bb61bbb3da386b95033b5f6d69994" compoundref="_simulation_8cpp" startline="60" endline="62">operator&lt;</referencedby>
+        <referencedby refid="struct_simulation_1_1_sim_data_a458c61e55585f180108578a2d659905a_1a458c61e55585f180108578a2d659905a" compoundref="_simulation_8cpp" startline="53" endline="58">print</referencedby>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">Simulation::run</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_simulation_1_1_sim_data_aa4defe4553681fdae0ea255fdee46bae_1aa4defe4553681fdae0ea255fdee46bae" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long Simulation::SimData::_expQueryCount</definition>
+        <argsstring></argsstring>
+        <name>_expQueryCount</name>
+        <qualifiedname>Simulation::SimData::_expQueryCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="45" column="24" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="45" bodyend="-1"/>
+        <referencedby refid="struct_simulation_1_1_sim_data_a458c61e55585f180108578a2d659905a_1a458c61e55585f180108578a2d659905a" compoundref="_simulation_8cpp" startline="53" endline="58">print</referencedby>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">Simulation::run</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_simulation_1_1_sim_data_a088bb61bbb3da386b95033b5f6d69994_1a088bb61bbb3da386b95033b5f6d69994" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool Simulation::SimData::operator&lt;</definition>
+        <argsstring>(const SimData &amp;sd) const</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>Simulation::SimData::operator&lt;</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_simulation_1_1_sim_data" kindref="compound">SimData</ref> &amp;</type>
+          <declname>sd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="40" column="5" bodyfile="submodules/mathic/src/divsim/Simulation.cpp" bodystart="60" bodyend="62"/>
+        <references refid="struct_simulation_1_1_sim_data_ae62adb27565e1e9e726a9a307a05f03d_1ae62adb27565e1e9e726a9a307a05f03d" compoundref="_simulation_8h" startline="44">_mseconds</references>
+      </memberdef>
+      <memberdef kind="function" id="struct_simulation_1_1_sim_data_a458c61e55585f180108578a2d659905a_1a458c61e55585f180108578a2d659905a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Simulation::SimData::print</definition>
+        <argsstring>(std::ostream &amp;out)</argsstring>
+        <name>print</name>
+        <qualifiedname>Simulation::SimData::print</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Simulation.h" line="41" column="10" bodyfile="submodules/mathic/src/divsim/Simulation.cpp" bodystart="53" bodyend="58"/>
+        <references refid="struct_simulation_1_1_sim_data_aa4defe4553681fdae0ea255fdee46bae_1aa4defe4553681fdae0ea255fdee46bae" compoundref="_simulation_8h" startline="45">_expQueryCount</references>
+        <references refid="struct_simulation_1_1_sim_data_ae62adb27565e1e9e726a9a307a05f03d_1ae62adb27565e1e9e726a9a307a05f03d" compoundref="_simulation_8h" startline="44">_mseconds</references>
+        <references refid="struct_simulation_1_1_sim_data_a2d739ddd4ca7281234429d70f7aef530_1a2d739ddd4ca7281234429d70f7aef530" compoundref="_simulation_8h" startline="43">_name</references>
+        <referencedby refid="class_simulation_a91b14b7642f96df15ead46d888dbead6_1a91b14b7642f96df15ead46d888dbead6" compoundref="_simulation_8h" startline="238" endline="308">Simulation::run</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Simulation::SimData</label>
+        <link refid="struct_simulation_1_1_sim_data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_expQueryCount</edgelabel>
+          <edgelabel>_mseconds</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>long</label>
+      </node>
+      <node id="3">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="2">
+        <label>std::string</label>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/divsim/Simulation.h" line="39" column="3" bodyfile="submodules/mathic/src/divsim/Simulation.h" bodystart="39" bodyend="46"/>
+    <listofallmembers>
+      <member refid="struct_simulation_1_1_sim_data_aa4defe4553681fdae0ea255fdee46bae_1aa4defe4553681fdae0ea255fdee46bae" prot="public" virt="non-virtual"><scope>Simulation::SimData</scope><name>_expQueryCount</name></member>
+      <member refid="struct_simulation_1_1_sim_data_ae62adb27565e1e9e726a9a307a05f03d_1ae62adb27565e1e9e726a9a307a05f03d" prot="public" virt="non-virtual"><scope>Simulation::SimData</scope><name>_mseconds</name></member>
+      <member refid="struct_simulation_1_1_sim_data_a2d739ddd4ca7281234429d70f7aef530_1a2d739ddd4ca7281234429d70f7aef530" prot="public" virt="non-virtual"><scope>Simulation::SimData</scope><name>_name</name></member>
+      <member refid="struct_simulation_1_1_sim_data_a088bb61bbb3da386b95033b5f6d69994_1a088bb61bbb3da386b95033b5f6d69994" prot="public" virt="non-virtual"><scope>Simulation::SimData</scope><name>operator&lt;</name></member>
+      <member refid="struct_simulation_1_1_sim_data_a458c61e55585f180108578a2d659905a_1a458c61e55585f180108578a2d659905a" prot="public" virt="non-virtual"><scope>Simulation::SimData</scope><name>print</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

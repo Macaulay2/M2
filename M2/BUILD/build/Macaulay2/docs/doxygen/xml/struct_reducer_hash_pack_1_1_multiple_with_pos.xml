@@ -1,0 +1,373 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_reducer_hash_pack_1_1_multiple_with_pos" kind="struct" language="C++" prot="private">
+    <compoundname>ReducerHashPack::MultipleWithPos</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_reducer_hash_pack_1_1_multiple_with_pos_ae68699a245285d6e5bfa8520b7eac24a_1ae68699a245285d6e5bfa8520b7eac24a" prot="public" static="no" mutable="no">
+        <type><ref refid="class_poly_1_1_const_term_iterator" kindref="compound">Poly::ConstTermIterator</ref></type>
+        <definition>Poly::ConstTermIterator ReducerHashPack&lt; Queue &gt;::MultipleWithPos::pos</definition>
+        <argsstring></argsstring>
+        <name>pos</name>
+        <qualifiedname>ReducerHashPack::MultipleWithPos::pos</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" line="57" column="29" bodyfile="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="class_reducer_hash_pack_ae98c32a04b08ceed015e69bfd27194ab_1ae98c32a04b08ceed015e69bfd27194ab" compoundref="_reducer_hash_pack_8cpp" startline="187" endline="199">ReducerHashPack&lt; Queue &gt;::insertEntry</referencedby>
+        <referencedby refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a3b549d346a7c6af9ed00ef5e41505614_1a3b549d346a7c6af9ed00ef5e41505614" compoundref="_reducer_hash_pack_8cpp" startline="115" endline="126">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::MultipleWithPos</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_reducer_hash_pack_1_1_multiple_with_pos_a913e6a15ff8b130659fb15241f7d345c_1a913e6a15ff8b130659fb15241f7d345c" prot="public" static="no" mutable="no">
+        <type>const <ref refid="class_poly_1_1_const_term_iterator" kindref="compound">Poly::ConstTermIterator</ref></type>
+        <definition>const Poly::ConstTermIterator ReducerHashPack&lt; Queue &gt;::MultipleWithPos::end</definition>
+        <argsstring></argsstring>
+        <name>end</name>
+        <qualifiedname>ReducerHashPack::MultipleWithPos::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" line="58" column="35" bodyfile="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="class_reducer_hash_pack_ae98c32a04b08ceed015e69bfd27194ab_1ae98c32a04b08ceed015e69bfd27194ab" compoundref="_reducer_hash_pack_8cpp" startline="187" endline="199">ReducerHashPack&lt; Queue &gt;::insertEntry</referencedby>
+        <referencedby refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a3b549d346a7c6af9ed00ef5e41505614_1a3b549d346a7c6af9ed00ef5e41505614" compoundref="_reducer_hash_pack_8cpp" startline="115" endline="126">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::MultipleWithPos</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_reducer_hash_pack_1_1_multiple_with_pos_a84cb2c8176ca0c6982bebbbbcc9dfefc_1a84cb2c8176ca0c6982bebbbbcc9dfefc" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_new_term" kindref="compound">NewTerm</ref></type>
+        <definition>NewTerm ReducerHashPack&lt; Queue &gt;::MultipleWithPos::multiple</definition>
+        <argsstring></argsstring>
+        <name>multiple</name>
+        <qualifiedname>ReducerHashPack::MultipleWithPos::multiple</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" line="59" column="13" bodyfile="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a033990e8397df7a3f875907b8a679202_1a033990e8397df7a3f875907b8a679202" compoundref="_reducer_hash_pack_8cpp" startline="129" endline="137">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::destroy</referencedby>
+        <referencedby refid="class_reducer_hash_pack_ae98c32a04b08ceed015e69bfd27194ab_1ae98c32a04b08ceed015e69bfd27194ab" compoundref="_reducer_hash_pack_8cpp" startline="187" endline="199">ReducerHashPack&lt; Queue &gt;::insertEntry</referencedby>
+        <referencedby refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a3b549d346a7c6af9ed00ef5e41505614_1a3b549d346a7c6af9ed00ef5e41505614" compoundref="_reducer_hash_pack_8cpp" startline="115" endline="126">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::MultipleWithPos</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_reducer_hash_pack_1_1_multiple_with_pos_a944056cca798734056640d4f65ceb87f_1a944056cca798734056640d4f65ceb87f" prot="public" static="no" mutable="no">
+        <type><ref refid="class_poly_hash_table_1_1_node" kindref="compound">PolyHashTable::Node</ref> *</type>
+        <definition>PolyHashTable::Node* ReducerHashPack&lt; Queue &gt;::MultipleWithPos::node</definition>
+        <argsstring></argsstring>
+        <name>node</name>
+        <qualifiedname>ReducerHashPack::MultipleWithPos::node</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" line="60" column="25" bodyfile="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="class_reducer_hash_pack_1_1_configuration_afe4bfb088db04c76c81acde8eb7b3d86_1afe4bfb088db04c76c81acde8eb7b3d86" compoundref="_reducer_hash_pack_8cpp" startline="69" endline="71">ReducerHashPack&lt; Queue &gt;::Configuration::compare</referencedby>
+        <referencedby refid="class_reducer_hash_pack_ae98c32a04b08ceed015e69bfd27194ab_1ae98c32a04b08ceed015e69bfd27194ab" compoundref="_reducer_hash_pack_8cpp" startline="187" endline="199">ReducerHashPack&lt; Queue &gt;::insertEntry</referencedby>
+        <referencedby refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a3b549d346a7c6af9ed00ef5e41505614_1a3b549d346a7c6af9ed00ef5e41505614" compoundref="_reducer_hash_pack_8cpp" startline="115" endline="126">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::MultipleWithPos</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_reducer_hash_pack_1_1_multiple_with_pos_a3b549d346a7c6af9ed00ef5e41505614_1a3b549d346a7c6af9ed00ef5e41505614" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ReducerHashPack&lt; Q &gt;::MultipleWithPos::MultipleWithPos</definition>
+        <argsstring>(const Poly &amp;poly, NewConstTerm multiple)</argsstring>
+        <name>MultipleWithPos</name>
+        <qualifiedname>ReducerHashPack::MultipleWithPos::MultipleWithPos</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_new_const_term" kindref="compound">NewConstTerm</ref></type>
+          <declname>multiple</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" line="55" column="5" bodyfile="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" bodystart="115" bodyend="126"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="struct_new_const_term_a173ef7c67063cd00e068404a823b8735_1a173ef7c67063cd00e068404a823b8735" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="201">NewConstTerm::coef</references>
+        <references refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a913e6a15ff8b130659fb15241f7d345c_1a913e6a15ff8b130659fb15241f7d345c" compoundref="_reducer_hash_pack_8cpp" startline="58">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::end</references>
+        <references refid="struct_new_const_term_a850c71117d86955876d9d151e9f26840_1a850c71117d86955876d9d151e9f26840" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="202">NewConstTerm::mono</references>
+        <references refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a84cb2c8176ca0c6982bebbbbcc9dfefc_1a84cb2c8176ca0c6982bebbbbcc9dfefc" compoundref="_reducer_hash_pack_8cpp" startline="59">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::multiple</references>
+        <references refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a944056cca798734056640d4f65ceb87f_1a944056cca798734056640d4f65ceb87f" compoundref="_reducer_hash_pack_8cpp" startline="60">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::node</references>
+        <references refid="struct_reducer_hash_pack_1_1_multiple_with_pos_ae68699a245285d6e5bfa8520b7eac24a_1ae68699a245285d6e5bfa8520b7eac24a" compoundref="_reducer_hash_pack_8cpp" startline="57">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::pos</references>
+        <references refid="class_poly_ad24ffab1144f77984283bbd74ecbbf12_1ad24ffab1144f77984283bbd74ecbbf12" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="43" endline="43">Poly::ring</references>
+        <referencedby refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a033990e8397df7a3f875907b8a679202_1a033990e8397df7a3f875907b8a679202" compoundref="_reducer_hash_pack_8cpp" startline="129" endline="137">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::destroy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="struct_reducer_hash_pack_1_1_multiple_with_pos_a033990e8397df7a3f875907b8a679202_1a033990e8397df7a3f875907b8a679202" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ReducerHashPack&lt; Q &gt;::MultipleWithPos::destroy</definition>
+        <argsstring>(const PolyRing &amp;ring)</argsstring>
+        <name>destroy</name>
+        <qualifiedname>ReducerHashPack::MultipleWithPos::destroy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" line="62" column="10" bodyfile="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" bodystart="129" bodyend="137"/>
+        <references refid="class_mono_monoid_add2f6b6a613eb2c8be47e6df7a8b7841_1add2f6b6a613eb2c8be47e6df7a8b7841" compoundref="_mono_monoid_8hpp" startline="1210" endline="1210">MonoMonoid&lt; E, HC, SH, SO &gt;::freeRaw</references>
+        <references refid="class_poly_ring_af2410633daff4cfc0687d62433fcaf3e_1af2410633daff4cfc0687d62433fcaf3e" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="505" endline="505">PolyRing::monoid</references>
+        <references refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a84cb2c8176ca0c6982bebbbbcc9dfefc_1a84cb2c8176ca0c6982bebbbbcc9dfefc" compoundref="_reducer_hash_pack_8cpp" startline="59">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::multiple</references>
+        <references refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a3b549d346a7c6af9ed00ef5e41505614_1a3b549d346a7c6af9ed00ef5e41505614" compoundref="_reducer_hash_pack_8cpp" startline="115" endline="126">ReducerHashPack&lt; Queue &gt;::MultipleWithPos::MultipleWithPos</references>
+        <referencedby refid="class_reducer_hash_pack_ae98c32a04b08ceed015e69bfd27194ab_1ae98c32a04b08ceed015e69bfd27194ab" compoundref="_reducer_hash_pack_8cpp" startline="187" endline="199">ReducerHashPack&lt; Queue &gt;::insertEntry</referencedby>
+        <referencedby refid="class_reducer_hash_pack_a0a8f88f194ffb81d713edcad4d7306e6_1a0a8f88f194ffb81d713edcad4d7306e6" compoundref="_reducer_hash_pack_8cpp" startline="202" endline="219">ReducerHashPack&lt; Queue &gt;::resetReducer</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>Iterator1</label>
+      </node>
+      <node id="6">
+        <label>Iterator2</label>
+      </node>
+      <node id="16">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="17" relation="private-inheritance">
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="19" relation="public-inheritance">
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="10" relation="private-inheritance">
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>NewTerm</label>
+        <link refid="struct_new_term"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>coef</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mono</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="19">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="20" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Poly::ConstTermIterator</label>
+        <link refid="class_poly_1_1_const_term_iterator"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mIt</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>PolyHashTable::Node</label>
+        <link refid="class_poly_hash_table_1_1_node"/>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mNext</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mMono</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ReducerHashPack&lt; Queue &gt;::MultipleWithPos</label>
+        <link refid="struct_reducer_hash_pack_1_1_multiple_with_pos"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>end</edgelabel>
+          <edgelabel>pos</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>multiple</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>node</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>T</label>
+      </node>
+      <node id="4">
+        <label>Zip&lt; Iterator1, Iterator2 &gt;</label>
+        <link refid="class_zip"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mIt1</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mIt2</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Zip&lt; ConstCoefIterator, ConstMonoIterator &gt;</label>
+        <link refid="class_zip"/>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; ConstCoefIterator, ConstMonoIterator &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="25">
+        <label>char</label>
+      </node>
+      <node id="27">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="8">
+        <label>long</label>
+      </node>
+      <node id="21">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="22" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="24" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>size_t</label>
+      </node>
+      <node id="14">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="15" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" line="54" column="3" bodyfile="submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp" bodystart="54" bodyend="63"/>
+    <listofallmembers>
+      <member refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a033990e8397df7a3f875907b8a679202_1a033990e8397df7a3f875907b8a679202" prot="public" virt="non-virtual"><scope>ReducerHashPack::MultipleWithPos</scope><name>destroy</name></member>
+      <member refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a913e6a15ff8b130659fb15241f7d345c_1a913e6a15ff8b130659fb15241f7d345c" prot="public" virt="non-virtual"><scope>ReducerHashPack::MultipleWithPos</scope><name>end</name></member>
+      <member refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a84cb2c8176ca0c6982bebbbbcc9dfefc_1a84cb2c8176ca0c6982bebbbbcc9dfefc" prot="public" virt="non-virtual"><scope>ReducerHashPack::MultipleWithPos</scope><name>multiple</name></member>
+      <member refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a3b549d346a7c6af9ed00ef5e41505614_1a3b549d346a7c6af9ed00ef5e41505614" prot="public" virt="non-virtual"><scope>ReducerHashPack::MultipleWithPos</scope><name>MultipleWithPos</name></member>
+      <member refid="struct_reducer_hash_pack_1_1_multiple_with_pos_a944056cca798734056640d4f65ceb87f_1a944056cca798734056640d4f65ceb87f" prot="public" virt="non-virtual"><scope>ReducerHashPack::MultipleWithPos</scope><name>node</name></member>
+      <member refid="struct_reducer_hash_pack_1_1_multiple_with_pos_ae68699a245285d6e5bfa8520b7eac24a_1ae68699a245285d6e5bfa8520b7eac24a" prot="public" virt="non-virtual"><scope>ReducerHashPack::MultipleWithPos</scope><name>pos</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

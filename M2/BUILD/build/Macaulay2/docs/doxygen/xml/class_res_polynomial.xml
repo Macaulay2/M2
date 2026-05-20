@@ -1,0 +1,333 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_res_polynomial" kind="class" language="C++" prot="public">
+    <compoundname>ResPolynomial</compoundname>
+    <includes refid="res-poly-ring_8hpp" local="no">res-poly-ring.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_res_polynomial_abb07a0f0226373ac7a3bc7fd1ba34b47_1abb07a0f0226373ac7a3bc7fd1ba34b47" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class ResPolyRing</definition>
+        <argsstring></argsstring>
+        <name>ResPolyRing</name>
+        <qualifiedname>ResPolynomial::ResPolyRing</qualifiedname>
+        <param>
+          <type><ref refid="class_res_poly_ring" kindref="compound">ResPolyRing</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="73" column="16" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="73" bodyend="-1"/>
+        <references refid="class_res_polynomial_abb07a0f0226373ac7a3bc7fd1ba34b47_1abb07a0f0226373ac7a3bc7fd1ba34b47" compoundref="res-poly-ring_8hpp" startline="73">ResPolyRing</references>
+        <referencedby refid="class_res_polynomial_abb07a0f0226373ac7a3bc7fd1ba34b47_1abb07a0f0226373ac7a3bc7fd1ba34b47" compoundref="res-poly-ring_8hpp" startline="73">ResPolyRing</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_res_polynomial_a72f0f36c07e75f98d758a4c1999273fd_1a72f0f36c07e75f98d758a4c1999273fd" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class ResPolynomialConstructor</definition>
+        <argsstring></argsstring>
+        <name>ResPolynomialConstructor</name>
+        <qualifiedname>ResPolynomial::ResPolynomialConstructor</qualifiedname>
+        <param>
+          <type><ref refid="class_res_polynomial_constructor" kindref="compound">ResPolynomialConstructor</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="74" column="16" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="74" bodyend="-1"/>
+        <references refid="class_res_polynomial_a72f0f36c07e75f98d758a4c1999273fd_1a72f0f36c07e75f98d758a4c1999273fd" compoundref="res-poly-ring_8hpp" startline="74">ResPolynomialConstructor</references>
+        <referencedby refid="class_res_polynomial_a72f0f36c07e75f98d758a4c1999273fd_1a72f0f36c07e75f98d758a4c1999273fd" compoundref="res-poly-ring_8hpp" startline="74">ResPolynomialConstructor</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_res_polynomial_a4e4a3880cd44ac889bca5726cfb08af1_1a4e4a3880cd44ac889bca5726cfb08af1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class ResPolynomialIterator</definition>
+        <argsstring></argsstring>
+        <name>ResPolynomialIterator</name>
+        <qualifiedname>ResPolynomial::ResPolynomialIterator</qualifiedname>
+        <param>
+          <type><ref refid="class_res_polynomial_iterator" kindref="compound">ResPolynomialIterator</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="75" column="16" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="75" bodyend="-1"/>
+        <references refid="class_res_polynomial_a4e4a3880cd44ac889bca5726cfb08af1_1a4e4a3880cd44ac889bca5726cfb08af1" compoundref="res-poly-ring_8hpp" startline="75">ResPolynomialIterator</references>
+        <referencedby refid="class_res_polynomial_a4e4a3880cd44ac889bca5726cfb08af1_1a4e4a3880cd44ac889bca5726cfb08af1" compoundref="res-poly-ring_8hpp" startline="75">ResPolynomialIterator</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_res_polynomial_ad7433436ddb96e2520d6d8720563b103_1ad7433436ddb96e2520d6d8720563b103" prot="public" static="yes" mutable="no">
+        <type>long</type>
+        <definition>long ResPolynomial::npoly_destructor</definition>
+        <argsstring></argsstring>
+        <name>npoly_destructor</name>
+        <qualifiedname>ResPolynomial::npoly_destructor</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="78" column="15" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="78" bodyend="-1"/>
+        <referencedby refid="class_schreyer_frame_a2e9d6a02bbdf20e16703110b876f1c61_1a2e9d6a02bbdf20e16703110b876f1c61" compoundref="res-schreyer-frame_8cpp" startline="141" endline="260">SchreyerFrame::minimalBettiNumbers</referencedby>
+        <referencedby refid="class_res_polynomial_a0174c8e8461e817ba578845eb70d21c4_1a0174c8e8461e817ba578845eb70d21c4" compoundref="res-poly-ring_8hpp" startline="86" endline="90">~ResPolynomial</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_res_polynomial_af51c4468dc7f112e0ca29ca5e2bd60a4_1af51c4468dc7f112e0ca29ca5e2bd60a4" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ResPolynomial::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <qualifiedname>ResPolynomial::len</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="79" column="7" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="79" bodyend="-1"/>
+        <referencedby refid="class_res_poly_ring_a89cfefa9ef82222276a3825a99ab3e76_1a89cfefa9ef82222276a3825a99ab3e76" compoundref="res-poly-ring_8cpp" startline="11" endline="22">ResPolyRing::memUsage</referencedby>
+        <referencedby refid="class_res_polynomial_a423c98265a51550d94544510a03b6edc_1a423c98265a51550d94544510a03b6edc" compoundref="res-poly-ring_8hpp" startline="85" endline="85">ResPolynomial</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a946be21d2157e4223832cd16d6597f50_1a946be21d2157e4223832cd16d6597f50" compoundref="res-f4-m2-interface_8cpp" startline="242" endline="318">ResF4toM2Interface::to_M2_MutableMatrix</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a415999e709aee01dbad7f071b9f0a00f_1a415999e709aee01dbad7f071b9f0a00f" compoundref="res-f4-m2-interface_8cpp" startline="94" endline="149">ResF4toM2Interface::to_M2_vec</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_polynomial_a7bb2e476197d7947dd8a002d3598ba2b_1a7bb2e476197d7947dd8a002d3598ba2b" prot="public" static="no" mutable="no">
+        <type><ref refid="class_element_array" kindref="compound">ElementArray</ref></type>
+        <definition>ElementArray ResPolynomial::coeffs</definition>
+        <argsstring></argsstring>
+        <name>coeffs</name>
+        <qualifiedname>ResPolynomial::coeffs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="81" column="16" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="81" bodyend="-1"/>
+        <referencedby refid="res-poly-ring_8hpp_ad01ce2340b834693daae348440d8b079_1ad01ce2340b834693daae348440d8b079" compoundref="res-poly-ring_8hpp" startline="278" endline="288">display_poly</referencedby>
+        <referencedby refid="class_res_polynomial_a423c98265a51550d94544510a03b6edc_1a423c98265a51550d94544510a03b6edc" compoundref="res-poly-ring_8hpp" startline="85" endline="85">ResPolynomial</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a946be21d2157e4223832cd16d6597f50_1a946be21d2157e4223832cd16d6597f50" compoundref="res-f4-m2-interface_8cpp" startline="242" endline="318">ResF4toM2Interface::to_M2_MutableMatrix</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a415999e709aee01dbad7f071b9f0a00f_1a415999e709aee01dbad7f071b9f0a00f" compoundref="res-f4-m2-interface_8cpp" startline="94" endline="149">ResF4toM2Interface::to_M2_vec</referencedby>
+        <referencedby refid="class_res_polynomial_a0174c8e8461e817ba578845eb70d21c4_1a0174c8e8461e817ba578845eb70d21c4" compoundref="res-poly-ring_8hpp" startline="86" endline="90">~ResPolynomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_res_polynomial_a0c321ae803ee4c698276fbde3b843062_1a0c321ae803ee4c698276fbde3b843062" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="res-monomial-types_8hpp_a519813b4b46a3b9a9de16c4845d0609c_1a519813b4b46a3b9a9de16c4845d0609c" kindref="member">res_monomial_word</ref> &gt;</type>
+        <definition>std::vector&lt;res_monomial_word&gt; ResPolynomial::monoms</definition>
+        <argsstring></argsstring>
+        <name>monoms</name>
+        <qualifiedname>ResPolynomial::monoms</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="82" column="15" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="82" bodyend="-1"/>
+        <referencedby refid="class_res_poly_ring_a89cfefa9ef82222276a3825a99ab3e76_1a89cfefa9ef82222276a3825a99ab3e76" compoundref="res-poly-ring_8cpp" startline="11" endline="22">ResPolyRing::memUsage</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a946be21d2157e4223832cd16d6597f50_1a946be21d2157e4223832cd16d6597f50" compoundref="res-f4-m2-interface_8cpp" startline="242" endline="318">ResF4toM2Interface::to_M2_MutableMatrix</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_a415999e709aee01dbad7f071b9f0a00f_1a415999e709aee01dbad7f071b9f0a00f" compoundref="res-f4-m2-interface_8cpp" startline="94" endline="149">ResF4toM2Interface::to_M2_vec</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_res_polynomial_a423c98265a51550d94544510a03b6edc_1a423c98265a51550d94544510a03b6edc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ResPolynomial::ResPolynomial</definition>
+        <argsstring>()</argsstring>
+        <name>ResPolynomial</name>
+        <qualifiedname>ResPolynomial::ResPolynomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="85" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="85" bodyend="85"/>
+        <references refid="class_res_polynomial_a7bb2e476197d7947dd8a002d3598ba2b_1a7bb2e476197d7947dd8a002d3598ba2b" compoundref="res-poly-ring_8hpp" startline="81">coeffs</references>
+        <references refid="class_res_polynomial_af51c4468dc7f112e0ca29ca5e2bd60a4_1af51c4468dc7f112e0ca29ca5e2bd60a4" compoundref="res-poly-ring_8hpp" startline="79">len</references>
+        <referencedby refid="class_res_polynomial_ac5d38114f6856f28a4d599ae5a68ad93_1ac5d38114f6856f28a4d599ae5a68ad93">operator=</referencedby>
+        <referencedby refid="class_res_polynomial_a42d76b0f039718135188b5b9e1382241_1a42d76b0f039718135188b5b9e1382241">operator=</referencedby>
+        <referencedby refid="class_res_polynomial_a527ebb35bbe84e8403c4eb4c23711090_1a527ebb35bbe84e8403c4eb4c23711090">ResPolynomial</referencedby>
+        <referencedby refid="class_res_polynomial_a6846c3f10053a7aad83db0b632a86a9b_1a6846c3f10053a7aad83db0b632a86a9b">ResPolynomial</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_res_polynomial_a0174c8e8461e817ba578845eb70d21c4_1a0174c8e8461e817ba578845eb70d21c4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ResPolynomial::~ResPolynomial</definition>
+        <argsstring>()</argsstring>
+        <name>~ResPolynomial</name>
+        <qualifiedname>ResPolynomial::~ResPolynomial</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="86" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="86" bodyend="90"/>
+        <references refid="class_res_polynomial_a7bb2e476197d7947dd8a002d3598ba2b_1a7bb2e476197d7947dd8a002d3598ba2b" compoundref="res-poly-ring_8hpp" startline="81">coeffs</references>
+        <references refid="class_res_polynomial_ad7433436ddb96e2520d6d8720563b103_1ad7433436ddb96e2520d6d8720563b103" compoundref="res-poly-ring_8hpp" startline="78">npoly_destructor</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_polynomial_a527ebb35bbe84e8403c4eb4c23711090_1a527ebb35bbe84e8403c4eb4c23711090" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ResPolynomial::ResPolynomial</definition>
+        <argsstring>(const ResPolynomial &amp;other)=default</argsstring>
+        <name>ResPolynomial</name>
+        <qualifiedname>ResPolynomial::ResPolynomial</qualifiedname>
+        <param>
+          <type>const <ref refid="class_res_polynomial" kindref="compound">ResPolynomial</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="92" column="3"/>
+        <references refid="class_res_polynomial_a423c98265a51550d94544510a03b6edc_1a423c98265a51550d94544510a03b6edc" compoundref="res-poly-ring_8hpp" startline="85" endline="85">ResPolynomial</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_polynomial_a6846c3f10053a7aad83db0b632a86a9b_1a6846c3f10053a7aad83db0b632a86a9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ResPolynomial::ResPolynomial</definition>
+        <argsstring>(ResPolynomial &amp;&amp;other)=default</argsstring>
+        <name>ResPolynomial</name>
+        <qualifiedname>ResPolynomial::ResPolynomial</qualifiedname>
+        <param>
+          <type><ref refid="class_res_polynomial" kindref="compound">ResPolynomial</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="93" column="3"/>
+        <references refid="class_res_polynomial_a423c98265a51550d94544510a03b6edc_1a423c98265a51550d94544510a03b6edc" compoundref="res-poly-ring_8hpp" startline="85" endline="85">ResPolynomial</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_polynomial_ac5d38114f6856f28a4d599ae5a68ad93_1ac5d38114f6856f28a4d599ae5a68ad93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_res_polynomial" kindref="compound">ResPolynomial</ref> &amp;</type>
+        <definition>ResPolynomial &amp; ResPolynomial::operator=</definition>
+        <argsstring>(const ResPolynomial &amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>ResPolynomial::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_res_polynomial" kindref="compound">ResPolynomial</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="94" column="17"/>
+        <references refid="class_res_polynomial_a423c98265a51550d94544510a03b6edc_1a423c98265a51550d94544510a03b6edc" compoundref="res-poly-ring_8hpp" startline="85" endline="85">ResPolynomial</references>
+      </memberdef>
+      <memberdef kind="function" id="class_res_polynomial_a42d76b0f039718135188b5b9e1382241_1a42d76b0f039718135188b5b9e1382241" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_res_polynomial" kindref="compound">ResPolynomial</ref> &amp;</type>
+        <definition>ResPolynomial &amp; ResPolynomial::operator=</definition>
+        <argsstring>(ResPolynomial &amp;&amp;other)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>ResPolynomial::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_res_polynomial" kindref="compound">ResPolynomial</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="95" column="17"/>
+        <references refid="class_res_polynomial_a423c98265a51550d94544510a03b6edc_1a423c98265a51550d94544510a03b6edc" compoundref="res-poly-ring_8hpp" startline="85" endline="85">ResPolynomial</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><ref refid="class_polynomial" kindref="compound">Polynomial</ref> type used by the F4 resolution engine: parallel coefficient vector and concatenated monomial buffer. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="class_res_polynomial_a7bb2e476197d7947dd8a002d3598ba2b_1a7bb2e476197d7947dd8a002d3598ba2b" kindref="member">coeffs</ref></computeroutput> is an <computeroutput><ref refid="class_element_array" kindref="compound">ElementArray</ref></computeroutput> of <computeroutput><ref refid="class_res_polynomial_af51c4468dc7f112e0ca29ca5e2bd60a4_1af51c4468dc7f112e0ca29ca5e2bd60a4" kindref="member">len</ref></computeroutput> coefficients managed through <computeroutput><ref refid="class_vector_arithmetic" kindref="compound">VectorArithmetic</ref></computeroutput>. <computeroutput><ref refid="class_res_polynomial_a0c321ae803ee4c698276fbde3b843062_1a0c321ae803ee4c698276fbde3b843062" kindref="member">monoms</ref></computeroutput> is a flat <computeroutput>std::vector&lt;<ref refid="res-monomial-types_8hpp_a519813b4b46a3b9a9de16c4845d0609c_1a519813b4b46a3b9a9de16c4845d0609c" kindref="member">res_monomial_word</ref>&gt;</computeroutput> holding all <computeroutput><ref refid="class_res_polynomial_af51c4468dc7f112e0ca29ca5e2bd60a4_1af51c4468dc7f112e0ca29ca5e2bd60a4" kindref="member">len</ref></computeroutput> monomials laid out back-to-back (variable-size in the general case <mdash/> iterate with <computeroutput><ref refid="class_res_polynomial_iterator" kindref="compound">ResPolynomialIterator</ref></computeroutput>, which advances by <computeroutput><ref refid="class_res_monoid_dense_aa09dc9fc18228dbdfd07f74bf6261bff_1aa09dc9fc18228dbdfd07f74bf6261bff" kindref="member">ResMonoid::monomial_size</ref></computeroutput>). The static <computeroutput><ref refid="class_res_polynomial_ad7433436ddb96e2520d6d8720563b103_1ad7433436ddb96e2520d6d8720563b103" kindref="member">npoly_destructor</ref></computeroutput> counter tracks how many destructors actually freed a coefficient array, useful for leak / churn diagnostics. Copy and move are default because both members own their data. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>ResPolynomial</label>
+        <link refid="class_res_polynomial"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>npoly_destructor</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>coeffs</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>monoms</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>T</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="7">
+        <label>int32_t</label>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+      <node id="8">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; res_monomial_word &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="template-instance">
+          <edgelabel>&lt; res_monomial_word &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" line="71" column="1" bodyfile="Macaulay2/e/schreyer-resolution/res-poly-ring.hpp" bodystart="72" bodyend="96"/>
+    <listofallmembers>
+      <member refid="class_res_polynomial_a7bb2e476197d7947dd8a002d3598ba2b_1a7bb2e476197d7947dd8a002d3598ba2b" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>coeffs</name></member>
+      <member refid="class_res_polynomial_af51c4468dc7f112e0ca29ca5e2bd60a4_1af51c4468dc7f112e0ca29ca5e2bd60a4" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>len</name></member>
+      <member refid="class_res_polynomial_a0c321ae803ee4c698276fbde3b843062_1a0c321ae803ee4c698276fbde3b843062" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>monoms</name></member>
+      <member refid="class_res_polynomial_ad7433436ddb96e2520d6d8720563b103_1ad7433436ddb96e2520d6d8720563b103" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>npoly_destructor</name></member>
+      <member refid="class_res_polynomial_ac5d38114f6856f28a4d599ae5a68ad93_1ac5d38114f6856f28a4d599ae5a68ad93" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>operator=</name></member>
+      <member refid="class_res_polynomial_a42d76b0f039718135188b5b9e1382241_1a42d76b0f039718135188b5b9e1382241" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>operator=</name></member>
+      <member refid="class_res_polynomial_a423c98265a51550d94544510a03b6edc_1a423c98265a51550d94544510a03b6edc" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>ResPolynomial</name></member>
+      <member refid="class_res_polynomial_a527ebb35bbe84e8403c4eb4c23711090_1a527ebb35bbe84e8403c4eb4c23711090" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>ResPolynomial</name></member>
+      <member refid="class_res_polynomial_a6846c3f10053a7aad83db0b632a86a9b_1a6846c3f10053a7aad83db0b632a86a9b" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>ResPolynomial</name></member>
+      <member refid="class_res_polynomial_a72f0f36c07e75f98d758a4c1999273fd_1a72f0f36c07e75f98d758a4c1999273fd" prot="private" virt="non-virtual"><scope>ResPolynomial</scope><name>ResPolynomialConstructor</name></member>
+      <member refid="class_res_polynomial_a4e4a3880cd44ac889bca5726cfb08af1_1a4e4a3880cd44ac889bca5726cfb08af1" prot="private" virt="non-virtual"><scope>ResPolynomial</scope><name>ResPolynomialIterator</name></member>
+      <member refid="class_res_polynomial_abb07a0f0226373ac7a3bc7fd1ba34b47_1abb07a0f0226373ac7a3bc7fd1ba34b47" prot="private" virt="non-virtual"><scope>ResPolynomial</scope><name>ResPolyRing</name></member>
+      <member refid="class_res_polynomial_a0174c8e8461e817ba578845eb70d21c4_1a0174c8e8461e817ba578845eb70d21c4" prot="public" virt="non-virtual"><scope>ResPolynomial</scope><name>~ResPolynomial</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

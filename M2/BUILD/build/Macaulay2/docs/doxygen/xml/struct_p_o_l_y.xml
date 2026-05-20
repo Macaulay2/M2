@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_p_o_l_y" kind="struct" language="C++" prot="public">
+    <compoundname>POLY</compoundname>
+    <includes refid="gbring_8hpp" local="no">gbring.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_p_o_l_y_a99d4e7b185b16968de58cb6c47ef605e_1a99d4e7b185b16968de58cb6c47ef605e" prot="public" static="no" mutable="no">
+        <type><ref refid="structgbvector" kindref="compound">gbvector</ref> *</type>
+        <definition>gbvector* POLY::f</definition>
+        <argsstring></argsstring>
+        <name>f</name>
+        <qualifiedname>POLY::f</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gbring.hpp" line="94" column="12" bodyfile="Macaulay2/e/gbring.hpp" bodystart="94" bodyend="-1"/>
+        <referencedby refid="class_marked_g_b_a06bf6939375aed8571b0cde823726566_1a06bf6939375aed8571b0cde823726566" compoundref="reducedgb-marked_8cpp" startline="59" endline="112">MarkedGB::add_marked_elems</referencedby>
+        <referencedby refid="classgb_a_a899dd75bd0d824d656a3a1b60e81bdfd_1a899dd75bd0d824d656a3a1b60e81bdfd" compoundref="gb-default_8cpp" startline="2084" endline="2123">gbA::auto_reduce_by</referencedby>
+        <referencedby refid="classgb_a_a11517fe61d4a2881f1626a385a0b8208_1a11517fe61d4a2881f1626a385a0b8208" compoundref="gb-default_8cpp" startline="1311" endline="1354">gbA::compute_s_pair</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_a75babcc483774af1eb5fe159640a6102_1a75babcc483774af1eb5fe159640a6102" compoundref="reducedgb-field-local_8cpp" startline="179" endline="467">ReducedGB_Field_Local::find_good_divisor</referencedby>
+        <referencedby refid="class_g_b_declared_abf1325cd6bf4a13df5d282d2bda93d43_1abf1325cd6bf4a13df5d282d2bda93d43" compoundref="comp-gb-declared_8cpp" startline="46" endline="88">GBDeclared::GBDeclared</referencedby>
+        <referencedby refid="class_g_b_declared_af0018cd7db9cea6dc0f1934f76b281ac_1af0018cd7db9cea6dc0f1934f76b281ac" compoundref="comp-gb-declared_8cpp" startline="7" endline="44">GBDeclared::GBDeclared</referencedby>
+        <referencedby refid="classgb_a_a53fbbc9874640b0a7681be28f899a473_1a53fbbc9874640b0a7681be28f899a473" compoundref="gb-default_8hpp" startline="269" endline="269">gbA::gbelem_COMPONENT</referencedby>
+        <referencedby refid="classgb_a_af30d4740c1cf2debffe9770a2791e3ac_1af30d4740c1cf2debffe9770a2791e3ac" compoundref="gb-default_8cpp" startline="386" endline="397">gbA::gbelem_copy</referencedby>
+        <referencedby refid="classgb_a_a5906e55522248442f0a2e0d400f9e96e_1a5906e55522248442f0a2e0d400f9e96e" compoundref="gb-default_8cpp" startline="362" endline="384">gbA::gbelem_make</referencedby>
+        <referencedby refid="classgb_a_a51e67a15b6b8fe786c5d2d90ac6c4e6b_1a51e67a15b6b8fe786c5d2d90ac6c4e6b" compoundref="gb-default_8cpp" startline="347" endline="360">gbA::gbelem_ring_make</referencedby>
+        <referencedby refid="class_marked_g_b_ac3880eb28d453114874f0b26b26801f7_1ac3880eb28d453114874f0b26b26801f7" compoundref="reducedgb-marked_8cpp" startline="222" endline="256">MarkedGB::geo_remainder</referencedby>
+        <referencedby refid="classgb_a_ae01df246ccc6e88f942316915add7903_1ae01df246ccc6e88f942316915add7903" compoundref="gb-default_8cpp" startline="2139" endline="2230">gbA::insert_gb</referencedby>
+        <referencedby refid="classgb_a_acbe1669088b1d8279bd9bf299f946a6d_1acbe1669088b1d8279bd9bf299f946a6d" compoundref="gb-default_8cpp" startline="2374" endline="2393">gbA::make_lead_term_matrix</referencedby>
+        <referencedby refid="class_marked_g_b_af143c6868b1b329f1f58d9df3a37ebdc_1af143c6868b1b329f1f58d9df3a37ebdc" compoundref="reducedgb-marked_8cpp" startline="124" endline="173">MarkedGB::marked_remainder</referencedby>
+        <referencedby refid="class_reduced_g_b_ac8eb52e0c0f0f993b8bdbab0eeaed7ed_1ac8eb52e0c0f0f993b8bdbab0eeaed7ed" compoundref="reducedgb_8cpp" startline="155" endline="205">ReducedGB::matrix_lift</referencedby>
+        <referencedby refid="class_reduced_g_b___field_ab63c4e43c1a932ea8680e2045e3b42a3_1ab63c4e43c1a932ea8680e2045e3b42a3" compoundref="reducedgb-field_8cpp" startline="54" endline="107">ReducedGB_Field::minimalize</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_ad3fce22ab6af08d875904d627170479a_1ad3fce22ab6af08d875904d627170479a" compoundref="reducedgb-field-local_8cpp" startline="80" endline="149">ReducedGB_Field_Local::minimalize</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_a730d13d1922e4ecb75f2bec6abca72d2_1a730d13d1922e4ecb75f2bec6abca72d2" compoundref="reducedgb-_z_z_8cpp" startline="64" endline="112">ReducedGB_ZZ::minimalize</referencedby>
+        <referencedby refid="class_g_binhom__comp_accd421642f1d062d8c0349dd9b8f4eba_1accd421642f1d062d8c0349dd9b8f4eba" compoundref="gb-sugarless_8cpp" startline="837" endline="853">GBinhom_comp::minimalize_gb</referencedby>
+        <referencedby refid="classgb_a_a6a54719d0a97777943c04dce06dc3d2e_1a6a54719d0a97777943c04dce06dc3d2e" compoundref="gb-default_8cpp" startline="226" endline="251">gbA::new_gen</referencedby>
+        <referencedby refid="classgb_a_acaad0acdeb58d6956d12f1e65d6fbc58_1acaad0acdeb58d6956d12f1e65d6fbc58" compoundref="gb-default_8cpp" startline="2309" endline="2350">gbA::process_spair</referencedby>
+        <referencedby refid="classgb_a_ad7ce494e09d577cc9bc159ea02d649d9_1ad7ce494e09d577cc9bc159ea02d649d9" compoundref="gb-default_8cpp" startline="1357" endline="1449">gbA::reduce_kk</referencedby>
+        <referencedby refid="classgb_a_aa8f38461d0118ce46f2f5bb1e4cfc479_1aa8f38461d0118ce46f2f5bb1e4cfc479" compoundref="gb-default_8cpp" startline="1451" endline="1592">gbA::reduce_ZZ</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_a4365212ddd0cc9bc0682a6d0207c2f9f_1a4365212ddd0cc9bc0682a6d0207c2f9f" compoundref="reducedgb-field-local_8cpp" startline="13" endline="39">ReducedGB_Field_Local::ReducedGB_Field_Local</referencedby>
+        <referencedby refid="struct_reduced_g_b___field___local__sorter_afd69f18ec29cb2407d9b82c47c4cd1f3_1afd69f18ec29cb2407d9b82c47c4cd1f3" compoundref="reducedgb-field-local_8cpp" startline="57" endline="68">ReducedGB_Field_Local_sorter::ReducedGB_Field_Local_sorter</referencedby>
+        <referencedby refid="class_marked_g_b_acbca2c01e90e35d59353fc054087f974_1acbca2c01e90e35d59353fc054087f974" compoundref="reducedgb-marked_8cpp" startline="180" endline="220">MarkedGB::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___field_a31548a63d2ad3eca584c20a76a440d7c_1a31548a63d2ad3eca584c20a76a440d7c" compoundref="reducedgb-field_8cpp" startline="175" endline="215">ReducedGB_Field::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___field_a7840ec971da915bcc4d24ddcfd16a3e5_1a7840ec971da915bcc4d24ddcfd16a3e5" compoundref="reducedgb-field_8cpp" startline="109" endline="173">ReducedGB_Field::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_a81466299f7155c14f7a07fb112c14438_1a81466299f7155c14f7a07fb112c14438" compoundref="reducedgb-field-local_8cpp" startline="573" endline="653">ReducedGB_Field_Local::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_a39c398eeb0b099d5acb4d4e0dab41a10_1a39c398eeb0b099d5acb4d4e0dab41a10" compoundref="reducedgb-field-local_8cpp" startline="490" endline="571">ReducedGB_Field_Local::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_aec4ba0cd56865dcfd322a8b5920beb37_1aec4ba0cd56865dcfd322a8b5920beb37" compoundref="reducedgb-_z_z_8cpp" startline="191" endline="241">ReducedGB_ZZ::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_ac3c1c390dfc64c42bcadb3b3666352ef_1ac3c1c390dfc64c42bcadb3b3666352ef" compoundref="reducedgb-_z_z_8cpp" startline="146" endline="189">ReducedGB_ZZ::remainder</referencedby>
+        <referencedby refid="classgb_a_ad45d613b31ff7de3973a60b88d17f79c_1ad45d613b31ff7de3973a60b88d17f79c" compoundref="gb-default_8cpp" startline="1995" endline="2077">gbA::remainder_non_ZZ</referencedby>
+        <referencedby refid="classgb_a_a51d8536c11c059408252d7721718e460_1a51d8536c11c059408252d7721718e460" compoundref="gb-default_8cpp" startline="1847" endline="1917">gbA::remainder_ZZ</referencedby>
+        <referencedby refid="classgb_a_a4d9b0ac32a2395305f6db8eecf4113ac_1a4d9b0ac32a2395305f6db8eecf4113ac" compoundref="gb-default_8cpp" startline="2232" endline="2290">gbA::replace_gb_element_ZZ</referencedby>
+        <referencedby refid="classgb_a_a82ff63434352e54eba66156313fefbeb_1a82ff63434352e54eba66156313fefbeb" compoundref="gb-default_8cpp" startline="475" endline="489">gbA::spair_make_gen</referencedby>
+        <referencedby refid="classgb_a_a3d0ad64d972bc976e01ec725bcef3b21_1a3d0ad64d972bc976e01ec725bcef3b21" compoundref="gb-default_8cpp" startline="1274" endline="1309">gbA::spair_set_lead_spoly</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_ae5392a8e14a37007ccf94ab9e6bd85d0_1ae5392a8e14a37007ccf94ab9e6bd85d0" compoundref="reducedgb-field-local_8cpp" startline="475" endline="488">ReducedGB_Field_Local::store_in_table</referencedby>
+        <referencedby refid="classgb_a_a34d975c42fdb431512b7824f037459e6_1a34d975c42fdb431512b7824f037459e6" compoundref="gb-default_8cpp" startline="1919" endline="1993">gbA::tail_remainder_ZZ</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_p_o_l_y_a7efdb8993698f844b8afabb2f926eecd_1a7efdb8993698f844b8afabb2f926eecd" prot="public" static="no" mutable="no">
+        <type><ref refid="structgbvector" kindref="compound">gbvector</ref> *</type>
+        <definition>gbvector* POLY::fsyz</definition>
+        <argsstring></argsstring>
+        <name>fsyz</name>
+        <qualifiedname>POLY::fsyz</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gbring.hpp" line="95" column="12" bodyfile="Macaulay2/e/gbring.hpp" bodystart="95" bodyend="-1"/>
+        <referencedby refid="class_marked_g_b_a06bf6939375aed8571b0cde823726566_1a06bf6939375aed8571b0cde823726566" compoundref="reducedgb-marked_8cpp" startline="59" endline="112">MarkedGB::add_marked_elems</referencedby>
+        <referencedby refid="classgb_a_a899dd75bd0d824d656a3a1b60e81bdfd_1a899dd75bd0d824d656a3a1b60e81bdfd" compoundref="gb-default_8cpp" startline="2084" endline="2123">gbA::auto_reduce_by</referencedby>
+        <referencedby refid="classgb_a_a11517fe61d4a2881f1626a385a0b8208_1a11517fe61d4a2881f1626a385a0b8208" compoundref="gb-default_8cpp" startline="1311" endline="1354">gbA::compute_s_pair</referencedby>
+        <referencedby refid="class_g_b_declared_abf1325cd6bf4a13df5d282d2bda93d43_1abf1325cd6bf4a13df5d282d2bda93d43" compoundref="comp-gb-declared_8cpp" startline="46" endline="88">GBDeclared::GBDeclared</referencedby>
+        <referencedby refid="class_g_b_declared_af0018cd7db9cea6dc0f1934f76b281ac_1af0018cd7db9cea6dc0f1934f76b281ac" compoundref="comp-gb-declared_8cpp" startline="7" endline="44">GBDeclared::GBDeclared</referencedby>
+        <referencedby refid="classgb_a_af30d4740c1cf2debffe9770a2791e3ac_1af30d4740c1cf2debffe9770a2791e3ac" compoundref="gb-default_8cpp" startline="386" endline="397">gbA::gbelem_copy</referencedby>
+        <referencedby refid="classgb_a_a5906e55522248442f0a2e0d400f9e96e_1a5906e55522248442f0a2e0d400f9e96e" compoundref="gb-default_8cpp" startline="362" endline="384">gbA::gbelem_make</referencedby>
+        <referencedby refid="classgb_a_a51e67a15b6b8fe786c5d2d90ac6c4e6b_1a51e67a15b6b8fe786c5d2d90ac6c4e6b" compoundref="gb-default_8cpp" startline="347" endline="360">gbA::gbelem_ring_make</referencedby>
+        <referencedby refid="classgb_a_ae01df246ccc6e88f942316915add7903_1ae01df246ccc6e88f942316915add7903" compoundref="gb-default_8cpp" startline="2139" endline="2230">gbA::insert_gb</referencedby>
+        <referencedby refid="class_marked_g_b_af143c6868b1b329f1f58d9df3a37ebdc_1af143c6868b1b329f1f58d9df3a37ebdc" compoundref="reducedgb-marked_8cpp" startline="124" endline="173">MarkedGB::marked_remainder</referencedby>
+        <referencedby refid="class_reduced_g_b_ac8eb52e0c0f0f993b8bdbab0eeaed7ed_1ac8eb52e0c0f0f993b8bdbab0eeaed7ed" compoundref="reducedgb_8cpp" startline="155" endline="205">ReducedGB::matrix_lift</referencedby>
+        <referencedby refid="class_reduced_g_b___field_ab63c4e43c1a932ea8680e2045e3b42a3_1ab63c4e43c1a932ea8680e2045e3b42a3" compoundref="reducedgb-field_8cpp" startline="54" endline="107">ReducedGB_Field::minimalize</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_ad3fce22ab6af08d875904d627170479a_1ad3fce22ab6af08d875904d627170479a" compoundref="reducedgb-field-local_8cpp" startline="80" endline="149">ReducedGB_Field_Local::minimalize</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_a730d13d1922e4ecb75f2bec6abca72d2_1a730d13d1922e4ecb75f2bec6abca72d2" compoundref="reducedgb-_z_z_8cpp" startline="64" endline="112">ReducedGB_ZZ::minimalize</referencedby>
+        <referencedby refid="class_g_binhom__comp_accd421642f1d062d8c0349dd9b8f4eba_1accd421642f1d062d8c0349dd9b8f4eba" compoundref="gb-sugarless_8cpp" startline="837" endline="853">GBinhom_comp::minimalize_gb</referencedby>
+        <referencedby refid="classgb_a_a6a54719d0a97777943c04dce06dc3d2e_1a6a54719d0a97777943c04dce06dc3d2e" compoundref="gb-default_8cpp" startline="226" endline="251">gbA::new_gen</referencedby>
+        <referencedby refid="classgb_a_acaad0acdeb58d6956d12f1e65d6fbc58_1acaad0acdeb58d6956d12f1e65d6fbc58" compoundref="gb-default_8cpp" startline="2309" endline="2350">gbA::process_spair</referencedby>
+        <referencedby refid="classgb_a_ad7ce494e09d577cc9bc159ea02d649d9_1ad7ce494e09d577cc9bc159ea02d649d9" compoundref="gb-default_8cpp" startline="1357" endline="1449">gbA::reduce_kk</referencedby>
+        <referencedby refid="classgb_a_aa8f38461d0118ce46f2f5bb1e4cfc479_1aa8f38461d0118ce46f2f5bb1e4cfc479" compoundref="gb-default_8cpp" startline="1451" endline="1592">gbA::reduce_ZZ</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_a4365212ddd0cc9bc0682a6d0207c2f9f_1a4365212ddd0cc9bc0682a6d0207c2f9f" compoundref="reducedgb-field-local_8cpp" startline="13" endline="39">ReducedGB_Field_Local::ReducedGB_Field_Local</referencedby>
+        <referencedby refid="class_reduced_g_b___field_a7840ec971da915bcc4d24ddcfd16a3e5_1a7840ec971da915bcc4d24ddcfd16a3e5" compoundref="reducedgb-field_8cpp" startline="109" endline="173">ReducedGB_Field::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_a81466299f7155c14f7a07fb112c14438_1a81466299f7155c14f7a07fb112c14438" compoundref="reducedgb-field-local_8cpp" startline="573" endline="653">ReducedGB_Field_Local::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_a39c398eeb0b099d5acb4d4e0dab41a10_1a39c398eeb0b099d5acb4d4e0dab41a10" compoundref="reducedgb-field-local_8cpp" startline="490" endline="571">ReducedGB_Field_Local::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_ac3c1c390dfc64c42bcadb3b3666352ef_1ac3c1c390dfc64c42bcadb3b3666352ef" compoundref="reducedgb-_z_z_8cpp" startline="146" endline="189">ReducedGB_ZZ::remainder</referencedby>
+        <referencedby refid="classgb_a_ad45d613b31ff7de3973a60b88d17f79c_1ad45d613b31ff7de3973a60b88d17f79c" compoundref="gb-default_8cpp" startline="1995" endline="2077">gbA::remainder_non_ZZ</referencedby>
+        <referencedby refid="classgb_a_a51d8536c11c059408252d7721718e460_1a51d8536c11c059408252d7721718e460" compoundref="gb-default_8cpp" startline="1847" endline="1917">gbA::remainder_ZZ</referencedby>
+        <referencedby refid="classgb_a_a4d9b0ac32a2395305f6db8eecf4113ac_1a4d9b0ac32a2395305f6db8eecf4113ac" compoundref="gb-default_8cpp" startline="2232" endline="2290">gbA::replace_gb_element_ZZ</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_ae5392a8e14a37007ccf94ab9e6bd85d0_1ae5392a8e14a37007ccf94ab9e6bd85d0" compoundref="reducedgb-field-local_8cpp" startline="475" endline="488">ReducedGB_Field_Local::store_in_table</referencedby>
+        <referencedby refid="classgb_a_a34d975c42fdb431512b7824f037459e6_1a34d975c42fdb431512b7824f037459e6" compoundref="gb-default_8cpp" startline="1919" endline="1993">gbA::tail_remainder_ZZ</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><ref refid="franzi-gb_8cpp_a8818ff25e637ee7d384c122f52a46d62_1a8818ff25e637ee7d384c122f52a46d62" kindref="member">Pairs</ref> a <computeroutput><ref refid="structgbvector" kindref="compound">gbvector</ref></computeroutput> with its evolving syzygy <computeroutput><ref refid="structgbvector" kindref="compound">gbvector</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="struct_p_o_l_y_a99d4e7b185b16968de58cb6c47ef605e_1a99d4e7b185b16968de58cb6c47ef605e" kindref="member">f</ref></computeroutput> is the polynomial in the current module and <computeroutput><ref refid="struct_p_o_l_y_a7efdb8993698f844b8afabb2f926eecd_1a7efdb8993698f844b8afabb2f926eecd" kindref="member">fsyz</ref></computeroutput> is the syzygy expressing how <computeroutput><ref refid="struct_p_o_l_y_a99d4e7b185b16968de58cb6c47ef605e_1a99d4e7b185b16968de58cb6c47ef605e" kindref="member">f</ref></computeroutput> was built from the original generators. Carried together throughout a Groebner basis computation so that the syzygy module can be reported alongside the basis. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>POLY</label>
+        <link refid="struct_p_o_l_y"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="17">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="15">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>const void *</label>
+      </node>
+      <node id="10">
+        <label>double</label>
+      </node>
+      <node id="2">
+        <label>gbvector</label>
+        <link refid="structgbvector"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>comp</edgelabel>
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="8">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>long</label>
+      </node>
+      <node id="14">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="13">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="11">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="12">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="7">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="3">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gbring.hpp" line="92" column="1" bodyfile="Macaulay2/e/gbring.hpp" bodystart="93" bodyend="96"/>
+    <listofallmembers>
+      <member refid="struct_p_o_l_y_a99d4e7b185b16968de58cb6c47ef605e_1a99d4e7b185b16968de58cb6c47ef605e" prot="public" virt="non-virtual"><scope>POLY</scope><name>f</name></member>
+      <member refid="struct_p_o_l_y_a7efdb8993698f844b8afabb2f926eecd_1a7efdb8993698f844b8afabb2f926eecd" prot="public" virt="non-virtual"><scope>POLY</scope><name>fsyz</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

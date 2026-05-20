@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_g_b_f4_polynomial" kind="struct" language="C++" prot="public">
+    <compoundname>GBF4Polynomial</compoundname>
+    <includes refid="f4-types_8hpp" local="no">f4-types.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_g_b_f4_polynomial_ac67d4476404b77290ff7a27aa0ef8197_1ac67d4476404b77290ff7a27aa0ef8197" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int GBF4Polynomial::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <qualifiedname>GBF4Polynomial::len</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="104" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="104" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_aaa00410ec515a944cf1dfd1e877c271f_1aaa00410ec515a944cf1dfd1e877c271f" compoundref="f4_8cpp" startline="196" endline="218">F4GB::load_gen</referencedby>
+        <referencedby refid="class_f4_g_b_a6babb76c1df3d323fa211b6972d6c9f3_1a6babb76c1df3d323fa211b6972d6c9f3" compoundref="f4_8cpp" startline="220" endline="241">F4GB::load_row</referencedby>
+        <referencedby refid="class_f4_g_b_a443809bfacccd069074892d330247edb_1a443809bfacccd069074892d330247edb" compoundref="f4_8cpp" startline="139" endline="148">F4GB::new_generators</referencedby>
+        <referencedby refid="class_f4_g_b_aa1707cc172cbf2e64f037ea5c01059ba_1aa1707cc172cbf2e64f037ea5c01059ba" compoundref="f4_8cpp" startline="121" endline="137">F4GB::poly_set_degrees</referencedby>
+        <referencedby refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" compoundref="f4-m2-interface_8cpp" startline="72" endline="128">F4toM2Interface::to_M2_vec</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_g_b_f4_polynomial_aa62506d76c6ea762f99c6646508e3d74_1aa62506d76c6ea762f99c6646508e3d74" prot="public" static="no" mutable="no">
+        <type><ref refid="class_element_array" kindref="compound">ElementArray</ref></type>
+        <definition>ElementArray GBF4Polynomial::coeffs</definition>
+        <argsstring></argsstring>
+        <name>coeffs</name>
+        <qualifiedname>GBF4Polynomial::coeffs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="105" column="16" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="105" bodyend="-1"/>
+        <referencedby refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" compoundref="f4-m2-interface_8cpp" startline="72" endline="128">F4toM2Interface::to_M2_vec</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_g_b_f4_polynomial_a537e11618ac75bee33331c962074c2b0_1a537e11618ac75bee33331c962074c2b0" prot="public" static="no" mutable="no">
+        <type><ref refid="moninfo_8hpp_afe2d8fe59c70630e71d82733c3f8ddcb_1afe2d8fe59c70630e71d82733c3f8ddcb" kindref="member">monomial_word</ref> *</type>
+        <definition>monomial_word* GBF4Polynomial::monoms</definition>
+        <argsstring></argsstring>
+        <name>monoms</name>
+        <qualifiedname>GBF4Polynomial::monoms</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="106" column="17" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="106" bodyend="-1"/>
+        <referencedby refid="class_f4_s_pair_set_a013c0429f3ad8bc8a44d86a0e29a8e76_1a013c0429f3ad8bc8a44d86a0e29a8e76" compoundref="f4-spairs_8cpp" startline="246" endline="321">F4SPairSet::construct_pairs</referencedby>
+        <referencedby refid="class_f4_g_b_aaa00410ec515a944cf1dfd1e877c271f_1aaa00410ec515a944cf1dfd1e877c271f" compoundref="f4_8cpp" startline="196" endline="218">F4GB::load_gen</referencedby>
+        <referencedby refid="class_f4_g_b_a6babb76c1df3d323fa211b6972d6c9f3_1a6babb76c1df3d323fa211b6972d6c9f3" compoundref="f4_8cpp" startline="220" endline="241">F4GB::load_row</referencedby>
+        <referencedby refid="class_f4_g_b_a443809bfacccd069074892d330247edb_1a443809bfacccd069074892d330247edb" compoundref="f4_8cpp" startline="139" endline="148">F4GB::new_generators</referencedby>
+        <referencedby refid="class_f4_s_pair_set_acb9c47f568cbe6feb75935ccaa74f7e4_1acb9c47f568cbe6feb75935ccaa74f7e4" compoundref="f4-spairs_8cpp" startline="81" endline="88">F4SPairSet::pair_not_needed</referencedby>
+        <referencedby refid="class_f4_g_b_aa1707cc172cbf2e64f037ea5c01059ba_1aa1707cc172cbf2e64f037ea5c01059ba" compoundref="f4_8cpp" startline="121" endline="137">F4GB::poly_set_degrees</referencedby>
+        <referencedby refid="class_f4to_m2_interface_aeae8fb357cd440600883ddebdf7c11d4_1aeae8fb357cd440600883ddebdf7c11d4" compoundref="f4-m2-interface_8cpp" startline="72" endline="128">F4toM2Interface::to_M2_vec</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Compact polynomial layout used inside the F4 GB engine. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="struct_g_b_f4_polynomial_ac67d4476404b77290ff7a27aa0ef8197_1ac67d4476404b77290ff7a27aa0ef8197" kindref="member">len</ref></computeroutput> is the number of terms, <computeroutput><ref refid="struct_g_b_f4_polynomial_aa62506d76c6ea762f99c6646508e3d74_1aa62506d76c6ea762f99c6646508e3d74" kindref="member">coeffs</ref></computeroutput> is the parallel <computeroutput><ref refid="class_element_array" kindref="compound">ElementArray</ref></computeroutput> of coefficients, and <computeroutput><ref refid="struct_g_b_f4_polynomial_a537e11618ac75bee33331c962074c2b0_1a537e11618ac75bee33331c962074c2b0" kindref="member">monoms</ref></computeroutput> is a flat buffer of <computeroutput><ref refid="moninfo_8hpp_afe2d8fe59c70630e71d82733c3f8ddcb_1afe2d8fe59c70630e71d82733c3f8ddcb" kindref="member">monomial_word</ref></computeroutput>s with every term&apos;s monomial laid out contiguously. Owned by an enclosing memory block; no destructor needed. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>GBF4Polynomial</label>
+        <link refid="struct_g_b_f4_polynomial"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>coeffs</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>monoms</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="5">
+        <label>long</label>
+      </node>
+      <node id="4">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/f4-types.hpp" line="102" column="1" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="103" bodyend="107"/>
+    <listofallmembers>
+      <member refid="struct_g_b_f4_polynomial_aa62506d76c6ea762f99c6646508e3d74_1aa62506d76c6ea762f99c6646508e3d74" prot="public" virt="non-virtual"><scope>GBF4Polynomial</scope><name>coeffs</name></member>
+      <member refid="struct_g_b_f4_polynomial_ac67d4476404b77290ff7a27aa0ef8197_1ac67d4476404b77290ff7a27aa0ef8197" prot="public" virt="non-virtual"><scope>GBF4Polynomial</scope><name>len</name></member>
+      <member refid="struct_g_b_f4_polynomial_a537e11618ac75bee33331c962074c2b0_1a537e11618ac75bee33331c962074c2b0" prot="public" virt="non-virtual"><scope>GBF4Polynomial</scope><name>monoms</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

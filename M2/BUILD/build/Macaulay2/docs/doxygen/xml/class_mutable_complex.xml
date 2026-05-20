@@ -1,0 +1,1456 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_mutable_complex" kind="class" language="C++" prot="public">
+    <compoundname>MutableComplex</compoundname>
+    <basecompoundref refid="class_mutable_engine_object" prot="public" virt="non-virtual">MutableEngineObject</basecompoundref>
+    <includes refid="mutablecomplex_8hpp" local="no">mutablecomplex.hpp</includes>
+    <innerclass refid="class_mutable_complex_1_1iterator" prot="public">MutableComplex::iterator</innerclass>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" prot="public" static="no" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t MutableComplex::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <qualifiedname>MutableComplex::flags</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="101" column="24" bodyfile="Macaulay2/e/mutablecomplex.hpp" bodystart="101" bodyend="-1"/>
+        <referencedby refid="class_mutable_complex_a698ab13831e121f2e8f0c07ac408adb9_1a698ab13831e121f2e8f0c07ac408adb9" compoundref="mutablecomplex_8cpp" startline="25" endline="66">complexity</referencedby>
+        <referencedby refid="class_mutable_complex_aad922f1e2640df08b7419163fea59916_1aad922f1e2640df08b7419163fea59916" compoundref="mutablecomplex_8cpp" startline="80" endline="98">find_unit</referencedby>
+        <referencedby refid="class_mutable_complex_ad20ea57e95282816ae6af2e83af3e44a_1ad20ea57e95282816ae6af2e83af3e44a" compoundref="mutablecomplex_8cpp" startline="102" endline="116">list_units</referencedby>
+        <referencedby refid="class_mutable_complex_a2b18e13c697f719b68e6b634f34cab7f_1a2b18e13c697f719b68e6b634f34cab7f" compoundref="mutablecomplex_8cpp" startline="68" endline="78">next_unit</referencedby>
+        <referencedby refid="class_mutable_complex_a5a4ed6da15d904e17bf9683d5c545500_1a5a4ed6da15d904e17bf9683d5c545500" compoundref="mutablecomplex_8cpp" startline="192" endline="202">prune_betti</referencedby>
+        <referencedby refid="class_mutable_complex_a5370b0a6b767cf2c3074fa76b0fe2b75_1a5370b0a6b767cf2c3074fa76b0fe2b75" compoundref="mutablecomplex_8cpp" startline="176" endline="190">prune_complex</referencedby>
+        <referencedby refid="class_mutable_complex_af3feb2f0862fe6fa491e00adffcad92e_1af3feb2f0862fe6fa491e00adffcad92e" compoundref="mutablecomplex_8cpp" startline="166" endline="174">prune_matrix</referencedby>
+        <referencedby refid="class_mutable_complex_a41a88801029c2b5e920badd39ec055c8_1a41a88801029c2b5e920badd39ec055c8" compoundref="mutablecomplex_8cpp" startline="118" endline="163">prune_unit</referencedby>
+        <referencedby refid="mutablecomplex_8cpp_a19d8c4f3d1adf8ca2325a2e520179c4d_1a19d8c4f3d1adf8ca2325a2e520179c4d" compoundref="mutablecomplex_8cpp" startline="204" endline="213">VECTOR</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_mutable_complex_aa278c6cadaf85ef858b2e990aef432dc_1aa278c6cadaf85ef858b2e990aef432dc" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+        <definition>const Ring* MutableComplex::mRing</definition>
+        <argsstring></argsstring>
+        <name>mRing</name>
+        <qualifiedname>MutableComplex::mRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="167" column="14" bodyfile="Macaulay2/e/mutablecomplex.hpp" bodystart="167" bodyend="-1"/>
+        <referencedby refid="class_mutable_complex_a698ab13831e121f2e8f0c07ac408adb9_1a698ab13831e121f2e8f0c07ac408adb9" compoundref="mutablecomplex_8cpp" startline="25" endline="66">complexity</referencedby>
+        <referencedby refid="class_mutable_complex_a2d99ae05a03dc9dbaf2c95422a134eeb_1a2d99ae05a03dc9dbaf2c95422a134eeb" compoundref="mutablecomplex_8hpp" startline="69" endline="85">MutableComplex</referencedby>
+        <referencedby refid="class_mutable_complex_a2b18e13c697f719b68e6b634f34cab7f_1a2b18e13c697f719b68e6b634f34cab7f" compoundref="mutablecomplex_8cpp" startline="68" endline="78">next_unit</referencedby>
+        <referencedby refid="class_mutable_complex_a5370b0a6b767cf2c3074fa76b0fe2b75_1a5370b0a6b767cf2c3074fa76b0fe2b75" compoundref="mutablecomplex_8cpp" startline="176" endline="190">prune_complex</referencedby>
+        <referencedby refid="class_mutable_complex_a41a88801029c2b5e920badd39ec055c8_1a41a88801029c2b5e920badd39ec055c8" compoundref="mutablecomplex_8cpp" startline="118" endline="163">prune_unit</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_mutable_complex_aac016b32100d81887387e3bff68b736f_1aac016b32100d81887387e3bff68b736f" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_local_ring" kindref="compound">LocalRing</ref> *</type>
+        <definition>const LocalRing* MutableComplex::mLocalRing</definition>
+        <argsstring></argsstring>
+        <name>mLocalRing</name>
+        <qualifiedname>MutableComplex::mLocalRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="168" column="19" bodyfile="Macaulay2/e/mutablecomplex.hpp" bodystart="168" bodyend="-1"/>
+        <referencedby refid="class_mutable_complex_a698ab13831e121f2e8f0c07ac408adb9_1a698ab13831e121f2e8f0c07ac408adb9" compoundref="mutablecomplex_8cpp" startline="25" endline="66">complexity</referencedby>
+        <referencedby refid="class_mutable_complex_a2d99ae05a03dc9dbaf2c95422a134eeb_1a2d99ae05a03dc9dbaf2c95422a134eeb" compoundref="mutablecomplex_8hpp" startline="69" endline="85">MutableComplex</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_mutable_complex_aea90c4f31c8871ff17b0fd20b2ea0b71_1aea90c4f31c8871ff17b0fd20b2ea0b71" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+        <definition>const PolynomialRing* MutableComplex::mPolynomialRing</definition>
+        <argsstring></argsstring>
+        <name>mPolynomialRing</name>
+        <qualifiedname>MutableComplex::mPolynomialRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="169" column="24" bodyfile="Macaulay2/e/mutablecomplex.hpp" bodystart="169" bodyend="-1"/>
+        <referencedby refid="class_mutable_complex_a698ab13831e121f2e8f0c07ac408adb9_1a698ab13831e121f2e8f0c07ac408adb9" compoundref="mutablecomplex_8cpp" startline="25" endline="66">complexity</referencedby>
+        <referencedby refid="class_mutable_complex_a2d99ae05a03dc9dbaf2c95422a134eeb_1a2d99ae05a03dc9dbaf2c95422a134eeb" compoundref="mutablecomplex_8hpp" startline="69" endline="85">MutableComplex</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_mutable_complex_a2313d1b55df6677b1ee59cc6a850c317_1a2313d1b55df6677b1ee59cc6a850c317" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt;</type>
+        <definition>std::vector&lt;size_t&gt; MutableComplex::mBetti</definition>
+        <argsstring></argsstring>
+        <name>mBetti</name>
+        <qualifiedname>MutableComplex::mBetti</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="173" column="15" bodyfile="Macaulay2/e/mutablecomplex.hpp" bodystart="173" bodyend="-1"/>
+        <referencedby refid="class_mutable_complex_a698ab13831e121f2e8f0c07ac408adb9_1a698ab13831e121f2e8f0c07ac408adb9" compoundref="mutablecomplex_8cpp" startline="25" endline="66">complexity</referencedby>
+        <referencedby refid="class_mutable_complex_a2d99ae05a03dc9dbaf2c95422a134eeb_1a2d99ae05a03dc9dbaf2c95422a134eeb" compoundref="mutablecomplex_8hpp" startline="69" endline="85">MutableComplex</referencedby>
+        <referencedby refid="class_mutable_complex_a5a4ed6da15d904e17bf9683d5c545500_1a5a4ed6da15d904e17bf9683d5c545500" compoundref="mutablecomplex_8cpp" startline="192" endline="202">prune_betti</referencedby>
+        <referencedby refid="class_mutable_complex_a5370b0a6b767cf2c3074fa76b0fe2b75_1a5370b0a6b767cf2c3074fa76b0fe2b75" compoundref="mutablecomplex_8cpp" startline="176" endline="190">prune_complex</referencedby>
+        <referencedby refid="class_mutable_complex_a41a88801029c2b5e920badd39ec055c8_1a41a88801029c2b5e920badd39ec055c8" compoundref="mutablecomplex_8cpp" startline="118" endline="163">prune_unit</referencedby>
+        <referencedby refid="class_mutable_complex_a81691d923c3e0c91a897c4acd0d03eb8_1a81691d923c3e0c91a897c4acd0d03eb8" compoundref="mutablecomplex_8cpp" startline="234" endline="240">text_out</referencedby>
+        <referencedby refid="mutablecomplex_8cpp_a19d8c4f3d1adf8ca2325a2e520179c4d_1a19d8c4f3d1adf8ca2325a2e520179c4d" compoundref="mutablecomplex_8cpp" startline="204" endline="213">VECTOR</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_mutable_complex_a329d9fe993a2c50821f7b093c0416c40_1a329d9fe993a2c50821f7b093c0416c40" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MutableComplex::MutableComplex</definition>
+        <argsstring>()</argsstring>
+        <name>MutableComplex</name>
+        <qualifiedname>MutableComplex::MutableComplex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="68" column="3" bodyfile="Macaulay2/e/mutablecomplex.hpp" bodystart="68" bodyend="68"/>
+        <referencedby refid="class_mutable_complex_1_1iterator_ab9178618899b84d373f96b5325bd7ab5_1ab9178618899b84d373f96b5325bd7ab5" compoundref="mutablecomplex_8hpp" startline="123" endline="126">MutableComplex::iterator::iterator</referencedby>
+        <referencedby refid="class_mutable_complex_1_1iterator_a948fd9b534032e9858c4ed1873873d0e_1a948fd9b534032e9858c4ed1873873d0e" compoundref="mutablecomplex_8hpp" startline="117" endline="122">MutableComplex::iterator::iterator</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_a2d99ae05a03dc9dbaf2c95422a134eeb_1a2d99ae05a03dc9dbaf2c95422a134eeb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MutableComplex::MutableComplex</definition>
+        <argsstring>(VECTOR(MutableMatrix *) &amp;D)</argsstring>
+        <name>MutableComplex</name>
+        <qualifiedname>MutableComplex::MutableComplex</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_complex_abee265d3fa47230fec8952d4bcda5c4a_1abee265d3fa47230fec8952d4bcda5c4a" kindref="member">VECTOR</ref>(<ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *) &amp;</type>
+          <declname>D</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="69" column="3" bodyfile="Macaulay2/e/mutablecomplex.hpp" bodystart="69" bodyend="85"/>
+        <references refid="class_mutable_complex_a2313d1b55df6677b1ee59cc6a850c317_1a2313d1b55df6677b1ee59cc6a850c317" compoundref="mutablecomplex_8hpp" startline="173">mBetti</references>
+        <references refid="class_mutable_complex_aac016b32100d81887387e3bff68b736f_1aac016b32100d81887387e3bff68b736f" compoundref="mutablecomplex_8hpp" startline="168">mLocalRing</references>
+        <references refid="class_mutable_complex_aea90c4f31c8871ff17b0fd20b2ea0b71_1aea90c4f31c8871ff17b0fd20b2ea0b71" compoundref="mutablecomplex_8hpp" startline="169">mPolynomialRing</references>
+        <references refid="class_mutable_complex_aa278c6cadaf85ef858b2e990aef432dc_1aa278c6cadaf85ef858b2e990aef432dc" compoundref="mutablecomplex_8hpp" startline="167">mRing</references>
+        <references refid="class_mutable_matrix_a30be137116d098d73a677476902998bd_1a30be137116d098d73a677476902998bd">MutableMatrix::n_cols</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_abd9fe8e7e6c8458ecd93c3a3b8c0b0e5_1abd9fe8e7e6c8458ecd93c3a3b8c0b0e5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual MutableComplex::~MutableComplex</definition>
+        <argsstring>()</argsstring>
+        <name>~MutableComplex</name>
+        <qualifiedname>MutableComplex::~MutableComplex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="86" column="11" bodyfile="Macaulay2/e/mutablecomplex.hpp" bodystart="86" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_a698ab13831e121f2e8f0c07ac408adb9_1a698ab13831e121f2e8f0c07ac408adb9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t MutableComplex::complexity</definition>
+        <argsstring>(const iterator &amp;i, const size_t flags) const</argsstring>
+        <name>complexity</name>
+        <qualifiedname>MutableComplex::complexity</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mutable_complex_1_1iterator" kindref="compound">iterator</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="90" column="10" bodyfile="Macaulay2/e/mutablecomplex.cpp" bodystart="25" bodyend="66"/>
+        <references refid="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" compoundref="mutablecomplex_8hpp" startline="101">flags</references>
+        <references refid="class_mutable_complex_a2313d1b55df6677b1ee59cc6a850c317_1a2313d1b55df6677b1ee59cc6a850c317" compoundref="mutablecomplex_8hpp" startline="173">mBetti</references>
+        <references refid="class_mutable_complex_aac016b32100d81887387e3bff68b736f_1aac016b32100d81887387e3bff68b736f" compoundref="mutablecomplex_8hpp" startline="168">mLocalRing</references>
+        <references refid="class_mutable_complex_aea90c4f31c8871ff17b0fd20b2ea0b71_1aea90c4f31c8871ff17b0fd20b2ea0b71" compoundref="mutablecomplex_8hpp" startline="169">mPolynomialRing</references>
+        <references refid="class_mutable_complex_aa278c6cadaf85ef858b2e990aef432dc_1aa278c6cadaf85ef858b2e990aef432dc" compoundref="mutablecomplex_8hpp" startline="167">mRing</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <referencedby refid="class_mutable_complex_aad922f1e2640df08b7419163fea59916_1aad922f1e2640df08b7419163fea59916" compoundref="mutablecomplex_8cpp" startline="80" endline="98">find_unit</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_a2b18e13c697f719b68e6b634f34cab7f_1a2b18e13c697f719b68e6b634f34cab7f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MutableComplex::next_unit</definition>
+        <argsstring>(iterator &amp;i, const size_t flags) const</argsstring>
+        <name>next_unit</name>
+        <qualifiedname>MutableComplex::next_unit</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_complex_1_1iterator" kindref="compound">iterator</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="91" column="8" bodyfile="Macaulay2/e/mutablecomplex.cpp" bodystart="68" bodyend="78"/>
+        <references refid="class_mutable_complex_1_1iterator_a7d7e7ca02a36231d56e17218fa769827_1a7d7e7ca02a36231d56e17218fa769827" compoundref="mutablecomplex_8hpp" startline="152" endline="156">MutableComplex::iterator::end</references>
+        <references refid="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" compoundref="mutablecomplex_8hpp" startline="101">flags</references>
+        <references refid="class_mutable_complex_1_1iterator_ae28b260ac53eea8f9500b6822ec43b33_1ae28b260ac53eea8f9500b6822ec43b33" compoundref="mutablecomplex_8hpp" startline="132" endline="132">MutableComplex::iterator::index</references>
+        <references refid="class_mutable_complex_aa278c6cadaf85ef858b2e990aef432dc_1aa278c6cadaf85ef858b2e990aef432dc" compoundref="mutablecomplex_8hpp" startline="167">mRing</references>
+        <referencedby refid="class_mutable_complex_aad922f1e2640df08b7419163fea59916_1aad922f1e2640df08b7419163fea59916" compoundref="mutablecomplex_8cpp" startline="80" endline="98">find_unit</referencedby>
+        <referencedby refid="class_mutable_complex_ad20ea57e95282816ae6af2e83af3e44a_1ad20ea57e95282816ae6af2e83af3e44a" compoundref="mutablecomplex_8cpp" startline="102" endline="116">list_units</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_aad922f1e2640df08b7419163fea59916_1aad922f1e2640df08b7419163fea59916" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MutableComplex::find_unit</definition>
+        <argsstring>(iterator &amp;i, const size_t flags) const</argsstring>
+        <name>find_unit</name>
+        <qualifiedname>MutableComplex::find_unit</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_complex_1_1iterator" kindref="compound">iterator</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="92" column="8" bodyfile="Macaulay2/e/mutablecomplex.cpp" bodystart="80" bodyend="98"/>
+        <references refid="class_mutable_complex_a698ab13831e121f2e8f0c07ac408adb9_1a698ab13831e121f2e8f0c07ac408adb9" compoundref="mutablecomplex_8cpp" startline="25" endline="66">complexity</references>
+        <references refid="mutablecomplex_8cpp_a26818febe4418fff299157679302a6d5_1a26818febe4418fff299157679302a6d5" compoundref="mutablecomplex_8cpp" startline="21">FLAG_BEST_UNIT</references>
+        <references refid="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" compoundref="mutablecomplex_8hpp" startline="101">flags</references>
+        <references refid="class_mutable_complex_1_1iterator_ae28b260ac53eea8f9500b6822ec43b33_1ae28b260ac53eea8f9500b6822ec43b33" compoundref="mutablecomplex_8hpp" startline="132" endline="132">MutableComplex::iterator::index</references>
+        <references refid="class_mutable_complex_a2b18e13c697f719b68e6b634f34cab7f_1a2b18e13c697f719b68e6b634f34cab7f" compoundref="mutablecomplex_8cpp" startline="68" endline="78">next_unit</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <referencedby refid="class_mutable_complex_af3feb2f0862fe6fa491e00adffcad92e_1af3feb2f0862fe6fa491e00adffcad92e" compoundref="mutablecomplex_8cpp" startline="166" endline="174">prune_matrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_ad20ea57e95282816ae6af2e83af3e44a_1ad20ea57e95282816ae6af2e83af3e44a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="class_mutable_complex_1_1iterator" kindref="compound">iterator</ref> &gt;</type>
+        <definition>std::vector&lt; MutableComplex::iterator &gt; MutableComplex::list_units</definition>
+        <argsstring>(size_t n, const size_t flags) const</argsstring>
+        <name>list_units</name>
+        <qualifiedname>MutableComplex::list_units</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="94" column="15" bodyfile="Macaulay2/e/mutablecomplex.cpp" bodystart="102" bodyend="116"/>
+        <references refid="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" compoundref="mutablecomplex_8hpp" startline="101">flags</references>
+        <references refid="class_mutable_complex_a2b18e13c697f719b68e6b634f34cab7f_1a2b18e13c697f719b68e6b634f34cab7f" compoundref="mutablecomplex_8cpp" startline="68" endline="78">next_unit</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_a41a88801029c2b5e920badd39ec055c8_1a41a88801029c2b5e920badd39ec055c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MutableComplex::prune_unit</definition>
+        <argsstring>(const iterator &amp;i, const size_t flags)</argsstring>
+        <name>prune_unit</name>
+        <qualifiedname>MutableComplex::prune_unit</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mutable_complex_1_1iterator" kindref="compound">iterator</ref> &amp;</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="96" column="8" bodyfile="Macaulay2/e/mutablecomplex.cpp" bodystart="118" bodyend="163"/>
+        <references refid="mutablecomplex_8cpp_a0d6e989fd58644c55f2eacb03829a58d_1a0d6e989fd58644c55f2eacb03829a58d" compoundref="mutablecomplex_8cpp" startline="14">FLAG_TRACE_MORPHISMS</references>
+        <references refid="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" compoundref="mutablecomplex_8hpp" startline="101">flags</references>
+        <references refid="class_mutable_complex_1_1iterator_ae28b260ac53eea8f9500b6822ec43b33_1ae28b260ac53eea8f9500b6822ec43b33" compoundref="mutablecomplex_8hpp" startline="132" endline="132">MutableComplex::iterator::index</references>
+        <references refid="class_mutable_complex_a2313d1b55df6677b1ee59cc6a850c317_1a2313d1b55df6677b1ee59cc6a850c317" compoundref="mutablecomplex_8hpp" startline="173">mBetti</references>
+        <references refid="class_mutable_complex_aa278c6cadaf85ef858b2e990aef432dc_1aa278c6cadaf85ef858b2e990aef432dc" compoundref="mutablecomplex_8hpp" startline="167">mRing</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <referencedby refid="class_mutable_complex_af3feb2f0862fe6fa491e00adffcad92e_1af3feb2f0862fe6fa491e00adffcad92e" compoundref="mutablecomplex_8cpp" startline="166" endline="174">prune_matrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_af3feb2f0862fe6fa491e00adffcad92e_1af3feb2f0862fe6fa491e00adffcad92e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MutableComplex::prune_matrix</definition>
+        <argsstring>(size_t n, const size_t flags)</argsstring>
+        <name>prune_matrix</name>
+        <qualifiedname>MutableComplex::prune_matrix</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="97" column="8" bodyfile="Macaulay2/e/mutablecomplex.cpp" bodystart="166" bodyend="174"/>
+        <references refid="class_mutable_complex_aad922f1e2640df08b7419163fea59916_1aad922f1e2640df08b7419163fea59916" compoundref="mutablecomplex_8cpp" startline="80" endline="98">find_unit</references>
+        <references refid="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" compoundref="mutablecomplex_8hpp" startline="101">flags</references>
+        <references refid="class_mutable_complex_a41a88801029c2b5e920badd39ec055c8_1a41a88801029c2b5e920badd39ec055c8" compoundref="mutablecomplex_8cpp" startline="118" endline="163">prune_unit</references>
+        <referencedby refid="class_mutable_complex_a5370b0a6b767cf2c3074fa76b0fe2b75_1a5370b0a6b767cf2c3074fa76b0fe2b75" compoundref="mutablecomplex_8cpp" startline="176" endline="190">prune_complex</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_a5370b0a6b767cf2c3074fa76b0fe2b75_1a5370b0a6b767cf2c3074fa76b0fe2b75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MutableComplex::prune_complex</definition>
+        <argsstring>(const size_t nsteps, const size_t flags)</argsstring>
+        <name>prune_complex</name>
+        <qualifiedname>MutableComplex::prune_complex</qualifiedname>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>nsteps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="98" column="8" bodyfile="Macaulay2/e/mutablecomplex.cpp" bodystart="176" bodyend="190"/>
+        <references refid="mutablecomplex_8cpp_a5613c80ef6b5ef7de2daa6d9f404db32_1a5613c80ef6b5ef7de2daa6d9f404db32" compoundref="mutablecomplex_8cpp" startline="23">FLAG_REV_ORDER</references>
+        <references refid="mutablecomplex_8cpp_a0d6e989fd58644c55f2eacb03829a58d_1a0d6e989fd58644c55f2eacb03829a58d" compoundref="mutablecomplex_8cpp" startline="14">FLAG_TRACE_MORPHISMS</references>
+        <references refid="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" compoundref="mutablecomplex_8hpp" startline="101">flags</references>
+        <references refid="class_mutable_matrix_afe8166972efc3f4e690eed1c10ef0aac_1afe8166972efc3f4e690eed1c10ef0aac" compoundref="mat_8cpp" startline="69" endline="74">MutableMatrix::identity</references>
+        <references refid="class_mutable_complex_a2313d1b55df6677b1ee59cc6a850c317_1a2313d1b55df6677b1ee59cc6a850c317" compoundref="mutablecomplex_8hpp" startline="173">mBetti</references>
+        <references refid="class_mutable_complex_aa278c6cadaf85ef858b2e990aef432dc_1aa278c6cadaf85ef858b2e990aef432dc" compoundref="mutablecomplex_8hpp" startline="167">mRing</references>
+        <references refid="class_mutable_complex_af3feb2f0862fe6fa491e00adffcad92e_1af3feb2f0862fe6fa491e00adffcad92e" compoundref="mutablecomplex_8cpp" startline="166" endline="174">prune_matrix</references>
+        <referencedby refid="engine_8h_a1875d631da22085bdc2fbe608637681d_1a1875d631da22085bdc2fbe608637681d" compoundref="mutablecomplex_8cpp" startline="273" endline="280">rawPruneComplex</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_a5a4ed6da15d904e17bf9683d5c545500_1a5a4ed6da15d904e17bf9683d5c545500" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt;</type>
+        <definition>std::vector&lt; size_t &gt; MutableComplex::prune_betti</definition>
+        <argsstring>(const size_t nsteps, const size_t flags)</argsstring>
+        <name>prune_betti</name>
+        <qualifiedname>MutableComplex::prune_betti</qualifiedname>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>nsteps</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="99" column="15" bodyfile="Macaulay2/e/mutablecomplex.cpp" bodystart="192" bodyend="202"/>
+        <references refid="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" compoundref="mutablecomplex_8hpp" startline="101">flags</references>
+        <references refid="class_mutable_complex_a2313d1b55df6677b1ee59cc6a850c317_1a2313d1b55df6677b1ee59cc6a850c317" compoundref="mutablecomplex_8hpp" startline="173">mBetti</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_abee265d3fa47230fec8952d4bcda5c4a_1abee265d3fa47230fec8952d4bcda5c4a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MutableComplex::VECTOR</definition>
+        <argsstring>(MutableMatrix *) prune_morphisms(const size_t nsteps</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>MutableComplex::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="100" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_a81691d923c3e0c91a897c4acd0d03eb8_1a81691d923c3e0c91a897c4acd0d03eb8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MutableComplex::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>MutableComplex::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="164" column="8" bodyfile="Macaulay2/e/mutablecomplex.cpp" bodystart="234" bodyend="240"/>
+        <references refid="class_mutable_complex_a2313d1b55df6677b1ee59cc6a850c317_1a2313d1b55df6677b1ee59cc6a850c317" compoundref="mutablecomplex_8hpp" startline="173">mBetti</references>
+        <referencedby refid="engine_8h_aec04afd88fbe86722efe7020a70c2d32_1aec04afd88fbe86722efe7020a70c2d32" compoundref="mutablecomplex_8cpp" startline="289" endline="294">rawMutableComplexToString</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_mutable_complex_ae63579877c43b2b9d76a561006634735_1ae63579877c43b2b9d76a561006634735" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MutableComplex::VECTOR</definition>
+        <argsstring>(MutableMatrix *) mDifferential</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>MutableComplex::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="170" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_aa3a1959d2667b9d04f4a97a53ce932d6_1aa3a1959d2667b9d04f4a97a53ce932d6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MutableComplex::VECTOR</definition>
+        <argsstring>(MutableMatrix *) mMorphisms</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>MutableComplex::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="171" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mutable_complex_a0fbb155f90e5be690639af794c8f5d51_1a0fbb155f90e5be690639af794c8f5d51" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MutableComplex::VECTOR</definition>
+        <argsstring>(MutableMatrix *) mDegrees</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>MutableComplex::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mutablecomplex.hpp" line="172" column="3"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Sequence of <computeroutput><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref></computeroutput> differentials representing an in-progress chain complex, used for engine-side minimisation / pruning. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds the underlying ring (<computeroutput><ref refid="class_mutable_complex_aa278c6cadaf85ef858b2e990aef432dc_1aa278c6cadaf85ef858b2e990aef432dc" kindref="member">mRing</ref></computeroutput>), and, if applicable, its <computeroutput><ref refid="class_local_ring" kindref="compound">LocalRing</ref></computeroutput> / <computeroutput><ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref></computeroutput> casts so <computeroutput>prune_*</computeroutput> can switch to the local-ring path when warranted. <computeroutput>mDifferential[i]</computeroutput> is the matrix from position <computeroutput>i+1</computeroutput> to position <computeroutput>i</computeroutput>, and <computeroutput><ref refid="class_mutable_complex_a2313d1b55df6677b1ee59cc6a850c317_1a2313d1b55df6677b1ee59cc6a850c317" kindref="member">mBetti</ref></computeroutput> caches the per-position Betti numbers (matrix sizes). The pruning API (<computeroutput><ref refid="class_mutable_complex_a41a88801029c2b5e920badd39ec055c8_1a41a88801029c2b5e920badd39ec055c8" kindref="member">prune_unit</ref></computeroutput>, <computeroutput><ref refid="class_mutable_complex_af3feb2f0862fe6fa491e00adffcad92e_1af3feb2f0862fe6fa491e00adffcad92e" kindref="member">prune_matrix</ref></computeroutput>, <computeroutput><ref refid="class_mutable_complex_a5370b0a6b767cf2c3074fa76b0fe2b75_1a5370b0a6b767cf2c3074fa76b0fe2b75" kindref="member">prune_complex</ref></computeroutput>) walks over <computeroutput>(matrix, row, col)</computeroutput> triples produced by the nested <computeroutput><ref refid="class_mutable_complex_1_1iterator" kindref="compound">iterator</ref></computeroutput> and uses any unit entry it finds to row/column reduce the complex in place, lowering the Betti numbers while preserving the homology. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>MutableComplex</label>
+        <link refid="class_mutable_complex"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="80">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="66" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="83">
+        <label>Computation</label>
+        <link refid="class_computation"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="84" relation="usage">
+          <edgelabel>computation_status</edgelabel>
+        </childnode>
+        <childnode refid="85" relation="usage">
+          <edgelabel>stop_</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="82">
+        <label>GBComputation</label>
+        <link refid="class_g_b_computation"/>
+        <childnode refid="83" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>LocalRing</label>
+        <link refid="class_local_ring"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mPrime</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>use_gcd_simplify</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="67" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="67" relation="public-inheritance">
+        </childnode>
+        <childnode refid="68" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="86">
+        <label>M2_arrayint</label>
+        <link refid="class_m2__arrayint"/>
+      </node>
+      <node id="74">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="75" relation="public-inheritance">
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="29" relation="private-inheritance">
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="31" relation="public-inheritance">
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="25" relation="private-inheritance">
+        </childnode>
+        <childnode refid="28" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="53">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>MutableComplex</label>
+        <link refid="class_mutable_complex"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>flags</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>mLocalRing</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mPolynomialRing</edgelabel>
+        </childnode>
+        <childnode refid="87" relation="usage">
+          <edgelabel>mBetti</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="31">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="32" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="15" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="17" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>CoefficientType</label>
+      </node>
+      <node id="77">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="85">
+        <label>StopConditions</label>
+        <link refid="struct_stop_conditions"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>always_stop</edgelabel>
+          <edgelabel>just_min_gens</edgelabel>
+          <edgelabel>stop_after_degree</edgelabel>
+          <edgelabel>use_codim_limit</edgelabel>
+        </childnode>
+        <childnode refid="86" relation="usage">
+          <edgelabel>degree_limit</edgelabel>
+          <edgelabel>length_limit</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>basis_element_limit</edgelabel>
+          <edgelabel>codim_limit</edgelabel>
+          <edgelabel>pair_limit</edgelabel>
+          <edgelabel>subring_limit</edgelabel>
+          <edgelabel>syzygy_limit</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>T</label>
+        <link refid="struct_t"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>cmp</edgelabel>
+          <edgelabel>length</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>hash</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>timestamp</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>buckets</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>T::binding</label>
+        <link refid="struct_t_1_1binding"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>link</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>key</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="49">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="10">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="47">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="42" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>char</label>
+      </node>
+      <node id="79">
+        <label>const ARing *</label>
+      </node>
+      <node id="22">
+        <label>const void *</label>
+      </node>
+      <node id="42">
+        <label>double</label>
+      </node>
+      <node id="84">
+        <label>enum ComputationStatusCode</label>
+      </node>
+      <node id="63">
+        <label>overflow_type *</label>
+      </node>
+      <node id="60">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="62">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="78">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="41">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="38" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>long</label>
+      </node>
+      <node id="33">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="34" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>mon_part</label>
+      </node>
+      <node id="46">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="45">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="43">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="44">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="38">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>size_t</label>
+      </node>
+      <node id="70">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>spinLock</label>
+      </node>
+      <node id="69">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="57">
+        <label>std::string</label>
+        <childnode refid="58" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="18" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="10" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="87">
+        <label>std::vector&lt; size_t &gt;</label>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; size_t &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="57" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>unsigned</label>
+      </node>
+      <node id="19">
+        <label>unsigned(*)(const void *key)</label>
+      </node>
+      <node id="23">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/mutablecomplex.hpp" line="65" column="1" bodyfile="Macaulay2/e/mutablecomplex.hpp" bodystart="66" bodyend="174"/>
+    <listofallmembers>
+      <member refid="class_mutable_complex_a698ab13831e121f2e8f0c07ac408adb9_1a698ab13831e121f2e8f0c07ac408adb9" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>complexity</name></member>
+      <member refid="class_mutable_complex_aad922f1e2640df08b7419163fea59916_1aad922f1e2640df08b7419163fea59916" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>find_unit</name></member>
+      <member refid="class_mutable_complex_a6da3885f99faeb983b1bfafa50f4da62_1a6da3885f99faeb983b1bfafa50f4da62" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>flags</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>hash</name></member>
+      <member refid="class_mutable_complex_ad20ea57e95282816ae6af2e83af3e44a_1ad20ea57e95282816ae6af2e83af3e44a" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>list_units</name></member>
+      <member refid="class_mutable_complex_a2313d1b55df6677b1ee59cc6a850c317_1a2313d1b55df6677b1ee59cc6a850c317" prot="private" virt="non-virtual"><scope>MutableComplex</scope><name>mBetti</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>MutableComplex</scope><name>mHashValue</name></member>
+      <member refid="class_mutable_complex_aac016b32100d81887387e3bff68b736f_1aac016b32100d81887387e3bff68b736f" prot="private" virt="non-virtual"><scope>MutableComplex</scope><name>mLocalRing</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>MutableComplex</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_mutable_complex_aea90c4f31c8871ff17b0fd20b2ea0b71_1aea90c4f31c8871ff17b0fd20b2ea0b71" prot="private" virt="non-virtual"><scope>MutableComplex</scope><name>mPolynomialRing</name></member>
+      <member refid="class_mutable_complex_aa278c6cadaf85ef858b2e990aef432dc_1aa278c6cadaf85ef858b2e990aef432dc" prot="private" virt="non-virtual"><scope>MutableComplex</scope><name>mRing</name></member>
+      <member refid="class_mutable_complex_a329d9fe993a2c50821f7b093c0416c40_1a329d9fe993a2c50821f7b093c0416c40" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>MutableComplex</name></member>
+      <member refid="class_mutable_complex_a2d99ae05a03dc9dbaf2c95422a134eeb_1a2d99ae05a03dc9dbaf2c95422a134eeb" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>MutableComplex</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>MutableEngineObject</name></member>
+      <member refid="class_mutable_complex_a2b18e13c697f719b68e6b634f34cab7f_1a2b18e13c697f719b68e6b634f34cab7f" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>next_unit</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_mutable_complex_a5a4ed6da15d904e17bf9683d5c545500_1a5a4ed6da15d904e17bf9683d5c545500" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>prune_betti</name></member>
+      <member refid="class_mutable_complex_a5370b0a6b767cf2c3074fa76b0fe2b75_1a5370b0a6b767cf2c3074fa76b0fe2b75" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>prune_complex</name></member>
+      <member refid="class_mutable_complex_af3feb2f0862fe6fa491e00adffcad92e_1af3feb2f0862fe6fa491e00adffcad92e" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>prune_matrix</name></member>
+      <member refid="class_mutable_complex_a41a88801029c2b5e920badd39ec055c8_1a41a88801029c2b5e920badd39ec055c8" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>prune_unit</name></member>
+      <member refid="class_mutable_complex_a81691d923c3e0c91a897c4acd0d03eb8_1a81691d923c3e0c91a897c4acd0d03eb8" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>text_out</name></member>
+      <member refid="class_mutable_complex_abee265d3fa47230fec8952d4bcda5c4a_1abee265d3fa47230fec8952d4bcda5c4a" prot="public" virt="non-virtual"><scope>MutableComplex</scope><name>VECTOR</name></member>
+      <member refid="class_mutable_complex_ae63579877c43b2b9d76a561006634735_1ae63579877c43b2b9d76a561006634735" prot="private" virt="non-virtual"><scope>MutableComplex</scope><name>VECTOR</name></member>
+      <member refid="class_mutable_complex_aa3a1959d2667b9d04f4a97a53ce932d6_1aa3a1959d2667b9d04f4a97a53ce932d6" prot="private" virt="non-virtual"><scope>MutableComplex</scope><name>VECTOR</name></member>
+      <member refid="class_mutable_complex_a0fbb155f90e5be690639af794c8f5d51_1a0fbb155f90e5be690639af794c8f5d51" prot="private" virt="non-virtual"><scope>MutableComplex</scope><name>VECTOR</name></member>
+      <member refid="class_mutable_complex_abd9fe8e7e6c8458ecd93c3a3b8c0b0e5_1abd9fe8e7e6c8458ecd93c3a3b8c0b0e5" prot="public" virt="virtual"><scope>MutableComplex</scope><name>~MutableComplex</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>MutableComplex</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>MutableComplex</scope><name>~our_gc_cleanup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

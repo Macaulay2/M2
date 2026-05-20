@@ -1,0 +1,523 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_range_8cpp" kind="file" language="C++">
+    <compoundname>Range.cpp</compoundname>
+    <includes local="no">utility</includes>
+    <includes local="no">algorithm</includes>
+    <includes local="no">iterator</includes>
+    <includes refid="mathicgb_2src_2mathicgb_2stdinc_8h" local="yes">mathicgb/stdinc.h</includes>
+    <includes refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" local="yes">mathicgb/Range.hpp</includes>
+    <includes local="no">gtest/gtest.h</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">list</includes>
+    <includes local="no">map</includes>
+    <incdepgraph>
+      <node id="8">
+        <label>mathicgb/Range.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>mathicgb/stdinc.h</label>
+        <link refid="mathicgb_2src_2mathicgb_2stdinc_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/test/Range.cpp</label>
+        <link refid="_range_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>algorithm</label>
+      </node>
+      <node id="6">
+        <label>cstddef</label>
+      </node>
+      <node id="12">
+        <label>gtest/gtest.h</label>
+      </node>
+      <node id="4">
+        <label>iterator</label>
+      </node>
+      <node id="9">
+        <label>limits</label>
+      </node>
+      <node id="13">
+        <label>list</label>
+      </node>
+      <node id="14">
+        <label>map</label>
+      </node>
+      <node id="7">
+        <label>memory</label>
+      </node>
+      <node id="11">
+        <label>type_traits</label>
+      </node>
+      <node id="2">
+        <label>utility</label>
+      </node>
+      <node id="10">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Range, Simple)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref></type>
+        </param>
+        <param>
+          <type>Simple</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/Range.cpp" line="28" column="1" bodyfile="submodules/mathicgb/src/test/Range.cpp" bodystart="28" bodyend="84"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+      </memberdef>
+      <memberdef kind="function" id="_range_8cpp_a3e981b823bb11c62da02b74ec8127f9b_1a3e981b823bb11c62da02b74ec8127f9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Range, rangeToVector)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref></type>
+        </param>
+        <param>
+          <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/Range.cpp" line="86" column="1" bodyfile="submodules/mathicgb/src/test/Range.cpp" bodystart="86" bodyend="92"/>
+        <references refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a">ASSERT_EQ</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="256" endline="263">rangeToVector</references>
+      </memberdef>
+      <memberdef kind="function" id="_range_8cpp_ab24720a28edd968900a767fd14a1fe7c_1ab24720a28edd968900a767fd14a1fe7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Range, zip)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref></type>
+        </param>
+        <param>
+          <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/Range.cpp" line="94" column="1" bodyfile="submodules/mathicgb/src/test/Range.cpp" bodystart="94" bodyend="112"/>
+        <references refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a">ASSERT_EQ</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="127" endline="134">zip</references>
+      </memberdef>
+      <memberdef kind="function" id="_range_8cpp_a66f4f53727985fc43d232a409888af50_1a66f4f53727985fc43d232a409888af50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Range, intRange)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref></type>
+        </param>
+        <param>
+          <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/Range.cpp" line="114" column="1" bodyfile="submodules/mathicgb/src/test/Range.cpp" bodystart="114" bodyend="132"/>
+        <references refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a">ASSERT_EQ</references>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="210" endline="212">intRange</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="256" endline="263">rangeToVector</references>
+      </memberdef>
+      <memberdef kind="function" id="_range_8cpp_a6f64e1f7114dffb30e01026243096937_1a6f64e1f7114dffb30e01026243096937" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Range, indexRange)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref></type>
+        </param>
+        <param>
+          <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" kindref="member">indexRange</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/Range.cpp" line="134" column="1" bodyfile="submodules/mathicgb/src/test/Range.cpp" bodystart="134" bodyend="141"/>
+        <references refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a">ASSERT_EQ</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="236" endline="241">indexRange</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="210" endline="212">intRange</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="256" endline="263">rangeToVector</references>
+      </memberdef>
+      <memberdef kind="function" id="_range_8cpp_a2226b9ad1565ee6ba2561c72fc0b6a02_1a2226b9ad1565ee6ba2561c72fc0b6a02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Range, oppositePairRange)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref></type>
+        </param>
+        <param>
+          <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/Range.cpp" line="143" column="1" bodyfile="submodules/mathicgb/src/test/Range.cpp" bodystart="143" bodyend="159"/>
+        <references refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a">ASSERT_EQ</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="210" endline="212">intRange</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="328" endline="333">oppositePairRange</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="256" endline="263">rangeToVector</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="127" endline="134">zip</references>
+      </memberdef>
+      <memberdef kind="function" id="_range_8cpp_a644382711514e516e6610247d6d7d5ff_1a644382711514e516e6610247d6d7d5ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Range, adjPairRange)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref></type>
+        </param>
+        <param>
+          <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/Range.cpp" line="161" column="1" bodyfile="submodules/mathicgb/src/test/Range.cpp" bodystart="161" bodyend="173"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="361" endline="382">adjPairRange</references>
+        <references refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a">ASSERT_EQ</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="210" endline="212">intRange</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="256" endline="263">rangeToVector</references>
+      </memberdef>
+      <memberdef kind="function" id="_range_8cpp_ad1d2660ac4f6602569efb76d1961b2e9_1ad1d2660ac4f6602569efb76d1961b2e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Range, flatten)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref></type>
+        </param>
+        <param>
+          <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/Range.cpp" line="175" column="1" bodyfile="submodules/mathicgb/src/test/Range.cpp" bodystart="175" bodyend="185"/>
+        <references refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a">ASSERT_EQ</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="515" endline="523">flatten</references>
+      </memberdef>
+      <memberdef kind="function" id="_range_8cpp_aacc5a5e3d0a77abd066b48c29f453c69_1aacc5a5e3d0a77abd066b48c29f453c69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TEST</definition>
+        <argsstring>(Range, flattenRecursive)</argsstring>
+        <name>TEST</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref></type>
+        </param>
+        <param>
+          <type>flattenRecursive</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/test/Range.cpp" line="187" column="1" bodyfile="submodules/mathicgb/src/test/Range.cpp" bodystart="187" bodyend="215"/>
+        <references refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a">ASSERT_EQ</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="515" endline="523">flatten</references>
+        <references refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" compoundref="overflow-test_8cpp" startline="30">outer</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;utility&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;algorithm&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iterator&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//<sp/>MathicGB<sp/>copyright<sp/>2012<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mathicgb_2src_2mathicgb_2stdinc_8h" kindref="compound">mathicgb/stdinc.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" kindref="compound">mathicgb/Range.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;gtest/gtest.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iterator&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;list&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;map&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemgb" kindref="compound">mgb</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Range1,<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Range2&gt;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>checkRange(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Range1&amp;<sp/>r1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Range2&amp;<sp/>r2)<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>d1<sp/>=<sp/>std::distance(std::begin(r1),<sp/>std::end(r1));</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>d2<sp/>=<sp/>std::distance(std::begin(r2),<sp/>std::end(r2));</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(d1,<sp/>d2);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="_arena_test_8cpp_a2d2acd57adc386d17198dafadbc27a5e_1a2d2acd57adc386d17198dafadbc27a5e" kindref="member">ASSERT_TRUE</ref>(std::equal(std::begin(r1),<sp/>std::end(r1),<sp/>std::begin(r2)));</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" refkind="member"><highlight class="normal"><ref refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" kindref="member">TEST</ref>(<ref refid="class_range" kindref="compound">Range</ref>,<sp/>Simple)<sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>intArray[]<sp/>=<sp/>{1,<sp/>5,<sp/>3,<sp/>7};</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;int&gt;<sp/>intVector(std::begin(intArray),<sp/>std::end(intArray));</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::list&lt;int&gt;<sp/>intList(std::begin(intArray),<sp/>std::end(intArray));</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>std::vector&lt;int&gt;<sp/>v;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>checkClear<sp/>=<sp/>[&amp;]()<sp/>{</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>checkRange(intVector,<sp/>v);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>v.clear();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Let&apos;s<sp/>try<sp/>the<sp/>pattern<sp/>without<sp/>using<sp/>range<sp/>just<sp/>to<sp/>make<sp/>sure<sp/>everything</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>is<sp/>OK.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/>intArray)</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>***<sp/>check<sp/>using<sp/>intArray.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(intArray))</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(std::begin(intArray),<sp/>std::end(intArray)))</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>***<sp/>check<sp/>using<sp/>intVector</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(intVector))</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(std::begin(intVector),<sp/>std::end(intVector)))</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>***<sp/>check<sp/>using<sp/>intList</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(intList))</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(std::begin(intList),<sp/>std::end(intList)))</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>***<sp/>check<sp/>using<sp/>iterated<sp/>range</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(std::begin(intArray),<sp/>std::end(intArray))))</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(intVector)))</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(intList)))))</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>v.push_back(i);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>checkClear();</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="_range_8cpp_a3e981b823bb11c62da02b74ec8127f9b_1a3e981b823bb11c62da02b74ec8127f9b" refkind="member"><highlight class="normal"><ref refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" kindref="member">TEST</ref>(<ref refid="class_range" kindref="compound">Range</ref>,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>intArray[]<sp/>=<sp/>{1,<sp/>5,<sp/>3,<sp/>7};</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;int&gt;<sp/>intVector(std::begin(intArray),<sp/>std::end(intArray));</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(intVector,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(std::begin(intArray),<sp/>std::end(intArray)));</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(intVector,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(intArray));</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(intVector,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(intArray)));</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="_range_8cpp_ab24720a28edd968900a767fd14a1fe7c_1ab24720a28edd968900a767fd14a1fe7c" refkind="member"><highlight class="normal"><ref refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" kindref="member">TEST</ref>(<ref refid="class_range" kindref="compound">Range</ref>,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>a[]<sp/>=<sp/>{</highlight><highlight class="stringliteral">&quot;hello&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;world&quot;</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b[]<sp/>=<sp/>{4,<sp/>2,<sp/>1,<sp/>0};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/>std::ostringstream<sp/>out;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Put<sp/>a<sp/>range()<sp/>around<sp/>b<sp/>just<sp/>to<sp/>test<sp/>something<sp/>other<sp/>than<sp/>a<sp/>built-in</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(a,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(b)))</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>.first<sp/>&lt;&lt;<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>.second<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;<sp/>&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(</highlight><highlight class="stringliteral">&quot;hello4<sp/>world2<sp/>&quot;</highlight><highlight class="normal">,<sp/>out.str());</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>try<sp/>the<sp/>version<sp/>on<sp/>iterators<sp/>and<sp/>put<sp/>the<sp/>range<sp/>around<sp/>a<sp/>instead.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/>out.str(</highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>:</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(std::begin(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(a)),<sp/>std::end(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(a)),<sp/>std::begin(b),<sp/>std::end(b))</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/>)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>.first<sp/>&lt;&lt;<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>.second<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;<sp/>&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(</highlight><highlight class="stringliteral">&quot;hello4<sp/>world2<sp/>&quot;</highlight><highlight class="normal">,<sp/>out.str());</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="_range_8cpp_a66f4f53727985fc43d232a409888af50_1a66f4f53727985fc43d232a409888af50" refkind="member"><highlight class="normal"><ref refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" kindref="member">TEST</ref>(<ref refid="class_range" kindref="compound">Range</ref>,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>int05[]<sp/>=<sp/>{0,<sp/>1,<sp/>2,<sp/>3,<sp/>4};</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(int05),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(0,<sp/>5)));</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(int05),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(5)));</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>gcc<sp/>4.7.3<sp/>won&apos;t<sp/>parse<sp/>&quot;const<sp/>signed<sp/>char&quot;<sp/>here,<sp/>but<sp/>it<sp/>will<sp/>parse</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>it<sp/>like<sp/>this<sp/>with<sp/>the<sp/>typedef.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">signed</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>C;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>C<sp/>scharm2p5[]<sp/>=<sp/>{-2,<sp/>-1,<sp/>0,<sp/>1,<sp/>2,<sp/>3,<sp/>4};</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(scharm2p5)),</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(C(-2),<sp/>C(5)))</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Normally<sp/>we<sp/>should<sp/>not<sp/>dereference<sp/>an<sp/>end()<sp/>iterator,<sp/>but<sp/>for<sp/>the<sp/>case</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>of<sp/>intRange()<sp/>it<sp/>is<sp/>OK.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(std::numeric_limits&lt;size_t&gt;::max(),<sp/>*<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>().<ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>());</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">(0),<sp/>*<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>().<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>());</highlight></codeline>
+<codeline lineno="132"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="_range_8cpp_a6f64e1f7114dffb30e01026243096937_1a6f64e1f7114dffb30e01026243096937" refkind="member"><highlight class="normal"><ref refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" kindref="member">TEST</ref>(<ref refid="class_range" kindref="compound">Range</ref>,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" kindref="member">indexRange</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::pair&lt;short,<sp/>size_t&gt;<sp/><ref refid="class_pair" kindref="compound">Pair</ref>;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><ref refid="class_pair" kindref="compound">Pair</ref><sp/>indexed[]<sp/>=<sp/>{<ref refid="class_pair" kindref="compound">Pair</ref>(-2,<sp/>0),<sp/><ref refid="class_pair" kindref="compound">Pair</ref>(-1,<sp/>1),<sp/><ref refid="class_pair" kindref="compound">Pair</ref>(0,<sp/>2)};</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(indexed),</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" kindref="member">indexRange</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange&lt;short&gt;</ref>(-2,<sp/>1)))</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="_range_8cpp_a2226b9ad1565ee6ba2561c72fc0b6a02_1a2226b9ad1565ee6ba2561c72fc0b6a02" refkind="member"><highlight class="normal"><ref refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" kindref="member">TEST</ref>(<ref refid="class_range" kindref="compound">Range</ref>,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>elems[]<sp/>{</highlight><highlight class="stringliteral">&quot;hello&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;world&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;!&quot;</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(elems,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(10));</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>opR<sp/>=<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(3),<sp/>elems);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>val1<sp/>=<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(r);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>val2a<sp/>=<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(opR);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>val3a<sp/>=<sp/>std::begin(val2a);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>val3b<sp/>=<sp/>std::end(val2a);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>val3<sp/>=<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(val3a,val3b);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>val2<sp/>=<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(val2a);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(val1,<sp/>val2);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(r),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(opR)));</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(opR),</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(std::begin(r),<sp/>std::end(r)))</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/>);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="_range_8cpp_a644382711514e516e6610247d6d7d5ff_1a644382711514e516e6610247d6d7d5ff" refkind="member"><highlight class="normal"><ref refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" kindref="member">TEST</ref>(<ref refid="class_range" kindref="compound">Range</ref>,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::pair&lt;int,<sp/>int&gt;<sp/><ref refid="class_pair" kindref="compound">Pair</ref>;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>std::vector&lt;Pair&gt;<sp/>none;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(none),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(0))));</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(none),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(1))));</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><ref refid="class_pair" kindref="compound">Pair</ref><sp/>adj2[]<sp/>=<sp/>{<ref refid="class_pair" kindref="compound">Pair</ref>(0,<sp/>1)};</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(adj2),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(2))));</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><ref refid="class_pair" kindref="compound">Pair</ref><sp/>adj4[]<sp/>=<sp/>{<ref refid="class_pair" kindref="compound">Pair</ref>(0,<sp/>1),<sp/><ref refid="class_pair" kindref="compound">Pair</ref>(1,<sp/>2),<sp/><ref refid="class_pair" kindref="compound">Pair</ref>(2,<sp/>3)};</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(adj4),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(4))));</highlight></codeline>
+<codeline lineno="173"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="_range_8cpp_ad1d2660ac4f6602569efb76d1961b2e9_1ad1d2660ac4f6602569efb76d1961b2e9" refkind="member"><highlight class="normal"><ref refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" kindref="member">TEST</ref>(<ref refid="class_range" kindref="compound">Range</ref>,<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/>std::vector&lt;std::list&lt;int&gt;&gt;<sp/>v(3);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/>v[0].push_back(1);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/>v[2].push_back(2);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/>v[2].push_back(3);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/>std::ostringstream<sp/>out;</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten</ref>(v))</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>i<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;<sp/>&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(</highlight><highlight class="stringliteral">&quot;1<sp/>2<sp/>3<sp/>&quot;</highlight><highlight class="normal">,<sp/>out.str());</highlight></codeline>
+<codeline lineno="185"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="_range_8cpp_aacc5a5e3d0a77abd066b48c29f453c69_1aacc5a5e3d0a77abd066b48c29f453c69" refkind="member"><highlight class="normal"><ref refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" kindref="member">TEST</ref>(<ref refid="class_range" kindref="compound">Range</ref>,<sp/>flattenRecursive)<sp/>{</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/>std::list&lt;std::vector&lt;std::set&lt;int&gt;&gt;&gt;<sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.emplace_back();</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.emplace_back();</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().emplace_back();</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().emplace_back();</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().back().insert(1);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().emplace_back();</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().back().insert(2);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().emplace_back();</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().emplace_back();</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().back().insert(3);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().back().insert(4);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().back().insert(5);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().back().insert(6);</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().emplace_back();</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().back().insert(7);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().emplace_back();</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>.back().emplace_back();</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/>std::ostringstream<sp/>out;</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>i<sp/>:<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten</ref>(<ref refid="overflow-test_8cpp_a1e36c9d9fa8e1a5d2153cc2c69f267ab_1a1e36c9d9fa8e1a5d2153cc2c69f267ab" kindref="member">outer</ref>)))</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>i<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;<sp/>&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><ref refid="_arena_test_8cpp_a3832f70c1485f4d4c2877746da4fbc1a_1a3832f70c1485f4d4c2877746da4fbc1a" kindref="member">ASSERT_EQ</ref>(</highlight><highlight class="stringliteral">&quot;1<sp/>2<sp/>3<sp/>4<sp/>5<sp/>6<sp/>7<sp/>&quot;</highlight><highlight class="normal">,<sp/>out.str());</highlight></codeline>
+<codeline lineno="215"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/test/Range.cpp"/>
+  </compounddef>
+</doxygen>

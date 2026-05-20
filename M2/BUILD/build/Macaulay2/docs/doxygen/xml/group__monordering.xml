@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="group__monordering" kind="group">
+    <compoundname>monordering</compoundname>
+    <title>Monomial Orders</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A <emphasis>monomial ordering</emphasis> is a total order on the set of monomials of a polynomial ring (or of a commutative monoid), such that if $x^\alpha &gt; x^\beta$ then for any monomial $x^\gamma$, $x^\alpha x^\gamma &gt; x^\beta x^\gamma$ </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,566 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4" kind="class" language="C++" prot="public">
+    <compoundname>DMatLinAlg&lt; M2::ARingQQ &gt;</compoundname>
+    <includes refid="dmat-lu-qq_8hpp" local="no">dmat-lu-qq.hpp</includes>
+    <templateparamlist>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a90df4aa0c62c3aa4527c323d2398c19c_1a90df4aa0c62c3aa4527c323d2398c19c" prot="public" static="no">
+        <type><ref refid="namespace_m2_a4020664aefa28984a9e3e19b16a31981_1a4020664aefa28984a9e3e19b16a31981" kindref="member">M2::ARingQQ</ref></type>
+        <definition>typedef M2::ARingQQ DMatLinAlg&lt; M2::ARingQQ &gt;::RingType</definition>
+        <argsstring></argsstring>
+        <name>RingType</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::RingType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="54" column="23" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_ac5f1af8cbcd7a4d5258e451bee5dd77c_1ac5f1af8cbcd7a4d5258e451bee5dd77c" prot="public" static="no">
+        <type><ref refid="class_m2_1_1_a_ring_q_q_g_m_p_ae2d30dc8390b77b42b89aa0b10dae502_1ae2d30dc8390b77b42b89aa0b10dae502" kindref="member">RingType::ElementType</ref></type>
+        <definition>typedef RingType::ElementType DMatLinAlg&lt; M2::ARingQQ &gt;::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="55" column="42" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" prot="public" static="no">
+        <type><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; <ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a90df4aa0c62c3aa4527c323d2398c19c_1a90df4aa0c62c3aa4527c323d2398c19c" kindref="member">RingType</ref> &gt;</type>
+        <definition>typedef DMat&lt;RingType&gt; DMatLinAlg&lt; M2::ARingQQ &gt;::Mat</definition>
+        <argsstring></argsstring>
+        <name>Mat</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::Mat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="56" column="16" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="56" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+        <definition>const Mat&amp; DMatLinAlg&lt; M2::ARingQQ &gt;::mInputMatrix</definition>
+        <argsstring></argsstring>
+        <name>mInputMatrix</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::mInputMatrix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="317" column="13" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="317" bodyend="-1"/>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a341297bedc7a5acf0ed1733af3f11b64_1a341297bedc7a5acf0ed1733af3f11b64" compoundref="dmat-lu-qq_8hpp" startline="99" endline="106">columnRankProfile</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a19209eec5fb4b03bcbbcb1bba2d71ede_1a19209eec5fb4b03bcbbcb1bba2d71ede" compoundref="dmat-lu-qq_8hpp" startline="71" endline="79">determinant</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a93ac8025788a5489731d2be0032a7139_1a93ac8025788a5489731d2be0032a7139" compoundref="dmat-lu-qq_8hpp" startline="59" endline="59">DMatLinAlg</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0919f4caca9914b5fa13fbfcd10ce202_1a0919f4caca9914b5fa13fbfcd10ce202" compoundref="dmat-lu-qq_8hpp" startline="261" endline="289">inverse</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a5826ab57e50d79c67297f67cfb45f3d7_1a5826ab57e50d79c67297f67cfb45f3d7" compoundref="dmat-lu-qq_8hpp" startline="291" endline="314">kernel</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a2f4ed4c5197c114c87be8351efb14f8d_1a2f4ed4c5197c114c87be8351efb14f8d" compoundref="dmat-lu-qq_8hpp" startline="108" endline="124">matrixPLU</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a34f7f3d20fcc472da0ff58733e67fa8a_1a34f7f3d20fcc472da0ff58733e67fa8a" compoundref="dmat-lu-qq_8hpp" startline="60" endline="69">rank</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a9eb1c05e010f0f26087403f68dcadc1e_1a9eb1c05e010f0f26087403f68dcadc1e" compoundref="dmat-lu-qq_8hpp" startline="199" endline="246">solve</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_abfeb916819694bae1985be6d183e3142_1abfeb916819694bae1985be6d183e3142" compoundref="dmat-lu-qq_8hpp" startline="248" endline="259">solveInvertible</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_mat_lin_alg_a23dd6a3496d57f9fef54b4432b297dd1_1a23dd6a3496d57f9fef54b4432b297dd1" prot="private" static="no" mutable="no">
+        <type><ref refid="class_d_mat_l_uin_place" kindref="compound">DMatLUinPlace</ref>&lt; <ref refid="namespace_m2_a4020664aefa28984a9e3e19b16a31981_1a4020664aefa28984a9e3e19b16a31981" kindref="member">M2::ARingQQ</ref> &gt;</type>
+        <definition>DMatLUinPlace&lt;M2::ARingQQ&gt; DMatLinAlg&lt; M2::ARingQQ &gt;::mLUObject</definition>
+        <argsstring></argsstring>
+        <name>mLUObject</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::mLUObject</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu.hpp" line="62" column="17" bodyfile="Macaulay2/e/dmat-lu.hpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a93ac8025788a5489731d2be0032a7139_1a93ac8025788a5489731d2be0032a7139" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DMatLinAlg&lt; M2::ARingQQ &gt;::DMatLinAlg</definition>
+        <argsstring>(const Mat &amp;A)</argsstring>
+        <name>DMatLinAlg</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::DMatLinAlg</qualifiedname>
+        <param>
+          <type>const <ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>A</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="59" column="3" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="59" bodyend="59"/>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" compoundref="dmat-lu-qq_8hpp" startline="317">mInputMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a34f7f3d20fcc472da0ff58733e67fa8a_1a34f7f3d20fcc472da0ff58733e67fa8a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DMatLinAlg&lt; M2::ARingQQ &gt;::rank</definition>
+        <argsstring>()</argsstring>
+        <name>rank</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::rank</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="60" column="10" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="60" bodyend="69"/>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" compoundref="dmat-lu-qq_8hpp" startline="317">mInputMatrix</references>
+        <references refid="class_flint_q_q_mat_a6a272f50c07c0e44817a08e9cd568163_1a6a272f50c07c0e44817a08e9cd568163" compoundref="dmat-qq-interface-flint_8hpp" startline="134" endline="134">FlintQQMat::numColumns</references>
+        <references refid="class_flint_q_q_mat_a70fe2c8640a8398d3b03cc78916e1fd6_1a70fe2c8640a8398d3b03cc78916e1fd6" compoundref="dmat-qq-interface-flint_8hpp" startline="133" endline="133">FlintQQMat::numRows</references>
+        <references refid="class_flint_q_q_mat_a3a263e83042fdcd86c4def0fe7ca3cee_1a3a263e83042fdcd86c4def0fe7ca3cee" compoundref="dmat-qq-interface-flint_8hpp" startline="126" endline="126">FlintQQMat::value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a19209eec5fb4b03bcbbcb1bba2d71ede_1a19209eec5fb4b03bcbbcb1bba2d71ede" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLinAlg&lt; M2::ARingQQ &gt;::determinant</definition>
+        <argsstring>(ElementType &amp;result_det)</argsstring>
+        <name>determinant</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::determinant</qualifiedname>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_ac5f1af8cbcd7a4d5258e451bee5dd77c_1ac5f1af8cbcd7a4d5258e451bee5dd77c" kindref="member">ElementType</ref> &amp;</type>
+          <declname>result_det</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="71" column="8" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="71" bodyend="79"/>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" compoundref="dmat-lu-qq_8hpp" startline="317">mInputMatrix</references>
+        <references refid="class_flint_q_q_mat_a3a263e83042fdcd86c4def0fe7ca3cee_1a3a263e83042fdcd86c4def0fe7ca3cee" compoundref="dmat-qq-interface-flint_8hpp" startline="126" endline="126">FlintQQMat::value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a341297bedc7a5acf0ed1733af3f11b64_1a341297bedc7a5acf0ed1733af3f11b64" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLinAlg&lt; M2::ARingQQ &gt;::columnRankProfile</definition>
+        <argsstring>(std::vector&lt; size_t &gt; &amp;profile)</argsstring>
+        <name>columnRankProfile</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::columnRankProfile</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &amp;</type>
+          <declname>profile</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="99" column="8" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="99" bodyend="106"/>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a62e12a38bd8dc3326b3b98b9ce91da98_1a62e12a38bd8dc3326b3b98b9ce91da98" compoundref="dmat-lu-qq_8hpp" startline="81" endline="98">findColumnRankProfileFromLU</references>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" compoundref="dmat-lu-qq_8hpp" startline="317">mInputMatrix</references>
+        <references refid="class_flint_q_q_mat_a6a272f50c07c0e44817a08e9cd568163_1a6a272f50c07c0e44817a08e9cd568163" compoundref="dmat-qq-interface-flint_8hpp" startline="134" endline="134">FlintQQMat::numColumns</references>
+        <references refid="class_flint_q_q_mat_a70fe2c8640a8398d3b03cc78916e1fd6_1a70fe2c8640a8398d3b03cc78916e1fd6" compoundref="dmat-qq-interface-flint_8hpp" startline="133" endline="133">FlintQQMat::numRows</references>
+        <references refid="class_flint_q_q_mat_a3a263e83042fdcd86c4def0fe7ca3cee_1a3a263e83042fdcd86c4def0fe7ca3cee" compoundref="dmat-qq-interface-flint_8hpp" startline="126" endline="126">FlintQQMat::value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a2f4ed4c5197c114c87be8351efb14f8d_1a2f4ed4c5197c114c87be8351efb14f8d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLinAlg&lt; M2::ARingQQ &gt;::matrixPLU</definition>
+        <argsstring>(std::vector&lt; size_t &gt; &amp;P, Mat &amp;L, Mat &amp;U)</argsstring>
+        <name>matrixPLU</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::matrixPLU</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &amp;</type>
+          <declname>P</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>U</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="108" column="8" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="108" bodyend="124"/>
+        <references refid="class_d_mat_l_uin_place_a1108ce384e2f788405d754ad7189506e_1a1108ce384e2f788405d754ad7189506e" compoundref="dmat-lu-inplace_8hpp" startline="95" endline="99">DMatLUinPlace&lt; RT &gt;::LUinPlace</references>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" compoundref="dmat-lu-qq_8hpp" startline="317">mInputMatrix</references>
+        <references refid="class_d_mat_l_uin_place_a9739210c858cf973d9982958559667df_1a9739210c858cf973d9982958559667df" compoundref="dmat-lu-inplace_8hpp" startline="104" endline="104">DMatLUinPlace&lt; RT &gt;::permutation</references>
+        <references refid="class_l_u_util_a1838ec98f16e5635a493dc4c1b1d09f7_1a1838ec98f16e5635a493dc4c1b1d09f7" compoundref="dmat-lu-inplace_8hpp" startline="412" endline="435">LUUtil&lt; RT &gt;::setUpperLower</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a9eb1c05e010f0f26087403f68dcadc1e_1a9eb1c05e010f0f26087403f68dcadc1e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DMatLinAlg&lt; M2::ARingQQ &gt;::solve</definition>
+        <argsstring>(const Mat &amp;B1, Mat &amp;X1)</argsstring>
+        <name>solve</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::solve</qualifiedname>
+        <param>
+          <type>const <ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>B1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>X1</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="199" column="8" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="199" bodyend="246"/>
+        <references refid="mat-util_8hpp_a74cc79c6ebb813de1ea8c131ada987ca_1a74cc79c6ebb813de1ea8c131ada987ca" compoundref="mat-util_8hpp" startline="88" endline="98">concatenateMatrices</references>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a62e12a38bd8dc3326b3b98b9ce91da98_1a62e12a38bd8dc3326b3b98b9ce91da98" compoundref="dmat-lu-qq_8hpp" startline="81" endline="98">findColumnRankProfileFromLU</references>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" compoundref="dmat-lu-qq_8hpp" startline="317">mInputMatrix</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_flint_q_q_mat_a479503cbda7fc8118de5d1210352df96_1a479503cbda7fc8118de5d1210352df96" compoundref="dmat-qq-interface-flint_8hpp" startline="127" endline="131">FlintQQMat::toDMat</references>
+        <references refid="class_flint_q_q_mat_a3a263e83042fdcd86c4def0fe7ca3cee_1a3a263e83042fdcd86c4def0fe7ca3cee" compoundref="dmat-qq-interface-flint_8hpp" startline="126" endline="126">FlintQQMat::value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_abfeb916819694bae1985be6d183e3142_1abfeb916819694bae1985be6d183e3142" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DMatLinAlg&lt; M2::ARingQQ &gt;::solveInvertible</definition>
+        <argsstring>(const Mat &amp;B1, Mat &amp;X1)</argsstring>
+        <name>solveInvertible</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::solveInvertible</qualifiedname>
+        <param>
+          <type>const <ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>B1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>X1</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="248" column="8" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="248" bodyend="259"/>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" compoundref="dmat-lu-qq_8hpp" startline="317">mInputMatrix</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_flint_q_q_mat_a479503cbda7fc8118de5d1210352df96_1a479503cbda7fc8118de5d1210352df96" compoundref="dmat-qq-interface-flint_8hpp" startline="127" endline="131">FlintQQMat::toDMat</references>
+        <references refid="class_flint_q_q_mat_a3a263e83042fdcd86c4def0fe7ca3cee_1a3a263e83042fdcd86c4def0fe7ca3cee" compoundref="dmat-qq-interface-flint_8hpp" startline="126" endline="126">FlintQQMat::value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0919f4caca9914b5fa13fbfcd10ce202_1a0919f4caca9914b5fa13fbfcd10ce202" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DMatLinAlg&lt; M2::ARingQQ &gt;::inverse</definition>
+        <argsstring>(Mat &amp;result_inv)</argsstring>
+        <name>inverse</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::inverse</qualifiedname>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>result_inv</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="261" column="8" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="261" bodyend="289"/>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" compoundref="dmat-lu-qq_8hpp" startline="317">mInputMatrix</references>
+        <references refid="class_flint_q_q_mat_a70fe2c8640a8398d3b03cc78916e1fd6_1a70fe2c8640a8398d3b03cc78916e1fd6" compoundref="dmat-qq-interface-flint_8hpp" startline="133" endline="133">FlintQQMat::numRows</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_flint_q_q_mat_a479503cbda7fc8118de5d1210352df96_1a479503cbda7fc8118de5d1210352df96" compoundref="dmat-qq-interface-flint_8hpp" startline="127" endline="131">FlintQQMat::toDMat</references>
+        <references refid="class_flint_q_q_mat_a3a263e83042fdcd86c4def0fe7ca3cee_1a3a263e83042fdcd86c4def0fe7ca3cee" compoundref="dmat-qq-interface-flint_8hpp" startline="126" endline="126">FlintQQMat::value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a5826ab57e50d79c67297f67cfb45f3d7_1a5826ab57e50d79c67297f67cfb45f3d7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DMatLinAlg&lt; M2::ARingQQ &gt;::kernel</definition>
+        <argsstring>(Mat &amp;result_nullspace)</argsstring>
+        <name>kernel</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::kernel</qualifiedname>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>result_nullspace</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="291" column="10" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="291" bodyend="314"/>
+        <references refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" compoundref="dmat-lu-qq_8hpp" startline="317">mInputMatrix</references>
+        <references refid="class_flint_q_q_mat_a6a272f50c07c0e44817a08e9cd568163_1a6a272f50c07c0e44817a08e9cd568163" compoundref="dmat-qq-interface-flint_8hpp" startline="134" endline="134">FlintQQMat::numColumns</references>
+        <references refid="class_flint_q_q_mat_a70fe2c8640a8398d3b03cc78916e1fd6_1a70fe2c8640a8398d3b03cc78916e1fd6" compoundref="dmat-qq-interface-flint_8hpp" startline="133" endline="133">FlintQQMat::numRows</references>
+        <references refid="class_flint_q_q_mat_a0aeae29a6e5933b1257cb03bf895695c_1a0aeae29a6e5933b1257cb03bf895695c" compoundref="dmat-qq-interface-flint_8hpp" startline="135" endline="139">FlintQQMat::set_from_fmpz</references>
+        <references refid="class_flint_q_q_mat_a479503cbda7fc8118de5d1210352df96_1a479503cbda7fc8118de5d1210352df96" compoundref="dmat-qq-interface-flint_8hpp" startline="127" endline="131">FlintQQMat::toDMat</references>
+        <references refid="class_flint_q_q_mat_a3a263e83042fdcd86c4def0fe7ca3cee_1a3a263e83042fdcd86c4def0fe7ca3cee" compoundref="dmat-qq-interface-flint_8hpp" startline="126" endline="126">FlintQQMat::value</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a62e12a38bd8dc3326b3b98b9ce91da98_1a62e12a38bd8dc3326b3b98b9ce91da98" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void DMatLinAlg&lt; M2::ARingQQ &gt;::findColumnRankProfileFromLU</definition>
+        <argsstring>(const fmpq_mat_t B, std::vector&lt; size_t &gt; &amp;profile)</argsstring>
+        <name>findColumnRankProfileFromLU</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::findColumnRankProfileFromLU</qualifiedname>
+        <param>
+          <type>const fmpq_mat_t</type>
+          <declname>B</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &amp;</type>
+          <declname>profile</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-qq.hpp" line="81" column="15" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="81" bodyend="98"/>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a341297bedc7a5acf0ed1733af3f11b64_1a341297bedc7a5acf0ed1733af3f11b64" compoundref="dmat-lu-qq_8hpp" startline="99" endline="106">columnRankProfile</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a9eb1c05e010f0f26087403f68dcadc1e_1a9eb1c05e010f0f26087403f68dcadc1e" compoundref="dmat-lu-qq_8hpp" startline="199" endline="246">solve</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_d_mat_lin_alg_a5024963fb8ae218765d7a828db1b2e81_1a5024963fb8ae218765d7a828db1b2e81" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="namespace_m2_a4020664aefa28984a9e3e19b16a31981_1a4020664aefa28984a9e3e19b16a31981" kindref="member">M2::ARingQQ</ref> &amp;</type>
+        <definition>const M2::ARingQQ &amp; DMatLinAlg&lt; M2::ARingQQ &gt;::ring</definition>
+        <argsstring>() const</argsstring>
+        <name>ring</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu.hpp" line="105" column="18" bodyfile="Macaulay2/e/dmat-lu.hpp" bodystart="105" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_a9d18bee2770c2f06be62758703ff511a_1a9d18bee2770c2f06be62758703ff511a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLinAlg&lt; M2::ARingQQ &gt;::setUpperLower</definition>
+        <argsstring>(const Mat &amp;LU, Mat &amp;lower, Mat &amp;upper)</argsstring>
+        <name>setUpperLower</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::setUpperLower</qualifiedname>
+        <param>
+          <type>const <ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>LU</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>lower</declname>
+        </param>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" kindref="member">Mat</ref> &amp;</type>
+          <declname>upper</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu.hpp" line="106" column="8" bodyfile="Macaulay2/e/dmat-lu.hpp" bodystart="269" bodyend="292"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_a3a4099ee63985ec06748b1fb41992646_1a3a4099ee63985ec06748b1fb41992646" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLinAlg&lt; M2::ARingQQ &gt;::debug_out</definition>
+        <argsstring>()</argsstring>
+        <name>debug_out</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::debug_out</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu.hpp" line="108" column="8" bodyfile="Macaulay2/e/dmat-lu.hpp" bodystart="108" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_lin_alg_a97f9432241c055128e98d56736e41cb4_1a97f9432241c055128e98d56736e41cb4" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLinAlg&lt; M2::ARingQQ &gt;::debug_out_list</definition>
+        <argsstring>(ElementType *x, size_t len)</argsstring>
+        <name>debug_out_list</name>
+        <qualifiedname>DMatLinAlg&lt; M2::ARingQQ &gt;::debug_out_list</qualifiedname>
+        <param>
+          <type><ref refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_ac5f1af8cbcd7a4d5258e451bee5dd77c_1ac5f1af8cbcd7a4d5258e451bee5dd77c" kindref="member">ElementType</ref> *</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu.hpp" line="115" column="8" bodyfile="Macaulay2/e/dmat-lu.hpp" bodystart="115" bodyend="126"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Specialisation of <computeroutput><ref refid="class_d_mat_lin_alg" kindref="compound">DMatLinAlg</ref></computeroutput> for <computeroutput>ARingQQ</computeroutput> dense matrices, routing every linear-algebra query (rank, determinant, kernel, inverse, solve) through FLINT&apos;s <computeroutput>fmpq_mat_*</computeroutput> routines. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Constructs <computeroutput><ref refid="class_flint_q_q_mat" kindref="compound">FlintQQMat</ref></computeroutput> translations on demand (via <computeroutput><ref refid="dmat-qq-interface-flint_8hpp" kindref="compound">dmat-qq-interface-flint.hpp</ref></computeroutput>), runs the corresponding FLINT call, and converts the result back into <computeroutput><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt;ARingQQ&gt;</computeroutput>. Saves the engine from having to re-implement Bareiss-style rational elimination on top of GMP rationals. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>DMatLinAlg&lt; RingType &gt;</label>
+        <link refid="class_d_mat_lin_alg"/>
+      </node>
+      <node id="1">
+        <label>DMatLinAlg&lt; M2::ARingQQ &gt;</label>
+        <link refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; M2::ARingQQ &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>DMat&lt; ACoeffRing &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mNumColumns</edgelabel>
+          <edgelabel>mNumRows</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mArray</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mRowPointers</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>DMat&lt; RingType &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; RingType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>DMatLUinPlace&lt; RT &gt;</label>
+        <link refid="class_d_mat_l_uin_place"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mLU</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mPerm</edgelabel>
+          <edgelabel>mPivotColumns</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mIsDone</edgelabel>
+          <edgelabel>mSign</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>DMatLUinPlace&lt; RingType &gt;</label>
+        <link refid="class_d_mat_l_uin_place"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mLU</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mPerm</edgelabel>
+          <edgelabel>mPivotColumns</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mIsDone</edgelabel>
+          <edgelabel>mSign</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; RingType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>DMatLinAlg&lt; RingType &gt;</label>
+        <link refid="class_d_mat_lin_alg"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mLUObject</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>DMatLinAlg&lt; M2::ARingQQ &gt;</label>
+        <link refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mInputMatrix</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; M2::ARingQQ &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ElementType</label>
+      </node>
+      <node id="6">
+        <label>ElementType *</label>
+      </node>
+      <node id="10">
+        <label>T</label>
+      </node>
+      <node id="14">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="4">
+        <label>const ACoeffRing *</label>
+      </node>
+      <node id="5">
+        <label>size_t</label>
+      </node>
+      <node id="9">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="10" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; ElementType * &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="template-instance">
+          <edgelabel>&lt; ElementType * &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; size_t &gt;</label>
+        <childnode refid="9" relation="template-instance">
+          <edgelabel>&lt; size_t &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/dmat-lu-qq.hpp" line="51" column="1" bodyfile="Macaulay2/e/dmat-lu-qq.hpp" bodystart="52" bodyend="318"/>
+    <listofallmembers>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a341297bedc7a5acf0ed1733af3f11b64_1a341297bedc7a5acf0ed1733af3f11b64" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>columnRankProfile</name></member>
+      <member refid="class_d_mat_lin_alg_a3a4099ee63985ec06748b1fb41992646_1a3a4099ee63985ec06748b1fb41992646" prot="private" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>debug_out</name></member>
+      <member refid="class_d_mat_lin_alg_a97f9432241c055128e98d56736e41cb4_1a97f9432241c055128e98d56736e41cb4" prot="private" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>debug_out_list</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a19209eec5fb4b03bcbbcb1bba2d71ede_1a19209eec5fb4b03bcbbcb1bba2d71ede" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>determinant</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a93ac8025788a5489731d2be0032a7139_1a93ac8025788a5489731d2be0032a7139" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>DMatLinAlg</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_ac5f1af8cbcd7a4d5258e451bee5dd77c_1ac5f1af8cbcd7a4d5258e451bee5dd77c" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>ElementType</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a62e12a38bd8dc3326b3b98b9ce91da98_1a62e12a38bd8dc3326b3b98b9ce91da98" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>findColumnRankProfileFromLU</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0919f4caca9914b5fa13fbfcd10ce202_1a0919f4caca9914b5fa13fbfcd10ce202" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>inverse</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a5826ab57e50d79c67297f67cfb45f3d7_1a5826ab57e50d79c67297f67cfb45f3d7" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>kernel</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a42cf1896e8bc752fe875595ab49024f7_1a42cf1896e8bc752fe875595ab49024f7" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>Mat</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a2f4ed4c5197c114c87be8351efb14f8d_1a2f4ed4c5197c114c87be8351efb14f8d" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>matrixPLU</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a0cd905d40ba5c2fc83629db4851a1c38_1a0cd905d40ba5c2fc83629db4851a1c38" prot="private" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>mInputMatrix</name></member>
+      <member refid="class_d_mat_lin_alg_a23dd6a3496d57f9fef54b4432b297dd1_1a23dd6a3496d57f9fef54b4432b297dd1" prot="private" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>mLUObject</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a34f7f3d20fcc472da0ff58733e67fa8a_1a34f7f3d20fcc472da0ff58733e67fa8a" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>rank</name></member>
+      <member refid="class_d_mat_lin_alg_a5024963fb8ae218765d7a828db1b2e81_1a5024963fb8ae218765d7a828db1b2e81" prot="private" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>ring</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a90df4aa0c62c3aa4527c323d2398c19c_1a90df4aa0c62c3aa4527c323d2398c19c" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>RingType</name></member>
+      <member refid="class_d_mat_lin_alg_a9d18bee2770c2f06be62758703ff511a_1a9d18bee2770c2f06be62758703ff511a" prot="private" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>setUpperLower</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a9eb1c05e010f0f26087403f68dcadc1e_1a9eb1c05e010f0f26087403f68dcadc1e" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>solve</name></member>
+      <member refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_abfeb916819694bae1985be6d183e3142_1abfeb916819694bae1985be6d183e3142" prot="public" virt="non-virtual"><scope>DMatLinAlg&lt; M2::ARingQQ &gt;</scope><name>solveInvertible</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

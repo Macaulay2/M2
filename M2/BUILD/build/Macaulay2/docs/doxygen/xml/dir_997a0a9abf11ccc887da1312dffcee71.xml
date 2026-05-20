@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_997a0a9abf11ccc887da1312dffcee71" kind="dir">
+    <compoundname>submodules/mathic/src/mathic</compoundname>
+    <innerfile refid="_action_8cpp">Action.cpp</innerfile>
+    <innerfile refid="_action_8h">Action.h</innerfile>
+    <innerfile refid="_binary_k_d_tree_8h">BinaryKDTree.h</innerfile>
+    <innerfile refid="mathic_2_bit_triangle_8cpp">BitTriangle.cpp</innerfile>
+    <innerfile refid="_bit_triangle_8h">BitTriangle.h</innerfile>
+    <innerfile refid="_bool_parameter_8cpp">BoolParameter.cpp</innerfile>
+    <innerfile refid="_bool_parameter_8h">BoolParameter.h</innerfile>
+    <innerfile refid="_cli_parameter_8cpp">CliParameter.cpp</innerfile>
+    <innerfile refid="_cli_parameter_8h">CliParameter.h</innerfile>
+    <innerfile refid="_cli_parser_8cpp">CliParser.cpp</innerfile>
+    <innerfile refid="_cli_parser_8h">CliParser.h</innerfile>
+    <innerfile refid="_column_printer_8cpp">ColumnPrinter.cpp</innerfile>
+    <innerfile refid="_column_printer_8h">ColumnPrinter.h</innerfile>
+    <innerfile refid="_comparer_8h">Comparer.h</innerfile>
+    <innerfile refid="_com_tree_8h">ComTree.h</innerfile>
+    <innerfile refid="display_8cpp">display.cpp</innerfile>
+    <innerfile refid="display_8h">display.h</innerfile>
+    <innerfile refid="_div_finder_8h">DivFinder.h</innerfile>
+    <innerfile refid="_div_list_8h">DivList.h</innerfile>
+    <innerfile refid="_div_mask_8cpp">DivMask.cpp</innerfile>
+    <innerfile refid="_div_mask_8h">DivMask.h</innerfile>
+    <innerfile refid="error_8cpp">error.cpp</innerfile>
+    <innerfile refid="submodules_2mathic_2src_2mathic_2error_8h">error.h</innerfile>
+    <innerfile refid="_geobucket_8h">Geobucket.h</innerfile>
+    <innerfile refid="_geo_front_8h">GeoFront.h</innerfile>
+    <innerfile refid="_hash_table_8h">HashTable.h</innerfile>
+    <innerfile refid="_heap_8h">Heap.h</innerfile>
+    <innerfile refid="src_2mathic_2_help_action_8cpp">HelpAction.cpp</innerfile>
+    <innerfile refid="_help_action_8h">HelpAction.h</innerfile>
+    <innerfile refid="_integer_parameter_8cpp">IntegerParameter.cpp</innerfile>
+    <innerfile refid="_integer_parameter_8h">IntegerParameter.h</innerfile>
+    <innerfile refid="_k_d_entry_array_8h">KDEntryArray.h</innerfile>
+    <innerfile refid="_k_d_tree_8h">KDTree.h</innerfile>
+    <innerfile refid="main_8cpp">main.cpp</innerfile>
+    <innerfile refid="_name_factory_8h">NameFactory.h</innerfile>
+    <innerfile refid="_packed_k_d_tree_8h">PackedKDTree.h</innerfile>
+    <innerfile refid="_pair_queue_8h">PairQueue.h</innerfile>
+    <innerfile refid="mathic_2src_2mathic_2stdinc_8h">stdinc.h</innerfile>
+    <innerfile refid="_stl_set_8h">StlSet.h</innerfile>
+    <innerfile refid="_string_parameter_8cpp">StringParameter.cpp</innerfile>
+    <innerfile refid="_string_parameter_8h">StringParameter.h</innerfile>
+    <innerfile refid="_timer_8cpp">Timer.cpp</innerfile>
+    <innerfile refid="_timer_8h">Timer.h</innerfile>
+    <innerfile refid="_tour_tree_8h">TourTree.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/mathic/"/>
+  </compounddef>
+</doxygen>

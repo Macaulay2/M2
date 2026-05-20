@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_element_array" kind="class" language="C++" prot="public">
+    <compoundname>ElementArray</compoundname>
+    <includes refid="_vector_arithmetic_8hpp" local="no">VectorArithmetic.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_element_array_a57608a0725bb8e88f1f5e1b6f2adbaea_1a57608a0725bb8e88f1f5e1b6f2adbaea" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename RingType</type>
+          </param>
+        </templateparamlist>
+        <type>class</type>
+        <definition>friend class ConcreteVectorArithmetic</definition>
+        <argsstring></argsstring>
+        <name>ConcreteVectorArithmetic</name>
+        <qualifiedname>ElementArray::ConcreteVectorArithmetic</qualifiedname>
+        <param>
+          <type><ref refid="class_concrete_vector_arithmetic" kindref="compound">ConcreteVectorArithmetic</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="95" column="27" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="95" bodyend="-1"/>
+        <references refid="class_element_array_a57608a0725bb8e88f1f5e1b6f2adbaea_1a57608a0725bb8e88f1f5e1b6f2adbaea" compoundref="_vector_arithmetic_8hpp" startline="95">ConcreteVectorArithmetic</references>
+        <referencedby refid="class_element_array_a57608a0725bb8e88f1f5e1b6f2adbaea_1a57608a0725bb8e88f1f5e1b6f2adbaea" compoundref="_vector_arithmetic_8hpp" startline="95">ConcreteVectorArithmetic</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_element_array_afe070f685327b84444ce91d2ed2348e2_1afe070f685327b84444ce91d2ed2348e2" prot="private" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* ElementArray::mValue</definition>
+        <argsstring></argsstring>
+        <name>mValue</name>
+        <qualifiedname>ElementArray::mValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="112" column="8" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="112" bodyend="-1"/>
+        <referencedby refid="class_element_array_a4d19e9d032dc06cb2cfded074696dd10_1a4d19e9d032dc06cb2cfded074696dd10" compoundref="_vector_arithmetic_8hpp" startline="98" endline="98">ElementArray</referencedby>
+        <referencedby refid="class_element_array_a65b9ca85f68297fe947b934c2f8f983e_1a65b9ca85f68297fe947b934c2f8f983e" compoundref="_vector_arithmetic_8hpp" startline="104" endline="104">ElementArray</referencedby>
+        <referencedby refid="class_element_array_a0425a8edb09e6fe3a3cee83d4c711203_1a0425a8edb09e6fe3a3cee83d4c711203" compoundref="_vector_arithmetic_8hpp" startline="109" endline="109">getValue</referencedby>
+        <referencedby refid="class_element_array_a91116d3992a591200a88f36993d8e280_1a91116d3992a591200a88f36993d8e280" compoundref="_vector_arithmetic_8hpp" startline="99" endline="99">isNull</referencedby>
+        <referencedby refid="class_element_array_adfe2b290b97f409b1a6070fdb5310ee7_1adfe2b290b97f409b1a6070fdb5310ee7" compoundref="_vector_arithmetic_8hpp" startline="110" endline="110">setValue</referencedby>
+        <referencedby refid="class_element_array_a394e678fb334b143b42102ec2c9c33a7_1a394e678fb334b143b42102ec2c9c33a7" compoundref="_vector_arithmetic_8hpp" startline="100" endline="100">swap</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_element_array_a4d19e9d032dc06cb2cfded074696dd10_1a4d19e9d032dc06cb2cfded074696dd10" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ElementArray::ElementArray</definition>
+        <argsstring>()</argsstring>
+        <name>ElementArray</name>
+        <qualifiedname>ElementArray::ElementArray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="98" column="3" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="98" bodyend="98"/>
+        <references refid="class_element_array_afe070f685327b84444ce91d2ed2348e2_1afe070f685327b84444ce91d2ed2348e2" compoundref="_vector_arithmetic_8hpp" startline="112">mValue</references>
+        <referencedby refid="class_element_array_a394e678fb334b143b42102ec2c9c33a7_1a394e678fb334b143b42102ec2c9c33a7" compoundref="_vector_arithmetic_8hpp" startline="100" endline="100">swap</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_element_array_a91116d3992a591200a88f36993d8e280_1a91116d3992a591200a88f36993d8e280" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ElementArray::isNull</definition>
+        <argsstring>() const</argsstring>
+        <name>isNull</name>
+        <qualifiedname>ElementArray::isNull</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="99" column="9" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="99" bodyend="99"/>
+        <references refid="class_element_array_afe070f685327b84444ce91d2ed2348e2_1afe070f685327b84444ce91d2ed2348e2" compoundref="_vector_arithmetic_8hpp" startline="112">mValue</references>
+        <referencedby refid="class_f4_g_b_af8a814037b954b343cbdfa95cc862a4c_1af8a814037b954b343cbdfa95cc862a4c" compoundref="f4_8cpp" startline="749" endline="814">F4GB::gauss_reduce_row</referencedby>
+        <referencedby refid="class_f4_res_aaf4caef994780061adfe102535ea2fe4_1aaf4caef994780061adfe102535ea2fe4" compoundref="res-f4_8cpp" startline="465" endline="577">F4Res::gaussReduceRow</referencedby>
+        <referencedby refid="class_f4_g_b_a09377712b38bdbec774d2e6f58c54ac5_1a09377712b38bdbec774d2e6f58c54ac5" compoundref="f4_8cpp" startline="591" endline="601">F4GB::get_coeffs_array</referencedby>
+        <referencedby refid="class_f4_g_b_ac129a0a9d0bf6e59362e6110405af6b1_1ac129a0a9d0bf6e59362e6110405af6b1" compoundref="f4_8cpp" startline="899" endline="974">F4GB::insert_gb_element</referencedby>
+        <referencedby refid="class_f4_g_b_a3095d006fca1c7aa9fa8db27354b779b_1a3095d006fca1c7aa9fa8db27354b779b" compoundref="f4_8cpp" startline="603" endline="610">F4GB::is_new_GB_row</referencedby>
+        <referencedby refid="class_f4_g_b_a0171bead5acbebb00213e0378fb06443_1a0171bead5acbebb00213e0378fb06443" compoundref="f4_8cpp" startline="817" endline="893">F4GB::tail_reduce</referencedby>
+        <referencedby refid="class_f4to_m2_interface_a1c5497ca412e3a4b7f745443ad3bfbd7_1a1c5497ca412e3a4b7f745443ad3bfbd7" compoundref="f4-m2-interface_8cpp" startline="141" endline="173">F4toM2Interface::to_M2_MutableMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_element_array_a394e678fb334b143b42102ec2c9c33a7_1a394e678fb334b143b42102ec2c9c33a7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ElementArray::swap</definition>
+        <argsstring>(ElementArray &amp;b)</argsstring>
+        <name>swap</name>
+        <qualifiedname>ElementArray::swap</qualifiedname>
+        <param>
+          <type><ref refid="class_element_array" kindref="compound">ElementArray</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="100" column="9" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="100" bodyend="100"/>
+        <references refid="class_element_array_a4d19e9d032dc06cb2cfded074696dd10_1a4d19e9d032dc06cb2cfded074696dd10" compoundref="_vector_arithmetic_8hpp" startline="98" endline="98">ElementArray</references>
+        <references refid="class_element_array_afe070f685327b84444ce91d2ed2348e2_1afe070f685327b84444ce91d2ed2348e2" compoundref="_vector_arithmetic_8hpp" startline="112">mValue</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_element_array_a65b9ca85f68297fe947b934c2f8f983e_1a65b9ca85f68297fe947b934c2f8f983e" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ElementArray::ElementArray</definition>
+        <argsstring>(void *p)</argsstring>
+        <name>ElementArray</name>
+        <qualifiedname>ElementArray::ElementArray</qualifiedname>
+        <param>
+          <type>void *</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="104" column="3" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="104" bodyend="104"/>
+        <references refid="class_element_array_afe070f685327b84444ce91d2ed2348e2_1afe070f685327b84444ce91d2ed2348e2" compoundref="_vector_arithmetic_8hpp" startline="112">mValue</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+      </memberdef>
+      <memberdef kind="function" id="class_element_array_a0425a8edb09e6fe3a3cee83d4c711203_1a0425a8edb09e6fe3a3cee83d4c711203" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * ElementArray::getValue</definition>
+        <argsstring>() const</argsstring>
+        <name>getValue</name>
+        <qualifiedname>ElementArray::getValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="109" column="8" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="109" bodyend="109"/>
+        <references refid="class_element_array_afe070f685327b84444ce91d2ed2348e2_1afe070f685327b84444ce91d2ed2348e2" compoundref="_vector_arithmetic_8hpp" startline="112">mValue</references>
+        <referencedby refid="class_concrete_vector_arithmetic_a972b0c376867451274e65c210318750c_1a972b0c376867451274e65c210318750c" compoundref="_vector_arithmetic_8hpp" startline="152" endline="155">ConcreteVectorArithmetic&lt; RingType &gt;::elementArray</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_element_array_adfe2b290b97f409b1a6070fdb5310ee7_1adfe2b290b97f409b1a6070fdb5310ee7" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ElementArray::setValue</definition>
+        <argsstring>(void *newValue)</argsstring>
+        <name>setValue</name>
+        <qualifiedname>ElementArray::setValue</qualifiedname>
+        <param>
+          <type>void *</type>
+          <declname>newValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/VectorArithmetic.hpp" line="110" column="9" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="110" bodyend="110"/>
+        <references refid="class_element_array_afe070f685327b84444ce91d2ed2348e2_1afe070f685327b84444ce91d2ed2348e2" compoundref="_vector_arithmetic_8hpp" startline="112">mValue</references>
+        <referencedby refid="class_concrete_vector_arithmetic_a1819aa0456f88b377dd142c133482d74_1a1819aa0456f88b377dd142c133482d74" compoundref="_vector_arithmetic_8hpp" startline="197" endline="205">ConcreteVectorArithmetic&lt; RingType &gt;::deallocateElementArray</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Type-erased owning handle to a dense coefficient vector held by a <computeroutput><ref refid="class_concrete_vector_arithmetic" kindref="compound">ConcreteVectorArithmetic</ref>&lt;<ref refid="class_ring" kindref="compound">Ring</ref>&gt;</computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Stores a single <computeroutput>void*</computeroutput> whose concrete type is the wrapped ring&apos;s <computeroutput>ElementContainerType</computeroutput> (e.g. an <computeroutput>std::vector&lt;elem&gt;</computeroutput> or an <ref refid="class_a_ring" kindref="compound">ARing</ref> concrete array). All payload access is funneled through <computeroutput><ref refid="class_concrete_vector_arithmetic" kindref="compound">ConcreteVectorArithmetic</ref></computeroutput> <mdash/> the friend declaration <mdash/> so only the matching arithmetic dispatcher can recover the real pointer. Default-constructed as null; copies are disallowed and moves go through <computeroutput><ref refid="class_element_array_a394e678fb334b143b42102ec2c9c33a7_1a394e678fb334b143b42102ec2c9c33a7" kindref="member">swap</ref></computeroutput>, keeping ownership unique. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/VectorArithmetic.hpp" line="93" column="1" bodyfile="Macaulay2/e/VectorArithmetic.hpp" bodystart="94" bodyend="113"/>
+    <listofallmembers>
+      <member refid="class_element_array_a57608a0725bb8e88f1f5e1b6f2adbaea_1a57608a0725bb8e88f1f5e1b6f2adbaea" prot="private" virt="non-virtual"><scope>ElementArray</scope><name>ConcreteVectorArithmetic</name></member>
+      <member refid="class_element_array_a4d19e9d032dc06cb2cfded074696dd10_1a4d19e9d032dc06cb2cfded074696dd10" prot="public" virt="non-virtual"><scope>ElementArray</scope><name>ElementArray</name></member>
+      <member refid="class_element_array_a65b9ca85f68297fe947b934c2f8f983e_1a65b9ca85f68297fe947b934c2f8f983e" prot="private" virt="non-virtual"><scope>ElementArray</scope><name>ElementArray</name></member>
+      <member refid="class_element_array_a0425a8edb09e6fe3a3cee83d4c711203_1a0425a8edb09e6fe3a3cee83d4c711203" prot="private" virt="non-virtual"><scope>ElementArray</scope><name>getValue</name></member>
+      <member refid="class_element_array_a91116d3992a591200a88f36993d8e280_1a91116d3992a591200a88f36993d8e280" prot="public" virt="non-virtual"><scope>ElementArray</scope><name>isNull</name></member>
+      <member refid="class_element_array_afe070f685327b84444ce91d2ed2348e2_1afe070f685327b84444ce91d2ed2348e2" prot="private" virt="non-virtual"><scope>ElementArray</scope><name>mValue</name></member>
+      <member refid="class_element_array_adfe2b290b97f409b1a6070fdb5310ee7_1adfe2b290b97f409b1a6070fdb5310ee7" prot="private" virt="non-virtual"><scope>ElementArray</scope><name>setValue</name></member>
+      <member refid="class_element_array_a394e678fb334b143b42102ec2c9c33a7_1a394e678fb334b143b42102ec2c9c33a7" prot="public" virt="non-virtual"><scope>ElementArray</scope><name>swap</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

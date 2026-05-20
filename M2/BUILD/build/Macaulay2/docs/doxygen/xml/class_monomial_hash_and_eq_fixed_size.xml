@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monomial_hash_and_eq_fixed_size" kind="class" language="C++" prot="public">
+    <compoundname>MonomialHashAndEqFixedSize</compoundname>
+    <includes refid="monomial-sets_8hpp" local="no">monomial-sets.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_monomial_hash_and_eq_fixed_size_a33f65ab02e4839b495335487e6fc07b8_1a33f65ab02e4839b495335487e6fc07b8" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int MonomialHashAndEqFixedSize::mMonomialSize</definition>
+        <argsstring></argsstring>
+        <name>mMonomialSize</name>
+        <qualifiedname>MonomialHashAndEqFixedSize::mMonomialSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="142" column="7" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="142" bodyend="-1"/>
+        <referencedby refid="class_monomial_hash_and_eq_fixed_size_a91fbf27a8ee07b5e481cd0b42211b273_1a91fbf27a8ee07b5e481cd0b42211b273" compoundref="monomial-sets_8hpp" startline="123" endline="123">MonomialHashAndEqFixedSize</referencedby>
+        <referencedby refid="class_monomial_hash_and_eq_fixed_size_a0e5ba37c9dba04599216dfce5086aa07_1a0e5ba37c9dba04599216dfce5086aa07" compoundref="monomial-sets_8hpp" startline="133" endline="139">operator()</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_monomial_hash_and_eq_fixed_size_a91fbf27a8ee07b5e481cd0b42211b273_1a91fbf27a8ee07b5e481cd0b42211b273" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonomialHashAndEqFixedSize::MonomialHashAndEqFixedSize</definition>
+        <argsstring>(int size)</argsstring>
+        <name>MonomialHashAndEqFixedSize</name>
+        <qualifiedname>MonomialHashAndEqFixedSize::MonomialHashAndEqFixedSize</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="123" column="3" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="123" bodyend="123"/>
+        <references refid="class_monomial_hash_and_eq_fixed_size_a33f65ab02e4839b495335487e6fc07b8_1a33f65ab02e4839b495335487e6fc07b8" compoundref="monomial-sets_8hpp" startline="142">mMonomialSize</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_and_eq_fixed_size_a0e6b96704577c8b544810b8b027ab4c2_1a0e6b96704577c8b544810b8b027ab4c2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t MonomialHashAndEqFixedSize::operator()</definition>
+        <argsstring>(const int *m) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>MonomialHashAndEqFixedSize::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="127" column="15" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="127" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_hash_and_eq_fixed_size_a0e5ba37c9dba04599216dfce5086aa07_1a0e5ba37c9dba04599216dfce5086aa07" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialHashAndEqFixedSize::operator()</definition>
+        <argsstring>(const int *a, const int *b) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>MonomialHashAndEqFixedSize::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-sets.hpp" line="133" column="8" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="133" bodyend="139"/>
+        <references refid="class_monomial_hash_and_eq_fixed_size_a33f65ab02e4839b495335487e6fc07b8_1a33f65ab02e4839b495335487e6fc07b8" compoundref="monomial-sets_8hpp" startline="142">mMonomialSize</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Combined hash + equality functor for fixed-size monomials, plugged into the <computeroutput>std::unordered_set</computeroutput> inside <computeroutput><ref refid="class_monomial_set_fixed_size" kindref="compound">MonomialSetFixedSize</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Equality is <computeroutput>std::equal</computeroutput> over <computeroutput><ref refid="class_monomial_hash_and_eq_fixed_size_a33f65ab02e4839b495335487e6fc07b8_1a33f65ab02e4839b495335487e6fc07b8" kindref="member">mMonomialSize</ref></computeroutput> ints; the hash is a <computeroutput>TODO</computeroutput> stub that returns 0 (so the underlying hash set degenerates to a single bucket and falls back on the equality comparator). </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>MonomialHashAndEqFixedSize</label>
+        <link refid="class_monomial_hash_and_eq_fixed_size"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mMonomialSize</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/monomial-sets.hpp" line="120" column="1" bodyfile="Macaulay2/e/monomial-sets.hpp" bodystart="121" bodyend="143"/>
+    <listofallmembers>
+      <member refid="class_monomial_hash_and_eq_fixed_size_a33f65ab02e4839b495335487e6fc07b8_1a33f65ab02e4839b495335487e6fc07b8" prot="private" virt="non-virtual"><scope>MonomialHashAndEqFixedSize</scope><name>mMonomialSize</name></member>
+      <member refid="class_monomial_hash_and_eq_fixed_size_a91fbf27a8ee07b5e481cd0b42211b273_1a91fbf27a8ee07b5e481cd0b42211b273" prot="public" virt="non-virtual"><scope>MonomialHashAndEqFixedSize</scope><name>MonomialHashAndEqFixedSize</name></member>
+      <member refid="class_monomial_hash_and_eq_fixed_size_a0e6b96704577c8b544810b8b027ab4c2_1a0e6b96704577c8b544810b8b027ab4c2" prot="public" virt="non-virtual"><scope>MonomialHashAndEqFixedSize</scope><name>operator()</name></member>
+      <member refid="class_monomial_hash_and_eq_fixed_size_a0e5ba37c9dba04599216dfce5086aa07_1a0e5ba37c9dba04599216dfce5086aa07" prot="public" virt="non-virtual"><scope>MonomialHashAndEqFixedSize</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

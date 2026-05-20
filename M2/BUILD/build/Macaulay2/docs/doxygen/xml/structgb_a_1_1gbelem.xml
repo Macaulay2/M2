@@ -1,0 +1,323 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structgb_a_1_1gbelem" kind="struct" language="C++" prot="public">
+    <compoundname>gbA::gbelem</compoundname>
+    <includes refid="gb-default_8hpp" local="no">gb-default.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structgb_a_1_1gbelem_a62dc20a89a82da8be73f0fa6e0c14525_1a62dc20a89a82da8be73f0fa6e0c14525" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_p_o_l_y" kindref="compound">POLY</ref></type>
+        <definition>POLY gbA::gbelem::g</definition>
+        <argsstring></argsstring>
+        <name>g</name>
+        <qualifiedname>gbA::gbelem::g</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-default.hpp" line="79" column="10" bodyfile="Macaulay2/e/gb-default.hpp" bodystart="79" bodyend="-1"/>
+        <referencedby refid="classgb_a_a899dd75bd0d824d656a3a1b60e81bdfd_1a899dd75bd0d824d656a3a1b60e81bdfd" compoundref="gb-default_8cpp" startline="2084" endline="2123">gbA::auto_reduce_by</referencedby>
+        <referencedby refid="classgb_a_a53fbbc9874640b0a7681be28f899a473_1a53fbbc9874640b0a7681be28f899a473" compoundref="gb-default_8hpp" startline="269" endline="269">gbA::gbelem_COMPONENT</referencedby>
+        <referencedby refid="classgb_a_af30d4740c1cf2debffe9770a2791e3ac_1af30d4740c1cf2debffe9770a2791e3ac" compoundref="gb-default_8cpp" startline="386" endline="397">gbA::gbelem_copy</referencedby>
+        <referencedby refid="classgb_a_a5906e55522248442f0a2e0d400f9e96e_1a5906e55522248442f0a2e0d400f9e96e" compoundref="gb-default_8cpp" startline="362" endline="384">gbA::gbelem_make</referencedby>
+        <referencedby refid="classgb_a_a51e67a15b6b8fe786c5d2d90ac6c4e6b_1a51e67a15b6b8fe786c5d2d90ac6c4e6b" compoundref="gb-default_8cpp" startline="347" endline="360">gbA::gbelem_ring_make</referencedby>
+        <referencedby refid="classgb_a_ae01df246ccc6e88f942316915add7903_1ae01df246ccc6e88f942316915add7903" compoundref="gb-default_8cpp" startline="2139" endline="2230">gbA::insert_gb</referencedby>
+        <referencedby refid="classgb_a_acbe1669088b1d8279bd9bf299f946a6d_1acbe1669088b1d8279bd9bf299f946a6d" compoundref="gb-default_8cpp" startline="2374" endline="2393">gbA::make_lead_term_matrix</referencedby>
+        <referencedby refid="classgb_a_aa8f38461d0118ce46f2f5bb1e4cfc479_1aa8f38461d0118ce46f2f5bb1e4cfc479" compoundref="gb-default_8cpp" startline="1451" endline="1592">gbA::reduce_ZZ</referencedby>
+        <referencedby refid="classgb_a_a4d9b0ac32a2395305f6db8eecf4113ac_1a4d9b0ac32a2395305f6db8eecf4113ac" compoundref="gb-default_8cpp" startline="2232" endline="2290">gbA::replace_gb_element_ZZ</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structgb_a_1_1gbelem_ab87e91cfccb61731f232b67df3f96c01_1ab87e91cfccb61731f232b67df3f96c01" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int gbA::gbelem::deg</definition>
+        <argsstring></argsstring>
+        <name>deg</name>
+        <qualifiedname>gbA::gbelem::deg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-default.hpp" line="80" column="9" bodyfile="Macaulay2/e/gb-default.hpp" bodystart="80" bodyend="-1"/>
+        <referencedby refid="classgb_a_a899dd75bd0d824d656a3a1b60e81bdfd_1a899dd75bd0d824d656a3a1b60e81bdfd" compoundref="gb-default_8cpp" startline="2084" endline="2123">gbA::auto_reduce_by</referencedby>
+        <referencedby refid="classgb_a_af30d4740c1cf2debffe9770a2791e3ac_1af30d4740c1cf2debffe9770a2791e3ac" compoundref="gb-default_8cpp" startline="386" endline="397">gbA::gbelem_copy</referencedby>
+        <referencedby refid="classgb_a_a5906e55522248442f0a2e0d400f9e96e_1a5906e55522248442f0a2e0d400f9e96e" compoundref="gb-default_8cpp" startline="362" endline="384">gbA::gbelem_make</referencedby>
+        <referencedby refid="classgb_a_a51e67a15b6b8fe786c5d2d90ac6c4e6b_1a51e67a15b6b8fe786c5d2d90ac6c4e6b" compoundref="gb-default_8cpp" startline="347" endline="360">gbA::gbelem_ring_make</referencedby>
+        <referencedby refid="classgb_a_a4d9b0ac32a2395305f6db8eecf4113ac_1a4d9b0ac32a2395305f6db8eecf4113ac" compoundref="gb-default_8cpp" startline="2232" endline="2290">gbA::replace_gb_element_ZZ</referencedby>
+        <referencedby refid="classgb_a_ad3b72d6a9c8ae73ce4fe7e69ccc0e21e_1ad3b72d6a9c8ae73ce4fe7e69ccc0e21e" compoundref="gb-default_8cpp" startline="449" endline="466">gbA::spair_make</referencedby>
+        <referencedby refid="classgb_a_acc3a85af41eb14b53d2b1cae20218fdb_1acc3a85af41eb14b53d2b1cae20218fdb" compoundref="gb-default_8cpp" startline="491" endline="510">gbA::spair_make_skew</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structgb_a_1_1gbelem_ab17c83811522d3313560df91cc5de802_1ab17c83811522d3313560df91cc5de802" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int gbA::gbelem::gap</definition>
+        <argsstring></argsstring>
+        <name>gap</name>
+        <qualifiedname>gbA::gbelem::gap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-default.hpp" line="81" column="9" bodyfile="Macaulay2/e/gb-default.hpp" bodystart="81" bodyend="-1"/>
+        <referencedby refid="classgb_a_a899dd75bd0d824d656a3a1b60e81bdfd_1a899dd75bd0d824d656a3a1b60e81bdfd" compoundref="gb-default_8cpp" startline="2084" endline="2123">gbA::auto_reduce_by</referencedby>
+        <referencedby refid="classgb_a_a97da2cd02bdbff42a847e44350f3be76_1a97da2cd02bdbff42a847e44350f3be76" compoundref="gb-default_8cpp" startline="1708" endline="1837">gbA::find_good_divisor</referencedby>
+        <referencedby refid="classgb_a_a312fb22f974205255c3399701718a273_1a312fb22f974205255c3399701718a273" compoundref="gb-default_8cpp" startline="1604" endline="1653">gbA::find_good_monomial_divisor_ZZ</referencedby>
+        <referencedby refid="classgb_a_af5c424a90db6d64e3f00ab2f384cffee_1af5c424a90db6d64e3f00ab2f384cffee" compoundref="gb-default_8cpp" startline="1655" endline="1706">gbA::find_good_term_divisor_ZZ</referencedby>
+        <referencedby refid="classgb_a_a5906e55522248442f0a2e0d400f9e96e_1a5906e55522248442f0a2e0d400f9e96e" compoundref="gb-default_8cpp" startline="362" endline="384">gbA::gbelem_make</referencedby>
+        <referencedby refid="classgb_a_a51e67a15b6b8fe786c5d2d90ac6c4e6b_1a51e67a15b6b8fe786c5d2d90ac6c4e6b" compoundref="gb-default_8cpp" startline="347" endline="360">gbA::gbelem_ring_make</referencedby>
+        <referencedby refid="classgb_a_ad3b72d6a9c8ae73ce4fe7e69ccc0e21e_1ad3b72d6a9c8ae73ce4fe7e69ccc0e21e" compoundref="gb-default_8cpp" startline="449" endline="466">gbA::spair_make</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structgb_a_1_1gbelem_ad919acfbcf5d1c4b4bc376c9675adde2_1ad919acfbcf5d1c4b4bc376c9675adde2" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int gbA::gbelem::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <qualifiedname>gbA::gbelem::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-default.hpp" line="83" column="9" bodyfile="Macaulay2/e/gb-default.hpp" bodystart="83" bodyend="-1"/>
+        <referencedby refid="classgb_a_a97da2cd02bdbff42a847e44350f3be76_1a97da2cd02bdbff42a847e44350f3be76" compoundref="gb-default_8cpp" startline="1708" endline="1837">gbA::find_good_divisor</referencedby>
+        <referencedby refid="classgb_a_a5906e55522248442f0a2e0d400f9e96e_1a5906e55522248442f0a2e0d400f9e96e" compoundref="gb-default_8cpp" startline="362" endline="384">gbA::gbelem_make</referencedby>
+        <referencedby refid="classgb_a_a51e67a15b6b8fe786c5d2d90ac6c4e6b_1a51e67a15b6b8fe786c5d2d90ac6c4e6b" compoundref="gb-default_8cpp" startline="347" endline="360">gbA::gbelem_ring_make</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structgb_a_1_1gbelem_a4775959dbceec332654599613d118ce4_1a4775959dbceec332654599613d118ce4" prot="public" static="no" mutable="no">
+        <type><ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref></type>
+        <definition>exponents_t gbA::gbelem::lead</definition>
+        <argsstring></argsstring>
+        <name>lead</name>
+        <qualifiedname>gbA::gbelem::lead</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-default.hpp" line="86" column="17" bodyfile="Macaulay2/e/gb-default.hpp" bodystart="86" bodyend="-1"/>
+        <referencedby refid="classgb_a_a97da2cd02bdbff42a847e44350f3be76_1a97da2cd02bdbff42a847e44350f3be76" compoundref="gb-default_8cpp" startline="1708" endline="1837">gbA::find_good_divisor</referencedby>
+        <referencedby refid="classgb_a_af30d4740c1cf2debffe9770a2791e3ac_1af30d4740c1cf2debffe9770a2791e3ac" compoundref="gb-default_8cpp" startline="386" endline="397">gbA::gbelem_copy</referencedby>
+        <referencedby refid="classgb_a_a5906e55522248442f0a2e0d400f9e96e_1a5906e55522248442f0a2e0d400f9e96e" compoundref="gb-default_8cpp" startline="362" endline="384">gbA::gbelem_make</referencedby>
+        <referencedby refid="classgb_a_a51e67a15b6b8fe786c5d2d90ac6c4e6b_1a51e67a15b6b8fe786c5d2d90ac6c4e6b" compoundref="gb-default_8cpp" startline="347" endline="360">gbA::gbelem_ring_make</referencedby>
+        <referencedby refid="classgb_a_ae01df246ccc6e88f942316915add7903_1ae01df246ccc6e88f942316915add7903" compoundref="gb-default_8cpp" startline="2139" endline="2230">gbA::insert_gb</referencedby>
+        <referencedby refid="classgb_a_ab7ac6726a60a3c5e4b8f89e1808420df_1ab7ac6726a60a3c5e4b8f89e1808420df" compoundref="gb-default_8cpp" startline="594" endline="636">gbA::pair_not_needed</referencedby>
+        <referencedby refid="classgb_a_ad3b72d6a9c8ae73ce4fe7e69ccc0e21e_1ad3b72d6a9c8ae73ce4fe7e69ccc0e21e" compoundref="gb-default_8cpp" startline="449" endline="466">gbA::spair_make</referencedby>
+        <referencedby refid="classgb_a_acc3a85af41eb14b53d2b1cae20218fdb_1acc3a85af41eb14b53d2b1cae20218fdb" compoundref="gb-default_8cpp" startline="491" endline="510">gbA::spair_make_skew</referencedby>
+        <referencedby refid="classgb_a_ae5b2dc7020f0768b42bf6d5513e25054_1ae5b2dc7020f0768b42bf6d5513e25054" compoundref="gb-default_8cpp" startline="954" endline="997">gbA::update_pairs</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structgb_a_1_1gbelem_a2d9de2b0a09d41431e42a0448209ed12_1a2d9de2b0a09d41431e42a0448209ed12" prot="public" static="no" mutable="no">
+        <type><ref refid="classgb_a_af3374835f6a2837a1c259f4315eea78c_1af3374835f6a2837a1c259f4315eea78c" kindref="member">gbelem_type</ref></type>
+        <definition>gbelem_type gbA::gbelem::minlevel</definition>
+        <argsstring></argsstring>
+        <name>minlevel</name>
+        <qualifiedname>gbA::gbelem::minlevel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-default.hpp" line="87" column="17" bodyfile="Macaulay2/e/gb-default.hpp" bodystart="87" bodyend="-1"/>
+        <referencedby refid="classgb_a_af30d4740c1cf2debffe9770a2791e3ac_1af30d4740c1cf2debffe9770a2791e3ac" compoundref="gb-default_8cpp" startline="386" endline="397">gbA::gbelem_copy</referencedby>
+        <referencedby refid="classgb_a_a5906e55522248442f0a2e0d400f9e96e_1a5906e55522248442f0a2e0d400f9e96e" compoundref="gb-default_8cpp" startline="362" endline="384">gbA::gbelem_make</referencedby>
+        <referencedby refid="classgb_a_a51e67a15b6b8fe786c5d2d90ac6c4e6b_1a51e67a15b6b8fe786c5d2d90ac6c4e6b" compoundref="gb-default_8cpp" startline="347" endline="360">gbA::gbelem_ring_make</referencedby>
+        <referencedby refid="classgb_a_acbe1669088b1d8279bd9bf299f946a6d_1acbe1669088b1d8279bd9bf299f946a6d" compoundref="gb-default_8cpp" startline="2374" endline="2393">gbA::make_lead_term_matrix</referencedby>
+        <referencedby refid="classgb_a_aa8f38461d0118ce46f2f5bb1e4cfc479_1aa8f38461d0118ce46f2f5bb1e4cfc479" compoundref="gb-default_8cpp" startline="1451" endline="1592">gbA::reduce_ZZ</referencedby>
+        <referencedby refid="classgb_a_a4d9b0ac32a2395305f6db8eecf4113ac_1a4d9b0ac32a2395305f6db8eecf4113ac" compoundref="gb-default_8cpp" startline="2232" endline="2290">gbA::replace_gb_element_ZZ</referencedby>
+        <referencedby refid="classgb_a_ae5b2dc7020f0768b42bf6d5513e25054_1ae5b2dc7020f0768b42bf6d5513e25054" compoundref="gb-default_8cpp" startline="954" endline="997">gbA::update_pairs</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>POLY</label>
+        <link refid="struct_p_o_l_y"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="18">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="16">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>const void *</label>
+      </node>
+      <node id="11">
+        <label>double</label>
+      </node>
+      <node id="22">
+        <label>Exponents</label>
+      </node>
+      <node id="1">
+        <label>gbA::gbelem</label>
+        <link refid="structgb_a_1_1gbelem"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>g</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>deg</edgelabel>
+          <edgelabel>gap</edgelabel>
+          <edgelabel>minlevel</edgelabel>
+          <edgelabel>size</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>lead</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>gbvector</label>
+        <link refid="structgbvector"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>comp</edgelabel>
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="9">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>long</label>
+      </node>
+      <node id="15">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="14">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="12">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="13">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="8">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="4">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-default.hpp" line="77" column="3" bodyfile="Macaulay2/e/gb-default.hpp" bodystart="78" bodyend="88"/>
+    <listofallmembers>
+      <member refid="structgb_a_1_1gbelem_ab87e91cfccb61731f232b67df3f96c01_1ab87e91cfccb61731f232b67df3f96c01" prot="public" virt="non-virtual"><scope>gbA::gbelem</scope><name>deg</name></member>
+      <member refid="structgb_a_1_1gbelem_a62dc20a89a82da8be73f0fa6e0c14525_1a62dc20a89a82da8be73f0fa6e0c14525" prot="public" virt="non-virtual"><scope>gbA::gbelem</scope><name>g</name></member>
+      <member refid="structgb_a_1_1gbelem_ab17c83811522d3313560df91cc5de802_1ab17c83811522d3313560df91cc5de802" prot="public" virt="non-virtual"><scope>gbA::gbelem</scope><name>gap</name></member>
+      <member refid="structgb_a_1_1gbelem_a4775959dbceec332654599613d118ce4_1a4775959dbceec332654599613d118ce4" prot="public" virt="non-virtual"><scope>gbA::gbelem</scope><name>lead</name></member>
+      <member refid="structgb_a_1_1gbelem_a2d9de2b0a09d41431e42a0448209ed12_1a2d9de2b0a09d41431e42a0448209ed12" prot="public" virt="non-virtual"><scope>gbA::gbelem</scope><name>minlevel</name></member>
+      <member refid="structgb_a_1_1gbelem_ad919acfbcf5d1c4b4bc376c9675adde2_1ad919acfbcf5d1c4b4bc376c9675adde2" prot="public" virt="non-virtual"><scope>gbA::gbelem</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

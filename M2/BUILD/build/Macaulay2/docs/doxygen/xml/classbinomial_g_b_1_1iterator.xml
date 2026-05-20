@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classbinomial_g_b_1_1iterator" kind="class" language="C++" prot="public">
+    <compoundname>binomialGB::iterator</compoundname>
+    <includes refid="gb-toric_8hpp" local="no">gb-toric.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="classbinomial_g_b_1_1iterator_affd481b157431fb2231e290a751b3ecb_1affd481b157431fb2231e290a751b3ecb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class binomialGB</definition>
+        <argsstring></argsstring>
+        <name>binomialGB</name>
+        <qualifiedname>binomialGB::iterator::binomialGB</qualifiedname>
+        <param>
+          <type><ref refid="classbinomial_g_b" kindref="compound">binomialGB</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="274" column="18" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="274" bodyend="-1"/>
+        <references refid="classbinomial_g_b_1_1iterator_affd481b157431fb2231e290a751b3ecb_1affd481b157431fb2231e290a751b3ecb" compoundref="gb-toric_8hpp" startline="274">binomialGB</references>
+        <referencedby refid="classbinomial_g_b_1_1iterator_affd481b157431fb2231e290a751b3ecb_1affd481b157431fb2231e290a751b3ecb" compoundref="gb-toric_8hpp" startline="274">binomialGB</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classbinomial_g_b_1_1iterator_a72c01da47dc84ab3955db138bb12f8d7_1a72c01da47dc84ab3955db138bb12f8d7" prot="private" static="no" mutable="no">
+        <type><ref refid="structbinomial_g_b_1_1gbmin__elem" kindref="compound">gbmin_elem</ref> *</type>
+        <definition>gbmin_elem* binomialGB::iterator::elem</definition>
+        <argsstring></argsstring>
+        <name>elem</name>
+        <qualifiedname>binomialGB::iterator::elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="275" column="16" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="275" bodyend="-1"/>
+        <referencedby refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" compoundref="gb-toric_8hpp" startline="276" endline="276">iterator</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_af5f54cabb01259443b14bcc696e81927_1af5f54cabb01259443b14bcc696e81927" compoundref="gb-toric_8hpp" startline="291" endline="291">operator!=</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_a3111e9bd463734e1a5aa8cfcb5f51559_1a3111e9bd463734e1a5aa8cfcb5f51559" compoundref="gb-toric_8hpp" startline="289" endline="289">operator*</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_aca4bc408bae9fa5562de81d496114f30_1aca4bc408bae9fa5562de81d496114f30" compoundref="gb-toric_8hpp" startline="279" endline="283">operator++</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_a30233d3cbfc4496ca093308f95b9278b_1a30233d3cbfc4496ca093308f95b9278b" compoundref="gb-toric_8hpp" startline="284" endline="288">operator++</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_a66f86faa3721a277c0f5dac0757a3d3d_1a66f86faa3721a277c0f5dac0757a3d3d" compoundref="gb-toric_8hpp" startline="290" endline="290">operator==</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_a079e16d9966152d1f164e1eef640f4fe_1a079e16d9966152d1f164e1eef640f4fe" compoundref="gb-toric_8hpp" startline="277" endline="277">this_elem</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>binomialGB::iterator::iterator</definition>
+        <argsstring>(gbmin_elem *p)</argsstring>
+        <name>iterator</name>
+        <qualifiedname>binomialGB::iterator::iterator</qualifiedname>
+        <param>
+          <type><ref refid="structbinomial_g_b_1_1gbmin__elem" kindref="compound">gbmin_elem</ref> *</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="276" column="5" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="276" bodyend="276"/>
+        <references refid="classbinomial_g_b_1_1iterator_a72c01da47dc84ab3955db138bb12f8d7_1a72c01da47dc84ab3955db138bb12f8d7" compoundref="gb-toric_8hpp" startline="275">elem</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <referencedby refid="classbinomial_g_b_1_1iterator_af5f54cabb01259443b14bcc696e81927_1af5f54cabb01259443b14bcc696e81927" compoundref="gb-toric_8hpp" startline="291" endline="291">operator!=</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_aca4bc408bae9fa5562de81d496114f30_1aca4bc408bae9fa5562de81d496114f30" compoundref="gb-toric_8hpp" startline="279" endline="283">operator++</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_a30233d3cbfc4496ca093308f95b9278b_1a30233d3cbfc4496ca093308f95b9278b" compoundref="gb-toric_8hpp" startline="284" endline="288">operator++</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_a66f86faa3721a277c0f5dac0757a3d3d_1a66f86faa3721a277c0f5dac0757a3d3d" compoundref="gb-toric_8hpp" startline="290" endline="290">operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial_g_b_1_1iterator_a079e16d9966152d1f164e1eef640f4fe_1a079e16d9966152d1f164e1eef640f4fe" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structbinomial_g_b_1_1gbmin__elem" kindref="compound">gbmin_elem</ref> *</type>
+        <definition>gbmin_elem * binomialGB::iterator::this_elem</definition>
+        <argsstring>()</argsstring>
+        <name>this_elem</name>
+        <qualifiedname>binomialGB::iterator::this_elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="277" column="16" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="277" bodyend="277"/>
+        <references refid="classbinomial_g_b_1_1iterator_a72c01da47dc84ab3955db138bb12f8d7_1a72c01da47dc84ab3955db138bb12f8d7" compoundref="gb-toric_8hpp" startline="275">elem</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classbinomial_g_b_1_1iterator_aca4bc408bae9fa5562de81d496114f30_1aca4bc408bae9fa5562de81d496114f30" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" kindref="member">iterator</ref> &amp;</type>
+        <definition>iterator &amp; binomialGB::iterator::operator++</definition>
+        <argsstring>()</argsstring>
+        <name>operator++</name>
+        <qualifiedname>binomialGB::iterator::operator++</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="279" column="14" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="279" bodyend="283"/>
+        <references refid="classbinomial_g_b_1_1iterator_a72c01da47dc84ab3955db138bb12f8d7_1a72c01da47dc84ab3955db138bb12f8d7" compoundref="gb-toric_8hpp" startline="275">elem</references>
+        <references refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" compoundref="gb-toric_8hpp" startline="276" endline="276">iterator</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial_g_b_1_1iterator_a30233d3cbfc4496ca093308f95b9278b_1a30233d3cbfc4496ca093308f95b9278b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" kindref="member">iterator</ref> &amp;</type>
+        <definition>iterator &amp; binomialGB::iterator::operator++</definition>
+        <argsstring>(int)</argsstring>
+        <name>operator++</name>
+        <qualifiedname>binomialGB::iterator::operator++</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="284" column="14" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="284" bodyend="288"/>
+        <references refid="classbinomial_g_b_1_1iterator_a72c01da47dc84ab3955db138bb12f8d7_1a72c01da47dc84ab3955db138bb12f8d7" compoundref="gb-toric_8hpp" startline="275">elem</references>
+        <references refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" compoundref="gb-toric_8hpp" startline="276" endline="276">iterator</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial_g_b_1_1iterator_a3111e9bd463734e1a5aa8cfcb5f51559_1a3111e9bd463734e1a5aa8cfcb5f51559" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structbinomial__gb__elem" kindref="compound">binomial_gb_elem</ref> *</type>
+        <definition>binomial_gb_elem * binomialGB::iterator::operator*</definition>
+        <argsstring>()</argsstring>
+        <name>operator*</name>
+        <qualifiedname>binomialGB::iterator::operator*</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="289" column="22" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="289" bodyend="289"/>
+        <references refid="classbinomial_g_b_1_1iterator_a72c01da47dc84ab3955db138bb12f8d7_1a72c01da47dc84ab3955db138bb12f8d7" compoundref="gb-toric_8hpp" startline="275">elem</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial_g_b_1_1iterator_a66f86faa3721a277c0f5dac0757a3d3d_1a66f86faa3721a277c0f5dac0757a3d3d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool binomialGB::iterator::operator==</definition>
+        <argsstring>(const iterator &amp;p) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>binomialGB::iterator::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" kindref="member">iterator</ref> &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="290" column="10" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="290" bodyend="290"/>
+        <references refid="classbinomial_g_b_1_1iterator_a72c01da47dc84ab3955db138bb12f8d7_1a72c01da47dc84ab3955db138bb12f8d7" compoundref="gb-toric_8hpp" startline="275">elem</references>
+        <references refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" compoundref="gb-toric_8hpp" startline="276" endline="276">iterator</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classbinomial_g_b_1_1iterator_af5f54cabb01259443b14bcc696e81927_1af5f54cabb01259443b14bcc696e81927" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool binomialGB::iterator::operator!=</definition>
+        <argsstring>(const iterator &amp;p) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>binomialGB::iterator::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" kindref="member">iterator</ref> &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="291" column="10" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="291" bodyend="291"/>
+        <references refid="classbinomial_g_b_1_1iterator_a72c01da47dc84ab3955db138bb12f8d7_1a72c01da47dc84ab3955db138bb12f8d7" compoundref="gb-toric_8hpp" startline="275">elem</references>
+        <references refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" compoundref="gb-toric_8hpp" startline="276" endline="276">iterator</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>binomial</label>
+        <link refid="structbinomial"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>lead</edgelabel>
+          <edgelabel>tail</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>binomialGB::gbmin_elem</label>
+        <link refid="structbinomial_g_b_1_1gbmin__elem"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elem</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mask</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>binomialGB::iterator</label>
+        <link refid="classbinomial_g_b_1_1iterator"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>elem</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>binomial_gb_elem</label>
+        <link refid="structbinomial__gb__elem"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>next</edgelabel>
+          <edgelabel>smaller</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>f</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-toric.hpp" line="272" column="3" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="273" bodyend="292"/>
+    <listofallmembers>
+      <member refid="classbinomial_g_b_1_1iterator_affd481b157431fb2231e290a751b3ecb_1affd481b157431fb2231e290a751b3ecb" prot="private" virt="non-virtual"><scope>binomialGB::iterator</scope><name>binomialGB</name></member>
+      <member refid="classbinomial_g_b_1_1iterator_a72c01da47dc84ab3955db138bb12f8d7_1a72c01da47dc84ab3955db138bb12f8d7" prot="private" virt="non-virtual"><scope>binomialGB::iterator</scope><name>elem</name></member>
+      <member refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" prot="private" virt="non-virtual"><scope>binomialGB::iterator</scope><name>iterator</name></member>
+      <member refid="classbinomial_g_b_1_1iterator_af5f54cabb01259443b14bcc696e81927_1af5f54cabb01259443b14bcc696e81927" prot="public" virt="non-virtual"><scope>binomialGB::iterator</scope><name>operator!=</name></member>
+      <member refid="classbinomial_g_b_1_1iterator_a3111e9bd463734e1a5aa8cfcb5f51559_1a3111e9bd463734e1a5aa8cfcb5f51559" prot="public" virt="non-virtual"><scope>binomialGB::iterator</scope><name>operator*</name></member>
+      <member refid="classbinomial_g_b_1_1iterator_aca4bc408bae9fa5562de81d496114f30_1aca4bc408bae9fa5562de81d496114f30" prot="public" virt="non-virtual"><scope>binomialGB::iterator</scope><name>operator++</name></member>
+      <member refid="classbinomial_g_b_1_1iterator_a30233d3cbfc4496ca093308f95b9278b_1a30233d3cbfc4496ca093308f95b9278b" prot="public" virt="non-virtual"><scope>binomialGB::iterator</scope><name>operator++</name></member>
+      <member refid="classbinomial_g_b_1_1iterator_a66f86faa3721a277c0f5dac0757a3d3d_1a66f86faa3721a277c0f5dac0757a3d3d" prot="public" virt="non-virtual"><scope>binomialGB::iterator</scope><name>operator==</name></member>
+      <member refid="classbinomial_g_b_1_1iterator_a079e16d9966152d1f164e1eef640f4fe_1a079e16d9966152d1f164e1eef640f4fe" prot="private" virt="non-virtual"><scope>binomialGB::iterator</scope><name>this_elem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1014 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_d_mat" kind="class" language="C++" prot="public">
+    <compoundname>DMat</compoundname>
+    <includes refid="dmat_8hpp" local="no">dmat.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename ACoeffRing</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_d_mat_a1456b3e65636b78e2b2e418c1a6c7bd7_1a1456b3e65636b78e2b2e418c1a6c7bd7" prot="public" static="no">
+        <type>ACoeffRing</type>
+        <definition>typedef ACoeffRing DMat&lt; ACoeffRing &gt;::CoeffRing</definition>
+        <argsstring></argsstring>
+        <name>CoeffRing</name>
+        <qualifiedname>DMat::CoeffRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="62" column="22" bodyfile="Macaulay2/e/dmat.hpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" prot="public" static="no">
+        <type>ACoeffRing::ElementType</type>
+        <definition>typedef ACoeffRing::ElementType DMat&lt; ACoeffRing &gt;::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>DMat::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="63" column="44" bodyfile="Macaulay2/e/dmat.hpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_d_mat_ab01d6e06ca7c9ba9ba767ab3947e2de0_1ab01d6e06ca7c9ba9ba767ab3947e2de0" prot="public" static="no">
+        <type>ACoeffRing::Element</type>
+        <definition>typedef ACoeffRing::Element DMat&lt; ACoeffRing &gt;::Element</definition>
+        <argsstring></argsstring>
+        <name>Element</name>
+        <qualifiedname>DMat::Element</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="64" column="40" bodyfile="Macaulay2/e/dmat.hpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_d_mat_a2f4e6ba88417aa58d1263afe7f00504a_1a2f4e6ba88417aa58d1263afe7f00504a" prot="private" static="no" mutable="no">
+        <type>const ACoeffRing *</type>
+        <definition>const ACoeffRing* DMat&lt; ACoeffRing &gt;::mRing</definition>
+        <argsstring></argsstring>
+        <name>mRing</name>
+        <qualifiedname>DMat::mRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="172" column="20" bodyfile="Macaulay2/e/dmat.hpp" bodystart="172" bodyend="-1"/>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_01_4_aa2419ea6ef5fae492b0dc61aa20e7ec4_1aa2419ea6ef5fae492b0dc61aa20e7ec4" compoundref="dmat-gf-flint_8hpp" startline="93" endline="97">DMat&lt; M2::ARingGFFlint &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_aedfbc6aaeeb8b5f8270272c17d53dcae_1aedfbc6aaeeb8b5f8270272c17d53dcae" compoundref="dmat-gf-flint-big_8hpp" startline="91" endline="95">DMat&lt; M2::ARingGFFlintBig &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_abcf976a68632c2f30909c944b1ad178d_1abcf976a68632c2f30909c944b1ad178d" compoundref="dmat-qq-flint_8hpp" startline="95" endline="99">DMat&lt; M2::ARingQQFlint &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_z_01_4_a79db652c9a64d68055b94554f95cd324_1a79db652c9a64d68055b94554f95cd324" compoundref="dmat-zz-flint_8hpp" startline="94" endline="98">DMat&lt; M2::ARingZZ &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_zp_flint_01_4_a03bd5f81c5258ce3a8df650b7decec9a_1a03bd5f81c5258ce3a8df650b7decec9a" compoundref="dmat-zzp-flint_8hpp" startline="91" endline="95">DMat&lt; M2::ARingZZpFlint &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" compoundref="dmat_8hpp" startline="132" endline="139">DMat&lt; RingType &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_mat_a6d1ff369db27b5aa3b2a8c98e50ce907_1a6d1ff369db27b5aa3b2a8c98e50ce907" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DMat&lt; ACoeffRing &gt;::mNumRows</definition>
+        <argsstring></argsstring>
+        <name>mNumRows</name>
+        <qualifiedname>DMat::mNumRows</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="173" column="10" bodyfile="Macaulay2/e/dmat.hpp" bodystart="173" bodyend="-1"/>
+        <referencedby refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" compoundref="dmat_8hpp" startline="132" endline="139">DMat&lt; RingType &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_mat_a2a075af3a9dd6d0509df6b7a46318746_1a2a075af3a9dd6d0509df6b7a46318746" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DMat&lt; ACoeffRing &gt;::mNumColumns</definition>
+        <argsstring></argsstring>
+        <name>mNumColumns</name>
+        <qualifiedname>DMat::mNumColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="174" column="10" bodyfile="Macaulay2/e/dmat.hpp" bodystart="174" bodyend="-1"/>
+        <referencedby refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" compoundref="dmat_8hpp" startline="132" endline="139">DMat&lt; RingType &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_mat_a3b3db187e0e6a13c33246e8844db0f83_1a3b3db187e0e6a13c33246e8844db0f83" prot="private" static="no" mutable="no">
+        <type><ref refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" kindref="member">ElementType</ref> *</type>
+        <definition>ElementType* DMat&lt; ACoeffRing &gt;::mArray</definition>
+        <argsstring></argsstring>
+        <name>mArray</name>
+        <qualifiedname>DMat::mArray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="175" column="15" bodyfile="Macaulay2/e/dmat.hpp" bodystart="175" bodyend="-1"/>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_01_4_a2fd10d0af79bc0d0930181d7b8ba027a_1a2fd10d0af79bc0d0930181d7b8ba027a" compoundref="dmat-gf-flint_8hpp" startline="84" endline="87">DMat&lt; M2::ARingGFFlint &gt;::DMat</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_acadfb2c3ba46681914519990d72d1d1b_1acadfb2c3ba46681914519990d72d1d1b" compoundref="dmat-gf-flint-big_8hpp" startline="82" endline="85">DMat&lt; M2::ARingGFFlintBig &gt;::DMat</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_ac1c1f0c61082bc1fa168879b10cf2575_1ac1c1f0c61082bc1fa168879b10cf2575" compoundref="dmat-qq-flint_8hpp" startline="86" endline="90">DMat&lt; M2::ARingQQFlint &gt;::DMat</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_z_01_4_a40737a09a97107e666ad8746a261909f_1a40737a09a97107e666ad8746a261909f" compoundref="dmat-zz-flint_8hpp" startline="84" endline="87">DMat&lt; M2::ARingZZ &gt;::DMat</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_zp_flint_01_4_a3c33462abda29503bd806e5365eb6560_1a3c33462abda29503bd806e5365eb6560" compoundref="dmat-zzp-flint_8hpp" startline="82" endline="85">DMat&lt; M2::ARingZZpFlint &gt;::DMat</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_01_4_aa2419ea6ef5fae492b0dc61aa20e7ec4_1aa2419ea6ef5fae492b0dc61aa20e7ec4" compoundref="dmat-gf-flint_8hpp" startline="93" endline="97">DMat&lt; M2::ARingGFFlint &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_aedfbc6aaeeb8b5f8270272c17d53dcae_1aedfbc6aaeeb8b5f8270272c17d53dcae" compoundref="dmat-gf-flint-big_8hpp" startline="91" endline="95">DMat&lt; M2::ARingGFFlintBig &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_abcf976a68632c2f30909c944b1ad178d_1abcf976a68632c2f30909c944b1ad178d" compoundref="dmat-qq-flint_8hpp" startline="95" endline="99">DMat&lt; M2::ARingQQFlint &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_z_01_4_a79db652c9a64d68055b94554f95cd324_1a79db652c9a64d68055b94554f95cd324" compoundref="dmat-zz-flint_8hpp" startline="94" endline="98">DMat&lt; M2::ARingZZ &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_zp_flint_01_4_a03bd5f81c5258ce3a8df650b7decec9a_1a03bd5f81c5258ce3a8df650b7decec9a" compoundref="dmat-zzp-flint_8hpp" startline="91" endline="95">DMat&lt; M2::ARingZZpFlint &gt;::swap</referencedby>
+        <referencedby refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" compoundref="dmat_8hpp" startline="132" endline="139">DMat&lt; RingType &gt;::swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_mat_a38f628377c19730bf5388a467ee7561a_1a38f628377c19730bf5388a467ee7561a" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" kindref="member">ElementType</ref> * &gt;</type>
+        <definition>std::vector&lt;ElementType*&gt; DMat&lt; ACoeffRing &gt;::mRowPointers</definition>
+        <argsstring></argsstring>
+        <name>mRowPointers</name>
+        <qualifiedname>DMat::mRowPointers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="176" column="15" bodyfile="Macaulay2/e/dmat.hpp" bodystart="176" bodyend="-1"/>
+        <referencedby refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" compoundref="dmat_8hpp" startline="132" endline="139">DMat&lt; RingType &gt;::swap</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_d_mat_ae96570ac0d611add9bbe53140cb90f2c_1ae96570ac0d611add9bbe53140cb90f2c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DMat&lt; ACoeffRing &gt;::DMat</definition>
+        <argsstring>()</argsstring>
+        <name>DMat</name>
+        <qualifiedname>DMat::DMat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="66" column="3" bodyfile="Macaulay2/e/dmat.hpp" bodystart="66" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_aa28b1b37aa4b3007d77fd436652c3967_1aa28b1b37aa4b3007d77fd436652c3967" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DMat&lt; ACoeffRing &gt;::DMat</definition>
+        <argsstring>(const ACoeffRing &amp;R, size_t nrows, size_t ncols)</argsstring>
+        <name>DMat</name>
+        <qualifiedname>DMat::DMat</qualifiedname>
+        <param>
+          <type>const ACoeffRing &amp;</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>nrows</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>ncols</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="67" column="3" bodyfile="Macaulay2/e/dmat.hpp" bodystart="67" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_a186ae90f1a921410b3ac424bd1dacf63_1a186ae90f1a921410b3ac424bd1dacf63" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DMat&lt; ACoeffRing &gt;::DMat</definition>
+        <argsstring>(const DMat&lt; ACoeffRing &gt; &amp;M)</argsstring>
+        <name>DMat</name>
+        <qualifiedname>DMat::DMat</qualifiedname>
+        <param>
+          <type>const <ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; ACoeffRing &gt; &amp;</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="95" column="3" bodyfile="Macaulay2/e/dmat.hpp" bodystart="95" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_aa16d3c198ca8eb8a18cdfb27c1019d04_1aa16d3c198ca8eb8a18cdfb27c1019d04" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DMat&lt; ACoeffRing &gt;::~DMat</definition>
+        <argsstring>()</argsstring>
+        <name>~DMat</name>
+        <qualifiedname>DMat::~DMat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="123" column="3" bodyfile="Macaulay2/e/dmat.hpp" bodystart="123" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMat&lt; ACoeffRing &gt;::swap</definition>
+        <argsstring>(DMat&lt; ACoeffRing &gt; &amp;M)</argsstring>
+        <name>swap</name>
+        <qualifiedname>DMat::swap</qualifiedname>
+        <param>
+          <type><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; ACoeffRing &gt; &amp;</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="132" column="8" bodyfile="Macaulay2/e/dmat.hpp" bodystart="132" bodyend="139"/>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a75f3f661e35044f2d666604c32c87ce7_1a75f3f661e35044f2d666604c32c87ce7" compoundref="mat-elem-ops_8hpp" startline="417" endline="435">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a885d74a3aab53687e0c5f8f0385bea48_1a885d74a3aab53687e0c5f8f0385bea48" compoundref="mat-elem-ops_8hpp" startline="437" endline="455">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_rows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a19da472bddbb8fe686904f916d7c6680_1a19da472bddbb8fe686904f916d7c6680" compoundref="mat-elem-ops_8hpp" startline="385" endline="399">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a51e6aaa88eb6653567d132a18f55525d_1a51e6aaa88eb6653567d132a18f55525d" compoundref="mat-elem-ops_8hpp" startline="401" endline="415">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_rows</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const ACoeffRing &amp;</type>
+        <definition>const ACoeffRing &amp; DMat&lt; ACoeffRing &gt;::ring</definition>
+        <argsstring>() const</argsstring>
+        <name>ring</name>
+        <qualifiedname>DMat::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="141" column="20" bodyfile="Macaulay2/e/dmat.hpp" bodystart="141" bodyend="141"/>
+        <referencedby refid="namespace_matrix_ops_aa0b591bedc09f2645c7561c0cb7fc079_1aa0b591bedc09f2645c7561c0cb7fc079" compoundref="mat-arith_8hpp" startline="248" endline="258">MatrixOps::addInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a2100eeba95e52ce0e249ae03e9365b54_1a2100eeba95e52ce0e249ae03e9365b54" compoundref="mat-arith_8hpp" startline="340" endline="361">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a809afbf836783d510ee57648fd09343c_1a809afbf836783d510ee57648fd09343c" compoundref="mat-arith_8hpp" startline="321" endline="336">MatrixOps::addTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a046d71ac1b58780e9db531a933bab164_1a046d71ac1b58780e9db531a933bab164" compoundref="mat-linalg_8hpp" startline="1370" endline="1377">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad4c31746076e6e9174fc962d8ea046fb_1ad4c31746076e6e9174fc962d8ea046fb" compoundref="mat-linalg_8hpp" startline="1500" endline="1507">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_a121c3014d3fd5dc02fd64d6ab80c0776_1a121c3014d3fd5dc02fd64d6ab80c0776" compoundref="mat-linalg_8hpp" startline="1281" endline="1288">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_a70a728c9889154baf051a5619f8e3efa_1a70a728c9889154baf051a5619f8e3efa" compoundref="mat-linalg_8hpp" startline="1435" endline="1442">MatrixOps::clean</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ab1fc64e9e13e6ab4a15a7236f82f7183_1ab1fc64e9e13e6ab4a15a7236f82f7183" compoundref="mat-elem-ops_8hpp" startline="230" endline="265">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column2by2</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a467a36aa06905806f10d29b728823361_1a467a36aa06905806f10d29b728823361" compoundref="mat-elem-ops_8hpp" startline="175" endline="190">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_op</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a9af45eb48c3be215183c5eaa1a5815ac_1a9af45eb48c3be215183c5eaa1a5815ac" compoundref="mat-elem-ops_8hpp" startline="336" endline="383">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_permute</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a75f3f661e35044f2d666604c32c87ce7_1a75f3f661e35044f2d666604c32c87ce7" compoundref="mat-elem-ops_8hpp" startline="417" endline="435">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a885d74a3aab53687e0c5f8f0385bea48_1a885d74a3aab53687e0c5f8f0385bea48" compoundref="mat-elem-ops_8hpp" startline="437" endline="455">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_rows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aeb81d1fdf71b0981c98e2605601a8888_1aeb81d1fdf71b0981c98e2605601a8888" compoundref="mat-elem-ops_8hpp" startline="149" endline="156">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_column</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a2ac2a3a44a57b41eeecf7fa6f01a2ca0_1a2ac2a3a44a57b41eeecf7fa6f01a2ca0" compoundref="mat-elem-ops_8hpp" startline="140" endline="147">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_row</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_01_4_a70d90325a00d82c85623ceee31b834cb_1a70d90325a00d82c85623ceee31b834cb" compoundref="dmat-gf-flint_8hpp" startline="79" endline="82">DMat&lt; M2::ARingGFFlint &gt;::DMat</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_aa34a1ea0332c63b6c158ee716e444c2d_1aa34a1ea0332c63b6c158ee716e444c2d" compoundref="dmat-gf-flint-big_8hpp" startline="77" endline="80">DMat&lt; M2::ARingGFFlintBig &gt;::DMat</referencedby>
+        <referencedby refid="class_d_mat_a186ae90f1a921410b3ac424bd1dacf63_1a186ae90f1a921410b3ac424bd1dacf63" compoundref="dmat_8hpp" startline="95" endline="121">DMat&lt; RingType &gt;::DMat</referencedby>
+        <referencedby refid="class_d_mat_aa28b1b37aa4b3007d77fd436652c3967_1aa28b1b37aa4b3007d77fd436652c3967" compoundref="dmat_8hpp" startline="67" endline="94">DMat&lt; RingType &gt;::DMat</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a4b96cbf748d0a84e4c25233247c5e86e_1a4b96cbf748d0a84e4c25233247c5e86e" compoundref="mat-elem-ops_8hpp" startline="268" endline="285">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::dot_product</referencedby>
+        <referencedby refid="namespace_eigen_m2_a3b9427576e6ae17b09a8afd7be2e1d9d_1a3b9427576e6ae17b09a8afd7be2e1d9d" compoundref="eigen_8cpp" startline="456" endline="468">EigenM2::eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_acb8f46b0895a5958cec75a06299332da_1acb8f46b0895a5958cec75a06299332da" compoundref="eigen_8cpp" startline="442" endline="454">EigenM2::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_a4578deee6ac6c59c7ea5a2b1feab788b_1a4578deee6ac6c59c7ea5a2b1feab788b" compoundref="lapack_8cpp" startline="302" endline="363">Lapack::eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_a8c6b6d2fc4b0dbe426264f0722ec27c3_1a8c6b6d2fc4b0dbe426264f0722ec27c3" compoundref="eigen_8cpp" startline="484" endline="496">EigenM2::eigenvalues_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_af62f1a1bf68deb784d2ae1b784fd25de_1af62f1a1bf68deb784d2ae1b784fd25de" compoundref="eigen_8cpp" startline="470" endline="482">EigenM2::eigenvalues_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a131c3bdad6371c26b237f3c22a82cc78_1a131c3bdad6371c26b237f3c22a82cc78" compoundref="eigen_8cpp" startline="513" endline="526">EigenM2::eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_a56ba255897185438deb0d30995c23a0e_1a56ba255897185438deb0d30995c23a0e" compoundref="eigen_8cpp" startline="498" endline="511">EigenM2::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a8e878b74dee60db22d6c749ae5f7ae2f_1a8e878b74dee60db22d6c749ae5f7ae2f" compoundref="lapack_8cpp" startline="365" endline="460">Lapack::eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae03ba0ce5b8c08b419799a9caa062338_1ae03ba0ce5b8c08b419799a9caa062338" compoundref="eigen_8cpp" startline="543" endline="556">EigenM2::eigenvectors_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a68b3b512faaac33a0c9642950dc2871d_1a68b3b512faaac33a0c9642950dc2871d" compoundref="eigen_8cpp" startline="528" endline="541">EigenM2::eigenvectors_hermitian</referencedby>
+        <referencedby refid="lapack_8cpp_a45498d1181590edfe4c373796ac81887_1a45498d1181590edfe4c373796ac81887" compoundref="lapack_8cpp" startline="100" endline="124">fill_from_lapack_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a84ab75ef1ffea656aeeb12c6850ba055_1a84ab75ef1ffea656aeeb12c6850ba055" compoundref="lapack_8cpp" startline="154" endline="193">fill_lower_and_upper</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad59e10bd3e5d8196c45776ebc88fac8e_1ad59e10bd3e5d8196c45776ebc88fac8e" compoundref="mat-elem-ops_8hpp" startline="616" endline="619">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::getEntry</referencedby>
+        <referencedby refid="namespace_matrix_ops_a6ac23720a3dbc69c683ecfd8e1496ad1_1a6ac23720a3dbc69c683ecfd8e1496ad1" compoundref="mat-linalg_8hpp" startline="1379" endline="1386">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_a801b45c61b89d2456aaf3b56ec1c2248_1a801b45c61b89d2456aaf3b56ec1c2248" compoundref="mat-linalg_8hpp" startline="1509" endline="1516">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_aa631e25f3ce5427bc185afb13f7ba36f_1aa631e25f3ce5427bc185afb13f7ba36f" compoundref="mat-linalg_8hpp" startline="1290" endline="1297">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1ae0c67d8cb6ac92a8f433241be1acc4_1a1ae0c67d8cb6ac92a8f433241be1acc4" compoundref="mat-linalg_8hpp" startline="1444" endline="1451">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a19da472bddbb8fe686904f916d7c6680_1a19da472bddbb8fe686904f916d7c6680" compoundref="mat-elem-ops_8hpp" startline="385" endline="399">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a51e6aaa88eb6653567d132a18f55525d_1a51e6aaa88eb6653567d132a18f55525d" compoundref="mat-elem-ops_8hpp" startline="401" endline="415">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_rows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a488107a18f569875ba421776aed06e9e_1a488107a18f569875ba421776aed06e9e" compoundref="mat-elem-ops_8hpp" startline="111" endline="120">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a8e841f0c687be82ea09d579c196119f9_1a8e841f0c687be82ea09d579c196119f9" compoundref="mat-elem-ops_8hpp" startline="100" endline="109">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_rows</referencedby>
+        <referencedby refid="namespace_matrix_ops_a32afed33bdc16276deae4541dabadb97_1a32afed33bdc16276deae4541dabadb97" compoundref="mat-arith_8hpp" startline="218" endline="228">MatrixOps::isEqual</referencedby>
+        <referencedby refid="namespace_matrix_ops_a37882f800102bd2b037f51de5e0211e0_1a37882f800102bd2b037f51de5e0211e0" compoundref="mat-arith_8hpp" startline="209" endline="215">MatrixOps::isZero</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a6bf36107358b63bff918bcdfa416266e_1a6bf36107358b63bff918bcdfa416266e" compoundref="mat-elem-ops_8hpp" startline="62" endline="73">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a88ba8aeb42efaabd80589cf39434d8fc_1a88ba8aeb42efaabd80589cf39434d8fc" compoundref="mat-elem-ops_8hpp" startline="75" endline="92">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</referencedby>
+        <referencedby refid="namespace_eigen_m2_a5c83bcba334e14a5b9f0114501c0fbeb_1a5c83bcba334e14a5b9f0114501c0fbeb" compoundref="eigen_8cpp" startline="579" endline="598">EigenM2::least_squares</referencedby>
+        <referencedby refid="namespace_eigen_m2_a522b8e40e31815a2f7dfc664347bde5f_1a522b8e40e31815a2f7dfc664347bde5f" compoundref="eigen_8cpp" startline="558" endline="577">EigenM2::least_squares</referencedby>
+        <referencedby refid="namespace_matrix_ops_a0357159763f060785e565cbba529bb88_1a0357159763f060785e565cbba529bb88" compoundref="mat-linalg_8hpp" startline="435" endline="453">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1fddce779e82000363d19934f65dbf89_1a1fddce779e82000363d19934f65dbf89" compoundref="mat-arith_8hpp" startline="239" endline="245">MatrixOps::negateInPlace</referencedby>
+        <referencedby refid="_s_l_p-imp_8hpp_a957305e8d4212e0a7001ae91d8184dc1_1a957305e8d4212e0a7001ae91d8184dc1" compoundref="_s_l_p-imp_8hpp" startline="336" endline="349">norm2</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_01_4_adc955c1fb799e6ad9148be3ac7b46d5b_1adc955c1fb799e6ad9148be3ac7b46d5b" compoundref="dmat-gf-flint_8hpp" startline="104" endline="107">DMat&lt; M2::ARingGFFlint &gt;::numColumns</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a7716072466d29149da1c0c7e2512f0fd_1a7716072466d29149da1c0c7e2512f0fd" compoundref="dmat-gf-flint-big_8hpp" startline="102" endline="105">DMat&lt; M2::ARingGFFlintBig &gt;::numColumns</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_01_4_a548332f3380e02a1643598a1e45dc2c3_1a548332f3380e02a1643598a1e45dc2c3" compoundref="dmat-gf-flint_8hpp" startline="100" endline="103">DMat&lt; M2::ARingGFFlint &gt;::numRows</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_aeb59b41bcb795329562b36436054f864_1aeb59b41bcb795329562b36436054f864" compoundref="dmat-gf-flint-big_8hpp" startline="98" endline="101">DMat&lt; M2::ARingGFFlintBig &gt;::numRows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::perform_reduction</referencedby>
+        <referencedby refid="namespace_matrix_ops_a32df96742b1d2f25a0318ef4ebcf2088_1a32df96742b1d2f25a0318ef4ebcf2088" compoundref="mat-linalg_8hpp" startline="613" endline="631">MatrixOps::rankProfile</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ace26a7e3cab6a90d5ac33a90dff3fd4f_1ace26a7e3cab6a90d5ac33a90dff3fd4f" compoundref="mat-elem-ops_8hpp" startline="506" endline="573">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::reduce_by_pivots</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_01_4_afd7a402968895f779cc4a5606e0389b9_1afd7a402968895f779cc4a5606e0389b9" compoundref="dmat-gf-flint_8hpp" startline="118" endline="122">DMat&lt; M2::ARingGFFlint &gt;::resize</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a0edc623502e2015b0300d4535d3a8253_1a0edc623502e2015b0300d4535d3a8253" compoundref="dmat-gf-flint-big_8hpp" startline="116" endline="120">DMat&lt; M2::ARingGFFlintBig &gt;::resize</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_a43f8581ae8cdd908a9ebd85b11d12a0c_1a43f8581ae8cdd908a9ebd85b11d12a0c" compoundref="dmat-qq-flint_8hpp" startline="118" endline="122">DMat&lt; M2::ARingQQFlint &gt;::resize</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_z_01_4_a1a8f0233f6087ab1827c9c4332050055_1a1a8f0233f6087ab1827c9c4332050055" compoundref="dmat-zz-flint_8hpp" startline="117" endline="121">DMat&lt; M2::ARingZZ &gt;::resize</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_zp_flint_01_4_a7217ca4235908c019b8477f2dd0cbf3c_1a7217ca4235908c019b8477f2dd0cbf3c" compoundref="dmat-zzp-flint_8hpp" startline="110" endline="114">DMat&lt; M2::ARingZZpFlint &gt;::resize</referencedby>
+        <referencedby refid="class_d_mat_a88d2a242efc934b17d6cc94851000627_1a88d2a242efc934b17d6cc94851000627" compoundref="dmat_8hpp" startline="155" endline="159">DMat&lt; RingType &gt;::resize</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_acb800f8bbb01ba96e0656c93ce814f83_1acb800f8bbb01ba96e0656c93ce814f83" compoundref="mat-elem-ops_8hpp" startline="193" endline="228">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row2by2</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad83429ed2810a793e831636b652a9825_1ad83429ed2810a793e831636b652a9825" compoundref="mat-elem-ops_8hpp" startline="158" endline="173">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_op</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_af19e1c5ba4e6bebc081f4c60443a8360_1af19e1c5ba4e6bebc081f4c60443a8360" compoundref="mat-elem-ops_8hpp" startline="287" endline="334">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_permute</referencedby>
+        <referencedby refid="namespace_matrix_ops_a08c5d448b55c37f010e5a33674f46c9a_1a08c5d448b55c37f010e5a33674f46c9a" compoundref="mat-arith_8hpp" startline="365" endline="383">MatrixOps::scalarMult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a15abadb101fc346ad2b1a6b32bd41e0b_1a15abadb101fc346ad2b1a6b32bd41e0b" compoundref="mat-arith_8hpp" startline="231" endline="236">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1af6bad8d4b5f937d4bd4aae7465f7ab_1a1af6bad8d4b5f937d4bd4aae7465f7ab" compoundref="mat-arith_8hpp" startline="387" endline="401">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a34f019a7684a540cf3b4e4b318d8e8dc_1a34f019a7684a540cf3b4e4b318d8e8dc" compoundref="mat-elem-ops_8hpp" startline="131" endline="138">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_column</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a100cbe56a5588f5c96dd68088d1e9e56_1a100cbe56a5588f5c96dd68088d1e9e56" compoundref="mat-elem-ops_8hpp" startline="122" endline="129">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_row</referencedby>
+        <referencedby refid="namespace_matrix_ops_a282f886010aee601304c4860fb1af33f_1a282f886010aee601304c4860fb1af33f" compoundref="mat-arith_8hpp" startline="305" endline="317">MatrixOps::set</referencedby>
+        <referencedby refid="res-f4-m2-interface_8cpp_ae931170547e656946abc459bf1404fe8_1ae931170547e656946abc459bf1404fe8" compoundref="res-f4-m2-interface_8cpp" startline="574" endline="585">setDMatFromSparseMatrixGenerator</referencedby>
+        <referencedby refid="res-f4-m2-interface_8cpp_a758bbaf19ae1d0a2ea7e0ccfe5a73b0e_1a758bbaf19ae1d0a2ea7e0ccfe5a73b0e" compoundref="res-f4-m2-interface_8cpp" startline="588" endline="599">setDMatFromSparseMatrixGeneratorTransposed</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a0a5323471c13905d2de190d36f958d4a_1a0a5323471c13905d2de190d36f958d4a" compoundref="mat-elem-ops_8hpp" startline="621" endline="624">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setEntry</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a38e50635f2aa9494317f5d6f69091cc1_1a38e50635f2aa9494317f5d6f69091cc1" compoundref="mat-elem-ops_8hpp" startline="606" endline="614">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a1d8c12b85af93bc51460e9a5c357fbb4_1a1d8c12b85af93bc51460e9a5c357fbb4" compoundref="mat-elem-ops_8hpp" startline="592" endline="604">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aca4a9d74f3bab7ab512359b0e8b5a645_1aca4a9d74f3bab7ab512359b0e8b5a645" compoundref="mat-elem-ops_8hpp" startline="576" endline="590">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</referencedby>
+        <referencedby refid="namespace_matrix_ops_a4cb69fe10c896de643645b4e78ca8fe9_1a4cb69fe10c896de643645b4e78ca8fe9" compoundref="mat-arith_8hpp" startline="287" endline="292">MatrixOps::setZero</referencedby>
+        <referencedby refid="namespace_matrix_ops_a50ed9378e232e326777a3a65b5521312_1a50ed9378e232e326777a3a65b5521312" compoundref="mat-arith_8hpp" startline="261" endline="271">MatrixOps::subtractInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1772947e92924570c8026dc7ce56e2ee_1a1772947e92924570c8026dc7ce56e2ee" compoundref="mat-linalg_8hpp" startline="463" endline="481">MatrixOps::subtractMultipleTo</referencedby>
+        <referencedby refid="namespace_eigen_m2_af30dfc95a87a561b6e49802685f438a4_1af30dfc95a87a561b6e49802685f438a4" compoundref="eigen_8cpp" startline="376" endline="396">EigenM2::SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_a34fab610792cb64d15deaabff2decae3_1a34fab610792cb64d15deaabff2decae3" compoundref="eigen_8cpp" startline="349" endline="374">EigenM2::SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae100724fc8c16d8030cf6114e9127037_1ae100724fc8c16d8030cf6114e9127037" compoundref="eigen_8cpp" startline="420" endline="440">EigenM2::SVD_divide_conquer</referencedby>
+        <referencedby refid="namespace_eigen_m2_ab283d0faea8ebc63035e107782d51f0b_1ab283d0faea8ebc63035e107782d51f0b" compoundref="eigen_8cpp" startline="398" endline="418">EigenM2::SVD_divide_conquer</referencedby>
+        <referencedby refid="mutablemat-defs_8hpp_af7e5e303010718199ac53d79dabca95c_1af7e5e303010718199ac53d79dabca95c" compoundref="mutablemat-defs_8hpp" startline="158" endline="180">toMatrix</referencedby>
+        <referencedby refid="namespace_matrix_ops_adf30da03679f9d00ec647e6d62babc80_1adf30da03679f9d00ec647e6d62babc80" compoundref="mat-arith_8hpp" startline="274" endline="283">MatrixOps::transpose</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_01_4_a0ebdb7f018d67ff94b45fd7b05f78c30_1a0ebdb7f018d67ff94b45fd7b05f78c30" compoundref="dmat-gf-flint_8hpp" startline="89" endline="89">DMat&lt; M2::ARingGFFlint &gt;::~DMat</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4_a3e17f4115315fba6ebc8df290f89c74e_1a3e17f4115315fba6ebc8df290f89c74e" compoundref="dmat-gf-flint-big_8hpp" startline="87" endline="87">DMat&lt; M2::ARingGFFlintBig &gt;::~DMat</referencedby>
+        <referencedby refid="class_d_mat_aa16d3c198ca8eb8a18cdfb27c1019d04_1aa16d3c198ca8eb8a18cdfb27c1019d04" compoundref="dmat_8hpp" startline="123" endline="129">DMat&lt; RingType &gt;::~DMat</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DMat&lt; ACoeffRing &gt;::numRows</definition>
+        <argsstring>() const</argsstring>
+        <name>numRows</name>
+        <qualifiedname>DMat::numRows</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="142" column="10" bodyfile="Macaulay2/e/dmat.hpp" bodystart="142" bodyend="142"/>
+        <referencedby refid="namespace_matrix_ops_aa0b591bedc09f2645c7561c0cb7fc079_1aa0b591bedc09f2645c7561c0cb7fc079" compoundref="mat-arith_8hpp" startline="248" endline="258">MatrixOps::addInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a306eba7a5f2fed1072d98f4e0a6a9a45_1a306eba7a5f2fed1072d98f4e0a6a9a45" compoundref="mat-linalg_8hpp" startline="1052" endline="1064">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad066fe21b322f2c98fd428c109c13b40_1ad066fe21b322f2c98fd428c109c13b40" compoundref="mat-linalg_8hpp" startline="748" endline="760">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a046d71ac1b58780e9db531a933bab164_1a046d71ac1b58780e9db531a933bab164" compoundref="mat-linalg_8hpp" startline="1370" endline="1377">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad4c31746076e6e9174fc962d8ea046fb_1ad4c31746076e6e9174fc962d8ea046fb" compoundref="mat-linalg_8hpp" startline="1500" endline="1507">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_a121c3014d3fd5dc02fd64d6ab80c0776_1a121c3014d3fd5dc02fd64d6ab80c0776" compoundref="mat-linalg_8hpp" startline="1281" endline="1288">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_a70a728c9889154baf051a5619f8e3efa_1a70a728c9889154baf051a5619f8e3efa" compoundref="mat-linalg_8hpp" startline="1435" endline="1442">MatrixOps::clean</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ab1fc64e9e13e6ab4a15a7236f82f7183_1ab1fc64e9e13e6ab4a15a7236f82f7183" compoundref="mat-elem-ops_8hpp" startline="230" endline="265">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column2by2</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a467a36aa06905806f10d29b728823361_1a467a36aa06905806f10d29b728823361" compoundref="mat-elem-ops_8hpp" startline="175" endline="190">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_op</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a9af45eb48c3be215183c5eaa1a5815ac_1a9af45eb48c3be215183c5eaa1a5815ac" compoundref="mat-elem-ops_8hpp" startline="336" endline="383">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_permute</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a75f3f661e35044f2d666604c32c87ce7_1a75f3f661e35044f2d666604c32c87ce7" compoundref="mat-elem-ops_8hpp" startline="417" endline="435">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a885d74a3aab53687e0c5f8f0385bea48_1a885d74a3aab53687e0c5f8f0385bea48" compoundref="mat-elem-ops_8hpp" startline="437" endline="455">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_rows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aeb81d1fdf71b0981c98e2605601a8888_1aeb81d1fdf71b0981c98e2605601a8888" compoundref="mat-elem-ops_8hpp" startline="149" endline="156">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_column</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a2ac2a3a44a57b41eeecf7fa6f01a2ca0_1a2ac2a3a44a57b41eeecf7fa6f01a2ca0" compoundref="mat-elem-ops_8hpp" startline="140" endline="147">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_row</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_ac1c1f0c61082bc1fa168879b10cf2575_1ac1c1f0c61082bc1fa168879b10cf2575" compoundref="dmat-qq-flint_8hpp" startline="86" endline="90">DMat&lt; M2::ARingQQFlint &gt;::DMat</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" compoundref="dmat-lu-inplace_8hpp" startline="160" endline="166">DMatLUinPlace&lt; RT &gt;::DMatLUinPlace</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a4b96cbf748d0a84e4c25233247c5e86e_1a4b96cbf748d0a84e4c25233247c5e86e" compoundref="mat-elem-ops_8hpp" startline="268" endline="285">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::dot_product</referencedby>
+        <referencedby refid="namespace_eigen_m2_a3b9427576e6ae17b09a8afd7be2e1d9d_1a3b9427576e6ae17b09a8afd7be2e1d9d" compoundref="eigen_8cpp" startline="456" endline="468">EigenM2::eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_acb8f46b0895a5958cec75a06299332da_1acb8f46b0895a5958cec75a06299332da" compoundref="eigen_8cpp" startline="442" endline="454">EigenM2::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_aa41a859a5de966143e215300d34c440c_1aa41a859a5de966143e215300d34c440c" compoundref="lapack_8cpp" startline="1233" endline="1294">Lapack::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_a4578deee6ac6c59c7ea5a2b1feab788b_1a4578deee6ac6c59c7ea5a2b1feab788b" compoundref="lapack_8cpp" startline="302" endline="363">Lapack::eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_a8c6b6d2fc4b0dbe426264f0722ec27c3_1a8c6b6d2fc4b0dbe426264f0722ec27c3" compoundref="eigen_8cpp" startline="484" endline="496">EigenM2::eigenvalues_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_af62f1a1bf68deb784d2ae1b784fd25de_1af62f1a1bf68deb784d2ae1b784fd25de" compoundref="eigen_8cpp" startline="470" endline="482">EigenM2::eigenvalues_hermitian</referencedby>
+        <referencedby refid="class_lapack_adc2348c6514e02299fc7a4430f82650b_1adc2348c6514e02299fc7a4430f82650b" compoundref="lapack_8cpp" startline="1366" endline="1424">Lapack::eigenvalues_hermitian</referencedby>
+        <referencedby refid="class_lapack_a5f84114301e0a8f7f9d287df0c961a64_1a5f84114301e0a8f7f9d287df0c961a64" compoundref="lapack_8cpp" startline="462" endline="511">Lapack::eigenvalues_symmetric</referencedby>
+        <referencedby refid="namespace_eigen_m2_a131c3bdad6371c26b237f3c22a82cc78_1a131c3bdad6371c26b237f3c22a82cc78" compoundref="eigen_8cpp" startline="513" endline="526">EigenM2::eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_a56ba255897185438deb0d30995c23a0e_1a56ba255897185438deb0d30995c23a0e" compoundref="eigen_8cpp" startline="498" endline="511">EigenM2::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a7097bdedbf71052dd9cae3b2263a0082_1a7097bdedbf71052dd9cae3b2263a0082" compoundref="lapack_8cpp" startline="1296" endline="1364">Lapack::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a8e878b74dee60db22d6c749ae5f7ae2f_1a8e878b74dee60db22d6c749ae5f7ae2f" compoundref="lapack_8cpp" startline="365" endline="460">Lapack::eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae03ba0ce5b8c08b419799a9caa062338_1ae03ba0ce5b8c08b419799a9caa062338" compoundref="eigen_8cpp" startline="543" endline="556">EigenM2::eigenvectors_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a68b3b512faaac33a0c9642950dc2871d_1a68b3b512faaac33a0c9642950dc2871d" compoundref="eigen_8cpp" startline="528" endline="541">EigenM2::eigenvectors_hermitian</referencedby>
+        <referencedby refid="class_lapack_a189ac4cb184bd7b67206841b0536a022_1a189ac4cb184bd7b67206841b0536a022" compoundref="lapack_8cpp" startline="1426" endline="1489">Lapack::eigenvectors_hermitian</referencedby>
+        <referencedby refid="class_lapack_ac7e7472d7c89089f39193a6ab1711661_1ac7e7472d7c89089f39193a6ab1711661" compoundref="lapack_8cpp" startline="513" endline="567">Lapack::eigenvectors_symmetric</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_a44d8581b4e76a5b4acffb0d3f81e78d5_1a44d8581b4e76a5b4acffb0d3f81e78d5" compoundref="dmat-qq-flint_8hpp" startline="105" endline="110">DMat&lt; M2::ARingQQFlint &gt;::entry</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_a9e8c5793e984dce9e8efe5666a6c1371_1a9e8c5793e984dce9e8efe5666a6c1371" compoundref="dmat-qq-flint_8hpp" startline="111" endline="116">DMat&lt; M2::ARingQQFlint &gt;::entry</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_z_01_4_a578e7421d3d539e45dd9a126da416d33_1a578e7421d3d539e45dd9a126da416d33" compoundref="dmat-zz-flint_8hpp" startline="104" endline="109">DMat&lt; M2::ARingZZ &gt;::entry</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_z_01_4_a901e7eaba7281ff9ecee35e36e3ca044_1a901e7eaba7281ff9ecee35e36e3ca044" compoundref="dmat-zz-flint_8hpp" startline="110" endline="115">DMat&lt; M2::ARingZZ &gt;::entry</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_ae48c10b495ee0250224ba9fc8741fde2_1ae48c10b495ee0250224ba9fc8741fde2" compoundref="lapack_8cpp" startline="58" endline="72">fill_from_lapack_array</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_a480bc96c84fc68bf689e889b1f65ae70_1a480bc96c84fc68bf689e889b1f65ae70" compoundref="lapack_8cpp" startline="45" endline="56">fill_from_lapack_array</referencedby>
+        <referencedby refid="lapack_8cpp_a45498d1181590edfe4c373796ac81887_1a45498d1181590edfe4c373796ac81887" compoundref="lapack_8cpp" startline="100" endline="124">fill_from_lapack_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a414c2112d924d6793dc2de2898ca97ba_1a414c2112d924d6793dc2de2898ca97ba" compoundref="lapack_8cpp" startline="74" endline="98">fill_from_lapack_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a84ab75ef1ffea656aeeb12c6850ba055_1a84ab75ef1ffea656aeeb12c6850ba055" compoundref="lapack_8cpp" startline="154" endline="193">fill_lower_and_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a88cda5abbc8bc638b16e89e1e7e682e5_1a88cda5abbc8bc638b16e89e1e7e682e5" compoundref="lapack_8cpp" startline="126" endline="152">fill_lower_and_upper</referencedby>
+        <referencedby refid="namespace_eigen_m2_a7136dbb0b6338d075e52d89c9685c227_1a7136dbb0b6338d075e52d89c9685c227" compoundref="eigen_8cpp" startline="320" endline="325">EigenM2::fill_to_MatrixXmp</referencedby>
+        <referencedby refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">EigenM2::fill_to_MatrixXmp</referencedby>
+        <referencedby refid="class_flint_q_q_mat_a604ed61dfa7f4c8d9f3eafd7b14eabfc_1a604ed61dfa7f4c8d9f3eafd7b14eabfc" compoundref="dmat-qq-interface-flint_8hpp" startline="115" endline="119">FlintQQMat::FlintQQMat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_a1e0d6c45d9fa3c34f518277fd16998eb_1a1e0d6c45d9fa3c34f518277fd16998eb" compoundref="dmat-qq-interface-flint_8hpp" startline="55" endline="59">FlintZZMat::FlintZZMat</referencedby>
+        <referencedby refid="class_flint_q_q_mat_a0e924cfa55cc881c56636248a5cf5b8b_1a0e924cfa55cc881c56636248a5cf5b8b" compoundref="dmat-qq-interface-flint_8hpp" startline="152" endline="159">FlintQQMat::from_fmpq_mat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" compoundref="dmat-qq-interface-flint_8hpp" startline="88" endline="95">FlintZZMat::from_fmpz_mat</referencedby>
+        <referencedby refid="namespace_matrix_ops_a6ac23720a3dbc69c683ecfd8e1496ad1_1a6ac23720a3dbc69c683ecfd8e1496ad1" compoundref="mat-linalg_8hpp" startline="1379" endline="1386">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_a801b45c61b89d2456aaf3b56ec1c2248_1a801b45c61b89d2456aaf3b56ec1c2248" compoundref="mat-linalg_8hpp" startline="1509" endline="1516">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_aa631e25f3ce5427bc185afb13f7ba36f_1aa631e25f3ce5427bc185afb13f7ba36f" compoundref="mat-linalg_8hpp" startline="1290" endline="1297">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1ae0c67d8cb6ac92a8f433241be1acc4_1a1ae0c67d8cb6ac92a8f433241be1acc4" compoundref="mat-linalg_8hpp" startline="1444" endline="1451">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a19da472bddbb8fe686904f916d7c6680_1a19da472bddbb8fe686904f916d7c6680" compoundref="mat-elem-ops_8hpp" startline="385" endline="399">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a51e6aaa88eb6653567d132a18f55525d_1a51e6aaa88eb6653567d132a18f55525d" compoundref="mat-elem-ops_8hpp" startline="401" endline="415">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_rows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a488107a18f569875ba421776aed06e9e_1a488107a18f569875ba421776aed06e9e" compoundref="mat-elem-ops_8hpp" startline="111" endline="120">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a8e841f0c687be82ea09d579c196119f9_1a8e841f0c687be82ea09d579c196119f9" compoundref="mat-elem-ops_8hpp" startline="100" endline="109">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_rows</referencedby>
+        <referencedby refid="namespace_matrix_ops_a32afed33bdc16276deae4541dabadb97_1a32afed33bdc16276deae4541dabadb97" compoundref="mat-arith_8hpp" startline="218" endline="228">MatrixOps::isEqual</referencedby>
+        <referencedby refid="namespace_matrix_ops_a37882f800102bd2b037f51de5e0211e0_1a37882f800102bd2b037f51de5e0211e0" compoundref="mat-arith_8hpp" startline="209" endline="215">MatrixOps::isZero</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a6bf36107358b63bff918bcdfa416266e_1a6bf36107358b63bff918bcdfa416266e" compoundref="mat-elem-ops_8hpp" startline="62" endline="73">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a88ba8aeb42efaabd80589cf39434d8fc_1a88ba8aeb42efaabd80589cf39434d8fc" compoundref="mat-elem-ops_8hpp" startline="75" endline="92">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</referencedby>
+        <referencedby refid="namespace_eigen_m2_a5c83bcba334e14a5b9f0114501c0fbeb_1a5c83bcba334e14a5b9f0114501c0fbeb" compoundref="eigen_8cpp" startline="579" endline="598">EigenM2::least_squares</referencedby>
+        <referencedby refid="namespace_eigen_m2_a522b8e40e31815a2f7dfc664347bde5f_1a522b8e40e31815a2f7dfc664347bde5f" compoundref="eigen_8cpp" startline="558" endline="577">EigenM2::least_squares</referencedby>
+        <referencedby refid="class_lapack_a537f0551ffb9d5ce33d5c8b371e8f020_1a537f0551ffb9d5ce33d5c8b371e8f020" compoundref="lapack_8cpp" startline="1634" endline="1726">Lapack::least_squares</referencedby>
+        <referencedby refid="class_lapack_a5f9cdd430cbbf708083522c35932e27c_1a5f9cdd430cbbf708083522c35932e27c" compoundref="lapack_8cpp" startline="707" endline="797">Lapack::least_squares</referencedby>
+        <referencedby refid="class_lapack_a688c41597b335f56d7912c031b8cb37c_1a688c41597b335f56d7912c031b8cb37c" compoundref="lapack_8cpp" startline="1728" endline="1829">Lapack::least_squares_deficient</referencedby>
+        <referencedby refid="class_lapack_a5fc7e282c98db00c325b0dea5e8f7ec2_1a5fc7e282c98db00c325b0dea5e8f7ec2" compoundref="lapack_8cpp" startline="799" endline="896">Lapack::least_squares_deficient</referencedby>
+        <referencedby refid="class_lapack_a6da0099b62fc850acad1f28e965bd345_1a6da0099b62fc850acad1f28e965bd345" compoundref="lapack_8cpp" startline="1117" endline="1178">Lapack::LU</referencedby>
+        <referencedby refid="class_lapack_a4661a514f8ce88bea22fcad2839a56cc_1a4661a514f8ce88bea22fcad2839a56cc" compoundref="lapack_8cpp" startline="195" endline="238">Lapack::LU</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_a4fb05baef8ff7f8ecdd0f05cbce2b31e_1a4fb05baef8ff7f8ecdd0f05cbce2b31e" compoundref="lapack_8cpp" startline="31" endline="43">make_lapack_array</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_a1d9fe790cb0cb4f0fe5ec99737d82ed4_1a1d9fe790cb0cb4f0fe5ec99737d82ed4" compoundref="lapack_8cpp" startline="20" endline="29">make_lapack_array</referencedby>
+        <referencedby refid="namespace_matrix_ops_a0357159763f060785e565cbba529bb88_1a0357159763f060785e565cbba529bb88" compoundref="mat-linalg_8hpp" startline="435" endline="453">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a31b84cb3b56a74cbdb0d7c28b7d3a6f1_1a31b84cb3b56a74cbdb0d7c28b7d3a6f1" compoundref="mat-linalg_8hpp" startline="1041" endline="1050">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a9b242a23e43adb4993ec9df94904ae89_1a9b242a23e43adb4993ec9df94904ae89" compoundref="mat-linalg_8hpp" startline="735" endline="746">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1fddce779e82000363d19934f65dbf89_1a1fddce779e82000363d19934f65dbf89" compoundref="mat-arith_8hpp" startline="239" endline="245">MatrixOps::negateInPlace</referencedby>
+        <referencedby refid="class_lapack_ab287c83bc72e11782ce3553dd8a8f471_1ab287c83bc72e11782ce3553dd8a8f471" compoundref="lapack_8cpp" startline="1009" endline="1115">Lapack::QR</referencedby>
+        <referencedby refid="class_lapack_a5b5ced881564f3e639f5990b066f0e6e_1a5b5ced881564f3e639f5990b066f0e6e" compoundref="lapack_8cpp" startline="898" endline="1007">Lapack::QR</referencedby>
+        <referencedby refid="namespace_matrix_ops_a32df96742b1d2f25a0318ef4ebcf2088_1a32df96742b1d2f25a0318ef4ebcf2088" compoundref="mat-linalg_8hpp" startline="613" endline="631">MatrixOps::rankProfile</referencedby>
+        <referencedby refid="class_schreyer_frame_aed05272971b00971de76e0ff864ed92b_1aed05272971b00971de76e0ff864ed92b" compoundref="res-f4-m2-interface_8cpp" startline="636" endline="666">SchreyerFrame::rankUsingDenseMatrix</referencedby>
+        <referencedby refid="class_schreyer_frame_a06503fa2e462f02860f9c7c03e1c785b_1a06503fa2e462f02860f9c7c03e1c785b" compoundref="res-f4-m2-interface_8cpp" startline="669" endline="699">SchreyerFrame::rankUsingDenseMatrixFlint</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ace26a7e3cab6a90d5ac33a90dff3fd4f_1ace26a7e3cab6a90d5ac33a90dff3fd4f" compoundref="mat-elem-ops_8hpp" startline="506" endline="573">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::reduce_by_pivots</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_acb800f8bbb01ba96e0656c93ce814f83_1acb800f8bbb01ba96e0656c93ce814f83" compoundref="mat-elem-ops_8hpp" startline="193" endline="228">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row2by2</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad83429ed2810a793e831636b652a9825_1ad83429ed2810a793e831636b652a9825" compoundref="mat-elem-ops_8hpp" startline="158" endline="173">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_op</referencedby>
+        <referencedby refid="namespace_matrix_ops_a15abadb101fc346ad2b1a6b32bd41e0b_1a15abadb101fc346ad2b1a6b32bd41e0b" compoundref="mat-arith_8hpp" startline="231" endline="236">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a34f019a7684a540cf3b4e4b318d8e8dc_1a34f019a7684a540cf3b4e4b318d8e8dc" compoundref="mat-elem-ops_8hpp" startline="131" endline="138">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_column</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a100cbe56a5588f5c96dd68088d1e9e56_1a100cbe56a5588f5c96dd68088d1e9e56" compoundref="mat-elem-ops_8hpp" startline="122" endline="129">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_row</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a38e50635f2aa9494317f5d6f69091cc1_1a38e50635f2aa9494317f5d6f69091cc1" compoundref="mat-elem-ops_8hpp" startline="606" endline="614">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a9d18bee2770c2f06be62758703ff511a_1a9d18bee2770c2f06be62758703ff511a" compoundref="dmat-lu_8hpp" startline="269" endline="292">DMatLinAlg&lt; RingType &gt;::setUpperLower</referencedby>
+        <referencedby refid="class_l_u_util_a1838ec98f16e5635a493dc4c1b1d09f7_1a1838ec98f16e5635a493dc4c1b1d09f7" compoundref="dmat-lu-inplace_8hpp" startline="412" endline="435">LUUtil&lt; RT &gt;::setUpperLower</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_af62eb419b81883be17eea4e3b719c47c_1af62eb419b81883be17eea4e3b719c47c" compoundref="dmat-lu_8hpp" startline="338" endline="446">DMatLinAlg&lt; RingType &gt;::solve</referencedby>
+        <referencedby refid="class_lapack_ac6c3c642267d23f995fc5a84d246426e_1ac6c3c642267d23f995fc5a84d246426e" compoundref="lapack_8cpp" startline="1180" endline="1231">Lapack::solve</referencedby>
+        <referencedby refid="class_lapack_afdd7668545160c61895bc35b9fc24605_1afdd7668545160c61895bc35b9fc24605" compoundref="lapack_8cpp" startline="240" endline="300">Lapack::solve</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a73e0808414a632221f057c5d740f4155_1a73e0808414a632221f057c5d740f4155" compoundref="dmat-lu_8hpp" startline="533" endline="559">DMatLinAlg&lt; RingType &gt;::solveInvertible</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_z_zp_flint_01_4_ada2f7f3ab7d88938f7208548039d67cc_1ada2f7f3ab7d88938f7208548039d67cc" compoundref="dmat-lu-zzp-flint_8hpp" startline="92" endline="101">DMatLinAlg&lt; M2::ARingZZpFlint &gt;::solveInvertible</referencedby>
+        <referencedby refid="namespace_matrix_ops_a50ed9378e232e326777a3a65b5521312_1a50ed9378e232e326777a3a65b5521312" compoundref="mat-arith_8hpp" startline="261" endline="271">MatrixOps::subtractInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1772947e92924570c8026dc7ce56e2ee_1a1772947e92924570c8026dc7ce56e2ee" compoundref="mat-linalg_8hpp" startline="463" endline="481">MatrixOps::subtractMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a4cd5cb6c8d684a9390558acddc68ca0e_1a4cd5cb6c8d684a9390558acddc68ca0e" compoundref="mat-linalg_8hpp" startline="1066" endline="1078">MatrixOps::subtractMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a65bcb4dd717f11407c55d387de2e696e_1a65bcb4dd717f11407c55d387de2e696e" compoundref="mat-linalg_8hpp" startline="762" endline="776">MatrixOps::subtractMultipleTo</referencedby>
+        <referencedby refid="namespace_eigen_m2_af30dfc95a87a561b6e49802685f438a4_1af30dfc95a87a561b6e49802685f438a4" compoundref="eigen_8cpp" startline="376" endline="396">EigenM2::SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_a34fab610792cb64d15deaabff2decae3_1a34fab610792cb64d15deaabff2decae3" compoundref="eigen_8cpp" startline="349" endline="374">EigenM2::SVD</referencedby>
+        <referencedby refid="class_lapack_adfab11e25aa4e836ab1ac234fcb05e18_1adfab11e25aa4e836ab1ac234fcb05e18" compoundref="lapack_8cpp" startline="1491" endline="1559">Lapack::SVD</referencedby>
+        <referencedby refid="class_lapack_a12b7cd295a64e4aa51332f12f89f47cc_1a12b7cd295a64e4aa51332f12f89f47cc" compoundref="lapack_8cpp" startline="569" endline="634">Lapack::SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae100724fc8c16d8030cf6114e9127037_1ae100724fc8c16d8030cf6114e9127037" compoundref="eigen_8cpp" startline="420" endline="440">EigenM2::SVD_divide_conquer</referencedby>
+        <referencedby refid="namespace_eigen_m2_ab283d0faea8ebc63035e107782d51f0b_1ab283d0faea8ebc63035e107782d51f0b" compoundref="eigen_8cpp" startline="398" endline="418">EigenM2::SVD_divide_conquer</referencedby>
+        <referencedby refid="class_lapack_ad9e115c33301489852608fe584598bc5_1ad9e115c33301489852608fe584598bc5" compoundref="lapack_8cpp" startline="1561" endline="1632">Lapack::SVD_divide_conquer</referencedby>
+        <referencedby refid="class_lapack_a839e03b3ed6262f11f89ab27a850e6e0_1a839e03b3ed6262f11f89ab27a850e6e0" compoundref="lapack_8cpp" startline="636" endline="704">Lapack::SVD_divide_conquer</referencedby>
+        <referencedby refid="class_flint_q_q_mat_acfec25dd2b67e376fba78e3f8814fa1f_1acfec25dd2b67e376fba78e3f8814fa1f" compoundref="dmat-qq-interface-flint_8hpp" startline="142" endline="150">FlintQQMat::to_fmpq_mat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" compoundref="dmat-qq-interface-flint_8hpp" startline="78" endline="86">FlintZZMat::to_fmpz_mat</referencedby>
+        <referencedby refid="mutablemat-defs_8hpp_af7e5e303010718199ac53d79dabca95c_1af7e5e303010718199ac53d79dabca95c" compoundref="mutablemat-defs_8hpp" startline="158" endline="180">toMatrix</referencedby>
+        <referencedby refid="namespace_matrix_ops_adf30da03679f9d00ec647e6d62babc80_1adf30da03679f9d00ec647e6d62babc80" compoundref="mat-arith_8hpp" startline="274" endline="283">MatrixOps::transpose</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DMat&lt; ACoeffRing &gt;::numColumns</definition>
+        <argsstring>() const</argsstring>
+        <name>numColumns</name>
+        <qualifiedname>DMat::numColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="143" column="10" bodyfile="Macaulay2/e/dmat.hpp" bodystart="143" bodyend="143"/>
+        <referencedby refid="namespace_matrix_ops_aa0b591bedc09f2645c7561c0cb7fc079_1aa0b591bedc09f2645c7561c0cb7fc079" compoundref="mat-arith_8hpp" startline="248" endline="258">MatrixOps::addInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a306eba7a5f2fed1072d98f4e0a6a9a45_1a306eba7a5f2fed1072d98f4e0a6a9a45" compoundref="mat-linalg_8hpp" startline="1052" endline="1064">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad066fe21b322f2c98fd428c109c13b40_1ad066fe21b322f2c98fd428c109c13b40" compoundref="mat-linalg_8hpp" startline="748" endline="760">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a046d71ac1b58780e9db531a933bab164_1a046d71ac1b58780e9db531a933bab164" compoundref="mat-linalg_8hpp" startline="1370" endline="1377">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad4c31746076e6e9174fc962d8ea046fb_1ad4c31746076e6e9174fc962d8ea046fb" compoundref="mat-linalg_8hpp" startline="1500" endline="1507">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_a121c3014d3fd5dc02fd64d6ab80c0776_1a121c3014d3fd5dc02fd64d6ab80c0776" compoundref="mat-linalg_8hpp" startline="1281" endline="1288">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_a70a728c9889154baf051a5619f8e3efa_1a70a728c9889154baf051a5619f8e3efa" compoundref="mat-linalg_8hpp" startline="1435" endline="1442">MatrixOps::clean</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ab1fc64e9e13e6ab4a15a7236f82f7183_1ab1fc64e9e13e6ab4a15a7236f82f7183" compoundref="mat-elem-ops_8hpp" startline="230" endline="265">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column2by2</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a467a36aa06905806f10d29b728823361_1a467a36aa06905806f10d29b728823361" compoundref="mat-elem-ops_8hpp" startline="175" endline="190">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_op</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a75f3f661e35044f2d666604c32c87ce7_1a75f3f661e35044f2d666604c32c87ce7" compoundref="mat-elem-ops_8hpp" startline="417" endline="435">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a885d74a3aab53687e0c5f8f0385bea48_1a885d74a3aab53687e0c5f8f0385bea48" compoundref="mat-elem-ops_8hpp" startline="437" endline="455">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_rows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aeb81d1fdf71b0981c98e2605601a8888_1aeb81d1fdf71b0981c98e2605601a8888" compoundref="mat-elem-ops_8hpp" startline="149" endline="156">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_column</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a2ac2a3a44a57b41eeecf7fa6f01a2ca0_1a2ac2a3a44a57b41eeecf7fa6f01a2ca0" compoundref="mat-elem-ops_8hpp" startline="140" endline="147">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_row</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_ac1c1f0c61082bc1fa168879b10cf2575_1ac1c1f0c61082bc1fa168879b10cf2575" compoundref="dmat-qq-flint_8hpp" startline="86" endline="90">DMat&lt; M2::ARingQQFlint &gt;::DMat</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a4b96cbf748d0a84e4c25233247c5e86e_1a4b96cbf748d0a84e4c25233247c5e86e" compoundref="mat-elem-ops_8hpp" startline="268" endline="285">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::dot_product</referencedby>
+        <referencedby refid="namespace_eigen_m2_a3b9427576e6ae17b09a8afd7be2e1d9d_1a3b9427576e6ae17b09a8afd7be2e1d9d" compoundref="eigen_8cpp" startline="456" endline="468">EigenM2::eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_acb8f46b0895a5958cec75a06299332da_1acb8f46b0895a5958cec75a06299332da" compoundref="eigen_8cpp" startline="442" endline="454">EigenM2::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_aa41a859a5de966143e215300d34c440c_1aa41a859a5de966143e215300d34c440c" compoundref="lapack_8cpp" startline="1233" endline="1294">Lapack::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_a4578deee6ac6c59c7ea5a2b1feab788b_1a4578deee6ac6c59c7ea5a2b1feab788b" compoundref="lapack_8cpp" startline="302" endline="363">Lapack::eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_a8c6b6d2fc4b0dbe426264f0722ec27c3_1a8c6b6d2fc4b0dbe426264f0722ec27c3" compoundref="eigen_8cpp" startline="484" endline="496">EigenM2::eigenvalues_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_af62f1a1bf68deb784d2ae1b784fd25de_1af62f1a1bf68deb784d2ae1b784fd25de" compoundref="eigen_8cpp" startline="470" endline="482">EigenM2::eigenvalues_hermitian</referencedby>
+        <referencedby refid="class_lapack_adc2348c6514e02299fc7a4430f82650b_1adc2348c6514e02299fc7a4430f82650b" compoundref="lapack_8cpp" startline="1366" endline="1424">Lapack::eigenvalues_hermitian</referencedby>
+        <referencedby refid="class_lapack_a5f84114301e0a8f7f9d287df0c961a64_1a5f84114301e0a8f7f9d287df0c961a64" compoundref="lapack_8cpp" startline="462" endline="511">Lapack::eigenvalues_symmetric</referencedby>
+        <referencedby refid="namespace_eigen_m2_a131c3bdad6371c26b237f3c22a82cc78_1a131c3bdad6371c26b237f3c22a82cc78" compoundref="eigen_8cpp" startline="513" endline="526">EigenM2::eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_a56ba255897185438deb0d30995c23a0e_1a56ba255897185438deb0d30995c23a0e" compoundref="eigen_8cpp" startline="498" endline="511">EigenM2::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a7097bdedbf71052dd9cae3b2263a0082_1a7097bdedbf71052dd9cae3b2263a0082" compoundref="lapack_8cpp" startline="1296" endline="1364">Lapack::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a8e878b74dee60db22d6c749ae5f7ae2f_1a8e878b74dee60db22d6c749ae5f7ae2f" compoundref="lapack_8cpp" startline="365" endline="460">Lapack::eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae03ba0ce5b8c08b419799a9caa062338_1ae03ba0ce5b8c08b419799a9caa062338" compoundref="eigen_8cpp" startline="543" endline="556">EigenM2::eigenvectors_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a68b3b512faaac33a0c9642950dc2871d_1a68b3b512faaac33a0c9642950dc2871d" compoundref="eigen_8cpp" startline="528" endline="541">EigenM2::eigenvectors_hermitian</referencedby>
+        <referencedby refid="class_lapack_a189ac4cb184bd7b67206841b0536a022_1a189ac4cb184bd7b67206841b0536a022" compoundref="lapack_8cpp" startline="1426" endline="1489">Lapack::eigenvectors_hermitian</referencedby>
+        <referencedby refid="class_lapack_ac7e7472d7c89089f39193a6ab1711661_1ac7e7472d7c89089f39193a6ab1711661" compoundref="lapack_8cpp" startline="513" endline="567">Lapack::eigenvectors_symmetric</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_a44d8581b4e76a5b4acffb0d3f81e78d5_1a44d8581b4e76a5b4acffb0d3f81e78d5" compoundref="dmat-qq-flint_8hpp" startline="105" endline="110">DMat&lt; M2::ARingQQFlint &gt;::entry</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4_a9e8c5793e984dce9e8efe5666a6c1371_1a9e8c5793e984dce9e8efe5666a6c1371" compoundref="dmat-qq-flint_8hpp" startline="111" endline="116">DMat&lt; M2::ARingQQFlint &gt;::entry</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_z_01_4_a578e7421d3d539e45dd9a126da416d33_1a578e7421d3d539e45dd9a126da416d33" compoundref="dmat-zz-flint_8hpp" startline="104" endline="109">DMat&lt; M2::ARingZZ &gt;::entry</referencedby>
+        <referencedby refid="class_d_mat_3_01_m2_1_1_a_ring_z_z_01_4_a901e7eaba7281ff9ecee35e36e3ca044_1a901e7eaba7281ff9ecee35e36e3ca044" compoundref="dmat-zz-flint_8hpp" startline="110" endline="115">DMat&lt; M2::ARingZZ &gt;::entry</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_ae48c10b495ee0250224ba9fc8741fde2_1ae48c10b495ee0250224ba9fc8741fde2" compoundref="lapack_8cpp" startline="58" endline="72">fill_from_lapack_array</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_a480bc96c84fc68bf689e889b1f65ae70_1a480bc96c84fc68bf689e889b1f65ae70" compoundref="lapack_8cpp" startline="45" endline="56">fill_from_lapack_array</referencedby>
+        <referencedby refid="lapack_8cpp_a45498d1181590edfe4c373796ac81887_1a45498d1181590edfe4c373796ac81887" compoundref="lapack_8cpp" startline="100" endline="124">fill_from_lapack_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a414c2112d924d6793dc2de2898ca97ba_1a414c2112d924d6793dc2de2898ca97ba" compoundref="lapack_8cpp" startline="74" endline="98">fill_from_lapack_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a84ab75ef1ffea656aeeb12c6850ba055_1a84ab75ef1ffea656aeeb12c6850ba055" compoundref="lapack_8cpp" startline="154" endline="193">fill_lower_and_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a88cda5abbc8bc638b16e89e1e7e682e5_1a88cda5abbc8bc638b16e89e1e7e682e5" compoundref="lapack_8cpp" startline="126" endline="152">fill_lower_and_upper</referencedby>
+        <referencedby refid="namespace_eigen_m2_a7136dbb0b6338d075e52d89c9685c227_1a7136dbb0b6338d075e52d89c9685c227" compoundref="eigen_8cpp" startline="320" endline="325">EigenM2::fill_to_MatrixXmp</referencedby>
+        <referencedby refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">EigenM2::fill_to_MatrixXmp</referencedby>
+        <referencedby refid="class_flint_q_q_mat_a604ed61dfa7f4c8d9f3eafd7b14eabfc_1a604ed61dfa7f4c8d9f3eafd7b14eabfc" compoundref="dmat-qq-interface-flint_8hpp" startline="115" endline="119">FlintQQMat::FlintQQMat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_a1e0d6c45d9fa3c34f518277fd16998eb_1a1e0d6c45d9fa3c34f518277fd16998eb" compoundref="dmat-qq-interface-flint_8hpp" startline="55" endline="59">FlintZZMat::FlintZZMat</referencedby>
+        <referencedby refid="class_flint_q_q_mat_a0e924cfa55cc881c56636248a5cf5b8b_1a0e924cfa55cc881c56636248a5cf5b8b" compoundref="dmat-qq-interface-flint_8hpp" startline="152" endline="159">FlintQQMat::from_fmpq_mat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" compoundref="dmat-qq-interface-flint_8hpp" startline="88" endline="95">FlintZZMat::from_fmpz_mat</referencedby>
+        <referencedby refid="namespace_matrix_ops_a6ac23720a3dbc69c683ecfd8e1496ad1_1a6ac23720a3dbc69c683ecfd8e1496ad1" compoundref="mat-linalg_8hpp" startline="1379" endline="1386">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_a801b45c61b89d2456aaf3b56ec1c2248_1a801b45c61b89d2456aaf3b56ec1c2248" compoundref="mat-linalg_8hpp" startline="1509" endline="1516">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_aa631e25f3ce5427bc185afb13f7ba36f_1aa631e25f3ce5427bc185afb13f7ba36f" compoundref="mat-linalg_8hpp" startline="1290" endline="1297">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1ae0c67d8cb6ac92a8f433241be1acc4_1a1ae0c67d8cb6ac92a8f433241be1acc4" compoundref="mat-linalg_8hpp" startline="1444" endline="1451">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a19da472bddbb8fe686904f916d7c6680_1a19da472bddbb8fe686904f916d7c6680" compoundref="mat-elem-ops_8hpp" startline="385" endline="399">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a51e6aaa88eb6653567d132a18f55525d_1a51e6aaa88eb6653567d132a18f55525d" compoundref="mat-elem-ops_8hpp" startline="401" endline="415">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_rows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a488107a18f569875ba421776aed06e9e_1a488107a18f569875ba421776aed06e9e" compoundref="mat-elem-ops_8hpp" startline="111" endline="120">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a8e841f0c687be82ea09d579c196119f9_1a8e841f0c687be82ea09d579c196119f9" compoundref="mat-elem-ops_8hpp" startline="100" endline="109">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_rows</referencedby>
+        <referencedby refid="namespace_matrix_ops_a32afed33bdc16276deae4541dabadb97_1a32afed33bdc16276deae4541dabadb97" compoundref="mat-arith_8hpp" startline="218" endline="228">MatrixOps::isEqual</referencedby>
+        <referencedby refid="namespace_matrix_ops_a37882f800102bd2b037f51de5e0211e0_1a37882f800102bd2b037f51de5e0211e0" compoundref="mat-arith_8hpp" startline="209" endline="215">MatrixOps::isZero</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a43302d0ac246c77be7f3378c700b12ef_1a43302d0ac246c77be7f3378c700b12ef" compoundref="dmat-lu_8hpp" startline="578" endline="626">DMatLinAlg&lt; RingType &gt;::kernel</referencedby>
+        <referencedby refid="namespace_eigen_m2_a5c83bcba334e14a5b9f0114501c0fbeb_1a5c83bcba334e14a5b9f0114501c0fbeb" compoundref="eigen_8cpp" startline="579" endline="598">EigenM2::least_squares</referencedby>
+        <referencedby refid="namespace_eigen_m2_a522b8e40e31815a2f7dfc664347bde5f_1a522b8e40e31815a2f7dfc664347bde5f" compoundref="eigen_8cpp" startline="558" endline="577">EigenM2::least_squares</referencedby>
+        <referencedby refid="class_lapack_a537f0551ffb9d5ce33d5c8b371e8f020_1a537f0551ffb9d5ce33d5c8b371e8f020" compoundref="lapack_8cpp" startline="1634" endline="1726">Lapack::least_squares</referencedby>
+        <referencedby refid="class_lapack_a5f9cdd430cbbf708083522c35932e27c_1a5f9cdd430cbbf708083522c35932e27c" compoundref="lapack_8cpp" startline="707" endline="797">Lapack::least_squares</referencedby>
+        <referencedby refid="class_lapack_a688c41597b335f56d7912c031b8cb37c_1a688c41597b335f56d7912c031b8cb37c" compoundref="lapack_8cpp" startline="1728" endline="1829">Lapack::least_squares_deficient</referencedby>
+        <referencedby refid="class_lapack_a5fc7e282c98db00c325b0dea5e8f7ec2_1a5fc7e282c98db00c325b0dea5e8f7ec2" compoundref="lapack_8cpp" startline="799" endline="896">Lapack::least_squares_deficient</referencedby>
+        <referencedby refid="class_lapack_a6da0099b62fc850acad1f28e965bd345_1a6da0099b62fc850acad1f28e965bd345" compoundref="lapack_8cpp" startline="1117" endline="1178">Lapack::LU</referencedby>
+        <referencedby refid="class_lapack_a4661a514f8ce88bea22fcad2839a56cc_1a4661a514f8ce88bea22fcad2839a56cc" compoundref="lapack_8cpp" startline="195" endline="238">Lapack::LU</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_a4fb05baef8ff7f8ecdd0f05cbce2b31e_1a4fb05baef8ff7f8ecdd0f05cbce2b31e" compoundref="lapack_8cpp" startline="31" endline="43">make_lapack_array</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_a1d9fe790cb0cb4f0fe5ec99737d82ed4_1a1d9fe790cb0cb4f0fe5ec99737d82ed4" compoundref="lapack_8cpp" startline="20" endline="29">make_lapack_array</referencedby>
+        <referencedby refid="namespace_matrix_ops_a0357159763f060785e565cbba529bb88_1a0357159763f060785e565cbba529bb88" compoundref="mat-linalg_8hpp" startline="435" endline="453">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a31b84cb3b56a74cbdb0d7c28b7d3a6f1_1a31b84cb3b56a74cbdb0d7c28b7d3a6f1" compoundref="mat-linalg_8hpp" startline="1041" endline="1050">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a9b242a23e43adb4993ec9df94904ae89_1a9b242a23e43adb4993ec9df94904ae89" compoundref="mat-linalg_8hpp" startline="735" endline="746">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1fddce779e82000363d19934f65dbf89_1a1fddce779e82000363d19934f65dbf89" compoundref="mat-arith_8hpp" startline="239" endline="245">MatrixOps::negateInPlace</referencedby>
+        <referencedby refid="class_lapack_ab287c83bc72e11782ce3553dd8a8f471_1ab287c83bc72e11782ce3553dd8a8f471" compoundref="lapack_8cpp" startline="1009" endline="1115">Lapack::QR</referencedby>
+        <referencedby refid="class_lapack_a5b5ced881564f3e639f5990b066f0e6e_1a5b5ced881564f3e639f5990b066f0e6e" compoundref="lapack_8cpp" startline="898" endline="1007">Lapack::QR</referencedby>
+        <referencedby refid="namespace_matrix_ops_a32df96742b1d2f25a0318ef4ebcf2088_1a32df96742b1d2f25a0318ef4ebcf2088" compoundref="mat-linalg_8hpp" startline="613" endline="631">MatrixOps::rankProfile</referencedby>
+        <referencedby refid="class_schreyer_frame_aed05272971b00971de76e0ff864ed92b_1aed05272971b00971de76e0ff864ed92b" compoundref="res-f4-m2-interface_8cpp" startline="636" endline="666">SchreyerFrame::rankUsingDenseMatrix</referencedby>
+        <referencedby refid="class_schreyer_frame_a06503fa2e462f02860f9c7c03e1c785b_1a06503fa2e462f02860f9c7c03e1c785b" compoundref="res-f4-m2-interface_8cpp" startline="669" endline="699">SchreyerFrame::rankUsingDenseMatrixFlint</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ace26a7e3cab6a90d5ac33a90dff3fd4f_1ace26a7e3cab6a90d5ac33a90dff3fd4f" compoundref="mat-elem-ops_8hpp" startline="506" endline="573">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::reduce_by_pivots</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_acb800f8bbb01ba96e0656c93ce814f83_1acb800f8bbb01ba96e0656c93ce814f83" compoundref="mat-elem-ops_8hpp" startline="193" endline="228">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row2by2</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad83429ed2810a793e831636b652a9825_1ad83429ed2810a793e831636b652a9825" compoundref="mat-elem-ops_8hpp" startline="158" endline="173">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_op</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_af19e1c5ba4e6bebc081f4c60443a8360_1af19e1c5ba4e6bebc081f4c60443a8360" compoundref="mat-elem-ops_8hpp" startline="287" endline="334">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_permute</referencedby>
+        <referencedby refid="namespace_matrix_ops_a15abadb101fc346ad2b1a6b32bd41e0b_1a15abadb101fc346ad2b1a6b32bd41e0b" compoundref="mat-arith_8hpp" startline="231" endline="236">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a34f019a7684a540cf3b4e4b318d8e8dc_1a34f019a7684a540cf3b4e4b318d8e8dc" compoundref="mat-elem-ops_8hpp" startline="131" endline="138">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_column</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a100cbe56a5588f5c96dd68088d1e9e56_1a100cbe56a5588f5c96dd68088d1e9e56" compoundref="mat-elem-ops_8hpp" startline="122" endline="129">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_row</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_af62eb419b81883be17eea4e3b719c47c_1af62eb419b81883be17eea4e3b719c47c" compoundref="dmat-lu_8hpp" startline="338" endline="446">DMatLinAlg&lt; RingType &gt;::solve</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a9eb1c05e010f0f26087403f68dcadc1e_1a9eb1c05e010f0f26087403f68dcadc1e" compoundref="dmat-lu-qq_8hpp" startline="199" endline="246">DMatLinAlg&lt; M2::ARingQQ &gt;::solve</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_z_zp_flint_01_4_a98595833789f68eba689a1b44e048afe_1a98595833789f68eba689a1b44e048afe" compoundref="dmat-lu-zzp-flint_8hpp" startline="103" endline="127">DMatLinAlg&lt; M2::ARingZZpFlint &gt;::solve</referencedby>
+        <referencedby refid="class_lapack_ac6c3c642267d23f995fc5a84d246426e_1ac6c3c642267d23f995fc5a84d246426e" compoundref="lapack_8cpp" startline="1180" endline="1231">Lapack::solve</referencedby>
+        <referencedby refid="class_lapack_afdd7668545160c61895bc35b9fc24605_1afdd7668545160c61895bc35b9fc24605" compoundref="lapack_8cpp" startline="240" endline="300">Lapack::solve</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a73e0808414a632221f057c5d740f4155_1a73e0808414a632221f057c5d740f4155" compoundref="dmat-lu_8hpp" startline="533" endline="559">DMatLinAlg&lt; RingType &gt;::solveInvertible</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_abfeb916819694bae1985be6d183e3142_1abfeb916819694bae1985be6d183e3142" compoundref="dmat-lu-qq_8hpp" startline="248" endline="259">DMatLinAlg&lt; M2::ARingQQ &gt;::solveInvertible</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_z_zp_flint_01_4_ada2f7f3ab7d88938f7208548039d67cc_1ada2f7f3ab7d88938f7208548039d67cc" compoundref="dmat-lu-zzp-flint_8hpp" startline="92" endline="101">DMatLinAlg&lt; M2::ARingZZpFlint &gt;::solveInvertible</referencedby>
+        <referencedby refid="namespace_matrix_ops_a50ed9378e232e326777a3a65b5521312_1a50ed9378e232e326777a3a65b5521312" compoundref="mat-arith_8hpp" startline="261" endline="271">MatrixOps::subtractInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1772947e92924570c8026dc7ce56e2ee_1a1772947e92924570c8026dc7ce56e2ee" compoundref="mat-linalg_8hpp" startline="463" endline="481">MatrixOps::subtractMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a4cd5cb6c8d684a9390558acddc68ca0e_1a4cd5cb6c8d684a9390558acddc68ca0e" compoundref="mat-linalg_8hpp" startline="1066" endline="1078">MatrixOps::subtractMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a65bcb4dd717f11407c55d387de2e696e_1a65bcb4dd717f11407c55d387de2e696e" compoundref="mat-linalg_8hpp" startline="762" endline="776">MatrixOps::subtractMultipleTo</referencedby>
+        <referencedby refid="namespace_eigen_m2_af30dfc95a87a561b6e49802685f438a4_1af30dfc95a87a561b6e49802685f438a4" compoundref="eigen_8cpp" startline="376" endline="396">EigenM2::SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_a34fab610792cb64d15deaabff2decae3_1a34fab610792cb64d15deaabff2decae3" compoundref="eigen_8cpp" startline="349" endline="374">EigenM2::SVD</referencedby>
+        <referencedby refid="class_lapack_adfab11e25aa4e836ab1ac234fcb05e18_1adfab11e25aa4e836ab1ac234fcb05e18" compoundref="lapack_8cpp" startline="1491" endline="1559">Lapack::SVD</referencedby>
+        <referencedby refid="class_lapack_a12b7cd295a64e4aa51332f12f89f47cc_1a12b7cd295a64e4aa51332f12f89f47cc" compoundref="lapack_8cpp" startline="569" endline="634">Lapack::SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae100724fc8c16d8030cf6114e9127037_1ae100724fc8c16d8030cf6114e9127037" compoundref="eigen_8cpp" startline="420" endline="440">EigenM2::SVD_divide_conquer</referencedby>
+        <referencedby refid="namespace_eigen_m2_ab283d0faea8ebc63035e107782d51f0b_1ab283d0faea8ebc63035e107782d51f0b" compoundref="eigen_8cpp" startline="398" endline="418">EigenM2::SVD_divide_conquer</referencedby>
+        <referencedby refid="class_lapack_ad9e115c33301489852608fe584598bc5_1ad9e115c33301489852608fe584598bc5" compoundref="lapack_8cpp" startline="1561" endline="1632">Lapack::SVD_divide_conquer</referencedby>
+        <referencedby refid="class_lapack_a839e03b3ed6262f11f89ab27a850e6e0_1a839e03b3ed6262f11f89ab27a850e6e0" compoundref="lapack_8cpp" startline="636" endline="704">Lapack::SVD_divide_conquer</referencedby>
+        <referencedby refid="class_flint_q_q_mat_acfec25dd2b67e376fba78e3f8814fa1f_1acfec25dd2b67e376fba78e3f8814fa1f" compoundref="dmat-qq-interface-flint_8hpp" startline="142" endline="150">FlintQQMat::to_fmpq_mat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" compoundref="dmat-qq-interface-flint_8hpp" startline="78" endline="86">FlintZZMat::to_fmpz_mat</referencedby>
+        <referencedby refid="mutablemat-defs_8hpp_af7e5e303010718199ac53d79dabca95c_1af7e5e303010718199ac53d79dabca95c" compoundref="mutablemat-defs_8hpp" startline="158" endline="180">toMatrix</referencedby>
+        <referencedby refid="namespace_matrix_ops_adf30da03679f9d00ec647e6d62babc80_1adf30da03679f9d00ec647e6d62babc80" compoundref="mat-arith_8hpp" startline="274" endline="283">MatrixOps::transpose</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" kindref="member">ElementType</ref> &amp;</type>
+        <definition>ElementType &amp; DMat&lt; ACoeffRing &gt;::entry</definition>
+        <argsstring>(size_t row, size_t column)</argsstring>
+        <name>entry</name>
+        <qualifiedname>DMat::entry</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>column</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="146" column="15" bodyfile="Macaulay2/e/dmat.hpp" bodystart="146" bodyend="149"/>
+        <referencedby refid="namespace_matrix_ops_aa0b591bedc09f2645c7561c0cb7fc079_1aa0b591bedc09f2645c7561c0cb7fc079" compoundref="mat-arith_8hpp" startline="248" endline="258">MatrixOps::addInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a2100eeba95e52ce0e249ae03e9365b54_1a2100eeba95e52ce0e249ae03e9365b54" compoundref="mat-arith_8hpp" startline="340" endline="361">MatrixOps::addMultipleTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a809afbf836783d510ee57648fd09343c_1a809afbf836783d510ee57648fd09343c" compoundref="mat-arith_8hpp" startline="321" endline="336">MatrixOps::addTo</referencedby>
+        <referencedby refid="namespace_matrix_ops_a046d71ac1b58780e9db531a933bab164_1a046d71ac1b58780e9db531a933bab164" compoundref="mat-linalg_8hpp" startline="1370" endline="1377">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad4c31746076e6e9174fc962d8ea046fb_1ad4c31746076e6e9174fc962d8ea046fb" compoundref="mat-linalg_8hpp" startline="1500" endline="1507">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_a121c3014d3fd5dc02fd64d6ab80c0776_1a121c3014d3fd5dc02fd64d6ab80c0776" compoundref="mat-linalg_8hpp" startline="1281" endline="1288">MatrixOps::clean</referencedby>
+        <referencedby refid="namespace_matrix_ops_a70a728c9889154baf051a5619f8e3efa_1a70a728c9889154baf051a5619f8e3efa" compoundref="mat-linalg_8hpp" startline="1435" endline="1442">MatrixOps::clean</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ab1fc64e9e13e6ab4a15a7236f82f7183_1ab1fc64e9e13e6ab4a15a7236f82f7183" compoundref="mat-elem-ops_8hpp" startline="230" endline="265">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column2by2</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a467a36aa06905806f10d29b728823361_1a467a36aa06905806f10d29b728823361" compoundref="mat-elem-ops_8hpp" startline="175" endline="190">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_op</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a9af45eb48c3be215183c5eaa1a5815ac_1a9af45eb48c3be215183c5eaa1a5815ac" compoundref="mat-elem-ops_8hpp" startline="336" endline="383">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::column_permute</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a279bad4657d188da2f4e1233cff35223_1a279bad4657d188da2f4e1233cff35223" compoundref="_s_l_p-imp_8hpp" startline="187" endline="222">SLEvaluatorConcrete&lt; RT &gt;::computeNextNode</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a75f3f661e35044f2d666604c32c87ce7_1a75f3f661e35044f2d666604c32c87ce7" compoundref="mat-elem-ops_8hpp" startline="417" endline="435">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a885d74a3aab53687e0c5f8f0385bea48_1a885d74a3aab53687e0c5f8f0385bea48" compoundref="mat-elem-ops_8hpp" startline="437" endline="455">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::delete_rows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aeb81d1fdf71b0981c98e2605601a8888_1aeb81d1fdf71b0981c98e2605601a8888" compoundref="mat-elem-ops_8hpp" startline="149" endline="156">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_column</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a2ac2a3a44a57b41eeecf7fa6f01a2ca0_1a2ac2a3a44a57b41eeecf7fa6f01a2ca0" compoundref="mat-elem-ops_8hpp" startline="140" endline="147">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::divide_row</referencedby>
+        <referencedby refid="class_d_mat_a186ae90f1a921410b3ac424bd1dacf63_1a186ae90f1a921410b3ac424bd1dacf63" compoundref="dmat_8hpp" startline="95" endline="121">DMat&lt; RingType &gt;::DMat</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a4b96cbf748d0a84e4c25233247c5e86e_1a4b96cbf748d0a84e4c25233247c5e86e" compoundref="mat-elem-ops_8hpp" startline="268" endline="285">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::dot_product</referencedby>
+        <referencedby refid="class_lapack_a4578deee6ac6c59c7ea5a2b1feab788b_1a4578deee6ac6c59c7ea5a2b1feab788b" compoundref="lapack_8cpp" startline="302" endline="363">Lapack::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_a8e878b74dee60db22d6c749ae5f7ae2f_1a8e878b74dee60db22d6c749ae5f7ae2f" compoundref="lapack_8cpp" startline="365" endline="460">Lapack::eigenvectors</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_ae48c10b495ee0250224ba9fc8741fde2_1ae48c10b495ee0250224ba9fc8741fde2" compoundref="lapack_8cpp" startline="58" endline="72">fill_from_lapack_array</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_a480bc96c84fc68bf689e889b1f65ae70_1a480bc96c84fc68bf689e889b1f65ae70" compoundref="lapack_8cpp" startline="45" endline="56">fill_from_lapack_array</referencedby>
+        <referencedby refid="lapack_8cpp_a45498d1181590edfe4c373796ac81887_1a45498d1181590edfe4c373796ac81887" compoundref="lapack_8cpp" startline="100" endline="124">fill_from_lapack_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a414c2112d924d6793dc2de2898ca97ba_1a414c2112d924d6793dc2de2898ca97ba" compoundref="lapack_8cpp" startline="74" endline="98">fill_from_lapack_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a84ab75ef1ffea656aeeb12c6850ba055_1a84ab75ef1ffea656aeeb12c6850ba055" compoundref="lapack_8cpp" startline="154" endline="193">fill_lower_and_upper</referencedby>
+        <referencedby refid="lapack_8cpp_a88cda5abbc8bc638b16e89e1e7e682e5_1a88cda5abbc8bc638b16e89e1e7e682e5" compoundref="lapack_8cpp" startline="126" endline="152">fill_lower_and_upper</referencedby>
+        <referencedby refid="namespace_eigen_m2_a7136dbb0b6338d075e52d89c9685c227_1a7136dbb0b6338d075e52d89c9685c227" compoundref="eigen_8cpp" startline="320" endline="325">EigenM2::fill_to_MatrixXmp</referencedby>
+        <referencedby refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">EigenM2::fill_to_MatrixXmp</referencedby>
+        <referencedby refid="class_flint_q_q_mat_a0e924cfa55cc881c56636248a5cf5b8b_1a0e924cfa55cc881c56636248a5cf5b8b" compoundref="dmat-qq-interface-flint_8hpp" startline="152" endline="159">FlintQQMat::from_fmpq_mat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_acb6c1d00ef4c85cbb7eebc6e2314888f_1acb6c1d00ef4c85cbb7eebc6e2314888f" compoundref="dmat-qq-interface-flint_8hpp" startline="88" endline="95">FlintZZMat::from_fmpz_mat</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad59e10bd3e5d8196c45776ebc88fac8e_1ad59e10bd3e5d8196c45776ebc88fac8e" compoundref="mat-elem-ops_8hpp" startline="616" endline="619">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::getEntry</referencedby>
+        <referencedby refid="namespace_matrix_ops_a6ac23720a3dbc69c683ecfd8e1496ad1_1a6ac23720a3dbc69c683ecfd8e1496ad1" compoundref="mat-linalg_8hpp" startline="1379" endline="1386">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_a801b45c61b89d2456aaf3b56ec1c2248_1a801b45c61b89d2456aaf3b56ec1c2248" compoundref="mat-linalg_8hpp" startline="1509" endline="1516">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_aa631e25f3ce5427bc185afb13f7ba36f_1aa631e25f3ce5427bc185afb13f7ba36f" compoundref="mat-linalg_8hpp" startline="1290" endline="1297">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1ae0c67d8cb6ac92a8f433241be1acc4_1a1ae0c67d8cb6ac92a8f433241be1acc4" compoundref="mat-linalg_8hpp" startline="1444" endline="1451">MatrixOps::increase_norm</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a19da472bddbb8fe686904f916d7c6680_1a19da472bddbb8fe686904f916d7c6680" compoundref="mat-elem-ops_8hpp" startline="385" endline="399">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a51e6aaa88eb6653567d132a18f55525d_1a51e6aaa88eb6653567d132a18f55525d" compoundref="mat-elem-ops_8hpp" startline="401" endline="415">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::insert_rows</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a488107a18f569875ba421776aed06e9e_1a488107a18f569875ba421776aed06e9e" compoundref="mat-elem-ops_8hpp" startline="111" endline="120">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_columns</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a8e841f0c687be82ea09d579c196119f9_1a8e841f0c687be82ea09d579c196119f9" compoundref="mat-elem-ops_8hpp" startline="100" endline="109">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::interchange_rows</referencedby>
+        <referencedby refid="namespace_matrix_ops_a32afed33bdc16276deae4541dabadb97_1a32afed33bdc16276deae4541dabadb97" compoundref="mat-arith_8hpp" startline="218" endline="228">MatrixOps::isEqual</referencedby>
+        <referencedby refid="namespace_matrix_ops_a37882f800102bd2b037f51de5e0211e0_1a37882f800102bd2b037f51de5e0211e0" compoundref="mat-arith_8hpp" startline="209" endline="215">MatrixOps::isZero</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a43302d0ac246c77be7f3378c700b12ef_1a43302d0ac246c77be7f3378c700b12ef" compoundref="dmat-lu_8hpp" startline="578" endline="626">DMatLinAlg&lt; RingType &gt;::kernel</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a6bf36107358b63bff918bcdfa416266e_1a6bf36107358b63bff918bcdfa416266e" compoundref="mat-elem-ops_8hpp" startline="62" endline="73">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a88ba8aeb42efaabd80589cf39434d8fc_1a88ba8aeb42efaabd80589cf39434d8fc" compoundref="mat-elem-ops_8hpp" startline="75" endline="92">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::lead_row</referencedby>
+        <referencedby refid="namespace_matrix_ops_a9f305c034a8494f51ef3d2852eed08ec_1a9f305c034a8494f51ef3d2852eed08ec" compoundref="mat-linalg_8hpp" startline="565" endline="603">MatrixOps::LUincremental</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_a4fb05baef8ff7f8ecdd0f05cbce2b31e_1a4fb05baef8ff7f8ecdd0f05cbce2b31e" compoundref="lapack_8cpp" startline="31" endline="43">make_lapack_array</referencedby>
+        <referencedby refid="dmat-lu-inplace_8hpp_a1d9fe790cb0cb4f0fe5ec99737d82ed4_1a1d9fe790cb0cb4f0fe5ec99737d82ed4" compoundref="lapack_8cpp" startline="20" endline="29">make_lapack_array</referencedby>
+        <referencedby refid="namespace_matrix_ops_a0357159763f060785e565cbba529bb88_1a0357159763f060785e565cbba529bb88" compoundref="mat-linalg_8hpp" startline="435" endline="453">MatrixOps::mult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1fddce779e82000363d19934f65dbf89_1a1fddce779e82000363d19934f65dbf89" compoundref="mat-arith_8hpp" startline="239" endline="245">MatrixOps::negateInPlace</referencedby>
+        <referencedby refid="_s_l_p-imp_8hpp_a957305e8d4212e0a7001ae91d8184dc1_1a957305e8d4212e0a7001ae91d8184dc1" compoundref="_s_l_p-imp_8hpp" startline="336" endline="349">norm2</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ace26a7e3cab6a90d5ac33a90dff3fd4f_1ace26a7e3cab6a90d5ac33a90dff3fd4f" compoundref="mat-elem-ops_8hpp" startline="506" endline="573">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::reduce_by_pivots</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_acb800f8bbb01ba96e0656c93ce814f83_1acb800f8bbb01ba96e0656c93ce814f83" compoundref="mat-elem-ops_8hpp" startline="193" endline="228">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row2by2</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ad83429ed2810a793e831636b652a9825_1ad83429ed2810a793e831636b652a9825" compoundref="mat-elem-ops_8hpp" startline="158" endline="173">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_op</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_af19e1c5ba4e6bebc081f4c60443a8360_1af19e1c5ba4e6bebc081f4c60443a8360" compoundref="mat-elem-ops_8hpp" startline="287" endline="334">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::row_permute</referencedby>
+        <referencedby refid="namespace_matrix_ops_a08c5d448b55c37f010e5a33674f46c9a_1a08c5d448b55c37f010e5a33674f46c9a" compoundref="mat-arith_8hpp" startline="365" endline="383">MatrixOps::scalarMult</referencedby>
+        <referencedby refid="namespace_matrix_ops_a15abadb101fc346ad2b1a6b32bd41e0b_1a15abadb101fc346ad2b1a6b32bd41e0b" compoundref="mat-arith_8hpp" startline="231" endline="236">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1af6bad8d4b5f937d4bd4aae7465f7ab_1a1af6bad8d4b5f937d4bd4aae7465f7ab" compoundref="mat-arith_8hpp" startline="387" endline="401">MatrixOps::scalarMultInPlace</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a34f019a7684a540cf3b4e4b318d8e8dc_1a34f019a7684a540cf3b4e4b318d8e8dc" compoundref="mat-elem-ops_8hpp" startline="131" endline="138">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_column</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a100cbe56a5588f5c96dd68088d1e9e56_1a100cbe56a5588f5c96dd68088d1e9e56" compoundref="mat-elem-ops_8hpp" startline="122" endline="129">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::scale_row</referencedby>
+        <referencedby refid="namespace_matrix_ops_a282f886010aee601304c4860fb1af33f_1a282f886010aee601304c4860fb1af33f" compoundref="mat-arith_8hpp" startline="305" endline="317">MatrixOps::set</referencedby>
+        <referencedby refid="res-f4-m2-interface_8cpp_ae931170547e656946abc459bf1404fe8_1ae931170547e656946abc459bf1404fe8" compoundref="res-f4-m2-interface_8cpp" startline="574" endline="585">setDMatFromSparseMatrixGenerator</referencedby>
+        <referencedby refid="res-f4-m2-interface_8cpp_a758bbaf19ae1d0a2ea7e0ccfe5a73b0e_1a758bbaf19ae1d0a2ea7e0ccfe5a73b0e" compoundref="res-f4-m2-interface_8cpp" startline="588" endline="599">setDMatFromSparseMatrixGeneratorTransposed</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a0a5323471c13905d2de190d36f958d4a_1a0a5323471c13905d2de190d36f958d4a" compoundref="mat-elem-ops_8hpp" startline="621" endline="624">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setEntry</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a38e50635f2aa9494317f5d6f69091cc1_1a38e50635f2aa9494317f5d6f69091cc1" compoundref="mat-elem-ops_8hpp" startline="606" endline="614">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a1d8c12b85af93bc51460e9a5c357fbb4_1a1d8c12b85af93bc51460e9a5c357fbb4" compoundref="mat-elem-ops_8hpp" startline="592" endline="604">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_aca4a9d74f3bab7ab512359b0e8b5a645_1aca4a9d74f3bab7ab512359b0e8b5a645" compoundref="mat-elem-ops_8hpp" startline="576" endline="590">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::setFromSubmatrix</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a9d18bee2770c2f06be62758703ff511a_1a9d18bee2770c2f06be62758703ff511a" compoundref="dmat-lu_8hpp" startline="269" endline="292">DMatLinAlg&lt; RingType &gt;::setUpperLower</referencedby>
+        <referencedby refid="class_l_u_util_a1838ec98f16e5635a493dc4c1b1d09f7_1a1838ec98f16e5635a493dc4c1b1d09f7" compoundref="dmat-lu-inplace_8hpp" startline="412" endline="435">LUUtil&lt; RT &gt;::setUpperLower</referencedby>
+        <referencedby refid="namespace_matrix_ops_a4cb69fe10c896de643645b4e78ca8fe9_1a4cb69fe10c896de643645b4e78ca8fe9" compoundref="mat-arith_8hpp" startline="287" endline="292">MatrixOps::setZero</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_af62eb419b81883be17eea4e3b719c47c_1af62eb419b81883be17eea4e3b719c47c" compoundref="dmat-lu_8hpp" startline="338" endline="446">DMatLinAlg&lt; RingType &gt;::solve</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_z_zp_flint_01_4_a98595833789f68eba689a1b44e048afe_1a98595833789f68eba689a1b44e048afe" compoundref="dmat-lu-zzp-flint_8hpp" startline="103" endline="127">DMatLinAlg&lt; M2::ARingZZpFlint &gt;::solve</referencedby>
+        <referencedby refid="namespace_matrix_ops_a50ed9378e232e326777a3a65b5521312_1a50ed9378e232e326777a3a65b5521312" compoundref="mat-arith_8hpp" startline="261" endline="271">MatrixOps::subtractInPlace</referencedby>
+        <referencedby refid="namespace_matrix_ops_a1772947e92924570c8026dc7ce56e2ee_1a1772947e92924570c8026dc7ce56e2ee" compoundref="mat-linalg_8hpp" startline="463" endline="481">MatrixOps::subtractMultipleTo</referencedby>
+        <referencedby refid="class_flint_q_q_mat_acfec25dd2b67e376fba78e3f8814fa1f_1acfec25dd2b67e376fba78e3f8814fa1f" compoundref="dmat-qq-interface-flint_8hpp" startline="142" endline="150">FlintQQMat::to_fmpq_mat</referencedby>
+        <referencedby refid="class_flint_z_z_mat_ac262f1ef748570ba21adcbd24f0b1ea3_1ac262f1ef748570ba21adcbd24f0b1ea3" compoundref="dmat-qq-interface-flint_8hpp" startline="78" endline="86">FlintZZMat::to_fmpz_mat</referencedby>
+        <referencedby refid="mutablemat-defs_8hpp_af7e5e303010718199ac53d79dabca95c_1af7e5e303010718199ac53d79dabca95c" compoundref="mutablemat-defs_8hpp" startline="158" endline="180">toMatrix</referencedby>
+        <referencedby refid="class_homotopy_concrete_3_01_r_t_00_01_fixed_precision_homotopy_algorithm_01_4_a3b9bca2865f35bb84a20d66e13f64880_1a3b9bca2865f35bb84a20d66e13f64880" compoundref="_s_l_p-imp_8hpp" startline="381" endline="803">HomotopyConcrete&lt; RT, FixedPrecisionHomotopyAlgorithm &gt;::track</referencedby>
+        <referencedby refid="namespace_matrix_ops_adf30da03679f9d00ec647e6d62babc80_1adf30da03679f9d00ec647e6d62babc80" compoundref="mat-arith_8hpp" startline="274" endline="283">MatrixOps::transpose</referencedby>
+        <referencedby refid="namespace_matrix_ops_a04305f4bd7a871e3cc62ef99450de411_1a04305f4bd7a871e3cc62ef99450de411" compoundref="mat-linalg_8hpp" startline="510" endline="562">MatrixOps::triangularSolve</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_acf01e822f8dffcdbc6b48ebcb3090ac3_1acf01e822f8dffcdbc6b48ebcb3090ac3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" kindref="member">ElementType</ref> &amp;</type>
+        <definition>const ElementType &amp; DMat&lt; ACoeffRing &gt;::entry</definition>
+        <argsstring>(size_t row, size_t column) const</argsstring>
+        <name>entry</name>
+        <qualifiedname>DMat::entry</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>column</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="150" column="21" bodyfile="Macaulay2/e/dmat.hpp" bodystart="150" bodyend="153"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_a88d2a242efc934b17d6cc94851000627_1a88d2a242efc934b17d6cc94851000627" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMat&lt; ACoeffRing &gt;::resize</definition>
+        <argsstring>(size_t new_nrows, size_t new_ncols)</argsstring>
+        <name>resize</name>
+        <qualifiedname>DMat::resize</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>new_nrows</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>new_ncols</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="155" column="8" bodyfile="Macaulay2/e/dmat.hpp" bodystart="155" bodyend="159"/>
+        <referencedby refid="class_lapack_aa41a859a5de966143e215300d34c440c_1aa41a859a5de966143e215300d34c440c" compoundref="lapack_8cpp" startline="1233" endline="1294">Lapack::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_a4578deee6ac6c59c7ea5a2b1feab788b_1a4578deee6ac6c59c7ea5a2b1feab788b" compoundref="lapack_8cpp" startline="302" endline="363">Lapack::eigenvalues</referencedby>
+        <referencedby refid="class_lapack_adc2348c6514e02299fc7a4430f82650b_1adc2348c6514e02299fc7a4430f82650b" compoundref="lapack_8cpp" startline="1366" endline="1424">Lapack::eigenvalues_hermitian</referencedby>
+        <referencedby refid="class_lapack_a5f84114301e0a8f7f9d287df0c961a64_1a5f84114301e0a8f7f9d287df0c961a64" compoundref="lapack_8cpp" startline="462" endline="511">Lapack::eigenvalues_symmetric</referencedby>
+        <referencedby refid="class_lapack_a7097bdedbf71052dd9cae3b2263a0082_1a7097bdedbf71052dd9cae3b2263a0082" compoundref="lapack_8cpp" startline="1296" endline="1364">Lapack::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a8e878b74dee60db22d6c749ae5f7ae2f_1a8e878b74dee60db22d6c749ae5f7ae2f" compoundref="lapack_8cpp" startline="365" endline="460">Lapack::eigenvectors</referencedby>
+        <referencedby refid="class_lapack_a189ac4cb184bd7b67206841b0536a022_1a189ac4cb184bd7b67206841b0536a022" compoundref="lapack_8cpp" startline="1426" endline="1489">Lapack::eigenvectors_hermitian</referencedby>
+        <referencedby refid="class_lapack_ac7e7472d7c89089f39193a6ab1711661_1ac7e7472d7c89089f39193a6ab1711661" compoundref="lapack_8cpp" startline="513" endline="567">Lapack::eigenvectors_symmetric</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_z_zp_flint_01_4_a5b0fdf75276cb1b3200a47b595ed7f9c_1a5b0fdf75276cb1b3200a47b595ed7f9c" compoundref="dmat-lu-zzp-flint_8hpp" startline="129" endline="135">DMatLinAlg&lt; M2::ARingZZpFlint &gt;::inverse</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a43302d0ac246c77be7f3378c700b12ef_1a43302d0ac246c77be7f3378c700b12ef" compoundref="dmat-lu_8hpp" startline="578" endline="626">DMatLinAlg&lt; RingType &gt;::kernel</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_z_zp_flint_01_4_a80d69e2090dd0a57f5a315c80e0fcf55_1a80d69e2090dd0a57f5a315c80e0fcf55" compoundref="dmat-lu-zzp-flint_8hpp" startline="137" endline="147">DMatLinAlg&lt; M2::ARingZZpFlint &gt;::kernel</referencedby>
+        <referencedby refid="class_lapack_a6da0099b62fc850acad1f28e965bd345_1a6da0099b62fc850acad1f28e965bd345" compoundref="lapack_8cpp" startline="1117" endline="1178">Lapack::LU</referencedby>
+        <referencedby refid="class_lapack_a4661a514f8ce88bea22fcad2839a56cc_1a4661a514f8ce88bea22fcad2839a56cc" compoundref="lapack_8cpp" startline="195" endline="238">Lapack::LU</referencedby>
+        <referencedby refid="class_lapack_ab287c83bc72e11782ce3553dd8a8f471_1ab287c83bc72e11782ce3553dd8a8f471" compoundref="lapack_8cpp" startline="1009" endline="1115">Lapack::QR</referencedby>
+        <referencedby refid="class_lapack_a5b5ced881564f3e639f5990b066f0e6e_1a5b5ced881564f3e639f5990b066f0e6e" compoundref="lapack_8cpp" startline="898" endline="1007">Lapack::QR</referencedby>
+        <referencedby refid="res-f4-m2-interface_8cpp_ae931170547e656946abc459bf1404fe8_1ae931170547e656946abc459bf1404fe8" compoundref="res-f4-m2-interface_8cpp" startline="574" endline="585">setDMatFromSparseMatrixGenerator</referencedby>
+        <referencedby refid="res-f4-m2-interface_8cpp_a758bbaf19ae1d0a2ea7e0ccfe5a73b0e_1a758bbaf19ae1d0a2ea7e0ccfe5a73b0e" compoundref="res-f4-m2-interface_8cpp" startline="588" endline="599">setDMatFromSparseMatrixGeneratorTransposed</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a9d18bee2770c2f06be62758703ff511a_1a9d18bee2770c2f06be62758703ff511a" compoundref="dmat-lu_8hpp" startline="269" endline="292">DMatLinAlg&lt; RingType &gt;::setUpperLower</referencedby>
+        <referencedby refid="class_l_u_util_a1838ec98f16e5635a493dc4c1b1d09f7_1a1838ec98f16e5635a493dc4c1b1d09f7" compoundref="dmat-lu-inplace_8hpp" startline="412" endline="435">LUUtil&lt; RT &gt;::setUpperLower</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_af62eb419b81883be17eea4e3b719c47c_1af62eb419b81883be17eea4e3b719c47c" compoundref="dmat-lu_8hpp" startline="338" endline="446">DMatLinAlg&lt; RingType &gt;::solve</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_z_zp_flint_01_4_a98595833789f68eba689a1b44e048afe_1a98595833789f68eba689a1b44e048afe" compoundref="dmat-lu-zzp-flint_8hpp" startline="103" endline="127">DMatLinAlg&lt; M2::ARingZZpFlint &gt;::solve</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a73e0808414a632221f057c5d740f4155_1a73e0808414a632221f057c5d740f4155" compoundref="dmat-lu_8hpp" startline="533" endline="559">DMatLinAlg&lt; RingType &gt;::solveInvertible</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_z_zp_flint_01_4_ada2f7f3ab7d88938f7208548039d67cc_1ada2f7f3ab7d88938f7208548039d67cc" compoundref="dmat-lu-zzp-flint_8hpp" startline="92" endline="101">DMatLinAlg&lt; M2::ARingZZpFlint &gt;::solveInvertible</referencedby>
+        <referencedby refid="class_lapack_adfab11e25aa4e836ab1ac234fcb05e18_1adfab11e25aa4e836ab1ac234fcb05e18" compoundref="lapack_8cpp" startline="1491" endline="1559">Lapack::SVD</referencedby>
+        <referencedby refid="class_lapack_a12b7cd295a64e4aa51332f12f89f47cc_1a12b7cd295a64e4aa51332f12f89f47cc" compoundref="lapack_8cpp" startline="569" endline="634">Lapack::SVD</referencedby>
+        <referencedby refid="class_lapack_ad9e115c33301489852608fe584598bc5_1ad9e115c33301489852608fe584598bc5" compoundref="lapack_8cpp" startline="1561" endline="1632">Lapack::SVD_divide_conquer</referencedby>
+        <referencedby refid="class_lapack_a839e03b3ed6262f11f89ab27a850e6e0_1a839e03b3ed6262f11f89ab27a850e6e0" compoundref="lapack_8cpp" startline="636" endline="704">Lapack::SVD_divide_conquer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_aea59563009327a673da4d7321f520e35_1aea59563009327a673da4d7321f520e35" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" kindref="member">ElementType</ref> *</type>
+        <definition>const ElementType * DMat&lt; ACoeffRing &gt;::rowMajorArray</definition>
+        <argsstring>() const</argsstring>
+        <name>rowMajorArray</name>
+        <qualifiedname>DMat::rowMajorArray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="162" column="21" bodyfile="Macaulay2/e/dmat.hpp" bodystart="162" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_adf7d78c3e96d6c4c85fd13b635655b3d_1adf7d78c3e96d6c4c85fd13b635655b3d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" kindref="member">ElementType</ref> *&amp;</type>
+        <definition>ElementType *&amp; DMat&lt; ACoeffRing &gt;::rowMajorArray</definition>
+        <argsstring>()</argsstring>
+        <name>rowMajorArray</name>
+        <qualifiedname>DMat::rowMajorArray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="163" column="15" bodyfile="Macaulay2/e/dmat.hpp" bodystart="163" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_ad0bf74d59141f090291e13948c00a3f0_1ad0bf74d59141f090291e13948c00a3f0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" kindref="member">ElementType</ref> *</type>
+        <definition>const ElementType * DMat&lt; ACoeffRing &gt;::unsafeArray</definition>
+        <argsstring>() const</argsstring>
+        <name>unsafeArray</name>
+        <qualifiedname>DMat::unsafeArray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="168" column="21" bodyfile="Macaulay2/e/dmat.hpp" bodystart="168" bodyend="168"/>
+        <referencedby refid="class_s_l_evaluator_concrete_a0f0957465d5966e19ea8ab82916f8b08_1a0f0957465d5966e19ea8ab82916f8b08" compoundref="_s_l_p-imp_8hpp" startline="254" endline="299">SLEvaluatorConcrete&lt; RT &gt;::evaluate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_a29d657185ad7d72d23fcb260bf4c5460_1a29d657185ad7d72d23fcb260bf4c5460" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" kindref="member">ElementType</ref> *&amp;</type>
+        <definition>ElementType *&amp; DMat&lt; ACoeffRing &gt;::unsafeArray</definition>
+        <argsstring>()</argsstring>
+        <name>unsafeArray</name>
+        <qualifiedname>DMat::unsafeArray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat.hpp" line="169" column="15" bodyfile="Macaulay2/e/dmat.hpp" bodystart="169" bodyend="169"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>DMat&lt; ACoeffRing &gt;</label>
+        <link refid="class_d_mat"/>
+      </node>
+      <node id="5">
+        <label>DMat&lt; M2::ARingCC &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingCC &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>DMat&lt; M2::ARingCCC &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingCCC &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>DMat&lt; M2::ARingGFFlint &gt;</label>
+        <link refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingGFFlint &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>DMat&lt; M2::ARingGFFlintBig &gt;</label>
+        <link refid="class_d_mat_3_01_m2_1_1_a_ring_g_f_flint_big_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingGFFlintBig &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>DMat&lt; M2::ARingGFM2 &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingGFM2 &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>DMat&lt; M2::ARingQQ &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingQQ &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>DMat&lt; M2::ARingQQFlint &gt;</label>
+        <link refid="class_d_mat_3_01_m2_1_1_a_ring_q_q_flint_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingQQFlint &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>DMat&lt; M2::ARingRR &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingRR &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>DMat&lt; M2::ARingRRR &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingRRR &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>DMat&lt; M2::ARingZZ &gt;</label>
+        <link refid="class_d_mat_3_01_m2_1_1_a_ring_z_z_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingZZ &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>DMat&lt; M2::ARingZZGMP &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingZZGMP &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>DMat&lt; M2::ARingZZp &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>DMat&lt; M2::ARingZZpFlint &gt;</label>
+        <link refid="class_d_mat_3_01_m2_1_1_a_ring_z_zp_flint_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; M2::ARingZZpFlint &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>DMat&lt; RT &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; RT &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>DMat&lt; RingType &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; RingType &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>DMat&lt; ACoeffRing &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mNumColumns</edgelabel>
+          <edgelabel>mNumRows</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mArray</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mRowPointers</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ElementType</label>
+      </node>
+      <node id="4">
+        <label>ElementType *</label>
+      </node>
+      <node id="8">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>const ACoeffRing *</label>
+      </node>
+      <node id="3">
+        <label>size_t</label>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; ElementType * &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; ElementType * &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/dmat.hpp" line="59" column="1" bodyfile="Macaulay2/e/dmat.hpp" bodystart="60" bodyend="177"/>
+    <listofallmembers>
+      <member refid="class_d_mat_a1456b3e65636b78e2b2e418c1a6c7bd7_1a1456b3e65636b78e2b2e418c1a6c7bd7" prot="public" virt="non-virtual"><scope>DMat</scope><name>CoeffRing</name></member>
+      <member refid="class_d_mat_ae96570ac0d611add9bbe53140cb90f2c_1ae96570ac0d611add9bbe53140cb90f2c" prot="public" virt="non-virtual"><scope>DMat</scope><name>DMat</name></member>
+      <member refid="class_d_mat_aa28b1b37aa4b3007d77fd436652c3967_1aa28b1b37aa4b3007d77fd436652c3967" prot="public" virt="non-virtual"><scope>DMat</scope><name>DMat</name></member>
+      <member refid="class_d_mat_a186ae90f1a921410b3ac424bd1dacf63_1a186ae90f1a921410b3ac424bd1dacf63" prot="public" virt="non-virtual"><scope>DMat</scope><name>DMat</name></member>
+      <member refid="class_d_mat_ab01d6e06ca7c9ba9ba767ab3947e2de0_1ab01d6e06ca7c9ba9ba767ab3947e2de0" prot="public" virt="non-virtual"><scope>DMat</scope><name>Element</name></member>
+      <member refid="class_d_mat_a97fa208b286ada86b61d08c7a1121801_1a97fa208b286ada86b61d08c7a1121801" prot="public" virt="non-virtual"><scope>DMat</scope><name>ElementType</name></member>
+      <member refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" prot="public" virt="non-virtual"><scope>DMat</scope><name>entry</name></member>
+      <member refid="class_d_mat_acf01e822f8dffcdbc6b48ebcb3090ac3_1acf01e822f8dffcdbc6b48ebcb3090ac3" prot="public" virt="non-virtual"><scope>DMat</scope><name>entry</name></member>
+      <member refid="class_d_mat_a3b3db187e0e6a13c33246e8844db0f83_1a3b3db187e0e6a13c33246e8844db0f83" prot="private" virt="non-virtual"><scope>DMat</scope><name>mArray</name></member>
+      <member refid="class_d_mat_a2a075af3a9dd6d0509df6b7a46318746_1a2a075af3a9dd6d0509df6b7a46318746" prot="private" virt="non-virtual"><scope>DMat</scope><name>mNumColumns</name></member>
+      <member refid="class_d_mat_a6d1ff369db27b5aa3b2a8c98e50ce907_1a6d1ff369db27b5aa3b2a8c98e50ce907" prot="private" virt="non-virtual"><scope>DMat</scope><name>mNumRows</name></member>
+      <member refid="class_d_mat_a2f4e6ba88417aa58d1263afe7f00504a_1a2f4e6ba88417aa58d1263afe7f00504a" prot="private" virt="non-virtual"><scope>DMat</scope><name>mRing</name></member>
+      <member refid="class_d_mat_a38f628377c19730bf5388a467ee7561a_1a38f628377c19730bf5388a467ee7561a" prot="private" virt="non-virtual"><scope>DMat</scope><name>mRowPointers</name></member>
+      <member refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" prot="public" virt="non-virtual"><scope>DMat</scope><name>numColumns</name></member>
+      <member refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" prot="public" virt="non-virtual"><scope>DMat</scope><name>numRows</name></member>
+      <member refid="class_d_mat_a88d2a242efc934b17d6cc94851000627_1a88d2a242efc934b17d6cc94851000627" prot="public" virt="non-virtual"><scope>DMat</scope><name>resize</name></member>
+      <member refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" prot="public" virt="non-virtual"><scope>DMat</scope><name>ring</name></member>
+      <member refid="class_d_mat_aea59563009327a673da4d7321f520e35_1aea59563009327a673da4d7321f520e35" prot="public" virt="non-virtual"><scope>DMat</scope><name>rowMajorArray</name></member>
+      <member refid="class_d_mat_adf7d78c3e96d6c4c85fd13b635655b3d_1adf7d78c3e96d6c4c85fd13b635655b3d" prot="public" virt="non-virtual"><scope>DMat</scope><name>rowMajorArray</name></member>
+      <member refid="class_d_mat_a94a2f2bd553d920413b59ba22543d9d4_1a94a2f2bd553d920413b59ba22543d9d4" prot="public" virt="non-virtual"><scope>DMat</scope><name>swap</name></member>
+      <member refid="class_d_mat_ad0bf74d59141f090291e13948c00a3f0_1ad0bf74d59141f090291e13948c00a3f0" prot="public" virt="non-virtual"><scope>DMat</scope><name>unsafeArray</name></member>
+      <member refid="class_d_mat_a29d657185ad7d72d23fcb260bf4c5460_1a29d657185ad7d72d23fcb260bf4c5460" prot="public" virt="non-virtual"><scope>DMat</scope><name>unsafeArray</name></member>
+      <member refid="class_d_mat_aa16d3c198ca8eb8a18cdfb27c1019d04_1aa16d3c198ca8eb8a18cdfb27c1019d04" prot="public" virt="non-virtual"><scope>DMat</scope><name>~DMat</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

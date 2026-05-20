@@ -1,0 +1,323 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="table_8h" kind="file" language="C++">
+    <compoundname>table.h</compoundname>
+    <includedby refid="exptable_8c" local="yes">Macaulay2/e/exptable.c</includedby>
+    <includedby refid="table_8c" local="yes">Macaulay2/e/table.c</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/exptable.c</label>
+        <link refid="exptable_8c"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/table.c</label>
+        <link refid="table_8c"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/table.h</label>
+        <link refid="table_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="table_8h_a0acb682b8260ab1c60b918599864e2e5_1a0acb682b8260ab1c60b918599864e2e5" prot="public" static="no">
+        <name>T</name>
+        <initializer>Table_T</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.h" line="8" column="9" bodyfile="Macaulay2/e/table.h" bodystart="8" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="table_8h_acb62762c32d1b74f3dde5df0462d4955_1acb62762c32d1b74f3dde5df0462d4955" prot="public" static="no" extern="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+        <definition>T * Table_new</definition>
+        <argsstring>(int hint, int cmp(const void *x, const void *y), unsigned hash(const void *key))</argsstring>
+        <name>Table_new</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>hint</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> </type>
+          <declname>cmp</declname>
+          <array>const void *x, const void *y</array>
+        </param>
+        <param>
+          <type>unsigned </type>
+          <declname>hash</declname>
+          <array>const void *key</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.h" line="15" column="13" bodyfile="Macaulay2/e/table.c" bodystart="46" bodyend="67" declfile="Macaulay2/e/table.h" declline="15" declcolumn="13"/>
+        <references refid="struct_t_adad3e68e3bfb5ff02e9d54fa83d84b28_1adad3e68e3bfb5ff02e9d54fa83d84b28">T::buckets</references>
+        <references refid="struct_t_ad0c05772826e7539be987c395607788e_1ad0c05772826e7539be987c395607788e" compoundref="table_8c" startline="29">T::cmp</references>
+        <references refid="table_8c_a46002fa21bef6b07e4b0b8093cd7b4cd_1a46002fa21bef6b07e4b0b8093cd7b4cd" compoundref="table_8c" startline="44" endline="44">cmpatom</references>
+        <references refid="m2-mem_8cpp_a6807bb51e1c9f3335f018dd77f7e9d5b_1a6807bb51e1c9f3335f018dd77f7e9d5b" compoundref="m2-mem_8cpp" startline="74" endline="91">getmem</references>
+        <references refid="struct_t_ac312863f3d6a86d9b3b7390129c76334_1ac312863f3d6a86d9b3b7390129c76334" compoundref="table_8c" startline="30">T::hash</references>
+        <references refid="table_8c_a8b92f9ce10af3b50b5c2e0067ac2b535_1a8b92f9ce10af3b50b5c2e0067ac2b535" compoundref="table_8c" startline="45" endline="45">hashatom</references>
+        <references refid="struct_t_ac165cb2e47175ce65b25465d5bd8556d_1ac165cb2e47175ce65b25465d5bd8556d" compoundref="table_8c" startline="31">T::length</references>
+        <references refid="struct_t_a26e23de58526d847534987d9531aef51_1a26e23de58526d847534987d9531aef51" compoundref="table_8c" startline="28">T::size</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <references refid="struct_t_a435a16de233b71e17a5186f56adea071_1a435a16de233b71e17a5186f56adea071" compoundref="table_8c" startline="32">T::timestamp</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="exptable_8c_a6bcb88df4d99aba58b5c577283a67172_1a6bcb88df4d99aba58b5c577283a67172" compoundref="exptable_8c" startline="45" endline="52">exponent_table_new</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="table_8h_a2831e8b0428674569e948b6806e10fb6_1a2831e8b0428674569e948b6806e10fb6" prot="public" static="no" extern="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Table_free</definition>
+        <argsstring>(T **table)</argsstring>
+        <name>Table_free</name>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> **</type>
+          <declname>table</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.h" line="18" column="13" bodyfile="Macaulay2/e/table.c" bodystart="166" bodyend="181" declfile="Macaulay2/e/table.h" declline="18" declcolumn="13"/>
+        <references refid="table_8c_a105949c59c998e38aad80266afac92bf_1a105949c59c998e38aad80266afac92bf" compoundref="table_8c" startline="11">FREE</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <referencedby refid="exptable_8c_a6354a9626ea1b930de3390324591e2c6_1a6354a9626ea1b930de3390324591e2c6" compoundref="exptable_8c" startline="55" endline="60">exponent_table_free</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="table_8h_a06dbf87743b1cac6c15c73716a3f3598_1a06dbf87743b1cac6c15c73716a3f3598" prot="public" static="no" extern="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int Table_length</definition>
+        <argsstring>(T *table)</argsstring>
+        <name>Table_length</name>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+          <declname>table</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.h" line="19" column="14" bodyfile="Macaulay2/e/table.c" bodystart="104" bodyend="108" declfile="Macaulay2/e/table.h" declline="19" declcolumn="14"/>
+        <references refid="struct_t_ac165cb2e47175ce65b25465d5bd8556d_1ac165cb2e47175ce65b25465d5bd8556d" compoundref="table_8c" startline="31">T::length</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <referencedby refid="exptable_8c_aec673c461904eaac4d190677665d2c90_1aec673c461904eaac4d190677665d2c90" compoundref="exptable_8c" startline="54" endline="54">exponent_table_length</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="table_8h_ac18704c6d5a33b3698ae7a1f93d92694_1ac18704c6d5a33b3698ae7a1f93d92694" prot="public" static="no" extern="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * Table_put</definition>
+        <argsstring>(T *table, const void *key, void *value)</argsstring>
+        <name>Table_put</name>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+          <declname>table</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.h" line="20" column="13" bodyfile="Macaulay2/e/table.c" bodystart="79" bodyend="103" declfile="Macaulay2/e/table.h" declline="20" declcolumn="13"/>
+        <references refid="struct_t_adad3e68e3bfb5ff02e9d54fa83d84b28_1adad3e68e3bfb5ff02e9d54fa83d84b28">T::buckets</references>
+        <references refid="struct_t_ad0c05772826e7539be987c395607788e_1ad0c05772826e7539be987c395607788e" compoundref="table_8c" startline="29">T::cmp</references>
+        <references refid="struct_t_ac312863f3d6a86d9b3b7390129c76334_1ac312863f3d6a86d9b3b7390129c76334" compoundref="table_8c" startline="30">T::hash</references>
+        <references refid="struct_t_ac165cb2e47175ce65b25465d5bd8556d_1ac165cb2e47175ce65b25465d5bd8556d" compoundref="table_8c" startline="31">T::length</references>
+        <references refid="table_8c_a6dcbdd586f47a62900804da2a6102a2e_1a6dcbdd586f47a62900804da2a6102a2e" compoundref="table_8c" startline="10">NEW</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="struct_t_a26e23de58526d847534987d9531aef51_1a26e23de58526d847534987d9531aef51" compoundref="table_8c" startline="28">T::size</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <references refid="struct_t_a435a16de233b71e17a5186f56adea071_1a435a16de233b71e17a5186f56adea071" compoundref="table_8c" startline="32">T::timestamp</references>
+        <referencedby refid="exptable_8c_adfdbaae69463c93055f5aaf8de017d3b_1adfdbaae69463c93055f5aaf8de017d3b" compoundref="exptable_8c" startline="62" endline="69">exponent_table_put</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="table_8h_a74543c15c1a59048507f504a4d17f458_1a74543c15c1a59048507f504a4d17f458" prot="public" static="no" extern="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * Table_get</definition>
+        <argsstring>(T *table, const void *key)</argsstring>
+        <name>Table_get</name>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+          <declname>table</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.h" line="22" column="13" bodyfile="Macaulay2/e/table.c" bodystart="68" bodyend="78" declfile="Macaulay2/e/table.h" declline="22" declcolumn="13"/>
+        <references refid="struct_t_adad3e68e3bfb5ff02e9d54fa83d84b28_1adad3e68e3bfb5ff02e9d54fa83d84b28">T::buckets</references>
+        <references refid="struct_t_ad0c05772826e7539be987c395607788e_1ad0c05772826e7539be987c395607788e" compoundref="table_8c" startline="29">T::cmp</references>
+        <references refid="struct_t_ac312863f3d6a86d9b3b7390129c76334_1ac312863f3d6a86d9b3b7390129c76334" compoundref="table_8c" startline="30">T::hash</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="struct_t_a26e23de58526d847534987d9531aef51_1a26e23de58526d847534987d9531aef51" compoundref="table_8c" startline="28">T::size</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <referencedby refid="exptable_8c_afba68e09d5d6ee8efc78c08e22b1908b_1afba68e09d5d6ee8efc78c08e22b1908b" compoundref="exptable_8c" startline="71" endline="77">exponent_table_get</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="table_8h_ac76d8a76af9448767fca6d00d084a078_1ac76d8a76af9448767fca6d00d084a078" prot="public" static="no" extern="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * Table_remove</definition>
+        <argsstring>(T *table, const void *key)</argsstring>
+        <name>Table_remove</name>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+          <declname>table</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.h" line="23" column="13" bodyfile="Macaulay2/e/table.c" bodystart="130" bodyend="149" declfile="Macaulay2/e/table.h" declline="23" declcolumn="13"/>
+        <references refid="struct_t_adad3e68e3bfb5ff02e9d54fa83d84b28_1adad3e68e3bfb5ff02e9d54fa83d84b28">T::buckets</references>
+        <references refid="struct_t_ad0c05772826e7539be987c395607788e_1ad0c05772826e7539be987c395607788e" compoundref="table_8c" startline="29">T::cmp</references>
+        <references refid="table_8c_a105949c59c998e38aad80266afac92bf_1a105949c59c998e38aad80266afac92bf" compoundref="table_8c" startline="11">FREE</references>
+        <references refid="struct_t_ac312863f3d6a86d9b3b7390129c76334_1ac312863f3d6a86d9b3b7390129c76334" compoundref="table_8c" startline="30">T::hash</references>
+        <references refid="struct_t_ac165cb2e47175ce65b25465d5bd8556d_1ac165cb2e47175ce65b25465d5bd8556d" compoundref="table_8c" startline="31">T::length</references>
+        <references refid="struct_t_1_1binding_aa4e327e2f615f7a2c20dacbaa3a730b1_1aa4e327e2f615f7a2c20dacbaa3a730b1" compoundref="table_8c" startline="39">T::binding::link</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="struct_t_a26e23de58526d847534987d9531aef51_1a26e23de58526d847534987d9531aef51" compoundref="table_8c" startline="28">T::size</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <references refid="struct_t_a435a16de233b71e17a5186f56adea071_1a435a16de233b71e17a5186f56adea071" compoundref="table_8c" startline="32">T::timestamp</references>
+      </memberdef>
+      <memberdef kind="function" id="table_8h_af05036c74e08de9da1c51de68f6364e4_1af05036c74e08de9da1c51de68f6364e4" prot="public" static="no" extern="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Table_map</definition>
+        <argsstring>(T *table, void apply(const void *key, void **value, void *cl), void *cl)</argsstring>
+        <name>Table_map</name>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+          <declname>table</declname>
+        </param>
+        <param>
+          <type>void </type>
+          <declname>apply</declname>
+          <array>const void *key, void **value, void *cl</array>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>cl</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.h" line="24" column="15" bodyfile="Macaulay2/e/table.c" bodystart="109" bodyend="129" declfile="Macaulay2/e/table.h" declline="24" declcolumn="15"/>
+        <references refid="struct_t_adad3e68e3bfb5ff02e9d54fa83d84b28_1adad3e68e3bfb5ff02e9d54fa83d84b28">T::buckets</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="struct_t_a26e23de58526d847534987d9531aef51_1a26e23de58526d847534987d9531aef51" compoundref="table_8c" startline="28">T::size</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <references refid="struct_t_a435a16de233b71e17a5186f56adea071_1a435a16de233b71e17a5186f56adea071" compoundref="table_8c" startline="32">T::timestamp</references>
+      </memberdef>
+      <memberdef kind="function" id="table_8h_a5dd514e4a6882a789b1008aebb9e4d6f_1a5dd514e4a6882a789b1008aebb9e4d6f" prot="public" static="no" extern="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const void **</type>
+        <definition>const void ** Table_toArray</definition>
+        <argsstring>(T *table, void *end)</argsstring>
+        <name>Table_toArray</name>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> *</type>
+          <declname>table</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/table.h" line="27" column="19" bodyfile="Macaulay2/e/table.c" bodystart="150" bodyend="165" declfile="Macaulay2/e/table.h" declline="27" declcolumn="19"/>
+        <references refid="struct_t_adad3e68e3bfb5ff02e9d54fa83d84b28_1adad3e68e3bfb5ff02e9d54fa83d84b28">T::buckets</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="m2-mem_8cpp_a6807bb51e1c9f3335f018dd77f7e9d5b_1a6807bb51e1c9f3335f018dd77f7e9d5b" compoundref="m2-mem_8cpp" startline="74" endline="91">getmem</references>
+        <references refid="struct_t_ac165cb2e47175ce65b25465d5bd8556d_1ac165cb2e47175ce65b25465d5bd8556d" compoundref="table_8c" startline="31">T::length</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="struct_t_a26e23de58526d847534987d9531aef51_1a26e23de58526d847534987d9531aef51" compoundref="table_8c" startline="28">T::size</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+        <referencedby refid="exptable_8c_a658ade4ce8bfcad70119113f4fdeae8e_1a658ade4ce8bfcad70119113f4fdeae8e" compoundref="exptable_8c" startline="79" endline="82">exponent_table_to_array</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*<sp/>$Id$<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>This<sp/>is<sp/>from<sp/>Hanson&apos;s<sp/>code,<sp/>from<sp/>his<sp/>book:<sp/>C<sp/>interfaces<sp/>and<sp/>implementations.</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/><sp/><sp/>I<sp/>have<sp/>added<sp/>c++<sp/>ifdef&apos;s<sp/>to<sp/>be<sp/>able<sp/>to<sp/>use<sp/>it<sp/>from<sp/>C++,<sp/>MES,<sp/>July<sp/>2002<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>TABLE_INCLUDED</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>TABLE_INCLUDED</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8" refid="table_8h_a0acb682b8260ab1c60b918599864e2e5_1a0acb682b8260ab1c60b918599864e2e5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>T<sp/>Table_T</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref>;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(__cplusplus)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/><ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/>*<sp/><sp/><sp/><ref refid="table_8h_acb62762c32d1b74f3dde5df0462d4955_1acb62762c32d1b74f3dde5df0462d4955" kindref="member">Table_new</ref><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>hint,</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cmp(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*y),</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/>hash(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*key));</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="table_8h_a2831e8b0428674569e948b6806e10fb6_1a2831e8b0428674569e948b6806e10fb6" kindref="member">Table_free</ref>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/>**table);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="table_8h_a06dbf87743b1cac6c15c73716a3f3598_1a06dbf87743b1cac6c15c73716a3f3598" kindref="member">Table_length</ref>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/>*<sp/>table);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="table_8h_ac18704c6d5a33b3698ae7a1f93d92694_1ac18704c6d5a33b3698ae7a1f93d92694" kindref="member">Table_put</ref><sp/><sp/><sp/>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/>*<sp/>table,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*key,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*value);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="table_8h_a74543c15c1a59048507f504a4d17f458_1a74543c15c1a59048507f504a4d17f458" kindref="member">Table_get</ref><sp/><sp/><sp/>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/>*<sp/>table,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*key);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="table_8h_ac76d8a76af9448767fca6d00d084a078_1ac76d8a76af9448767fca6d00d084a078" kindref="member">Table_remove</ref>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/>*<sp/>table,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*key);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="table_8h_af05036c74e08de9da1c51de68f6364e4_1af05036c74e08de9da1c51de68f6364e4" kindref="member">Table_map</ref><sp/><sp/><sp/><sp/>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/>*<sp/>table,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>apply(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*key,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>**value,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*cl),</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*cl);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>**<ref refid="table_8h_a5dd514e4a6882a789b1008aebb9e4d6f_1a5dd514e4a6882a789b1008aebb9e4d6f" kindref="member">Table_toArray</ref>(<ref refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" kindref="member">T</ref><sp/>*<sp/>table,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*<ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(__cplusplus)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>T</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="37"><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight></codeline>
+<codeline lineno="38"><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight></codeline>
+<codeline lineno="39"><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight></codeline>
+<codeline lineno="40"><highlight class="comment">//<sp/>End:</highlight></codeline>
+<codeline lineno="41"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/table.h"/>
+  </compounddef>
+</doxygen>

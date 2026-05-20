@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structbinomial__s__pair__set_1_1s__pair__elem" kind="struct" language="C++" prot="private">
+    <compoundname>binomial_s_pair_set::s_pair_elem</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbinomial__s__pair__set_1_1s__pair__elem_a6e852039fbc3b0daf475253adff8213c_1a6e852039fbc3b0daf475253adff8213c" prot="public" static="no" mutable="no">
+        <type><ref refid="structbinomial__s__pair__set_1_1s__pair__elem_a3e1b9faa1ac7260dcb0dc58243d60efc_1a3e1b9faa1ac7260dcb0dc58243d60efc" kindref="member">s_pair_elem</ref> *</type>
+        <definition>s_pair_elem* binomial_s_pair_set::s_pair_elem::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>binomial_s_pair_set::s_pair_elem::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="185" column="17" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="185" bodyend="-1"/>
+        <referencedby refid="classbinomial__s__pair__set_acd26d583d97a86a5b89b57974a9b0a7f_1acd26d583d97a86a5b89b57974a9b0a7f" compoundref="gb-toric_8cpp" startline="449" endline="461">binomial_s_pair_set::enlarge</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a2e04ded21c1e852fc1dcae58ed175959_1a2e04ded21c1e852fc1dcae58ed175959" compoundref="gb-toric_8cpp" startline="495" endline="525">binomial_s_pair_set::insert_pair</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a5cf49c4a71718e25b9f45834433fa15c_1a5cf49c4a71718e25b9f45834433fa15c" compoundref="gb-toric_8cpp" startline="463" endline="473">binomial_s_pair_set::remove_lcm_list</referencedby>
+        <referencedby refid="structbinomial__s__pair__set_1_1s__pair__elem_a3e1b9faa1ac7260dcb0dc58243d60efc_1a3e1b9faa1ac7260dcb0dc58243d60efc" compoundref="gb-toric_8hpp" startline="188" endline="191">s_pair_elem</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structbinomial__s__pair__set_1_1s__pair__elem_a020ade5019567dc71c6b6a25bb544b4d_1a020ade5019567dc71c6b6a25bb544b4d" prot="public" static="no" mutable="no">
+        <type><ref refid="structbinomial__gb__elem" kindref="compound">binomial_gb_elem</ref> *</type>
+        <definition>binomial_gb_elem* binomial_s_pair_set::s_pair_elem::f1</definition>
+        <argsstring></argsstring>
+        <name>f1</name>
+        <qualifiedname>binomial_s_pair_set::s_pair_elem::f1</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="186" column="22" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="186" bodyend="-1"/>
+        <referencedby refid="structbinomial__s__pair__set_1_1s__pair__elem_a3e1b9faa1ac7260dcb0dc58243d60efc_1a3e1b9faa1ac7260dcb0dc58243d60efc" compoundref="gb-toric_8hpp" startline="188" endline="191">s_pair_elem</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structbinomial__s__pair__set_1_1s__pair__elem_a0e99e97f11a1b9bd7a9a461b7a194745_1a0e99e97f11a1b9bd7a9a461b7a194745" prot="public" static="no" mutable="no">
+        <type><ref refid="structbinomial__gb__elem" kindref="compound">binomial_gb_elem</ref> *</type>
+        <definition>binomial_gb_elem* binomial_s_pair_set::s_pair_elem::f2</definition>
+        <argsstring></argsstring>
+        <name>f2</name>
+        <qualifiedname>binomial_s_pair_set::s_pair_elem::f2</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="187" column="22" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="187" bodyend="-1"/>
+        <referencedby refid="structbinomial__s__pair__set_1_1s__pair__elem_a3e1b9faa1ac7260dcb0dc58243d60efc_1a3e1b9faa1ac7260dcb0dc58243d60efc" compoundref="gb-toric_8hpp" startline="188" endline="191">s_pair_elem</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structbinomial__s__pair__set_1_1s__pair__elem_a3e1b9faa1ac7260dcb0dc58243d60efc_1a3e1b9faa1ac7260dcb0dc58243d60efc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>binomial_s_pair_set::s_pair_elem::s_pair_elem</definition>
+        <argsstring>(binomial_gb_elem *ff1, binomial_gb_elem *ff2)</argsstring>
+        <name>s_pair_elem</name>
+        <qualifiedname>binomial_s_pair_set::s_pair_elem::s_pair_elem</qualifiedname>
+        <param>
+          <type><ref refid="structbinomial__gb__elem" kindref="compound">binomial_gb_elem</ref> *</type>
+          <declname>ff1</declname>
+        </param>
+        <param>
+          <type><ref refid="structbinomial__gb__elem" kindref="compound">binomial_gb_elem</ref> *</type>
+          <declname>ff2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-toric.hpp" line="188" column="5" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="188" bodyend="191"/>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__elem_a020ade5019567dc71c6b6a25bb544b4d_1a020ade5019567dc71c6b6a25bb544b4d" compoundref="gb-toric_8hpp" startline="186">f1</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__elem_a0e99e97f11a1b9bd7a9a461b7a194745_1a0e99e97f11a1b9bd7a9a461b7a194745" compoundref="gb-toric_8hpp" startline="187">f2</references>
+        <references refid="structbinomial__s__pair__set_1_1s__pair__elem_a6e852039fbc3b0daf475253adff8213c_1a6e852039fbc3b0daf475253adff8213c" compoundref="gb-toric_8hpp" startline="185">next</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>binomial_s_pair_set::s_pair_elem</label>
+        <link refid="structbinomial__s__pair__set_1_1s__pair__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>binomial</label>
+        <link refid="structbinomial"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>lead</edgelabel>
+          <edgelabel>tail</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>binomial_gb_elem</label>
+        <link refid="structbinomial__gb__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>next</edgelabel>
+          <edgelabel>smaller</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>f</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>binomial_s_pair_set::s_pair_elem</label>
+        <link refid="structbinomial__s__pair__set_1_1s__pair__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>f1</edgelabel>
+          <edgelabel>f2</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-toric.hpp" line="183" column="3" bodyfile="Macaulay2/e/gb-toric.hpp" bodystart="184" bodyend="192"/>
+    <listofallmembers>
+      <member refid="structbinomial__s__pair__set_1_1s__pair__elem_a020ade5019567dc71c6b6a25bb544b4d_1a020ade5019567dc71c6b6a25bb544b4d" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>f1</name></member>
+      <member refid="structbinomial__s__pair__set_1_1s__pair__elem_a0e99e97f11a1b9bd7a9a461b7a194745_1a0e99e97f11a1b9bd7a9a461b7a194745" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>f2</name></member>
+      <member refid="structbinomial__s__pair__set_1_1s__pair__elem_a6e852039fbc3b0daf475253adff8213c_1a6e852039fbc3b0daf475253adff8213c" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>next</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>operator new[]</name></member>
+      <member refid="structbinomial__s__pair__set_1_1s__pair__elem_a3e1b9faa1ac7260dcb0dc58243d60efc_1a3e1b9faa1ac7260dcb0dc58243d60efc" prot="public" virt="non-virtual"><scope>binomial_s_pair_set::s_pair_elem</scope><name>s_pair_elem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

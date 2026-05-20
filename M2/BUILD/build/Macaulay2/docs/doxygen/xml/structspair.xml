@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structspair" kind="struct" language="C++" prot="public">
+    <compoundname>spair</compoundname>
+    <includes refid="f4-types_8hpp" local="no">f4-types.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structspair_a848b22d9e475eea55f5e2fab033d1209_1a848b22d9e475eea55f5e2fab033d1209" prot="public" static="no" mutable="no">
+        <type><ref refid="f4-types_8hpp_ae9790f5914af2c375b70fb21b924cf42_1ae9790f5914af2c375b70fb21b924cf42" kindref="member">SPairType</ref></type>
+        <definition>SPairType spair::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <qualifiedname>spair::type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="122" column="13" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="122" bodyend="-1"/>
+        <referencedby refid="structspair_a2d34999340bd7065a2f61dd24efb17a8_1a2d34999340bd7065a2f61dd24efb17a8" compoundref="f4-types_8hpp" startline="128" endline="128">spair</referencedby>
+        <referencedby refid="structspair_a6249b7f1cc079dc6c4a2b8b67a4c227e_1a6249b7f1cc079dc6c4a2b8b67a4c227e" compoundref="f4-types_8hpp" startline="129" endline="130">spair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structspair_ab2110251754ccb047f0a71b2200c30e8_1ab2110251754ccb047f0a71b2200c30e8" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int spair::deg</definition>
+        <argsstring></argsstring>
+        <name>deg</name>
+        <qualifiedname>spair::deg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="123" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="123" bodyend="-1"/>
+        <referencedby refid="class_s_pair_compare_ad700bbd0b06c2cdbd271f98034de801a_1ad700bbd0b06c2cdbd271f98034de801a" compoundref="f4-types_8hpp" startline="331" endline="339">SPairCompare::operator()</referencedby>
+        <referencedby refid="structspair_a2d34999340bd7065a2f61dd24efb17a8_1a2d34999340bd7065a2f61dd24efb17a8" compoundref="f4-types_8hpp" startline="128" endline="128">spair</referencedby>
+        <referencedby refid="structspair_a6249b7f1cc079dc6c4a2b8b67a4c227e_1a6249b7f1cc079dc6c4a2b8b67a4c227e" compoundref="f4-types_8hpp" startline="129" endline="130">spair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structspair_aab0f7ee3d8a7c5add822fe1ca98bc987_1aab0f7ee3d8a7c5add822fe1ca98bc987" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int spair::i</definition>
+        <argsstring></argsstring>
+        <name>i</name>
+        <qualifiedname>spair::i</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="124" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="124" bodyend="-1"/>
+        <referencedby refid="class_s_pair_compare_ad700bbd0b06c2cdbd271f98034de801a_1ad700bbd0b06c2cdbd271f98034de801a" compoundref="f4-types_8hpp" startline="331" endline="339">SPairCompare::operator()</referencedby>
+        <referencedby refid="structspair_a2d34999340bd7065a2f61dd24efb17a8_1a2d34999340bd7065a2f61dd24efb17a8" compoundref="f4-types_8hpp" startline="128" endline="128">spair</referencedby>
+        <referencedby refid="structspair_a6249b7f1cc079dc6c4a2b8b67a4c227e_1a6249b7f1cc079dc6c4a2b8b67a4c227e" compoundref="f4-types_8hpp" startline="129" endline="130">spair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structspair_a231a6101ead6705a69f17a420ce9aaa0_1a231a6101ead6705a69f17a420ce9aaa0" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int spair::j</definition>
+        <argsstring></argsstring>
+        <name>j</name>
+        <qualifiedname>spair::j</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="125" column="7" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="125" bodyend="-1"/>
+        <referencedby refid="structspair_a2d34999340bd7065a2f61dd24efb17a8_1a2d34999340bd7065a2f61dd24efb17a8" compoundref="f4-types_8hpp" startline="128" endline="128">spair</referencedby>
+        <referencedby refid="structspair_a6249b7f1cc079dc6c4a2b8b67a4c227e_1a6249b7f1cc079dc6c4a2b8b67a4c227e" compoundref="f4-types_8hpp" startline="129" endline="130">spair</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structspair_a3a67bf0a8802396b9e28e286083e9492_1a3a67bf0a8802396b9e28e286083e9492" prot="public" static="no" mutable="no">
+        <type><ref refid="moninfo_8hpp_afe2d8fe59c70630e71d82733c3f8ddcb_1afe2d8fe59c70630e71d82733c3f8ddcb" kindref="member">monomial_word</ref> *</type>
+        <definition>monomial_word* spair::lcm</definition>
+        <argsstring></argsstring>
+        <name>lcm</name>
+        <qualifiedname>spair::lcm</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="126" column="17" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="126" bodyend="-1"/>
+        <referencedby refid="structspair_a2d34999340bd7065a2f61dd24efb17a8_1a2d34999340bd7065a2f61dd24efb17a8" compoundref="f4-types_8hpp" startline="128" endline="128">spair</referencedby>
+        <referencedby refid="structspair_a6249b7f1cc079dc6c4a2b8b67a4c227e_1a6249b7f1cc079dc6c4a2b8b67a4c227e" compoundref="f4-types_8hpp" startline="129" endline="130">spair</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structspair_a2d34999340bd7065a2f61dd24efb17a8_1a2d34999340bd7065a2f61dd24efb17a8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>spair::spair</definition>
+        <argsstring>()</argsstring>
+        <name>spair</name>
+        <qualifiedname>spair::spair</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="128" column="3" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="128" bodyend="128"/>
+        <references refid="structspair_ab2110251754ccb047f0a71b2200c30e8_1ab2110251754ccb047f0a71b2200c30e8" compoundref="f4-types_8hpp" startline="123">deg</references>
+        <references refid="structspair_aab0f7ee3d8a7c5add822fe1ca98bc987_1aab0f7ee3d8a7c5add822fe1ca98bc987" compoundref="f4-types_8hpp" startline="124">i</references>
+        <references refid="structspair_a231a6101ead6705a69f17a420ce9aaa0_1a231a6101ead6705a69f17a420ce9aaa0" compoundref="f4-types_8hpp" startline="125">j</references>
+        <references refid="structspair_a3a67bf0a8802396b9e28e286083e9492_1a3a67bf0a8802396b9e28e286083e9492" compoundref="f4-types_8hpp" startline="126">lcm</references>
+        <references refid="structspair_a848b22d9e475eea55f5e2fab033d1209_1a848b22d9e475eea55f5e2fab033d1209" compoundref="f4-types_8hpp" startline="122">type</references>
+      </memberdef>
+      <memberdef kind="function" id="structspair_a6249b7f1cc079dc6c4a2b8b67a4c227e_1a6249b7f1cc079dc6c4a2b8b67a4c227e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>spair::spair</definition>
+        <argsstring>(SPairType t, int deg0, int i0, int j0, monomial_word *lcm0)</argsstring>
+        <name>spair</name>
+        <qualifiedname>spair::spair</qualifiedname>
+        <param>
+          <type><ref refid="f4-types_8hpp_ae9790f5914af2c375b70fb21b924cf42_1ae9790f5914af2c375b70fb21b924cf42" kindref="member">SPairType</ref></type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>deg0</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i0</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>j0</declname>
+        </param>
+        <param>
+          <type><ref refid="moninfo_8hpp_afe2d8fe59c70630e71d82733c3f8ddcb_1afe2d8fe59c70630e71d82733c3f8ddcb" kindref="member">monomial_word</ref> *</type>
+          <declname>lcm0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/f4-types.hpp" line="129" column="3" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="129" bodyend="130"/>
+        <references refid="structspair_ab2110251754ccb047f0a71b2200c30e8_1ab2110251754ccb047f0a71b2200c30e8" compoundref="f4-types_8hpp" startline="123">deg</references>
+        <references refid="structspair_aab0f7ee3d8a7c5add822fe1ca98bc987_1aab0f7ee3d8a7c5add822fe1ca98bc987" compoundref="f4-types_8hpp" startline="124">i</references>
+        <references refid="structspair_a231a6101ead6705a69f17a420ce9aaa0_1a231a6101ead6705a69f17a420ce9aaa0" compoundref="f4-types_8hpp" startline="125">j</references>
+        <references refid="structspair_a3a67bf0a8802396b9e28e286083e9492_1a3a67bf0a8802396b9e28e286083e9492" compoundref="f4-types_8hpp" startline="126">lcm</references>
+        <references refid="structspair_a848b22d9e475eea55f5e2fab033d1209_1a848b22d9e475eea55f5e2fab033d1209" compoundref="f4-types_8hpp" startline="122">type</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>SPairType</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>long</label>
+      </node>
+      <node id="1">
+        <label>spair</label>
+        <link refid="structspair"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>deg</edgelabel>
+          <edgelabel>i</edgelabel>
+          <edgelabel>j</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>lcm</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/f4-types.hpp" line="119" column="1" bodyfile="Macaulay2/e/f4/f4-types.hpp" bodystart="120" bodyend="131"/>
+    <listofallmembers>
+      <member refid="structspair_ab2110251754ccb047f0a71b2200c30e8_1ab2110251754ccb047f0a71b2200c30e8" prot="public" virt="non-virtual"><scope>spair</scope><name>deg</name></member>
+      <member refid="structspair_aab0f7ee3d8a7c5add822fe1ca98bc987_1aab0f7ee3d8a7c5add822fe1ca98bc987" prot="public" virt="non-virtual"><scope>spair</scope><name>i</name></member>
+      <member refid="structspair_a231a6101ead6705a69f17a420ce9aaa0_1a231a6101ead6705a69f17a420ce9aaa0" prot="public" virt="non-virtual"><scope>spair</scope><name>j</name></member>
+      <member refid="structspair_a3a67bf0a8802396b9e28e286083e9492_1a3a67bf0a8802396b9e28e286083e9492" prot="public" virt="non-virtual"><scope>spair</scope><name>lcm</name></member>
+      <member refid="structspair_a2d34999340bd7065a2f61dd24efb17a8_1a2d34999340bd7065a2f61dd24efb17a8" prot="public" virt="non-virtual"><scope>spair</scope><name>spair</name></member>
+      <member refid="structspair_a6249b7f1cc079dc6c4a2b8b67a4c227e_1a6249b7f1cc079dc6c4a2b8b67a4c227e" prot="public" virt="non-virtual"><scope>spair</scope><name>spair</name></member>
+      <member refid="structspair_a848b22d9e475eea55f5e2fab033d1209_1a848b22d9e475eea55f5e2fab033d1209" prot="public" virt="non-virtual"><scope>spair</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

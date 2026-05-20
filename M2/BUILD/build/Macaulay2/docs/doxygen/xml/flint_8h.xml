@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="flint_8h" kind="file" language="C++">
+    <compoundname>flint.h</compoundname>
+    <includes refid="engine-includes_8hpp" local="yes">engine-includes.hpp</includes>
+    <includedby refid="engine_8h" local="yes">Macaulay2/e/engine.h</includedby>
+    <includedby refid="flint_8cpp" local="yes">Macaulay2/e/interface/flint.cpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/interface/flint.h</label>
+        <link refid="flint_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>M2/config.h</label>
+      </node>
+      <node id="7">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="6">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="5">
+        <label>stdint.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/engine.h</label>
+        <link refid="engine_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/interface/flint.cpp</label>
+        <link refid="flint_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/interface/flint.h</label>
+        <link refid="flint_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/unit-tests/testMain.cpp</label>
+        <link refid="_macaulay2_2e_2unit-tests_2test_main_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="flint_8h_aa6d50580684413c3a42c3c85a1343da4_1aa6d50580684413c3a42c3c85a1343da4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool rawZZisPrime</definition>
+        <argsstring>(gmp_ZZ a)</argsstring>
+        <name>rawZZisPrime</name>
+        <param>
+          <type><ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref> primality and factorization interface routines via Flint </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/flint.h" line="44" column="9" bodyfile="Macaulay2/e/interface/flint.cpp" bodystart="18" bodyend="30" declfile="Macaulay2/e/interface/flint.h" declline="44" declcolumn="9"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+      </memberdef>
+      <memberdef kind="function" id="flint_8h_ab40a7d44c5311ebdb77e9fbcf30f8bb7_1ab40a7d44c5311ebdb77e9fbcf30f8bb7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool rawZZisProbablePrime</definition>
+        <argsstring>(gmp_ZZ a)</argsstring>
+        <name>rawZZisProbablePrime</name>
+        <param>
+          <type><ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/flint.h" line="46" column="9" bodyfile="Macaulay2/e/interface/flint.cpp" bodystart="32" bodyend="40" declfile="Macaulay2/e/interface/flint.h" declline="46" declcolumn="9"/>
+      </memberdef>
+      <memberdef kind="function" id="flint_8h_a37a26fe4308f16c2bcfa20318e14af7e_1a37a26fe4308f16c2bcfa20318e14af7e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>gmp_arrayZZ</type>
+        <definition>gmp_arrayZZ rawZZfactor</definition>
+        <argsstring>(gmp_ZZ a)</argsstring>
+        <name>rawZZfactor</name>
+        <param>
+          <type><ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/flint.h" line="48" column="13" bodyfile="Macaulay2/e/interface/flint.cpp" bodystart="46" bodyend="82" declfile="Macaulay2/e/interface/flint.h" declline="48" declcolumn="13"/>
+        <references refid="m2-mem_8h_a31dcc58936c13ff01270d6ee43733178_1a31dcc58936c13ff01270d6ee43733178" compoundref="m2-mem_8h" startline="140">getmemarraytype</references>
+        <references refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" compoundref="gmp-util_8h" startline="44" endline="54">mpz_reallocate_limbs</references>
+        <references refid="newdelete_8hpp_a4b6a76f68cebc914ce819a24aedda112_1a4b6a76f68cebc914ce819a24aedda112" compoundref="newdelete_8hpp" startline="84">newitem</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Engine-boundary C API exposing FLINT&apos;s integer primality and factorisation services. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares the three <computeroutput>extern "C"</computeroutput> entry points the <ref refid="namespace_m2" kindref="compound">M2</ref> interpreter routes to FLINT for big-integer number theory: <computeroutput><ref refid="flint_8h_aa6d50580684413c3a42c3c85a1343da4_1aa6d50580684413c3a42c3c85a1343da4" kindref="member">rawZZisPrime</ref></computeroutput> (exact primality via <computeroutput>fmpz_is_prime</computeroutput> <mdash/> errors out via <computeroutput><ref refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" kindref="member">ERROR</ref></computeroutput> if FLINT returns a negative status), <computeroutput><ref refid="flint_8h_ab40a7d44c5311ebdb77e9fbcf30f8bb7_1ab40a7d44c5311ebdb77e9fbcf30f8bb7" kindref="member">rawZZisProbablePrime</ref></computeroutput> (probable-primality via FLINT&apos;s <computeroutput>fmpz_is_probabprime</computeroutput>, which combines several tests internally), and <computeroutput><ref refid="flint_8h_a37a26fe4308f16c2bcfa20318e14af7e_1a37a26fe4308f16c2bcfa20318e14af7e" kindref="member">rawZZfactor</ref></computeroutput> (full integer factorisation through <computeroutput>fmpz_factor</computeroutput>). Inputs arrive as <computeroutput><ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref></computeroutput>; the implementation handles the GMP-to-FLINT <computeroutput>fmpz_set_mpz</computeroutput> / <computeroutput>fmpz_clear</computeroutput> round-trip internally so the interpreter never sees <computeroutput>fmpz_t</computeroutput>. <computeroutput><ref refid="flint_8h_a37a26fe4308f16c2bcfa20318e14af7e_1a37a26fe4308f16c2bcfa20318e14af7e" kindref="member">rawZZfactor</ref></computeroutput> returns a <computeroutput>gmp_arrayZZ</computeroutput> of total length <computeroutput>2*num_factors + 1</computeroutput> shaped <computeroutput>[sign, prime_1, mult_1, prime_2, mult_2, ...]</computeroutput> <mdash/> the leading element is the input&apos;s sign, not a prime.</para>
+<para>FLINT is consumed pervasively <emphasis>inside</emphasis> the engine (see the <computeroutput>aring-*-flint</computeroutput> and <computeroutput>dmat-*-flint</computeroutput> families), but this header is the only place where FLINT-backed services are exposed directly to the interpreter; everything else stays private to its owning class.</para>
+<para><simplesect kind="see"><para><ref refid="flint_8cpp" kindref="compound">flint.cpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="factory_8h" kindref="compound">factory.h</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="engine-includes_8hpp" kindref="compound">engine-includes.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>_flint_h_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>define<sp/>_flint_h_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>include<sp/>&quot;<ref refid="engine-includes_8hpp" kindref="compound">engine-includes.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>if<sp/>defined(__cplusplus)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref><sp/><ref refid="flint_8h_aa6d50580684413c3a42c3c85a1343da4_1aa6d50580684413c3a42c3c85a1343da4" kindref="member">rawZZisPrime</ref>(<ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref><sp/>a);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref><sp/><ref refid="flint_8h_ab40a7d44c5311ebdb77e9fbcf30f8bb7_1ab40a7d44c5311ebdb77e9fbcf30f8bb7" kindref="member">rawZZisProbablePrime</ref>(<ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref><sp/>a);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal">gmp_arrayZZ<sp/><ref refid="flint_8h_a37a26fe4308f16c2bcfa20318e14af7e_1a37a26fe4308f16c2bcfa20318e14af7e" kindref="member">rawZZfactor</ref>(<ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref><sp/>a);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>if<sp/>defined(__cplusplus)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/><sp/>endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>_flint_h_<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/interface/flint.h"/>
+  </compounddef>
+</doxygen>

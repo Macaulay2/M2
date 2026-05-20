@@ -1,0 +1,537 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="frac_8hpp" kind="file" language="C++">
+    <compoundname>frac.hpp</compoundname>
+    <includes refid="monoid_8hpp" local="yes">monoid.hpp</includes>
+    <includes refid="ring_8hpp" local="yes">ring.hpp</includes>
+    <includes refid="_macaulay2_2e_2polyring_8hpp" local="yes">polyring.hpp</includes>
+    <includedby refid="frac_8cpp" local="yes">Macaulay2/e/frac.cpp</includedby>
+    <includedby refid="interface_2ring_8cpp" local="yes">Macaulay2/e/interface/ring.cpp</includedby>
+    <includedby refid="poly_8cpp" local="yes">Macaulay2/e/poly.cpp</includedby>
+    <includedby refid="relem_8cpp" local="yes">Macaulay2/e/relem.cpp</includedby>
+    <incdepgraph>
+      <node id="6">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="19">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/frac.hpp</label>
+        <link refid="frac_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>interface/computation.h</label>
+        <link refid="computation_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>qring.hpp</label>
+        <link refid="qring_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="22">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>M2/config.h</label>
+      </node>
+      <node id="13">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="12">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="15">
+        <label>assert.h</label>
+      </node>
+      <node id="21">
+        <label>cassert</label>
+      </node>
+      <node id="41">
+        <label>cstddef</label>
+      </node>
+      <node id="7">
+        <label>cstdio</label>
+      </node>
+      <node id="27">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="30">
+        <label>iostream</label>
+      </node>
+      <node id="37">
+        <label>memory</label>
+      </node>
+      <node id="3">
+        <label>stddef.h</label>
+      </node>
+      <node id="20">
+        <label>stdexcept</label>
+      </node>
+      <node id="11">
+        <label>stdint.h</label>
+      </node>
+      <node id="25">
+        <label>stdlib.h</label>
+      </node>
+      <node id="4">
+        <label>string</label>
+      </node>
+      <node id="16">
+        <label>string.h</label>
+      </node>
+      <node id="17">
+        <label>type_traits</label>
+      </node>
+      <node id="35">
+        <label>utility</label>
+      </node>
+      <node id="26">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="5">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/frac.cpp</label>
+        <link refid="frac_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/frac.hpp</label>
+        <link refid="frac_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/poly.cpp</label>
+        <link refid="poly_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/relem.cpp</label>
+        <link refid="relem_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structfrac__elem" prot="public">frac_elem</innerclass>
+    <innerclass refid="class_fraction_field" prot="public">FractionField</innerclass>
+    <briefdescription>
+<para><computeroutput><ref refid="class_fraction_field" kindref="compound">FractionField</ref></computeroutput> <mdash/> field of fractions of an integral domain, with on-the-fly normalisation. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares <computeroutput><ref refid="class_fraction_field" kindref="compound">FractionField</ref></computeroutput> (a <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput> subclass) along with its value type <computeroutput><ref refid="structfrac__elem" kindref="compound">frac_elem</ref></computeroutput>, a <computeroutput>(numer, denom)</computeroutput> pair of <computeroutput><ref refid="unionring__elem" kindref="compound">ring_elem</ref></computeroutput>s. Construction wraps a base ring <computeroutput>R_</computeroutput> that the caller asserts is an integral domain; the engine does not verify this, so a non-domain input produces silent garbage and the M2-side wrapper is responsible for the check. Every arithmetic op (<computeroutput>a/b + c/d = (ad + bc)/bd</computeroutput>, similarly for multiplication) is followed by a <computeroutput>simplify</computeroutput> pass that normalises the denominator&apos;s sign / leading coefficient so that <computeroutput>2/3</computeroutput> and <computeroutput>4/6</computeroutput> compare equal.</para>
+<para>When the base is <computeroutput><ref refid="ringelem_8hpp_afea72c39052b53d15e7acad8d36847c1_1afea72c39052b53d15e7acad8d36847c1" kindref="member">ZZ</ref>[x_1, ..., x_n]</computeroutput> or <computeroutput>(Z/p)[x_1, ..., x_n]</computeroutput> the <computeroutput>use_gcd_simplify</computeroutput> flag turns on an explicit GCD reduction that puts fractions into canonical form; other domains fall back to a weaker normalisation that still preserves equality but may leave common factors in place. The base must currently be a <computeroutput><ref refid="class_poly_ring_flat" kindref="compound">PolyRingFlat</ref></computeroutput>; iterated <computeroutput>frac(frac(R))</computeroutput> works only because the engine flattens first, an artefact the header comment flags as removable once fractions themselves become flat.</para>
+<para><simplesect kind="see"><para><ref refid="localring_8hpp" kindref="compound">localring.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="qring_8hpp" kindref="compound">qring.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para>polyring.hpp </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>1996<sp/>Michael<sp/>E.<sp/>Stillman.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_frac_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_frac_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="monoid_8hpp" kindref="compound">monoid.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ring_8hpp" kindref="compound">ring.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_macaulay2_2e_2polyring_8hpp" kindref="compound">polyring.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structfrac__elem" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structfrac__elem" kindref="compound">frac_elem</ref></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41" refid="structfrac__elem_a9f845989d42942789cf19281b5bd7e09_1a9f845989d42942789cf19281b5bd7e09" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="structfrac__elem_a9f845989d42942789cf19281b5bd7e09_1a9f845989d42942789cf19281b5bd7e09" kindref="member">numer</ref>;</highlight></codeline>
+<codeline lineno="42" refid="structfrac__elem_ad25c31c4a3fda9879b5cf0ef73b49b0c_1ad25c31c4a3fda9879b5cf0ef73b49b0c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="structfrac__elem_ad25c31c4a3fda9879b5cf0ef73b49b0c_1ad25c31c4a3fda9879b5cf0ef73b49b0c" kindref="member">denom</ref>;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="class_fraction_field" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_fraction_field_af2c95db110f2097b7ef0ea48b2019290_1af2c95db110f2097b7ef0ea48b2019290" kindref="member">FractionField</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_ring_afc47f40ab072db783126111b70693e49_1afc47f40ab072db783126111b70693e49" kindref="member">Ring</ref></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="59" refid="class_fraction_field_a8b5c2297018537f8497ed6ea72b4f49f_1a8b5c2297018537f8497ed6ea72b4f49f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_poly_ring_flat" kindref="compound">PolyRingFlat</ref><sp/>*<ref refid="class_fraction_field_a8b5c2297018537f8497ed6ea72b4f49f_1a8b5c2297018537f8497ed6ea72b4f49f" kindref="member">R_</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>Base<sp/>ring.<sp/><sp/>Assumed<sp/>to<sp/>be<sp/>a<sp/>domain.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="class_fraction_field_a894cd40a3d725c7388e6605b63831820_1a894cd40a3d725c7388e6605b63831820" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a894cd40a3d725c7388e6605b63831820_1a894cd40a3d725c7388e6605b63831820" kindref="member">use_gcd_simplify</ref>;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Use<sp/>built<sp/>in<sp/>gcd<sp/>only<sp/>if<sp/>this<sp/>is<sp/>frac(ZZ[xs])<sp/>or</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>frac(ZZ/p[xs])</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>When<sp/>we<sp/>(if<sp/>we)<sp/>change<sp/>fractions<sp/>to<sp/>be<sp/>flat,<sp/>then<sp/>this</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>restriction<sp/>should<sp/>go<sp/>away.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a6b31efd1b127a96642c6e3e8f97531f1_1a6b31efd1b127a96642c6e3e8f97531f1" kindref="member">set_non_unit_frac</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>top)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><ref refid="structfrac__elem" kindref="compound">frac_elem</ref><sp/>*<ref refid="class_fraction_field_a5cbad3580b3d3147552f3aa515b4d200_1a5cbad3580b3d3147552f3aa515b4d200" kindref="member">new_frac_elem</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a7e0bb0da2c18133c5026023be412c618_1a7e0bb0da2c18133c5026023be412c618" kindref="member">simplify</ref>(<ref refid="structfrac__elem" kindref="compound">frac_elem</ref><sp/>*f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><ref refid="structfrac__elem" kindref="compound">frac_elem</ref><sp/>*<ref refid="class_fraction_field_a77d464ccc2824344d0d68f698c8a86f0_1a77d464ccc2824344d0d68f698c8a86f0" kindref="member">make_elem</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>b)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="71" refid="class_fraction_field_af2c95db110f2097b7ef0ea48b2019290_1af2c95db110f2097b7ef0ea48b2019290" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_fraction_field_af2c95db110f2097b7ef0ea48b2019290_1af2c95db110f2097b7ef0ea48b2019290" kindref="member">FractionField</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="72" refid="class_fraction_field_afbfc9be7eedd9d9c43cd8d41cb3da148_1afbfc9be7eedd9d9c43cd8d41cb3da148" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_afbfc9be7eedd9d9c43cd8d41cb3da148_1afbfc9be7eedd9d9c43cd8d41cb3da148" kindref="member">~FractionField</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_abb5dc10ffd8cf26c8fc14345abadd5ae_1abb5dc10ffd8cf26c8fc14345abadd5ae" kindref="member">initialize_frac</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_poly_ring_flat" kindref="compound">PolyRingFlat</ref><sp/>*R);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field" kindref="compound">FractionField</ref><sp/>*<ref refid="class_fraction_field_a579a17e3477967ef7ab9511472453dc8_1a579a17e3477967ef7ab9511472453dc8" kindref="member">create</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_poly_ring_flat" kindref="compound">PolyRingFlat</ref><sp/>*R);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="class_fraction_field_a6e7d1c216476bb5a25dee812517634bf_1a6e7d1c216476bb5a25dee812517634bf" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_fraction_field_af2c95db110f2097b7ef0ea48b2019290_1af2c95db110f2097b7ef0ea48b2019290" kindref="member">FractionField</ref><sp/>*<ref refid="class_fraction_field_a6e7d1c216476bb5a25dee812517634bf_1a6e7d1c216476bb5a25dee812517634bf" kindref="member">cast_to_FractionField</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="79" refid="class_fraction_field_a92ceb5d49c40c6215f9ddc260162b596_1a92ceb5d49c40c6215f9ddc260162b596" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_af2c95db110f2097b7ef0ea48b2019290_1af2c95db110f2097b7ef0ea48b2019290" kindref="member">FractionField</ref><sp/>*<ref refid="class_fraction_field_a92ceb5d49c40c6215f9ddc260162b596_1a92ceb5d49c40c6215f9ddc260162b596" kindref="member">cast_to_FractionField</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="80" refid="class_fraction_field_a41dab619661a64ec7e9844ab4d80b4a0_1a41dab619661a64ec7e9844ab4d80b4a0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring_afc47f40ab072db783126111b70693e49_1afc47f40ab072db783126111b70693e49" kindref="member">Ring</ref><sp/>*<ref refid="class_fraction_field_a41dab619661a64ec7e9844ab4d80b4a0_1a41dab619661a64ec7e9844ab4d80b4a0" kindref="member">get_ring</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a8b5c2297018537f8497ed6ea72b4f49f_1a8b5c2297018537f8497ed6ea72b4f49f" kindref="member">R_</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="81" refid="class_fraction_field_ac5148b319a3cb5f80aac7a8e260bf7ef_1ac5148b319a3cb5f80aac7a8e260bf7ef" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_ac5148b319a3cb5f80aac7a8e260bf7ef_1ac5148b319a3cb5f80aac7a8e260bf7ef" kindref="member">get_precision</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a8b5c2297018537f8497ed6ea72b4f49f_1a8b5c2297018537f8497ed6ea72b4f49f" kindref="member">R_</ref>-&gt;get_precision();<sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a6fdf270875823c56409d0034fcdb94da_1a6fdf270875823c56409d0034fcdb94da" kindref="member">numerator</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_ad03d0be4ae260241c36e0d0c8b524ab2_1ad03d0be4ae260241c36e0d0c8b524ab2" kindref="member">denominator</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_ad1c3f1b424a05f20089ea320932e990e_1ad1c3f1b424a05f20089ea320932e990e" kindref="member">fraction</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>top,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>bottom)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>are<sp/>all<sp/>the<sp/>routines<sp/>required<sp/>by<sp/>&apos;ring&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="class_fraction_field_aee4529569285e7c05c9b937276e58064_1aee4529569285e7c05c9b937276e58064" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_aee4529569285e7c05c9b937276e58064_1aee4529569285e7c05c9b937276e58064" kindref="member">is_fraction_field</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="88" refid="class_fraction_field_ac3d19c60f030a2a896b4096e7ccf2f6e_1ac3d19c60f030a2a896b4096e7ccf2f6e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_ac3d19c60f030a2a896b4096e7ccf2f6e_1ac3d19c60f030a2a896b4096e7ccf2f6e" kindref="member">is_graded</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a8b5c2297018537f8497ed6ea72b4f49f_1a8b5c2297018537f8497ed6ea72b4f49f" kindref="member">R_</ref>-&gt;is_graded();<sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>CoefficientType<sp/><ref refid="class_fraction_field_a826925ce4690242bb497ecdafe8de7b2_1a826925ce4690242bb497ecdafe8de7b2" kindref="member">coefficient_type</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a8f436214389b82033c88ce43d0d5fd6a_1a8f436214389b82033c88ce43d0d5fd6a" kindref="member">n_fraction_vars</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a2f5da7a88eacc9ce3104991d95af5770_1a2f5da7a88eacc9ce3104991d95af5770" kindref="member">text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a5b2b327c2123f9fe0b0d53fb47d5c53e_1a5b2b327c2123f9fe0b0d53fb47d5c53e" kindref="member">computeHashValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_ae29b291c2e7899c458c81d8dd795f048_1ae29b291c2e7899c458c81d8dd795f048" kindref="member">from_long</ref>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_add8a16928615eb84428c9af5f791c14a_1add8a16928615eb84428c9af5f791c14a" kindref="member">from_int</ref>(mpz_srcptr<sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a84edbf6d4fb0bd59db79db992b93d16a_1a84edbf6d4fb0bd59db79db992b93d16a" kindref="member">from_rational</ref>(mpq_srcptr<sp/>n,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_af4ff3757a0617dda18087d471ea6b428_1af4ff3757a0617dda18087d471ea6b428" kindref="member">var</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>v)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a32750a2f1f8a315d0de34b42780e70c6_1a32750a2f1f8a315d0de34b42780e70c6" kindref="member">index_of_var</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref><sp/><ref refid="class_fraction_field_ae6d4dec99efffa8e4f69534edb01e1fd_1ae6d4dec99efffa8e4f69534edb01e1fd" kindref="member">support</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a7456bfb44797a457a623c874f531d7ce_1a7456bfb44797a457a623c874f531d7ce" kindref="member">lower_content</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;c,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a061a70ae42aecfbcfbc93d290025a0a8_1a061a70ae42aecfbcfbc93d290025a0a8" kindref="member">promote</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*R,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a09db89cf6cc89d729e474a0738ac1f18_1a09db89cf6cc89d729e474a0738ac1f18" kindref="member">lift</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*R,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_adaa365352f5a155505fbef04182e87dd_1adaa365352f5a155505fbef04182e87dd" kindref="member">is_unit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a2f23ac0f7875fa0460a87759bdf9bd8e_1a2f23ac0f7875fa0460a87759bdf9bd8e" kindref="member">is_zero</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_ab63440af6f4b99851a00fb841c3482da_1ab63440af6f4b99851a00fb841c3482da" kindref="member">is_equal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a195f8b32752039bd2856d57e8bc1e63e_1a195f8b32752039bd2856d57e8bc1e63e" kindref="member">compare_elems</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a52bf2a244348c527f0a54adce7b0932b_1a52bf2a244348c527f0a54adce7b0932b" kindref="member">is_homogeneous</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_ab438bddec4ce5dbaaddf18145d09b3c3_1ab438bddec4ce5dbaaddf18145d09b3c3" kindref="member">multi_degree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/><ref refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" kindref="member">monomial</ref><sp/>d)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a9095ac37b0d7860eaceee30df7d0479d_1a9095ac37b0d7860eaceee30df7d0479d" kindref="member">degree_weights</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;int&gt;<sp/>&amp;wts,</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>&amp;lo,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>&amp;hi)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a32c58554a38bfb8ba18c59534539164f_1a32c58554a38bfb8ba18c59534539164f" kindref="member">homogenize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>v,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>deg,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;int&gt;<sp/>&amp;wts)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a32c58554a38bfb8ba18c59534539164f_1a32c58554a38bfb8ba18c59534539164f" kindref="member">homogenize</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>v,</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;int&gt;<sp/>&amp;wts)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a8eda2ae4390038386d115cf997dfb52f_1a8eda2ae4390038386d115cf997dfb52f" kindref="member">copy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_af8a0aa1d947b44ed2651efb90c5b534e_1af8a0aa1d947b44ed2651efb90c5b534e" kindref="member">remove</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_ad62d96fe52dd13f7303ef112c4420fff_1ad62d96fe52dd13f7303ef112c4420fff" kindref="member">internal_negate_to</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_ae87ab39d591aeeb457428841e712c291_1ae87ab39d591aeeb457428841e712c291" kindref="member">internal_add_to</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a12dc3fab0cdb2854fce1dbd3d2cfdae9_1a12dc3fab0cdb2854fce1dbd3d2cfdae9" kindref="member">internal_subtract_to</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_ab7d8355badf5dbd1698a2d43ec4f3ea1_1ab7d8355badf5dbd1698a2d43ec4f3ea1" kindref="member">negate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a7493d0b44726fdce09b5bd2577cde655_1a7493d0b44726fdce09b5bd2577cde655" kindref="member">add</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a0e64be34a0395fed9449669b4b3745cd_1a0e64be34a0395fed9449669b4b3745cd" kindref="member">subtract</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a4312ee467d095377629b689aa86138e2_1a4312ee467d095377629b689aa86138e2" kindref="member">mult</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a9cc747df6eb0f3c62b218d4c87f78352_1a9cc747df6eb0f3c62b218d4c87f78352" kindref="member">power</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/>mpz_srcptr<sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a9cc747df6eb0f3c62b218d4c87f78352_1a9cc747df6eb0f3c62b218d4c87f78352" kindref="member">power</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a6b6b2351e9af44d4b7fd2a0d4242fb33_1a6b6b2351e9af44d4b7fd2a0d4242fb33" kindref="member">invert</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a8ca42e51522bb562f07b2ea8775f6a58_1a8ca42e51522bb562f07b2ea8775f6a58" kindref="member">divide</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_ae8b2b7f9cbe35c00355e2d717e622f6b_1ae8b2b7f9cbe35c00355e2d717e622f6b" kindref="member">syzygy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>b,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;y)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a44550ffd753c119ed38dd127be6e92e4_1a44550ffd753c119ed38dd127be6e92e4" kindref="member">random</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_a03fce5f1799251874a484053e79cedde_1a03fce5f1799251874a484053e79cedde" kindref="member">elem_text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o,</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_one<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_plus<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_parens<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a650c87ab0fbfd6fd6aac5fd1f43343a5_1a650c87ab0fbfd6fd6aac5fd1f43343a5" kindref="member">eval</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring_map" kindref="compound">RingMap</ref><sp/>*map,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>first_var)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_fraction_field_ad0622f32fed9448b1e7246951d55aa65_1ad0622f32fed9448b1e7246951d55aa65" kindref="member">n_terms</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a1c3d614711a4bd4190a4ef060eb5015d_1a1c3d614711a4bd4190a4ef060eb5015d" kindref="member">term</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a,<sp/><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref><sp/>m)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_ae223166e14f9d88acfafe27cea6675ac_1ae223166e14f9d88acfafe27cea6675ac" kindref="member">lead_coeff</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a5bd7c69918ae200dd3b2ea3957da8517_1a5bd7c69918ae200dd3b2ea3957da8517" kindref="member">get_coeff</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/><ref refid="imonorder_8hpp_a478c7f9d1b96319cce705c05e567cc29_1a478c7f9d1b96319cce705c05e567cc29" kindref="member">const_monomial</ref><sp/>m)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_fraction_field_a4fde3ca438e74c3cc5287c85ff1ea571_1a4fde3ca438e74c3cc5287c85ff1ea571" kindref="member">get_terms</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nvars0,</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lo,</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>hi)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/frac.hpp"/>
+  </compounddef>
+</doxygen>

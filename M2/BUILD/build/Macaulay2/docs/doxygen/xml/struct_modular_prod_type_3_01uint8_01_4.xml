@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_modular_prod_type_3_01uint8_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>ModularProdType&lt; uint8 &gt;</compoundname>
+    <includes refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" local="no">PolyRing.hpp</includes>
+    <templateparamlist>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="struct_modular_prod_type_3_01uint8_01_4_acd280da3cd89d68de5e61ca0dcef0a00_1acd280da3cd89d68de5e61ca0dcef0a00" prot="public" static="no">
+        <type><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a05f6b0ae8f6a6e135b0e290c25fe0e4e_1a05f6b0ae8f6a6e135b0e290c25fe0e4e" kindref="member">uint16</ref></type>
+        <definition>typedef uint16 ModularProdType&lt; uint8 &gt;::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <qualifiedname>ModularProdType&lt; uint8 &gt;::type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="43" column="48" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>ModularProdType&lt; T &gt;</label>
+        <link refid="struct_modular_prod_type"/>
+      </node>
+      <node id="1">
+        <label>ModularProdType&lt; uint8 &gt;</label>
+        <link refid="struct_modular_prod_type_3_01uint8_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; uint8 &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>ModularProdType&lt; T &gt;</label>
+        <link refid="struct_modular_prod_type"/>
+      </node>
+      <node id="1">
+        <label>ModularProdType&lt; uint8 &gt;</label>
+        <link refid="struct_modular_prod_type_3_01uint8_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; uint8 &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="43" column="10" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="43" bodyend="43"/>
+    <listofallmembers>
+      <member refid="struct_modular_prod_type_3_01uint8_01_4_acd280da3cd89d68de5e61ca0dcef0a00_1acd280da3cd89d68de5e61ca0dcef0a00" prot="public" virt="non-virtual"><scope>ModularProdType&lt; uint8 &gt;</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

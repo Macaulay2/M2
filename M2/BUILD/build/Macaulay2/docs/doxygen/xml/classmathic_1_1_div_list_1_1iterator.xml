@@ -1,0 +1,401 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_div_list_1_1iterator" kind="class" language="C++" prot="public">
+    <compoundname>mathic::DivList::iterator</compoundname>
+    <includes refid="_div_list_8h" local="no">DivList.h</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmathic_1_1_div_list_1_1iterator_a5e9c741057b6971c6b6e4d9d599f15cf_1a5e9c741057b6971c6b6e4d9d599f15cf" prot="public" static="no">
+        <type>std::bidirectional_iterator_tag</type>
+        <definition>typedef std::bidirectional_iterator_tag mathic::DivList&lt; C &gt;::iterator::iterator_category</definition>
+        <argsstring></argsstring>
+        <name>iterator_category</name>
+        <qualifiedname>mathic::DivList::iterator::iterator_category</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="164" column="45" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_div_list_1_1iterator_a2168b78ce950aee8f4fd7bd6aeaba493_1a2168b78ce950aee8f4fd7bd6aeaba493" prot="public" static="no">
+        <type><ref refid="classmathic_1_1_div_list_a7ed0f82644aa4762f8cc3664a360d822_1a7ed0f82644aa4762f8cc3664a360d822" kindref="member">Entry</ref></type>
+        <definition>typedef Entry mathic::DivList&lt; C &gt;::iterator::value_type</definition>
+        <argsstring></argsstring>
+        <name>value_type</name>
+        <qualifiedname>mathic::DivList::iterator::value_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="165" column="19" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_div_list_1_1iterator_a8eaddca732a381ebdc6670a546b270ca_1a8eaddca732a381ebdc6670a546b270ca" prot="public" static="no">
+        <type>std::ptrdiff_t</type>
+        <definition>typedef std::ptrdiff_t mathic::DivList&lt; C &gt;::iterator::difference_type</definition>
+        <argsstring></argsstring>
+        <name>difference_type</name>
+        <qualifiedname>mathic::DivList::iterator::difference_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="166" column="28" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_div_list_1_1iterator_a4cba623129aae7511b8cf4ecc0d44bc0_1a4cba623129aae7511b8cf4ecc0d44bc0" prot="public" static="no">
+        <type><ref refid="classmathic_1_1_div_list_a7ed0f82644aa4762f8cc3664a360d822_1a7ed0f82644aa4762f8cc3664a360d822" kindref="member">Entry</ref> *</type>
+        <definition>typedef Entry* mathic::DivList&lt; C &gt;::iterator::pointer</definition>
+        <argsstring></argsstring>
+        <name>pointer</name>
+        <qualifiedname>mathic::DivList::iterator::pointer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="167" column="19" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_div_list_1_1iterator_abced16fd199e92e7f7cf42150e617d82_1abced16fd199e92e7f7cf42150e617d82" prot="public" static="no">
+        <type><ref refid="classmathic_1_1_div_list_a7ed0f82644aa4762f8cc3664a360d822_1a7ed0f82644aa4762f8cc3664a360d822" kindref="member">Entry</ref> &amp;</type>
+        <definition>typedef Entry&amp; mathic::DivList&lt; C &gt;::iterator::reference</definition>
+        <argsstring></argsstring>
+        <name>reference</name>
+        <qualifiedname>mathic::DivList::iterator::reference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="168" column="19" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="classmathic_1_1_div_list_1_1iterator_ad5c8e60061e723c541a323422b888f9b_1ad5c8e60061e723c541a323422b888f9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class DivList&lt; C &gt;</definition>
+        <argsstring></argsstring>
+        <name>DivList&lt; C &gt;</name>
+        <qualifiedname>mathic::DivList::iterator::DivList&lt; C &gt;</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_div_list_a3631f59508cddf98d71e9c5806828c69_1a3631f59508cddf98d71e9c5806828c69" kindref="member">DivList</ref>&lt; C &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="168" column="19" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="170" bodyend="-1"/>
+        <references refid="classmathic_1_1_div_list_a3631f59508cddf98d71e9c5806828c69_1a3631f59508cddf98d71e9c5806828c69" compoundref="_div_list_8h" startline="408" endline="412">mathic::DivList&lt; C &gt;::DivList</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_div_list_a7afb72a0ac269167a4c0838ab9d26afa_1a7afb72a0ac269167a4c0838ab9d26afa" kindref="member">ListIter</ref></type>
+        <definition>ListIter mathic::DivList&lt; C &gt;::iterator::_it</definition>
+        <argsstring></argsstring>
+        <name>_it</name>
+        <qualifiedname>mathic::DivList::iterator::_it</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="191" column="14" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="191" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_ac5ab66ea78056a90b2aa08575306c3c1_1ac5ab66ea78056a90b2aa08575306c3c1" compoundref="_div_list_8h" startline="188" endline="188">mathic::DivList&lt; C &gt;::iterator::getInternal</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" compoundref="_div_list_8h" startline="171" endline="171">mathic::DivList&lt; C &gt;::iterator::iterator</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_aff719f8bb10ffdd66dcaa76cd0e435c9_1aff719f8bb10ffdd66dcaa76cd0e435c9" compoundref="_div_list_8h" startline="172" endline="172">mathic::DivList&lt; C &gt;::iterator::operator const_iterator</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a3d1436f23f5ede8f11a844454a0aa7be_1a3d1436f23f5ede8f11a844454a0aa7be" compoundref="_div_list_8h" startline="175" endline="175">mathic::DivList&lt; C &gt;::iterator::operator!=</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_ac9c6c09de3ce3654dfcf136992b3c406_1ac9c6c09de3ce3654dfcf136992b3c406" compoundref="_div_list_8h" startline="184" endline="184">mathic::DivList&lt; C &gt;::iterator::operator*</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a808bbfdb3bdd99544c4ae523cefa4bb1_1a808bbfdb3bdd99544c4ae523cefa4bb1" compoundref="_div_list_8h" startline="179" endline="179">mathic::DivList&lt; C &gt;::iterator::operator++</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_af31212ea718be2451fa745df73367cac_1af31212ea718be2451fa745df73367cac" compoundref="_div_list_8h" startline="181" endline="181">mathic::DivList&lt; C &gt;::iterator::operator--</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a935d17f50ee3af6bcd8bf82a3037698a_1a935d17f50ee3af6bcd8bf82a3037698a" compoundref="_div_list_8h" startline="185" endline="185">mathic::DivList&lt; C &gt;::iterator::operator-&gt;</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a9b337d0ca4e86fabfad996306778697b_1a9b337d0ca4e86fabfad996306778697b" compoundref="_div_list_8h" startline="174" endline="174">mathic::DivList&lt; C &gt;::iterator::operator==</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::DivList&lt; C &gt;::iterator::iterator</definition>
+        <argsstring>(ListIter it)</argsstring>
+        <name>iterator</name>
+        <qualifiedname>mathic::DivList::iterator::iterator</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_div_list_a7afb72a0ac269167a4c0838ab9d26afa_1a7afb72a0ac269167a4c0838ab9d26afa" kindref="member">ListIter</ref></type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="171" column="14" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="171" bodyend="171"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" compoundref="_div_list_8h" startline="191">mathic::DivList&lt; C &gt;::iterator::_it</references>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a3d1436f23f5ede8f11a844454a0aa7be_1a3d1436f23f5ede8f11a844454a0aa7be" compoundref="_div_list_8h" startline="175" endline="175">mathic::DivList&lt; C &gt;::iterator::operator!=</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a808bbfdb3bdd99544c4ae523cefa4bb1_1a808bbfdb3bdd99544c4ae523cefa4bb1" compoundref="_div_list_8h" startline="179" endline="179">mathic::DivList&lt; C &gt;::iterator::operator++</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a1ab8dfba4dc1a3dad1e0420549730eef_1a1ab8dfba4dc1a3dad1e0420549730eef" compoundref="_div_list_8h" startline="180" endline="180">mathic::DivList&lt; C &gt;::iterator::operator++</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_af31212ea718be2451fa745df73367cac_1af31212ea718be2451fa745df73367cac" compoundref="_div_list_8h" startline="181" endline="181">mathic::DivList&lt; C &gt;::iterator::operator--</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a5e93440d288b75855b3ff3b0e4a219cd_1a5e93440d288b75855b3ff3b0e4a219cd" compoundref="_div_list_8h" startline="182" endline="182">mathic::DivList&lt; C &gt;::iterator::operator--</referencedby>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a9b337d0ca4e86fabfad996306778697b_1a9b337d0ca4e86fabfad996306778697b" compoundref="_div_list_8h" startline="174" endline="174">mathic::DivList&lt; C &gt;::iterator::operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_aff719f8bb10ffdd66dcaa76cd0e435c9_1aff719f8bb10ffdd66dcaa76cd0e435c9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::DivList&lt; C &gt;::iterator::operator const_iterator</definition>
+        <argsstring>() const</argsstring>
+        <name>operator const_iterator</name>
+        <qualifiedname>mathic::DivList::iterator::operator const_iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="172" column="5" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="172" bodyend="172"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" compoundref="_div_list_8h" startline="191">mathic::DivList&lt; C &gt;::iterator::_it</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_a9b337d0ca4e86fabfad996306778697b_1a9b337d0ca4e86fabfad996306778697b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::DivList&lt; C &gt;::iterator::operator==</definition>
+        <argsstring>(iterator it)</argsstring>
+        <name>operator==</name>
+        <qualifiedname>mathic::DivList::iterator::operator==</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" kindref="member">iterator</ref></type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="174" column="10" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="174" bodyend="174"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" compoundref="_div_list_8h" startline="191">mathic::DivList&lt; C &gt;::iterator::_it</references>
+        <references refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" compoundref="_div_list_8h" startline="171" endline="171">mathic::DivList&lt; C &gt;::iterator::iterator</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_a3d1436f23f5ede8f11a844454a0aa7be_1a3d1436f23f5ede8f11a844454a0aa7be" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::DivList&lt; C &gt;::iterator::operator!=</definition>
+        <argsstring>(iterator it)</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>mathic::DivList::iterator::operator!=</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" kindref="member">iterator</ref></type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="175" column="10" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="175" bodyend="175"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" compoundref="_div_list_8h" startline="191">mathic::DivList&lt; C &gt;::iterator::_it</references>
+        <references refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" compoundref="_div_list_8h" startline="171" endline="171">mathic::DivList&lt; C &gt;::iterator::iterator</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_adad50abc3bc90c71d04f23fb11c023c7_1adad50abc3bc90c71d04f23fb11c023c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::DivList&lt; C &gt;::iterator::operator==</definition>
+        <argsstring>(const_iterator it)</argsstring>
+        <name>operator==</name>
+        <qualifiedname>mathic::DivList::iterator::operator==</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_div_list_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="176" column="10" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="234" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_a26dbf8c934d0fb496279947463f5a701_1a26dbf8c934d0fb496279947463f5a701" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::DivList&lt; C &gt;::iterator::operator!=</definition>
+        <argsstring>(const_iterator it)</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>mathic::DivList::iterator::operator!=</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_div_list_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="177" column="10" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="236" bodyend="236"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_a808bbfdb3bdd99544c4ae523cefa4bb1_1a808bbfdb3bdd99544c4ae523cefa4bb1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" kindref="member">iterator</ref> &amp;</type>
+        <definition>iterator &amp; mathic::DivList&lt; C &gt;::iterator::operator++</definition>
+        <argsstring>()</argsstring>
+        <name>operator++</name>
+        <qualifiedname>mathic::DivList::iterator::operator++</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="179" column="14" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="179" bodyend="179"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" compoundref="_div_list_8h" startline="191">mathic::DivList&lt; C &gt;::iterator::_it</references>
+        <references refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" compoundref="_div_list_8h" startline="171" endline="171">mathic::DivList&lt; C &gt;::iterator::iterator</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_a1ab8dfba4dc1a3dad1e0420549730eef_1a1ab8dfba4dc1a3dad1e0420549730eef" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" kindref="member">iterator</ref></type>
+        <definition>iterator mathic::DivList&lt; C &gt;::iterator::operator++</definition>
+        <argsstring>(int)</argsstring>
+        <name>operator++</name>
+        <qualifiedname>mathic::DivList::iterator::operator++</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="180" column="14" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="180" bodyend="180"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" compoundref="_div_list_8h" startline="171" endline="171">mathic::DivList&lt; C &gt;::iterator::iterator</references>
+        <references refid="classmathic_1_1_div_list_1_1iterator_a1ab8dfba4dc1a3dad1e0420549730eef_1a1ab8dfba4dc1a3dad1e0420549730eef" compoundref="_div_list_8h" startline="180" endline="180">mathic::DivList&lt; C &gt;::iterator::operator++</references>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a1ab8dfba4dc1a3dad1e0420549730eef_1a1ab8dfba4dc1a3dad1e0420549730eef" compoundref="_div_list_8h" startline="180" endline="180">mathic::DivList&lt; C &gt;::iterator::operator++</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_af31212ea718be2451fa745df73367cac_1af31212ea718be2451fa745df73367cac" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" kindref="member">iterator</ref> &amp;</type>
+        <definition>iterator &amp; mathic::DivList&lt; C &gt;::iterator::operator--</definition>
+        <argsstring>()</argsstring>
+        <name>operator--</name>
+        <qualifiedname>mathic::DivList::iterator::operator--</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="181" column="14" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="181" bodyend="181"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" compoundref="_div_list_8h" startline="191">mathic::DivList&lt; C &gt;::iterator::_it</references>
+        <references refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" compoundref="_div_list_8h" startline="171" endline="171">mathic::DivList&lt; C &gt;::iterator::iterator</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_a5e93440d288b75855b3ff3b0e4a219cd_1a5e93440d288b75855b3ff3b0e4a219cd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" kindref="member">iterator</ref></type>
+        <definition>iterator mathic::DivList&lt; C &gt;::iterator::operator--</definition>
+        <argsstring>(int)</argsstring>
+        <name>operator--</name>
+        <qualifiedname>mathic::DivList::iterator::operator--</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="182" column="14" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="182" bodyend="182"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" compoundref="_div_list_8h" startline="171" endline="171">mathic::DivList&lt; C &gt;::iterator::iterator</references>
+        <references refid="classmathic_1_1_div_list_1_1iterator_a5e93440d288b75855b3ff3b0e4a219cd_1a5e93440d288b75855b3ff3b0e4a219cd" compoundref="_div_list_8h" startline="182" endline="182">mathic::DivList&lt; C &gt;::iterator::operator--</references>
+        <referencedby refid="classmathic_1_1_div_list_1_1iterator_a5e93440d288b75855b3ff3b0e4a219cd_1a5e93440d288b75855b3ff3b0e4a219cd" compoundref="_div_list_8h" startline="182" endline="182">mathic::DivList&lt; C &gt;::iterator::operator--</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_ac9c6c09de3ce3654dfcf136992b3c406_1ac9c6c09de3ce3654dfcf136992b3c406" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_list_a7ed0f82644aa4762f8cc3664a360d822_1a7ed0f82644aa4762f8cc3664a360d822" kindref="member">Entry</ref> &amp;</type>
+        <definition>Entry &amp; mathic::DivList&lt; C &gt;::iterator::operator*</definition>
+        <argsstring>() const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>mathic::DivList::iterator::operator*</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="184" column="11" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="184" bodyend="184"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" compoundref="_div_list_8h" startline="191">mathic::DivList&lt; C &gt;::iterator::_it</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_a935d17f50ee3af6bcd8bf82a3037698a_1a935d17f50ee3af6bcd8bf82a3037698a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_list_a7ed0f82644aa4762f8cc3664a360d822_1a7ed0f82644aa4762f8cc3664a360d822" kindref="member">Entry</ref> *</type>
+        <definition>Entry * mathic::DivList&lt; C &gt;::iterator::operator-&gt;</definition>
+        <argsstring>() const</argsstring>
+        <name>operator-&gt;</name>
+        <qualifiedname>mathic::DivList::iterator::operator-&gt;</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="185" column="11" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="185" bodyend="185"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" compoundref="_div_list_8h" startline="191">mathic::DivList&lt; C &gt;::iterator::_it</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classmathic_1_1_div_list_1_1iterator_ac5ab66ea78056a90b2aa08575306c3c1_1ac5ab66ea78056a90b2aa08575306c3c1" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_div_list_a7afb72a0ac269167a4c0838ab9d26afa_1a7afb72a0ac269167a4c0838ab9d26afa" kindref="member">ListIter</ref></type>
+        <definition>ListIter mathic::DivList&lt; C &gt;::iterator::getInternal</definition>
+        <argsstring>()</argsstring>
+        <name>getInternal</name>
+        <qualifiedname>mathic::DivList::iterator::getInternal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivList.h" line="188" column="14" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="188" bodyend="188"/>
+        <references refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" compoundref="_div_list_8h" startline="191">mathic::DivList&lt; C &gt;::iterator::_it</references>
+        <referencedby refid="classmathic_1_1_div_list_a91cf383acd15e242bff61568ea9a88a3_1a91cf383acd15e242bff61568ea9a88a3" compoundref="_div_list_8h" startline="586" endline="588">mathic::DivList&lt; C &gt;::moveToFront</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>iterator</label>
+      </node>
+      <node id="1">
+        <label>mathic::DivList&lt; C &gt;::iterator</label>
+        <link refid="classmathic_1_1_div_list_1_1iterator"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_it</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/DivList.h" line="162" column="5" bodyfile="submodules/mathic/src/mathic/DivList.h" bodystart="162" bodyend="192"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_div_list_1_1iterator_aadc349911cde3179ba97d09924f7df44_1aadc349911cde3179ba97d09924f7df44" prot="private" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>_it</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a8eaddca732a381ebdc6670a546b270ca_1a8eaddca732a381ebdc6670a546b270ca" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>difference_type</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_ad5c8e60061e723c541a323422b888f9b_1ad5c8e60061e723c541a323422b888f9b" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>DivList&lt; C &gt;</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_ac5ab66ea78056a90b2aa08575306c3c1_1ac5ab66ea78056a90b2aa08575306c3c1" prot="protected" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>getInternal</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_affd995b5fc636fb28717a802e50adc40_1affd995b5fc636fb28717a802e50adc40" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>iterator</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a5e9c741057b6971c6b6e4d9d599f15cf_1a5e9c741057b6971c6b6e4d9d599f15cf" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>iterator_category</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_aff719f8bb10ffdd66dcaa76cd0e435c9_1aff719f8bb10ffdd66dcaa76cd0e435c9" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator const_iterator</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a3d1436f23f5ede8f11a844454a0aa7be_1a3d1436f23f5ede8f11a844454a0aa7be" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator!=</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a26dbf8c934d0fb496279947463f5a701_1a26dbf8c934d0fb496279947463f5a701" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator!=</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_ac9c6c09de3ce3654dfcf136992b3c406_1ac9c6c09de3ce3654dfcf136992b3c406" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator*</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a808bbfdb3bdd99544c4ae523cefa4bb1_1a808bbfdb3bdd99544c4ae523cefa4bb1" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator++</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a1ab8dfba4dc1a3dad1e0420549730eef_1a1ab8dfba4dc1a3dad1e0420549730eef" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator++</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_af31212ea718be2451fa745df73367cac_1af31212ea718be2451fa745df73367cac" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator--</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a5e93440d288b75855b3ff3b0e4a219cd_1a5e93440d288b75855b3ff3b0e4a219cd" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator--</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a935d17f50ee3af6bcd8bf82a3037698a_1a935d17f50ee3af6bcd8bf82a3037698a" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator-&gt;</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a9b337d0ca4e86fabfad996306778697b_1a9b337d0ca4e86fabfad996306778697b" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator==</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_adad50abc3bc90c71d04f23fb11c023c7_1adad50abc3bc90c71d04f23fb11c023c7" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>operator==</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a4cba623129aae7511b8cf4ecc0d44bc0_1a4cba623129aae7511b8cf4ecc0d44bc0" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>pointer</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_abced16fd199e92e7f7cf42150e617d82_1abced16fd199e92e7f7cf42150e617d82" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>reference</name></member>
+      <member refid="classmathic_1_1_div_list_1_1iterator_a2168b78ce950aee8f4fd7bd6aeaba493_1a2168b78ce950aee8f4fd7bd6aeaba493" prot="public" virt="non-virtual"><scope>mathic::DivList::iterator</scope><name>value_type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

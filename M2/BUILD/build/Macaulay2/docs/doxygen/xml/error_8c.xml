@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="error_8c" kind="file" language="C++">
+    <compoundname>error.c</compoundname>
+    <includes refid="_macaulay2_2e_2error_8h" local="yes">error.h</includes>
+    <includes local="no">stdio.h</includes>
+    <includes local="no">stdarg.h</includes>
+    <includes local="no">stdlib.h</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>Macaulay2/e/error.c</label>
+        <link refid="error_8c"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="4">
+        <label>stdarg.h</label>
+      </node>
+      <node id="3">
+        <label>stdio.h</label>
+      </node>
+      <node id="5">
+        <label>stdlib.h</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="error_8c_a1e180be6d62e5412353162d2917de91b_1a1e180be6d62e5412353162d2917de91b" prot="public" static="no">
+        <name>MAXERROR</name>
+        <initializer>200</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/error.c" line="22" column="9" bodyfile="Macaulay2/e/error.c" bodystart="22" bodyend="-1"/>
+        <referencedby refid="error_8c_ab0cecac1cffe5487678959fae3092a66_1ab0cecac1cffe5487678959fae3092a66" compoundref="error_8c" startline="36" endline="46">INTERNAL_ERROR</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" prot="public" static="yes" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int iserror</definition>
+        <argsstring></argsstring>
+        <name>iserror</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/error.c" line="23" column="12" bodyfile="Macaulay2/e/error.c" bodystart="23" bodyend="-1"/>
+        <referencedby refid="error_8c_aa1e71b9c0f1bdf1cee4fc0998db66c7a_1aa1e71b9c0f1bdf1cee4fc0998db66c7a" compoundref="error_8c" startline="26" endline="34">ERROR</referencedby>
+        <referencedby refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" compoundref="error_8c" startline="48" endline="48">error</referencedby>
+        <referencedby refid="error_8c_ac31687987f7bad1448440a2049272a67_1ac31687987f7bad1448440a2049272a67" compoundref="error_8c" startline="49" endline="54">error_message</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="error_8c_adaa2dd2c9b271d61cc315a9b80a22fd9_1adaa2dd2c9b271d61cc315a9b80a22fd9" prot="public" static="yes" mutable="no">
+        <type>char</type>
+        <definition>char errmsg[MAXERROR]</definition>
+        <argsstring>[MAXERROR]</argsstring>
+        <name>errmsg</name>
+        <initializer>= {&apos;\0&apos;}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/error.c" line="24" column="13" bodyfile="Macaulay2/e/error.c" bodystart="24" bodyend="24"/>
+        <referencedby refid="error_8c_aa1e71b9c0f1bdf1cee4fc0998db66c7a_1aa1e71b9c0f1bdf1cee4fc0998db66c7a" compoundref="error_8c" startline="26" endline="34">ERROR</referencedby>
+        <referencedby refid="error_8c_ac31687987f7bad1448440a2049272a67_1ac31687987f7bad1448440a2049272a67" compoundref="error_8c" startline="49" endline="54">error_message</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="error_8c_aa1e71b9c0f1bdf1cee4fc0998db66c7a_1aa1e71b9c0f1bdf1cee4fc0998db66c7a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ERROR</definition>
+        <argsstring>(const char *s,...)</argsstring>
+        <name>ERROR</name>
+        <param>
+          <type>const char *</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/error.c" line="26" column="6" bodyfile="Macaulay2/e/error.c" bodystart="26" bodyend="34"/>
+        <references refid="error_8c_adaa2dd2c9b271d61cc315a9b80a22fd9_1adaa2dd2c9b271d61cc315a9b80a22fd9" compoundref="error_8c" startline="24" endline="24">errmsg</references>
+        <references refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" compoundref="error_8c" startline="23">iserror</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+      </memberdef>
+      <memberdef kind="function" id="error_8c_ab0cecac1cffe5487678959fae3092a66_1ab0cecac1cffe5487678959fae3092a66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void INTERNAL_ERROR</definition>
+        <argsstring>(const char *s,...)</argsstring>
+        <name>INTERNAL_ERROR</name>
+        <param>
+          <type>const char *</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/error.c" line="36" column="6" bodyfile="Macaulay2/e/error.c" bodystart="36" bodyend="46"/>
+        <references refid="error_8c_a1e180be6d62e5412353162d2917de91b_1a1e180be6d62e5412353162d2917de91b" compoundref="error_8c" startline="22">MAXERROR</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <referencedby refid="class_matrix_constructor_a82cd5af150336ac9a4cb9c5670e4c0ea_1a82cd5af150336ac9a4cb9c5670e4c0ea" compoundref="matrix-con_8cpp" startline="43" endline="52">MatrixConstructor::append</referencedby>
+        <referencedby refid="class_matrix_constructor_a1122ebc8257b13640765fc82c123cfc0_1a1122ebc8257b13640765fc82c123cfc0" compoundref="matrix-con_8cpp" startline="79" endline="91">MatrixConstructor::compute_column_degree</referencedby>
+        <referencedby refid="class_matrix_constructor_a311858d44ddec547261944efff8a2d06_1a311858d44ddec547261944efff8a2d06" compoundref="matrix-con_8cpp" startline="59" endline="67">MatrixConstructor::compute_column_degrees</referencedby>
+        <referencedby refid="class_poly_ring_quotient_a854c5c1cd3a4286efa4a439c8bcea812_1a854c5c1cd3a4286efa4a439c8bcea812" compoundref="polyquotient_8cpp" startline="161" endline="190">PolyRingQuotient::invert</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_a7028fe71c0766b170379a73bd87f67f5_1a7028fe71c0766b170379a73bd87f67f5" compoundref="monomial-ordering_8cpp" startline="466" endline="531">rawNonTermOrderVariables</referencedby>
+        <referencedby refid="class_matrix_constructor_a66338637400fc34b573d35d09649ba86_1a66338637400fc34b573d35d09649ba86" compoundref="matrix-con_8cpp" startline="69" endline="77">MatrixConstructor::set_column_degree</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_a0c99b1bfe85ace39ed31c13a9d025988_1a0c99b1bfe85ace39ed31c13a9d025988" compoundref="monomial-ideal_8cpp" startline="360" endline="391">wrapperFrobbyAlexanderDual</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int error</definition>
+        <argsstring>()</argsstring>
+        <name>error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/error.c" line="48" column="5" bodyfile="Macaulay2/e/error.c" bodystart="48" bodyend="48"/>
+        <references refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" compoundref="error_8c" startline="23">iserror</references>
+        <referencedby refid="classgb2__comp_a3dd71774b568ffecb3fdad084c99b929_1a3dd71774b568ffecb3fdad084c99b929" compoundref="res-a2-gb_8cpp" startline="684" endline="799">gb2_comp::calc_gb</referencedby>
+        <referencedby refid="class_c_file_a100e438b305482a0ad6004f043abad2c_1a100e438b305482a0ad6004f043abad2c" compoundref="_c_file_8cpp" startline="15" endline="23">CFile::CFile</referencedby>
+        <referencedby refid="_check_source_8cpp_a6b5b2e723cd7642751619e11a8afa02c_1a6b5b2e723cd7642751619e11a8afa02c" compoundref="_check_source_8cpp" startline="142" endline="174">checkFile</referencedby>
+        <referencedby refid="_check_source_8cpp_a62bddd888cdfc5774115037301a664fe_1a62bddd888cdfc5774115037301a664fe" compoundref="_check_source_8cpp" startline="115" endline="140">checkOther</referencedby>
+        <referencedby refid="factory_8cpp_a67c68531e56fcabd05f4724d2e4251e7_1a67c68531e56fcabd05f4724d2e4251e7" compoundref="factory_8cpp" startline="214" endline="285">convertToM2</referencedby>
+        <referencedby refid="classgb_a_ab2bc5a2ed6c4e647bed584475f7fb7d5_1ab2bc5a2ed6c4e647bed584475f7fb7d5" compoundref="gb-default_8cpp" startline="2396" endline="2608">gbA::do_computation</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_c_afc7fdaf2f1d28b30a8c72fb0cf4d10d7_1afc7fdaf2f1d28b30a8c72fb0cf4d10d7" compoundref="aring-_c_c_8hpp" startline="426" endline="437">M2::ARingCC::eval</referencedby>
+        <referencedby refid="class_ring_map_a0db99cac04415e52e27defc8e744eef6_1a0db99cac04415e52e27defc8e744eef6" compoundref="ringmap_8cpp" startline="246" endline="253">RingMap::eval</referencedby>
+        <referencedby refid="class_ring_map_ae03f15753a4d5dd1b571715a688d44a3_1ae03f15753a4d5dd1b571715a688d44a3" compoundref="ringmap_8cpp" startline="238" endline="244">RingMap::eval</referencedby>
+        <referencedby refid="class_ring_element_af772b467564a4f4b6c817ffd4cab97ff_1af772b467564a4f4b6c817ffd4cab97ff" compoundref="relem_8cpp" startline="245" endline="272">RingElement::homogenize</referencedby>
+        <referencedby refid="class_ring_element_a66dc103c4ee480469b355652acc93fe6_1a66dc103c4ee480469b355652acc93fe6" compoundref="relem_8cpp" startline="274" endline="303">RingElement::homogenize</referencedby>
+        <referencedby refid="ringelement_8cpp_a21b7103a3fad2174c4c7ff5366637581_1a21b7103a3fad2174c4c7ff5366637581" compoundref="ringelement_8cpp" startline="347" endline="374">IM2_RingElement_divmod</referencedby>
+        <referencedby refid="ringelement_8cpp_aa5684b5ecb78427beb2d4d0190e9b09d_1aa5684b5ecb78427beb2d4d0190e9b09d" compoundref="ringelement_8cpp" startline="927" endline="941">IM2_RingElement_fraction</referencedby>
+        <referencedby refid="ringelement_8cpp_ac26a8bd25791eeef37049c68331b32f9_1ac26a8bd25791eeef37049c68331b32f9" compoundref="ringelement_8cpp" startline="321" endline="333">IM2_RingElement_make_var</referencedby>
+        <referencedby refid="class_engine_monomial_a8afb93ddd0730efdffc0b792922bedbd_1a8afb93ddd0730efdffc0b792922bedbd" compoundref="monomial_8cpp" startline="51" endline="56">EngineMonomial::make</referencedby>
+        <referencedby refid="class_engine_monomial_ae07ff3fe0b8019f3dba3218a4c098524_1ae07ff3fe0b8019f3dba3218a4c098524" compoundref="monomial_8cpp" startline="26" endline="31">EngineMonomial::make</referencedby>
+        <referencedby refid="class_engine_monomial_ada95981824ad007f16fd294e152b806c_1ada95981824ad007f16fd294e152b806c" compoundref="monomial_8cpp" startline="33" endline="49">EngineMonomial::make</referencedby>
+        <referencedby refid="class_reducer_a61bec00e6d6deb21a1a1290426a6dc07_1a61bec00e6d6deb21a1a1290426a6dc07" compoundref="_reducer_8cpp" startline="61" endline="73">Reducer::makeReducer</referencedby>
+        <referencedby refid="class_engine_monomial_a14b8e894a1e3801d430c04fde33d5809_1a14b8e894a1e3801d430c04fde33d5809" compoundref="monomial_8cpp" startline="122" endline="128">EngineMonomial::operator*</referencedby>
+        <referencedby refid="class_ring_element_afa3f6888e609b76d69b8278c0b77da1d_1afa3f6888e609b76d69b8278c0b77da1d" compoundref="relem_8cpp" startline="82" endline="94">RingElement::operator*</referencedby>
+        <referencedby refid="class_ring_element_a1ddb6e298583e47808de02de13e28e02_1a1ddb6e298583e47808de02de13e28e02" compoundref="relem_8cpp" startline="57" endline="67">RingElement::operator+</referencedby>
+        <referencedby refid="class_ring_element_a28cad1292690e59ad655fc743dd07e2c_1a28cad1292690e59ad655fc743dd07e2c" compoundref="relem_8cpp" startline="69" endline="80">RingElement::operator-</referencedby>
+        <referencedby refid="class_ring_element_a5efe2d37733d6520b727a463a9cabfed_1a5efe2d37733d6520b727a463a9cabfed" compoundref="relem_8cpp" startline="105" endline="120">RingElement::operator/</referencedby>
+        <referencedby refid="class_engine_monomial_a61709688c003166caf1978ad29c11887_1a61709688c003166caf1978ad29c11887" compoundref="monomial_8cpp" startline="144" endline="150">EngineMonomial::power</referencedby>
+        <referencedby refid="class_ring_element_ab0bc89cf0bb372da0367cd8fd60a10a1_1ab0bc89cf0bb372da0367cd8fd60a10a1" compoundref="relem_8cpp" startline="122" endline="128">RingElement::power</referencedby>
+        <referencedby refid="class_ring_element_a189189d4b20d104eb959274e181df6e6_1a189189d4b20d104eb959274e181df6e6" compoundref="relem_8cpp" startline="130" endline="135">RingElement::power</referencedby>
+        <referencedby refid="factory_8cpp_a277eb27756a88af857772363f77b3e19_1a277eb27756a88af857772363f77b3e19" compoundref="factory_8cpp" startline="810" endline="874">rawCharSeries</referencedby>
+        <referencedby refid="factory_8cpp_a169ce4c376b30270249b4551fdfb05f8_1a169ce4c376b30270249b4551fdfb05f8" compoundref="factory_8cpp" startline="553" endline="623">rawExtendedGCDRingElement</referencedby>
+        <referencedby refid="factory_8cpp_a5f8ca45d58516b4ff1758715081e9795_1a5f8ca45d58516b4ff1758715081e9795" compoundref="factory_8cpp" startline="661" endline="735">rawFactorBase</referencedby>
+        <referencedby refid="factory_8cpp_af04b0de40c3a49e0d68bca62193a8a8a_1af04b0de40c3a49e0d68bca62193a8a8a" compoundref="factory_8cpp" startline="488" endline="551">rawGCDRingElement</referencedby>
+        <referencedby refid="factory_8cpp_a660a2555972e970e2e55578aee2cc514_1a660a2555972e970e2e55578aee2cc514" compoundref="factory_8cpp" startline="625" endline="659">rawPseudoRemainder</referencedby>
+        <referencedby refid="engine_8h_a46a6919232280c54401864a7d39ef8a7_1a46a6919232280c54401864a7d39ef8a7" compoundref="groebner_8cpp" startline="264" endline="315">rawStartComputation</referencedby>
+        <referencedby refid="ringelement_8cpp_a49379da656266a7ad2bc330c97f1724f_1a49379da656266a7ad2bc330c97f1724f" compoundref="ringelement_8cpp" startline="472" endline="498">rawWeightRange</referencedby>
+        <referencedby refid="class_hilbert_controller_a88ed4434dd989eeed88b334c68e9d217_1a88ed4434dd989eeed88b334c68e9d217" compoundref="hilb-fcn_8cpp" startline="42" endline="53">HilbertController::setDegree</referencedby>
+        <referencedby refid="class_f4_g_b_a25cdf35d18839f7e51a1d50af6e2cc49_1a25cdf35d18839f7e51a1d50af6e2cc49" compoundref="f4_8cpp" startline="1130" endline="1246">F4GB::start_computation</referencedby>
+        <referencedby refid="class_g_b__comp_a14b1b8f16312e3b92ec569a77f9d93c0_1a14b1b8f16312e3b92ec569a77f9d93c0" compoundref="gb-homog2_8cpp" startline="796" endline="961">GB_comp::start_computation</referencedby>
+        <referencedby refid="class_g_binhom__comp_ac1e209e9c40b43d91f8ac055c75dcd1f_1ac1e209e9c40b43d91f8ac055c75dcd1f" compoundref="gb-sugarless_8cpp" startline="766" endline="832">GBinhom_comp::start_computation</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_aab20c74d40adbd03a830e2497448f215_1aab20c74d40adbd03a830e2497448f215" compoundref="_n_c_groebner_test_8cpp" startline="267" endline="283">TEST</referencedby>
+        <referencedby refid="_poly_ring_test_8cpp_a4755ae177c203f1aa7acf3c1ff84aa11_1a4755ae177c203f1aa7acf3c1ff84aa11" compoundref="_poly_ring_test_8cpp" startline="51" endline="60">TEST</referencedby>
+        <referencedby refid="_poly_ring_test_8cpp_a6c82b412cd3e2ff7cf39fdae4c072068_1a6c82b412cd3e2ff7cf39fdae4c072068" compoundref="_poly_ring_test_8cpp" startline="62" endline="71">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="error_8c_ac31687987f7bad1448440a2049272a67_1ac31687987f7bad1448440a2049272a67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * error_message</definition>
+        <argsstring>()</argsstring>
+        <name>error_message</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/error.c" line="49" column="12" bodyfile="Macaulay2/e/error.c" bodystart="49" bodyend="54"/>
+        <references refid="error_8c_adaa2dd2c9b271d61cc315a9b80a22fd9_1adaa2dd2c9b271d61cc315a9b80a22fd9" compoundref="error_8c" startline="24" endline="24">errmsg</references>
+        <references refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" compoundref="error_8c" startline="23">iserror</references>
+        <referencedby refid="engine_8cpp_af3d03fb6974347cf59d4a0ebef83b6b2_1af3d03fb6974347cf59d4a0ebef83b6b2" compoundref="engine_8cpp" startline="97" endline="97">IM2_last_error_message</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_aab20c74d40adbd03a830e2497448f215_1aab20c74d40adbd03a830e2497448f215" compoundref="_n_c_groebner_test_8cpp" startline="267" endline="283">TEST</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>(c)<sp/>1997<sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>stuff<sp/>would<sp/>not<sp/>be<sp/>necessary<sp/>if<sp/>exceptions<sp/>worked<sp/>well,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//<sp/>unfortunately,<sp/>there<sp/>are<sp/>internal<sp/>errors<sp/>so<sp/>that<sp/>they<sp/>fail</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//<sp/>at<sp/>least<sp/>in<sp/>the<sp/>presence<sp/>of<sp/>template<sp/>code<sp/>(even<sp/>in<sp/>version<sp/>2.7.2).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//<sp/>So,<sp/>we<sp/>use<sp/>the<sp/>following<sp/>simple,<sp/>if<sp/>unpleasant,<sp/>scheme.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Upon<sp/>finding<sp/>an<sp/>error,<sp/>call<sp/>ERROR<sp/>any<sp/>number<sp/>of<sp/>times.<sp/><sp/>Each<sp/>time,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>message<sp/>is<sp/>added<sp/>to<sp/>the<sp/>end<sp/>(but,<sp/>it<sp/>won&apos;t<sp/>write<sp/>over<sp/>the<sp/>end<sp/>of</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>buffer).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Then,<sp/>it<sp/>is<sp/>unfortunately<sp/>necessary<sp/>to<sp/>check<sp/>whether<sp/>an<sp/>error<sp/>has</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">//<sp/>occurred,<sp/>using<sp/>&apos;error&apos;.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Finally,<sp/>the<sp/>error<sp/>flag<sp/>is<sp/>cleared<sp/>upon<sp/>giving<sp/>control<sp/>back<sp/>to<sp/>the<sp/>front<sp/>end.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_macaulay2_2e_2error_8h" kindref="compound">error.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdio.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdarg.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="error_8c_a1e180be6d62e5412353162d2917de91b_1a1e180be6d62e5412353162d2917de91b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MAXERROR<sp/>200</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" kindref="member">iserror</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="24" refid="error_8c_adaa2dd2c9b271d61cc315a9b80a22fd9_1adaa2dd2c9b271d61cc315a9b80a22fd9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="error_8c_adaa2dd2c9b271d61cc315a9b80a22fd9_1adaa2dd2c9b271d61cc315a9b80a22fd9" kindref="member">errmsg</ref>[<ref refid="error_8c_a1e180be6d62e5412353162d2917de91b_1a1e180be6d62e5412353162d2917de91b" kindref="member">MAXERROR</ref>]<sp/>=<sp/>{</highlight><highlight class="charliteral">&apos;\0&apos;</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="error_8c_aa1e71b9c0f1bdf1cee4fc0998db66c7a_1aa1e71b9c0f1bdf1cee4fc0998db66c7a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" kindref="member">ERROR</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>,<sp/>...)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/>va_list<sp/>ap;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" kindref="member">iserror</ref>)<sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;--error<sp/>message<sp/>bumped:<sp/>%s\n&quot;</highlight><highlight class="normal">,<sp/><ref refid="error_8c_adaa2dd2c9b271d61cc315a9b80a22fd9_1adaa2dd2c9b271d61cc315a9b80a22fd9" kindref="member">errmsg</ref>);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><ref refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" kindref="member">iserror</ref><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/>va_start(ap,<sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>vsprintf(<ref refid="error_8c_adaa2dd2c9b271d61cc315a9b80a22fd9_1adaa2dd2c9b271d61cc315a9b80a22fd9" kindref="member">errmsg</ref>,<sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>,<sp/>ap);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>va_end(ap);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="error_8c_ab0cecac1cffe5487678959fae3092a66_1ab0cecac1cffe5487678959fae3092a66" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="error_8c_ab0cecac1cffe5487678959fae3092a66_1ab0cecac1cffe5487678959fae3092a66" kindref="member">INTERNAL_ERROR</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>,<sp/>...)</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buf[<ref refid="error_8c_a1e180be6d62e5412353162d2917de91b_1a1e180be6d62e5412353162d2917de91b" kindref="member">MAXERROR</ref>];</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>buf[0]<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>va_list<sp/>ap;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>va_start(ap,<sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>vsprintf(buf,<sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>,<sp/>ap);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/>va_end(ap);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;--internal<sp/>error:<sp/>%s\n&quot;</highlight><highlight class="normal">,<sp/>buf);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>abort();<sp/></highlight><highlight class="comment">/*<sp/>we<sp/>should<sp/>exit<sp/>after<sp/>an<sp/>internal<sp/>error,<sp/>to<sp/>avoid<sp/>crashing<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="error_8c_ad1a5ba420409525ff5ab1be86ac5e526_1ad1a5ba420409525ff5ab1be86ac5e526" kindref="member">error</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" kindref="member">iserror</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="49" refid="error_8c_ac31687987f7bad1448440a2049272a67_1ac31687987f7bad1448440a2049272a67" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*<ref refid="error_8c_ac31687987f7bad1448440a2049272a67_1ac31687987f7bad1448440a2049272a67" kindref="member">error_message</ref>()</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" kindref="member">iserror</ref><sp/>==<sp/>0)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><ref refid="error_8c_a6b43cbb0b1293b10e9323567e52627bf_1a6b43cbb0b1293b10e9323567e52627bf" kindref="member">iserror</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="error_8c_adaa2dd2c9b271d61cc315a9b80a22fd9_1adaa2dd2c9b271d61cc315a9b80a22fd9" kindref="member">errmsg</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="57"><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight></codeline>
+<codeline lineno="58"><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight></codeline>
+<codeline lineno="59"><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight></codeline>
+<codeline lineno="60"><highlight class="comment">//<sp/>End:</highlight></codeline>
+<codeline lineno="61"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/error.c"/>
+  </compounddef>
+</doxygen>

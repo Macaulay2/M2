@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_log_domain_3_01true_01_4_1_1_time_interval" kind="struct" language="C++" prot="private">
+    <compoundname>LogDomain&lt; true &gt;::TimeInterval</compoundname>
+    <templateparamlist>
+    </templateparamlist>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_log_domain_3_01true_01_4_1_1_time_interval_a0296829a1d405383a4834bd059632e7b_1a0296829a1d405383a4834bd059632e7b" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double LogDomain&lt; true &gt;::TimeInterval::realSeconds</definition>
+        <argsstring></argsstring>
+        <name>realSeconds</name>
+        <qualifiedname>LogDomain&lt; true &gt;::TimeInterval::realSeconds</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="91" column="12" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="91" bodyend="-1"/>
+        <referencedby refid="struct_log_domain_3_01true_01_4_1_1_time_interval_a6c483da7dfed6a66d4b560059d024525_1a6c483da7dfed6a66d4b560059d024525" compoundref="_log_domain_8cpp" startline="55" endline="64">print</referencedby>
+        <referencedby refid="class_log_domain_3_01true_01_4_a9dd81c3a66e0dcb458b079a04fae2af8_1a9dd81c3a66e0dcb458b079a04fae2af8" compoundref="_log_domain_8cpp" startline="66" endline="78">LogDomain&lt; true &gt;::recordTime</referencedby>
+        <referencedby refid="class_log_domain_3_01true_01_4_1_1_timer_a935acd5ade0d3f34592b215af20bffb3_1a935acd5ade0d3f34592b215af20bffb3" compoundref="_log_domain_8cpp" startline="92" endline="102">LogDomain&lt; true &gt;::Timer::stop</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_log_domain_3_01true_01_4_1_1_time_interval_a6c483da7dfed6a66d4b560059d024525_1a6c483da7dfed6a66d4b560059d024525" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LogDomain&lt; true &gt;::TimeInterval::print</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>print</name>
+        <qualifiedname>LogDomain&lt; true &gt;::TimeInterval::print</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="93" column="10" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.cpp" bodystart="55" bodyend="64"/>
+        <references refid="class_log_domain_3_01true_01_4_abd5d0793f55cc912c5dd5b86eeda61af_1abd5d0793f55cc912c5dd5b86eeda61af" compoundref="_log_domain_8cpp" startline="14" endline="32">LogDomain&lt; true &gt;::LogDomain</references>
+        <references refid="struct_log_domain_3_01true_01_4_1_1_time_interval_a0296829a1d405383a4834bd059632e7b_1a0296829a1d405383a4834bd059632e7b" compoundref="_log_domain_8hpp" startline="91">realSeconds</references>
+        <referencedby refid="class_log_domain_3_01true_01_4_a9dd81c3a66e0dcb458b079a04fae2af8_1a9dd81c3a66e0dcb458b079a04fae2af8" compoundref="_log_domain_8cpp" startline="66" endline="78">LogDomain&lt; true &gt;::recordTime</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>LogDomain&lt; true &gt;::TimeInterval</label>
+        <link refid="struct_log_domain_3_01true_01_4_1_1_time_interval"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>realSeconds</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>double</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="88" column="3" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="88" bodyend="94"/>
+    <listofallmembers>
+      <member refid="struct_log_domain_3_01true_01_4_1_1_time_interval_a6c483da7dfed6a66d4b560059d024525_1a6c483da7dfed6a66d4b560059d024525" prot="public" virt="non-virtual"><scope>LogDomain&lt; true &gt;::TimeInterval</scope><name>print</name></member>
+      <member refid="struct_log_domain_3_01true_01_4_1_1_time_interval_a0296829a1d405383a4834bd059632e7b_1a0296829a1d405383a4834bd059632e7b" prot="public" virt="non-virtual"><scope>LogDomain&lt; true &gt;::TimeInterval</scope><name>realSeconds</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

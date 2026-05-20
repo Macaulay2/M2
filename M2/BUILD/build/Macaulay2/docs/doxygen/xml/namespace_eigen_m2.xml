@@ -1,0 +1,981 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_eigen_m2" kind="namespace" language="C++">
+    <compoundname>EigenM2</compoundname>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void EigenM2::fill_to_MatrixXmp</definition>
+        <argsstring>(const LMatrixRRR &amp;orig, MatrixXmpRRR &amp;result)</argsstring>
+        <name>fill_to_MatrixXmp</name>
+        <qualifiedname>EigenM2::fill_to_MatrixXmp</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> &amp;</type>
+          <declname>orig</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8cpp_a814b82173f10ddcd7b18365c97dfe48c_1a814b82173f10ddcd7b18365c97dfe48c" kindref="member">MatrixXmpRRR</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="313" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="313" bodyend="318"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="namespace_eigen_m2_a3b9427576e6ae17b09a8afd7be2e1d9d_1a3b9427576e6ae17b09a8afd7be2e1d9d" compoundref="eigen_8cpp" startline="456" endline="468">eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_acb8f46b0895a5958cec75a06299332da_1acb8f46b0895a5958cec75a06299332da" compoundref="eigen_8cpp" startline="442" endline="454">eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_a8c6b6d2fc4b0dbe426264f0722ec27c3_1a8c6b6d2fc4b0dbe426264f0722ec27c3" compoundref="eigen_8cpp" startline="484" endline="496">eigenvalues_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_af62f1a1bf68deb784d2ae1b784fd25de_1af62f1a1bf68deb784d2ae1b784fd25de" compoundref="eigen_8cpp" startline="470" endline="482">eigenvalues_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a131c3bdad6371c26b237f3c22a82cc78_1a131c3bdad6371c26b237f3c22a82cc78" compoundref="eigen_8cpp" startline="513" endline="526">eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_a56ba255897185438deb0d30995c23a0e_1a56ba255897185438deb0d30995c23a0e" compoundref="eigen_8cpp" startline="498" endline="511">eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae03ba0ce5b8c08b419799a9caa062338_1ae03ba0ce5b8c08b419799a9caa062338" compoundref="eigen_8cpp" startline="543" endline="556">eigenvectors_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a68b3b512faaac33a0c9642950dc2871d_1a68b3b512faaac33a0c9642950dc2871d" compoundref="eigen_8cpp" startline="528" endline="541">eigenvectors_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a5c83bcba334e14a5b9f0114501c0fbeb_1a5c83bcba334e14a5b9f0114501c0fbeb" compoundref="eigen_8cpp" startline="579" endline="598">least_squares</referencedby>
+        <referencedby refid="namespace_eigen_m2_a522b8e40e31815a2f7dfc664347bde5f_1a522b8e40e31815a2f7dfc664347bde5f" compoundref="eigen_8cpp" startline="558" endline="577">least_squares</referencedby>
+        <referencedby refid="namespace_eigen_m2_af30dfc95a87a561b6e49802685f438a4_1af30dfc95a87a561b6e49802685f438a4" compoundref="eigen_8cpp" startline="376" endline="396">SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_a34fab610792cb64d15deaabff2decae3_1a34fab610792cb64d15deaabff2decae3" compoundref="eigen_8cpp" startline="349" endline="374">SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae100724fc8c16d8030cf6114e9127037_1ae100724fc8c16d8030cf6114e9127037" compoundref="eigen_8cpp" startline="420" endline="440">SVD_divide_conquer</referencedby>
+        <referencedby refid="namespace_eigen_m2_ab283d0faea8ebc63035e107782d51f0b_1ab283d0faea8ebc63035e107782d51f0b" compoundref="eigen_8cpp" startline="398" endline="418">SVD_divide_conquer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a7136dbb0b6338d075e52d89c9685c227_1a7136dbb0b6338d075e52d89c9685c227" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void EigenM2::fill_to_MatrixXmp</definition>
+        <argsstring>(const LMatrixCCC &amp;orig, MatrixXmpCCC &amp;result)</argsstring>
+        <name>fill_to_MatrixXmp</name>
+        <qualifiedname>EigenM2::fill_to_MatrixXmp</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> &amp;</type>
+          <declname>orig</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8cpp_af4313a6354b08bdd8239bc08a690a433_1af4313a6354b08bdd8239bc08a690a433" kindref="member">MatrixXmpCCC</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="320" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="320" bodyend="325"/>
+        <references refid="class_d_mat_a430faaf604ffe11bf81a35456acc2e97_1a430faaf604ffe11bf81a35456acc2e97" compoundref="dmat_8hpp" startline="146" endline="149">DMat&lt; ACoeffRing &gt;::entry</references>
+        <references refid="structcc__struct_a01c7e0ae1aa6afdb88e34089b44e315c_1a01c7e0ae1aa6afdb88e34089b44e315c" compoundref="ringelem_8hpp" startline="56">cc_struct::im</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="structcc__struct_ab0d0e122986378302dd93f5fb27ec281_1ab0d0e122986378302dd93f5fb27ec281" compoundref="ringelem_8hpp" startline="55">cc_struct::re</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void EigenM2::fill_from_MatrixXmp</definition>
+        <argsstring>(const MatrixXmpRRR &amp;orig, LMatrixRRR &amp;result)</argsstring>
+        <name>fill_from_MatrixXmp</name>
+        <qualifiedname>EigenM2::fill_from_MatrixXmp</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8cpp_a814b82173f10ddcd7b18365c97dfe48c_1a814b82173f10ddcd7b18365c97dfe48c" kindref="member">MatrixXmpRRR</ref> &amp;</type>
+          <declname>orig</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="327" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="327" bodyend="335"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="namespace_eigen_m2_a3b9427576e6ae17b09a8afd7be2e1d9d_1a3b9427576e6ae17b09a8afd7be2e1d9d" compoundref="eigen_8cpp" startline="456" endline="468">eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_acb8f46b0895a5958cec75a06299332da_1acb8f46b0895a5958cec75a06299332da" compoundref="eigen_8cpp" startline="442" endline="454">eigenvalues</referencedby>
+        <referencedby refid="namespace_eigen_m2_a8c6b6d2fc4b0dbe426264f0722ec27c3_1a8c6b6d2fc4b0dbe426264f0722ec27c3" compoundref="eigen_8cpp" startline="484" endline="496">eigenvalues_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_af62f1a1bf68deb784d2ae1b784fd25de_1af62f1a1bf68deb784d2ae1b784fd25de" compoundref="eigen_8cpp" startline="470" endline="482">eigenvalues_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a131c3bdad6371c26b237f3c22a82cc78_1a131c3bdad6371c26b237f3c22a82cc78" compoundref="eigen_8cpp" startline="513" endline="526">eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_a56ba255897185438deb0d30995c23a0e_1a56ba255897185438deb0d30995c23a0e" compoundref="eigen_8cpp" startline="498" endline="511">eigenvectors</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae03ba0ce5b8c08b419799a9caa062338_1ae03ba0ce5b8c08b419799a9caa062338" compoundref="eigen_8cpp" startline="543" endline="556">eigenvectors_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a68b3b512faaac33a0c9642950dc2871d_1a68b3b512faaac33a0c9642950dc2871d" compoundref="eigen_8cpp" startline="528" endline="541">eigenvectors_hermitian</referencedby>
+        <referencedby refid="namespace_eigen_m2_a5c83bcba334e14a5b9f0114501c0fbeb_1a5c83bcba334e14a5b9f0114501c0fbeb" compoundref="eigen_8cpp" startline="579" endline="598">least_squares</referencedby>
+        <referencedby refid="namespace_eigen_m2_a522b8e40e31815a2f7dfc664347bde5f_1a522b8e40e31815a2f7dfc664347bde5f" compoundref="eigen_8cpp" startline="558" endline="577">least_squares</referencedby>
+        <referencedby refid="namespace_eigen_m2_af30dfc95a87a561b6e49802685f438a4_1af30dfc95a87a561b6e49802685f438a4" compoundref="eigen_8cpp" startline="376" endline="396">SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_a34fab610792cb64d15deaabff2decae3_1a34fab610792cb64d15deaabff2decae3" compoundref="eigen_8cpp" startline="349" endline="374">SVD</referencedby>
+        <referencedby refid="namespace_eigen_m2_ae100724fc8c16d8030cf6114e9127037_1ae100724fc8c16d8030cf6114e9127037" compoundref="eigen_8cpp" startline="420" endline="440">SVD_divide_conquer</referencedby>
+        <referencedby refid="namespace_eigen_m2_ab283d0faea8ebc63035e107782d51f0b_1ab283d0faea8ebc63035e107782d51f0b" compoundref="eigen_8cpp" startline="398" endline="418">SVD_divide_conquer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a71c34a2ac9af2edbccc5185e2fb2ab46_1a71c34a2ac9af2edbccc5185e2fb2ab46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void EigenM2::fill_from_MatrixXmp</definition>
+        <argsstring>(const MatrixXmpCCC &amp;orig, LMatrixCCC &amp;result)</argsstring>
+        <name>fill_from_MatrixXmp</name>
+        <qualifiedname>EigenM2::fill_from_MatrixXmp</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8cpp_af4313a6354b08bdd8239bc08a690a433_1af4313a6354b08bdd8239bc08a690a433" kindref="member">MatrixXmpCCC</ref> &amp;</type>
+          <declname>orig</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="337" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="337" bodyend="347"/>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a34fab610792cb64d15deaabff2decae3_1a34fab610792cb64d15deaabff2decae3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::SVD</definition>
+        <argsstring>(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixRRR *U, LMatrixRRR *VT)</argsstring>
+        <name>SVD</name>
+        <qualifiedname>EigenM2::SVD</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>Sigma</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>U</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>VT</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="349" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="349" bodyend="374" declfile="Macaulay2/e/eigen.hpp" declline="72" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_r_r_r_adf7ab19bb8ed5decb51e9b0885e69e94_1adf7ab19bb8ed5decb51e9b0885e69e94" compoundref="aring-_r_r_r_8hpp" startline="78" endline="78">M2::ARingRRR::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="namespace_matrix_ops_a2d98d71c8e040c1bbd0572e6d6e75735_1a2d98d71c8e040c1bbd0572e6d6e75735" compoundref="mat-linalg_8hpp" startline="1355" endline="1368">MatrixOps::SVD</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad5243acd41116f1cbd899673ad125b41_1ad5243acd41116f1cbd899673ad125b41" compoundref="mat-linalg_8hpp" startline="1490" endline="1498">MatrixOps::SVD</referencedby>
+        <referencedby refid="namespace_matrix_ops_a699ca2946cc94b39c5007fe7a5b2cd68_1a699ca2946cc94b39c5007fe7a5b2cd68" compoundref="mat-linalg_8hpp" startline="1256" endline="1269">MatrixOps::SVD</referencedby>
+        <referencedby refid="namespace_matrix_ops_a7db4ab4dd986658992c3004f95df68ae_1a7db4ab4dd986658992c3004f95df68ae" compoundref="mat-linalg_8hpp" startline="1425" endline="1433">MatrixOps::SVD</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_af30dfc95a87a561b6e49802685f438a4_1af30dfc95a87a561b6e49802685f438a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::SVD</definition>
+        <argsstring>(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixCCC *U, LMatrixCCC *VT)</argsstring>
+        <name>SVD</name>
+        <qualifiedname>EigenM2::SVD</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>Sigma</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>U</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>VT</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="376" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="376" bodyend="396" declfile="Macaulay2/e/eigen.hpp" declline="76" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_c_c_c_a6ca36f68691d04e4535212cbb3a963cf_1a6ca36f68691d04e4535212cbb3a963cf" compoundref="aring-_c_c_c_8hpp" startline="84" endline="84">M2::ARingCCC::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_ab283d0faea8ebc63035e107782d51f0b_1ab283d0faea8ebc63035e107782d51f0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::SVD_divide_conquer</definition>
+        <argsstring>(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixRRR *U, LMatrixRRR *VT)</argsstring>
+        <name>SVD_divide_conquer</name>
+        <qualifiedname>EigenM2::SVD_divide_conquer</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>Sigma</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>U</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>VT</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="398" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="398" bodyend="418" declfile="Macaulay2/e/eigen.hpp" declline="80" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_r_r_r_adf7ab19bb8ed5decb51e9b0885e69e94_1adf7ab19bb8ed5decb51e9b0885e69e94" compoundref="aring-_r_r_r_8hpp" startline="78" endline="78">M2::ARingRRR::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="namespace_matrix_ops_a2d98d71c8e040c1bbd0572e6d6e75735_1a2d98d71c8e040c1bbd0572e6d6e75735" compoundref="mat-linalg_8hpp" startline="1355" endline="1368">MatrixOps::SVD</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad5243acd41116f1cbd899673ad125b41_1ad5243acd41116f1cbd899673ad125b41" compoundref="mat-linalg_8hpp" startline="1490" endline="1498">MatrixOps::SVD</referencedby>
+        <referencedby refid="namespace_matrix_ops_a699ca2946cc94b39c5007fe7a5b2cd68_1a699ca2946cc94b39c5007fe7a5b2cd68" compoundref="mat-linalg_8hpp" startline="1256" endline="1269">MatrixOps::SVD</referencedby>
+        <referencedby refid="namespace_matrix_ops_a7db4ab4dd986658992c3004f95df68ae_1a7db4ab4dd986658992c3004f95df68ae" compoundref="mat-linalg_8hpp" startline="1425" endline="1433">MatrixOps::SVD</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_ae100724fc8c16d8030cf6114e9127037_1ae100724fc8c16d8030cf6114e9127037" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::SVD_divide_conquer</definition>
+        <argsstring>(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixCCC *U, LMatrixCCC *VT)</argsstring>
+        <name>SVD_divide_conquer</name>
+        <qualifiedname>EigenM2::SVD_divide_conquer</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>Sigma</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>U</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>VT</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="420" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="420" bodyend="440" declfile="Macaulay2/e/eigen.hpp" declline="84" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_c_c_c_a6ca36f68691d04e4535212cbb3a963cf_1a6ca36f68691d04e4535212cbb3a963cf" compoundref="aring-_c_c_c_8hpp" startline="84" endline="84">M2::ARingCCC::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_acb8f46b0895a5958cec75a06299332da_1acb8f46b0895a5958cec75a06299332da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvalues</definition>
+        <argsstring>(const LMatrixRRR *A, LMatrixCCC *eigenvals)</argsstring>
+        <name>eigenvalues</name>
+        <qualifiedname>EigenM2::eigenvalues</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="442" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="442" bodyend="454" declfile="Macaulay2/e/eigen.hpp" declline="88" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_r_r_r_adf7ab19bb8ed5decb51e9b0885e69e94_1adf7ab19bb8ed5decb51e9b0885e69e94" compoundref="aring-_r_r_r_8hpp" startline="78" endline="78">M2::ARingRRR::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="namespace_matrix_ops_a7ac47dfde6112aea74ea92366375ddae_1a7ac47dfde6112aea74ea92366375ddae" compoundref="mat-linalg_8hpp" startline="1311" endline="1318">MatrixOps::eigenvalues</referencedby>
+        <referencedby refid="namespace_matrix_ops_a3c4cc98d9a641768c5a7aaae8fec1afd_1a3c4cc98d9a641768c5a7aaae8fec1afd" compoundref="mat-linalg_8hpp" startline="1462" endline="1465">MatrixOps::eigenvalues</referencedby>
+        <referencedby refid="namespace_matrix_ops_ac2c163f378aa14ffea516ac36721373e_1ac2c163f378aa14ffea516ac36721373e" compoundref="mat-linalg_8hpp" startline="1209" endline="1216">MatrixOps::eigenvalues</referencedby>
+        <referencedby refid="namespace_matrix_ops_adc3b152b777630abb9de536127e740f3_1adc3b152b777630abb9de536127e740f3" compoundref="mat-linalg_8hpp" startline="1397" endline="1400">MatrixOps::eigenvalues</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a3b9427576e6ae17b09a8afd7be2e1d9d_1a3b9427576e6ae17b09a8afd7be2e1d9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvalues</definition>
+        <argsstring>(const LMatrixCCC *A, LMatrixCCC *eigenvals)</argsstring>
+        <name>eigenvalues</name>
+        <qualifiedname>EigenM2::eigenvalues</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="456" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="456" bodyend="468" declfile="Macaulay2/e/eigen.hpp" declline="89" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_c_c_c_a6ca36f68691d04e4535212cbb3a963cf_1a6ca36f68691d04e4535212cbb3a963cf" compoundref="aring-_c_c_c_8hpp" startline="84" endline="84">M2::ARingCCC::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_af62f1a1bf68deb784d2ae1b784fd25de_1af62f1a1bf68deb784d2ae1b784fd25de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvalues_hermitian</definition>
+        <argsstring>(const LMatrixRRR *A, LMatrixRRR *eigenvals)</argsstring>
+        <name>eigenvalues_hermitian</name>
+        <qualifiedname>EigenM2::eigenvalues_hermitian</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="470" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="470" bodyend="482" declfile="Macaulay2/e/eigen.hpp" declline="90" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_r_r_r_adf7ab19bb8ed5decb51e9b0885e69e94_1adf7ab19bb8ed5decb51e9b0885e69e94" compoundref="aring-_r_r_r_8hpp" startline="78" endline="78">M2::ARingRRR::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="namespace_matrix_ops_ad615a237263b292b971ecbca10181606_1ad615a237263b292b971ecbca10181606" compoundref="mat-linalg_8hpp" startline="1302" endline="1309">MatrixOps::eigenvaluesHermitian</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad12b044f3e1210b30b329ab017920bba_1ad12b044f3e1210b30b329ab017920bba" compoundref="mat-linalg_8hpp" startline="1457" endline="1460">MatrixOps::eigenvaluesHermitian</referencedby>
+        <referencedby refid="namespace_matrix_ops_a58682268ed5e7c2ef3a75c70e89ab254_1a58682268ed5e7c2ef3a75c70e89ab254" compoundref="mat-linalg_8hpp" startline="1200" endline="1207">MatrixOps::eigenvaluesHermitian</referencedby>
+        <referencedby refid="namespace_matrix_ops_a0829f315dd5d838948e5d22ddbf1768a_1a0829f315dd5d838948e5d22ddbf1768a" compoundref="mat-linalg_8hpp" startline="1392" endline="1395">MatrixOps::eigenvaluesHermitian</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a8c6b6d2fc4b0dbe426264f0722ec27c3_1a8c6b6d2fc4b0dbe426264f0722ec27c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvalues_hermitian</definition>
+        <argsstring>(const LMatrixCCC *A, LMatrixRRR *eigenvals)</argsstring>
+        <name>eigenvalues_hermitian</name>
+        <qualifiedname>EigenM2::eigenvalues_hermitian</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="484" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="484" bodyend="496" declfile="Macaulay2/e/eigen.hpp" declline="91" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_c_c_c_a6ca36f68691d04e4535212cbb3a963cf_1a6ca36f68691d04e4535212cbb3a963cf" compoundref="aring-_c_c_c_8hpp" startline="84" endline="84">M2::ARingCCC::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a56ba255897185438deb0d30995c23a0e_1a56ba255897185438deb0d30995c23a0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvectors</definition>
+        <argsstring>(const LMatrixRRR *A, LMatrixCCC *eigenvals, LMatrixCCC *eigenvecs)</argsstring>
+        <name>eigenvectors</name>
+        <qualifiedname>EigenM2::eigenvectors</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>eigenvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="498" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="498" bodyend="511" declfile="Macaulay2/e/eigen.hpp" declline="92" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_r_r_r_adf7ab19bb8ed5decb51e9b0885e69e94_1adf7ab19bb8ed5decb51e9b0885e69e94" compoundref="aring-_r_r_r_8hpp" startline="78" endline="78">M2::ARingRRR::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="namespace_matrix_ops_a142be27bb9e2241f9fb70908feb54f45_1a142be27bb9e2241f9fb70908feb54f45" compoundref="mat-linalg_8hpp" startline="1331" endline="1338">MatrixOps::eigenvectors</referencedby>
+        <referencedby refid="namespace_matrix_ops_a86da8970d67670fa4bbc48cc6f32fe4e_1a86da8970d67670fa4bbc48cc6f32fe4e" compoundref="mat-linalg_8hpp" startline="1474" endline="1479">MatrixOps::eigenvectors</referencedby>
+        <referencedby refid="namespace_matrix_ops_a0569dc4b5486467bda0492e7757980a6_1a0569dc4b5486467bda0492e7757980a6" compoundref="mat-linalg_8hpp" startline="1229" endline="1236">MatrixOps::eigenvectors</referencedby>
+        <referencedby refid="namespace_matrix_ops_a31c8ee6b6f63e7b3f66071ef74007ab3_1a31c8ee6b6f63e7b3f66071ef74007ab3" compoundref="mat-linalg_8hpp" startline="1409" endline="1414">MatrixOps::eigenvectors</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a131c3bdad6371c26b237f3c22a82cc78_1a131c3bdad6371c26b237f3c22a82cc78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvectors</definition>
+        <argsstring>(const LMatrixCCC *A, LMatrixCCC *eigenvals, LMatrixCCC *eigenvecs)</argsstring>
+        <name>eigenvectors</name>
+        <qualifiedname>EigenM2::eigenvectors</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>eigenvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="513" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="513" bodyend="526" declfile="Macaulay2/e/eigen.hpp" declline="93" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_c_c_c_a6ca36f68691d04e4535212cbb3a963cf_1a6ca36f68691d04e4535212cbb3a963cf" compoundref="aring-_c_c_c_8hpp" startline="84" endline="84">M2::ARingCCC::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a68b3b512faaac33a0c9642950dc2871d_1a68b3b512faaac33a0c9642950dc2871d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvectors_hermitian</definition>
+        <argsstring>(const LMatrixRRR *A, LMatrixRRR *eigenvals, LMatrixRRR *eigenvecs)</argsstring>
+        <name>eigenvectors_hermitian</name>
+        <qualifiedname>EigenM2::eigenvectors_hermitian</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>eigenvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="528" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="528" bodyend="541" declfile="Macaulay2/e/eigen.hpp" declline="94" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_r_r_r_adf7ab19bb8ed5decb51e9b0885e69e94_1adf7ab19bb8ed5decb51e9b0885e69e94" compoundref="aring-_r_r_r_8hpp" startline="78" endline="78">M2::ARingRRR::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="namespace_matrix_ops_a6493f42331568b7fecacbf0bce70cf9b_1a6493f42331568b7fecacbf0bce70cf9b" compoundref="mat-linalg_8hpp" startline="1320" endline="1329">MatrixOps::eigenvectorsHermitian</referencedby>
+        <referencedby refid="namespace_matrix_ops_a43671c55a30f4f24c32dab2dae8d596b_1a43671c55a30f4f24c32dab2dae8d596b" compoundref="mat-linalg_8hpp" startline="1467" endline="1472">MatrixOps::eigenvectorsHermitian</referencedby>
+        <referencedby refid="namespace_matrix_ops_a640a84468bdad2298a1c32675523b772_1a640a84468bdad2298a1c32675523b772" compoundref="mat-linalg_8hpp" startline="1218" endline="1227">MatrixOps::eigenvectorsHermitian</referencedby>
+        <referencedby refid="namespace_matrix_ops_a96e50c36c5c4d88f8dfae1cd4ca25321_1a96e50c36c5c4d88f8dfae1cd4ca25321" compoundref="mat-linalg_8hpp" startline="1402" endline="1407">MatrixOps::eigenvectorsHermitian</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_ae03ba0ce5b8c08b419799a9caa062338_1ae03ba0ce5b8c08b419799a9caa062338" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvectors_hermitian</definition>
+        <argsstring>(const LMatrixCCC *A, LMatrixRRR *eigenvals, LMatrixCCC *eigenvecs)</argsstring>
+        <name>eigenvectors_hermitian</name>
+        <qualifiedname>EigenM2::eigenvectors_hermitian</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>eigenvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="543" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="543" bodyend="556" declfile="Macaulay2/e/eigen.hpp" declline="95" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_c_c_c_a6ca36f68691d04e4535212cbb3a963cf_1a6ca36f68691d04e4535212cbb3a963cf" compoundref="aring-_c_c_c_8hpp" startline="84" endline="84">M2::ARingCCC::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a522b8e40e31815a2f7dfc664347bde5f_1a522b8e40e31815a2f7dfc664347bde5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::least_squares</definition>
+        <argsstring>(const LMatrixRRR *A, const LMatrixRRR *B, LMatrixRRR *X)</argsstring>
+        <name>least_squares</name>
+        <qualifiedname>EigenM2::least_squares</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>B</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a2830d53a5a9003065d799abd5636fbec_1a2830d53a5a9003065d799abd5636fbec" kindref="member">LMatrixRRR</ref> *</type>
+          <declname>X</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="558" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="558" bodyend="577" declfile="Macaulay2/e/eigen.hpp" declline="96" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_r_r_r_adf7ab19bb8ed5decb51e9b0885e69e94_1adf7ab19bb8ed5decb51e9b0885e69e94" compoundref="aring-_r_r_r_8hpp" startline="78" endline="78">M2::ARingRRR::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+        <referencedby refid="namespace_matrix_ops_a13e82864659bf32e3d8a03ba902cd846_1a13e82864659bf32e3d8a03ba902cd846" compoundref="mat-linalg_8hpp" startline="1340" endline="1353">MatrixOps::leastSquares</referencedby>
+        <referencedby refid="namespace_matrix_ops_acb430a349169a43ff290ddc8ad3af6f0_1acb430a349169a43ff290ddc8ad3af6f0" compoundref="mat-linalg_8hpp" startline="1481" endline="1488">MatrixOps::leastSquares</referencedby>
+        <referencedby refid="namespace_matrix_ops_ae3e403f9c07cee698545ebebe4295677_1ae3e403f9c07cee698545ebebe4295677" compoundref="mat-linalg_8hpp" startline="1238" endline="1254">MatrixOps::leastSquares</referencedby>
+        <referencedby refid="namespace_matrix_ops_ad12071f88de5d4d81fa5f10df9018923_1ad12071f88de5d4d81fa5f10df9018923" compoundref="mat-linalg_8hpp" startline="1416" endline="1423">MatrixOps::leastSquares</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a5c83bcba334e14a5b9f0114501c0fbeb_1a5c83bcba334e14a5b9f0114501c0fbeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::least_squares</definition>
+        <argsstring>(const LMatrixCCC *A, const LMatrixCCC *B, LMatrixCCC *X)</argsstring>
+        <name>least_squares</name>
+        <qualifiedname>EigenM2::least_squares</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>const <ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>B</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_ae4688d4dbe18b4b70b5be6ec36d2a5d7_1ae4688d4dbe18b4b70b5be6ec36d2a5d7" kindref="member">LMatrixCCC</ref> *</type>
+          <declname>X</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.cpp" line="579" column="6" bodyfile="Macaulay2/e/eigen.cpp" bodystart="579" bodyend="598" declfile="Macaulay2/e/eigen.hpp" declline="97" declcolumn="8"/>
+        <references refid="namespace_eigen_m2_af3c5a8e3f97203012695d6a1a0a1101d_1af3c5a8e3f97203012695d6a1a0a1101d" compoundref="eigen_8cpp" startline="327" endline="335">fill_from_MatrixXmp</references>
+        <references refid="namespace_eigen_m2_a0cad0b2294423fcf798db91a563038c5_1a0cad0b2294423fcf798db91a563038c5" compoundref="eigen_8cpp" startline="313" endline="318">fill_to_MatrixXmp</references>
+        <references refid="class_m2_1_1_a_ring_c_c_c_a6ca36f68691d04e4535212cbb3a963cf_1a6ca36f68691d04e4535212cbb3a963cf" compoundref="aring-_c_c_c_8hpp" startline="84" endline="84">M2::ARingCCC::get_precision</references>
+        <references refid="class_d_mat_aff91923e882c194ecf16030897933e45_1aff91923e882c194ecf16030897933e45" compoundref="dmat_8hpp" startline="143" endline="143">DMat&lt; ACoeffRing &gt;::numColumns</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+        <references refid="class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440_1a8bfde729efa8a5ba300bd3024dc9a440" compoundref="dmat_8hpp" startline="141" endline="141">DMat&lt; ACoeffRing &gt;::ring</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a11a27c06359c1c3f5d021925692483e4_1a11a27c06359c1c3f5d021925692483e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::SVD</definition>
+        <argsstring>(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)</argsstring>
+        <name>SVD</name>
+        <qualifiedname>EigenM2::SVD</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>Sigma</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>U</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>VT</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="45" column="8" declfile="Macaulay2/e/eigen.hpp" declline="45" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_af5b743fdbdf9f0e1ec51673f0e4621bc_1af5b743fdbdf9f0e1ec51673f0e4621bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::SVD</definition>
+        <argsstring>(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)</argsstring>
+        <name>SVD</name>
+        <qualifiedname>EigenM2::SVD</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>Sigma</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>U</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>VT</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="49" column="8" declfile="Macaulay2/e/eigen.hpp" declline="49" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a8ef953e2167959992b06262a0ff5554a_1a8ef953e2167959992b06262a0ff5554a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::SVD_divide_conquer</definition>
+        <argsstring>(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)</argsstring>
+        <name>SVD_divide_conquer</name>
+        <qualifiedname>EigenM2::SVD_divide_conquer</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>Sigma</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>U</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>VT</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="53" column="8" declfile="Macaulay2/e/eigen.hpp" declline="53" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_aa5098a86020d4b60216be330cf147afc_1aa5098a86020d4b60216be330cf147afc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::SVD_divide_conquer</definition>
+        <argsstring>(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)</argsstring>
+        <name>SVD_divide_conquer</name>
+        <qualifiedname>EigenM2::SVD_divide_conquer</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>Sigma</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>U</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>VT</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="57" column="8" declfile="Macaulay2/e/eigen.hpp" declline="57" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_afed486e9add93a409dfc5fd01052141a_1afed486e9add93a409dfc5fd01052141a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvalues</definition>
+        <argsstring>(const LMatrixRR *A, LMatrixCC *eigenvals)</argsstring>
+        <name>eigenvalues</name>
+        <qualifiedname>EigenM2::eigenvalues</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="61" column="8" declfile="Macaulay2/e/eigen.hpp" declline="61" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a1e64abe33906f8f1a0749abb7a17bca1_1a1e64abe33906f8f1a0749abb7a17bca1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvalues</definition>
+        <argsstring>(const LMatrixCC *A, LMatrixCC *eigenvals)</argsstring>
+        <name>eigenvalues</name>
+        <qualifiedname>EigenM2::eigenvalues</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="62" column="8" declfile="Macaulay2/e/eigen.hpp" declline="62" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_ad101ca8fffe3a6c240ee84025357c325_1ad101ca8fffe3a6c240ee84025357c325" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvalues_hermitian</definition>
+        <argsstring>(const LMatrixRR *A, LMatrixRR *eigenvals)</argsstring>
+        <name>eigenvalues_hermitian</name>
+        <qualifiedname>EigenM2::eigenvalues_hermitian</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="63" column="8" declfile="Macaulay2/e/eigen.hpp" declline="63" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_ae031c74918f19caa9ab5a09f653c3c08_1ae031c74918f19caa9ab5a09f653c3c08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvalues_hermitian</definition>
+        <argsstring>(const LMatrixCC *A, LMatrixRR *eigenvals)</argsstring>
+        <name>eigenvalues_hermitian</name>
+        <qualifiedname>EigenM2::eigenvalues_hermitian</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="64" column="8" declfile="Macaulay2/e/eigen.hpp" declline="64" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_ae0d876b509772e90e4f51dbf1285895c_1ae0d876b509772e90e4f51dbf1285895c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvectors</definition>
+        <argsstring>(const LMatrixRR *A, LMatrixCC *eigenvals, LMatrixCC *eigenvecs)</argsstring>
+        <name>eigenvectors</name>
+        <qualifiedname>EigenM2::eigenvectors</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>eigenvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="65" column="8" declfile="Macaulay2/e/eigen.hpp" declline="65" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a2ff55174813fab7337a93dc39a8b6753_1a2ff55174813fab7337a93dc39a8b6753" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvectors</definition>
+        <argsstring>(const LMatrixCC *A, LMatrixCC *eigenvals, LMatrixCC *eigenvecs)</argsstring>
+        <name>eigenvectors</name>
+        <qualifiedname>EigenM2::eigenvectors</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>eigenvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="66" column="8" declfile="Macaulay2/e/eigen.hpp" declline="66" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a2adc576b0535e94495d6cb22439f7605_1a2adc576b0535e94495d6cb22439f7605" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvectors_hermitian</definition>
+        <argsstring>(const LMatrixRR *A, LMatrixRR *eigenvals, LMatrixRR *eigenvecs)</argsstring>
+        <name>eigenvectors_hermitian</name>
+        <qualifiedname>EigenM2::eigenvectors_hermitian</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>eigenvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="67" column="8" declfile="Macaulay2/e/eigen.hpp" declline="67" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_ab8cbb4b2d12d23e680d3948909b0b33b_1ab8cbb4b2d12d23e680d3948909b0b33b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::eigenvectors_hermitian</definition>
+        <argsstring>(const LMatrixCC *A, LMatrixRR *eigenvals, LMatrixCC *eigenvecs)</argsstring>
+        <name>eigenvectors_hermitian</name>
+        <qualifiedname>EigenM2::eigenvectors_hermitian</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>eigenvals</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>eigenvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="68" column="8" declfile="Macaulay2/e/eigen.hpp" declline="68" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_ad4757a5e9aff22708d307563c1b9e1f4_1ad4757a5e9aff22708d307563c1b9e1f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::least_squares</definition>
+        <argsstring>(const LMatrixRR *A, const LMatrixRR *B, LMatrixRR *X)</argsstring>
+        <name>least_squares</name>
+        <qualifiedname>EigenM2::least_squares</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>B</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a46104c88077064eb35341bb7baa1f09b_1a46104c88077064eb35341bb7baa1f09b" kindref="member">LMatrixRR</ref> *</type>
+          <declname>X</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="69" column="8" declfile="Macaulay2/e/eigen.hpp" declline="69" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_eigen_m2_a93d8d5eb5362b07307dfd2281c614385_1a93d8d5eb5362b07307dfd2281c614385" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool EigenM2::least_squares</definition>
+        <argsstring>(const LMatrixCC *A, const LMatrixCC *B, LMatrixCC *X)</argsstring>
+        <name>least_squares</name>
+        <qualifiedname>EigenM2::least_squares</qualifiedname>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>const <ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>B</declname>
+        </param>
+        <param>
+          <type><ref refid="eigen_8hpp_a7004766f64660aaaa35147ddfa33a9b4_1a7004766f64660aaaa35147ddfa33a9b4" kindref="member">LMatrixCC</ref> *</type>
+          <declname>X</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/eigen.hpp" line="70" column="8" declfile="Macaulay2/e/eigen.hpp" declline="70" declcolumn="8"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/eigen.cpp" line="67" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,582 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmgb_1_1_ideal_stream_log" kind="class" language="C++" prot="public">
+    <compoundname>mgb::IdealStreamLog</compoundname>
+    <includes refid="mathicgb_8h" local="no">mathicgb.h</includes>
+    <templateparamlist>
+      <param>
+        <type>class Stream</type>
+        <defval><ref refid="classmgb_1_1_null_ideal_stream" kindref="compound">NullIdealStream</ref></defval>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmgb_1_1_ideal_stream_log_a4dee05511bf14b2defda30f5c5358926_1a4dee05511bf14b2defda30f5c5358926" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a6d2bed91ab97c0431180883c32fcbe84_1a6d2bed91ab97c0431180883c32fcbe84" kindref="member">GroebnerConfiguration::Coefficient</ref></type>
+        <definition>typedef GroebnerConfiguration::Coefficient mgb::IdealStreamLog&lt; Stream &gt;::Coefficient</definition>
+        <argsstring></argsstring>
+        <name>Coefficient</name>
+        <qualifiedname>mgb::IdealStreamLog::Coefficient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="408" column="48" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="408" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmgb_1_1_ideal_stream_log_ad9859d5753aaae5a82739ed1d94f200c_1ad9859d5753aaae5a82739ed1d94f200c" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_af1054f5d7d178da47ae7dc2c3de8a5ba_1af1054f5d7d178da47ae7dc2c3de8a5ba" kindref="member">GroebnerConfiguration::VarIndex</ref></type>
+        <definition>typedef GroebnerConfiguration::VarIndex mgb::IdealStreamLog&lt; Stream &gt;::VarIndex</definition>
+        <argsstring></argsstring>
+        <name>VarIndex</name>
+        <qualifiedname>mgb::IdealStreamLog::VarIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="409" column="45" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="409" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmgb_1_1_ideal_stream_log_a8b15898f0bc9bb300d47fa91b88d82be_1a8b15898f0bc9bb300d47fa91b88d82be" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a689abdbe85ca79cdeee87350036d4c10_1a689abdbe85ca79cdeee87350036d4c10" kindref="member">GroebnerConfiguration::Exponent</ref></type>
+        <definition>typedef GroebnerConfiguration::Exponent mgb::IdealStreamLog&lt; Stream &gt;::Exponent</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>mgb::IdealStreamLog::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="410" column="45" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="410" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmgb_1_1_ideal_stream_log_a89f32f47c8bb7e35e8f6b2e2c761dab2_1a89f32f47c8bb7e35e8f6b2e2c761dab2" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a4f5b7158eb39c62706456d28cfb65d73_1a4f5b7158eb39c62706456d28cfb65d73" kindref="member">GroebnerConfiguration::Component</ref></type>
+        <definition>typedef GroebnerConfiguration::Component mgb::IdealStreamLog&lt; Stream &gt;::Component</definition>
+        <argsstring></argsstring>
+        <name>Component</name>
+        <qualifiedname>mgb::IdealStreamLog::Component</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="411" column="46" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="411" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmgb_1_1_ideal_stream_log_a77ae2fd9e5d7ab0ede9a8f69c0616384_1a77ae2fd9e5d7ab0ede9a8f69c0616384" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classmgb_1_1_ideal_stream_log_a4dee05511bf14b2defda30f5c5358926_1a4dee05511bf14b2defda30f5c5358926" kindref="member">Coefficient</ref></type>
+        <definition>const Coefficient mgb::IdealStreamLog&lt; Stream &gt;::mModulus</definition>
+        <argsstring></argsstring>
+        <name>mModulus</name>
+        <qualifiedname>mgb::IdealStreamLog::mModulus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="441" column="23" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="441" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" compoundref="mathicgb_8h" startline="660" endline="677">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" compoundref="mathicgb_8h" startline="647" endline="657">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a2e98a6c23b7f8f107f47b86d7cdc8bd8_1a2e98a6c23b7f8f107f47b86d7cdc8bd8" compoundref="mathicgb_8h" startline="686" endline="688">mgb::IdealStreamLog&lt; Stream &gt;::modulus</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmgb_1_1_ideal_stream_log_a013bfb86956a61ee6610ffd3a94b12ab_1a013bfb86956a61ee6610ffd3a94b12ab" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classmgb_1_1_ideal_stream_log_ad9859d5753aaae5a82739ed1d94f200c_1ad9859d5753aaae5a82739ed1d94f200c" kindref="member">VarIndex</ref></type>
+        <definition>const VarIndex mgb::IdealStreamLog&lt; Stream &gt;::mVarCount</definition>
+        <argsstring></argsstring>
+        <name>mVarCount</name>
+        <qualifiedname>mgb::IdealStreamLog::mVarCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="442" column="20" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="442" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" compoundref="mathicgb_8h" startline="660" endline="677">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" compoundref="mathicgb_8h" startline="647" endline="657">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_aa3f73a3c5adfb5d141f294375d50b719_1aa3f73a3c5adfb5d141f294375d50b719" compoundref="mathicgb_8h" startline="692" endline="694">mgb::IdealStreamLog&lt; Stream &gt;::varCount</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmgb_1_1_ideal_stream_log_a914392d50fe55c6c67d22f8317616f9a_1a914392d50fe55c6c67d22f8317616f9a" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classmgb_1_1_ideal_stream_log_a89f32f47c8bb7e35e8f6b2e2c761dab2_1a89f32f47c8bb7e35e8f6b2e2c761dab2" kindref="member">Component</ref></type>
+        <definition>const Component mgb::IdealStreamLog&lt; Stream &gt;::mComCount</definition>
+        <argsstring></argsstring>
+        <name>mComCount</name>
+        <qualifiedname>mgb::IdealStreamLog::mComCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="443" column="21" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="443" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a0a717f6f8607608cc98679cfdc2fdf86_1a0a717f6f8607608cc98679cfdc2fdf86" compoundref="mathicgb_8h" startline="698" endline="700">mgb::IdealStreamLog&lt; Stream &gt;::comCount</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" compoundref="mathicgb_8h" startline="660" endline="677">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" compoundref="mathicgb_8h" startline="647" endline="657">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" prot="private" static="no" mutable="no">
+        <type>Stream *const</type>
+        <definition>Stream* const mgb::IdealStreamLog&lt; Stream &gt;::mStream</definition>
+        <argsstring></argsstring>
+        <name>mStream</name>
+        <qualifiedname>mgb::IdealStreamLog::mStream</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="444" column="18" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="444" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_ac102adcb54dcb8973e58498ca68a4eee_1ac102adcb54dcb8973e58498ca68a4eee" compoundref="mathicgb_8h" startline="738" endline="743">mgb::IdealStreamLog&lt; Stream &gt;::appendExponent</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_ab6829d72069cc33d75f62b9ba2b78caa_1ab6829d72069cc33d75f62b9ba2b78caa" compoundref="mathicgb_8h" startline="717" endline="721">mgb::IdealStreamLog&lt; Stream &gt;::appendPolynomialBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a5114e0cc4da6e0a30de970ac8b2cede9_1a5114e0cc4da6e0a30de970ac8b2cede9" compoundref="mathicgb_8h" startline="724" endline="728">mgb::IdealStreamLog&lt; Stream &gt;::appendPolynomialBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_ad7bb4d6d1840b38150c13d73b8317f54_1ad7bb4d6d1840b38150c13d73b8317f54" compoundref="mathicgb_8h" startline="753" endline="757">mgb::IdealStreamLog&lt; Stream &gt;::appendPolynomialDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_af4b1e04fc2d46c9fe92f526c71d1bd68_1af4b1e04fc2d46c9fe92f526c71d1bd68" compoundref="mathicgb_8h" startline="731" endline="735">mgb::IdealStreamLog&lt; Stream &gt;::appendTermBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_aa5ca55870b3574eee7a2bb61991fa00b_1aa5ca55870b3574eee7a2bb61991fa00b" compoundref="mathicgb_8h" startline="746" endline="750">mgb::IdealStreamLog&lt; Stream &gt;::appendTermDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a48131d365375f38b518ab739b5056f81_1a48131d365375f38b518ab739b5056f81" compoundref="mathicgb_8h" startline="703" endline="707">mgb::IdealStreamLog&lt; Stream &gt;::idealBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a8bcc6ea79bc23ed8cc6d9fb160c06bc7_1a8bcc6ea79bc23ed8cc6d9fb160c06bc7" compoundref="mathicgb_8h" startline="710" endline="714">mgb::IdealStreamLog&lt; Stream &gt;::idealBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_ac2aa1e3f06e92d19bde25557d55e2810_1ac2aa1e3f06e92d19bde25557d55e2810" compoundref="mathicgb_8h" startline="760" endline="764">mgb::IdealStreamLog&lt; Stream &gt;::idealDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" compoundref="mathicgb_8h" startline="660" endline="677">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" compoundref="mathicgb_8h" startline="647" endline="657">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" prot="private" static="no" mutable="no">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; mgb::IdealStreamLog&lt; Stream &gt;::mLog</definition>
+        <argsstring></argsstring>
+        <name>mLog</name>
+        <qualifiedname>mgb::IdealStreamLog::mLog</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="445" column="18" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="445" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_ac102adcb54dcb8973e58498ca68a4eee_1ac102adcb54dcb8973e58498ca68a4eee" compoundref="mathicgb_8h" startline="738" endline="743">mgb::IdealStreamLog&lt; Stream &gt;::appendExponent</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_ab6829d72069cc33d75f62b9ba2b78caa_1ab6829d72069cc33d75f62b9ba2b78caa" compoundref="mathicgb_8h" startline="717" endline="721">mgb::IdealStreamLog&lt; Stream &gt;::appendPolynomialBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a5114e0cc4da6e0a30de970ac8b2cede9_1a5114e0cc4da6e0a30de970ac8b2cede9" compoundref="mathicgb_8h" startline="724" endline="728">mgb::IdealStreamLog&lt; Stream &gt;::appendPolynomialBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_ad7bb4d6d1840b38150c13d73b8317f54_1ad7bb4d6d1840b38150c13d73b8317f54" compoundref="mathicgb_8h" startline="753" endline="757">mgb::IdealStreamLog&lt; Stream &gt;::appendPolynomialDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_af4b1e04fc2d46c9fe92f526c71d1bd68_1af4b1e04fc2d46c9fe92f526c71d1bd68" compoundref="mathicgb_8h" startline="731" endline="735">mgb::IdealStreamLog&lt; Stream &gt;::appendTermBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_aa5ca55870b3574eee7a2bb61991fa00b_1aa5ca55870b3574eee7a2bb61991fa00b" compoundref="mathicgb_8h" startline="746" endline="750">mgb::IdealStreamLog&lt; Stream &gt;::appendTermDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a48131d365375f38b518ab739b5056f81_1a48131d365375f38b518ab739b5056f81" compoundref="mathicgb_8h" startline="703" endline="707">mgb::IdealStreamLog&lt; Stream &gt;::idealBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a8bcc6ea79bc23ed8cc6d9fb160c06bc7_1a8bcc6ea79bc23ed8cc6d9fb160c06bc7" compoundref="mathicgb_8h" startline="710" endline="714">mgb::IdealStreamLog&lt; Stream &gt;::idealBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_ac2aa1e3f06e92d19bde25557d55e2810_1ac2aa1e3f06e92d19bde25557d55e2810" compoundref="mathicgb_8h" startline="760" endline="764">mgb::IdealStreamLog&lt; Stream &gt;::idealDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" compoundref="mathicgb_8h" startline="660" endline="677">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" compoundref="mathicgb_8h" startline="647" endline="657">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a93f9adb3e9766967fb2407e0b0d3f8e1_1a93f9adb3e9766967fb2407e0b0d3f8e1" compoundref="mathicgb_8h" startline="680" endline="682">mgb::IdealStreamLog&lt; Stream &gt;::~IdealStreamLog</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</definition>
+        <argsstring>(std::ostream &amp;log, Stream &amp;stream)</argsstring>
+        <name>IdealStreamLog</name>
+        <qualifiedname>mgb::IdealStreamLog::IdealStreamLog</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>log</declname>
+        </param>
+        <param>
+          <type>Stream &amp;</type>
+          <declname>stream</declname>
+        </param>
+        <briefdescription>
+<para>All calls are written to log and then passed on to stream. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="414" column="5" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="647" bodyend="657"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a0a717f6f8607608cc98679cfdc2fdf86_1a0a717f6f8607608cc98679cfdc2fdf86" compoundref="mathicgb_8h" startline="698" endline="700">mgb::IdealStreamLog&lt; Stream &gt;::comCount</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a914392d50fe55c6c67d22f8317616f9a_1a914392d50fe55c6c67d22f8317616f9a" compoundref="mathicgb_8h" startline="443">mgb::IdealStreamLog&lt; Stream &gt;::mComCount</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a77ae2fd9e5d7ab0ede9a8f69c0616384_1a77ae2fd9e5d7ab0ede9a8f69c0616384" compoundref="mathicgb_8h" startline="441">mgb::IdealStreamLog&lt; Stream &gt;::mModulus</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a2e98a6c23b7f8f107f47b86d7cdc8bd8_1a2e98a6c23b7f8f107f47b86d7cdc8bd8" compoundref="mathicgb_8h" startline="686" endline="688">mgb::IdealStreamLog&lt; Stream &gt;::modulus</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a013bfb86956a61ee6610ffd3a94b12ab_1a013bfb86956a61ee6610ffd3a94b12ab" compoundref="mathicgb_8h" startline="442">mgb::IdealStreamLog&lt; Stream &gt;::mVarCount</references>
+        <references refid="classmgb_1_1_ideal_stream_log_aa3f73a3c5adfb5d141f294375d50b719_1aa3f73a3c5adfb5d141f294375d50b719" compoundref="mathicgb_8h" startline="692" endline="694">mgb::IdealStreamLog&lt; Stream &gt;::varCount</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</definition>
+        <argsstring>(std::ostream &amp;log, Coefficient modulus, VarIndex varCount, Component comCount)</argsstring>
+        <name>IdealStreamLog</name>
+        <qualifiedname>mgb::IdealStreamLog::IdealStreamLog</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>log</declname>
+        </param>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_log_a4dee05511bf14b2defda30f5c5358926_1a4dee05511bf14b2defda30f5c5358926" kindref="member">Coefficient</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_log_ad9859d5753aaae5a82739ed1d94f200c_1ad9859d5753aaae5a82739ed1d94f200c" kindref="member">VarIndex</ref></type>
+          <declname>varCount</declname>
+        </param>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_log_a89f32f47c8bb7e35e8f6b2e2c761dab2_1a89f32f47c8bb7e35e8f6b2e2c761dab2" kindref="member">Component</ref></type>
+          <declname>comCount</declname>
+        </param>
+        <briefdescription>
+<para>All calls are written to log. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="417" column="5" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="660" bodyend="677"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a0a717f6f8607608cc98679cfdc2fdf86_1a0a717f6f8607608cc98679cfdc2fdf86" compoundref="mathicgb_8h" startline="698" endline="700">mgb::IdealStreamLog&lt; Stream &gt;::comCount</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a914392d50fe55c6c67d22f8317616f9a_1a914392d50fe55c6c67d22f8317616f9a" compoundref="mathicgb_8h" startline="443">mgb::IdealStreamLog&lt; Stream &gt;::mComCount</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a77ae2fd9e5d7ab0ede9a8f69c0616384_1a77ae2fd9e5d7ab0ede9a8f69c0616384" compoundref="mathicgb_8h" startline="441">mgb::IdealStreamLog&lt; Stream &gt;::mModulus</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a2e98a6c23b7f8f107f47b86d7cdc8bd8_1a2e98a6c23b7f8f107f47b86d7cdc8bd8" compoundref="mathicgb_8h" startline="686" endline="688">mgb::IdealStreamLog&lt; Stream &gt;::modulus</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+        <references refid="classmgb_1_1_ideal_stream_log_a013bfb86956a61ee6610ffd3a94b12ab_1a013bfb86956a61ee6610ffd3a94b12ab" compoundref="mathicgb_8h" startline="442">mgb::IdealStreamLog&lt; Stream &gt;::mVarCount</references>
+        <references refid="classmgb_1_1_ideal_stream_log_aa3f73a3c5adfb5d141f294375d50b719_1aa3f73a3c5adfb5d141f294375d50b719" compoundref="mathicgb_8h" startline="692" endline="694">mgb::IdealStreamLog&lt; Stream &gt;::varCount</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_a93f9adb3e9766967fb2407e0b0d3f8e1_1a93f9adb3e9766967fb2407e0b0d3f8e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mgb::IdealStreamLog&lt; Stream &gt;::~IdealStreamLog</definition>
+        <argsstring>()</argsstring>
+        <name>~IdealStreamLog</name>
+        <qualifiedname>mgb::IdealStreamLog::~IdealStreamLog</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="424" column="5" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="680" bodyend="682"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_a2e98a6c23b7f8f107f47b86d7cdc8bd8_1a2e98a6c23b7f8f107f47b86d7cdc8bd8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmgb_1_1_ideal_stream_log_a4dee05511bf14b2defda30f5c5358926_1a4dee05511bf14b2defda30f5c5358926" kindref="member">Coefficient</ref></type>
+        <definition>IdealStreamLog&lt; Stream &gt;::Coefficient mgb::IdealStreamLog&lt; Stream &gt;::modulus</definition>
+        <argsstring>() const</argsstring>
+        <name>modulus</name>
+        <qualifiedname>mgb::IdealStreamLog::modulus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="426" column="17" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="686" bodyend="688"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a77ae2fd9e5d7ab0ede9a8f69c0616384_1a77ae2fd9e5d7ab0ede9a8f69c0616384" compoundref="mathicgb_8h" startline="441">mgb::IdealStreamLog&lt; Stream &gt;::mModulus</references>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" compoundref="mathicgb_8h" startline="660" endline="677">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" compoundref="mathicgb_8h" startline="647" endline="657">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="test_2mathicgb_8cpp_a0e2c2fb4abfd0b594c6d02f0815d6da0_1a0e2c2fb4abfd0b594c6d02f0815d6da0" compoundref="test_2mathicgb_8cpp" startline="500" endline="594">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_aa3f73a3c5adfb5d141f294375d50b719_1aa3f73a3c5adfb5d141f294375d50b719" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmgb_1_1_ideal_stream_log_ad9859d5753aaae5a82739ed1d94f200c_1ad9859d5753aaae5a82739ed1d94f200c" kindref="member">VarIndex</ref></type>
+        <definition>IdealStreamLog&lt; Stream &gt;::VarIndex mgb::IdealStreamLog&lt; Stream &gt;::varCount</definition>
+        <argsstring>() const</argsstring>
+        <name>varCount</name>
+        <qualifiedname>mgb::IdealStreamLog::varCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="427" column="14" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="692" bodyend="694"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a013bfb86956a61ee6610ffd3a94b12ab_1a013bfb86956a61ee6610ffd3a94b12ab" compoundref="mathicgb_8h" startline="442">mgb::IdealStreamLog&lt; Stream &gt;::mVarCount</references>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" compoundref="mathicgb_8h" startline="660" endline="677">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" compoundref="mathicgb_8h" startline="647" endline="657">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="test_2mathicgb_8cpp_a0e2c2fb4abfd0b594c6d02f0815d6da0_1a0e2c2fb4abfd0b594c6d02f0815d6da0" compoundref="test_2mathicgb_8cpp" startline="500" endline="594">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_a0a717f6f8607608cc98679cfdc2fdf86_1a0a717f6f8607608cc98679cfdc2fdf86" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmgb_1_1_ideal_stream_log_a89f32f47c8bb7e35e8f6b2e2c761dab2_1a89f32f47c8bb7e35e8f6b2e2c761dab2" kindref="member">Component</ref></type>
+        <definition>IdealStreamLog&lt; Stream &gt;::Component mgb::IdealStreamLog&lt; Stream &gt;::comCount</definition>
+        <argsstring>() const</argsstring>
+        <name>comCount</name>
+        <qualifiedname>mgb::IdealStreamLog::comCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="428" column="15" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="698" bodyend="700"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a914392d50fe55c6c67d22f8317616f9a_1a914392d50fe55c6c67d22f8317616f9a" compoundref="mathicgb_8h" startline="443">mgb::IdealStreamLog&lt; Stream &gt;::mComCount</references>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" compoundref="mathicgb_8h" startline="660" endline="677">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" compoundref="mathicgb_8h" startline="647" endline="657">mgb::IdealStreamLog&lt; Stream &gt;::IdealStreamLog</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_a48131d365375f38b518ab739b5056f81_1a48131d365375f38b518ab739b5056f81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamLog&lt; Stream &gt;::idealBegin</definition>
+        <argsstring>()</argsstring>
+        <name>idealBegin</name>
+        <qualifiedname>mgb::IdealStreamLog::idealBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="430" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="703" bodyend="707"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+        <referencedby refid="test_2mathicgb_8cpp_a0e2c2fb4abfd0b594c6d02f0815d6da0_1a0e2c2fb4abfd0b594c6d02f0815d6da0" compoundref="test_2mathicgb_8cpp" startline="500" endline="594">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_a8bcc6ea79bc23ed8cc6d9fb160c06bc7_1a8bcc6ea79bc23ed8cc6d9fb160c06bc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamLog&lt; Stream &gt;::idealBegin</definition>
+        <argsstring>(size_t polyCount)</argsstring>
+        <name>idealBegin</name>
+        <qualifiedname>mgb::IdealStreamLog::idealBegin</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>polyCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="431" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="710" bodyend="714"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_ab6829d72069cc33d75f62b9ba2b78caa_1ab6829d72069cc33d75f62b9ba2b78caa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamLog&lt; Stream &gt;::appendPolynomialBegin</definition>
+        <argsstring>()</argsstring>
+        <name>appendPolynomialBegin</name>
+        <qualifiedname>mgb::IdealStreamLog::appendPolynomialBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="432" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="717" bodyend="721"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+        <referencedby refid="test_2mathicgb_8cpp_a0e2c2fb4abfd0b594c6d02f0815d6da0_1a0e2c2fb4abfd0b594c6d02f0815d6da0" compoundref="test_2mathicgb_8cpp" startline="500" endline="594">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_a5114e0cc4da6e0a30de970ac8b2cede9_1a5114e0cc4da6e0a30de970ac8b2cede9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamLog&lt; Stream &gt;::appendPolynomialBegin</definition>
+        <argsstring>(size_t termCount)</argsstring>
+        <name>appendPolynomialBegin</name>
+        <qualifiedname>mgb::IdealStreamLog::appendPolynomialBegin</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>termCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="433" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="724" bodyend="728"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_af4b1e04fc2d46c9fe92f526c71d1bd68_1af4b1e04fc2d46c9fe92f526c71d1bd68" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamLog&lt; Stream &gt;::appendTermBegin</definition>
+        <argsstring>(Component com)</argsstring>
+        <name>appendTermBegin</name>
+        <qualifiedname>mgb::IdealStreamLog::appendTermBegin</qualifiedname>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_log_a89f32f47c8bb7e35e8f6b2e2c761dab2_1a89f32f47c8bb7e35e8f6b2e2c761dab2" kindref="member">Component</ref></type>
+          <declname>com</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="434" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="731" bodyend="735"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+        <referencedby refid="test_2mathicgb_8cpp_a0e2c2fb4abfd0b594c6d02f0815d6da0_1a0e2c2fb4abfd0b594c6d02f0815d6da0" compoundref="test_2mathicgb_8cpp" startline="500" endline="594">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_ac102adcb54dcb8973e58498ca68a4eee_1ac102adcb54dcb8973e58498ca68a4eee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamLog&lt; Stream &gt;::appendExponent</definition>
+        <argsstring>(VarIndex index, Exponent exponent)</argsstring>
+        <name>appendExponent</name>
+        <qualifiedname>mgb::IdealStreamLog::appendExponent</qualifiedname>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_log_ad9859d5753aaae5a82739ed1d94f200c_1ad9859d5753aaae5a82739ed1d94f200c" kindref="member">VarIndex</ref></type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_log_a8b15898f0bc9bb300d47fa91b88d82be_1a8b15898f0bc9bb300d47fa91b88d82be" kindref="member">Exponent</ref></type>
+          <declname>exponent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="435" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="738" bodyend="743"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_aa5ca55870b3574eee7a2bb61991fa00b_1aa5ca55870b3574eee7a2bb61991fa00b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamLog&lt; Stream &gt;::appendTermDone</definition>
+        <argsstring>(Coefficient coefficient)</argsstring>
+        <name>appendTermDone</name>
+        <qualifiedname>mgb::IdealStreamLog::appendTermDone</qualifiedname>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_log_a4dee05511bf14b2defda30f5c5358926_1a4dee05511bf14b2defda30f5c5358926" kindref="member">Coefficient</ref></type>
+          <declname>coefficient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="436" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="746" bodyend="750"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+        <referencedby refid="test_2mathicgb_8cpp_a0e2c2fb4abfd0b594c6d02f0815d6da0_1a0e2c2fb4abfd0b594c6d02f0815d6da0" compoundref="test_2mathicgb_8cpp" startline="500" endline="594">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_ad7bb4d6d1840b38150c13d73b8317f54_1ad7bb4d6d1840b38150c13d73b8317f54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamLog&lt; Stream &gt;::appendPolynomialDone</definition>
+        <argsstring>()</argsstring>
+        <name>appendPolynomialDone</name>
+        <qualifiedname>mgb::IdealStreamLog::appendPolynomialDone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="437" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="753" bodyend="757"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+        <referencedby refid="test_2mathicgb_8cpp_a0e2c2fb4abfd0b594c6d02f0815d6da0_1a0e2c2fb4abfd0b594c6d02f0815d6da0" compoundref="test_2mathicgb_8cpp" startline="500" endline="594">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_log_ac2aa1e3f06e92d19bde25557d55e2810_1ac2aa1e3f06e92d19bde25557d55e2810" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamLog&lt; Stream &gt;::idealDone</definition>
+        <argsstring>()</argsstring>
+        <name>idealDone</name>
+        <qualifiedname>mgb::IdealStreamLog::idealDone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="438" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="760" bodyend="764"/>
+        <references refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" compoundref="mathicgb_8h" startline="445">mgb::IdealStreamLog&lt; Stream &gt;::mLog</references>
+        <references refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" compoundref="mathicgb_8h" startline="444">mgb::IdealStreamLog&lt; Stream &gt;::mStream</references>
+        <referencedby refid="test_2mathicgb_8cpp_a0e2c2fb4abfd0b594c6d02f0815d6da0_1a0e2c2fb4abfd0b594c6d02f0815d6da0" compoundref="test_2mathicgb_8cpp" startline="500" endline="594">TEST</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Passes on all method calls to an inner ideal stream while printing out what methods get called to an std::ostream. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>const Coefficient</label>
+      </node>
+      <node id="4">
+        <label>const Component</label>
+      </node>
+      <node id="1">
+        <label>mgb::IdealStreamLog&lt; Stream &gt;</label>
+        <link refid="classmgb_1_1_ideal_stream_log"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mModulus</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mComCount</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mStream</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mLog</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>mgb::NullIdealStream</label>
+        <link refid="classmgb_1_1_null_ideal_stream"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mModulus</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mComCount</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>size_t</label>
+      </node>
+      <node id="8">
+        <label>std::basic_ios&lt; Char &gt;</label>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::basic_ostream&lt; Char &gt;</label>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>std::ios_base</label>
+      </node>
+      <node id="6">
+        <label>std::ostream</label>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb.h" line="406" column="3" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="406" bodyend="446"/>
+    <listofallmembers>
+      <member refid="classmgb_1_1_ideal_stream_log_ac102adcb54dcb8973e58498ca68a4eee_1ac102adcb54dcb8973e58498ca68a4eee" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>appendExponent</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_ab6829d72069cc33d75f62b9ba2b78caa_1ab6829d72069cc33d75f62b9ba2b78caa" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>appendPolynomialBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a5114e0cc4da6e0a30de970ac8b2cede9_1a5114e0cc4da6e0a30de970ac8b2cede9" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>appendPolynomialBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_ad7bb4d6d1840b38150c13d73b8317f54_1ad7bb4d6d1840b38150c13d73b8317f54" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>appendPolynomialDone</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_af4b1e04fc2d46c9fe92f526c71d1bd68_1af4b1e04fc2d46c9fe92f526c71d1bd68" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>appendTermBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_aa5ca55870b3574eee7a2bb61991fa00b_1aa5ca55870b3574eee7a2bb61991fa00b" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>appendTermDone</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a4dee05511bf14b2defda30f5c5358926_1a4dee05511bf14b2defda30f5c5358926" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>Coefficient</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a0a717f6f8607608cc98679cfdc2fdf86_1a0a717f6f8607608cc98679cfdc2fdf86" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>comCount</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a89f32f47c8bb7e35e8f6b2e2c761dab2_1a89f32f47c8bb7e35e8f6b2e2c761dab2" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>Component</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a8b15898f0bc9bb300d47fa91b88d82be_1a8b15898f0bc9bb300d47fa91b88d82be" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>Exponent</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a48131d365375f38b518ab739b5056f81_1a48131d365375f38b518ab739b5056f81" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>idealBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a8bcc6ea79bc23ed8cc6d9fb160c06bc7_1a8bcc6ea79bc23ed8cc6d9fb160c06bc7" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>idealBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_ac2aa1e3f06e92d19bde25557d55e2810_1ac2aa1e3f06e92d19bde25557d55e2810" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>idealDone</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1_1a1c797d493f87bb40db84e07f7141eea1" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>IdealStreamLog</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198_1a4b9e19e55524bf6b844e29a905aec198" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>IdealStreamLog</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a914392d50fe55c6c67d22f8317616f9a_1a914392d50fe55c6c67d22f8317616f9a" prot="private" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>mComCount</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e_1a890645186579e3056fd1b614224d160e" prot="private" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>mLog</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a77ae2fd9e5d7ab0ede9a8f69c0616384_1a77ae2fd9e5d7ab0ede9a8f69c0616384" prot="private" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>mModulus</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a2e98a6c23b7f8f107f47b86d7cdc8bd8_1a2e98a6c23b7f8f107f47b86d7cdc8bd8" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>modulus</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47_1ace11cf0aaedda0a0af555ca6de870c47" prot="private" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>mStream</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a013bfb86956a61ee6610ffd3a94b12ab_1a013bfb86956a61ee6610ffd3a94b12ab" prot="private" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>mVarCount</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_aa3f73a3c5adfb5d141f294375d50b719_1aa3f73a3c5adfb5d141f294375d50b719" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>varCount</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_ad9859d5753aaae5a82739ed1d94f200c_1ad9859d5753aaae5a82739ed1d94f200c" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>VarIndex</name></member>
+      <member refid="classmgb_1_1_ideal_stream_log_a93f9adb3e9766967fb2407e0b0d3f8e1_1a93f9adb3e9766967fb2407e0b0d3f8e1" prot="public" virt="non-virtual"><scope>mgb::IdealStreamLog</scope><name>~IdealStreamLog</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

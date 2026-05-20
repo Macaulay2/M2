@@ -1,0 +1,475 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classstash" kind="class" language="C++" prot="public">
+    <compoundname>stash</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="mem_8hpp" local="no">mem.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classstash_a22f91368659c6d0a984ddc07a0c87297_1a22f91368659c6d0a984ddc07a0c87297" prot="private" static="no" mutable="no">
+        <type>const char *</type>
+        <definition>const char* stash::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <qualifiedname>stash::name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="88" column="14" bodyfile="Macaulay2/e/mem.hpp" bodystart="88" bodyend="-1"/>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+        <referencedby refid="classstash_ac0ae2120a85ca409ec94fc0d53b5f55c_1ac0ae2120a85ca409ec94fc0d53b5f55c" compoundref="mem_8cpp" startline="70" endline="87">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classstash_af00c0293f029f6e0e62bf712438b3ec9_1af00c0293f029f6e0e62bf712438b3ec9" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t stash::element_size</definition>
+        <argsstring></argsstring>
+        <name>element_size</name>
+        <qualifiedname>stash::element_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="89" column="10" bodyfile="Macaulay2/e/mem.hpp" bodystart="89" bodyend="-1"/>
+        <referencedby refid="classstash_a5949a8fdf217026140bd5f0cbb0b450c_1a5949a8fdf217026140bd5f0cbb0b450c" compoundref="mem_8cpp" startline="48" endline="68">chop_slab</referencedby>
+        <referencedby refid="classstash_ae4b46df1e16a1459ac79ef4aa4047b68_1ae4b46df1e16a1459ac79ef4aa4047b68" compoundref="mem_8hpp" startline="145" endline="175">delete_elem</referencedby>
+        <referencedby refid="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" compoundref="mem_8hpp" startline="119" endline="143">new_elem</referencedby>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+        <referencedby refid="classstash_ac0ae2120a85ca409ec94fc0d53b5f55c_1ac0ae2120a85ca409ec94fc0d53b5f55c" compoundref="mem_8cpp" startline="70" endline="87">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classstash_a17742f50b5d7de4db6bc915baa510b79_1a17742f50b5d7de4db6bc915baa510b79" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int stash::n_per_slab</definition>
+        <argsstring></argsstring>
+        <name>n_per_slab</name>
+        <qualifiedname>stash::n_per_slab</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="92" column="7" bodyfile="Macaulay2/e/mem.hpp" bodystart="92" bodyend="-1"/>
+        <referencedby refid="classstash_a5949a8fdf217026140bd5f0cbb0b450c_1a5949a8fdf217026140bd5f0cbb0b450c" compoundref="mem_8cpp" startline="48" endline="68">chop_slab</referencedby>
+        <referencedby refid="classstash_ae4b46df1e16a1459ac79ef4aa4047b68_1ae4b46df1e16a1459ac79ef4aa4047b68" compoundref="mem_8hpp" startline="145" endline="175">delete_elem</referencedby>
+        <referencedby refid="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" compoundref="mem_8hpp" startline="119" endline="143">new_elem</referencedby>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classstash_a56ac3888860dca8a3336554eb9757c9c_1a56ac3888860dca8a3336554eb9757c9c" prot="private" static="no" mutable="no">
+        <type><ref refid="classslab" kindref="compound">slab</ref> *</type>
+        <definition>slab* stash::slabs</definition>
+        <argsstring></argsstring>
+        <name>slabs</name>
+        <qualifiedname>stash::slabs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="97" column="8" bodyfile="Macaulay2/e/mem.hpp" bodystart="97" bodyend="-1"/>
+        <referencedby refid="classstash_a5949a8fdf217026140bd5f0cbb0b450c_1a5949a8fdf217026140bd5f0cbb0b450c" compoundref="mem_8cpp" startline="48" endline="68">chop_slab</referencedby>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+        <referencedby refid="classstash_a08c07e5949cc3fce5f2038fc8b57d681_1a08c07e5949cc3fce5f2038fc8b57d681" compoundref="mem_8cpp" startline="35" endline="46">~stash</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classstash_a6295f7881b66b9105f4c18e3b88ace60_1a6295f7881b66b9105f4c18e3b88ace60" prot="private" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* stash::free_list</definition>
+        <argsstring></argsstring>
+        <name>free_list</name>
+        <qualifiedname>stash::free_list</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="104" column="8" bodyfile="Macaulay2/e/mem.hpp" bodystart="104" bodyend="-1"/>
+        <referencedby refid="classstash_a5949a8fdf217026140bd5f0cbb0b450c_1a5949a8fdf217026140bd5f0cbb0b450c" compoundref="mem_8cpp" startline="48" endline="68">chop_slab</referencedby>
+        <referencedby refid="classstash_ae4b46df1e16a1459ac79ef4aa4047b68_1ae4b46df1e16a1459ac79ef4aa4047b68" compoundref="mem_8hpp" startline="145" endline="175">delete_elem</referencedby>
+        <referencedby refid="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" compoundref="mem_8hpp" startline="119" endline="143">new_elem</referencedby>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classstash_aeaca3d4656aa2f77599db531de531f31_1aeaca3d4656aa2f77599db531de531f31" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t stash::n_allocs</definition>
+        <argsstring></argsstring>
+        <name>n_allocs</name>
+        <qualifiedname>stash::n_allocs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="107" column="10" bodyfile="Macaulay2/e/mem.hpp" bodystart="107" bodyend="-1"/>
+        <referencedby refid="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" compoundref="mem_8hpp" startline="119" endline="143">new_elem</referencedby>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+        <referencedby refid="classstash_ac0ae2120a85ca409ec94fc0d53b5f55c_1ac0ae2120a85ca409ec94fc0d53b5f55c" compoundref="mem_8cpp" startline="70" endline="87">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classstash_afaae51cad540d03e8a259d54ebfeb253_1afaae51cad540d03e8a259d54ebfeb253" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t stash::n_inuse</definition>
+        <argsstring></argsstring>
+        <name>n_inuse</name>
+        <qualifiedname>stash::n_inuse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="108" column="10" bodyfile="Macaulay2/e/mem.hpp" bodystart="108" bodyend="-1"/>
+        <referencedby refid="classstash_ae4b46df1e16a1459ac79ef4aa4047b68_1ae4b46df1e16a1459ac79ef4aa4047b68" compoundref="mem_8hpp" startline="145" endline="175">delete_elem</referencedby>
+        <referencedby refid="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" compoundref="mem_8hpp" startline="119" endline="143">new_elem</referencedby>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+        <referencedby refid="classstash_ac0ae2120a85ca409ec94fc0d53b5f55c_1ac0ae2120a85ca409ec94fc0d53b5f55c" compoundref="mem_8cpp" startline="70" endline="87">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classstash_a8be13424643a2df36e67364c01bbff65_1a8be13424643a2df36e67364c01bbff65" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t stash::highwater</definition>
+        <argsstring></argsstring>
+        <name>highwater</name>
+        <qualifiedname>stash::highwater</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="109" column="10" bodyfile="Macaulay2/e/mem.hpp" bodystart="109" bodyend="-1"/>
+        <referencedby refid="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" compoundref="mem_8hpp" startline="119" endline="143">new_elem</referencedby>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+        <referencedby refid="classstash_ac0ae2120a85ca409ec94fc0d53b5f55c_1ac0ae2120a85ca409ec94fc0d53b5f55c" compoundref="mem_8cpp" startline="70" endline="87">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classstash_aeea8aaf79cf42c18e0db18e60a063539_1aeea8aaf79cf42c18e0db18e60a063539" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t stash::n_frees</definition>
+        <argsstring></argsstring>
+        <name>n_frees</name>
+        <qualifiedname>stash::n_frees</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="110" column="10" bodyfile="Macaulay2/e/mem.hpp" bodystart="110" bodyend="-1"/>
+        <referencedby refid="classstash_ae4b46df1e16a1459ac79ef4aa4047b68_1ae4b46df1e16a1459ac79ef4aa4047b68" compoundref="mem_8hpp" startline="145" endline="175">delete_elem</referencedby>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+        <referencedby refid="classstash_ac0ae2120a85ca409ec94fc0d53b5f55c_1ac0ae2120a85ca409ec94fc0d53b5f55c" compoundref="mem_8cpp" startline="70" endline="87">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classstash_ab0087ae1e008a33c48fbf24b4481cf06_1ab0087ae1e008a33c48fbf24b4481cf06" prot="private" static="no" mutable="no">
+        <type>spinLock</type>
+        <definition>spinLock stash::list_spinlock</definition>
+        <argsstring></argsstring>
+        <name>list_spinlock</name>
+        <qualifiedname>stash::list_spinlock</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="116" column="12" bodyfile="Macaulay2/e/mem.hpp" bodystart="116" bodyend="-1"/>
+        <referencedby refid="classstash_ae4b46df1e16a1459ac79ef4aa4047b68_1ae4b46df1e16a1459ac79ef4aa4047b68" compoundref="mem_8hpp" startline="145" endline="175">delete_elem</referencedby>
+        <referencedby refid="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" compoundref="mem_8hpp" startline="119" endline="143">new_elem</referencedby>
+        <referencedby refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" compoundref="mem_8cpp" startline="16" endline="33">stash</referencedby>
+        <referencedby refid="classstash_a08c07e5949cc3fce5f2038fc8b57d681_1a08c07e5949cc3fce5f2038fc8b57d681" compoundref="mem_8cpp" startline="35" endline="46">~stash</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>stash::stash</definition>
+        <argsstring>(const char *s, size_t len)</argsstring>
+        <name>stash</name>
+        <qualifiedname>stash::stash</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="78" column="3" bodyfile="Macaulay2/e/mem.cpp" bodystart="16" bodyend="33"/>
+        <references refid="classstash_af00c0293f029f6e0e62bf712438b3ec9_1af00c0293f029f6e0e62bf712438b3ec9" compoundref="mem_8hpp" startline="89">element_size</references>
+        <references refid="classstash_a6295f7881b66b9105f4c18e3b88ace60_1a6295f7881b66b9105f4c18e3b88ace60" compoundref="mem_8hpp" startline="104">free_list</references>
+        <references refid="classstash_a8be13424643a2df36e67364c01bbff65_1a8be13424643a2df36e67364c01bbff65" compoundref="mem_8hpp" startline="109">highwater</references>
+        <references refid="classstash_ab0087ae1e008a33c48fbf24b4481cf06_1ab0087ae1e008a33c48fbf24b4481cf06" compoundref="mem_8hpp" startline="116">list_spinlock</references>
+        <references refid="classstash_aeaca3d4656aa2f77599db531de531f31_1aeaca3d4656aa2f77599db531de531f31" compoundref="mem_8hpp" startline="107">n_allocs</references>
+        <references refid="classstash_aeea8aaf79cf42c18e0db18e60a063539_1aeea8aaf79cf42c18e0db18e60a063539" compoundref="mem_8hpp" startline="110">n_frees</references>
+        <references refid="classstash_afaae51cad540d03e8a259d54ebfeb253_1afaae51cad540d03e8a259d54ebfeb253" compoundref="mem_8hpp" startline="108">n_inuse</references>
+        <references refid="classstash_a17742f50b5d7de4db6bc915baa510b79_1a17742f50b5d7de4db6bc915baa510b79" compoundref="mem_8hpp" startline="92">n_per_slab</references>
+        <references refid="classstash_a22f91368659c6d0a984ddc07a0c87297_1a22f91368659c6d0a984ddc07a0c87297" compoundref="mem_8hpp" startline="88">name</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="mem_8hpp_a465250e9be6282d14e8ddeea2d313036_1a465250e9be6282d14e8ddeea2d313036" compoundref="mem_8hpp" startline="42">slab_size</references>
+        <references refid="classstash_a56ac3888860dca8a3336554eb9757c9c_1a56ac3888860dca8a3336554eb9757c9c" compoundref="mem_8hpp" startline="97">slabs</references>
+        <references refid="mem_8hpp_aca2b58b464f2a314aba4cee850d0c170_1aca2b58b464f2a314aba4cee850d0c170" compoundref="mem_8hpp" startline="45">word_size</references>
+      </memberdef>
+      <memberdef kind="function" id="classstash_a08c07e5949cc3fce5f2038fc8b57d681_1a08c07e5949cc3fce5f2038fc8b57d681" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>stash::~stash</definition>
+        <argsstring>()</argsstring>
+        <name>~stash</name>
+        <qualifiedname>stash::~stash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="79" column="3" bodyfile="Macaulay2/e/mem.cpp" bodystart="35" bodyend="46"/>
+        <references refid="classstash_ab0087ae1e008a33c48fbf24b4481cf06_1ab0087ae1e008a33c48fbf24b4481cf06" compoundref="mem_8hpp" startline="116">list_spinlock</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="classstash_a56ac3888860dca8a3336554eb9757c9c_1a56ac3888860dca8a3336554eb9757c9c" compoundref="mem_8hpp" startline="97">slabs</references>
+      </memberdef>
+      <memberdef kind="function" id="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * stash::new_elem</definition>
+        <argsstring>()</argsstring>
+        <name>new_elem</name>
+        <qualifiedname>stash::new_elem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="81" column="8" bodyfile="Macaulay2/e/mem.hpp" bodystart="119" bodyend="143"/>
+        <references refid="classstash_a5949a8fdf217026140bd5f0cbb0b450c_1a5949a8fdf217026140bd5f0cbb0b450c" compoundref="mem_8cpp" startline="48" endline="68">chop_slab</references>
+        <references refid="classstash_af00c0293f029f6e0e62bf712438b3ec9_1af00c0293f029f6e0e62bf712438b3ec9" compoundref="mem_8hpp" startline="89">element_size</references>
+        <references refid="classstash_a6295f7881b66b9105f4c18e3b88ace60_1a6295f7881b66b9105f4c18e3b88ace60" compoundref="mem_8hpp" startline="104">free_list</references>
+        <references refid="classstash_a8be13424643a2df36e67364c01bbff65_1a8be13424643a2df36e67364c01bbff65" compoundref="mem_8hpp" startline="109">highwater</references>
+        <references refid="classstash_ab0087ae1e008a33c48fbf24b4481cf06_1ab0087ae1e008a33c48fbf24b4481cf06" compoundref="mem_8hpp" startline="116">list_spinlock</references>
+        <references refid="classstash_aeaca3d4656aa2f77599db531de531f31_1aeaca3d4656aa2f77599db531de531f31" compoundref="mem_8hpp" startline="107">n_allocs</references>
+        <references refid="classstash_afaae51cad540d03e8a259d54ebfeb253_1afaae51cad540d03e8a259d54ebfeb253" compoundref="mem_8hpp" startline="108">n_inuse</references>
+        <references refid="classstash_a17742f50b5d7de4db6bc915baa510b79_1a17742f50b5d7de4db6bc915baa510b79" compoundref="mem_8hpp" startline="92">n_per_slab</references>
+        <references refid="newdelete_8hpp_af464ed09a8bd05599f0a0f8ae9124228_1af464ed09a8bd05599f0a0f8ae9124228" compoundref="newdelete_8hpp" startline="81" endline="82">newarray_clear</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="classstash_ae4b46df1e16a1459ac79ef4aa4047b68_1ae4b46df1e16a1459ac79ef4aa4047b68" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void stash::delete_elem</definition>
+        <argsstring>(void *p)</argsstring>
+        <name>delete_elem</name>
+        <qualifiedname>stash::delete_elem</qualifiedname>
+        <param>
+          <type>void *</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="82" column="8" bodyfile="Macaulay2/e/mem.hpp" bodystart="145" bodyend="175"/>
+        <references refid="classstash_af00c0293f029f6e0e62bf712438b3ec9_1af00c0293f029f6e0e62bf712438b3ec9" compoundref="mem_8hpp" startline="89">element_size</references>
+        <references refid="classstash_a6295f7881b66b9105f4c18e3b88ace60_1a6295f7881b66b9105f4c18e3b88ace60" compoundref="mem_8hpp" startline="104">free_list</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="classstash_ab0087ae1e008a33c48fbf24b4481cf06_1ab0087ae1e008a33c48fbf24b4481cf06" compoundref="mem_8hpp" startline="116">list_spinlock</references>
+        <references refid="classstash_aeea8aaf79cf42c18e0db18e60a063539_1aeea8aaf79cf42c18e0db18e60a063539" compoundref="mem_8hpp" startline="110">n_frees</references>
+        <references refid="classstash_afaae51cad540d03e8a259d54ebfeb253_1afaae51cad540d03e8a259d54ebfeb253" compoundref="mem_8hpp" startline="108">n_inuse</references>
+        <references refid="classstash_a17742f50b5d7de4db6bc915baa510b79_1a17742f50b5d7de4db6bc915baa510b79" compoundref="mem_8hpp" startline="92">n_per_slab</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classstash_ac0ae2120a85ca409ec94fc0d53b5f55c_1ac0ae2120a85ca409ec94fc0d53b5f55c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void stash::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>stash::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="84" column="8" bodyfile="Macaulay2/e/mem.cpp" bodystart="70" bodyend="87"/>
+        <references refid="classstash_af00c0293f029f6e0e62bf712438b3ec9_1af00c0293f029f6e0e62bf712438b3ec9" compoundref="mem_8hpp" startline="89">element_size</references>
+        <references refid="classstash_a8be13424643a2df36e67364c01bbff65_1a8be13424643a2df36e67364c01bbff65" compoundref="mem_8hpp" startline="109">highwater</references>
+        <references refid="classstash_aeaca3d4656aa2f77599db531de531f31_1aeaca3d4656aa2f77599db531de531f31" compoundref="mem_8hpp" startline="107">n_allocs</references>
+        <references refid="classstash_aeea8aaf79cf42c18e0db18e60a063539_1aeea8aaf79cf42c18e0db18e60a063539" compoundref="mem_8hpp" startline="110">n_frees</references>
+        <references refid="classstash_afaae51cad540d03e8a259d54ebfeb253_1afaae51cad540d03e8a259d54ebfeb253" compoundref="mem_8hpp" startline="108">n_inuse</references>
+        <references refid="classstash_a22f91368659c6d0a984ddc07a0c87297_1a22f91368659c6d0a984ddc07a0c87297" compoundref="mem_8hpp" startline="88">name</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classstash_a535ddb3dc11aa2361bbbe0075f4fc8ab_1a535ddb3dc11aa2361bbbe0075f4fc8ab" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void stash::stats</definition>
+        <argsstring>(buffer &amp;o)</argsstring>
+        <name>stats</name>
+        <qualifiedname>stash::stats</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="85" column="15" bodyfile="Macaulay2/e/mem.cpp" bodystart="93" bodyend="119"/>
+        <references refid="mem_8cpp_ac40af4ab7373fbb53821facc535224f2_1ac40af4ab7373fbb53821facc535224f2" compoundref="mem_8cpp" startline="6">allocated_amount</references>
+        <references refid="mem_8cpp_a4ac3e2b884004fcae0a209537fb483c4_1a4ac3e2b884004fcae0a209537fb483c4" compoundref="mem_8cpp" startline="7">deleted_amount</references>
+        <references refid="classslab_a569561ac07bdefb1306cbaa89d3115eb_1a569561ac07bdefb1306cbaa89d3115eb" compoundref="mem_8hpp" startline="67">slab::n_slabs</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="mem_8hpp_a465250e9be6282d14e8ddeea2d313036_1a465250e9be6282d14e8ddeea2d313036" compoundref="mem_8hpp" startline="42">slab_size</references>
+        <referencedby refid="debug_8cpp_a27f673ac9a6f684b24073a9a7b2f78c2_1a27f673ac9a6f684b24073a9a7b2f78c2" compoundref="debug_8cpp" startline="138" endline="143">dstash</referencedby>
+        <referencedby refid="engine_8h_aa78afd614e0c63c5d69d14da6cbec326_1aa78afd614e0c63c5d69d14da6cbec326" compoundref="finalize_8cpp" startline="221" endline="273">engineMemory</referencedby>
+        <referencedby refid="class_f4_computation_a8d93ae992e4b27777d61e67099411b08_1a8d93ae992e4b27777d61e67099411b08" compoundref="f4-computation_8cpp" startline="235" endline="242">F4Computation::show</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classstash_a5949a8fdf217026140bd5f0cbb0b450c_1a5949a8fdf217026140bd5f0cbb0b450c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void stash::chop_slab</definition>
+        <argsstring>()</argsstring>
+        <name>chop_slab</name>
+        <qualifiedname>stash::chop_slab</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mem.hpp" line="113" column="8" bodyfile="Macaulay2/e/mem.cpp" bodystart="48" bodyend="68"/>
+        <references refid="classstash_af00c0293f029f6e0e62bf712438b3ec9_1af00c0293f029f6e0e62bf712438b3ec9" compoundref="mem_8hpp" startline="89">element_size</references>
+        <references refid="classstash_a6295f7881b66b9105f4c18e3b88ace60_1a6295f7881b66b9105f4c18e3b88ace60" compoundref="mem_8hpp" startline="104">free_list</references>
+        <references refid="classstash_a17742f50b5d7de4db6bc915baa510b79_1a17742f50b5d7de4db6bc915baa510b79" compoundref="mem_8hpp" startline="92">n_per_slab</references>
+        <references refid="classslab_a0f7418588412caf4f807db4c1e07ecb1_1a0f7418588412caf4f807db4c1e07ecb1" compoundref="mem_8hpp" startline="68">slab::next</references>
+        <references refid="classstash_a56ac3888860dca8a3336554eb9757c9c_1a56ac3888860dca8a3336554eb9757c9c" compoundref="mem_8hpp" startline="97">slabs</references>
+        <referencedby refid="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" compoundref="mem_8hpp" startline="119" endline="143">new_elem</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="1">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>char</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="4">
+        <label>size_t</label>
+      </node>
+      <node id="6">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>spinLock</label>
+      </node>
+      <node id="1">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/mem.hpp" line="75" column="1" bodyfile="Macaulay2/e/mem.hpp" bodystart="76" bodyend="117"/>
+    <listofallmembers>
+      <member refid="classstash_a5949a8fdf217026140bd5f0cbb0b450c_1a5949a8fdf217026140bd5f0cbb0b450c" prot="private" virt="non-virtual"><scope>stash</scope><name>chop_slab</name></member>
+      <member refid="classstash_ae4b46df1e16a1459ac79ef4aa4047b68_1ae4b46df1e16a1459ac79ef4aa4047b68" prot="public" virt="non-virtual"><scope>stash</scope><name>delete_elem</name></member>
+      <member refid="classstash_af00c0293f029f6e0e62bf712438b3ec9_1af00c0293f029f6e0e62bf712438b3ec9" prot="private" virt="non-virtual"><scope>stash</scope><name>element_size</name></member>
+      <member refid="classstash_a6295f7881b66b9105f4c18e3b88ace60_1a6295f7881b66b9105f4c18e3b88ace60" prot="private" virt="non-virtual"><scope>stash</scope><name>free_list</name></member>
+      <member refid="classstash_a8be13424643a2df36e67364c01bbff65_1a8be13424643a2df36e67364c01bbff65" prot="private" virt="non-virtual"><scope>stash</scope><name>highwater</name></member>
+      <member refid="classstash_ab0087ae1e008a33c48fbf24b4481cf06_1ab0087ae1e008a33c48fbf24b4481cf06" prot="private" virt="non-virtual"><scope>stash</scope><name>list_spinlock</name></member>
+      <member refid="classstash_aeaca3d4656aa2f77599db531de531f31_1aeaca3d4656aa2f77599db531de531f31" prot="private" virt="non-virtual"><scope>stash</scope><name>n_allocs</name></member>
+      <member refid="classstash_aeea8aaf79cf42c18e0db18e60a063539_1aeea8aaf79cf42c18e0db18e60a063539" prot="private" virt="non-virtual"><scope>stash</scope><name>n_frees</name></member>
+      <member refid="classstash_afaae51cad540d03e8a259d54ebfeb253_1afaae51cad540d03e8a259d54ebfeb253" prot="private" virt="non-virtual"><scope>stash</scope><name>n_inuse</name></member>
+      <member refid="classstash_a17742f50b5d7de4db6bc915baa510b79_1a17742f50b5d7de4db6bc915baa510b79" prot="private" virt="non-virtual"><scope>stash</scope><name>n_per_slab</name></member>
+      <member refid="classstash_a22f91368659c6d0a984ddc07a0c87297_1a22f91368659c6d0a984ddc07a0c87297" prot="private" virt="non-virtual"><scope>stash</scope><name>name</name></member>
+      <member refid="classstash_a7caad862ee0282823e4a735988375634_1a7caad862ee0282823e4a735988375634" prot="public" virt="non-virtual"><scope>stash</scope><name>new_elem</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>stash</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>stash</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>stash</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>stash</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>stash</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>stash</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>stash</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>stash</scope><name>operator new[]</name></member>
+      <member refid="classstash_a56ac3888860dca8a3336554eb9757c9c_1a56ac3888860dca8a3336554eb9757c9c" prot="private" virt="non-virtual"><scope>stash</scope><name>slabs</name></member>
+      <member refid="classstash_a505aed40248234617f1b9a8ab425ffeb_1a505aed40248234617f1b9a8ab425ffeb" prot="public" virt="non-virtual"><scope>stash</scope><name>stash</name></member>
+      <member refid="classstash_a535ddb3dc11aa2361bbbe0075f4fc8ab_1a535ddb3dc11aa2361bbbe0075f4fc8ab" prot="public" virt="non-virtual"><scope>stash</scope><name>stats</name></member>
+      <member refid="classstash_ac0ae2120a85ca409ec94fc0d53b5f55c_1ac0ae2120a85ca409ec94fc0d53b5f55c" prot="public" virt="non-virtual"><scope>stash</scope><name>text_out</name></member>
+      <member refid="classstash_a08c07e5949cc3fce5f2038fc8b57d681_1a08c07e5949cc3fce5f2038fc8b57d681" prot="public" virt="non-virtual"><scope>stash</scope><name>~stash</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

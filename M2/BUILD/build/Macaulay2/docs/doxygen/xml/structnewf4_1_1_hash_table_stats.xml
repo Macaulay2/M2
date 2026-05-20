@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structnewf4_1_1_hash_table_stats" kind="struct" language="C++" prot="public">
+    <compoundname>newf4::HashTableStats</compoundname>
+    <includes refid="_monomial_hash_table_8hpp" local="no">MonomialHashTable.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnewf4_1_1_hash_table_stats_a32f5a608ed516ee0b4ec44cf33046419_1a32f5a608ed516ee0b4ec44cf33046419" prot="public" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long newf4::HashTableStats::n_calls_find</definition>
+        <argsstring></argsstring>
+        <name>n_calls_find</name>
+        <qualifiedname>newf4::HashTableStats::n_calls_find</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialHashTable.hpp" line="138" column="19" bodyfile="Macaulay2/e/gb-f4/MonomialHashTable.hpp" bodystart="138" bodyend="-1"/>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_af0ca0570a0acc123b9eae7028cd8de96_1af0ca0570a0acc123b9eae7028cd8de96" compoundref="_monomial_hash_table_8cpp" startline="6" endline="13">dump</referencedby>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_a64e73672b8b59ac123e5a0c86ba1dcf5_1a64e73672b8b59ac123e5a0c86ba1dcf5" compoundref="_monomial_hash_table_8hpp" startline="144" endline="151">HashTableStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnewf4_1_1_hash_table_stats_ac2c7fc403ef668d793d4fe18c86726a8_1ac2c7fc403ef668d793d4fe18c86726a8" prot="public" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long newf4::HashTableStats::n_clashes</definition>
+        <argsstring></argsstring>
+        <name>n_clashes</name>
+        <qualifiedname>newf4::HashTableStats::n_clashes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialHashTable.hpp" line="139" column="19" bodyfile="Macaulay2/e/gb-f4/MonomialHashTable.hpp" bodystart="139" bodyend="-1"/>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_af0ca0570a0acc123b9eae7028cd8de96_1af0ca0570a0acc123b9eae7028cd8de96" compoundref="_monomial_hash_table_8cpp" startline="6" endline="13">dump</referencedby>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_a64e73672b8b59ac123e5a0c86ba1dcf5_1a64e73672b8b59ac123e5a0c86ba1dcf5" compoundref="_monomial_hash_table_8hpp" startline="144" endline="151">HashTableStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnewf4_1_1_hash_table_stats_ab44c6202367da396f9873af072e6a888_1ab44c6202367da396f9873af072e6a888" prot="public" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long newf4::HashTableStats::max_run_length</definition>
+        <argsstring></argsstring>
+        <name>max_run_length</name>
+        <qualifiedname>newf4::HashTableStats::max_run_length</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialHashTable.hpp" line="140" column="19" bodyfile="Macaulay2/e/gb-f4/MonomialHashTable.hpp" bodystart="140" bodyend="-1"/>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_af0ca0570a0acc123b9eae7028cd8de96_1af0ca0570a0acc123b9eae7028cd8de96" compoundref="_monomial_hash_table_8cpp" startline="6" endline="13">dump</referencedby>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_a64e73672b8b59ac123e5a0c86ba1dcf5_1a64e73672b8b59ac123e5a0c86ba1dcf5" compoundref="_monomial_hash_table_8hpp" startline="144" endline="151">HashTableStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnewf4_1_1_hash_table_stats_a5fddc91d71a723f456bdc683768633bb_1a5fddc91d71a723f456bdc683768633bb" prot="public" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long newf4::HashTableStats::monequal_count</definition>
+        <argsstring></argsstring>
+        <name>monequal_count</name>
+        <qualifiedname>newf4::HashTableStats::monequal_count</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialHashTable.hpp" line="141" column="19" bodyfile="Macaulay2/e/gb-f4/MonomialHashTable.hpp" bodystart="141" bodyend="-1"/>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_af0ca0570a0acc123b9eae7028cd8de96_1af0ca0570a0acc123b9eae7028cd8de96" compoundref="_monomial_hash_table_8cpp" startline="6" endline="13">dump</referencedby>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_a64e73672b8b59ac123e5a0c86ba1dcf5_1a64e73672b8b59ac123e5a0c86ba1dcf5" compoundref="_monomial_hash_table_8hpp" startline="144" endline="151">HashTableStats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnewf4_1_1_hash_table_stats_a167a0d3f13df589524a41752f6422c43_1a167a0d3f13df589524a41752f6422c43" prot="public" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long newf4::HashTableStats::monequal_fails</definition>
+        <argsstring></argsstring>
+        <name>monequal_fails</name>
+        <qualifiedname>newf4::HashTableStats::monequal_fails</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialHashTable.hpp" line="142" column="19" bodyfile="Macaulay2/e/gb-f4/MonomialHashTable.hpp" bodystart="142" bodyend="-1"/>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_af0ca0570a0acc123b9eae7028cd8de96_1af0ca0570a0acc123b9eae7028cd8de96" compoundref="_monomial_hash_table_8cpp" startline="6" endline="13">dump</referencedby>
+        <referencedby refid="structnewf4_1_1_hash_table_stats_a64e73672b8b59ac123e5a0c86ba1dcf5_1a64e73672b8b59ac123e5a0c86ba1dcf5" compoundref="_monomial_hash_table_8hpp" startline="144" endline="151">HashTableStats</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structnewf4_1_1_hash_table_stats_a64e73672b8b59ac123e5a0c86ba1dcf5_1a64e73672b8b59ac123e5a0c86ba1dcf5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>newf4::HashTableStats::HashTableStats</definition>
+        <argsstring>()</argsstring>
+        <name>HashTableStats</name>
+        <qualifiedname>newf4::HashTableStats::HashTableStats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialHashTable.hpp" line="144" column="5" bodyfile="Macaulay2/e/gb-f4/MonomialHashTable.hpp" bodystart="144" bodyend="151"/>
+        <references refid="structnewf4_1_1_hash_table_stats_ab44c6202367da396f9873af072e6a888_1ab44c6202367da396f9873af072e6a888" compoundref="_monomial_hash_table_8hpp" startline="140">max_run_length</references>
+        <references refid="structnewf4_1_1_hash_table_stats_a5fddc91d71a723f456bdc683768633bb_1a5fddc91d71a723f456bdc683768633bb" compoundref="_monomial_hash_table_8hpp" startline="141">monequal_count</references>
+        <references refid="structnewf4_1_1_hash_table_stats_a167a0d3f13df589524a41752f6422c43_1a167a0d3f13df589524a41752f6422c43" compoundref="_monomial_hash_table_8hpp" startline="142">monequal_fails</references>
+        <references refid="structnewf4_1_1_hash_table_stats_a32f5a608ed516ee0b4ec44cf33046419_1a32f5a608ed516ee0b4ec44cf33046419" compoundref="_monomial_hash_table_8hpp" startline="138">n_calls_find</references>
+        <references refid="structnewf4_1_1_hash_table_stats_ac2c7fc403ef668d793d4fe18c86726a8_1ac2c7fc403ef668d793d4fe18c86726a8" compoundref="_monomial_hash_table_8hpp" startline="139">n_clashes</references>
+      </memberdef>
+      <memberdef kind="function" id="structnewf4_1_1_hash_table_stats_af0ca0570a0acc123b9eae7028cd8de96_1af0ca0570a0acc123b9eae7028cd8de96" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::HashTableStats::dump</definition>
+        <argsstring>() const</argsstring>
+        <name>dump</name>
+        <qualifiedname>newf4::HashTableStats::dump</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialHashTable.hpp" line="153" column="10" bodyfile="Macaulay2/e/gb-f4/MonomialHashTable.cpp" bodystart="6" bodyend="13"/>
+        <references refid="structnewf4_1_1_hash_table_stats_ab44c6202367da396f9873af072e6a888_1ab44c6202367da396f9873af072e6a888" compoundref="_monomial_hash_table_8hpp" startline="140">max_run_length</references>
+        <references refid="structnewf4_1_1_hash_table_stats_a5fddc91d71a723f456bdc683768633bb_1a5fddc91d71a723f456bdc683768633bb" compoundref="_monomial_hash_table_8hpp" startline="141">monequal_count</references>
+        <references refid="structnewf4_1_1_hash_table_stats_a167a0d3f13df589524a41752f6422c43_1a167a0d3f13df589524a41752f6422c43" compoundref="_monomial_hash_table_8hpp" startline="142">monequal_fails</references>
+        <references refid="structnewf4_1_1_hash_table_stats_a32f5a608ed516ee0b4ec44cf33046419_1a32f5a608ed516ee0b4ec44cf33046419" compoundref="_monomial_hash_table_8hpp" startline="138">n_calls_find</references>
+        <references refid="structnewf4_1_1_hash_table_stats_ac2c7fc403ef668d793d4fe18c86726a8_1ac2c7fc403ef668d793d4fe18c86726a8" compoundref="_monomial_hash_table_8hpp" startline="139">n_clashes</references>
+        <referencedby refid="_new_f4_test_8cpp_a587fd4a1f5d14275ac1666bea50566b1_1a587fd4a1f5d14275ac1666bea50566b1" compoundref="_new_f4_test_8cpp" startline="47" endline="52">TEST</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>newf4::HashTableStats</label>
+        <link refid="structnewf4_1_1_hash_table_stats"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>max_run_length</edgelabel>
+          <edgelabel>monequal_count</edgelabel>
+          <edgelabel>monequal_fails</edgelabel>
+          <edgelabel>n_calls_find</edgelabel>
+          <edgelabel>n_clashes</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>unsigned</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-f4/MonomialHashTable.hpp" line="136" column="3" bodyfile="Macaulay2/e/gb-f4/MonomialHashTable.hpp" bodystart="137" bodyend="154"/>
+    <listofallmembers>
+      <member refid="structnewf4_1_1_hash_table_stats_af0ca0570a0acc123b9eae7028cd8de96_1af0ca0570a0acc123b9eae7028cd8de96" prot="public" virt="non-virtual"><scope>newf4::HashTableStats</scope><name>dump</name></member>
+      <member refid="structnewf4_1_1_hash_table_stats_a64e73672b8b59ac123e5a0c86ba1dcf5_1a64e73672b8b59ac123e5a0c86ba1dcf5" prot="public" virt="non-virtual"><scope>newf4::HashTableStats</scope><name>HashTableStats</name></member>
+      <member refid="structnewf4_1_1_hash_table_stats_ab44c6202367da396f9873af072e6a888_1ab44c6202367da396f9873af072e6a888" prot="public" virt="non-virtual"><scope>newf4::HashTableStats</scope><name>max_run_length</name></member>
+      <member refid="structnewf4_1_1_hash_table_stats_a5fddc91d71a723f456bdc683768633bb_1a5fddc91d71a723f456bdc683768633bb" prot="public" virt="non-virtual"><scope>newf4::HashTableStats</scope><name>monequal_count</name></member>
+      <member refid="structnewf4_1_1_hash_table_stats_a167a0d3f13df589524a41752f6422c43_1a167a0d3f13df589524a41752f6422c43" prot="public" virt="non-virtual"><scope>newf4::HashTableStats</scope><name>monequal_fails</name></member>
+      <member refid="structnewf4_1_1_hash_table_stats_a32f5a608ed516ee0b4ec44cf33046419_1a32f5a608ed516ee0b4ec44cf33046419" prot="public" virt="non-virtual"><scope>newf4::HashTableStats</scope><name>n_calls_find</name></member>
+      <member refid="structnewf4_1_1_hash_table_stats_ac2c7fc403ef668d793d4fe18c86726a8_1ac2c7fc403ef668d793d4fe18c86726a8" prot="public" virt="non-virtual"><scope>newf4::HashTableStats</scope><name>n_clashes</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

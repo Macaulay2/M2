@@ -1,0 +1,1320 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classs__pair__heap" kind="class" language="C++" prot="public">
+    <compoundname>s_pair_heap</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="spair_8hpp" local="no">spair.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classs__pair__heap_ae802569273707df2b2db23e8b2eeca88_1ae802569273707df2b2db23e8b2eeca88" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_monoid" kindref="compound">Monoid</ref> *</type>
+        <definition>const Monoid* s_pair_heap::M</definition>
+        <argsstring></argsstring>
+        <name>M</name>
+        <qualifiedname>s_pair_heap::M</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="104" column="16" bodyfile="Macaulay2/e/spair.hpp" bodystart="104" bodyend="-1"/>
+        <referencedby refid="classs__pair__heap_a6e7211f1f4d2134ac9b3389b393d5600_1a6e7211f1f4d2134ac9b3389b393d5600" compoundref="spair_8cpp" startline="66" endline="121">compare</referencedby>
+        <referencedby refid="classs__pair__heap_a27019d6acddea81c5bb334f9d397a7b3_1a27019d6acddea81c5bb334f9d397a7b3" compoundref="spair_8cpp" startline="21" endline="29">s_pair_heap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classs__pair__heap_a5588bfac84aaa52fe8ab9fef3c63fe61_1a5588bfac84aaa52fe8ab9fef3c63fe61" prot="private" static="no" mutable="no">
+        <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+        <definition>s_pair* s_pair_heap::heap[NHEAP]</definition>
+        <argsstring>[NHEAP]</argsstring>
+        <name>heap</name>
+        <qualifiedname>s_pair_heap::heap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="106" column="10" bodyfile="Macaulay2/e/spair.hpp" bodystart="106" bodyend="-1"/>
+        <referencedby refid="classs__pair__heap_af90fec0becc4fe4a30d0fef45fafdff4_1af90fec0becc4fe4a30d0fef45fafdff4" compoundref="spair_8hpp" startline="132" endline="135">debug_list</referencedby>
+        <referencedby refid="classs__pair__heap_aa07184937b76a304c19bcbf88a278050_1aa07184937b76a304c19bcbf88a278050" compoundref="spair_8cpp" startline="31" endline="42">grab_remaining_pairs</referencedby>
+        <referencedby refid="classs__pair__heap_af1904fb0707ad9e4b2684152ced0ff3f_1af1904fb0707ad9e4b2684152ced0ff3f" compoundref="spair_8cpp" startline="180" endline="203">insert</referencedby>
+        <referencedby refid="classs__pair__heap_a2ba3d9aa2a439c39e5a09dda3f1be7a2_1a2ba3d9aa2a439c39e5a09dda3f1be7a2" compoundref="spair_8cpp" startline="205" endline="223">insert</referencedby>
+        <referencedby refid="classs__pair__heap_a0d63e7ffa0167aa7b57f77222e20ff58_1a0d63e7ffa0167aa7b57f77222e20ff58" compoundref="spair_8cpp" startline="225" endline="261">remove</referencedby>
+        <referencedby refid="classs__pair__heap_a27019d6acddea81c5bb334f9d397a7b3_1a27019d6acddea81c5bb334f9d397a7b3" compoundref="spair_8cpp" startline="21" endline="29">s_pair_heap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classs__pair__heap_a6cd73f2bf318533351554e74235a483e_1a6cd73f2bf318533351554e74235a483e" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int s_pair_heap::n_in_heap[NHEAP]</definition>
+        <argsstring>[NHEAP]</argsstring>
+        <name>n_in_heap</name>
+        <qualifiedname>s_pair_heap::n_in_heap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="107" column="7" bodyfile="Macaulay2/e/spair.hpp" bodystart="107" bodyend="-1"/>
+        <referencedby refid="classs__pair__heap_af1904fb0707ad9e4b2684152ced0ff3f_1af1904fb0707ad9e4b2684152ced0ff3f" compoundref="spair_8cpp" startline="180" endline="203">insert</referencedby>
+        <referencedby refid="classs__pair__heap_a2ba3d9aa2a439c39e5a09dda3f1be7a2_1a2ba3d9aa2a439c39e5a09dda3f1be7a2" compoundref="spair_8cpp" startline="205" endline="223">insert</referencedby>
+        <referencedby refid="classs__pair__heap_a0d63e7ffa0167aa7b57f77222e20ff58_1a0d63e7ffa0167aa7b57f77222e20ff58" compoundref="spair_8cpp" startline="225" endline="261">remove</referencedby>
+        <referencedby refid="classs__pair__heap_a27019d6acddea81c5bb334f9d397a7b3_1a27019d6acddea81c5bb334f9d397a7b3" compoundref="spair_8cpp" startline="21" endline="29">s_pair_heap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classs__pair__heap_ad1bfbe42c16ce537b7fdd6bb546ea6a6_1ad1bfbe42c16ce537b7fdd6bb546ea6a6" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int s_pair_heap::top_of_heap</definition>
+        <argsstring></argsstring>
+        <name>top_of_heap</name>
+        <qualifiedname>s_pair_heap::top_of_heap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="108" column="7" bodyfile="Macaulay2/e/spair.hpp" bodystart="108" bodyend="-1"/>
+        <referencedby refid="classs__pair__heap_af1904fb0707ad9e4b2684152ced0ff3f_1af1904fb0707ad9e4b2684152ced0ff3f" compoundref="spair_8cpp" startline="180" endline="203">insert</referencedby>
+        <referencedby refid="classs__pair__heap_a2ba3d9aa2a439c39e5a09dda3f1be7a2_1a2ba3d9aa2a439c39e5a09dda3f1be7a2" compoundref="spair_8cpp" startline="205" endline="223">insert</referencedby>
+        <referencedby refid="classs__pair__heap_a0d63e7ffa0167aa7b57f77222e20ff58_1a0d63e7ffa0167aa7b57f77222e20ff58" compoundref="spair_8cpp" startline="225" endline="261">remove</referencedby>
+        <referencedby refid="classs__pair__heap_a27019d6acddea81c5bb334f9d397a7b3_1a27019d6acddea81c5bb334f9d397a7b3" compoundref="spair_8cpp" startline="21" endline="29">s_pair_heap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classs__pair__heap_a18b571fb37a8fd034f57b52e3b7d661d_1a18b571fb37a8fd034f57b52e3b7d661d" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int s_pair_heap::nelems</definition>
+        <argsstring></argsstring>
+        <name>nelems</name>
+        <qualifiedname>s_pair_heap::nelems</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="109" column="7" bodyfile="Macaulay2/e/spair.hpp" bodystart="109" bodyend="-1"/>
+        <referencedby refid="classs__pair__heap_af1904fb0707ad9e4b2684152ced0ff3f_1af1904fb0707ad9e4b2684152ced0ff3f" compoundref="spair_8cpp" startline="180" endline="203">insert</referencedby>
+        <referencedby refid="classs__pair__heap_a2ba3d9aa2a439c39e5a09dda3f1be7a2_1a2ba3d9aa2a439c39e5a09dda3f1be7a2" compoundref="spair_8cpp" startline="205" endline="223">insert</referencedby>
+        <referencedby refid="classs__pair__heap_acb3cdb742c9e8bf81a95034c1a1d3319_1acb3cdb742c9e8bf81a95034c1a1d3319" compoundref="spair_8hpp" startline="128" endline="128">n_elems</referencedby>
+        <referencedby refid="classs__pair__heap_a0d63e7ffa0167aa7b57f77222e20ff58_1a0d63e7ffa0167aa7b57f77222e20ff58" compoundref="spair_8cpp" startline="225" endline="261">remove</referencedby>
+        <referencedby refid="classs__pair__heap_a27019d6acddea81c5bb334f9d397a7b3_1a27019d6acddea81c5bb334f9d397a7b3" compoundref="spair_8cpp" startline="21" endline="29">s_pair_heap</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classs__pair__heap_a6e7211f1f4d2134ac9b3389b393d5600_1a6e7211f1f4d2134ac9b3389b393d5600" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int s_pair_heap::compare</definition>
+        <argsstring>(s_pair *f, s_pair *g) const</argsstring>
+        <name>compare</name>
+        <qualifiedname>s_pair_heap::compare</qualifiedname>
+        <param>
+          <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="111" column="7" bodyfile="Macaulay2/e/spair.cpp" bodystart="66" bodyend="121"/>
+        <references refid="structs__pair_a1b72cee4a6487abea0ce0c0576fdc721_1a1b72cee4a6487abea0ce0c0576fdc721" compoundref="spair_8hpp" startline="92">s_pair::degree</references>
+        <references refid="structs__pair_a7eff2724d6c06dc138fbf271fd823c63_1a7eff2724d6c06dc138fbf271fd823c63" compoundref="spair_8hpp" startline="94">s_pair::first</references>
+        <references refid="structs__pair_a0428aff0ecbcecf6188933f0f104fd2a_1a0428aff0ecbcecf6188933f0f104fd2a" compoundref="spair_8hpp" startline="93">s_pair::lcm</references>
+        <references refid="classs__pair__heap_ae802569273707df2b2db23e8b2eeca88_1ae802569273707df2b2db23e8b2eeca88" compoundref="spair_8hpp" startline="104">M</references>
+        <references refid="structgb__elem_ad4bc7d51c00934029ef3392fbaaaf98e_1ad4bc7d51c00934029ef3392fbaaaf98e" compoundref="spair_8hpp" startline="60">gb_elem::me</references>
+        <references refid="structs__pair_a33b137e3b5d1d54134a128ee0b92d0f8_1a33b137e3b5d1d54134a128ee0b92d0f8" compoundref="spair_8hpp" startline="95">s_pair::second</references>
+        <referencedby refid="classs__pair__heap_a95450142dd345e94b35caa138609aa3b_1a95450142dd345e94b35caa138609aa3b" compoundref="spair_8cpp" startline="123" endline="154">merge</referencedby>
+        <referencedby refid="classs__pair__heap_a0d63e7ffa0167aa7b57f77222e20ff58_1a0d63e7ffa0167aa7b57f77222e20ff58" compoundref="spair_8cpp" startline="225" endline="261">remove</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_a95450142dd345e94b35caa138609aa3b_1a95450142dd345e94b35caa138609aa3b" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+        <definition>s_pair * s_pair_heap::merge</definition>
+        <argsstring>(s_pair *f, s_pair *g) const</argsstring>
+        <name>merge</name>
+        <qualifiedname>s_pair_heap::merge</qualifiedname>
+        <param>
+          <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="112" column="10" bodyfile="Macaulay2/e/spair.cpp" bodystart="123" bodyend="154"/>
+        <references refid="classs__pair__heap_a6e7211f1f4d2134ac9b3389b393d5600_1a6e7211f1f4d2134ac9b3389b393d5600" compoundref="spair_8cpp" startline="66" endline="121">compare</references>
+        <references refid="structs__pair_a5844565e9742d4d95b8394efed1bdf97_1a5844565e9742d4d95b8394efed1bdf97" compoundref="spair_8hpp" startline="88">s_pair::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="classs__pair__heap_af1904fb0707ad9e4b2684152ced0ff3f_1af1904fb0707ad9e4b2684152ced0ff3f" compoundref="spair_8cpp" startline="180" endline="203">insert</referencedby>
+        <referencedby refid="classs__pair__heap_a2ba3d9aa2a439c39e5a09dda3f1be7a2_1a2ba3d9aa2a439c39e5a09dda3f1be7a2" compoundref="spair_8cpp" startline="205" endline="223">insert</referencedby>
+        <referencedby refid="classs__pair__heap_a1850658b903c728ae8e933b3ff45bf12_1a1850658b903c728ae8e933b3ff45bf12" compoundref="spair_8cpp" startline="156" endline="178">sort_list</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classs__pair__heap_a27019d6acddea81c5bb334f9d397a7b3_1a27019d6acddea81c5bb334f9d397a7b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>s_pair_heap::s_pair_heap</definition>
+        <argsstring>(const Monoid *M)</argsstring>
+        <name>s_pair_heap</name>
+        <qualifiedname>s_pair_heap::s_pair_heap</qualifiedname>
+        <param>
+          <type>const <ref refid="class_monoid" kindref="compound">Monoid</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="115" column="3" bodyfile="Macaulay2/e/spair.cpp" bodystart="21" bodyend="29"/>
+        <references refid="classs__pair__heap_a5588bfac84aaa52fe8ab9fef3c63fe61_1a5588bfac84aaa52fe8ab9fef3c63fe61" compoundref="spair_8hpp" startline="106">heap</references>
+        <references refid="classs__pair__heap_ae802569273707df2b2db23e8b2eeca88_1ae802569273707df2b2db23e8b2eeca88" compoundref="spair_8hpp" startline="104">M</references>
+        <references refid="classs__pair__heap_a6cd73f2bf318533351554e74235a483e_1a6cd73f2bf318533351554e74235a483e" compoundref="spair_8hpp" startline="107">n_in_heap</references>
+        <references refid="classs__pair__heap_a18b571fb37a8fd034f57b52e3b7d661d_1a18b571fb37a8fd034f57b52e3b7d661d" compoundref="spair_8hpp" startline="109">nelems</references>
+        <references refid="spair_8hpp_aed98e358958f80eb3aa1463bd4605444_1aed98e358958f80eb3aa1463bd4605444" compoundref="spair_8hpp" startline="100">NHEAP</references>
+        <references refid="classs__pair__heap_ad1bfbe42c16ce537b7fdd6bb546ea6a6_1ad1bfbe42c16ce537b7fdd6bb546ea6a6" compoundref="spair_8hpp" startline="108">top_of_heap</references>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_aa07184937b76a304c19bcbf88a278050_1aa07184937b76a304c19bcbf88a278050" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+        <definition>s_pair * s_pair_heap::grab_remaining_pairs</definition>
+        <argsstring>()</argsstring>
+        <name>grab_remaining_pairs</name>
+        <qualifiedname>s_pair_heap::grab_remaining_pairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="117" column="10" bodyfile="Macaulay2/e/spair.cpp" bodystart="31" bodyend="42"/>
+        <references refid="classs__pair__heap_a5588bfac84aaa52fe8ab9fef3c63fe61_1a5588bfac84aaa52fe8ab9fef3c63fe61" compoundref="spair_8hpp" startline="106">heap</references>
+        <references refid="structs__pair_a5844565e9742d4d95b8394efed1bdf97_1a5844565e9742d4d95b8394efed1bdf97" compoundref="spair_8hpp" startline="88">s_pair::next</references>
+        <references refid="spair_8hpp_aed98e358958f80eb3aa1463bd4605444_1aed98e358958f80eb3aa1463bd4605444" compoundref="spair_8hpp" startline="100">NHEAP</references>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_ad21d7c44305095e8c2d1a3c583830acd_1ad21d7c44305095e8c2d1a3c583830acd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>s_pair_heap::~s_pair_heap</definition>
+        <argsstring>()</argsstring>
+        <name>~s_pair_heap</name>
+        <qualifiedname>s_pair_heap::~s_pair_heap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="119" column="3" bodyfile="Macaulay2/e/spair.cpp" bodystart="44" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_af1904fb0707ad9e4b2684152ced0ff3f_1af1904fb0707ad9e4b2684152ced0ff3f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void s_pair_heap::insert</definition>
+        <argsstring>(s_pair *&amp;p)</argsstring>
+        <name>insert</name>
+        <qualifiedname>s_pair_heap::insert</qualifiedname>
+        <param>
+          <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *&amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="121" column="8" bodyfile="Macaulay2/e/spair.cpp" bodystart="180" bodyend="203"/>
+        <references refid="classs__pair__heap_a5588bfac84aaa52fe8ab9fef3c63fe61_1a5588bfac84aaa52fe8ab9fef3c63fe61" compoundref="spair_8hpp" startline="106">heap</references>
+        <references refid="classs__pair__heap_a95450142dd345e94b35caa138609aa3b_1a95450142dd345e94b35caa138609aa3b" compoundref="spair_8cpp" startline="123" endline="154">merge</references>
+        <references refid="classs__pair__heap_a6cd73f2bf318533351554e74235a483e_1a6cd73f2bf318533351554e74235a483e" compoundref="spair_8hpp" startline="107">n_in_heap</references>
+        <references refid="classs__pair__heap_a18b571fb37a8fd034f57b52e3b7d661d_1a18b571fb37a8fd034f57b52e3b7d661d" compoundref="spair_8hpp" startline="109">nelems</references>
+        <references refid="spair_8hpp_aed98e358958f80eb3aa1463bd4605444_1aed98e358958f80eb3aa1463bd4605444" compoundref="spair_8hpp" startline="100">NHEAP</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="spair_8cpp_aa79571439c5e54f0c0f6711376a496c7_1aa79571439c5e54f0c0f6711376a496c7" compoundref="spair_8cpp" startline="8" endline="19">spair_heap_size</references>
+        <references refid="classs__pair__heap_ad1bfbe42c16ce537b7fdd6bb546ea6a6_1ad1bfbe42c16ce537b7fdd6bb546ea6a6" compoundref="spair_8hpp" startline="108">top_of_heap</references>
+        <referencedby refid="classs__pair__heap_acf24a45c88664772124db0f19a95862b_1acf24a45c88664772124db0f19a95862b" compoundref="spair_8cpp" startline="263" endline="267">put_back</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_a2ba3d9aa2a439c39e5a09dda3f1be7a2_1a2ba3d9aa2a439c39e5a09dda3f1be7a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void s_pair_heap::insert</definition>
+        <argsstring>(s_pair *p, int len)</argsstring>
+        <name>insert</name>
+        <qualifiedname>s_pair_heap::insert</qualifiedname>
+        <param>
+          <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="122" column="8" bodyfile="Macaulay2/e/spair.cpp" bodystart="205" bodyend="223"/>
+        <references refid="classs__pair__heap_a5588bfac84aaa52fe8ab9fef3c63fe61_1a5588bfac84aaa52fe8ab9fef3c63fe61" compoundref="spair_8hpp" startline="106">heap</references>
+        <references refid="classs__pair__heap_a95450142dd345e94b35caa138609aa3b_1a95450142dd345e94b35caa138609aa3b" compoundref="spair_8cpp" startline="123" endline="154">merge</references>
+        <references refid="classs__pair__heap_a6cd73f2bf318533351554e74235a483e_1a6cd73f2bf318533351554e74235a483e" compoundref="spair_8hpp" startline="107">n_in_heap</references>
+        <references refid="classs__pair__heap_a18b571fb37a8fd034f57b52e3b7d661d_1a18b571fb37a8fd034f57b52e3b7d661d" compoundref="spair_8hpp" startline="109">nelems</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="spair_8cpp_aa79571439c5e54f0c0f6711376a496c7_1aa79571439c5e54f0c0f6711376a496c7" compoundref="spair_8cpp" startline="8" endline="19">spair_heap_size</references>
+        <references refid="classs__pair__heap_ad1bfbe42c16ce537b7fdd6bb546ea6a6_1ad1bfbe42c16ce537b7fdd6bb546ea6a6" compoundref="spair_8hpp" startline="108">top_of_heap</references>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_a0d63e7ffa0167aa7b57f77222e20ff58_1a0d63e7ffa0167aa7b57f77222e20ff58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+        <definition>s_pair * s_pair_heap::remove</definition>
+        <argsstring>()</argsstring>
+        <name>remove</name>
+        <qualifiedname>s_pair_heap::remove</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="123" column="10" bodyfile="Macaulay2/e/spair.cpp" bodystart="225" bodyend="261"/>
+        <references refid="classs__pair__heap_a6e7211f1f4d2134ac9b3389b393d5600_1a6e7211f1f4d2134ac9b3389b393d5600" compoundref="spair_8cpp" startline="66" endline="121">compare</references>
+        <references refid="classs__pair__heap_a5588bfac84aaa52fe8ab9fef3c63fe61_1a5588bfac84aaa52fe8ab9fef3c63fe61" compoundref="spair_8hpp" startline="106">heap</references>
+        <references refid="classs__pair__heap_a6cd73f2bf318533351554e74235a483e_1a6cd73f2bf318533351554e74235a483e" compoundref="spair_8hpp" startline="107">n_in_heap</references>
+        <references refid="classs__pair__heap_a18b571fb37a8fd034f57b52e3b7d661d_1a18b571fb37a8fd034f57b52e3b7d661d" compoundref="spair_8hpp" startline="109">nelems</references>
+        <references refid="structs__pair_a5844565e9742d4d95b8394efed1bdf97_1a5844565e9742d4d95b8394efed1bdf97" compoundref="spair_8hpp" startline="88">s_pair::next</references>
+        <references refid="classs__pair__heap_ad1bfbe42c16ce537b7fdd6bb546ea6a6_1ad1bfbe42c16ce537b7fdd6bb546ea6a6" compoundref="spair_8hpp" startline="108">top_of_heap</references>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_acf24a45c88664772124db0f19a95862b_1acf24a45c88664772124db0f19a95862b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void s_pair_heap::put_back</definition>
+        <argsstring>(s_pair *&amp;p)</argsstring>
+        <name>put_back</name>
+        <qualifiedname>s_pair_heap::put_back</qualifiedname>
+        <param>
+          <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *&amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="124" column="8" bodyfile="Macaulay2/e/spair.cpp" bodystart="263" bodyend="267"/>
+        <references refid="classs__pair__heap_af1904fb0707ad9e4b2684152ced0ff3f_1af1904fb0707ad9e4b2684152ced0ff3f" compoundref="spair_8cpp" startline="180" endline="203">insert</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_a1850658b903c728ae8e933b3ff45bf12_1a1850658b903c728ae8e933b3ff45bf12" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void s_pair_heap::sort_list</definition>
+        <argsstring>(s_pair *&amp;p) const</argsstring>
+        <name>sort_list</name>
+        <qualifiedname>s_pair_heap::sort_list</qualifiedname>
+        <param>
+          <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *&amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="126" column="8" bodyfile="Macaulay2/e/spair.cpp" bodystart="156" bodyend="178"/>
+        <references refid="classs__pair__heap_a95450142dd345e94b35caa138609aa3b_1a95450142dd345e94b35caa138609aa3b" compoundref="spair_8cpp" startline="123" endline="154">merge</references>
+        <references refid="structs__pair_a5844565e9742d4d95b8394efed1bdf97_1a5844565e9742d4d95b8394efed1bdf97" compoundref="spair_8hpp" startline="88">s_pair::next</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+        <references refid="classs__pair__heap_a1850658b903c728ae8e933b3ff45bf12_1a1850658b903c728ae8e933b3ff45bf12" compoundref="spair_8cpp" startline="156" endline="178">sort_list</references>
+        <referencedby refid="classs__pair__heap_a1850658b903c728ae8e933b3ff45bf12_1a1850658b903c728ae8e933b3ff45bf12" compoundref="spair_8cpp" startline="156" endline="178">sort_list</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_acb3cdb742c9e8bf81a95034c1a1d3319_1acb3cdb742c9e8bf81a95034c1a1d3319" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int s_pair_heap::n_elems</definition>
+        <argsstring>()</argsstring>
+        <name>n_elems</name>
+        <qualifiedname>s_pair_heap::n_elems</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="128" column="7" bodyfile="Macaulay2/e/spair.hpp" bodystart="128" bodyend="128"/>
+        <references refid="classs__pair__heap_a18b571fb37a8fd034f57b52e3b7d661d_1a18b571fb37a8fd034f57b52e3b7d661d" compoundref="spair_8hpp" startline="109">nelems</references>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_a046c47c7f8fce42ef797486acba0ca35_1a046c47c7f8fce42ef797486acba0ca35" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void s_pair_heap::stats</definition>
+        <argsstring>() const</argsstring>
+        <name>stats</name>
+        <qualifiedname>s_pair_heap::stats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="129" column="8" bodyfile="Macaulay2/e/spair.cpp" bodystart="269" bodyend="269"/>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_aafdddf3c1118d0e1d40b35c40a0ec111_1aafdddf3c1118d0e1d40b35c40a0ec111" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void s_pair_heap::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>s_pair_heap::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="130" column="8" bodyfile="Macaulay2/e/spair.cpp" bodystart="270" bodyend="276"/>
+      </memberdef>
+      <memberdef kind="function" id="classs__pair__heap_af90fec0becc4fe4a30d0fef45fafdff4_1af90fec0becc4fe4a30d0fef45fafdff4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structs__pair" kindref="compound">s_pair</ref> *</type>
+        <definition>s_pair * s_pair_heap::debug_list</definition>
+        <argsstring>(int i)</argsstring>
+        <name>debug_list</name>
+        <qualifiedname>s_pair_heap::debug_list</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/spair.hpp" line="132" column="10" bodyfile="Macaulay2/e/spair.hpp" bodystart="132" bodyend="135"/>
+        <references refid="classs__pair__heap_a5588bfac84aaa52fe8ab9fef3c63fe61_1a5588bfac84aaa52fe8ab9fef3c63fe61" compoundref="spair_8hpp" startline="106">heap</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="1">
+        <label>s_pair_heap</label>
+        <link refid="classs__pair__heap"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="14">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="54" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="55" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="55" relation="public-inheritance">
+        </childnode>
+        <childnode refid="56" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="43" relation="private-inheritance">
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="45" relation="public-inheritance">
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="39" relation="private-inheritance">
+        </childnode>
+        <childnode refid="42" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="30" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="30" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="69">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="45">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="46" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="35" relation="public-inheritance">
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="37" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>CoefficientType</label>
+      </node>
+      <node id="67">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="31">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>T</label>
+      </node>
+      <node id="61">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="28">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="26">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="30">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="24">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="25">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="26" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="28" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>char</label>
+      </node>
+      <node id="13">
+        <label>const ARing *</label>
+      </node>
+      <node id="29">
+        <label>const void *</label>
+      </node>
+      <node id="19">
+        <label>double</label>
+      </node>
+      <node id="77">
+        <label>overflow_type *</label>
+      </node>
+      <node id="79">
+        <label>gb_elem</label>
+        <link refid="structgb__elem"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>next</edgelabel>
+          <edgelabel>next_min</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>pair_list</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fsyz</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>is_min</edgelabel>
+          <edgelabel>lead_exp</edgelabel>
+          <edgelabel>me</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>gbvector</label>
+        <link refid="structgbvector"/>
+        <childnode refid="80" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>comp</edgelabel>
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="66">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="68">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="6">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="18">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>long</label>
+      </node>
+      <node id="47">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="40" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="48" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="50" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>mon_part</label>
+      </node>
+      <node id="23">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="22">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="20">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="21">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="5">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="15">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>s_pair</label>
+        <link refid="structs__pair"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>next</edgelabel>
+          <edgelabel>next_same</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>compare_num</edgelabel>
+          <edgelabel>degree</edgelabel>
+          <edgelabel>lcm</edgelabel>
+          <edgelabel>syz_type</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>first</edgelabel>
+          <edgelabel>second</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>f</edgelabel>
+          <edgelabel>fsyz</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>s_pair_heap</label>
+        <link refid="classs__pair__heap"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>heap</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>n_in_heap</edgelabel>
+          <edgelabel>nelems</edgelabel>
+          <edgelabel>top_of_heap</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>size_t</label>
+      </node>
+      <node id="58">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>spinLock</label>
+      </node>
+      <node id="57">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="73">
+        <label>std::string</label>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="12" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="30" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="73" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/spair.hpp" line="102" column="1" bodyfile="Macaulay2/e/spair.hpp" bodystart="103" bodyend="136"/>
+    <listofallmembers>
+      <member refid="classs__pair__heap_a6e7211f1f4d2134ac9b3389b393d5600_1a6e7211f1f4d2134ac9b3389b393d5600" prot="private" virt="non-virtual"><scope>s_pair_heap</scope><name>compare</name></member>
+      <member refid="classs__pair__heap_af90fec0becc4fe4a30d0fef45fafdff4_1af90fec0becc4fe4a30d0fef45fafdff4" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>debug_list</name></member>
+      <member refid="classs__pair__heap_aa07184937b76a304c19bcbf88a278050_1aa07184937b76a304c19bcbf88a278050" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>grab_remaining_pairs</name></member>
+      <member refid="classs__pair__heap_a5588bfac84aaa52fe8ab9fef3c63fe61_1a5588bfac84aaa52fe8ab9fef3c63fe61" prot="private" virt="non-virtual"><scope>s_pair_heap</scope><name>heap</name></member>
+      <member refid="classs__pair__heap_af1904fb0707ad9e4b2684152ced0ff3f_1af1904fb0707ad9e4b2684152ced0ff3f" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>insert</name></member>
+      <member refid="classs__pair__heap_a2ba3d9aa2a439c39e5a09dda3f1be7a2_1a2ba3d9aa2a439c39e5a09dda3f1be7a2" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>insert</name></member>
+      <member refid="classs__pair__heap_ae802569273707df2b2db23e8b2eeca88_1ae802569273707df2b2db23e8b2eeca88" prot="private" virt="non-virtual"><scope>s_pair_heap</scope><name>M</name></member>
+      <member refid="classs__pair__heap_a95450142dd345e94b35caa138609aa3b_1a95450142dd345e94b35caa138609aa3b" prot="private" virt="non-virtual"><scope>s_pair_heap</scope><name>merge</name></member>
+      <member refid="classs__pair__heap_acb3cdb742c9e8bf81a95034c1a1d3319_1acb3cdb742c9e8bf81a95034c1a1d3319" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>n_elems</name></member>
+      <member refid="classs__pair__heap_a6cd73f2bf318533351554e74235a483e_1a6cd73f2bf318533351554e74235a483e" prot="private" virt="non-virtual"><scope>s_pair_heap</scope><name>n_in_heap</name></member>
+      <member refid="classs__pair__heap_a18b571fb37a8fd034f57b52e3b7d661d_1a18b571fb37a8fd034f57b52e3b7d661d" prot="private" virt="non-virtual"><scope>s_pair_heap</scope><name>nelems</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>operator new[]</name></member>
+      <member refid="classs__pair__heap_acf24a45c88664772124db0f19a95862b_1acf24a45c88664772124db0f19a95862b" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>put_back</name></member>
+      <member refid="classs__pair__heap_a0d63e7ffa0167aa7b57f77222e20ff58_1a0d63e7ffa0167aa7b57f77222e20ff58" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>remove</name></member>
+      <member refid="classs__pair__heap_a27019d6acddea81c5bb334f9d397a7b3_1a27019d6acddea81c5bb334f9d397a7b3" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>s_pair_heap</name></member>
+      <member refid="classs__pair__heap_a1850658b903c728ae8e933b3ff45bf12_1a1850658b903c728ae8e933b3ff45bf12" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>sort_list</name></member>
+      <member refid="classs__pair__heap_a046c47c7f8fce42ef797486acba0ca35_1a046c47c7f8fce42ef797486acba0ca35" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>stats</name></member>
+      <member refid="classs__pair__heap_aafdddf3c1118d0e1d40b35c40a0ec111_1aafdddf3c1118d0e1d40b35c40a0ec111" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>text_out</name></member>
+      <member refid="classs__pair__heap_ad1bfbe42c16ce537b7fdd6bb546ea6a6_1ad1bfbe42c16ce537b7fdd6bb546ea6a6" prot="private" virt="non-virtual"><scope>s_pair_heap</scope><name>top_of_heap</name></member>
+      <member refid="classs__pair__heap_ad21d7c44305095e8c2d1a3c583830acd_1ad21d7c44305095e8c2d1a3c583830acd" prot="public" virt="non-virtual"><scope>s_pair_heap</scope><name>~s_pair_heap</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

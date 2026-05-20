@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_monomial_8h" kind="file" language="C++">
+    <compoundname>Monomial.h</compoundname>
+    <includes local="no">vector</includes>
+    <includes local="no">ostream</includes>
+    <includedby refid="_div_list_model_8h" local="yes">submodules/mathic/src/divsim/DivListModel.h</includedby>
+    <includedby refid="_k_d_tree_model_8h" local="yes">submodules/mathic/src/divsim/KDTreeModel.h</includedby>
+    <includedby refid="_simulation_8h" local="yes">submodules/mathic/src/divsim/Simulation.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathic/src/divsim/Monomial.h</label>
+        <link refid="_monomial_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ostream</label>
+      </node>
+      <node id="2">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>submodules/mathic/src/divsim/DivListModel.h</label>
+        <link refid="_div_list_model_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>submodules/mathic/src/divsim/KDTreeModel.h</label>
+        <link refid="_k_d_tree_model_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>submodules/mathic/src/divsim/Monomial.h</label>
+        <link refid="_monomial_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>submodules/mathic/src/divsim/Simulation.cpp</label>
+        <link refid="_simulation_8cpp"/>
+      </node>
+      <node id="6">
+        <label>submodules/mathic/src/divsim/Simulation.h</label>
+        <link refid="_simulation_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>submodules/mathic/src/divsim/divMain.cpp</label>
+        <link refid="div_main_8cpp"/>
+      </node>
+      <node id="5">
+        <label>submodules/mathic/src/test/DivFinder.cpp</label>
+        <link refid="_div_finder_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_monomial" prot="public">Monomial</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_monomial_8h_abc28bf29bf05cf792ab51fc4ade6f0c0_1abc28bf29bf05cf792ab51fc4ade6f0c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;out, const Monomial &amp;monomial)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monomial" kindref="compound">Monomial</ref> &amp;</type>
+          <declname>monomial</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/divsim/Monomial.h" line="40" column="8" bodyfile="submodules/mathic/src/divsim/Monomial.h" bodystart="40" bodyend="50"/>
+        <references refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" compoundref="gb-toric_8cpp" startline="11">monomial</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>MONOMIAL_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MONOMIAL_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7" refid="class_monomial" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_monomial_ac80d5b20f63ff48cfbf4d67cacacf4f7_1ac80d5b20f63ff48cfbf4d67cacacf4f7" kindref="member">Monomial</ref><sp/>{</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="9" refid="class_monomial_a60be73287075cc4b54d4311bf079ecf7_1a60be73287075cc4b54d4311bf079ecf7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_monomial_a60be73287075cc4b54d4311bf079ecf7_1a60be73287075cc4b54d4311bf079ecf7" kindref="member">Exponent</ref>;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="class_monomial_ac80d5b20f63ff48cfbf4d67cacacf4f7_1ac80d5b20f63ff48cfbf4d67cacacf4f7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_ac80d5b20f63ff48cfbf4d67cacacf4f7_1ac80d5b20f63ff48cfbf4d67cacacf4f7" kindref="member">Monomial</ref>():<sp/><ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref>(0)<sp/>{<ref refid="mathic_2src_2divsim_2stdinc_8h_ab66b59128fbb3d5a428e94c374959b8e_1ab66b59128fbb3d5a428e94c374959b8e" kindref="member">IF_DEBUG</ref>(_size<sp/>=<sp/>0);}</highlight></codeline>
+<codeline lineno="12" refid="class_monomial_a10e1e305339bbf7bf5cd0fed0854f452_1a10e1e305339bbf7bf5cd0fed0854f452" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_a10e1e305339bbf7bf5cd0fed0854f452_1a10e1e305339bbf7bf5cd0fed0854f452" kindref="member">Monomial</ref>(std::vector&lt;Exponent&gt;&amp;<sp/>v):<sp/><ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref>(&amp;v[0])<sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathic_2src_2divsim_2stdinc_8h_ab66b59128fbb3d5a428e94c374959b8e_1ab66b59128fbb3d5a428e94c374959b8e" kindref="member">IF_DEBUG</ref>(_size<sp/>=<sp/>v.size());</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="class_monomial_a87d4cfdcba3c58b87d6ee85778e2a2da_1a87d4cfdcba3c58b87d6ee85778e2a2da" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="class_monomial_a60be73287075cc4b54d4311bf079ecf7_1a60be73287075cc4b54d4311bf079ecf7" kindref="member">Exponent</ref>&amp;<sp/><ref refid="class_monomial_a87d4cfdcba3c58b87d6ee85778e2a2da_1a87d4cfdcba3c58b87d6ee85778e2a2da" kindref="member">operator[]</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index)<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" kindref="member">ASSERT</ref>(index<sp/>&lt;<sp/>_size);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref>[index];</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="20" refid="class_monomial_aab5bd2054fc536fb42e4d0df8e6faec1_1aab5bd2054fc536fb42e4d0df8e6faec1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monomial_a60be73287075cc4b54d4311bf079ecf7_1a60be73287075cc4b54d4311bf079ecf7" kindref="member">Exponent</ref>&amp;<sp/><ref refid="class_monomial_aab5bd2054fc536fb42e4d0df8e6faec1_1aab5bd2054fc536fb42e4d0df8e6faec1" kindref="member">operator[]</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathic_2src_2divsim_2stdinc_8h_ad014a2a071494bbabc34b48eeebadbf3_1ad014a2a071494bbabc34b48eeebadbf3" kindref="member">ASSERT</ref>(index<sp/>&lt;<sp/>_size);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref>[index];</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="class_monomial_a0456a5b6c9c0fc0a8a40ae4c70766abe_1a0456a5b6c9c0fc0a8a40ae4c70766abe" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monomial_a60be73287075cc4b54d4311bf079ecf7_1a60be73287075cc4b54d4311bf079ecf7" kindref="member">Exponent</ref>*<sp/><ref refid="class_monomial_a0456a5b6c9c0fc0a8a40ae4c70766abe_1a0456a5b6c9c0fc0a8a40ae4c70766abe" kindref="member">getPointer</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref>;}</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>MATHIC_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_size;}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a7dc924fd67e00bc2650738a6f2660b0f_1a7dc924fd67e00bc2650738a6f2660b0f" kindref="member">operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ac80d5b20f63ff48cfbf4d67cacacf4f7_1ac80d5b20f63ff48cfbf4d67cacacf4f7" kindref="member">Monomial</ref>&amp;<sp/>m)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref><sp/>==<sp/>m.<ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref>;}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacempfr_a6d8f594854bf791b71995c684b56a611_1a6d8f594854bf791b71995c684b56a611" kindref="member">operator&lt;</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ac80d5b20f63ff48cfbf4d67cacacf4f7_1ac80d5b20f63ff48cfbf4d67cacacf4f7" kindref="member">Monomial</ref>&amp;<sp/>m)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref><sp/>&lt;<sp/>m.<ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref>;}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>MATHIC_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>_size;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_a60be73287075cc4b54d4311bf079ecf7_1a60be73287075cc4b54d4311bf079ecf7" kindref="member">Exponent</ref>*<sp/><ref refid="class_monomial_ad4b15aeffefa735a90062205572aeb0e_1ad4b15aeffefa735a90062205572aeb0e" kindref="member">_exponents</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="_monomial_8h_abc28bf29bf05cf792ab51fc4ade6f0c0_1abc28bf29bf05cf792ab51fc4ade6f0c0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::ostream&amp;<sp/><ref refid="_monomial_8h_abc28bf29bf05cf792ab51fc4ade6f0c0_1abc28bf29bf05cf792ab51fc4ade6f0c0" kindref="member">operator&lt;&lt;</ref>(std::ostream&amp;<sp/>out,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monomial" kindref="compound">Monomial</ref>&amp;<sp/><ref refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" kindref="member">monomial</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>MATHIC_DEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;(Monomial:&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/><ref refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" kindref="member">monomial</ref>.size();<sp/>++i)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;<sp/>&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="gb-toric_8cpp_a0020cb9370f27f1e0ebd02a704b50a68_1a0020cb9370f27f1e0ebd02a704b50a68" kindref="member">monomial</ref>[i];</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;)&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;(Monomial)&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>out;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathic/src/divsim/Monomial.h"/>
+  </compounddef>
+</doxygen>

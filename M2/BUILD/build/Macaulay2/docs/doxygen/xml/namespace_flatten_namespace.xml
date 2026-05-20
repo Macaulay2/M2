@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_flatten_namespace" kind="namespace" language="C++">
+    <compoundname>FlattenNamespace</compoundname>
+    <innerclass refid="struct_flatten_namespace_1_1_inner_iterator_type" prot="public">FlattenNamespace::InnerIteratorType</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="393" column="1"/>
+  </compounddef>
+</doxygen>

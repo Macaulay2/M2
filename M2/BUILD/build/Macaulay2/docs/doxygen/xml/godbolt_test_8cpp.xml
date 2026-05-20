@@ -1,0 +1,955 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="godbolt_test_8cpp" kind="file" language="C++">
+    <compoundname>godboltTest.cpp</compoundname>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int exp_table[]</definition>
+        <argsstring>[]</argsstring>
+        <name>exp_table</name>
+        <initializer>= {1,2,4,8,16,32,64,27,54,7,14,28,56,11,22,44,88,75,49,98,95,89,77,53,5,10,20,40,80,59,17,34,68,35,70,39,78,55,9,18,36,72,43,86,71,41,82,63,25,50,100,99,97,93,85,69,37,74,47,94,87,73,45,90,79,57,13,26,52,3,6,12,24,48,96,91,81,61,21,42,84,67,33,66,31,62,23,46,92,83,65,29,58,15,30,60,19,38,76,51,0}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="25" column="5" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="25" bodyend="25"/>
+        <referencedby refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" compoundref="godbolt_test_8cpp" startline="63" endline="74">subtract</referencedby>
+        <referencedby refid="godbolt_test_8cpp_aeedfefbfa9a8292d413a21d325aab7ba_1aeedfefbfa9a8292d413a21d325aab7ba" compoundref="godbolt_test_8cpp" startline="39" endline="48">subtract_multiple</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int log_table[]</definition>
+        <argsstring>[]</argsstring>
+        <name>log_table</name>
+        <initializer>= {100,0,1,69,2,24,70,9,3,38,25,13,71,66,10,93,4,30,39,96,26,78,14,86,72,48,67,7,11,91,94,84,5,82,31,33,40,56,97,35,27,45,79,42,15,62,87,58,73,18,49,99,68,23,8,37,12,65,92,29,95,77,85,47,6,90,83,81,32,55,34,44,41,61,57,17,98,22,36,64,28,76,46,89,80,54,43,60,16,21,63,75,88,53,59,20,74,52,19,51,50}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="27" column="5" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="27" bodyend="27"/>
+        <referencedby refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" compoundref="godbolt_test_8cpp" startline="63" endline="74">subtract</referencedby>
+        <referencedby refid="godbolt_test_8cpp_aeedfefbfa9a8292d413a21d325aab7ba_1aeedfefbfa9a8292d413a21d325aab7ba" compoundref="godbolt_test_8cpp" startline="39" endline="48">subtract_multiple</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="godbolt_test_8cpp_acb662a02ed1c065aaf832bfdf5d0d8ad_1acb662a02ed1c065aaf832bfdf5d0d8ad" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int exp_table2[]</definition>
+        <argsstring>[]</argsstring>
+        <name>exp_table2</name>
+        <initializer>= {0,2,4,8,16,32,64,27,54,7,14,28,56,11,22,44,88,75,49,98,95,89,77,53,5,10,20,40,80,59,17,34,68,35,70,39,78,55,9,18,36,72,43,86,71,41,82,63,25,50,100,99,97,93,85,69,37,74,47,94,87,73,45,90,79,57,13,26,52,3,6,12,24,48,96,91,81,61,21,42,84,67,33,66,31,62,23,46,92,83,65,29,58,15,30,60,19,38,76,51,1}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="29" column="5" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="29" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="variable" id="godbolt_test_8cpp_a22ca9e6de82e70b1965e089c248c71a5_1a22ca9e6de82e70b1965e089c248c71a5" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int log_table2[]</definition>
+        <argsstring>[]</argsstring>
+        <name>log_table2</name>
+        <initializer>= {0,100,1,69,2,24,70,9,3,38,25,13,71,66,10,93,4,30,39,96,26,78,14,86,72,48,67,7,11,91,94,84,5,82,31,33,40,56,97,35,27,45,79,42,15,62,87,58,73,18,49,99,68,23,8,37,12,65,92,29,95,77,85,47,6,90,83,81,32,55,34,44,41,61,57,17,98,22,36,64,28,76,46,89,80,54,43,60,16,21,63,75,88,53,59,20,74,52,19,51,50}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="31" column="5" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="31" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="variable" id="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int p1</definition>
+        <argsstring></argsstring>
+        <name>p1</name>
+        <initializer>= 100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="33" column="5" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="33" bodyend="-1"/>
+        <referencedby refid="classmpfr_1_1mpreal_a1efb053de525f55550b0d2737a8e7985_1a1efb053de525f55550b0d2737a8e7985" compoundref="mpreal_8h" startline="2583" endline="2596">mpfr::mpreal::agm</referencedby>
+        <referencedby refid="classmpfr_1_1mpreal_ac899857c40e3b870467ac2d140fe61a2_1ac899857c40e3b870467ac2d140fe61a2" compoundref="mpreal_8h" startline="2553" endline="2566">mpfr::mpreal::fma</referencedby>
+        <referencedby refid="classmpfr_1_1mpreal_a7aeaa1060b3caff7d5308863a85b7ebe_1a7aeaa1060b3caff7d5308863a85b7ebe" compoundref="mpreal_8h" startline="2568" endline="2581">mpfr::mpreal::fms</referencedby>
+        <referencedby refid="classbinomial_g_b_aaafd0bb2e5e73f7ca55c31a8e8bcfb81_1aaafd0bb2e5e73f7ca55c31a8e8bcfb81" compoundref="gb-toric_8cpp" startline="735" endline="794">binomialGB::ideal_quotient</referencedby>
+        <referencedby refid="imonorder_8cpp_a4c8b68e12051c0839192a7a920addc78_1a4c8b68e12051c0839192a7a920addc78" compoundref="imonorder_8cpp" startline="411" endline="546">monomialOrderEncodeFromActualExponents</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_pointer_less_comparator_a4c0df7cb774c6cac3e1c3e69d8bba263_1a4c0df7cb774c6cac3e1c3e69d8bba263" compoundref="pcomparator_8hpp" startline="45" endline="52">BIBasis::PointerLessComparator&lt; T &gt;::operator()</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_pointer_more_comparator_a1a7784461b72284cba68d67825dab74a_1a1a7784461b72284cba68d67825dab74a" compoundref="pcomparator_8hpp" startline="58" endline="65">BIBasis::PointerMoreComparator&lt; T &gt;::operator()</referencedby>
+        <referencedby refid="class_hermite_computation_a728abdccc619e66fd85da5bb0345ec41_1a728abdccc619e66fd85da5bb0345ec41" compoundref="hermite_8cpp" startline="210" endline="258">HermiteComputation::reduce</referencedby>
+        <referencedby refid="class_simulation_a84b10bd22e95f17e405c92f8267e7533_1a84b10bd22e95f17e405c92f8267e7533" compoundref="_simulation_8h" startline="115" endline="118">Simulation::run</referencedby>
+        <referencedby refid="class_simulation_a35b06e739480deaf5b16588a172a278c_1a35b06e739480deaf5b16588a172a278c" compoundref="_simulation_8h" startline="123" endline="127">Simulation::run</referencedby>
+        <referencedby refid="class_hermite_computation_afc94471ae40cbcf6d996766b3e491f82_1afc94471ae40cbcf6d996766b3e491f82" compoundref="hermite_8cpp" startline="185" endline="208">HermiteComputation::sort</referencedby>
+        <referencedby refid="classres__comp_a0e46fb086a91ad9913ce4edbfd21c2c1_1a0e46fb086a91ad9913ce4edbfd21c2c1" compoundref="res-a1_8cpp" startline="544" endline="567">res_comp::sort_compares</referencedby>
+        <referencedby refid="classs__pair__heap_a1850658b903c728ae8e933b3ff45bf12_1a1850658b903c728ae8e933b3ff45bf12" compoundref="spair_8cpp" startline="156" endline="178">s_pair_heap::sort_list</referencedby>
+        <referencedby refid="classres2__comp_a43619c272bd2a0bae6d4960c51ef6818_1a43619c272bd2a0bae6d4960c51ef6818" compoundref="res-a0_8cpp" startline="891" endline="914">res2_comp::sort_res2_pairs</referencedby>
+        <referencedby refid="classres__comp_ab9aa1454c1bef866b9ff231ce99e1018_1ab9aa1454c1bef866b9ff231ce99e1018" compoundref="res-a1_8cpp" startline="438" endline="461">res_comp::sort_res_pairs</referencedby>
+        <referencedby refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" compoundref="godbolt_test_8cpp" startline="63" endline="74">subtract</referencedby>
+        <referencedby refid="godbolt_test_8cpp_aeedfefbfa9a8292d413a21d325aab7ba_1aeedfefbfa9a8292d413a21d325aab7ba" compoundref="godbolt_test_8cpp" startline="39" endline="48">subtract_multiple</referencedby>
+        <referencedby refid="godbolt_test_8cpp_afb3d749fd3cadeee4489badf8821dec1_1afb3d749fd3cadeee4489badf8821dec1" compoundref="godbolt_test_8cpp" startline="76" endline="83">subtract_multiple2</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a836020b215a19e76dc2bb19ea1013d64_1a836020b215a19e76dc2bb19ea1013d64" compoundref="test_2_f4_matrix_builder_8cpp" startline="133" endline="173">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a149c54f5152dc1c80f475a42dc040c30_1a149c54f5152dc1c80f475a42dc040c30" compoundref="test_2_f4_matrix_builder_8cpp" startline="175" endline="196">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_af3893dac4fb13f523a52a00549b2ce19_1af3893dac4fb13f523a52a00549b2ce19" compoundref="test_2_f4_matrix_builder_8cpp" startline="80" endline="110">TEST</referencedby>
+        <referencedby refid="class_monomial_info_a6b6ab7746febafa2bc0d3b305083afcc_1a6b6ab7746febafa2bc0d3b305083afcc" compoundref="moninfo_8hpp" startline="612" endline="672">MonomialInfo::unnecessary</referencedby>
+        <referencedby refid="class_monomial_info_afe93be33bdb774bd544468f107318c5f_1afe93be33bdb774bd544468f107318c5f" compoundref="moninfo_8hpp" startline="570" endline="610">MonomialInfo::unnecessary1</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int p</definition>
+        <argsstring></argsstring>
+        <name>p</name>
+        <initializer>= 101</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="34" column="5" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="34" bodyend="-1"/>
+        <referencedby refid="class_free_algebra_heap_ad203156874f08a6d875981c9ce4170cf_1ad203156874f08a6d875981c9ce4170cf" compoundref="_free_algebra_8cpp" startline="40" endline="64">FreeAlgebraHeap::add</referencedby>
+        <referencedby refid="classgbvector_heap_a7f79adcff52c5ba6cefa069a749f6bf0_1a7f79adcff52c5ba6cefa069a749f6bf0" compoundref="gbring_8cpp" startline="1532" endline="1549">gbvectorHeap::add</referencedby>
+        <referencedby refid="classgeobucket_a1688973d4c5b74409149fca4b8a0d514_1a1688973d4c5b74409149fca4b8a0d514" compoundref="geobucket_8hpp" startline="97" endline="115">geobucket&lt; FREEMODULETYPE, VECTYPE &gt;::add</referencedby>
+        <referencedby refid="classgeobucket_a1688973d4c5b74409149fca4b8a0d514_1a1688973d4c5b74409149fca4b8a0d514">geobucket&lt; const res2_poly, res2term * &gt;::add</referencedby>
+        <referencedby refid="classpolyheap_a9e969ba5847a9bfc2452800d4a41b86e_1a9e969ba5847a9bfc2452800d4a41b86e" compoundref="geopoly_8hpp" startline="82" endline="108">polyheap::add</referencedby>
+        <referencedby refid="classschur__poly__heap_acfd4bd4856e238b12f864022fe15bb52_1acfd4bd4856e238b12f864022fe15bb52" compoundref="schur-poly-heap_8hpp" startline="74" endline="88">schur_poly_heap::add</referencedby>
+        <referencedby refid="classvec_heap_aee39d6db6094683f5687bb3b7b575c9c_1aee39d6db6094683f5687bb3b7b575c9c" compoundref="geovec_8hpp" startline="91" endline="108">vecHeap::add</referencedby>
+        <referencedby refid="classbinomial_g_b__comp_aff8f33f8f3c5050f2dd62f47a1cf9669_1aff8f33f8f3c5050f2dd62f47a1cf9669" compoundref="gb-toric_8cpp" startline="1056" endline="1090">binomialGB_comp::add_generators</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0d2af5cdee7fec7b70ad70ecda9def25_1a0d2af5cdee7fec7b70ad70ecda9def25" compoundref="gb-sugarless_8cpp" startline="86" endline="103">GBinhom_comp::add_gens</referencedby>
+        <referencedby refid="class_log_domain_set_ad422a2f557c2163f5104d54a8678eff7_1ad422a2f557c2163f5104d54a8678eff7" compoundref="_log_domain_set_8cpp" startline="28" endline="34">LogDomainSet::alias</referencedby>
+        <referencedby refid="classmemt_1_1_arena_a9c47b93083c964cdd2a0defd7f4c0ed7_1a9c47b93083c964cdd2a0defd7f4c0ed7" compoundref="_arena_8h" startline="345" endline="357">memt::Arena::allocArray</referencedby>
+        <referencedby refid="classdoubling__stash_af3d73df22e2bdde7a2c6822403dc5a48_1af3d73df22e2bdde7a2c6822403dc5a48" compoundref="mem_8cpp" startline="165" endline="171">doubling_stash::allocated_size</referencedby>
+        <referencedby refid="class_free_module_a70e90276abbdf7722815b3482c4b6a3d_1a70e90276abbdf7722815b3482c4b6a3d" compoundref="freemod_8cpp" startline="130" endline="135">FreeModule::append</referencedby>
+        <referencedby refid="class_free_module_acbdf43ecae68513fd8b6403174782502_1acbdf43ecae68513fd8b6403174782502" compoundref="freemod_8cpp" startline="137" endline="143">FreeModule::append_schreyer</referencedby>
+        <referencedby refid="class_d_poly_a5680758ab8dd22b08fdfc26c3cd12467_1a5680758ab8dd22b08fdfc26c3cd12467" compoundref="dpoly_8cpp" startline="389" endline="416">DPoly::append_to_stream</referencedby>
+        <referencedby refid="class_associated_primes_abfd0418996c6dc2fad2ae1a753fb8191_1abfd0418996c6dc2fad2ae1a753fb8191" compoundref="assprime_8cpp" startline="89" endline="136">AssociatedPrimes::ass_prime_generator</referencedby>
+        <referencedby refid="class_minimal_primes_a1959583b990a8c49967e0b9e10fd0d83_1a1959583b990a8c49967e0b9e10fd0d83" compoundref="monideal-minprimes_8cpp" startline="265" endline="311">MinimalPrimes::ass_prime_generator</referencedby>
+        <referencedby refid="io-util_8cpp_af3404b132d0f5cf0918c220db6b6b643_1af3404b132d0f5cf0918c220db6b6b643" compoundref="io-util_8cpp" startline="36" endline="43">basisParseFromString</referencedby>
+        <referencedby refid="classres2__comp_ae22953223cfa84b2d47e7267fc440978_1ae22953223cfa84b2d47e7267fc440978" compoundref="res-a0_8cpp" startline="1855" endline="1875">res2_comp::betti_minimal</referencedby>
+        <referencedby refid="classres2__comp_ae681d8adbd2dbb8116261d4fc6597bdd_1ae681d8adbd2dbb8116261d4fc6597bdd" compoundref="res-a0_8cpp" startline="1877" endline="1895">res2_comp::betti_nmonoms</referencedby>
+        <referencedby refid="classres2__comp_ab71d3ad97b40f2f80e231520423fe4f6_1ab71d3ad97b40f2f80e231520423fe4f6" compoundref="res-a0_8cpp" startline="1834" endline="1853">res2_comp::betti_remaining</referencedby>
+        <referencedby refid="classres2__comp_a9de8a02cf92ebf72c148d470a47bf7e8_1a9de8a02cf92ebf72c148d470a47bf7e8" compoundref="res-a0_8cpp" startline="1816" endline="1832">res2_comp::betti_skeleton</referencedby>
+        <referencedby refid="class_subsets_aaa823944360f6f13123382df2d46b081_1aaa823944360f6f13123382df2d46b081" compoundref="comb_8hpp" startline="113" endline="118">Subsets::binom</referencedby>
+        <referencedby refid="class_exponent_list_a13862d9f1e89d05d0a337e626f0e2e4d_1a13862d9f1e89d05d0a337e626f0e2e4d" compoundref="_exponent_list_8hpp" startline="212" endline="221">ExponentList&lt; int, true &gt;::buchberger_moeller_keep</referencedby>
+        <referencedby refid="class_g_b_kernel_computation_ab7006bdadecec3ce42d91c65b4dd5323_1ab7006bdadecec3ce42d91c65b4dd5323" compoundref="_eschreyer_8cpp" startline="98" endline="125">GBKernelComputation::calc</referencedby>
+        <referencedby refid="m2-mem_8cpp_a66a537d2f96847d52c41beabc158f170_1a66a537d2f96847d52c41beabc158f170">CALL_FN_W_WW</referencedby>
+        <referencedby refid="class_n_c_f4_aa449584c2d4b7ebd6fd573139bc0d8d0_1aa449584c2d4b7ebd6fd573139bc0d8d0" compoundref="_n_c_f4_8cpp" startline="267" endline="299">NCF4::checkOldOverlaps</referencedby>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+        <referencedby refid="class_g_binhom__comp_a1a824fee2b65f4ac5e933607e0a4c70d_1a1a824fee2b65f4ac5e933607e0a4c70d" compoundref="gb-sugarless_8cpp" startline="585" endline="594">GBinhom_comp::compare</referencedby>
+        <referencedby refid="classres2__comp_a366bf47f0710ef80d26ab8fecafe3c25_1a366bf47f0710ef80d26ab8fecafe3c25" compoundref="res-a0_8cpp" startline="24" endline="38">res2_comp::complete_thru_degree</referencedby>
+        <referencedby refid="class_ring_a03119f391a83b5d4aa09b61c2153c6ab_1a03119f391a83b5d4aa09b61c2153c6ab" compoundref="ring-vecs_8cpp" startline="284" endline="298">Ring::component_shift</referencedby>
+        <referencedby refid="classgb_a_a442a0cc8692a6e6076de2bd7522b086e_1a442a0cc8692a6e6076de2bd7522b086e">gbA::compute_hilbert_function</referencedby>
+        <referencedby refid="classgb2__comp_acab333bd5d6350c14b2fb3f969bdd545_1acab333bd5d6350c14b2fb3f969bdd545" compoundref="res-a2-gb_8cpp" startline="311" endline="326">gb2_comp::compute_s_pair</referencedby>
+        <referencedby refid="class_g_b__comp_a9c56eb4536156cba29ae3a573ea0d96f_1a9c56eb4536156cba29ae3a573ea0d96f" compoundref="gb-homog2_8cpp" startline="375" endline="389">GB_comp::compute_s_pair</referencedby>
+        <referencedby refid="classgb_a_a11517fe61d4a2881f1626a385a0b8208_1a11517fe61d4a2881f1626a385a0b8208" compoundref="gb-default_8cpp" startline="1311" endline="1354">gbA::compute_s_pair</referencedby>
+        <referencedby refid="class_g_binhom__comp_a3f718c1ad0ba2691ad65bc7f943a2efe_1a3f718c1ad0ba2691ad65bc7f943a2efe" compoundref="gb-sugarless_8cpp" startline="445" endline="459">GBinhom_comp::compute_s_pair</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a36f101adb537c9affd5097a5c134696f_1a36f101adb537c9affd5097a5c134696f" compoundref="_hash_table_8h" startline="316" endline="324">mathic::HashTable&lt; C &gt;::computeNodeCount</referencedby>
+        <referencedby refid="class_subsets_a51ce5fef32d765ccc0e9389cd46eb844_1a51ce5fef32d765ccc0e9389cd46eb844" compoundref="comb_8cpp" startline="163" endline="201">Subsets::concatenateSubsets</referencedby>
+        <referencedby refid="classmpfr_1_1mpreal_a28d6e6d000cbb4c3a0a3fdf345e43b57_1a28d6e6d000cbb4c3a0a3fdf345e43b57" compoundref="mpreal_8h" startline="2708" endline="2713">mpfr::mpreal::const_catalan</referencedby>
+        <referencedby refid="classmpfr_1_1mpreal_a84bf269d11b5a4d3fab3a4da1b96b77d_1a84bf269d11b5a4d3fab3a4da1b96b77d" compoundref="mpreal_8h" startline="2701" endline="2706">mpfr::mpreal::const_euler</referencedby>
+        <referencedby refid="classmpfr_1_1mpreal_a92e89ad48c28737c47cf8aab636e2dcc_1a92e89ad48c28737c47cf8aab636e2dcc" compoundref="mpreal_8h" startline="2715" endline="2720">mpfr::mpreal::const_infinity</referencedby>
+        <referencedby refid="classmpfr_1_1mpreal_a9df18114b9360557fb1b6e5a406fb01f_1a9df18114b9360557fb1b6e5a406fb01f" compoundref="mpreal_8h" startline="2687" endline="2692">mpfr::mpreal::const_log2</referencedby>
+        <referencedby refid="classmpfr_1_1mpreal_a38778517947b20c88481b70e9427b91c_1a38778517947b20c88481b70e9427b91c" compoundref="mpreal_8h" startline="2694" endline="2699">mpfr::mpreal::const_pi</referencedby>
+        <referencedby refid="class_f4_s_pair_set_a013c0429f3ad8bc8a44d86a0e29a8e76_1a013c0429f3ad8bc8a44d86a0e29a8e76" compoundref="f4-spairs_8cpp" startline="246" endline="321">F4SPairSet::construct_pairs</referencedby>
+        <referencedby refid="factory_8cpp_ac11eb4d2067afe35c90c95a7ea143d20_1ac11eb4d2067afe35c90c95a7ea143d20" compoundref="factory_8cpp" startline="312" endline="340">convertToFactory</referencedby>
+        <referencedby refid="class_ring_aef0dd726d2923b97198ae701dc3406a6_1aef0dd726d2923b97198ae701dc3406a6" compoundref="ring-vecs_8cpp" startline="87" endline="101">Ring::copy_vec</referencedby>
+        <referencedby refid="class_d_ring_aa08cb5a54253a90a4af8f81a2b266635_1aa08cb5a54253a90a4af8f81a2b266635" compoundref="dpoly_8cpp" startline="1494" endline="1497">DRing::create</referencedby>
+        <referencedby refid="class_z__mod_a9610c7d8dec24c6ec6017a5da0abe5a0_1a9610c7d8dec24c6ec6017a5da0abe5a0" compoundref="_z_zp_8cpp" startline="64" endline="70">Z_mod::create</referencedby>
+        <referencedby refid="class_stats_allocator_afe14055602acade6c39627468597611d_1afe14055602acade6c39627468597611d" compoundref="myalloc_8hpp" startline="116" endline="120">StatsAllocator&lt; T &gt;::deallocate</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a160607e3110ddb8b5401829c18f0a30b_1a160607e3110ddb8b5401829c18f0a30b" compoundref="f4-monlookup_8cpp" startline="450" endline="491">F4MonomialLookupTableT&lt; Key &gt;::debug_check</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a160607e3110ddb8b5401829c18f0a30b_1a160607e3110ddb8b5401829c18f0a30b">F4MonomialLookupTableT&lt; int32_t &gt;::debug_check</referencedby>
+        <referencedby refid="class_monomial_ideal_a521d4d769f68a98d2c2f540da8ea35cb_1a521d4d769f68a98d2c2f540da8ea35cb" compoundref="monideal_8cpp" startline="524" endline="565">MonomialIdeal::debug_check</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_a3242e3c7126034467f992f94edb873e7_1a3242e3c7126034467f992f94edb873e7" compoundref="res-f4-monlookup_8cpp" startline="466" endline="507">ResF4MonomialLookupTableT&lt; Key &gt;::debug_check</referencedby>
+        <referencedby refid="classbinomial_g_b_a05724c57849f424dfdf54c8296c4801c_1a05724c57849f424dfdf54c8296c4801c" compoundref="gb-toric_8cpp" startline="956" endline="966">binomialGB::debug_display</referencedby>
+        <referencedby refid="class_g_binhom__comp_ab435b437e85d996f8f3ec5cc04a1a408_1ab435b437e85d996f8f3ec5cc04a1a408" compoundref="gb-sugarless_8cpp" startline="1006" endline="1025">GBinhom_comp::debug_pairs</referencedby>
+        <referencedby refid="class_g_binhom__comp_a94d88ff7f314610d65e6c8ebb9ba9912_1a94d88ff7f314610d65e6c8ebb9ba9912" compoundref="gb-sugarless_8cpp" startline="987" endline="998">GBinhom_comp::debug_pairs_out</referencedby>
+        <referencedby refid="class_g_binhom__comp_a5695a3ca60ba58d2c65dc60384280307_1a5695a3ca60ba58d2c65dc60384280307" compoundref="gb-sugarless_8cpp" startline="981" endline="986">GBinhom_comp::debug_pairs_out</referencedby>
+        <referencedby refid="classgb_a_acd18e0defa1ddb6e585d23eafa7e4b08_1acd18e0defa1ddb6e585d23eafa7e4b08" compoundref="gb-default_8cpp" startline="2802" endline="2807">gbA::debug_spair</referencedby>
+        <referencedby refid="classgb_a_ae7b599e55f5f1152c807788cd051f6cd_1ae7b599e55f5f1152c807788cd051f6cd" compoundref="gb-default_8cpp" startline="2809" endline="2817">gbA::debug_spairs</referencedby>
+        <referencedby refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" compoundref="_mono_arena_8hpp" startline="179" endline="188">MonoArena&lt; M &gt;::debugAssertValid</referencedby>
+        <referencedby refid="classres__comp_a0e37eebf7b8cf8972fd32f968a1f5a13_1a0e37eebf7b8cf8972fd32f968a1f5a13" compoundref="res-a1_8cpp" startline="273" endline="278">res_comp::degree</referencedby>
+        <referencedby refid="class_degree_zero_map_generator_ad2c750087c24d292712a6f3636e7e629_1ad2c750087c24d292712a6f3636e7e629" compoundref="res-f4-m2-interface_8cpp" startline="398" endline="425">DegreeZeroMapGenerator::DegreeZeroMapGenerator</referencedby>
+        <referencedby refid="classdoubling__stash_abb45db0dfe6f0a2d669f858c850859ac_1abb45db0dfe6f0a2d669f858c850859ac" compoundref="mem_8cpp" startline="157" endline="163">doubling_stash::delete_elem</referencedby>
+        <referencedby refid="classstash_ae4b46df1e16a1459ac79ef4aa4047b68_1ae4b46df1e16a1459ac79ef4aa4047b68" compoundref="mem_8hpp" startline="145" endline="175">stash::delete_elem</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_aa6b7e08b1d3c82910c29ec11bf001380_1aa6b7e08b1d3c82910c29ec11bf001380" compoundref="f4-monlookup_8cpp" startline="49" endline="58">F4MonomialLookupTableT&lt; Key &gt;::delete_mi_node</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_aa6b7e08b1d3c82910c29ec11bf001380_1aa6b7e08b1d3c82910c29ec11bf001380">F4MonomialLookupTableT&lt; int32_t &gt;::delete_mi_node</referencedby>
+        <referencedby refid="class_monomial_ideal_a5a0f4a6440e0884f84e4cbfccf3b61f2_1a5a0f4a6440e0884f84e4cbfccf3b61f2" compoundref="monideal_8cpp" startline="78" endline="89">MonomialIdeal::delete_mi_node</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_ab523359f48f0ef9616ab58893858be42_1ab523359f48f0ef9616ab58893858be42" compoundref="res-f4-monlookup_8cpp" startline="52" endline="61">ResF4MonomialLookupTableT&lt; Key &gt;::delete_mi_node</referencedby>
+        <referencedby refid="class_f4_s_pair_set_a37836c08928d817413fee0000853d11c_1a37836c08928d817413fee0000853d11c" compoundref="f4-spairs_8cpp" startline="66" endline="66">F4SPairSet::delete_spair</referencedby>
+        <referencedby refid="class_suffix_tree_a4df26d22a1a982ddfbd918cbdcdd073a_1a4df26d22a1a982ddfbd918cbdcdd073a" compoundref="_suffix_tree_8cpp" startline="123" endline="128">SuffixTree::destroyChildren</referencedby>
+        <referencedby refid="class_d_poly_aedcf8456b0f29bbe948b1da4a830e788_1aedcf8456b0f29bbe948b1da4a830e788" compoundref="dpoly_8cpp" startline="428" endline="456">DPoly::display_poly</referencedby>
+        <referencedby refid="class_f4_s_pair_set_aab428f270c2ab60e5c393d635931b551_1aab428f270c2ab60e5c393d635931b551" compoundref="f4-spairs_8cpp" startline="180" endline="193">F4SPairSet::display_spair</referencedby>
+        <referencedby refid="mat-util_8hpp_a1109fbe3c04d038304324bcb8a66d8c4_1a1109fbe3c04d038304324bcb8a66d8c4" compoundref="mat-util_8hpp" startline="41" endline="77">displayMat</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_c_aec3590f9da6aab150c9c8e83187afe86_1aec3590f9da6aab150c9c8e83187afe86" compoundref="aring-_c_c_8hpp" startline="323" endline="345">M2::ARingCC::divide</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_c_c_aa675267f3b066222d5d4e734bdf22e78_1aa675267f3b066222d5d4e734bdf22e78" compoundref="aring-_c_c_c_8hpp" startline="384" endline="440">M2::ARingCCC::divide</referencedby>
+        <referencedby refid="class_ring_a52f9b58452ad1b821cb2d0bb0a5761c5_1a52f9b58452ad1b821cb2d0bb0a5761c5" compoundref="ring-vecs_8cpp" startline="508" endline="528">Ring::divide_row</referencedby>
+        <referencedby refid="class_ring_a7a57a30263273b99105c15817749aa02_1a7a57a30263273b99105c15817749aa02" compoundref="ring-vecs_8cpp" startline="480" endline="506">Ring::divide_vec_to</referencedby>
+        <referencedby refid="class_d_poly_aeffebcc8466c6c044fbc183112382e3b_1aeffebcc8466c6c044fbc183112382e3b" compoundref="dpoly_8cpp" startline="1015" endline="1087">DPoly::division_in_place</referencedby>
+        <referencedby refid="class_d_poly_afb53a5d5777a56fd563b1ac49865ed0b_1afb53a5d5777a56fd563b1ac49865ed0b" compoundref="dpoly_8cpp" startline="966" endline="1014">DPoly::division_in_place_monic</referencedby>
+        <referencedby refid="classres2__comp_ab02a6bfafbdd68b22248676720d1514a_1ab02a6bfafbdd68b22248676720d1514a" compoundref="res-a0_8cpp" startline="1621" endline="1645">res2_comp::do_auto_reductions</referencedby>
+        <referencedby refid="classgb_a_ab2bc5a2ed6c4e647bed584475f7fb7d5_1ab2bc5a2ed6c4e647bed584475f7fb7d5" compoundref="gb-default_8cpp" startline="2396" endline="2608">gbA::do_computation</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a165b1e163dfed3c375a7c54278b1ff5b_1a165b1e163dfed3c375a7c54278b1ff5b" compoundref="f4-monlookup_8cpp" startline="386" endline="411">F4MonomialLookupTableT&lt; Key &gt;::do_node</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a165b1e163dfed3c375a7c54278b1ff5b_1a165b1e163dfed3c375a7c54278b1ff5b">F4MonomialLookupTableT&lt; int32_t &gt;::do_node</referencedby>
+        <referencedby refid="class_monomial_ideal_a0b9e7395a854f24e4a44204f0f9ef6ba_1a0b9e7395a854f24e4a44204f0f9ef6ba" compoundref="monideal_8cpp" startline="465" endline="492">MonomialIdeal::do_node</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_a26a8947fd8619a0b4e77935c34abbb11_1a26a8947fd8619a0b4e77935c34abbb11" compoundref="res-f4-monlookup_8cpp" startline="400" endline="425">ResF4MonomialLookupTableT&lt; Key &gt;::do_node</referencedby>
+        <referencedby refid="classres2__comp_ac5ab141d3e1dc99524cd9b3c2784ac2e_1ac5ab141d3e1dc99524cd9b3c2784ac2e" compoundref="res-a0_8cpp" startline="109" endline="149">res2_comp::do_pairs</referencedby>
+        <referencedby refid="classres2__comp_a484ed48a1da3595e73a890cd88674157_1a484ed48a1da3595e73a890cd88674157" compoundref="res-a0_8cpp" startline="214" endline="254">res2_comp::do_pairs_by_degree</referencedby>
+        <referencedby refid="classres2__comp_a599c68d4526ea9dbe9c31d86f2163f15_1a599c68d4526ea9dbe9c31d86f2163f15" compoundref="res-a0_8cpp" startline="151" endline="212">res2_comp::do_pairs_by_level</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a2e2144a52f0b21d3680d3fbd5004c390_1a2e2144a52f0b21d3680d3fbd5004c390" compoundref="f4-monlookup_8cpp" startline="414" endline="429">F4MonomialLookupTableT&lt; Key &gt;::do_tree</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a2e2144a52f0b21d3680d3fbd5004c390_1a2e2144a52f0b21d3680d3fbd5004c390">F4MonomialLookupTableT&lt; int32_t &gt;::do_tree</referencedby>
+        <referencedby refid="class_monomial_ideal_a9cd7b0de6687239b620888fd22ae0a8a_1a9cd7b0de6687239b620888fd22ae0a8a" compoundref="monideal_8cpp" startline="494" endline="506">MonomialIdeal::do_tree</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_a62a64f0d00951a7fcf36ac64da24c39a_1a62a64f0d00951a7fcf36ac64da24c39a" compoundref="res-f4-monlookup_8cpp" startline="428" endline="443">ResF4MonomialLookupTableT&lt; Key &gt;::do_tree</referencedby>
+        <referencedby refid="class_d_poly_a319303b982dc70c41000829862673ef5_1a319303b982dc70c41000829862673ef5" compoundref="dpoly_8cpp" startline="95" endline="98">DPoly::DPoly</referencedby>
+        <referencedby refid="class_element_array_a65b9ca85f68297fe947b934c2f8f983e_1a65b9ca85f68297fe947b934c2f8f983e" compoundref="_vector_arithmetic_8hpp" startline="104" endline="104">ElementArray::ElementArray</referencedby>
+        <referencedby refid="class_free_module_a767ad41f904f0f32bcff1d709d4fc951_1a767ad41f904f0f32bcff1d709d4fc951" compoundref="freemod_8cpp" startline="296" endline="330">FreeModule::exterior</referencedby>
+        <referencedby refid="class_matrix_a9cc250b8bcece12afe751456cda41900_1a9cc250b8bcece12afe751456cda41900" compoundref="det_8cpp" startline="425" endline="438">Matrix::exterior</referencedby>
+        <referencedby refid="class_schreyer_order_a36106f60d98ac77110e8b8beb0114792_1a36106f60d98ac77110e8b8beb0114792" compoundref="schorder_8cpp" startline="219" endline="248">SchreyerOrder::exterior</referencedby>
+        <referencedby refid="class_monomial_ideal_a786cafa3de19c9a91c182575f0984611_1a786cafa3de19c9a91c182575f0984611" compoundref="monideal_8cpp" startline="246" endline="276">MonomialIdeal::find_all_divisors</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ace33253661a68f4682647a1d2ce619d3_1ace33253661a68f4682647a1d2ce619d3" compoundref="f4-monlookup_8cpp" startline="193" endline="223">F4MonomialLookupTableT&lt; Key &gt;::find_all_divisors1</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_aba9187d936c0a411fa50bd211197dacf_1aba9187d936c0a411fa50bd211197dacf" compoundref="res-f4-monlookup_8cpp" startline="207" endline="237">ResF4MonomialLookupTableT&lt; Key &gt;::find_all_divisors1</referencedby>
+        <referencedby refid="classbinomial_g_b_a3f7ac6dda22bf9c2e3f6fc2e8724b834_1a3f7ac6dda22bf9c2e3f6fc2e8724b834" compoundref="gb-toric_8cpp" startline="864" endline="875">binomialGB::find_divisor</referencedby>
+        <referencedby refid="classbinomial_g_b_a7e8511a213d39fe49b6cc83061bacfce_1a7e8511a213d39fe49b6cc83061bacfce" compoundref="gb-toric_8cpp" startline="720" endline="733">binomialGB::find_divisor</referencedby>
+        <referencedby refid="class_g_b_kernel_computation_a01c6b63a4177f580001506cbb1ec9040_1a01c6b63a4177f580001506cbb1ec9040" compoundref="_eschreyer_8cpp" startline="287" endline="323">GBKernelComputation::find_divisor</referencedby>
+        <referencedby refid="classres2__comp_a9642a47a369533bf13b0a4242410bcb1_1a9642a47a369533bf13b0a4242410bcb1" compoundref="res-a0_8cpp" startline="1060" endline="1108">res2_comp::find_divisor</referencedby>
+        <referencedby refid="classres__comp_a2817359c5bba06c25581026fed29d46b_1a2817359c5bba06c25581026fed29d46b">res_comp::find_divisor</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_a75babcc483774af1eb5fe159640a6102_1a75babcc483774af1eb5fe159640a6102" compoundref="reducedgb-field-local_8cpp" startline="179" endline="467">ReducedGB_Field_Local::find_good_divisor</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a37df511a50c19656bbcb8b5f4afc0d63_1a37df511a50c19656bbcb8b5f4afc0d63" compoundref="f4-monlookup_8cpp" startline="157" endline="190">F4MonomialLookupTableT&lt; Key &gt;::find_one_divisor1</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_ab675edbf6c23580f824c50d1988706c6_1ab675edbf6c23580f824c50d1988706c6" compoundref="res-f4-monlookup_8cpp" startline="170" endline="204">ResF4MonomialLookupTableT&lt; Key &gt;::find_one_divisor1</referencedby>
+        <referencedby refid="classgb2__comp_a7acfed66bb7daa507f03c1685d42f14a_1a7acfed66bb7daa507f03c1685d42f14a" compoundref="res-a2-gb_8cpp" startline="195" endline="309">gb2_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_b__comp_a4ce6b24952442c3f141b7fbc75f16139_1a4ce6b24952442c3f141b7fbc75f16139" compoundref="gb-homog2_8cpp" startline="265" endline="373">GB_comp::find_pairs</referencedby>
+        <referencedby refid="class_g_binhom__comp_a0722f6d2a763f199d00dfc295ca6bcc9_1a0722f6d2a763f199d00dfc295ca6bcc9" compoundref="gb-sugarless_8cpp" startline="277" endline="443">GBinhom_comp::find_pairs</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a4bda1685e4809f8e9b86ed952929de7d_1a4bda1685e4809f8e9b86ed952929de7d" compoundref="interface_2ring_8cpp" startline="624" endline="658">findConwayPolynomial</referencedby>
+        <referencedby refid="classgb2__comp_ac001a39e292b818ed62f077ddbaba4af_1ac001a39e292b818ed62f077ddbaba4af" compoundref="res-a2-gb_8cpp" startline="460" endline="469">gb2_comp::flush_pairs</referencedby>
+        <referencedby refid="class_g_b__comp_ad30d85bd7c7be1b6874c18c7a25dfb77_1ad30d85bd7c7be1b6874c18c7a25dfb77" compoundref="gb-homog2_8cpp" startline="532" endline="557">GB_comp::flush_pairs</referencedby>
+        <referencedby refid="classgb_a_a28db33617b81b42cf8fa93b35d268178_1a28db33617b81b42cf8fa93b35d268178" compoundref="gb-default_8cpp" startline="2668" endline="2676">gbA::flush_pairs</referencedby>
+        <referencedby refid="classres2__comp_a2de938bd1806a38e9b87d26e873abae2_1a2de938bd1806a38e9b87d26e873abae2" compoundref="res-a0_8cpp" startline="2034" endline="2051">res2_comp::free_of</referencedby>
+        <referencedby refid="classres__comp_aaf04276c8399cc41618b68f18b71f817_1aaf04276c8399cc41618b68f18b71f817" compoundref="res-a1_8cpp" startline="1341" endline="1362">res_comp::free_of</referencedby>
+        <referencedby refid="classmemt_1_1_arena_a8eed2be5f27a0a72da213a9eacc70940_1a8eed2be5f27a0a72da213a9eacc70940" compoundref="_arena_8h" startline="145" endline="147">memt::Arena::freeArrayAndAllAfter</referencedby>
+        <referencedby refid="_arena_test_8cpp_a174586a9e2143969602be750cab06589_1a174586a9e2143969602be750cab06589">freeTopArray</referencedby>
+        <referencedby refid="classmemt_1_1_arena_ab4caa10fd32f5175e6c434dbab3f790f_1ab4caa10fd32f5175e6c434dbab3f790f" compoundref="_arena_8h" startline="135" endline="135">memt::Arena::freeTopArray</referencedby>
+        <referencedby refid="class_gauss_elim_computation_ab92358de6dfd12c613245238bffba901_1ab92358de6dfd12c613245238bffba901" compoundref="gauss_8cpp" startline="69" endline="101">GaussElimComputation::GaussElimComputation</referencedby>
+        <referencedby refid="classgb2__comp_a3b467a868769ad42cbaeb16df66a3799_1a3b467a868769ad42cbaeb16df66a3799" compoundref="res-a2-gb_8cpp" startline="485" endline="528">gb2_comp::gb_insert</referencedby>
+        <referencedby refid="class_g_b__comp_a7878134170e458a2092f0403a9883257_1a7878134170e458a2092f0403a9883257" compoundref="gb-homog2_8cpp" startline="559" endline="591">GB_comp::gb_insert</referencedby>
+        <referencedby refid="class_g_binhom__comp_a2ed28f4d0aa49ec415de3f83b01a926a_1a2ed28f4d0aa49ec415de3f83b01a926a" compoundref="gb-sugarless_8cpp" startline="618" endline="674">GBinhom_comp::gb_insert</referencedby>
+        <referencedby refid="class_monoid_a09dbbbc0d0b60aa63f19b1a3a2c7ec27_1a09dbbbc0d0b60aa63f19b1a3a2c7ec27" compoundref="monoid_8cpp" startline="548" endline="559">Monoid::gcd</referencedby>
+        <referencedby refid="class_g_b__comp_aa17f8a27e2987a61ef9cda85fed7d0d7_1aa17f8a27e2987a61ef9cda85fed7d0d7" compoundref="gb-homog2_8cpp" startline="653" endline="700">GB_comp::gen_step</referencedby>
+        <referencedby refid="classres__comp_a57d51687cb6bb86761b7abcef5ed4b14_1a57d51687cb6bb86761b7abcef5ed4b14" compoundref="res-a1_8cpp" startline="964" endline="995">res_comp::gens</referencedby>
+        <referencedby refid="class_hermite_computation_ad4f19b1cab95c4dbbe1221cfe3833389_1ad4f19b1cab95c4dbbe1221cfe3833389" compoundref="hermite_8cpp" startline="331" endline="337">HermiteComputation::get_change</referencedby>
+        <referencedby refid="class_ring_a4c02ff76c48c1de195f9cb548226b014_1a4c02ff76c48c1de195f9cb548226b014" compoundref="ring-vecs_8cpp" startline="151" endline="162">Ring::get_entry</referencedby>
+        <referencedby refid="classbinomial_g_b__comp_ace65e2aa070c1cd469c0bd56e96180c9_1ace65e2aa070c1cd469c0bd56e96180c9" compoundref="gb-toric_8cpp" startline="1244" endline="1250">binomialGB_comp::get_gb</referencedby>
+        <referencedby refid="class_hermite_computation_a9fda50ce985a8f96ced0c5a734c33f52_1a9fda50ce985a8f96ced0c5a734c33f52" compoundref="hermite_8cpp" startline="317" endline="323">HermiteComputation::get_gb</referencedby>
+        <referencedby refid="classbinomial_g_b__comp_a1194c328fb25bfa7bbedd65c3a3683d4_1a1194c328fb25bfa7bbedd65c3a3683d4" compoundref="gb-toric_8cpp" startline="1236" endline="1242">binomialGB_comp::get_initial</referencedby>
+        <referencedby refid="class_hermite_computation_a48c246938a8ef59bd0ae1b0bf05c09a3_1a48c246938a8ef59bd0ae1b0bf05c09a3" compoundref="hermite_8cpp" startline="347" endline="357">HermiteComputation::get_initial</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a90177657a355256a11823cc894fc0dba_1a90177657a355256a11823cc894fc0dba" compoundref="mutable-matrix_8cpp" startline="1137" endline="1154">get_norm_start</referencedby>
+        <referencedby refid="classgb2__comp_a579cc23dd01969b211522c3d1fb3842d_1a579cc23dd01969b211522c3d1fb3842d" compoundref="res-a2-gb_8cpp" startline="530" endline="556">gb2_comp::get_pairs</referencedby>
+        <referencedby refid="class_schreyer_frame_a4abd5cf9d202f0055ced815e0fcc9317_1a4abd5cf9d202f0055ced815e0fcc9317" compoundref="res-schreyer-frame_8cpp" startline="988" endline="1008">SchreyerFrame::getBettiFrame</referencedby>
+        <referencedby refid="class_schreyer_frame_abfd8ba7f405c36faf9e396dd48ed1295_1abfd8ba7f405c36faf9e396dd48ed1295" compoundref="res-schreyer-frame_8cpp" startline="808" endline="834">SchreyerFrame::getBounds</referencedby>
+        <referencedby refid="m2-mem_8cpp_a6807bb51e1c9f3335f018dd77f7e9d5b_1a6807bb51e1c9f3335f018dd77f7e9d5b" compoundref="m2-mem_8cpp" startline="74" endline="91">getmem</referencedby>
+        <referencedby refid="m2-mem_8cpp_ad570aa88b4e5fd3b499f00c231407f19_1ad570aa88b4e5fd3b499f00c231407f19" compoundref="m2-mem_8cpp" startline="135" endline="151">getmem_atomic</referencedby>
+        <referencedby refid="m2-mem_8cpp_a150590b4455fc1acb6a1a32a290b2fec_1a150590b4455fc1acb6a1a32a290b2fec" compoundref="m2-mem_8cpp" startline="167" endline="183">getmem_atomic_clear</referencedby>
+        <referencedby refid="m2-mem_8cpp_a73e7c17a6f9c173af8fc3fa4bd0809e6_1a73e7c17a6f9c173af8fc3fa4bd0809e6" compoundref="m2-mem_8cpp" startline="112" endline="133">getmem_clear</referencedby>
+        <referencedby refid="class_monomial_orderings_a12d7d77b74e7e00294a448a18472f57e_1a12d7d77b74e7e00294a448a18472f57e" compoundref="monomial-ordering_8cpp" startline="162" endline="204">MonomialOrderings::GRevLex</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classres__comp_af15fe10352f4dcec289675d45414610a_1af15fe10352f4dcec289675d45414610a" compoundref="res-a1_8cpp" startline="1053" endline="1074">res_comp::handle_gen</referencedby>
+        <referencedby refid="classres2__comp_a7b1c83259f065ecc5558cb99b75b2879_1a7b1c83259f065ecc5558cb99b75b2879" compoundref="res-a0_8cpp" startline="1647" endline="1725">res2_comp::handle_pair</referencedby>
+        <referencedby refid="classres__comp_af00a40f25c90e881b54792de41dfe645_1af00a40f25c90e881b54792de41dfe645" compoundref="res-a1_8cpp" startline="1075" endline="1105">res_comp::handle_pair</referencedby>
+        <referencedby refid="classres2__comp_ac89a991e8939c9af28ac346b4d2af09d_1ac89a991e8939c9af28ac346b4d2af09d" compoundref="res-a0_8cpp" startline="1767" endline="1811">res2_comp::handle_pair_by_degree</referencedby>
+        <referencedby refid="classres2__comp_a4b1579c18f2242fe5764db7509b92cac_1a4b1579c18f2242fe5764db7509b92cac" compoundref="res-a0_8cpp" startline="1727" endline="1765">res2_comp::handle_pair_by_level</referencedby>
+        <referencedby refid="class_hermite_computation_a0d2c0ca4ad529a8d51e0e9faad1cfad9_1a0d2c0ca4ad529a8d51e0e9faad1cfad9" compoundref="hermite_8cpp" startline="59" endline="79">HermiteComputation::HermiteComputation</referencedby>
+        <referencedby refid="m2-mem_8h_ad33cb05c97abf6ef27c15ba6aa0c46cc_1ad33cb05c97abf6ef27c15ba6aa0c46cc">I_WRAP_SONAME_FNNAME_ZU</referencedby>
+        <referencedby refid="m2-mem_8cpp_a4267e31729feebe115da1d8a3f2a64b5_1a4267e31729feebe115da1d8a3f2a64b5">I_WRAP_SONAME_FNNAME_ZU</referencedby>
+        <referencedby refid="classbinomial_g_b_aaafd0bb2e5e73f7ca55c31a8e8bcfb81_1aaafd0bb2e5e73f7ca55c31a8e8bcfb81" compoundref="gb-toric_8cpp" startline="735" endline="794">binomialGB::ideal_quotient</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a60f8382e3a854aa717f14db13c57e7f0_1a60f8382e3a854aa717f14db13c57e7f0" compoundref="interface_2matrix_8cpp" startline="552" endline="565">IM2_Matrix_exterior</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a1548ad2ce8831cd7d74e01cbb7d018af_1a1548ad2ce8831cd7d74e01cbb7d018af" compoundref="interface_2matrix_8cpp" startline="506" endline="516">IM2_Matrix_koszul</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a4cb6a5a4aeb1a9390f18e0e21ed7e5b3_1a4cb6a5a4aeb1a9390f18e0e21ed7e5b3" compoundref="interface_2matrix_8cpp" startline="581" endline="593">IM2_Matrix_minors</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_ad3c47d8fe0f5038b8aeef222eab6aa5b_1ad3c47d8fe0f5038b8aeef222eab6aa5b" compoundref="interface_2matrix_8cpp" startline="620" endline="623">IM2_Matrix_pfaffians</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_ac724eafc99e053aae3b1688ed474e526_1ac724eafc99e053aae3b1688ed474e526" compoundref="interface_2matrix_8cpp" startline="540" endline="550">IM2_Matrix_symm</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_abc38aa1f4a34b3d53fb71ecc4361e6f8_1abc38aa1f4a34b3d53fb71ecc4361e6f8" compoundref="monomial-ordering_8cpp" startline="746" endline="826">IM2_MonomialOrdering_to_string</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a6f8d09b2760754faaecf1c78f317adec_1a6f8d09b2760754faaecf1c78f317adec" compoundref="interface_2ring_8cpp" startline="65" endline="74">IM2_Ring_ZZp</referencedby>
+        <referencedby refid="classres2__comp_a680514f770adbb7612abb860770af9e8_1a680514f770adbb7612abb860770af9e8" compoundref="res-a0_8cpp" startline="75" endline="90">res2_comp::increase_level</referencedby>
+        <referencedby refid="class_subsets_aba08e1ab6067d7cfed8900c6a571b9e1_1aba08e1ab6067d7cfed8900c6a571b9e1" compoundref="comb_8cpp" startline="146" endline="161">Subsets::increment</referencedby>
+        <referencedby refid="class_subsets_a0fa6840b17ab300a5bf015458b20e302_1a0fa6840b17ab300a5bf015458b20e302" compoundref="comb_8cpp" startline="124" endline="144">Subsets::increment</referencedby>
+        <referencedby refid="class_poly_basis_a27e2c4b420c9edf2bb0b5515279df0c5_1a27e2c4b420c9edf2bb0b5515279df0c5" compoundref="_poly_basis_8cpp" startline="31" endline="43">PolyBasis::initialIdeal</referencedby>
+        <referencedby refid="class_d_poly_aacffe2167dcbf4322ca97358969e838f_1aacffe2167dcbf4322ca97358969e838f" compoundref="dpoly_8cpp" startline="80" endline="94">DPoly::initialize</referencedby>
+        <referencedby refid="class_g_b__comp_ab0799b08f34c7b42457fe8ef7e067f2b_1ab0799b08f34c7b42457fe8ef7e067f2b" compoundref="gb-homog2_8cpp" startline="84" endline="110">GB_comp::initialize</referencedby>
+        <referencedby refid="classgb_a_a73821a3ec777b0edfabef3b1ebe87f6f_1a73821a3ec777b0edfabef3b1ebe87f6f" compoundref="gb-default_8cpp" startline="99" endline="224">gbA::initialize</referencedby>
+        <referencedby refid="classres2__comp_a893620d9087a9c6307043b62b4bc53a4_1a893620d9087a9c6307043b62b4bc53a4" compoundref="res-a0_8cpp" startline="420" endline="528">res2_comp::initialize</referencedby>
+        <referencedby refid="classres__comp_ae108ff4a215d6b7df2674cccfec1652c_1ae108ff4a215d6b7df2674cccfec1652c" compoundref="res-a1_8cpp" startline="14" endline="115">res_comp::initialize</referencedby>
+        <referencedby refid="class_g_b__comp_a52f9b90c569650d95fce7ac6344a3253_1a52f9b90c569650d95fce7ac6344a3253" compoundref="gb-homog2_8cpp" startline="28" endline="82">GB_comp::initialize0</referencedby>
+        <referencedby refid="class_g_b__comp_ac416658e4fa903fb98d915290bbfa019_1ac416658e4fa903fb98d915290bbfa019">GB_comp::initialize_forced</referencedby>
+        <referencedby refid="class_z__mod_a17156f1c013e5b41145018cf9329d1e2_1a17156f1c013e5b41145018cf9329d1e2" compoundref="_z_zp_8cpp" startline="15" endline="62">Z_mod::initialize_Z_mod</referencedby>
+        <referencedby refid="franzi-gb_8cpp_a72d885bfb58dd4c0a5acc107b2e9184c_1a72d885bfb58dd4c0a5acc107b2e9184c" compoundref="franzi-gb_8cpp" startline="205" endline="209">inList</referencedby>
+        <referencedby refid="class_basis_a16e199c32fb273b8a55b53883378362e_1a16e199c32fb273b8a55b53883378362e" compoundref="submodules_2mathicgb_2src_2mathicgb_2_basis_8cpp" startline="16" endline="20">Basis::insert</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a32028bfd8077a4fa9070162e7ae87a84_1a32028bfd8077a4fa9070162e7ae87a84" compoundref="gb-toric_8cpp" startline="527" endline="532">binomial_s_pair_set::insert</referencedby>
+        <referencedby refid="class_fixed_size_monomial_map_a3688d3ea672b57d7684ca9737e8679c9_1a3688d3ea672b57d7684ca9737e8679c9" compoundref="_fixed_size_monomial_map_8h" startline="193" endline="226">FixedSizeMonomialMap&lt; mapped_type &gt;::insert</referencedby>
+        <referencedby refid="class_gauss_elim_computation_adc4dfa981933918b2debf84177c47ff3_1adc4dfa981933918b2debf84177c47ff3" compoundref="gauss_8cpp" startline="32" endline="67">GaussElimComputation::insert</referencedby>
+        <referencedby refid="class_hermite_computation_a8a20ee6a46d6a4a61ffa4003a2db2559_1a8a20ee6a46d6a4a61ffa4003a2db2559" compoundref="hermite_8cpp" startline="42" endline="57">HermiteComputation::insert</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_ae05fdd4f076408f956238df5e5a443f9_1ae05fdd4f076408f956238df5e5a443f9" compoundref="_geobucket_8h" startline="637" endline="701">mathic::Geobucket&lt; C &gt;::insert</referencedby>
+        <referencedby refid="class_monomial_map_a01eee4657104d4e1e6b96e352e55c6f5_1a01eee4657104d4e1e6b96e352e55c6f5" compoundref="_monomial_map_8hpp" startline="158" endline="196">MonomialMap&lt; ColIndex &gt;::insert</referencedby>
+        <referencedby refid="class_reducer_hash_a01fc006872fd205bdd4e5127b61e7c45_1a01fc006872fd205bdd4e5127b61e7c45" compoundref="_reducer_hash_8cpp" startline="83" endline="93">ReducerHash&lt; Queue &gt;::insert</referencedby>
+        <referencedby refid="classs__pair__heap_af1904fb0707ad9e4b2684152ced0ff3f_1af1904fb0707ad9e4b2684152ced0ff3f" compoundref="spair_8cpp" startline="180" endline="203">s_pair_heap::insert</referencedby>
+        <referencedby refid="classs__pair__heap_a2ba3d9aa2a439c39e5a09dda3f1be7a2_1a2ba3d9aa2a439c39e5a09dda3f1be7a2" compoundref="spair_8cpp" startline="205" endline="223">s_pair_heap::insert</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ae92f905fbe47c87c0de68fd3bcd5cdb4_1ae92f905fbe47c87c0de68fd3bcd5cdb4" compoundref="f4-monlookup_8cpp" startline="77" endline="154">F4MonomialLookupTableT&lt; Key &gt;::insert1</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ae92f905fbe47c87c0de68fd3bcd5cdb4_1ae92f905fbe47c87c0de68fd3bcd5cdb4">F4MonomialLookupTableT&lt; int32_t &gt;::insert1</referencedby>
+        <referencedby refid="class_monomial_ideal_aa2b966e4fb57344655a37d92fd0e2d1a_1aa2b966e4fb57344655a37d92fd0e2d1a" compoundref="monideal_8cpp" startline="321" endline="395">MonomialIdeal::insert1</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_af512283a2131b26c892f860058073dee_1af512283a2131b26c892f860058073dee" compoundref="res-f4-monlookup_8cpp" startline="90" endline="167">ResF4MonomialLookupTableT&lt; Key &gt;::insert1</referencedby>
+        <referencedby refid="f4-spairs_8cpp_a246f29980d9c4fedabef0041b54fbd00_1a246f29980d9c4fedabef0041b54fbd00" compoundref="f4-spairs_8cpp" startline="237" endline="242">insert_pre_spair</referencedby>
+        <referencedby refid="classres__comp_af1164b21938cca815af311e7335d1343_1af1164b21938cca815af311e7335d1343" compoundref="res-a1_8cpp" startline="288" endline="312">res_comp::insert_res_pair</referencedby>
+        <referencedby refid="class_f4_s_pair_set_aabee9c93faf23e4d422b0e6a43cd7f16_1aabee9c93faf23e4d422b0e6a43cd7f16" compoundref="f4-spairs_8cpp" startline="42" endline="64">F4SPairSet::insert_spair</referencedby>
+        <referencedby refid="class_reducer_hash_pack_ae98c32a04b08ceed015e69bfd27194ab_1ae98c32a04b08ceed015e69bfd27194ab" compoundref="_reducer_hash_pack_8cpp" startline="187" endline="199">ReducerHashPack&lt; Queue &gt;::insertEntry</referencedby>
+        <referencedby refid="class_schreyer_frame_a7ed034dff61ef5245387754e439633f0_1a7ed034dff61ef5245387754e439633f0" compoundref="res-schreyer-frame_8cpp" startline="644" endline="668">SchreyerFrame::insertLevelOne</referencedby>
+        <referencedby refid="class_poly_hash_table_aaa26df98aaf4b61ae390abc401d5804e_1aaa26df98aaf4b61ae390abc401d5804e" compoundref="_poly_hash_table_8hpp" startline="82" endline="87">PolyHashTable::insertProduct</referencedby>
+        <referencedby refid="class_suffix_tree_a1b9f61ac0d77ab2bb2aa8f9abcabc380_1a1b9f61ac0d77ab2bb2aa8f9abcabc380" compoundref="_suffix_tree_8cpp" startline="259" endline="301">SuffixTree::insertStepD</referencedby>
+        <referencedby refid="class_reducer_hash_a3514d9673440029ab41a2b0bfebf4d55_1a3514d9673440029ab41a2b0bfebf4d55" compoundref="_reducer_hash_8cpp" startline="66" endline="80">ReducerHash&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_adb145a5087eae21240cf6bdadfaf688f_1adb145a5087eae21240cf6bdadfaf688f" compoundref="monomial-ordering_8cpp" startline="707" endline="721">intarray_to_string</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_c_a2d533977345dab0008e8c79b006cc41d_1a2d533977345dab0008e8c79b006cc41d" compoundref="aring-_c_c_8hpp" startline="230" endline="249">M2::ARingCC::invert</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_c_c_af357b08918b7936450ecc681cae739fa_1af357b08918b7936450ecc681cae739fa" compoundref="aring-_c_c_c_8hpp" startline="241" endline="279">M2::ARingCCC::invert</referencedby>
+        <referencedby refid="hilb_8cpp_a63f6b21008951d3bb1a9454d9eaa2a58_1a63f6b21008951d3bb1a9454d9eaa2a58" compoundref="hilb_8cpp" startline="267" endline="312">iquotient_and_sum</referencedby>
+        <referencedby refid="classgb_a_a8c69ec419db644c26497251da81975a4_1a8c69ec419db644c26497251da81975a4" compoundref="gb-default_8cpp" startline="669" endline="681">gbA::is_gcd_one_pair</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_aa7139db9c6e2c92f8bfe442a6217d137_1aa7139db9c6e2c92f8bfe442a6217d137" compoundref="monomial-ordering_8cpp" startline="66" endline="90">is_good</referencedby>
+        <referencedby refid="class_monomial_ideal_ab1d978a420670ba4ebedd99becd9ea73_1ab1d978a420670ba4ebedd99becd9ea73" compoundref="monideal_8cpp" startline="977" endline="983">MonomialIdeal::is_one</referencedby>
+        <referencedby refid="classmemt_1_1_memory_blocks_1_1_block_af4c4752a03d19a6c03ed6df8a693e2e3_1af4c4752a03d19a6c03ed6df8a693e2e3" compoundref="_memory_blocks_8h" startline="225" endline="233">memt::MemoryBlocks::Block::isInBlock</referencedby>
+        <referencedby refid="class_monomial_ideal_ab4916ce7b6a92f5e88a42b2a7784671a_1ab4916ce7b6a92f5e88a42b2a7784671a" compoundref="monideal_8cpp" startline="578" endline="620">MonomialIdeal::isWellFormed</referencedby>
+        <referencedby refid="class_monomial_ideal_1_1_iterator_a624c55bfd5b8c4269b3623867c1dfde7_1a624c55bfd5b8c4269b3623867c1dfde7" compoundref="monideal_8hpp" startline="248" endline="252">MonomialIdeal::Iterator::Iterator</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_a774888dece1d3d21b5f1cae43a7cca1a_1a774888dece1d3d21b5f1cae43a7cca1a" compoundref="gb-toric_8hpp" startline="276" endline="276">binomialGB::iterator::iterator</referencedby>
+        <referencedby refid="class_monomial_orderings_aeac24bb39d682a1ae9b85e7a40d903a2_1aeac24bb39d682a1ae9b85e7a40d903a2" compoundref="monomial-ordering_8cpp" startline="206" endline="246">MonomialOrderings::join</referencedby>
+        <referencedby refid="class_d_mat_lin_alg_a43302d0ac246c77be7f3378c700b12ef_1a43302d0ac246c77be7f3378c700b12ef" compoundref="dmat-lu_8hpp" startline="578" endline="626">DMatLinAlg&lt; RingType &gt;::kernel</referencedby>
+        <referencedby refid="class_matrix_abd996365eea61c89cbe9fec5106137d5_1abd996365eea61c89cbe9fec5106137d5" compoundref="matrix_8cpp" startline="1087" endline="1118">Matrix::koszul</referencedby>
+        <referencedby refid="class_monoid_a20b09ceb0610a8d0c2e57ca17c025f0c_1a20b09ceb0610a8d0c2e57ca17c025f0c" compoundref="monoid_8cpp" startline="561" endline="572">Monoid::lcm</referencedby>
+        <referencedby refid="class_f4_g_b_aaa8cdf12824c26154c7c92e2c87ae6d3_1aaa8cdf12824c26154c7c92e2c87ae6d3" compoundref="f4_8cpp" startline="280" endline="288">F4GB::loadReducerRow</referencedby>
+        <referencedby refid="class_f4_res_abc693eb88680c6d1cf415a333adb1f67_1abc693eb88680c6d1cf415a333adb1f67" compoundref="res-f4_8cpp" startline="226" endline="279">F4Res::loadRow</referencedby>
+        <referencedby refid="class_f4_g_b_ad965401448e654b2be41d02300a9ad9e_1ad965401448e654b2be41d02300a9ad9e" compoundref="f4_8cpp" startline="270" endline="278">F4GB::loadSPairRow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0e9f02203210a8a9dbb4d6a4c62aa73_1aa0e9f02203210a8a9dbb4d6a4c62aa73" compoundref="_hash_table_8h" startline="224" endline="235">mathic::HashTable&lt; C &gt;::lookup</referencedby>
+        <referencedby refid="class_point_array_acfe6394944f4ce160efa5ba3e1fa060d_1acfe6394944f4ce160efa5ba3e1fa060d" compoundref="_n_a_g_8hpp" startline="128" endline="138">PointArray::lookup_or_append</referencedby>
+        <referencedby refid="m2-types_8cpp_ab795da449e71f96a3c4177e42e2741e7_1ab795da449e71f96a3c4177e42e2741e7" compoundref="m2-types_8cpp" startline="21" endline="30">M2_join</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_a7dab1707234f43ff5745583bd3f176f6_1a7dab1707234f43ff5745583bd3f176f6" compoundref="monomial-ordering_8cpp" startline="46" endline="64">M2_mo_offset</referencedby>
+        <referencedby refid="m2-types_8cpp_a8372d8a1f51edec461412bad6fa11bbe_1a8372d8a1f51edec461412bad6fa11bbe" compoundref="m2-types_8cpp" startline="13" endline="20">M2_tocharstar</referencedby>
+        <referencedby refid="m2-types_8cpp_a4ff1fca74ab5662cbe7e9be26321a0be_1a4ff1fca74ab5662cbe7e9be26321a0be" compoundref="m2-types_8cpp" startline="31" endline="39">M2_tostring</referencedby>
+        <referencedby refid="m2-types_8cpp_a11f315241b296017ead0c423d27b6fb4_1a11f315241b296017ead0c423d27b6fb4" compoundref="m2-types_8cpp" startline="40" endline="47">M2_tostringn</referencedby>
+        <referencedby refid="struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_make_a01da01b1877e16d0942ea6d5c6adbfcb_1a01da01b1877e16d0942ea6d5c6adbfcb" compoundref="_mono_lookup_8cpp" startline="156" endline="160">MATHICGB_NAMESPACE_BEGIN::ConcreteFactory::Make&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::make</referencedby>
+        <referencedby refid="class_path_tracker_a2f22a8e1a69d62d52999ab1ad74b6c0d_1a2f22a8e1a69d62d52999ab1ad74b6c0d" compoundref="_n_a_g_8cpp" startline="1516" endline="1556">PathTracker::make</referencedby>
+        <referencedby refid="class_path_tracker_a33a2e7b1b39160a449004c2390394911_1a33a2e7b1b39160a449004c2390394911" compoundref="_n_a_g_8cpp" startline="1436" endline="1510">PathTracker::make</referencedby>
+        <referencedby refid="class_path_tracker_ad51edd3cf7d7f6aa4c24279fa881162f_1ad51edd3cf7d7f6aa4c24279fa881162f" compoundref="_n_a_g_8cpp" startline="1559" endline="1569">PathTracker::make</referencedby>
+        <referencedby refid="classres2__comp_a60f778ea487c81a4df1d4782c579e7d8_1a60f778ea487c81a4df1d4782c579e7d8" compoundref="res-a0_8cpp" startline="2073" endline="2085">res2_comp::make</referencedby>
+        <referencedby refid="classres__comp_ac3b263cc664c6ffe59b6008921be4d13_1ac3b263cc664c6ffe59b6008921be4d13" compoundref="res-a1_8cpp" startline="1388" endline="1404">res_comp::make</referencedby>
+        <referencedby refid="class_f4_g_b_acd2b14e1c82269078923145af00bb3b2_1acd2b14e1c82269078923145af00bb3b2" compoundref="f4_8cpp" startline="469" endline="513">F4GB::make_matrix</referencedby>
+        <referencedby refid="classres2__comp_af0f179388649bbcbddffc0ddbfc9dfbe_1af0f179388649bbcbddffc0ddbfc9dfbe" compoundref="res-a0_8cpp" startline="2119" endline="2154">res2_comp::make_minimal</referencedby>
+        <referencedby refid="classres__comp_a0a2b83ce2d38631a73458055f336f2af_1a0a2b83ce2d38631a73458055f336f2af" compoundref="res-a1_8cpp" startline="1438" endline="1466">res_comp::make_minimal</referencedby>
+        <referencedby refid="class_d_poly_ab8ff7b2c720895b8e4af1e75cc70767d_1ab8ff7b2c720895b8e4af1e75cc70767d" compoundref="dpoly_8cpp" startline="902" endline="911">DPoly::make_monic_0</referencedby>
+        <referencedby refid="class_d_poly_a5e276530b10c653e7d2df59af2a24aa0_1a5e276530b10c653e7d2df59af2a24aa0" compoundref="dpoly_8cpp" startline="912" endline="920">DPoly::make_monic_n</referencedby>
+        <referencedby refid="class_f4_s_pair_set_af908fccb928bb1eed1ab14398893bf56_1af908fccb928bb1eed1ab14398893bf56">F4SPairSet::make_spair</referencedby>
+        <referencedby refid="class_g_binhom__comp_a24914a3ba9db697bf7206d594a88a9ae_1a24914a3ba9db697bf7206d594a88a9ae" compoundref="gb-sugarless_8cpp" startline="236" endline="276">GBinhom_comp::mark_pair</referencedby>
+        <referencedby refid="classres2__comp_a7f28e4ddd9dc345c4e2c4787aee9bc72_1a7f28e4ddd9dc345c4e2c4787aee9bc72" compoundref="res-a0_8cpp" startline="2052" endline="2071">res2_comp::minimal_free_of</referencedby>
+        <referencedby refid="classres__comp_ae974d5148ba9502e6d59fe959574fb41_1ae974d5148ba9502e6d59fe959574fb41" compoundref="res-a1_8cpp" startline="1363" endline="1386">res_comp::minimal_free_of</referencedby>
+        <referencedby refid="classbinomial_g_b_ab4dc57aeae47627ac34f39f84c45c5f1_1ab4dc57aeae47627ac34f39f84c45c5f1" compoundref="gb-toric_8cpp" startline="681" endline="718">binomialGB::minimalize_and_insert</referencedby>
+        <referencedby refid="classgb_a_a1212629742c9cda0dc6b030a9e2d67fd_1a1212629742c9cda0dc6b030a9e2d67fd" compoundref="gb-default_8cpp" startline="786" endline="852">gbA::minimalize_pairs_non_ZZ</referencedby>
+        <referencedby refid="classgb_a_ac91ec706dbece2661b2e06a82a660fff_1ac91ec706dbece2661b2e06a82a660fff" compoundref="gb-default_8cpp" startline="854" endline="944">gbA::minimalize_pairs_ZZ</referencedby>
+        <referencedby refid="f4-monlookup_8cpp_a8f11b8c4f84feae00a2a3413de6260fa_1a8f11b8c4f84feae00a2a3413de6260fa" compoundref="f4-monlookup_8cpp" startline="520" endline="543">minimalize_varpower_monomials</referencedby>
+        <referencedby refid="class_monomial_ideal_a958914c9aa1c17fb1bed8ec18596452e_1a958914c9aa1c17fb1bed8ec18596452e" compoundref="monideal_8hpp" startline="138">MonomialIdeal::MinimalPrimes</referencedby>
+        <referencedby refid="class_matrix_a10b227cbbeb9c7d0b395eda3db673cf1_1a10b227cbbeb9c7d0b395eda3db673cf1" compoundref="det_8cpp" startline="440" endline="453">Matrix::minors</referencedby>
+        <referencedby refid="class_matrix_a96a40a91839b4dfdca581e414f158892_1a96a40a91839b4dfdca581e414f158892" compoundref="det_8cpp" startline="455" endline="490">Matrix::minors</referencedby>
+        <referencedby refid="class_ring_z_z_a56dfe33da6328718f97bec3c02580197_1a56dfe33da6328718f97bec3c02580197" compoundref="_z_z_8cpp" startline="55" endline="62">RingZZ::mod_ui</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_m2_ace6e4fae3d5f400556beaa73bc8d4d01_1ace6e4fae3d5f400556beaa73bc8d4d01" compoundref="aring-m2-gf_8hpp" startline="150" endline="154">M2::ARingGFM2::modulus_add</referencedby>
+        <referencedby refid="_g_f_8cpp_aaac226e2362493e94aadfa5fe9cad553_1aaac226e2362493e94aadfa5fe9cad553" compoundref="_g_f_8cpp" startline="169" endline="173">modulus_add</referencedby>
+        <referencedby refid="godbolt_test_8cpp_acc37bd5943130fa0316d5d6c483dff91_1acc37bd5943130fa0316d5d6c483dff91" compoundref="godbolt_test_8cpp" startline="51" endline="55">modulus_add</referencedby>
+        <referencedby refid="_z_zp_8cpp_aaac226e2362493e94aadfa5fe9cad553_1aaac226e2362493e94aadfa5fe9cad553" compoundref="_z_zp_8cpp" startline="91" endline="95">modulus_add</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_g_f_m2_a49041a15475d50120ec32c8da449237a_1a49041a15475d50120ec32c8da449237a" compoundref="aring-m2-gf_8hpp" startline="156" endline="160">M2::ARingGFM2::modulus_sub</referencedby>
+        <referencedby refid="_g_f_8cpp_aaaf836fc6998d71b15d5714f52bc5ffc_1aaaf836fc6998d71b15d5714f52bc5ffc" compoundref="_g_f_8cpp" startline="175" endline="179">modulus_sub</referencedby>
+        <referencedby refid="godbolt_test_8cpp_a7b15a74d626e094b615789b5b56f0b5a_1a7b15a74d626e094b615789b5b56f0b5a" compoundref="godbolt_test_8cpp" startline="57" endline="61">modulus_sub</referencedby>
+        <referencedby refid="_z_zp_8cpp_aaaf836fc6998d71b15d5714f52bc5ffc_1aaaf836fc6998d71b15d5714f52bc5ffc" compoundref="_z_zp_8cpp" startline="97" endline="101">modulus_sub</referencedby>
+        <referencedby refid="class_monomial_ideal_a60bd6053b2ced9eae816a7a50f56476d_1a60bd6053b2ced9eae816a7a50f56476d" compoundref="monideal_8cpp" startline="140" endline="175">MonomialIdeal::MonomialIdeal</referencedby>
+        <referencedby refid="class_monomial_ideal_a51166c28f3a39de93cf75a5d34cde00b_1a51166c28f3a39de93cf75a5d34cde00b" compoundref="monideal_8cpp" startline="102" endline="138">MonomialIdeal::MonomialIdeal</referencedby>
+        <referencedby refid="imonorder_8cpp_a79215441690cae9016d1b108f74dbcd2_1a79215441690cae9016d1b108f74dbcd2" compoundref="imonorder_8cpp" startline="548" endline="649">monomialOrderDecodeToActualExponents</referencedby>
+        <referencedby refid="imonorder_8cpp_a4c8b68e12051c0839192a7a920addc78_1a4c8b68e12051c0839192a7a920addc78" compoundref="imonorder_8cpp" startline="411" endline="546">monomialOrderEncodeFromActualExponents</referencedby>
+        <referencedby refid="groebner_8cpp_ac8e6aec63b8db19052ae6ed45d4540f0_1ac8e6aec63b8db19052ae6ed45d4540f0" compoundref="monomial-ordering_8cpp" startline="861" endline="987">monomialOrderingToMatrix</referencedby>
+        <referencedby refid="classmathic_1_1_heap_a8e058dac0e672a5a3da14efe686ff72c_1a8e058dac0e672a5a3da14efe686ff72c" compoundref="_heap_8h" startline="162" endline="192">mathic::Heap&lt; C &gt;::moveValueUp</referencedby>
+        <referencedby refid="complex_8c_aa3ca3707d8d46a17b0d2fbc9dece96d0_1aa3ca3707d8d46a17b0d2fbc9dece96d0" compoundref="complex_8c" startline="124" endline="199">mpfc_div</referencedby>
+        <referencedby refid="complex_8c_a907013a04f4241e32c51f647e204ad94_1a907013a04f4241e32c51f647e204ad94" compoundref="complex_8c" startline="86" endline="123">mpfc_invert</referencedby>
+        <referencedby refid="complex_8c_a72149f13477bf7b82a4a85244a74d091_1a72149f13477bf7b82a4a85244a74d091" compoundref="complex_8c" startline="282" endline="399">mpfc_sqrt</referencedby>
+        <referencedby refid="gmp-util_8h_a7089c4618e1129e1149d2d3d7baf62ca_1a7089c4618e1129e1149d2d3d7baf62ca" compoundref="gmp-util_8h" startline="63" endline="75">mpfr_reallocate_limbs</referencedby>
+        <referencedby refid="class_d_poly_a1870403a62e5878c85eaca64f575e9f8_1a1870403a62e5878c85eaca64f575e9f8" compoundref="dpoly_8cpp" startline="872" endline="885">DPoly::mult_by_coeff_0</referencedby>
+        <referencedby refid="class_d_poly_a483af39a5d9dc608c69a09abc1047871_1a483af39a5d9dc608c69a09abc1047871" compoundref="dpoly_8cpp" startline="886" endline="901">DPoly::mult_by_coeff_n</referencedby>
+        <referencedby refid="class_schur_ring_a14aaaa57fda192667c8207851034729d_1a14aaaa57fda192667c8207851034729d" compoundref="schur_8cpp" startline="233" endline="264">SchurRing::mult_monomials</referencedby>
+        <referencedby refid="class_ring_ad1ec0e0f648e9f070aef7afd6dc271db_1ad1ec0e0f648e9f070aef7afd6dc271db" compoundref="ring-vecs_8cpp" startline="436" endline="460">Ring::mult_row</referencedby>
+        <referencedby refid="class_schur_ring2_a415e8088a9d126727b420bf4c8b9a781_1a415e8088a9d126727b420bf4c8b9a781" compoundref="schur2_8cpp" startline="867" endline="906">SchurRing2::mult_terms</referencedby>
+        <referencedby refid="class_ring_a7e69dd9e350769debce345a1467001fe_1a7e69dd9e350769debce345a1467001fe" compoundref="ring-vecs_8cpp" startline="404" endline="434">Ring::mult_vec_to</referencedby>
+        <referencedby refid="classres2__comp_adbf2e93f323c49481d3111f54fc8acf2_1adbf2e93f323c49481d3111f54fc8acf2" compoundref="res-a0_8cpp" startline="701" endline="708">res2_comp::multi_degree</referencedby>
+        <referencedby refid="classres__comp_a702044053b795f184c784cefbeaf1366_1a702044053b795f184c784cefbeaf1366" compoundref="res-a1_8cpp" startline="280" endline="286">res_comp::multi_degree</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a6ba080b3d8764d9b540d0a47c9d1c1f1_1a6ba080b3d8764d9b540d0a47c9d1c1f1" compoundref="gb-toric_8cpp" startline="618" endline="624">binomial_s_pair_set::n_elems</referencedby>
+        <referencedby refid="classres__comp_a0e16b6d15ef69fc4036863ed01dddba5_1a0e16b6d15ef69fc4036863ed01dddba5" compoundref="res-a1_8cpp" startline="1142" endline="1152">res_comp::n_left</referencedby>
+        <referencedby refid="classbinomial_g_b_a85efd8fa26f37a2299f35843f4103297_1a85efd8fa26f37a2299f35843f4103297" compoundref="gb-toric_8cpp" startline="934" endline="955">binomialGB::n_masks</referencedby>
+        <referencedby refid="classres__comp_ac9581f10a817ba1285cd32f1d266859c_1ac9581f10a817ba1285cd32f1d266859c" compoundref="res-a1_8cpp" startline="1154" endline="1163">res_comp::n_minimal</referencedby>
+        <referencedby refid="classres__comp_a194c00a56f489cdf203195c57fe78f87_1a194c00a56f489cdf203195c57fe78f87" compoundref="res-a1_8cpp" startline="1165" endline="1174">res_comp::n_monoms</referencedby>
+        <referencedby refid="classres__comp_a85977da1935fa91d9a18d10fb832f547_1a85977da1935fa91d9a18d10fb832f547" compoundref="res-a1_8cpp" startline="1135" endline="1140">res_comp::n_pairs</referencedby>
+        <referencedby refid="class_f4_memory_block_a30842187cdef96dc40c073aece88a836_1a30842187cdef96dc40c073aece88a836" compoundref="memblock_8hpp" startline="148" endline="153">F4MemoryBlock&lt; T, NSLAB &gt;::n_slabs</referencedby>
+        <referencedby refid="class_res_memory_block_a453c014c808201598fee487cb77c1f79_1a453c014c808201598fee487cb77c1f79" compoundref="res-memblock_8hpp" startline="148" endline="153">ResMemoryBlock&lt; T, NSLAB &gt;::n_slabs</referencedby>
+        <referencedby refid="class_d_poly_ac070325884d331e700a2df1457b40840_1ac070325884d331e700a2df1457b40840" compoundref="dpoly_8cpp" startline="604" endline="621">DPoly::negate_in_place</referencedby>
+        <referencedby refid="class_s_mat_a6c4c78bbce3f00541386550e69fe949c_1a6c4c78bbce3f00541386550e69fe949c" compoundref="smat_8hpp" startline="1192" endline="1198">SMat&lt; ACoeffRing &gt;::negateInPlace</referencedby>
+        <referencedby refid="classres2__comp_a650bd72362153c0ecb7d6c2e292bf2ae_1a650bd72362153c0ecb7d6c2e292bf2ae" compoundref="res-a0_8cpp" startline="627" endline="644">res2_comp::new_base_res2_pair</referencedby>
+        <referencedby refid="class_monomial_ideal_ad6d1140e6ffd609c4b27639686708491_1ad6d1140e6ffd609c4b27639686708491" compoundref="monideal_8cpp" startline="49" endline="60">MonomialIdeal::new_internal_mi_node</referencedby>
+        <referencedby refid="class_monomial_ideal_a3ea4a57785c70e6e42f970d21dea8bb4_1a3ea4a57785c70e6e42f970d21dea8bb4" compoundref="monideal_8cpp" startline="62" endline="73">MonomialIdeal::new_leaf_mi_node</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a343545050d66dd034c9a6e4bfec7d383_1a343545050d66dd034c9a6e4bfec7d383" compoundref="f4-monlookup_8cpp" startline="33" endline="46">F4MonomialLookupTableT&lt; Key &gt;::new_mi_node</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a3b81e0fde286f2ce2d7463cd22692335_1a3b81e0fde286f2ce2d7463cd22692335" compoundref="f4-monlookup_8cpp" startline="16" endline="29">F4MonomialLookupTableT&lt; Key &gt;::new_mi_node</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_aa45b25178f27d85d0d5dc680755fdfc2_1aa45b25178f27d85d0d5dc680755fdfc2" compoundref="res-f4-monlookup_8cpp" startline="36" endline="49">ResF4MonomialLookupTableT&lt; Key &gt;::new_mi_node</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_aeb7296f238ddc748e0bad3ba44865944_1aeb7296f238ddc748e0bad3ba44865944" compoundref="res-f4-monlookup_8cpp" startline="19" endline="32">ResF4MonomialLookupTableT&lt; Key &gt;::new_mi_node</referencedby>
+        <referencedby refid="classres2__comp_a4eca17db9eebd6083740dcde50e5345d_1a4eca17db9eebd6083740dcde50e5345d" compoundref="res-a0_8cpp" startline="951" endline="1043">res2_comp::new_pairs</referencedby>
+        <referencedby refid="classres__comp_abfed20da6757feb6f651d41618370faf_1abfed20da6757feb6f651d41618370faf" compoundref="res-a1_8cpp" startline="606" endline="704">res_comp::new_pairs</referencedby>
+        <referencedby refid="class_g_b_ring_ab2137f6b54e7e8f18dd6684f327ad193_1ab2137f6b54e7e8f18dd6684f327ad193" compoundref="gbring_8cpp" startline="28" endline="32">GBRing::new_raw_term</referencedby>
+        <referencedby refid="classres2__comp_a2d704dca94f00d4fc0b823c62bc7ab53_1a2d704dca94f00d4fc0b823c62bc7ab53" compoundref="res-a0_8cpp" startline="646" endline="661">res2_comp::new_res2_pair</referencedby>
+        <referencedby refid="classres2__comp_a810b6142aec4361e23bb2ae6b5b401cc_1a810b6142aec4361e23bb2ae6b5b401cc" compoundref="res-a0_8cpp" startline="603" endline="625">res2_comp::new_res2_pair</referencedby>
+        <referencedby refid="classres__comp_a71934b6cc6873d3a94eea35490f428d8_1a71934b6cc6873d3a94eea35490f428d8" compoundref="res-a1_8cpp" startline="243" endline="256">res_comp::new_res_pair</referencedby>
+        <referencedby refid="classres__comp_ad2ec3fe43932681397259727d44c3f9a_1ad2ec3fe43932681397259727d44c3f9a" compoundref="res-a1_8cpp" startline="258" endline="271">res_comp::new_res_pair</referencedby>
+        <referencedby refid="classgb2__comp_a18d2198bfc0a13ad1da798d2829e0408_1a18d2198bfc0a13ad1da798d2829e0408" compoundref="res-a2-gb_8cpp" startline="118" endline="132">gb2_comp::new_ring_pair</referencedby>
+        <referencedby refid="class_g_b__comp_a25ca1bc7c7632d69c9ffdebad1a828b3_1a25ca1bc7c7632d69c9ffdebad1a828b3" compoundref="gb-homog2_8cpp" startline="149" endline="165">GB_comp::new_ring_pair</referencedby>
+        <referencedby refid="class_g_binhom__comp_a428d2fecf16439ba576a60c75bab6e24_1a428d2fecf16439ba576a60c75bab6e24" compoundref="gb-sugarless_8cpp" startline="164" endline="180">GBinhom_comp::new_ring_pair</referencedby>
+        <referencedby refid="classgb2__comp_af58b3875e558da15572395489e446ca3_1af58b3875e558da15572395489e446ca3" compoundref="res-a2-gb_8cpp" startline="134" endline="149">gb2_comp::new_s_pair</referencedby>
+        <referencedby refid="class_g_b__comp_a9ad473969dba70abfc39ada0a568922d_1a9ad473969dba70abfc39ada0a568922d" compoundref="gb-homog2_8cpp" startline="167" endline="184">GB_comp::new_s_pair</referencedby>
+        <referencedby refid="class_g_binhom__comp_aa6afa3727d4754cc1c09965acaf281c1_1aa6afa3727d4754cc1c09965acaf281c1" compoundref="gb-sugarless_8cpp" startline="182" endline="199">GBinhom_comp::new_s_pair</referencedby>
+        <referencedby refid="class_g_b__comp_a82a245ca4c096043e88b85cebe5f7e01_1a82a245ca4c096043e88b85cebe5f7e01" compoundref="gb-homog2_8cpp" startline="144" endline="147">GB_comp::new_var_pair</referencedby>
+        <referencedby refid="class_g_binhom__comp_ac90c4a6e33da0ce137235b1265b6531b_1ac90c4a6e33da0ce137235b1265b6531b" compoundref="gb-sugarless_8cpp" startline="159" endline="162">GBinhom_comp::new_var_pair</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a01dd5983aa4fcfc3a0d68964bf7e8d75_1a01dd5983aa4fcfc3a0d68964bf7e8d75" compoundref="f4-monlookup_8cpp" startline="352" endline="363">F4MonomialLookupTableT&lt; Key &gt;::next</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a01dd5983aa4fcfc3a0d68964bf7e8d75_1a01dd5983aa4fcfc3a0d68964bf7e8d75">F4MonomialLookupTableT&lt; int32_t &gt;::next</referencedby>
+        <referencedby refid="class_monomial_ideal_a0868ea8aaa7ba2e7ba38d8e115125841_1a0868ea8aaa7ba2e7ba38d8e115125841" compoundref="monideal_8cpp" startline="285" endline="296">MonomialIdeal::next</referencedby>
+        <referencedby refid="class_monomial_ideal_a208ece04128e0b81caecd3292e17a944_1a208ece04128e0b81caecd3292e17a944" compoundref="monideal_8cpp" startline="298" endline="301">MonomialIdeal::next</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_a73403cb9b17a349e16dc0013bcec18af_1a73403cb9b17a349e16dc0013bcec18af" compoundref="res-f4-monlookup_8cpp" startline="366" endline="377">ResF4MonomialLookupTableT&lt; Key &gt;::next</referencedby>
+        <referencedby refid="class_g_b__comp_ab15e1049e91b71e56f0852c17c8aa5f6_1ab15e1049e91b71e56f0852c17c8aa5f6" compoundref="gb-homog2_8cpp" startline="762" endline="780">GB_comp::next_degree</referencedby>
+        <referencedby refid="class_matrix_afc49a7c80e3b4d42800c76aba3cf9984_1afc49a7c80e3b4d42800c76aba3cf9984" compoundref="matrix_8cpp" startline="2074" endline="2095">Matrix::norm</referencedby>
+        <referencedby refid="class_degree_zero_map_generator_ac1bd0eab0d9be0dfd192f3de187d8230_1ac1bd0eab0d9be0dfd192f3de187d8230" compoundref="res-f4-m2-interface_8cpp" startline="433" endline="452">DegreeZeroMapGenerator::numNonzero</referencedby>
+        <referencedby refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" compoundref="newdelete_8hpp" startline="115" endline="122">our_new_delete::operator new</referencedby>
+        <referencedby refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" compoundref="newdelete_8hpp" startline="123" endline="130">our_new_delete::operator new[]</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_af5f54cabb01259443b14bcc696e81927_1af5f54cabb01259443b14bcc696e81927" compoundref="gb-toric_8hpp" startline="291" endline="291">binomialGB::iterator::operator!=</referencedby>
+        <referencedby refid="monomial-collection_8hpp_a988ceb02c6ac96ebac9cc45101ef2645_1a988ceb02c6ac96ebac9cc45101ef2645" compoundref="monomial-collection_8hpp" startline="72" endline="75">operator&lt;&lt;</referencedby>
+        <referencedby refid="classbinomial_g_b_1_1iterator_a66f86faa3721a277c0f5dac0757a3d3d_1a66f86faa3721a277c0f5dac0757a3d3d" compoundref="gb-toric_8hpp" startline="290" endline="290">binomialGB::iterator::operator==</referencedby>
+        <referencedby refid="class_f4_s_pair_set_acb9c47f568cbe6feb75935ccaa74f7e4_1acb9c47f568cbe6feb75935ccaa74f7e4" compoundref="f4-spairs_8cpp" startline="81" endline="88">F4SPairSet::pair_not_needed</referencedby>
+        <referencedby refid="classgb_a_ab7ac6726a60a3c5e4b8f89e1808420df_1ab7ac6726a60a3c5e4b8f89e1808420df" compoundref="gb-default_8cpp" startline="594" endline="636">gbA::pair_not_needed</referencedby>
+        <referencedby refid="classres__comp_a3cc891a75ddadf12a644b395e252c61a_1a3cc891a75ddadf12a644b395e252c61a" compoundref="res-a1_8cpp" startline="997" endline="1022">res_comp::pairs</referencedby>
+        <referencedby refid="class_g_b_action_a69a4ac798f6958ee05121ae226f71681_1a69a4ac798f6958ee05121ae226f71681" compoundref="_g_b_action_8cpp" startline="65" endline="122">GBAction::performAction</referencedby>
+        <referencedby refid="class_sig_g_b_action_a324f66f8e0a6aa1a281683182db193fe_1a324f66f8e0a6aa1a281683182db193fe" compoundref="_sig_g_b_action_8cpp" startline="46" endline="105">SigGBAction::performAction</referencedby>
+        <referencedby refid="class_matrix_a858030441cf3b8aae7109958fd5e2220_1a858030441cf3b8aae7109958fd5e2220" compoundref="pfaff_8cpp" startline="101" endline="111">Matrix::pfaffians</referencedby>
+        <referencedby refid="class_s_l_p_a3d97685ecc8e908919ef18c203b7c9aa_1a3d97685ecc8e908919ef18c203b7c9aa" compoundref="_n_a_g_8cpp" startline="237" endline="279">SLP&lt; Field &gt;::poly_to_horner_slp</referencedby>
+        <referencedby refid="class_s_pairs_a04a49673fdd3ca0172411b50115aee0f_1a04a49673fdd3ca0172411b50115aee0f" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp" startline="41" endline="68">SPairs::pop</referencedby>
+        <referencedby refid="class_s_pairs_a1829d629931caf9e7f1a4185f0951bdd_1a1829d629931caf9e7f1a4185f0951bdd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp" startline="70" endline="105">SPairs::pop</referencedby>
+        <referencedby refid="class_poly_ring_aecc703dee7b68aae6eb62f9a8cb83515_1aecc703dee7b68aae6eb62f9a8cb83515" compoundref="poly_8cpp" startline="918" endline="959">PolyRing::power</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ab3c80c9de112c5aa6565de55fee810be_1ab3c80c9de112c5aa6565de55fee810be" compoundref="f4-monlookup_8cpp" startline="367" endline="378">F4MonomialLookupTableT&lt; Key &gt;::prev</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_ab3c80c9de112c5aa6565de55fee810be_1ab3c80c9de112c5aa6565de55fee810be">F4MonomialLookupTableT&lt; int32_t &gt;::prev</referencedby>
+        <referencedby refid="class_monomial_ideal_af77dfe9a92b5c64c46ee2f0f2d301258_1af77dfe9a92b5c64c46ee2f0f2d301258" compoundref="monideal_8cpp" startline="303" endline="314">MonomialIdeal::prev</referencedby>
+        <referencedby refid="class_monomial_ideal_a710d441abf6976ab2c77210391ce7c3b_1a710d441abf6976ab2c77210391ce7c3b" compoundref="monideal_8cpp" startline="316" endline="319">MonomialIdeal::prev</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_a648c278f6db28de434adc257449d3cd5_1a648c278f6db28de434adc257449d3cd5" compoundref="res-f4-monlookup_8cpp" startline="381" endline="392">ResF4MonomialLookupTableT&lt; Key &gt;::prev</referencedby>
+        <referencedby refid="classbinomial_g_b__comp_a9e8f7ab5aa010dbd7d276eb9c19edd66_1a9e8f7ab5aa010dbd7d276eb9c19edd66" compoundref="gb-toric_8cpp" startline="1096" endline="1157">binomialGB_comp::process_pair</referencedby>
+        <referencedby refid="class_f4_g_b_ac0c10752d20c021579b91c3824bfdb09_1ac0c10752d20c021579b91c3824bfdb09" compoundref="f4_8cpp" startline="290" endline="317">F4GB::process_s_pair</referencedby>
+        <referencedby refid="classgb_a_acaad0acdeb58d6956d12f1e65d6fbc58_1acaad0acdeb58d6956d12f1e65d6fbc58" compoundref="gb-default_8cpp" startline="2309" endline="2350">gbA::process_spair</referencedby>
+        <referencedby refid="class_f4_res_a16a7029ca10e8a3767852bc0af94482c_1a16a7029ca10e8a3767852bc0af94482c" compoundref="res-f4_8cpp" startline="154" endline="178">F4Res::processMonomialProduct</referencedby>
+        <referencedby refid="class_n_c_f4_a56da2c8dec3c256256b345ac6db162ac_1a56da2c8dec3c256256b345ac6db162ac" compoundref="_n_c_f4_8cpp" startline="159" endline="191">NCF4::processPreviousF4Matrix</referencedby>
+        <referencedby refid="class_mutable_complex_a41a88801029c2b5e920badd39ec055c8_1a41a88801029c2b5e920badd39ec055c8" compoundref="mutablecomplex_8cpp" startline="118" endline="163">MutableComplex::prune_unit</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="classs__pair__heap_acf24a45c88664772124db0f19a95862b_1acf24a45c88664772124db0f19a95862b" compoundref="spair_8cpp" startline="263" endline="267">s_pair_heap::put_back</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a3d7eae0e990e9b09c39915d9d3d4d692_1a3d7eae0e990e9b09c39915d9d3d4d692" compoundref="res-moninfo-sparse_8hpp" startline="515" endline="554">ResMonoidSparse::quotient_as_vp</referencedby>
+        <referencedby refid="aring_8h_acada3ced796f144111611a0ab353f54d_1acada3ced796f144111611a0ab353f54d">rawARingGFCoefficients</referencedby>
+        <referencedby refid="interface_2aring_8cpp_aaf8402bed83dad90c95ae993cb5bb751_1aaf8402bed83dad90c95ae993cb5bb751" compoundref="interface_2aring_8cpp" startline="42" endline="50">rawARingZZp</referencedby>
+        <referencedby refid="interface_2aring_8cpp_ab66a6eb2d52fda1e042e8e02e44e78d2_1ab66a6eb2d52fda1e042e8e02e44e78d2" compoundref="interface_2aring_8cpp" startline="51" endline="54">rawARingZZpFlint</referencedby>
+        <referencedby refid="factory_8cpp_a169ce4c376b30270249b4551fdfb05f8_1a169ce4c376b30270249b4551fdfb05f8" compoundref="factory_8cpp" startline="553" endline="623">rawExtendedGCDRingElement</referencedby>
+        <referencedby refid="factory_8cpp_af04b0de40c3a49e0d68bca62193a8a8a_1af04b0de40c3a49e0d68bca62193a8a8a" compoundref="factory_8cpp" startline="488" endline="551">rawGCDRingElement</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_ac4de886de29963e6ec04125c8eefcc1c_1ac4de886de29963e6ec04125c8eefcc1c" compoundref="monomial-ordering_8cpp" startline="552" endline="595">rawGRevLexMonomialOrdering</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_a8428c4c66467a0473ac35f9a3f46ff9b_1a8428c4c66467a0473ac35f9a3f46ff9b" compoundref="monomial-ordering_8cpp" startline="612" endline="618">rawGroupLexMonomialOrdering</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_abb783995390dc315dc34666c47c46dc5_1abb783995390dc315dc34666c47c46dc5" compoundref="monomial-ordering_8cpp" startline="619" endline="625">rawGroupRevLexMonomialOrdering</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_ae01270a0c541244354ff178d9a0af68c_1ae01270a0c541244354ff178d9a0af68c" compoundref="monomial-ordering_8cpp" startline="642" endline="685">rawJoinMonomialOrdering</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_aa8161ff5803258b82a9d8cb7f18773b8_1aa8161ff5803258b82a9d8cb7f18773b8" compoundref="monomial-ordering_8cpp" startline="533" endline="550">rawLexMonomialOrdering</referencedby>
+        <referencedby refid="mutable-matrix_8h_a75d95ab4227116af6ea679901390e4d5_1a75d95ab4227116af6ea679901390e4d5">rawLQUPFactorization</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a93d9f33807e959f7edf5dd51b0019928_1a93d9f33807e959f7edf5dd51b0019928" compoundref="mutable-matrix_8cpp" startline="1156" endline="1156">rawMatrixNorm</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_aed8d7883ef44974bc3c3a6e247440d43_1aed8d7883ef44974bc3c3a6e247440d43" compoundref="interface_2matrix_8cpp" startline="595" endline="618">rawMinors</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a81f5e67888cf51e7fd85b03dcd24562c_1a81f5e67888cf51e7fd85b03dcd24562c" compoundref="mutable-matrix_8cpp" startline="1165" endline="1169">rawMutableMatrixNorm</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_a22797647635f3c26bc1c819a6862ebd3_1a22797647635f3c26bc1c819a6862ebd3" compoundref="monomial-ordering_8cpp" startline="626" endline="632">rawNClexMonomialOrdering</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_a7028fe71c0766b170379a73bd87f67f5_1a7028fe71c0766b170379a73bd87f67f5" compoundref="monomial-ordering_8cpp" startline="466" endline="531">rawNonTermOrderVariables</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a9ef89f52fb9eaa34865f11679153c425_1a9ef89f52fb9eaa34865f11679153c425" compoundref="interface_2matrix_8cpp" startline="1037" endline="1037">rawPathTrackerHash</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a03f88020d4c882e50e86412c2021bbed_1a03f88020d4c882e50e86412c2021bbed" compoundref="interface_2matrix_8cpp" startline="1030" endline="1035">rawPathTrackerToString</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_ae4243ece580cd896647010893812389c_1ae4243ece580cd896647010893812389c" compoundref="monomial-ordering_8cpp" startline="633" endline="640">rawPositionMonomialOrdering</referencedby>
+        <referencedby refid="factory_8cpp_a660a2555972e970e2e55578aee2cc514_1a660a2555972e970e2e55578aee2cc514" compoundref="factory_8cpp" startline="625" endline="659">rawPseudoRemainder</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_a1f76ea98f8364fd8e383e32232a2f205_1a1f76ea98f8364fd8e383e32232a2f205" compoundref="monomial-ordering_8cpp" startline="597" endline="603">rawRevLexMonomialOrdering</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ae3274dc975e0691417ca8ef8e3f6eb3b_1ae3274dc975e0691417ca8ef8e3f6eb3b" compoundref="mutable-matrix_8cpp" startline="1157" endline="1163">rawRingElementNorm</referencedby>
+        <referencedby refid="factory_8h_aaeba08756f80029d2d0391724962e90f_1aaeba08756f80029d2d0391724962e90f" compoundref="polyroots_8cpp" startline="52" endline="192">rawRoots</referencedby>
+        <referencedby refid="random_8cpp_a6fcf352d71c2f199a48eff7fb230f665_1a6fcf352d71c2f199a48eff7fb230f665" compoundref="random_8cpp" startline="83" endline="159">rawSetFareyApproximation</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_ad9d6181415eb9f0caedcb8ca969971d9_1ad9d6181415eb9f0caedcb8ca969971d9" compoundref="interface_2matrix_8cpp" startline="464" endline="477">rawWedgeProduct</referencedby>
+        <referencedby refid="ringelement_8cpp_a49379da656266a7ad2bc330c97f1724f_1a49379da656266a7ad2bc330c97f1724f" compoundref="ringelement_8cpp" startline="472" endline="498">rawWeightRange</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_abd1870dcf8952be8939a2e5eca5ccd61_1abd1870dcf8952be8939a2e5eca5ccd61" compoundref="monomial-ordering_8cpp" startline="605" endline="611">rawWeightsMonomialOrdering</referencedby>
+        <referencedby refid="class_mathic_i_o_af3d5d3898dfbde68d39b625c59d09f9e_1af3d5d3898dfbde68d39b625c59d09f9e" compoundref="_mathic_i_o_8hpp" startline="346" endline="359">MathicIO&lt; M, BF &gt;::readBasis</referencedby>
+        <referencedby refid="class_mathic_i_o_adbcff9d0cd41a2857c8d2c9a45e66b29_1adbcff9d0cd41a2857c8d2c9a45e66b29" compoundref="_mathic_i_o_8hpp" startline="385" endline="406">MathicIO&lt; M, BF &gt;::readPolyDoNotOrder</referencedby>
+        <referencedby refid="classgb2__comp_ae251506100c90b3868faf17843ec0cc3_1ae251506100c90b3868faf17843ec0cc3" compoundref="res-a2-gb_8cpp" startline="614" endline="660">gb2_comp::receive_generator</referencedby>
+        <referencedby refid="classbinomial_g_b_a5004e8d4974fa97fb5eb1201c7a52863_1a5004e8d4974fa97fb5eb1201c7a52863" compoundref="gb-toric_8cpp" startline="884" endline="901">binomialGB::reduce</referencedby>
+        <referencedby refid="class_gauss_elim_computation_ace8837a7803cdd7d404e225e40c63ea0_1ace8837a7803cdd7d404e225e40c63ea0" compoundref="gauss_8cpp" startline="130" endline="150">GaussElimComputation::reduce</referencedby>
+        <referencedby refid="class_hermite_computation_a728abdccc619e66fd85da5bb0345ec41_1a728abdccc619e66fd85da5bb0345ec41" compoundref="hermite_8cpp" startline="210" endline="258">HermiteComputation::reduce</referencedby>
+        <referencedby refid="classres2__comp_a5c7966f99611f3b25522df595a3efbda_1a5c7966f99611f3b25522df595a3efbda" compoundref="res-a0_8cpp" startline="1402" endline="1495">res2_comp::reduce4</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ace26a7e3cab6a90d5ac33a90dff3fd4f_1ace26a7e3cab6a90d5ac33a90dff3fd4f" compoundref="mat-elem-ops_8hpp" startline="506" endline="573">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::reduce_by_pivots</referencedby>
+        <referencedby refid="classgb_a_ad7ce494e09d577cc9bc159ea02d649d9_1ad7ce494e09d577cc9bc159ea02d649d9" compoundref="gb-default_8cpp" startline="1357" endline="1449">gbA::reduce_kk</referencedby>
+        <referencedby refid="classres2__comp_ac0cc5f585959e1176dcabd41b29731de_1ac0cc5f585959e1176dcabd41b29731de" compoundref="res-a0_8cpp" startline="2091" endline="2117">res2_comp::reduce_minimal</referencedby>
+        <referencedby refid="classres__comp_aef30abe65afb5722db89ef980359d0aa_1aef30abe65afb5722db89ef980359d0aa" compoundref="res-a1_8cpp" startline="1410" endline="1436">res_comp::reduce_minimal</referencedby>
+        <referencedby refid="classbinomial_g_b_a66b63999d6f49ab0e0d7f973c1dac240_1a66b63999d6f49ab0e0d7f973c1dac240" compoundref="gb-toric_8cpp" startline="877" endline="882">binomialGB::reduce_monomial</referencedby>
+        <referencedby refid="classgb_a_aa8f38461d0118ce46f2f5bb1e4cfc479_1aa8f38461d0118ce46f2f5bb1e4cfc479" compoundref="gb-default_8cpp" startline="1451" endline="1592">gbA::reduce_ZZ</referencedby>
+        <referencedby refid="classgb_a_a3a52b1522678d2574f2533e3146d6279_1a3a52b1522678d2574f2533e3146d6279" compoundref="gb-default_8cpp" startline="1594" endline="1598">gbA::reduceit</referencedby>
+        <referencedby refid="classres__comp_a22bd0345a7d4308d3c7cb065fcce3181_1a22bd0345a7d4308d3c7cb065fcce3181" compoundref="res-a1_8cpp" startline="1024" endline="1051">res_comp::reductions</referencedby>
+        <referencedby refid="classres__comp_a23950fc441d8984c72fbdb39fbe25d83_1a23950fc441d8984c72fbdb39fbe25d83">res_comp::regularity</referencedby>
+        <referencedby refid="class_f4_reducer_aa98e12cb6c100ea7ae1220fb90348138_1aa98e12cb6c100ea7ae1220fb90348138" compoundref="_f4_reducer_8cpp" startline="290" endline="301">F4Reducer::regularReduce</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a24d5832edabe491df62a0eca23dc9f4b_1a24d5832edabe491df62a0eca23dc9f4b" compoundref="_hash_table_8h" startline="238" endline="261">mathic::HashTable&lt; C &gt;::remove</referencedby>
+        <referencedby refid="class_monomial_ideal_a197ba5780c7ea0c2cecab5e59769229b_1a197ba5780c7ea0c2cecab5e59769229b" compoundref="monideal_8cpp" startline="451" endline="458">MonomialIdeal::remove</referencedby>
+        <referencedby refid="class_monomial_ideal_af811da0593d8eb43b8a5d893b4b0edb5_1af811da0593d8eb43b8a5d893b4b0edb5" compoundref="monideal_8cpp" startline="397" endline="449">MonomialIdeal::remove1</referencedby>
+        <referencedby refid="finalize_8cpp_ad5dfbb748fc385e82406d90f81a5deec_1ad5dfbb748fc385e82406d90f81a5deec" compoundref="finalize_8cpp" startline="100" endline="111">remove_gb</referencedby>
+        <referencedby refid="class_gauss_elim_computation_a2b05e631cb90ff71386cd2774c522b3e_1a2b05e631cb90ff71386cd2774c522b3e" compoundref="gauss_8cpp" startline="103" endline="112">GaussElimComputation::remove_gm_elem</referencedby>
+        <referencedby refid="class_hermite_computation_a25928756126d0da2342146ea3db287a4_1a25928756126d0da2342146ea3db287a4" compoundref="hermite_8cpp" startline="81" endline="88">HermiteComputation::remove_hm_elem</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a5cf49c4a71718e25b9f45834433fa15c_1a5cf49c4a71718e25b9f45834433fa15c" compoundref="gb-toric_8cpp" startline="463" endline="473">binomial_s_pair_set::remove_lcm_list</referencedby>
+        <referencedby refid="finalize_8cpp_a8edf5905229d913571c2b764ccf7b057_1a8edf5905229d913571c2b764ccf7b057" compoundref="finalize_8cpp" startline="42" endline="54">remove_monideal</referencedby>
+        <referencedby refid="finalize_8cpp_a2acd80d5ff4b2d40403f1d69e3f4178b_1a2acd80d5ff4b2d40403f1d69e3f4178b" compoundref="finalize_8cpp" startline="187" endline="199">remove_MutableMatrix</referencedby>
+        <referencedby refid="classgb2__comp_a457028f671a2205bbd91e026369e9319_1a457028f671a2205bbd91e026369e9319" compoundref="res-a2-gb_8cpp" startline="90" endline="100">gb2_comp::remove_pair</referencedby>
+        <referencedby refid="class_g_b__comp_a3dd8684ca39c0becb13dd3ebe1dfc806_1a3dd8684ca39c0becb13dd3ebe1dfc806" compoundref="gb-homog2_8cpp" startline="127" endline="137">GB_comp::remove_pair</referencedby>
+        <referencedby refid="class_g_binhom__comp_a94698b4532ed696372fc4eab1ea3ec5f_1a94698b4532ed696372fc4eab1ea3ec5f" compoundref="gb-sugarless_8cpp" startline="135" endline="145">GBinhom_comp::remove_pair</referencedby>
+        <referencedby refid="classbinomial__s__pair__set_a935a7dcaa7d19603335f3367def329b9_1a935a7dcaa7d19603335f3367def329b9" compoundref="gb-toric_8cpp" startline="474" endline="483">binomial_s_pair_set::remove_pair_list</referencedby>
+        <referencedby refid="finalize_8cpp_acd907bbebf5d58d8a86ca872771d383e_1acd907bbebf5d58d8a86ca872771d383e" compoundref="finalize_8cpp" startline="132" endline="143">remove_res</referencedby>
+        <referencedby refid="classres2__comp_a2bbc8eed8aaaf12897879648190e5b04_1a2bbc8eed8aaaf12897879648190e5b04" compoundref="res-a0_8cpp" startline="578" endline="588">res2_comp::remove_res2_level</referencedby>
+        <referencedby refid="classres2__comp_a2b9894764b202a93ae015cbca7c58f02_1a2b9894764b202a93ae015cbca7c58f02" compoundref="res-a0_8cpp" startline="570" endline="576">res2_comp::remove_res2_pair</referencedby>
+        <referencedby refid="classres__comp_a9874be2d4906eb95d647e66baccdda8d_1a9874be2d4906eb95d647e66baccdda8d" compoundref="res-a1_8cpp" startline="147" endline="157">res_comp::remove_res_degree</referencedby>
+        <referencedby refid="classres__comp_ab0ec6badea60e62bdefdf06f96e3184d_1ab0ec6badea60e62bdefdf06f96e3184d" compoundref="res-a1_8cpp" startline="137" endline="145">res_comp::remove_res_pair</referencedby>
+        <referencedby refid="finalize_8cpp_a62e309e31422eabdd0a945104a8bd60c_1a62e309e31422eabdd0a945104a8bd60c" compoundref="finalize_8cpp" startline="158" endline="170">remove_SchreyerOrder</referencedby>
+        <referencedby refid="class_f4_s_pair_set_a3693da635374220ddcc6ae0cbf4fff8c_1a3693da635374220ddcc6ae0cbf4fff8c" compoundref="f4-spairs_8cpp" startline="90" endline="129">F4SPairSet::remove_unneeded_pairs</referencedby>
+        <referencedby refid="classgb_a_acbb74781cfdffd1b6cba2ca9d0161217_1acbb74781cfdffd1b6cba2ca9d0161217" compoundref="gb-default_8cpp" startline="638" endline="667">gbA::remove_unneeded_pairs</referencedby>
+        <referencedby refid="class_reducer_hash_pack_a95d23d211b8ada4ee8ca416b0f4593f7_1a95d23d211b8ada4ee8ca416b0f4593f7" compoundref="_reducer_hash_pack_8cpp" startline="156" endline="184">ReducerHashPack&lt; Queue &gt;::removeLeadTerm</referencedby>
+        <referencedby refid="class_matrix_ae194fcc73edeec7c305d3e1b9f0e502d_1ae194fcc73edeec7c305d3e1b9f0e502d" compoundref="matrix_8cpp" startline="516" endline="545">Matrix::reshape</referencedby>
+        <referencedby refid="classres2__comp_a04387bddec0a24230a7446cf87a87dce_1a04387bddec0a24230a7446cf87a87dce">res2_comp::resize</referencedby>
+        <referencedby refid="classres__comp_a840ea1d810abba2a4cce3b15f11f1fee_1a840ea1d810abba2a4cce3b15f11f1fee">res_comp::resize</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_a523eb6f8ae5ed7c2dfa7050255cb8898_1a523eb6f8ae5ed7c2dfa7050255cb8898" compoundref="_pair_queue_8h" startline="625" endline="634">mathic::PairQueue&lt; C &gt;::retireIndex</referencedby>
+        <referencedby refid="classres__comp_a1c4d8545463f246d35ab695a19a37e07_1a1c4d8545463f246d35ab695a19a37e07" compoundref="res-a1_8cpp" startline="722" endline="741">res_comp::s_pair</referencedby>
+        <referencedby refid="classgb2__comp_ac07ed82e5ad1ea57ce71a02929dcf57d_1ac07ed82e5ad1ea57ce71a02929dcf57d" compoundref="res-a2-gb_8cpp" startline="557" endline="606">gb2_comp::s_pair_step</referencedby>
+        <referencedby refid="class_g_b__comp_a3fbf4d52a2ac537b8ab4d2d0a5ef5143_1a3fbf4d52a2ac537b8ab4d2d0a5ef5143" compoundref="gb-homog2_8cpp" startline="593" endline="651">GB_comp::s_pair_step</referencedby>
+        <referencedby refid="class_g_binhom__comp_aeb766f145ff183520f9ed836e0475453_1aeb766f145ff183520f9ed836e0475453" compoundref="gb-sugarless_8cpp" startline="676" endline="746">GBinhom_comp::s_pair_step</referencedby>
+        <referencedby refid="class_free_module_adb9058114cf8321f7c64b29395f6c921_1adb9058114cf8321f7c64b29395f6c921">FreeModule::schur</referencedby>
+        <referencedby refid="class_g_binhom__comp_aca22c01d0caae3f9f76e0ab6c190939d_1aca22c01d0caae3f9f76e0ab6c190939d" compoundref="gb-sugarless_8cpp" startline="595" endline="617">GBinhom_comp::search</referencedby>
+        <referencedby refid="class_monomial_ideal_a16af5f4af8950976e8d6c3b494d324b4_1a16af5f4af8950976e8d6c3b494d324b4" compoundref="monideal_8cpp" startline="214" endline="244">MonomialIdeal::search_expvector</referencedby>
+        <referencedby refid="classres__comp_adb8475cf67941cd0b7d10211b5e643fc_1adb8475cf67941cd0b7d10211b5e643fc" compoundref="res-a1_8cpp" startline="569" endline="601">res_comp::set_compare_nums</referencedby>
+        <referencedby refid="class_ring_a58afa47f15c732860a8cec8e9fffe089_1a58afa47f15c732860a8cec8e9fffe089" compoundref="ring-vecs_8cpp" startline="637" endline="668">Ring::set_entry</referencedby>
+        <referencedby refid="classgb2__comp_aa624c96ac4b6de2dacb785cd9fe39063_1aa624c96ac4b6de2dacb785cd9fe39063" compoundref="res-a2-gb_8cpp" startline="85" endline="89">gb2_comp::set_output</referencedby>
+        <referencedby refid="classgb__node_ae7553173497ad00b62f68cd0542358e3_1ae7553173497ad00b62f68cd0542358e3">gb_node::set_output</referencedby>
+        <referencedby refid="class_monoid_a98b247ab756c01da37aa475cf17e9e7a_1a98b247ab756c01da37aa475cf17e9e7a" compoundref="monoid_8cpp" startline="242" endline="296">Monoid::set_overflow_flags</referencedby>
+        <referencedby refid="class_schreyer_frame_a565b0aa021f597cb41c19d005854b8d0_1a565b0aa021f597cb41c19d005854b8d0" compoundref="res-schreyer-frame_8cpp" startline="836" endline="905">SchreyerFrame::setBettiDisplays</referencedby>
+        <referencedby refid="_arena_test_8cpp_ab1955f459b8a6353874472323d1a2529_1ab1955f459b8a6353874472323d1a2529">setId</referencedby>
+        <referencedby refid="_arena_test_8cpp_ac517fcc791235fb6a2dba27739cf79bf_1ac517fcc791235fb6a2dba27739cf79bf">setId</referencedby>
+        <referencedby refid="_arena_test_8cpp_a3615277c3e2178a6b9030c1e3d4d4126_1a3615277c3e2178a6b9030c1e3d4d4126">setId</referencedby>
+        <referencedby refid="class_s_l_program_ac06889bd3d651063ae33ea10bb5a0425_1ac06889bd3d651063ae33ea10bb5a0425" compoundref="_s_l_p_8cpp" startline="53" endline="65">SLProgram::setOutputPositions</referencedby>
+        <referencedby refid="classgb2__comp_a20af8990a8b4adc14304e48b9cb4ff5c_1a20af8990a8b4adc14304e48b9cb4ff5c" compoundref="res-a2-gb_8cpp" startline="11" endline="73">gb2_comp::setup</referencedby>
+        <referencedby refid="util-polyring-creation_8cpp_a45a0a96d3ec0b0086be66a86120dd5a9_1a45a0a96d3ec0b0086be66a86120dd5a9" compoundref="util-polyring-creation_8cpp" startline="82" endline="99">simplePolynomialRing</referencedby>
+        <referencedby refid="classres2__comp_ad540c64bb488772bdb144a1342a4bd4e_1ad540c64bb488772bdb144a1342a4bd4e" compoundref="res-a0_8cpp" startline="40" endline="73">res2_comp::skeleton</referencedby>
+        <referencedby refid="classres__comp_aa19d14dcc922a777811f67304e4a16e2_1aa19d14dcc922a777811f67304e4a16e2" compoundref="res-a1_8cpp" startline="1658" endline="1692">res_comp::skeleton</referencedby>
+        <referencedby refid="classres__comp_a562ff9b48f4239c849037b52d0779670_1a562ff9b48f4239c849037b52d0779670" compoundref="res-a1_8cpp" startline="1473" endline="1494">res_comp::skeleton_init</referencedby>
+        <referencedby refid="classres__comp_af0ed9a0f6b4acc592d00a69fabe53525_1af0ed9a0f6b4acc592d00a69fabe53525" compoundref="res-a1_8cpp" startline="1593" endline="1605">res_comp::skeleton_maxdegree</referencedby>
+        <referencedby refid="classres__comp_a88107b9fb4809ec2589b74d4dcb84eaa_1a88107b9fb4809ec2589b74d4dcb84eaa" compoundref="res-a1_8cpp" startline="1496" endline="1591">res_comp::skeleton_pairs</referencedby>
+        <referencedby refid="classres__comp_a31aa5814ed2dcf5bbe44cf3b29993946_1a31aa5814ed2dcf5bbe44cf3b29993946" compoundref="res-a1_8cpp" startline="1607" endline="1656">res_comp::skeleton_stats</referencedby>
+        <referencedby refid="class_schur_ring2_a1525745c2fcecdc172e1fc4dfbd377f1_1a1525745c2fcecdc172e1fc4dfbd377f1" compoundref="schur2_8cpp" startline="836" endline="865">SchurRing2::skew_schur</referencedby>
+        <referencedby refid="class_schur_ring_a092088b989910a3d074a5f1c46052d31_1a092088b989910a3d074a5f1c46052d31" compoundref="schur_8cpp" startline="215" endline="231">SchurRing::skew_schur</referencedby>
+        <referencedby refid="class_schur_ring2_a6ac68681c012212d42afb6d61c6a6b70_1a6ac68681c012212d42afb6d61c6a6b70" compoundref="schur2_8cpp" startline="787" endline="793">SchurRing2::SMsetPartitionLength</referencedby>
+        <referencedby refid="class_hermite_computation_afc94471ae40cbcf6d996766b3e491f82_1afc94471ae40cbcf6d996766b3e491f82" compoundref="hermite_8cpp" startline="185" endline="208">HermiteComputation::sort</referencedby>
+        <referencedby refid="classres__comp_a0e46fb086a91ad9913ce4edbfd21c2c1_1a0e46fb086a91ad9913ce4edbfd21c2c1" compoundref="res-a1_8cpp" startline="544" endline="567">res_comp::sort_compares</referencedby>
+        <referencedby refid="classres__comp_a6f0d49a42ceea69fd7ec61e9aea71d15_1a6f0d49a42ceea69fd7ec61e9aea71d15" compoundref="res-a1_8cpp" startline="470" endline="479">res_comp::sort_gens</referencedby>
+        <referencedby refid="classs__pair__heap_a1850658b903c728ae8e933b3ff45bf12_1a1850658b903c728ae8e933b3ff45bf12" compoundref="spair_8cpp" startline="156" endline="178">s_pair_heap::sort_list</referencedby>
+        <referencedby refid="classres2__comp_af87d27273c1d9f609c117b05820b4a07_1af87d27273c1d9f609c117b05820b4a07" compoundref="res-a0_8cpp" startline="924" endline="930">res2_comp::sort_monorder</referencedby>
+        <referencedby refid="classres__comp_a1743055596ac18c226c94cd1467383cb_1a1743055596ac18c226c94cd1467383cb" compoundref="res-a1_8cpp" startline="481" endline="494">res_comp::sort_pairs</referencedby>
+        <referencedby refid="classres2__comp_a8634704e59c9f402e596fb4fee8af581_1a8634704e59c9f402e596fb4fee8af581" compoundref="res-a0_8cpp" startline="931" endline="938">res2_comp::sort_reduction</referencedby>
+        <referencedby refid="classres2__comp_a43619c272bd2a0bae6d4960c51ef6818_1a43619c272bd2a0bae6d4960c51ef6818" compoundref="res-a0_8cpp" startline="891" endline="914">res2_comp::sort_res2_pairs</referencedby>
+        <referencedby refid="classres__comp_ab9aa1454c1bef866b9ff231ce99e1018_1ab9aa1454c1bef866b9ff231ce99e1018" compoundref="res-a1_8cpp" startline="438" endline="461">res_comp::sort_res_pairs</referencedby>
+        <referencedby refid="classres2__comp_a8f50f690fc1a540f5bfb8cf8e63e8d5e_1a8f50f690fc1a540f5bfb8cf8e63e8d5e" compoundref="res-a0_8cpp" startline="916" endline="923">res2_comp::sort_skeleton</referencedby>
+        <referencedby refid="classres2__comp_aa511a0320254221ad76c601227497fea_1aa511a0320254221ad76c601227497fea" compoundref="res-a0_8cpp" startline="940" endline="945">res2_comp::sort_value</referencedby>
+        <referencedby refid="classres__comp_a9193a1e7566eed8733ce9634cbe480c4_1a9193a1e7566eed8733ce9634cbe480c4" compoundref="res-a1_8cpp" startline="463" endline="468">res_comp::sort_value</referencedby>
+        <referencedby refid="classgb_a_a0d127ead94b8633639c231c0f9cf7862_1a0d127ead94b8633639c231c0f9cf7862" compoundref="gb-default_8cpp" startline="436" endline="447">gbA::spair_delete</referencedby>
+        <referencedby refid="classgb_a_a7d0923560d0ac5da9f282cf8aec01d77_1a7d0923560d0ac5da9f282cf8aec01d77" compoundref="gb-default_8cpp" startline="2292" endline="2307">gbA::spair_is_retired</referencedby>
+        <referencedby refid="classgb_a_af171c343064baadd8be6fe1acfeb653b_1af171c343064baadd8be6fe1acfeb653b" compoundref="gb-default_8cpp" startline="1111" endline="1136">gbA::spair_set_defer</referencedby>
+        <referencedby refid="classgb_a_affb3e51cb9a0ad5a29379cabee1cdf2e_1affb3e51cb9a0ad5a29379cabee1cdf2e" compoundref="gb-default_8cpp" startline="1138" endline="1157">gbA::spair_set_determine_next_degree</referencedby>
+        <referencedby refid="classgb_a_a514b21d721a8faa3fc8187718f829d16_1a514b21d721a8faa3fc8187718f829d16" compoundref="gb-default_8cpp" startline="1037" endline="1050">gbA::spair_set_insert</referencedby>
+        <referencedby refid="classgb_a_a3d0ad64d972bc976e01ec725bcef3b21_1a3d0ad64d972bc976e01ec725bcef3b21" compoundref="gb-default_8cpp" startline="1274" endline="1309">gbA::spair_set_lead_spoly</referencedby>
+        <referencedby refid="classgb_a_ac2859781440b429b2e144fd8473025c1_1ac2859781440b429b2e144fd8473025c1" compoundref="gb-default_8cpp" startline="1159" endline="1206">gbA::spair_set_prepare_next_degree</referencedby>
+        <referencedby refid="classgb_a_a22952ccd8e6c3130c67ae2a46f2603ce_1a22952ccd8e6c3130c67ae2a46f2603ce" compoundref="gb-default_8cpp" startline="521" endline="573">gbA::spair_text_out</referencedby>
+        <referencedby refid="classgb_a_a07c3d4533c2f7041ffb224e969f5322b_1a07c3d4533c2f7041ffb224e969f5322b" compoundref="gb-default_8cpp" startline="1209" endline="1221">gbA::spairs_reverse</referencedby>
+        <referencedby refid="classgb_a_aa0f1c7106ad176ddd967916dbd883378_1aa0f1c7106ad176ddd967916dbd883378" compoundref="gb-default_8cpp" startline="1224" endline="1268">gbA::spairs_sort</referencedby>
+        <referencedby refid="class_s_l_evaluator_concrete_a2b49f6a5d39e6c104f4a9e810d328c2f_1a2b49f6a5d39e6c104f4a9e810d328c2f" compoundref="_s_l_p-imp_8hpp" startline="149" endline="157">SLEvaluatorConcrete&lt; RT &gt;::specialize</referencedby>
+        <referencedby refid="class_suffix_tree_ad4c5f1dccba499d1349d9b049bead150_1ad4c5f1dccba499d1349d9b049bead150" compoundref="_suffix_tree_8cpp" startline="306" endline="316">SuffixTree::splitArc</referencedby>
+        <referencedby refid="class_gauss_elim_computation_ad04e59468cc16a96bbb4ca40ad8355cc_1ad04e59468cc16a96bbb4ca40ad8355cc" compoundref="gauss_8cpp" startline="216" endline="275">GaussElimComputation::start_computation</referencedby>
+        <referencedby refid="class_g_binhom__comp_ac1e209e9c40b43d91f8ac055c75dcd1f_1ac1e209e9c40b43d91f8ac055c75dcd1f" compoundref="gb-sugarless_8cpp" startline="766" endline="832">GBinhom_comp::start_computation</referencedby>
+        <referencedby refid="class_hermite_computation_a49e74d40b4ee508a4f37f14e70ea0557_1a49e74d40b4ee508a4f37f14e70ea0557" compoundref="hermite_8cpp" startline="260" endline="311">HermiteComputation::start_computation</referencedby>
+        <referencedby refid="classres2__comp_afd43374a56d9f08824fcecce27f29484_1afd43374a56d9f08824fcecce27f29484" compoundref="res-a0_8cpp" startline="266" endline="414">res2_comp::start_computation</referencedby>
+        <referencedby refid="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" compoundref="hilb_8cpp" startline="618" endline="652">hilb_comp::stats</referencedby>
+        <referencedby refid="class_classic_g_b_alg_a6edde4a86845fd64e8462047020d0398_1a6edde4a86845fd64e8462047020d0398" compoundref="_classic_g_b_alg_8cpp" startline="346" endline="417">ClassicGBAlg::step</referencedby>
+        <referencedby refid="classmgb_1_1_classic_g_b_alg_a6edde4a86845fd64e8462047020d0398_1a6edde4a86845fd64e8462047020d0398" compoundref="_m_e_s_classic_g_b_alg_8cpp" startline="328" endline="399">mgb::ClassicGBAlg::step</referencedby>
+        <referencedby refid="class_signature_g_b_ab01d202b8ef8e8411d04fd40cf5be92d_1ab01d202b8ef8e8411d04fd40cf5be92d" compoundref="_signature_g_b_8cpp" startline="193" endline="271">SignatureGB::step</referencedby>
+        <referencedby refid="classbinomial_g_b__comp_a4df8b909ef8beae6d93ef3362992cc64_1a4df8b909ef8beae6d93ef3362992cc64" compoundref="gb-toric_8cpp" startline="1206" endline="1213">binomialGB_comp::subringGB</referencedby>
+        <referencedby refid="class_subsets_a580b78e7e03a10efb91a9a1b59a1a610_1a580b78e7e03a10efb91a9a1b59a1a610" compoundref="comb_8cpp" startline="20" endline="33">Subsets::Subsets</referencedby>
+        <referencedby refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" compoundref="godbolt_test_8cpp" startline="63" endline="74">subtract</referencedby>
+        <referencedby refid="godbolt_test_8cpp_aeedfefbfa9a8292d413a21d325aab7ba_1aeedfefbfa9a8292d413a21d325aab7ba" compoundref="godbolt_test_8cpp" startline="39" endline="48">subtract_multiple</referencedby>
+        <referencedby refid="classmpfr_1_1mpreal_a0985c0504f64476622e91de6755a78ae_1a0985c0504f64476622e91de6755a78ae" compoundref="mpreal_8h" startline="2598" endline="2610">mpfr::mpreal::sum</referencedby>
+        <referencedby refid="class_symm_matrix_a09dff20e6c2d0d3d0e34667a82fd4731_1a09dff20e6c2d0d3d0e34667a82fd4731" compoundref="matrix-symm_8cpp" startline="54" endline="64">SymmMatrix::symmetricPower</referencedby>
+        <referencedby refid="class_symm_matrix_a47b3b8515df93a9800471ebb08f0ea17_1a47b3b8515df93a9800471ebb08f0ea17" compoundref="matrix-symm_8cpp" startline="92" endline="108">SymmMatrix::SymmMatrix</referencedby>
+        <referencedby refid="class_g_binhom__comp_a34a7dee17540f13fa1bfc8e109ce8ca4_1a34a7dee17540f13fa1bfc8e109ce8ca4">GBinhom_comp::syz_matrix</referencedby>
+        <referencedby refid="table_8c_a2831e8b0428674569e948b6806e10fb6_1a2831e8b0428674569e948b6806e10fb6" compoundref="table_8c" startline="166" endline="181">Table_free</referencedby>
+        <referencedby refid="table_8c_a74543c15c1a59048507f504a4d17f458_1a74543c15c1a59048507f504a4d17f458" compoundref="table_8c" startline="68" endline="78">Table_get</referencedby>
+        <referencedby refid="table_8c_af05036c74e08de9da1c51de68f6364e4_1af05036c74e08de9da1c51de68f6364e4" compoundref="table_8c" startline="109" endline="129">Table_map</referencedby>
+        <referencedby refid="table_8c_ac18704c6d5a33b3698ae7a1f93d92694_1ac18704c6d5a33b3698ae7a1f93d92694" compoundref="table_8c" startline="79" endline="103">Table_put</referencedby>
+        <referencedby refid="table_8c_ac76d8a76af9448767fca6d00d084a078_1ac76d8a76af9448767fca6d00d084a078" compoundref="table_8c" startline="130" endline="149">Table_remove</referencedby>
+        <referencedby refid="table_8c_a5dd514e4a6882a789b1008aebb9e4d6f_1a5dd514e4a6882a789b1008aebb9e4d6f" compoundref="table_8c" startline="150" endline="165">Table_toArray</referencedby>
+        <referencedby refid="_arena_test_8cpp_a89245104d2e61abe9efd87462666d637_1a89245104d2e61abe9efd87462666d637" compoundref="_arena_test_8cpp" startline="55" endline="85">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_ac95834d044aab7993513e2bea6832b20_1ac95834d044aab7993513e2bea6832b20" compoundref="test_2_f4_matrix_builder_8cpp" startline="112" endline="131">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_reducer_8cpp_a8100829527f16c897c93d726fd019fd1_1a8100829527f16c897c93d726fd019fd1" compoundref="test_2_f4_matrix_reducer_8cpp" startline="16" endline="128">TEST</referencedby>
+        <referencedby refid="_hash_table_8cpp_ab5838193c735202e4db578b9786d0c5f_1ab5838193c735202e4db578b9786d0c5f" compoundref="_hash_table_8cpp" startline="20" endline="33">TEST</referencedby>
+        <referencedby refid="_hash_table_8cpp_a576ac4ca0ab5cbc10344c580b61814e0_1a576ac4ca0ab5cbc10344c580b61814e0" compoundref="_hash_table_8cpp" startline="53" endline="70">TEST</referencedby>
+        <referencedby refid="_mathic_i_o_8cpp_a124543b0eee815c5506afd96831e9511_1a124543b0eee815c5506afd96831e9511" compoundref="_mathic_i_o_8cpp" startline="10" endline="24">TEST</referencedby>
+        <referencedby refid="_mathic_i_o_8cpp_a67d970cc6e52557d71540fb295744436_1a67d970cc6e52557d71540fb295744436" compoundref="_mathic_i_o_8cpp" startline="26" endline="67">TEST</referencedby>
+        <referencedby refid="_pair_queue_8cpp_a8e1d916141e7747b824a083c2ca4498e_1a8e1d916141e7747b824a083c2ca4498e" compoundref="_pair_queue_8cpp" startline="109" endline="204">TEST</referencedby>
+        <referencedby refid="_pair_queue_8cpp_a6696b94790897feb15d183afa29c078d_1a6696b94790897feb15d183afa29c078d" compoundref="_pair_queue_8cpp" startline="412" endline="461">TEST</referencedby>
+        <referencedby refid="_point_array_8cpp_a0b318fd208ff6af40177628153b8e70e_1a0b318fd208ff6af40177628153b8e70e" compoundref="_point_array_8cpp" startline="38" endline="42">TEST</referencedby>
+        <referencedby refid="_point_array_8cpp_a5cc04550d3d8970d8322c44c45a13692_1a5cc04550d3d8970d8322c44c45a13692" compoundref="_point_array_8cpp" startline="44" endline="56">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_a21251c9bc0615886b10d4ce58cc31605_1a21251c9bc0615886b10d4ce58cc31605" compoundref="test_2_quad_matrix_builder_8cpp" startline="133" endline="161">TEST</referencedby>
+        <referencedby refid="_range_8cpp_ab24720a28edd968900a767fd14a1fe7c_1ab24720a28edd968900a767fd14a1fe7c" compoundref="_range_8cpp" startline="94" endline="112">TEST</referencedby>
+        <referencedby refid="test_2_sparse_matrix_8cpp_aad152bb1676dd922c3cac00c09b9f8ca_1aad152bb1676dd922c3cac00c09b9f8ca" compoundref="test_2_sparse_matrix_8cpp" startline="66" endline="90">TEST</referencedby>
+        <referencedby refid="_subset_test_8cpp_a62b547a3eb91218822a2bf7533bb2189_1a62b547a3eb91218822a2bf7533bb2189" compoundref="_subset_test_8cpp" startline="145" endline="182">TEST</referencedby>
+        <referencedby refid="_subset_test_8cpp_afd3a32071985530437e3645825101026_1afd3a32071985530437e3645825101026" compoundref="_subset_test_8cpp" startline="120" endline="143">TEST</referencedby>
+        <referencedby refid="_subset_test_8cpp_a304771f20f162265cb98328248883502_1a304771f20f162265cb98328248883502" compoundref="_subset_test_8cpp" startline="203" endline="228">TEST</referencedby>
+        <referencedby refid="_subset_test_8cpp_a2d9bd05ed365f33e659177f9aecf35cc_1a2d9bd05ed365f33e659177f9aecf35cc" compoundref="_subset_test_8cpp" startline="184" endline="201">TEST</referencedby>
+        <referencedby refid="gb-test_8cpp_a64267ccca287756fc198b82a780a6b92_1a64267ccca287756fc198b82a780a6b92" compoundref="gb-test_8cpp" startline="39" endline="327">testGB</referencedby>
+        <referencedby refid="class_f4_monomial_lookup_table_t_a10e711c0466dd4394b2090a45861322d_1a10e711c0466dd4394b2090a45861322d" compoundref="f4-monlookup_8cpp" startline="505" endline="518">F4MonomialLookupTableT&lt; Key &gt;::text_out</referencedby>
+        <referencedby refid="class_gauss_elim_computation_ae08293d4d0c21012884d0226f87868ad_1ae08293d4d0c21012884d0226f87868ad" compoundref="gauss_8cpp" startline="315" endline="342">GaussElimComputation::text_out</referencedby>
+        <referencedby refid="class_hermite_computation_a31662941ebf429ccb37bf61f6522356e_1a31662941ebf429ccb37bf61f6522356e" compoundref="hermite_8cpp" startline="359" endline="385">HermiteComputation::text_out</referencedby>
+        <referencedby refid="class_matrix_ab43f2101cc741a8f8e657f7212b376e3_1ab43f2101cc741a8f8e657f7212b376e3" compoundref="matrix_8cpp" startline="1316" endline="1345">Matrix::text_out</referencedby>
+        <referencedby refid="class_mutable_matrix_a97b363a1a3c241f2856245e203d10226_1a97b363a1a3c241f2856245e203d10226" compoundref="mat_8cpp" startline="89" endline="119">MutableMatrix::text_out</referencedby>
+        <referencedby refid="classres2__comp_a4c9cd12dcae7ca23a308baa67049ed46_1a4c9cd12dcae7ca23a308baa67049ed46" compoundref="res-a0_8cpp" startline="1998" endline="2032">res2_comp::text_out</referencedby>
+        <referencedby refid="classres2__comp_abe08103c0a5c3f61d89ff1c8a8d1498e_1abe08103c0a5c3f61d89ff1c8a8d1498e" compoundref="res-a0_8cpp" startline="1925" endline="1989">res2_comp::text_out</referencedby>
+        <referencedby refid="classres2__comp_a62c83f21e93a1de3e6928b5c35610850_1a62c83f21e93a1de3e6928b5c35610850" compoundref="res-a0_8cpp" startline="1919" endline="1924">res2_comp::text_out</referencedby>
+        <referencedby refid="classres__comp_a60cbd39fba32778f180f0ebd19f620fe_1a60cbd39fba32778f180f0ebd19f620fe" compoundref="res-a1_8cpp" startline="1300" endline="1339">res_comp::text_out</referencedby>
+        <referencedby refid="classres__comp_a693be2e7f94f2e325ec4d56736843d2e_1a693be2e7f94f2e325ec4d56736843d2e" compoundref="res-a1_8cpp" startline="1227" endline="1285">res_comp::text_out</referencedby>
+        <referencedby refid="classres__comp_ad5a2cb91e78ca1c13182e98a1aecd868_1ad5a2cb91e78ca1c13182e98a1aecd868" compoundref="res-a1_8cpp" startline="1287" endline="1292">res_comp::text_out</referencedby>
+        <referencedby refid="class_res_f4_monomial_lookup_table_t_a63571792392c6991d5e216d407cca03a_1a63571792392c6991d5e216d407cca03a" compoundref="res-f4-monlookup_8cpp" startline="523" endline="538">ResF4MonomialLookupTableT&lt; Key &gt;::text_out</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_ae80ce7723ce85a6a1f269d7df4ed3749_1ae80ce7723ce85a6a1f269d7df4ed3749" compoundref="res-f4-m2-interface_8cpp" startline="320" endline="374">ResF4toM2Interface::to_M2_MutableMatrix</referencedby>
+        <referencedby refid="class_res_monoid_sparse_a623965fb45cd0b1a99f50ab89738d13e_1a623965fb45cd0b1a99f50ab89738d13e" compoundref="res-moninfo-sparse_8hpp" startline="246" endline="274">ResMonoidSparse::to_varpower_monomial</referencedby>
+        <referencedby refid="class_res_monomial_sorter_ad550fea64af5a97211603eb7e6406dc8_1ad550fea64af5a97211603eb7e6406dc8" compoundref="res-monomial-sorter_8hpp" startline="187" endline="202">ResMonomialSorter::toMonomial</referencedby>
+        <referencedby refid="class_monomial_orderings_adcbc87f98f3e76ff28eb33f4a3fefb05_1adcbc87f98f3e76ff28eb33f4a3fefb05" compoundref="monomial-ordering_8cpp" startline="293" endline="370">MonomialOrderings::toString</referencedby>
+        <referencedby refid="monomial-ordering_8cpp_a2df59f2ce4ad9361c691ca93d9108955_1a2df59f2ce4ad9361c691ca93d9108955" compoundref="monomial-ordering_8cpp" startline="269" endline="279">toString</referencedby>
+        <referencedby refid="m2-mem_8cpp_a229bb05ca9a514c60182129020a00e72_1a229bb05ca9a514c60182129020a00e72" compoundref="m2-mem_8cpp" startline="40" endline="43">trapchk</referencedby>
+        <referencedby refid="_mono_monoid_8cpp_a65fffb73daf9a8ca4713acf8fe74ca0d_1a65fffb73daf9a8ca4713acf8fe74ca0d" compoundref="_mono_monoid_8cpp" startline="785" endline="847">TYPED_TEST</referencedby>
+        <referencedby refid="class_monomial_ideal_a4a0505e0708959a661eedabdd9a00e4e_1a4a0505e0708959a661eedabdd9a00e4e" compoundref="monideal_8hpp" startline="274" endline="274">MonomialIdeal::valid</referencedby>
+        <referencedby refid="class_s_mat_add6ecb096e9141535369eafa31b76558_1add6ecb096e9141535369eafa31b76558" compoundref="smat_8hpp" startline="303" endline="318">SMat&lt; ACoeffRing &gt;::vec_copy</referencedby>
+        <referencedby refid="class_ring_ace4e99008221eece447482a913b91d6e_1ace4e99008221eece447482a913b91d6e" compoundref="ring-vecs_8cpp" startline="710" endline="731">Ring::vec_diff</referencedby>
+        <referencedby refid="class_s_mat_a4a6597ba19ec781734671b9257700d98_1a4a6597ba19ec781734671b9257700d98" compoundref="smat_8hpp" startline="515" endline="537">SMat&lt; ACoeffRing &gt;::vec_divide</referencedby>
+        <referencedby refid="class_ring_a90262b2802488987e553fb60b262ef73_1a90262b2802488987e553fb60b262ef73" compoundref="ring-vecs_8cpp" startline="1006" endline="1021">Ring::vec_divide_by_given_content</referencedby>
+        <referencedby refid="class_s_mat_a4722a5d684b5d82dfa5307c6a7c1a411_1a4722a5d684b5d82dfa5307c6a7c1a411" compoundref="smat_8hpp" startline="491" endline="512">SMat&lt; ACoeffRing &gt;::vec_divide_row</referencedby>
+        <referencedby refid="class_s_mat_acc8746e2fc1e556f2206a3b28a3b133b_1acc8746e2fc1e556f2206a3b28a3b133b" compoundref="smat_8hpp" startline="329" endline="342">SMat&lt; ACoeffRing &gt;::vec_get_entry</referencedby>
+        <referencedby refid="class_ring_a9badb9c8d993b0e1cc82d7af9f24b0dc_1a9badb9c8d993b0e1cc82d7af9f24b0dc" compoundref="ring-vecs_8cpp" startline="392" endline="399">Ring::vec_increase_maxnorm</referencedby>
+        <referencedby refid="class_s_mat_aa63026cd2ca522e69c7cab9f11c8ded7_1aa63026cd2ca522e69c7cab9f11c8ded7" compoundref="smat_8hpp" startline="381" endline="432">SMat&lt; ACoeffRing &gt;::vec_interchange_rows</referencedby>
+        <referencedby refid="class_ring_abc3a4dad081c84e3f09edc8077d579f9_1abc3a4dad081c84e3f09edc8077d579f9" compoundref="ring-vecs_8cpp" startline="947" endline="972">Ring::vec_is_scalar_multiple</referencedby>
+        <referencedby refid="class_s_mat_a91426c4fbd66ccb6e43848cd13a78aca_1a91426c4fbd66ccb6e43848cd13a78aca" compoundref="smat_8hpp" startline="484" endline="488">SMat&lt; ACoeffRing &gt;::vec_negate</referencedby>
+        <referencedby refid="class_s_mat_a62b82f1f738aa000dd68f4c0b5fa113e_1a62b82f1f738aa000dd68f4c0b5fa113e" compoundref="smat_8hpp" startline="612" endline="659">SMat&lt; ACoeffRing &gt;::vec_row_op</referencedby>
+        <referencedby refid="class_s_mat_a50de878f4d218f3d4961d1347ce13118_1a50de878f4d218f3d4961d1347ce13118" compoundref="smat_8hpp" startline="459" endline="481">SMat&lt; ACoeffRing &gt;::vec_scale</referencedby>
+        <referencedby refid="class_s_mat_a2064c2b6d3607ac7dbdbd472dd3475d9_1a2064c2b6d3607ac7dbdbd472dd3475d9" compoundref="smat_8hpp" startline="435" endline="456">SMat&lt; ACoeffRing &gt;::vec_scale_row</referencedby>
+        <referencedby refid="class_s_mat_a20508a713d592df28903b4de066e1472_1a20508a713d592df28903b4de066e1472" compoundref="smat_8hpp" startline="345" endline="378">SMat&lt; ACoeffRing &gt;::vec_set_entry</referencedby>
+        <referencedby refid="class_ring_a4ee9e3796bd24d3ccb662cd45a8d0a16_1a4ee9e3796bd24d3ccb662cd45a8d0a16" compoundref="ring-vecs_8cpp" startline="372" endline="390">Ring::vec_zeroize_tiny</referencedby>
+        <referencedby refid="classbinomial_g_b__comp_ad2e5d97f309fd73dc709d070ae6e2d80_1ad2e5d97f309fd73dc709d070ae6e2d80">binomialGB_comp::VECTOR</referencedby>
+        <referencedby refid="class_matrix_a4810c746604ea9b7aad22672388e0817_1a4810c746604ea9b7aad22672388e0817" compoundref="matrix_8cpp" startline="1272" endline="1314">Matrix::wedge_product</referencedby>
+        <referencedby refid="class_monomial_orderings_a167bb8dc2dd397a80f998ea0d038ba32_1a167bb8dc2dd397a80f998ea0d038ba32" compoundref="monomial-ordering_8cpp" startline="138" endline="144">MonomialOrderings::Weights</referencedby>
+        <referencedby refid="class_gauss_elim_computation_ab9e84877cc1ca8687a144e0d00f9c05e_1ab9e84877cc1ca8687a144e0d00f9c05e" compoundref="gauss_8cpp" startline="114" endline="128">GaussElimComputation::~GaussElimComputation</referencedby>
+        <referencedby refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" compoundref="hilb_8cpp" startline="401" endline="420">hilb_comp::~hilb_comp</referencedby>
+        <referencedby refid="classstash_a08c07e5949cc3fce5f2038fc8b57d681_1a08c07e5949cc3fce5f2038fc8b57d681" compoundref="mem_8cpp" startline="35" endline="46">stash::~stash</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int zero</definition>
+        <argsstring></argsstring>
+        <name>zero</name>
+        <initializer>= 100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="35" column="5" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="35" bodyend="-1"/>
+        <referencedby refid="class_q_ring_info__field__basic_a28b534589183058f81eca6a4472f190d_1a28b534589183058f81eca6a4472f190d" compoundref="qring_8cpp" startline="151" endline="179">QRingInfo_field_basic::gbvector_normal_form</referencedby>
+        <referencedby refid="class_q_ring_info__field___q_q_a6346f042060bf7d77a25c1e3ed588c44_1a6346f042060bf7d77a25c1e3ed588c44" compoundref="qring_8cpp" startline="244" endline="273">QRingInfo_field_QQ::gbvector_normal_form</referencedby>
+        <referencedby refid="class_q_ring_info__field___q_q_a7661437faf6c6254d48a068f709814cc_1a7661437faf6c6254d48a068f709814cc" compoundref="qring_8cpp" startline="275" endline="307">QRingInfo_field_QQ::gbvector_normal_form</referencedby>
+        <referencedby refid="class_q_ring_info___z_z_a107d118dfe75d726daadf748058d4f8d_1a107d118dfe75d726daadf748058d4f8d" compoundref="qring_8cpp" startline="414" endline="444">QRingInfo_ZZ::gbvector_normal_form</referencedby>
+        <referencedby refid="class_marked_g_b_ac3880eb28d453114874f0b26b26801f7_1ac3880eb28d453114874f0b26b26801f7" compoundref="reducedgb-marked_8cpp" startline="222" endline="256">MarkedGB::geo_remainder</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a9c5fdb06f6066f4a2fdaa59bdedca212_1a9c5fdb06f6066f4a2fdaa59bdedca212" compoundref="interface_2matrix_8cpp" startline="85" endline="137">IM2_Matrix_get_entries</referencedby>
+        <referencedby refid="class_naive_polynomial_heap_aef5be967f76ee92694ccf94380ed6355_1aef5be967f76ee92694ccf94380ed6355" compoundref="_n_c_reduction_8cpp" startline="359" endline="365">NaivePolynomialHeap&lt; Queue &gt;::NaivePolynomialHeap</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_a80b35d3f509902ec04bc7a17a433ef6d_1a80b35d3f509902ec04bc7a17a433ef6d" compoundref="mat-elem-ops_8hpp" startline="462" endline="503">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::perform_reduction</referencedby>
+        <referencedby refid="class_priority_queue_polynomial_heap_af70e3658f915511773f77b52eca44171_1af70e3658f915511773f77b52eca44171" compoundref="_n_c_reduction_8cpp" startline="956" endline="963">PriorityQueuePolynomialHeap::PriorityQueuePolynomialHeap</referencedby>
+        <referencedby refid="factory_8h_aaeba08756f80029d2d0391724962e90f_1aaeba08756f80029d2d0391724962e90f" compoundref="polyroots_8cpp" startline="52" endline="192">rawRoots</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+        <referencedby refid="class_marked_g_b_acbca2c01e90e35d59353fc054087f974_1acbca2c01e90e35d59353fc054087f974" compoundref="reducedgb-marked_8cpp" startline="180" endline="220">MarkedGB::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___field_a31548a63d2ad3eca584c20a76a440d7c_1a31548a63d2ad3eca584c20a76a440d7c" compoundref="reducedgb-field_8cpp" startline="175" endline="215">ReducedGB_Field::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___field___local_a81466299f7155c14f7a07fb112c14438_1a81466299f7155c14f7a07fb112c14438" compoundref="reducedgb-field-local_8cpp" startline="573" endline="653">ReducedGB_Field_Local::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_aec4ba0cd56865dcfd322a8b5920beb37_1aec4ba0cd56865dcfd322a8b5920beb37" compoundref="reducedgb-_z_z_8cpp" startline="191" endline="241">ReducedGB_ZZ::remainder</referencedby>
+        <referencedby refid="class_reduced_g_b___z_z_ac3c1c390dfc64c42bcadb3b3666352ef_1ac3c1c390dfc64c42bcadb3b3666352ef" compoundref="reducedgb-_z_z_8cpp" startline="146" endline="189">ReducedGB_ZZ::remainder</referencedby>
+        <referencedby refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" compoundref="godbolt_test_8cpp" startline="63" endline="74">subtract</referencedby>
+        <referencedby refid="class_sum_collector_default_a11b4d55779d21fef15df42a1255212d5_1a11b4d55779d21fef15df42a1255212d5" compoundref="ring_8cpp" startline="473" endline="473">SumCollectorDefault::SumCollectorDefault</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_ab28cad15d19daaf7277bfd0095e90840_1ab28cad15d19daaf7277bfd0095e90840" compoundref="_a_ring_test_8hpp" startline="338" endline="366">testDivide</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_ada808f2424b0679c4701eb75ea9ec11a_1ada808f2424b0679c4701eb75ea9ec11a" compoundref="_a_ring_test_8hpp" startline="310" endline="335">testMultiply</referencedby>
+        <referencedby refid="_ring_test_8hpp_a0e31630c7a47d9cb67c4a378f924ad02_1a0e31630c7a47d9cb67c4a378f924ad02" compoundref="_ring_test_8hpp" startline="138" endline="159">testRingDivide</referencedby>
+        <referencedby refid="class_res_f4to_m2_interface_ad1362a190bb1bbcc8291b53cb8a22b38_1ad1362a190bb1bbcc8291b53cb8a22b38" compoundref="res-f4-m2-interface_8cpp" startline="220" endline="239">ResF4toM2Interface::to_M2_matrix</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="godbolt_test_8cpp_a0e1045921b894ff7aa509d02f4740b4b_1a0e1045921b894ff7aa509d02f4740b4b" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int minus_one</definition>
+        <argsstring></argsstring>
+        <name>minus_one</name>
+        <initializer>= 50</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="36" column="5" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="36" bodyend="-1"/>
+        <referencedby refid="class_concrete_vector_arithmetic_a9c9642d33c3ebee52a2b4a14a8319d37_1a9c9642d33c3ebee52a2b4a14a8319d37" compoundref="_vector_arithmetic_8hpp" startline="538" endline="545">ConcreteVectorArithmetic&lt; RingType &gt;::pushBackMinusOne</referencedby>
+        <referencedby refid="class_mat_elementary_ops_3_01_d_mat_3_01_r_t_01_4_01_4_ace26a7e3cab6a90d5ac33a90dff3fd4f_1ace26a7e3cab6a90d5ac33a90dff3fd4f" compoundref="mat-elem-ops_8hpp" startline="506" endline="573">MatElementaryOps&lt; DMat&lt; RT &gt; &gt;::reduce_by_pivots</referencedby>
+        <referencedby refid="class_free_algebra_a12e7c8f87c5382bd808552fc08d5fef7_1a12e7c8f87c5382bd808552fc08d5fef7" compoundref="_free_algebra_8cpp" startline="413" endline="423">FreeAlgebra::subtract</referencedby>
+        <referencedby refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" compoundref="godbolt_test_8cpp" startline="63" endline="74">subtract</referencedby>
+        <referencedby refid="namespace_matrix_ops_a6bfce64ef689842e289bd5b11bd6dbfc_1a6bfce64ef689842e289bd5b11bd6dbfc" compoundref="dmat_8cpp" startline="63" endline="70">MatrixOps::subtractMultipleTo</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="godbolt_test_8cpp_aeedfefbfa9a8292d413a21d325aab7ba_1aeedfefbfa9a8292d413a21d325aab7ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void subtract_multiple</definition>
+        <argsstring>(int &amp;result, int a, int b)</argsstring>
+        <name>subtract_multiple</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="39" column="7" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="39" bodyend="48"/>
+        <references refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" compoundref="godbolt_test_8cpp" startline="25" endline="25">exp_table</references>
+        <references refid="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" compoundref="godbolt_test_8cpp" startline="27" endline="27">log_table</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="godbolt_test_8cpp_acc37bd5943130fa0316d5d6c483dff91_1acc37bd5943130fa0316d5d6c483dff91" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int modulus_add</definition>
+        <argsstring>(int a, int b, int p)</argsstring>
+        <name>modulus_add</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="51" column="14" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="51" bodyend="55"/>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <referencedby refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" compoundref="godbolt_test_8cpp" startline="63" endline="74">subtract</referencedby>
+        <referencedby refid="godbolt_test_8cpp_afb3d749fd3cadeee4489badf8821dec1_1afb3d749fd3cadeee4489badf8821dec1" compoundref="godbolt_test_8cpp" startline="76" endline="83">subtract_multiple2</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="godbolt_test_8cpp_a7b15a74d626e094b615789b5b56f0b5a_1a7b15a74d626e094b615789b5b56f0b5a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int modulus_sub</definition>
+        <argsstring>(int a, int b, int p)</argsstring>
+        <name>modulus_sub</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="57" column="14" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="57" bodyend="61"/>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <referencedby refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" compoundref="godbolt_test_8cpp" startline="63" endline="74">subtract</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void subtract</definition>
+        <argsstring>(int &amp;result, int a, int b)</argsstring>
+        <name>subtract</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="63" column="8" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="63" bodyend="74"/>
+        <references refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" compoundref="godbolt_test_8cpp" startline="25" endline="25">exp_table</references>
+        <references refid="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" compoundref="godbolt_test_8cpp" startline="27" endline="27">log_table</references>
+        <references refid="godbolt_test_8cpp_a0e1045921b894ff7aa509d02f4740b4b_1a0e1045921b894ff7aa509d02f4740b4b" compoundref="godbolt_test_8cpp" startline="36">minus_one</references>
+        <references refid="godbolt_test_8cpp_acc37bd5943130fa0316d5d6c483dff91_1acc37bd5943130fa0316d5d6c483dff91" compoundref="godbolt_test_8cpp" startline="51" endline="55">modulus_add</references>
+        <references refid="godbolt_test_8cpp_a7b15a74d626e094b615789b5b56f0b5a_1a7b15a74d626e094b615789b5b56f0b5a" compoundref="godbolt_test_8cpp" startline="57" endline="61">modulus_sub</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" compoundref="godbolt_test_8cpp" startline="35">zero</references>
+        <referencedby refid="class_poly_ring_a9118eba568abe71f52b0ec9a3ca571ed_1a9118eba568abe71f52b0ec9a3ca571ed" compoundref="poly_8cpp" startline="1083" endline="1132">PolyRing::gcd_extended</referencedby>
+        <referencedby refid="godbolt_test_8cpp_afb3d749fd3cadeee4489badf8821dec1_1afb3d749fd3cadeee4489badf8821dec1" compoundref="godbolt_test_8cpp" startline="76" endline="83">subtract_multiple2</referencedby>
+        <referencedby refid="_a_ring_c_c_test_8cpp_a6526815c9265a72553a73e89e1648c62_1a6526815c9265a72553a73e89e1648c62" compoundref="_a_ring_c_c_test_8cpp" startline="128" endline="154">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_c_test_8cpp_ac159c77e395a5fdd0243f43a40020504_1ac159c77e395a5fdd0243f43a40020504" compoundref="_a_ring_c_c_c_test_8cpp" startline="134" endline="159">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a185a9eaeceacc3357af113dd60851f91_1a185a9eaeceacc3357af113dd60851f91" compoundref="_a_ring_r_r_test_8cpp" startline="137" endline="166">TEST</referencedby>
+        <referencedby refid="_a_ring_r_ri_test_8cpp_a63701297673b6dc053cc69b010e3d022_1a63701297673b6dc053cc69b010e3d022" compoundref="_a_ring_r_ri_test_8cpp" startline="147" endline="178">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_r_test_8cpp_aa1fe4d6efa4a1fee3b2e800a33f6407e_1aa1fe4d6efa4a1fee3b2e800a33f6407e" compoundref="_a_ring_r_r_r_test_8cpp" startline="140" endline="165">TEST</referencedby>
+        <referencedby refid="_ring_c_c_c_test_8cpp_a09a27a6ee6f2f1e9fb08f20c7a47e3d1_1a09a27a6ee6f2f1e9fb08f20c7a47e3d1" compoundref="_ring_c_c_c_test_8cpp" startline="102" endline="106">TEST</referencedby>
+        <referencedby refid="_ring_q_q_test_8cpp_adbd9c22fdb8d8f0183359fec3a75c46d_1adbd9c22fdb8d8f0183359fec3a75c46d" compoundref="_ring_q_q_test_8cpp" startline="75" endline="75">TEST</referencedby>
+        <referencedby refid="_ring_r_r_r_test_8cpp_a1ac6ad7d30b580bd6c2312afe6fe11ab_1a1ac6ad7d30b580bd6c2312afe6fe11ab" compoundref="_ring_r_r_r_test_8cpp" startline="96" endline="100">TEST</referencedby>
+        <referencedby refid="_ring_z_z_test_8cpp_a76c6febb1c5ce60ad96ed6b6ea459f85_1a76c6febb1c5ce60ad96ed6b6ea459f85" compoundref="_ring_z_z_test_8cpp" startline="126" endline="126">TEST</referencedby>
+        <referencedby refid="_ring_z_zp_test_8cpp_a97fa217c288a5c60e8629082b7e4df91_1a97fa217c288a5c60e8629082b7e4df91" compoundref="_ring_z_zp_test_8cpp" startline="84" endline="88">TEST</referencedby>
+        <referencedby refid="_ring_z_zp_test_8cpp_a1cdabbd10c26dd0a624a7173ff5dd0f0_1a1cdabbd10c26dd0a624a7173ff5dd0f0" compoundref="_ring_z_zp_test_8cpp" startline="138" endline="142">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="godbolt_test_8cpp_afb3d749fd3cadeee4489badf8821dec1_1afb3d749fd3cadeee4489badf8821dec1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void subtract_multiple2</definition>
+        <argsstring>(int &amp;result, int a, int b)</argsstring>
+        <name>subtract_multiple2</name>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/godboltTest.cpp" line="76" column="8" bodyfile="Macaulay2/e/godboltTest.cpp" bodystart="76" bodyend="83"/>
+        <references refid="godbolt_test_8cpp_acc37bd5943130fa0316d5d6c483dff91_1acc37bd5943130fa0316d5d6c483dff91" compoundref="godbolt_test_8cpp" startline="51" endline="55">modulus_add</references>
+        <references refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" compoundref="godbolt_test_8cpp" startline="33">p1</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" compoundref="godbolt_test_8cpp" startline="63" endline="74">subtract</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Standalone log / exp / Zech-table scratch file for <computeroutput>Z/p</computeroutput> at <computeroutput><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref> = 101</computeroutput>, not part of the build. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Hardcodes the discrete-log and exponential tables of <computeroutput>(Z/101)^*</computeroutput> (the primitive root generates the multiplicative group, so each index <computeroutput>i in [0, p-1)</computeroutput> stores <computeroutput>g^i mod <ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref></computeroutput> in <computeroutput><ref refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" kindref="member">exp_table</ref>[i]</computeroutput> and inversely in <computeroutput><ref refid="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" kindref="member">log_table</ref></computeroutput>), keeps a second variant with the zero/one boundary adjusted (<computeroutput><ref refid="godbolt_test_8cpp_acb662a02ed1c065aaf832bfdf5d0d8ad_1acb662a02ed1c065aaf832bfdf5d0d8ad" kindref="member">exp_table2</ref></computeroutput> / <computeroutput><ref refid="godbolt_test_8cpp_a22ca9e6de82e70b1965e089c248c71a5_1a22ca9e6de82e70b1965e089c248c71a5" kindref="member">log_table2</ref></computeroutput>), and pastes the <computeroutput><ref refid="godbolt_test_8cpp_aeedfefbfa9a8292d413a21d325aab7ba_1aeedfefbfa9a8292d413a21d325aab7ba" kindref="member">subtract_multiple</ref></computeroutput> inner-loop body from <computeroutput><ref refid="aring-zzp_8hpp" kindref="compound">aring-zzp.hpp</ref></computeroutput> next to them. The intent was to ship a self-contained example to Compiler Explorer (godbolt) and inspect the generated assembly for the table-based modular arithmetic. CMake / autotools exclude this file from the production build; the tables are not consulted at runtime.</para>
+<para>Retain as a worked-example reference for anyone adding a new small <computeroutput>Z/p</computeroutput> aring; the production paths live in <computeroutput><ref refid="aring-zzp_8hpp" kindref="compound">aring-zzp.hpp</ref></computeroutput>, <computeroutput><ref refid="aring-zzp-flint_8hpp" kindref="compound">aring-zzp-flint.hpp</ref></computeroutput>, and <computeroutput><ref refid="aring-zzp-ffpack_8hpp" kindref="compound">aring-zzp-ffpack.hpp</ref></computeroutput>.</para>
+<para><simplesect kind="see"><para><ref refid="aring-zzp_8hpp" kindref="compound">aring-zzp.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="coeffrings_8hpp" kindref="compound">coeffrings.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" kindref="member">exp_table</ref>[]<sp/>=<sp/>{1,2,4,8,16,32,64,27,54,7,14,28,56,11,22,44,88,75,49,98,95,89,77,53,5,10,20,40,80,59,17,34,68,35,70,39,78,55,9,18,36,72,43,86,71,41,82,63,25,50,100,99,97,93,85,69,37,74,47,94,87,73,45,90,79,57,13,26,52,3,6,12,24,48,96,91,81,61,21,42,84,67,33,66,31,62,23,46,92,83,65,29,58,15,30,60,19,38,76,51,0};</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" kindref="member">log_table</ref>[]<sp/>=<sp/>{100,0,1,69,2,24,70,9,3,38,25,13,71,66,10,93,4,30,39,96,26,78,14,86,72,48,67,7,11,91,94,84,5,82,31,33,40,56,97,35,27,45,79,42,15,62,87,58,73,18,49,99,68,23,8,37,12,65,92,29,95,77,85,47,6,90,83,81,32,55,34,44,41,61,57,17,98,22,36,64,28,76,46,89,80,54,43,60,16,21,63,75,88,53,59,20,74,52,19,51,50};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="godbolt_test_8cpp_acb662a02ed1c065aaf832bfdf5d0d8ad_1acb662a02ed1c065aaf832bfdf5d0d8ad" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_acb662a02ed1c065aaf832bfdf5d0d8ad_1acb662a02ed1c065aaf832bfdf5d0d8ad" kindref="member">exp_table2</ref>[]<sp/>=<sp/>{0,2,4,8,16,32,64,27,54,7,14,28,56,11,22,44,88,75,49,98,95,89,77,53,5,10,20,40,80,59,17,34,68,35,70,39,78,55,9,18,36,72,43,86,71,41,82,63,25,50,100,99,97,93,85,69,37,74,47,94,87,73,45,90,79,57,13,26,52,3,6,12,24,48,96,91,81,61,21,42,84,67,33,66,31,62,23,46,92,83,65,29,58,15,30,60,19,38,76,51,1};</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="godbolt_test_8cpp_a22ca9e6de82e70b1965e089c248c71a5_1a22ca9e6de82e70b1965e089c248c71a5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a22ca9e6de82e70b1965e089c248c71a5_1a22ca9e6de82e70b1965e089c248c71a5" kindref="member">log_table2</ref>[]<sp/>=<sp/>{0,100,1,69,2,24,70,9,3,38,25,13,71,66,10,93,4,30,39,96,26,78,14,86,72,48,67,7,11,91,94,84,5,82,31,33,40,56,97,35,27,45,79,42,15,62,87,58,73,18,49,99,68,23,8,37,12,65,92,29,95,77,85,47,6,90,83,81,32,55,34,44,41,61,57,17,98,22,36,64,28,76,46,89,80,54,43,60,16,21,63,75,88,53,59,20,74,52,19,51,50};</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" kindref="member">p1</ref><sp/>=<sp/>100;</highlight></codeline>
+<codeline lineno="34" refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>=<sp/>101;</highlight></codeline>
+<codeline lineno="35" refid="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" kindref="member">zero</ref><sp/>=<sp/>100;</highlight></codeline>
+<codeline lineno="36" refid="godbolt_test_8cpp_a0e1045921b894ff7aa509d02f4740b4b_1a0e1045921b894ff7aa509d02f4740b4b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a0e1045921b894ff7aa509d02f4740b4b_1a0e1045921b894ff7aa509d02f4740b4b" kindref="member">minus_one</ref><sp/>=<sp/>50;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/>aring-zzp.hpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="godbolt_test_8cpp_aeedfefbfa9a8292d413a21d325aab7ba_1aeedfefbfa9a8292d413a21d325aab7ba" refkind="member"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_aeedfefbfa9a8292d413a21d325aab7ba_1aeedfefbfa9a8292d413a21d325aab7ba" kindref="member">subtract_multiple</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b)</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>we<sp/>assume:<sp/>a,<sp/>b<sp/>are<sp/>NONZERO!!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>result<sp/>-=<sp/>a*b</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ab<sp/>=<sp/>a<sp/>+<sp/>b;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ab<sp/>&gt;<sp/><ref refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" kindref="member">p1</ref>)<sp/>ab<sp/>-=<sp/><ref refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" kindref="member">p1</ref>;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n<sp/>=<sp/><ref refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" kindref="member">exp_table</ref>[<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>]<sp/>-<sp/><ref refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" kindref="member">exp_table</ref>[ab];</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(n<sp/>&lt;<sp/>0)<sp/>n<sp/>+=<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" kindref="member">log_table</ref>[n];</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">//<sp/>coeffrings.hpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="godbolt_test_8cpp_acc37bd5943130fa0316d5d6c483dff91_1acc37bd5943130fa0316d5d6c483dff91" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_acc37bd5943130fa0316d5d6c483dff91_1acc37bd5943130fa0316d5d6c483dff91" kindref="member">modulus_add</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>t<sp/>=<sp/>a<sp/>+<sp/>b;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(t<sp/>&lt;<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>?<sp/>t<sp/>:<sp/>t<sp/>-<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="godbolt_test_8cpp_a7b15a74d626e094b615789b5b56f0b5a_1a7b15a74d626e094b615789b5b56f0b5a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a7b15a74d626e094b615789b5b56f0b5a_1a7b15a74d626e094b615789b5b56f0b5a" kindref="member">modulus_sub</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>)</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>t<sp/>=<sp/>a<sp/>-<sp/>b;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(t<sp/>&lt;<sp/>0<sp/>?<sp/>t<sp/>+<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref><sp/>:<sp/>t);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" kindref="member">subtract</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(b<sp/>==<sp/><ref refid="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" kindref="member">zero</ref>)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>==<sp/><ref refid="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" kindref="member">zero</ref>)</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="godbolt_test_8cpp_acc37bd5943130fa0316d5d6c483dff91_1acc37bd5943130fa0316d5d6c483dff91" kindref="member">modulus_add</ref>(b,<sp/><ref refid="godbolt_test_8cpp_a0e1045921b894ff7aa509d02f4740b4b_1a0e1045921b894ff7aa509d02f4740b4b" kindref="member">minus_one</ref>,<sp/><ref refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" kindref="member">p1</ref>);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n<sp/>=<sp/><ref refid="godbolt_test_8cpp_a7b15a74d626e094b615789b5b56f0b5a_1a7b15a74d626e094b615789b5b56f0b5a" kindref="member">modulus_sub</ref>(<ref refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" kindref="member">exp_table</ref>[a],<sp/><ref refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" kindref="member">exp_table</ref>[b],<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" kindref="member">log_table</ref>[n];</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="godbolt_test_8cpp_afb3d749fd3cadeee4489badf8821dec1_1afb3d749fd3cadeee4489badf8821dec1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_afb3d749fd3cadeee4489badf8821dec1_1afb3d749fd3cadeee4489badf8821dec1" kindref="member">subtract_multiple2</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b)</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>we<sp/>assume:<sp/>a,<sp/>b<sp/>are<sp/>NONZERO!!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>result<sp/>-=<sp/>a*b</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ab<sp/>=<sp/><ref refid="godbolt_test_8cpp_acc37bd5943130fa0316d5d6c483dff91_1acc37bd5943130fa0316d5d6c483dff91" kindref="member">modulus_add</ref>(a,<sp/>b,<sp/><ref refid="godbolt_test_8cpp_a8d5504470de9fec69f0389092910c500_1a8d5504470de9fec69f0389092910c500" kindref="member">p1</ref>);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" kindref="member">subtract</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>ab);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/godboltTest.cpp"/>
+  </compounddef>
+</doxygen>

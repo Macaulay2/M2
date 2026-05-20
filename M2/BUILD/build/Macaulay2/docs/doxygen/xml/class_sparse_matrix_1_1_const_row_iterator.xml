@@ -1,0 +1,401 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_sparse_matrix_1_1_const_row_iterator" kind="class" language="C++" prot="public">
+    <compoundname>SparseMatrix::ConstRowIterator</compoundname>
+    <includes refid="_sparse_matrix_8hpp" local="no">SparseMatrix.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_sparse_matrix_1_1_const_row_iterator_acadbb93a394561a34866a4afca351164_1acadbb93a394561a34866a4afca351164" prot="public" static="no">
+        <type>const std::pair&lt; <ref refid="class_sparse_matrix_a7c42586fe17c8e6c9231765abaf2e1da_1a7c42586fe17c8e6c9231765abaf2e1da" kindref="member">ColIndex</ref>, <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">Scalar</ref> &gt;</type>
+        <definition>typedef const std::pair&lt;ColIndex, Scalar&gt; SparseMatrix::ConstRowIterator::value_type</definition>
+        <argsstring></argsstring>
+        <name>value_type</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::value_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="265" column="29" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="265" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sparse_matrix_1_1_const_row_iterator_a009f75b32f588a525a2bbdbbdf000e26_1a009f75b32f588a525a2bbdbbdf000e26" prot="public" static="no">
+        <type>ptrdiff_t</type>
+        <definition>typedef ptrdiff_t SparseMatrix::ConstRowIterator::difference_type</definition>
+        <argsstring></argsstring>
+        <name>difference_type</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::difference_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="266" column="19" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sparse_matrix_1_1_const_row_iterator_af02719a7b1d19a29979cf9d12f833384_1af02719a7b1d19a29979cf9d12f833384" prot="public" static="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>typedef size_t SparseMatrix::ConstRowIterator::distance_type</definition>
+        <argsstring></argsstring>
+        <name>distance_type</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::distance_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="267" column="20" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="267" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sparse_matrix_1_1_const_row_iterator_ac9764bf00a01a4ab74b2581e70b700b1_1ac9764bf00a01a4ab74b2581e70b700b1" prot="public" static="no">
+        <type><ref refid="class_sparse_matrix_1_1_const_row_iterator_acadbb93a394561a34866a4afca351164_1acadbb93a394561a34866a4afca351164" kindref="member">value_type</ref> *</type>
+        <definition>typedef value_type* SparseMatrix::ConstRowIterator::pointer</definition>
+        <argsstring></argsstring>
+        <name>pointer</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::pointer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="268" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="268" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sparse_matrix_1_1_const_row_iterator_a3b5de94fc3ceed322c56eb671b83ae8f_1a3b5de94fc3ceed322c56eb671b83ae8f" prot="public" static="no">
+        <type><ref refid="class_sparse_matrix_1_1_const_row_iterator_acadbb93a394561a34866a4afca351164_1acadbb93a394561a34866a4afca351164" kindref="member">value_type</ref> &amp;</type>
+        <definition>typedef value_type&amp; SparseMatrix::ConstRowIterator::reference</definition>
+        <argsstring></argsstring>
+        <name>reference</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::reference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="269" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="269" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sparse_matrix_1_1_const_row_iterator_ae6922d0839b76b8d9205d41caed354e1_1ae6922d0839b76b8d9205d41caed354e1" prot="public" static="no">
+        <type>std::random_access_iterator_tag</type>
+        <definition>typedef std::random_access_iterator_tag SparseMatrix::ConstRowIterator::iterator_category</definition>
+        <argsstring></argsstring>
+        <name>iterator_category</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::iterator_category</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="270" column="45" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="270" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_sparse_matrix_1_1_const_row_iterator_a240abf68603784c3dcc4761f8bc41ad6_1a240abf68603784c3dcc4761f8bc41ad6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class SparseMatrix</definition>
+        <argsstring></argsstring>
+        <name>SparseMatrix</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::SparseMatrix</qualifiedname>
+        <param>
+          <type><ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="303" column="18" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="303" bodyend="-1"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a240abf68603784c3dcc4761f8bc41ad6_1a240abf68603784c3dcc4761f8bc41ad6" compoundref="_sparse_matrix_8hpp" startline="303">SparseMatrix</references>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_a240abf68603784c3dcc4761f8bc41ad6_1a240abf68603784c3dcc4761f8bc41ad6" compoundref="_sparse_matrix_8hpp" startline="303">SparseMatrix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_sparse_matrix_1_1_const_row_iterator_aa82e51fabb9942b01a699822cf2ef1d4_1aa82e51fabb9942b01a699822cf2ef1d4" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_sparse_matrix_a7c42586fe17c8e6c9231765abaf2e1da_1a7c42586fe17c8e6c9231765abaf2e1da" kindref="member">ColIndex</ref> *</type>
+        <definition>const ColIndex* SparseMatrix::ConstRowIterator::mColIndexIt</definition>
+        <argsstring></argsstring>
+        <name>mColIndexIt</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::mColIndexIt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="313" column="20" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="313" bodyend="-1"/>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" compoundref="_sparse_matrix_8hpp" startline="304" endline="311">ConstRowIterator</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_a6cf3f2c955efca5a341da770e237b185_1a6cf3f2c955efca5a341da770e237b185" compoundref="_sparse_matrix_8hpp" startline="300" endline="300">index</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_ac4968367e37d7c48f152f9ea6d7a37f3_1ac4968367e37d7c48f152f9ea6d7a37f3" compoundref="_sparse_matrix_8hpp" startline="272" endline="276">operator++</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_abc78e6f96e9ccc89dccc9651d44f3d21_1abc78e6f96e9ccc89dccc9651d44f3d21" compoundref="_sparse_matrix_8hpp" startline="278" endline="282">operator+=</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_aca53df6fd943c72eda0808d55f6a7ac9_1aca53df6fd943c72eda0808d55f6a7ac9" compoundref="_sparse_matrix_8hpp" startline="290" endline="292">operator-</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_aa474b3a03abe98e13085c9b37d530a99_1aa474b3a03abe98e13085c9b37d530a99" compoundref="_sparse_matrix_8hpp" startline="286" endline="288">operator&lt;</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_a397eb9b7a6e44a7aa26fad9aecad0d77_1a397eb9b7a6e44a7aa26fad9aecad0d77" compoundref="_sparse_matrix_8hpp" startline="294" endline="296">operator==</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_1_1_const_row_iterator_a9157612e981a7b14cb49b5fdc8dea94a_1a9157612e981a7b14cb49b5fdc8dea94a" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">Scalar</ref> *</type>
+        <definition>const Scalar* SparseMatrix::ConstRowIterator::mScalarIt</definition>
+        <argsstring></argsstring>
+        <name>mScalarIt</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::mScalarIt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="314" column="18" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="314" bodyend="-1"/>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" compoundref="_sparse_matrix_8hpp" startline="304" endline="311">ConstRowIterator</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_ac4968367e37d7c48f152f9ea6d7a37f3_1ac4968367e37d7c48f152f9ea6d7a37f3" compoundref="_sparse_matrix_8hpp" startline="272" endline="276">operator++</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_abc78e6f96e9ccc89dccc9651d44f3d21_1abc78e6f96e9ccc89dccc9651d44f3d21" compoundref="_sparse_matrix_8hpp" startline="278" endline="282">operator+=</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_ac7964ffd86494b97c7452d67c1c903fe_1ac7964ffd86494b97c7452d67c1c903fe" compoundref="_sparse_matrix_8hpp" startline="299" endline="299">scalar</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_ac4968367e37d7c48f152f9ea6d7a37f3_1ac4968367e37d7c48f152f9ea6d7a37f3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" kindref="member">ConstRowIterator</ref> &amp;</type>
+        <definition>ConstRowIterator &amp; SparseMatrix::ConstRowIterator::operator++</definition>
+        <argsstring>()</argsstring>
+        <name>operator++</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::operator++</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="272" column="22" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="272" bodyend="276"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" compoundref="_sparse_matrix_8hpp" startline="304" endline="311">ConstRowIterator</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_aa82e51fabb9942b01a699822cf2ef1d4_1aa82e51fabb9942b01a699822cf2ef1d4" compoundref="_sparse_matrix_8hpp" startline="313">mColIndexIt</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a9157612e981a7b14cb49b5fdc8dea94a_1a9157612e981a7b14cb49b5fdc8dea94a" compoundref="_sparse_matrix_8hpp" startline="314">mScalarIt</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_abc78e6f96e9ccc89dccc9651d44f3d21_1abc78e6f96e9ccc89dccc9651d44f3d21" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" kindref="member">ConstRowIterator</ref> &amp;</type>
+        <definition>ConstRowIterator &amp; SparseMatrix::ConstRowIterator::operator+=</definition>
+        <argsstring>(difference_type i)</argsstring>
+        <name>operator+=</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::operator+=</qualifiedname>
+        <param>
+          <type><ref refid="class_sparse_matrix_1_1_const_row_iterator_a009f75b32f588a525a2bbdbbdf000e26_1a009f75b32f588a525a2bbdbbdf000e26" kindref="member">difference_type</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="278" column="22" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="278" bodyend="282"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" compoundref="_sparse_matrix_8hpp" startline="304" endline="311">ConstRowIterator</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_aa82e51fabb9942b01a699822cf2ef1d4_1aa82e51fabb9942b01a699822cf2ef1d4" compoundref="_sparse_matrix_8hpp" startline="313">mColIndexIt</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a9157612e981a7b14cb49b5fdc8dea94a_1a9157612e981a7b14cb49b5fdc8dea94a" compoundref="_sparse_matrix_8hpp" startline="314">mScalarIt</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_a357bf634d1baa548f7e1db17d18c2fd8_1a357bf634d1baa548f7e1db17d18c2fd8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix_1_1_const_row_iterator_acadbb93a394561a34866a4afca351164_1acadbb93a394561a34866a4afca351164" kindref="member">value_type</ref></type>
+        <definition>value_type SparseMatrix::ConstRowIterator::operator*</definition>
+        <argsstring>() const</argsstring>
+        <name>operator*</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::operator*</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="284" column="16" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="284" bodyend="284"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a6cf3f2c955efca5a341da770e237b185_1a6cf3f2c955efca5a341da770e237b185" compoundref="_sparse_matrix_8hpp" startline="300" endline="300">index</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_ac7964ffd86494b97c7452d67c1c903fe_1ac7964ffd86494b97c7452d67c1c903fe" compoundref="_sparse_matrix_8hpp" startline="299" endline="299">scalar</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_aa474b3a03abe98e13085c9b37d530a99_1aa474b3a03abe98e13085c9b37d530a99" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SparseMatrix::ConstRowIterator::operator&lt;</definition>
+        <argsstring>(const ConstRowIterator &amp;it) const</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::operator&lt;</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" kindref="member">ConstRowIterator</ref> &amp;</type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="286" column="5" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="286" bodyend="288"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" compoundref="_sparse_matrix_8hpp" startline="304" endline="311">ConstRowIterator</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_aa82e51fabb9942b01a699822cf2ef1d4_1aa82e51fabb9942b01a699822cf2ef1d4" compoundref="_sparse_matrix_8hpp" startline="313">mColIndexIt</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_aca53df6fd943c72eda0808d55f6a7ac9_1aca53df6fd943c72eda0808d55f6a7ac9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix_1_1_const_row_iterator_a009f75b32f588a525a2bbdbbdf000e26_1a009f75b32f588a525a2bbdbbdf000e26" kindref="member">difference_type</ref></type>
+        <definition>difference_type SparseMatrix::ConstRowIterator::operator-</definition>
+        <argsstring>(const ConstRowIterator &amp;it) const</argsstring>
+        <name>operator-</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::operator-</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" kindref="member">ConstRowIterator</ref> &amp;</type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="290" column="21" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="290" bodyend="292"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" compoundref="_sparse_matrix_8hpp" startline="304" endline="311">ConstRowIterator</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_aa82e51fabb9942b01a699822cf2ef1d4_1aa82e51fabb9942b01a699822cf2ef1d4" compoundref="_sparse_matrix_8hpp" startline="313">mColIndexIt</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_a397eb9b7a6e44a7aa26fad9aecad0d77_1a397eb9b7a6e44a7aa26fad9aecad0d77" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SparseMatrix::ConstRowIterator::operator==</definition>
+        <argsstring>(const ConstRowIterator &amp;it) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" kindref="member">ConstRowIterator</ref> &amp;</type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="294" column="10" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="294" bodyend="296"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" compoundref="_sparse_matrix_8hpp" startline="304" endline="311">ConstRowIterator</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_aa82e51fabb9942b01a699822cf2ef1d4_1aa82e51fabb9942b01a699822cf2ef1d4" compoundref="_sparse_matrix_8hpp" startline="313">mColIndexIt</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_abac8c73cac4b5f51b44d8b26f576b135_1abac8c73cac4b5f51b44d8b26f576b135" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool SparseMatrix::ConstRowIterator::operator!=</definition>
+        <argsstring>(const ConstRowIterator &amp;it) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" kindref="member">ConstRowIterator</ref> &amp;</type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="298" column="10" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="298" bodyend="298"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" compoundref="_sparse_matrix_8hpp" startline="304" endline="311">ConstRowIterator</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_ac7964ffd86494b97c7452d67c1c903fe_1ac7964ffd86494b97c7452d67c1c903fe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">Scalar</ref> &amp;</type>
+        <definition>const Scalar &amp; SparseMatrix::ConstRowIterator::scalar</definition>
+        <argsstring>() const</argsstring>
+        <name>scalar</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::scalar</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="299" column="18" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="299" bodyend="299"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a9157612e981a7b14cb49b5fdc8dea94a_1a9157612e981a7b14cb49b5fdc8dea94a" compoundref="_sparse_matrix_8hpp" startline="314">mScalarIt</references>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_a357bf634d1baa548f7e1db17d18c2fd8_1a357bf634d1baa548f7e1db17d18c2fd8" compoundref="_sparse_matrix_8hpp" startline="284" endline="284">operator*</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3dbc5e9230f94d1f22fc5ee20e441ce5_1a3dbc5e9230f94d1f22fc5ee20e441ce5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="168" endline="188">MATHICGB_NAMESPACE_BEGIN::DenseRow::rowReduceByUnitary</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_a6cf3f2c955efca5a341da770e237b185_1a6cf3f2c955efca5a341da770e237b185" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_sparse_matrix_a7c42586fe17c8e6c9231765abaf2e1da_1a7c42586fe17c8e6c9231765abaf2e1da" kindref="member">ColIndex</ref> &amp;</type>
+        <definition>const ColIndex &amp; SparseMatrix::ConstRowIterator::index</definition>
+        <argsstring>() const</argsstring>
+        <name>index</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::index</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="300" column="20" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="300" bodyend="300"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_aa82e51fabb9942b01a699822cf2ef1d4_1aa82e51fabb9942b01a699822cf2ef1d4" compoundref="_sparse_matrix_8hpp" startline="313">mColIndexIt</references>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_a357bf634d1baa548f7e1db17d18c2fd8_1a357bf634d1baa548f7e1db17d18c2fd8" compoundref="_sparse_matrix_8hpp" startline="284" endline="284">operator*</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a45306678f821408d44aa25a3f68d8b57_1a45306678f821408d44aa25a3f68d8b57" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="402" endline="556">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonForm</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SparseMatrix::ConstRowIterator::ConstRowIterator</definition>
+        <argsstring>(const ColIndex *const indicesIt, const Scalar *const scalarIt)</argsstring>
+        <name>ConstRowIterator</name>
+        <qualifiedname>SparseMatrix::ConstRowIterator::ConstRowIterator</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_a7c42586fe17c8e6c9231765abaf2e1da_1a7c42586fe17c8e6c9231765abaf2e1da" kindref="member">ColIndex</ref> *const</type>
+          <declname>indicesIt</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">Scalar</ref> *const</type>
+          <declname>scalarIt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="304" column="5" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="304" bodyend="311"/>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_aa82e51fabb9942b01a699822cf2ef1d4_1aa82e51fabb9942b01a699822cf2ef1d4" compoundref="_sparse_matrix_8hpp" startline="313">mColIndexIt</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a9157612e981a7b14cb49b5fdc8dea94a_1a9157612e981a7b14cb49b5fdc8dea94a" compoundref="_sparse_matrix_8hpp" startline="314">mScalarIt</references>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_abac8c73cac4b5f51b44d8b26f576b135_1abac8c73cac4b5f51b44d8b26f576b135" compoundref="_sparse_matrix_8hpp" startline="298" endline="298">operator!=</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_ac4968367e37d7c48f152f9ea6d7a37f3_1ac4968367e37d7c48f152f9ea6d7a37f3" compoundref="_sparse_matrix_8hpp" startline="272" endline="276">operator++</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_abc78e6f96e9ccc89dccc9651d44f3d21_1abc78e6f96e9ccc89dccc9651d44f3d21" compoundref="_sparse_matrix_8hpp" startline="278" endline="282">operator+=</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_aca53df6fd943c72eda0808d55f6a7ac9_1aca53df6fd943c72eda0808d55f6a7ac9" compoundref="_sparse_matrix_8hpp" startline="290" endline="292">operator-</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_aa474b3a03abe98e13085c9b37d530a99_1aa474b3a03abe98e13085c9b37d530a99" compoundref="_sparse_matrix_8hpp" startline="286" endline="288">operator&lt;</referencedby>
+        <referencedby refid="class_sparse_matrix_1_1_const_row_iterator_a397eb9b7a6e44a7aa26fad9aecad0d77_1a397eb9b7a6e44a7aa26fad9aecad0d77" compoundref="_sparse_matrix_8hpp" startline="294" endline="296">operator==</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Iterates through the entries in a row. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>SparseMatrix::ConstRowIterator</label>
+        <link refid="class_sparse_matrix_1_1_const_row_iterator"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mColIndexIt</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mScalarIt</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>const ColIndex *</label>
+      </node>
+      <node id="3">
+        <label>const Scalar *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" line="263" column="3" bodyfile="submodules/mathicgb/src/mathicgb/SparseMatrix.hpp" bodystart="263" bodyend="315"/>
+    <listofallmembers>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_a8ddc78493e3142939bd00b667e842f5d_1a8ddc78493e3142939bd00b667e842f5d" prot="private" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>ConstRowIterator</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_a009f75b32f588a525a2bbdbbdf000e26_1a009f75b32f588a525a2bbdbbdf000e26" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>difference_type</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_af02719a7b1d19a29979cf9d12f833384_1af02719a7b1d19a29979cf9d12f833384" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>distance_type</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_a6cf3f2c955efca5a341da770e237b185_1a6cf3f2c955efca5a341da770e237b185" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>index</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_ae6922d0839b76b8d9205d41caed354e1_1ae6922d0839b76b8d9205d41caed354e1" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>iterator_category</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_aa82e51fabb9942b01a699822cf2ef1d4_1aa82e51fabb9942b01a699822cf2ef1d4" prot="private" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>mColIndexIt</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_a9157612e981a7b14cb49b5fdc8dea94a_1a9157612e981a7b14cb49b5fdc8dea94a" prot="private" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>mScalarIt</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_abac8c73cac4b5f51b44d8b26f576b135_1abac8c73cac4b5f51b44d8b26f576b135" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>operator!=</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_a357bf634d1baa548f7e1db17d18c2fd8_1a357bf634d1baa548f7e1db17d18c2fd8" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>operator*</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_ac4968367e37d7c48f152f9ea6d7a37f3_1ac4968367e37d7c48f152f9ea6d7a37f3" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>operator++</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_abc78e6f96e9ccc89dccc9651d44f3d21_1abc78e6f96e9ccc89dccc9651d44f3d21" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>operator+=</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_aca53df6fd943c72eda0808d55f6a7ac9_1aca53df6fd943c72eda0808d55f6a7ac9" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>operator-</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_aa474b3a03abe98e13085c9b37d530a99_1aa474b3a03abe98e13085c9b37d530a99" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>operator&lt;</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_a397eb9b7a6e44a7aa26fad9aecad0d77_1a397eb9b7a6e44a7aa26fad9aecad0d77" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>operator==</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_ac9764bf00a01a4ab74b2581e70b700b1_1ac9764bf00a01a4ab74b2581e70b700b1" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>pointer</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_a3b5de94fc3ceed322c56eb671b83ae8f_1a3b5de94fc3ceed322c56eb671b83ae8f" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>reference</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_ac7964ffd86494b97c7452d67c1c903fe_1ac7964ffd86494b97c7452d67c1c903fe" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>scalar</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_a240abf68603784c3dcc4761f8bc41ad6_1a240abf68603784c3dcc4761f8bc41ad6" prot="private" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>SparseMatrix</name></member>
+      <member refid="class_sparse_matrix_1_1_const_row_iterator_acadbb93a394561a34866a4afca351164_1acadbb93a394561a34866a4afca351164" prot="public" virt="non-virtual"><scope>SparseMatrix::ConstRowIterator</scope><name>value_type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monomial_map_1_1_reader" kind="class" language="C++" prot="public">
+    <compoundname>MonomialMap::Reader</compoundname>
+    <includes refid="_monomial_map_8hpp" local="no">MonomialMap.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_monomial_map_1_1_reader_aa44dee6d424b875c0bb71801c590b17c_1aa44dee6d424b875c0bb71801c590b17c" prot="public" static="no">
+        <type><ref refid="class_fixed_size_monomial_map" kindref="compound">FixedSizeMonomialMap</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt;::const_iterator</type>
+        <definition>typedef FixedSizeMonomialMap&lt;T&gt;::const_iterator MonomialMap&lt; T &gt;::Reader::const_iterator</definition>
+        <argsstring></argsstring>
+        <name>const_iterator</name>
+        <qualifiedname>MonomialMap::Reader::const_iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" line="130" column="60" bodyfile="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_monomial_map_1_1_reader_a085b98e13046ca9ac5edb3e7c0ce1aa4_1a085b98e13046ca9ac5edb3e7c0ce1aa4" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_fixed_size_monomial_map" kindref="compound">FixedSizeMonomialMap</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt; &amp;</type>
+        <definition>const FixedSizeMonomialMap&lt;T&gt;&amp; MonomialMap&lt; T &gt;::Reader::mMap</definition>
+        <argsstring></argsstring>
+        <name>mMap</name>
+        <qualifiedname>MonomialMap::Reader::mMap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" line="139" column="32" bodyfile="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" bodystart="139" bodyend="-1"/>
+        <referencedby refid="class_monomial_map_1_1_reader_a772360fb20a754df554024dd2223020b_1a772360fb20a754df554024dd2223020b" compoundref="_monomial_map_8hpp" startline="135" endline="135">MonomialMap&lt; T &gt;::Reader::begin</referencedby>
+        <referencedby refid="class_monomial_map_1_1_reader_aac6e75b8c176a26efb9679640dcc4c51_1aac6e75b8c176a26efb9679640dcc4c51" compoundref="_monomial_map_8hpp" startline="136" endline="136">MonomialMap&lt; T &gt;::Reader::end</referencedby>
+        <referencedby refid="class_monomial_map_1_1_reader_ab1120a75bef7bbe403e12b9eb3460112_1ab1120a75bef7bbe403e12b9eb3460112" compoundref="_monomial_map_8hpp" startline="105" endline="107">MonomialMap&lt; T &gt;::Reader::find</referencedby>
+        <referencedby refid="class_monomial_map_1_1_reader_aa7e4eb64e777a52aba8de26758ba633f_1aa7e4eb64e777a52aba8de26758ba633f" compoundref="_monomial_map_8hpp" startline="111" endline="116">MonomialMap&lt; T &gt;::Reader::findProduct</referencedby>
+        <referencedby refid="class_monomial_map_1_1_reader_adf4c37bfe21e7cded5c54d273b672199_1adf4c37bfe21e7cded5c54d273b672199" compoundref="_monomial_map_8hpp" startline="122" endline="128">MonomialMap&lt; T &gt;::Reader::findTwoProducts</referencedby>
+        <referencedby refid="class_monomial_map_1_1_reader_ad98bf7523b4b28316577f83e50698c60_1ad98bf7523b4b28316577f83e50698c60" compoundref="_monomial_map_8hpp" startline="92" endline="98">MonomialMap&lt; T &gt;::Reader::Reader</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_monomial_map_1_1_reader_ad98bf7523b4b28316577f83e50698c60_1ad98bf7523b4b28316577f83e50698c60" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonomialMap&lt; T &gt;::Reader::Reader</definition>
+        <argsstring>(const MonomialMap&lt; T &gt; &amp;map)</argsstring>
+        <name>Reader</name>
+        <qualifiedname>MonomialMap::Reader::Reader</qualifiedname>
+        <param>
+          <type>const <ref refid="class_monomial_map" kindref="compound">MonomialMap</ref>&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt; &amp;</type>
+          <declname>map</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" line="92" column="5" bodyfile="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" bodystart="92" bodyend="98"/>
+        <references refid="class_monomial_map_1_1_reader_a085b98e13046ca9ac5edb3e7c0ce1aa4_1a085b98e13046ca9ac5edb3e7c0ce1aa4" compoundref="_monomial_map_8hpp" startline="139">MonomialMap&lt; T &gt;::Reader::mMap</references>
+        <references refid="class_monomial_map_ab3f7340a5415dcc49365bdeb36048cdd_1ab3f7340a5415dcc49365bdeb36048cdd" compoundref="_monomial_map_8hpp" startline="55" endline="63">MonomialMap&lt; T &gt;::MonomialMap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_map_1_1_reader_ab1120a75bef7bbe403e12b9eb3460112_1ab1120a75bef7bbe403e12b9eb3460112" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::pair&lt; const <ref refid="class_monomial_map_a11712d16aeaa993ef3fad052e6fd58c8_1a11712d16aeaa993ef3fad052e6fd58c8" kindref="member">mapped_type</ref> *, <ref refid="class_monomial_map_af4cc16db8b8ce77acd08e0d1d0221921_1af4cc16db8b8ce77acd08e0d1d0221921" kindref="member">ConstMonoPtr</ref> &gt;</type>
+        <definition>std::pair&lt; const mapped_type *, ConstMonoPtr &gt; MonomialMap&lt; T &gt;::Reader::find</definition>
+        <argsstring>(ConstMonoRef mono) const</argsstring>
+        <name>find</name>
+        <qualifiedname>MonomialMap::Reader::find</qualifiedname>
+        <param>
+          <type><ref refid="class_monomial_map_af5a893607cf01996588160dcf80fee56_1af5a893607cf01996588160dcf80fee56" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the value that mono maps to or null if no such key has been inserted. Also returns the internal monomial that matches mono if such a monomial exists. Misses can be spurious! Read the comments on the parent class. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" line="105" column="5" bodyfile="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" bodystart="105" bodyend="107"/>
+        <references refid="class_monomial_map_1_1_reader_a085b98e13046ca9ac5edb3e7c0ce1aa4_1a085b98e13046ca9ac5edb3e7c0ce1aa4" compoundref="_monomial_map_8hpp" startline="139">MonomialMap&lt; T &gt;::Reader::mMap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_map_1_1_reader_aa7e4eb64e777a52aba8de26758ba633f_1aa7e4eb64e777a52aba8de26758ba633f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::pair&lt; const <ref refid="class_monomial_map_a11712d16aeaa993ef3fad052e6fd58c8_1a11712d16aeaa993ef3fad052e6fd58c8" kindref="member">mapped_type</ref> *, <ref refid="class_monomial_map_af4cc16db8b8ce77acd08e0d1d0221921_1af4cc16db8b8ce77acd08e0d1d0221921" kindref="member">ConstMonoPtr</ref> &gt;</type>
+        <definition>std::pair&lt; const mapped_type *, ConstMonoPtr &gt; MonomialMap&lt; T &gt;::Reader::findProduct</definition>
+        <argsstring>(ConstMonoRef a, ConstMonoRef b) const</argsstring>
+        <name>findProduct</name>
+        <qualifiedname>MonomialMap::Reader::findProduct</qualifiedname>
+        <param>
+          <type><ref refid="class_monomial_map_af5a893607cf01996588160dcf80fee56_1af5a893607cf01996588160dcf80fee56" kindref="member">ConstMonoRef</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_monomial_map_af5a893607cf01996588160dcf80fee56_1af5a893607cf01996588160dcf80fee56" kindref="member">ConstMonoRef</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" line="111" column="15" bodyfile="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" bodystart="111" bodyend="116"/>
+        <references refid="class_monomial_map_1_1_reader_a085b98e13046ca9ac5edb3e7c0ce1aa4_1a085b98e13046ca9ac5edb3e7c0ce1aa4" compoundref="_monomial_map_8hpp" startline="139">MonomialMap&lt; T &gt;::Reader::mMap</references>
+        <referencedby refid="class_f4_matrix_builder_a65a9e17af17e29aec4cf79cefc97c4c1_1a65a9e17af17e29aec4cf79cefc97c4c1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="274" endline="305">F4MatrixBuilder::appendRowBottom</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_map_1_1_reader_adf4c37bfe21e7cded5c54d273b672199_1adf4c37bfe21e7cded5c54d273b672199" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af47fb666c90ea479a76ebf62448aad60_1af47fb666c90ea479a76ebf62448aad60" kindref="member">MATHICGB_INLINE</ref> std::pair&lt; const <ref refid="class_monomial_map_a11712d16aeaa993ef3fad052e6fd58c8_1a11712d16aeaa993ef3fad052e6fd58c8" kindref="member">mapped_type</ref> *, const <ref refid="class_monomial_map_a11712d16aeaa993ef3fad052e6fd58c8_1a11712d16aeaa993ef3fad052e6fd58c8" kindref="member">mapped_type</ref> * &gt;</type>
+        <definition>MATHICGB_INLINE std::pair&lt; const mapped_type *, const mapped_type * &gt; MonomialMap&lt; T &gt;::Reader::findTwoProducts</definition>
+        <argsstring>(const ConstMonoRef a1, const ConstMonoRef a2, const ConstMonoRef b) const</argsstring>
+        <name>findTwoProducts</name>
+        <qualifiedname>MonomialMap::Reader::findTwoProducts</qualifiedname>
+        <param>
+          <type>const <ref refid="class_monomial_map_af5a893607cf01996588160dcf80fee56_1af5a893607cf01996588160dcf80fee56" kindref="member">ConstMonoRef</ref></type>
+          <declname>a1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monomial_map_af5a893607cf01996588160dcf80fee56_1af5a893607cf01996588160dcf80fee56" kindref="member">ConstMonoRef</ref></type>
+          <declname>a2</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monomial_map_af5a893607cf01996588160dcf80fee56_1af5a893607cf01996588160dcf80fee56" kindref="member">ConstMonoRef</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>As <ref refid="class_monomial_map_1_1_reader_aa7e4eb64e777a52aba8de26758ba633f_1aa7e4eb64e777a52aba8de26758ba633f" kindref="member">findProduct()</ref> but looks for the two products a1*b and a2*b simultaneously. The purpose of this is similar to that of unrolling a loop. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" line="122" column="15" bodyfile="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" bodystart="122" bodyend="128"/>
+        <references refid="class_monomial_map_1_1_reader_a085b98e13046ca9ac5edb3e7c0ce1aa4_1a085b98e13046ca9ac5edb3e7c0ce1aa4" compoundref="_monomial_map_8hpp" startline="139">MonomialMap&lt; T &gt;::Reader::mMap</references>
+        <referencedby refid="class_f4_matrix_builder_acc4c82697e6b57c22a45b8a17d039bd1_1acc4c82697e6b57c22a45b8a17d039bd1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="307" endline="351">F4MatrixBuilder::appendRowTop</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_map_1_1_reader_a772360fb20a754df554024dd2223020b_1a772360fb20a754df554024dd2223020b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_monomial_map_1_1_reader_aa44dee6d424b875c0bb71801c590b17c_1aa44dee6d424b875c0bb71801c590b17c" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator MonomialMap&lt; T &gt;::Reader::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>MonomialMap::Reader::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The range [<ref refid="class_monomial_map_1_1_reader_a772360fb20a754df554024dd2223020b_1a772360fb20a754df554024dd2223020b" kindref="member">begin()</ref>, <ref refid="class_monomial_map_1_1_reader_aac6e75b8c176a26efb9679640dcc4c51_1aac6e75b8c176a26efb9679640dcc4c51" kindref="member">end()</ref>) contains all entries in the hash table. Insertions invalidate all iterators. Beware that insertions can happen concurrently. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" line="135" column="20" bodyfile="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" bodystart="135" bodyend="135"/>
+        <references refid="class_monomial_map_1_1_reader_a085b98e13046ca9ac5edb3e7c0ce1aa4_1a085b98e13046ca9ac5edb3e7c0ce1aa4" compoundref="_monomial_map_8hpp" startline="139">MonomialMap&lt; T &gt;::Reader::mMap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomial_map_1_1_reader_aac6e75b8c176a26efb9679640dcc4c51_1aac6e75b8c176a26efb9679640dcc4c51" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_monomial_map_1_1_reader_aa44dee6d424b875c0bb71801c590b17c_1aa44dee6d424b875c0bb71801c590b17c" kindref="member">const_iterator</ref></type>
+        <definition>const_iterator MonomialMap&lt; T &gt;::Reader::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>MonomialMap::Reader::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" line="136" column="20" bodyfile="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" bodystart="136" bodyend="136"/>
+        <references refid="class_monomial_map_1_1_reader_a085b98e13046ca9ac5edb3e7c0ce1aa4_1a085b98e13046ca9ac5edb3e7c0ce1aa4" compoundref="_monomial_map_8hpp" startline="139">MonomialMap&lt; T &gt;::Reader::mMap</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>All queries are performed through a <ref refid="class_monomial_map_1_1_reader" kindref="compound">Reader</ref>. Readers are subject to permanent spurious misses on hash map resize. Grab a fresh reader on misses to confirm them. Making a <ref refid="class_monomial_map_1_1_reader" kindref="compound">Reader</ref> imposes synchronization overhead. External locking is required to guarantee that a miss is genuine since there is no mutual exclusion between queries and insertions.</para>
+<para>It is intentional that a reader does not have an update() method. The purpose of this is to make the internal hash table pointer const inside the class which guarantees to the compiler that it will never change. This in turn allows the compiler to store the fields of the internal hash table pointer such as the hash map mask. If there were an update() method this would not be possible and the compiler might have to load that mask for every query. I made it this way because I was seeming a performance regression of several percent which then went away with this solution. (well actually it&apos;s a reference, which has the same effect). </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>MonomialMap&lt; T &gt;::Reader</label>
+        <link refid="class_monomial_map_1_1_reader"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mMap</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>const FixedSizeMonomialMap&lt; T &gt; &amp;</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" line="90" column="3" bodyfile="submodules/mathicgb/src/mathicgb/MonomialMap.hpp" bodystart="90" bodyend="140"/>
+    <listofallmembers>
+      <member refid="class_monomial_map_1_1_reader_a772360fb20a754df554024dd2223020b_1a772360fb20a754df554024dd2223020b" prot="public" virt="non-virtual"><scope>MonomialMap::Reader</scope><name>begin</name></member>
+      <member refid="class_monomial_map_1_1_reader_aa44dee6d424b875c0bb71801c590b17c_1aa44dee6d424b875c0bb71801c590b17c" prot="public" virt="non-virtual"><scope>MonomialMap::Reader</scope><name>const_iterator</name></member>
+      <member refid="class_monomial_map_1_1_reader_aac6e75b8c176a26efb9679640dcc4c51_1aac6e75b8c176a26efb9679640dcc4c51" prot="public" virt="non-virtual"><scope>MonomialMap::Reader</scope><name>end</name></member>
+      <member refid="class_monomial_map_1_1_reader_ab1120a75bef7bbe403e12b9eb3460112_1ab1120a75bef7bbe403e12b9eb3460112" prot="public" virt="non-virtual"><scope>MonomialMap::Reader</scope><name>find</name></member>
+      <member refid="class_monomial_map_1_1_reader_aa7e4eb64e777a52aba8de26758ba633f_1aa7e4eb64e777a52aba8de26758ba633f" prot="public" virt="non-virtual"><scope>MonomialMap::Reader</scope><name>findProduct</name></member>
+      <member refid="class_monomial_map_1_1_reader_adf4c37bfe21e7cded5c54d273b672199_1adf4c37bfe21e7cded5c54d273b672199" prot="public" virt="non-virtual"><scope>MonomialMap::Reader</scope><name>findTwoProducts</name></member>
+      <member refid="class_monomial_map_1_1_reader_a085b98e13046ca9ac5edb3e7c0ce1aa4_1a085b98e13046ca9ac5edb3e7c0ce1aa4" prot="private" virt="non-virtual"><scope>MonomialMap::Reader</scope><name>mMap</name></member>
+      <member refid="class_monomial_map_1_1_reader_ad98bf7523b4b28316577f83e50698c60_1ad98bf7523b4b28316577f83e50698c60" prot="public" virt="non-virtual"><scope>MonomialMap::Reader</scope><name>Reader</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

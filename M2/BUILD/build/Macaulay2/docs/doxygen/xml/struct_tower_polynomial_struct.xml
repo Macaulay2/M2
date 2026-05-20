@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_tower_polynomial_struct" kind="struct" language="C++" prot="public">
+    <compoundname>TowerPolynomialStruct</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="dpoly_8hpp" local="no">dpoly.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_tower_polynomial_struct_aac31bcfd8540080d4495e9ab24fe4a67_1aac31bcfd8540080d4495e9ab24fe4a67" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int TowerPolynomial::deg</definition>
+        <argsstring></argsstring>
+        <name>deg</name>
+        <qualifiedname>TowerPolynomialStruct::deg</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="78" column="7" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_tower_polynomial_struct_aa3f1876f3e4724e082392bfc5aa0c81e_1aa3f1876f3e4724e082392bfc5aa0c81e" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int TowerPolynomial::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <qualifiedname>TowerPolynomialStruct::len</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="79" column="7" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_tower_polynomial_struct_adebe500398be3c3148d0f1210335dde7_1adebe500398be3c3148d0f1210335dde7" prot="public" static="no" mutable="no">
+        <type>long *</type>
+        <definition>long* TowerPolynomial::ints</definition>
+        <argsstring></argsstring>
+        <name>ints</name>
+        <qualifiedname>TowerPolynomialStruct::ints</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="82" column="10" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_tower_polynomial_struct_a91c9140940a119138b42d439b3f51d68_1a91c9140940a119138b42d439b3f51d68" prot="public" static="no" mutable="no">
+        <type>TowerPolynomial *</type>
+        <definition>TowerPolynomial* TowerPolynomial::polys</definition>
+        <argsstring></argsstring>
+        <name>polys</name>
+        <qualifiedname>TowerPolynomialStruct::polys</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="83" column="21" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_tower_polynomial_struct_a553d754e6f8ff78b448a3b0a2e8bb1e2_1a553d754e6f8ff78b448a3b0a2e8bb1e2" prot="public" static="no" mutable="no">
+        <type>union <ref refid="struct_tower_polynomial_struct" kindref="compound">TowerPolynomialStruct</ref></type>
+        <definition>union TowerPolynomialStruct TowerPolynomial::arr</definition>
+        <argsstring></argsstring>
+        <name>arr</name>
+        <qualifiedname>TowerPolynomialStruct::arr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dpoly.hpp" line="84" column="7"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Heap-allocated node of a tower polynomial: a dense <computeroutput>degree</computeroutput>-indexed coefficient array that recurses through levels. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="struct_tower_polynomial_struct_aac31bcfd8540080d4495e9ab24fe4a67_1aac31bcfd8540080d4495e9ab24fe4a67" kindref="member">deg</ref></computeroutput> is the polynomial&apos;s degree in the current top variable and <computeroutput><ref refid="struct_tower_polynomial_struct_aa3f1876f3e4724e082392bfc5aa0c81e_1aa3f1876f3e4724e082392bfc5aa0c81e" kindref="member">len</ref></computeroutput> is the allocated capacity. The <computeroutput><ref refid="struct_tower_polynomial_struct_a553d754e6f8ff78b448a3b0a2e8bb1e2_1a553d754e6f8ff78b448a3b0a2e8bb1e2" kindref="member">arr</ref></computeroutput> union picks the coefficient kind by depth: at the bottom level the coefficients are integers mod <computeroutput><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref></computeroutput> stored in <computeroutput>arr.ints</computeroutput>, and at higher levels each &quot;coefficient&quot; is itself a <computeroutput>TowerPolynomial</computeroutput> one level down, stored in <computeroutput>arr.polys</computeroutput>. <ref refid="class_tower" kindref="compound">Tower</ref> polynomials are accessed through <computeroutput><ref refid="class_d_poly" kindref="compound">DPoly</ref></computeroutput> / <computeroutput><ref refid="class_d_ring" kindref="compound">DRing</ref></computeroutput>, which always carry the current <computeroutput>level</computeroutput> so the right union arm is consulted. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>TowerPolynomial</label>
+        <link refid="struct_tower_polynomial_struct"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>TowerPolynomial</label>
+        <link refid="struct_tower_polynomial_struct"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>deg</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ints</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>polys</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>arr</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>anonymous:arr</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>long</label>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/dpoly.hpp" line="76" column="1" bodyfile="Macaulay2/e/dpoly.hpp" bodystart="77" bodyend="85"/>
+    <listofallmembers>
+      <member refid="struct_tower_polynomial_struct_a553d754e6f8ff78b448a3b0a2e8bb1e2_1a553d754e6f8ff78b448a3b0a2e8bb1e2" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>arr</name></member>
+      <member refid="struct_tower_polynomial_struct_aac31bcfd8540080d4495e9ab24fe4a67_1aac31bcfd8540080d4495e9ab24fe4a67" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>deg</name></member>
+      <member refid="struct_tower_polynomial_struct_adebe500398be3c3148d0f1210335dde7_1adebe500398be3c3148d0f1210335dde7" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>ints</name></member>
+      <member refid="struct_tower_polynomial_struct_aa3f1876f3e4724e082392bfc5aa0c81e_1aa3f1876f3e4724e082392bfc5aa0c81e" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>len</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>operator new[]</name></member>
+      <member refid="struct_tower_polynomial_struct_a91c9140940a119138b42d439b3f51d68_1a91c9140940a119138b42d439b3f51d68" prot="public" virt="non-virtual"><scope>TowerPolynomialStruct</scope><name>polys</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

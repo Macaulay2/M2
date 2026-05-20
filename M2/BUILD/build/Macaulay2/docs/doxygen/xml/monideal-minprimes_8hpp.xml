@@ -1,0 +1,489 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="monideal-minprimes_8hpp" kind="file" language="C++">
+    <compoundname>monideal-minprimes.hpp</compoundname>
+    <includes refid="monideal_8hpp" local="yes">monideal.hpp</includes>
+    <includedby refid="monomial-ideal_8cpp" local="yes">Macaulay2/e/interface/monomial-ideal.cpp</includedby>
+    <includedby refid="monideal-minprimes_8cpp" local="yes">Macaulay2/e/monideal-minprimes.cpp</includedby>
+    <incdepgraph>
+      <node id="49">
+        <label>../system/mutex.h</label>
+      </node>
+      <node id="28">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="9">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>int-bag.hpp</label>
+        <link refid="int-bag_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>interface/computation.h</label>
+        <link refid="computation_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>mem.hpp</label>
+        <link refid="mem_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/monideal-minprimes.hpp</label>
+        <link refid="monideal-minprimes_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>monideal.hpp</label>
+        <link refid="monideal_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>qring.hpp</label>
+        <link refid="qring_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="14">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>M2/config.h</label>
+      </node>
+      <node id="19">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="24">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="4">
+        <label>assert.h</label>
+      </node>
+      <node id="12">
+        <label>cassert</label>
+      </node>
+      <node id="43">
+        <label>cstddef</label>
+      </node>
+      <node id="29">
+        <label>cstdio</label>
+      </node>
+      <node id="20">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="27">
+        <label>iostream</label>
+      </node>
+      <node id="34">
+        <label>memory</label>
+      </node>
+      <node id="37">
+        <label>stddef.h</label>
+      </node>
+      <node id="10">
+        <label>stdexcept</label>
+      </node>
+      <node id="23">
+        <label>stdint.h</label>
+      </node>
+      <node id="17">
+        <label>stdlib.h</label>
+      </node>
+      <node id="11">
+        <label>string</label>
+      </node>
+      <node id="5">
+        <label>string.h</label>
+      </node>
+      <node id="6">
+        <label>type_traits</label>
+      </node>
+      <node id="32">
+        <label>utility</label>
+      </node>
+      <node id="18">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="7">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/interface/monomial-ideal.cpp</label>
+        <link refid="monomial-ideal_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/monideal-minprimes.cpp</label>
+        <link refid="monideal-minprimes_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/monideal-minprimes.hpp</label>
+        <link refid="monideal-minprimes_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_minimal_primes" prot="public">MinimalPrimes</innerclass>
+    <briefdescription>
+<para><computeroutput><ref refid="class_minimal_primes" kindref="compound">MinimalPrimes</ref></computeroutput> <mdash/> minimal primes of a <computeroutput><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref></computeroutput> via a two-phase state machine. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares <computeroutput><ref refid="class_minimal_primes" kindref="compound">MinimalPrimes</ref></computeroutput>, the cousin of <computeroutput><ref refid="class_associated_primes" kindref="compound">AssociatedPrimes</ref></computeroutput> specialised to the minimal-codimension primes only. The constructor radicalises the input (minimal primes of <computeroutput>I</computeroutput> agree with minimal primes of <computeroutput>rad(I)</computeroutput>, and working with the radical eliminates higher-power monomials cheaply), sets <computeroutput>min_codim</computeroutput> to an impossibly large <computeroutput>nvars + 1</computeroutput>, and leaves an empty accumulator <computeroutput>primes</computeroutput>. The <computeroutput><ref refid="random_8cpp_a9f8b71742e74bcfa6c4b6d38a690329d_1a9f8b71742e74bcfa6c4b6d38a690329d" kindref="member">state</ref></computeroutput> field runs the same two-stage shape as <computeroutput><ref refid="class_associated_primes" kindref="compound">AssociatedPrimes</ref></computeroutput>: <computeroutput>do_codim</computeroutput> finds the minimum codimension cheaply, <computeroutput>do_primes</computeroutput> enumerates the minimal-codimension primes; callers who only need <computeroutput>codimension()</computeroutput> can stop after the first phase. Generators are stored as squarefree monomials in the accumulator <computeroutput>primes</computeroutput>, with the <computeroutput>Q</computeroutput> worklist of <computeroutput>Bag*</computeroutput>s carrying in-progress candidates between recursive steps; the combinatorial recursion is the standard monomial split-on-<computeroutput>x_i</computeroutput> that drives monomial primary decomposition.</para>
+<para>The public surface offers two enumeration algorithms <mdash/> <computeroutput>min_primes(maxcodim, count)</computeroutput> (the <computeroutput><ref refid="class_nmi__node" kindref="compound">Nmi_node</ref></computeroutput>-tree walk via <computeroutput>ass_prime_generator</computeroutput>) and <computeroutput>alg1_min_primes(maxcodim, count)</computeroutput> (the <computeroutput>alg1_grab_prime</computeroutput> / <computeroutput>alg1_min_prime_generator</computeroutput> exponent- vector recursion) <mdash/> plus <computeroutput>associated_primes(count)</computeroutput>, <computeroutput>max_indep_sets(count)</computeroutput>, and static convenience overloads <computeroutput><ref refid="class_minimal_primes_af694e9565ce5d93c1a853c282e72ef52_1af694e9565ce5d93c1a853c282e72ef52" kindref="member">MinimalPrimes::codimension</ref></computeroutput> / <computeroutput>::min_primes</computeroutput> / <computeroutput>::max_indep_sets</computeroutput> that build a transient instance and call the matching member.</para>
+<para><simplesect kind="see"><para><ref refid="monideal_8hpp" kindref="compound">monideal.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="assprime_8hpp" kindref="compound">assprime.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(c)<sp/>1994-2005<sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_monideal_minprimes_h_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_monideal_minprimes_h_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="monideal_8hpp" kindref="compound">monideal.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="class_minimal_primes" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_minimal_primes_a76a5e89815952f734be446d7028ebbd6_1a76a5e89815952f734be446d7028ebbd6" kindref="member">MinimalPrimes</ref></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="comment">//<sp/>A<sp/>class<sp/>which<sp/>enables<sp/>one<sp/>to<sp/>compute<sp/>the<sp/>codimension<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="comment">//<sp/>associated<sp/>primes<sp/>of<sp/>minimal<sp/>codimension,<sp/>of<sp/>a<sp/>monomial<sp/>ideal.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="51" refid="class_minimal_primes_a4cdec6e145e555b84bb4021a1ad17cd1_1a4cdec6e145e555b84bb4021a1ad17cd1a965410d81b5f9754221e620e5447d210" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{<sp/><ref refid="class_minimal_primes_a4cdec6e145e555b84bb4021a1ad17cd1_1a4cdec6e145e555b84bb4021a1ad17cd1a965410d81b5f9754221e620e5447d210" kindref="member">do_codim</ref>,<sp/><ref refid="class_minimal_primes_a4cdec6e145e555b84bb4021a1ad17cd1_1a4cdec6e145e555b84bb4021a1ad17cd1a3db78df04016bc25b7aa39c7adae16f0" kindref="member">do_primes</ref><sp/>}<sp/><ref refid="random_8cpp_a9f8b71742e74bcfa6c4b6d38a690329d_1a9f8b71742e74bcfa6c4b6d38a690329d" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="52" refid="class_minimal_primes_ac512a1aca34fcc5f0bded3a2411c1e57_1ac512a1aca34fcc5f0bded3a2411c1e57" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_ac512a1aca34fcc5f0bded3a2411c1e57_1ac512a1aca34fcc5f0bded3a2411c1e57" kindref="member">min_codim</ref>;</highlight></codeline>
+<codeline lineno="53" refid="class_minimal_primes_ab5574decb3c386150c5732e5f653f8c0_1ab5574decb3c386150c5732e5f653f8c0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_ab5574decb3c386150c5732e5f653f8c0_1ab5574decb3c386150c5732e5f653f8c0" kindref="member">nvars</ref>;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="class_minimal_primes_a7fa9beabfac6a655051ce5367a335013_1a7fa9beabfac6a655051ce5367a335013" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="class_minimal_primes_a7fa9beabfac6a655051ce5367a335013_1a7fa9beabfac6a655051ce5367a335013" kindref="member">mi</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>A<sp/>radical<sp/>monomial<sp/>ideal</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="class_minimal_primes_a1ada5c52885eb44c2f2cbeced61b9ee7_1a1ada5c52885eb44c2f2cbeced61b9ee7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="class_minimal_primes_a1ada5c52885eb44c2f2cbeced61b9ee7_1a1ada5c52885eb44c2f2cbeced61b9ee7" kindref="member">primes</ref>;</highlight></codeline>
+<codeline lineno="58" refid="class_minimal_primes_a04d827478ce03d6b425d2ccd154b2011_1a04d827478ce03d6b425d2ccd154b2011" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_minimal_primes_a04d827478ce03d6b425d2ccd154b2011_1a04d827478ce03d6b425d2ccd154b2011" kindref="member">VECTOR</ref>(<ref refid="int-bag_8hpp_a6c11c4c974bbcebff5c4b81ae6c7e62e_1a6c11c4c974bbcebff5c4b81ae6c7e62e" kindref="member">Bag</ref><sp/>*)<sp/>Q;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Each<sp/>monomial<sp/>corresponds<sp/>to<sp/>a<sp/>potential<sp/>prime<sp/>monomial</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>ideal:<sp/>a<sp/>monomial<sp/>is<sp/>the<sp/>product<sp/>of<sp/>the<sp/>gens<sp/>of</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>the<sp/>prime<sp/>ideal.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="class_minimal_primes_a0890424811f4b144f5b911d81b42c89d_1a0890424811f4b144f5b911d81b42c89d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_a0890424811f4b144f5b911d81b42c89d_1a0890424811f4b144f5b911d81b42c89d" kindref="member">codim_limit</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>only<sp/>consider<sp/>monomial<sp/>primes<sp/>of<sp/>codim<sp/>&lt;=<sp/>this<sp/>number.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="class_minimal_primes_ae0f3b06bb4f5c28f91a615e502c1c5a3_1ae0f3b06bb4f5c28f91a615e502c1c5a3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_ae0f3b06bb4f5c28f91a615e502c1c5a3_1ae0f3b06bb4f5c28f91a615e502c1c5a3" kindref="member">minprime_limit</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>-1<sp/>means<sp/>find<sp/>all.<sp/><sp/>&gt;=<sp/>1<sp/>means<sp/>stop<sp/>after<sp/>that<sp/>number</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="class_minimal_primes_a9ada46bf0253139643207044d25361fe_1a9ada46bf0253139643207044d25361fe" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_a9ada46bf0253139643207044d25361fe_1a9ada46bf0253139643207044d25361fe" kindref="member">n_minprimes</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>number<sp/>found<sp/>so<sp/>far,<sp/>during<sp/>associated_primes<sp/>computation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="class_minimal_primes_ab9f0daf83f004ee3eeb462e6ca291907_1ab9f0daf83f004ee3eeb462e6ca291907" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref><sp/>*<ref refid="class_minimal_primes_ab9f0daf83f004ee3eeb462e6ca291907_1ab9f0daf83f004ee3eeb462e6ca291907" kindref="member">exps</ref>;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="class_minimal_primes_aa78563d5be67c76d1d70fd9add9398e6_1aa78563d5be67c76d1d70fd9add9398e6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_aa78563d5be67c76d1d70fd9add9398e6_1aa78563d5be67c76d1d70fd9add9398e6" kindref="member">depth_limit</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>-codim_limit-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="class_minimal_primes_a16273326d505d981d20ce208e28cc310_1a16273326d505d981d20ce208e28cc310" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref><sp/><ref refid="class_minimal_primes_a16273326d505d981d20ce208e28cc310_1a16273326d505d981d20ce208e28cc310" kindref="member">exp</ref>;</highlight></codeline>
+<codeline lineno="68" refid="class_minimal_primes_a79849a596566edd55af92c87aa02d279_1a79849a596566edd55af92c87aa02d279" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref><sp/><ref refid="class_minimal_primes_a79849a596566edd55af92c87aa02d279_1a79849a596566edd55af92c87aa02d279" kindref="member">exp2</ref>;</highlight></codeline>
+<codeline lineno="69" refid="class_minimal_primes_aac0deb1ee392a273eae5e2ea29b98391_1aac0deb1ee392a273eae5e2ea29b98391" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="class_minimal_primes_aac0deb1ee392a273eae5e2ea29b98391_1aac0deb1ee392a273eae5e2ea29b98391" kindref="member">monoms</ref>;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_aa1dbdd47388447984593c2ee96ae24e7_1aa1dbdd47388447984593c2ee96ae24e7" kindref="member">alg1_grab_prime</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>depth);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_ac10ea2564eaabb9f0eda25a559caf72e_1ac10ea2564eaabb9f0eda25a559caf72e" kindref="member">alg1_min_prime_generator</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*which,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>depth);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_a1959583b990a8c49967e0b9e10fd0d83_1a1959583b990a8c49967e0b9e10fd0d83" kindref="member">ass_prime_generator</ref>(<ref refid="class_nmi__node" kindref="compound">Nmi_node</ref><sp/>*<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>codim);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><ref refid="class_minimal_primes_a76a5e89815952f734be446d7028ebbd6_1a76a5e89815952f734be446d7028ebbd6" kindref="member">MinimalPrimes</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>&amp;<ref refid="class_minimal_primes_a7fa9beabfac6a655051ce5367a335013_1a7fa9beabfac6a655051ce5367a335013" kindref="member">mi</ref>);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><ref refid="class_minimal_primes_a014b12181464a7b2e165043672cd69bd_1a014b12181464a7b2e165043672cd69bd" kindref="member">~MinimalPrimes</ref>();</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_af694e9565ce5d93c1a853c282e72ef52_1af694e9565ce5d93c1a853c282e72ef52" kindref="member">codimension</ref>();</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="class_minimal_primes_a8659a5180ea87bc468a43f851f0e6308_1a8659a5180ea87bc468a43f851f0e6308" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="class_minimal_primes_a8659a5180ea87bc468a43f851f0e6308_1a8659a5180ea87bc468a43f851f0e6308" kindref="member">associated_primes</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="class_minimal_primes_aaadd7187cb82277776711fc56794a521_1aaadd7187cb82277776711fc56794a521" kindref="member">alg1_min_primes</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>maxcodim,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="class_minimal_primes_ae77843aea178e8b2688e75a38f33a432_1ae77843aea178e8b2688e75a38f33a432" kindref="member">min_primes</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>maxcodim,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>maxcodim<sp/>==<sp/>nvars<sp/>means<sp/>get<sp/>all<sp/>of<sp/>them</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>count<sp/>==<sp/>-1<sp/>means<sp/>no<sp/>limit</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>return<sp/>value:<sp/>A<sp/>monomial<sp/>ideal<sp/>where<sp/>each</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>monomial<sp/>prime<sp/>ideal<sp/>is<sp/>represented<sp/>as<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>monomial:<sp/>the<sp/>product<sp/>of<sp/>the<sp/>generators.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>NOTE:<sp/>this<sp/>is<sp/>the<sp/>complement<sp/>of<sp/>the<sp/>gens<sp/>from</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>max_indep_sets</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="class_minimal_primes_a82be87e2c477ce3d2d0817b44059ccc9_1a82be87e2c477ce3d2d0817b44059ccc9" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="class_minimal_primes_a82be87e2c477ce3d2d0817b44059ccc9_1a82be87e2c477ce3d2d0817b44059ccc9" kindref="member">max_indep_sets</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Static<sp/>routines:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="class_minimal_primes_ae395fec0d8460e17c45b7273265f9e85_1ae395fec0d8460e17c45b7273265f9e85" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_minimal_primes_ae395fec0d8460e17c45b7273265f9e85_1ae395fec0d8460e17c45b7273265f9e85" kindref="member">codimension</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*I);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="class_minimal_primes_ad7e4669565c0acb7902e2586c6d636f2_1ad7e4669565c0acb7902e2586c6d636f2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="class_minimal_primes_ad7e4669565c0acb7902e2586c6d636f2_1ad7e4669565c0acb7902e2586c6d636f2" kindref="member">min_primes</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*I,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>maxcodim,</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="class_minimal_primes_a397a5901fa2003b5141e719b5daeb661_1a397a5901fa2003b5141e719b5daeb661" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="class_minimal_primes_a397a5901fa2003b5141e719b5daeb661_1a397a5901fa2003b5141e719b5daeb661" kindref="member">max_indep_sets</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*I,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/monideal-minprimes.hpp"/>
+  </compounddef>
+</doxygen>

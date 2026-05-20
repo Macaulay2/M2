@@ -1,0 +1,416 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmgb_1_1_ideal_stream_checker" kind="class" language="C++" prot="public">
+    <compoundname>mgb::IdealStreamChecker</compoundname>
+    <includes refid="mathicgb_8h" local="no">mathicgb.h</includes>
+    <templateparamlist>
+      <param>
+        <type>class Stream</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmgb_1_1_ideal_stream_checker_a289d2076df5d3deb3fb485ff780d9a1d_1a289d2076df5d3deb3fb485ff780d9a1d" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a6d2bed91ab97c0431180883c32fcbe84_1a6d2bed91ab97c0431180883c32fcbe84" kindref="member">GroebnerConfiguration::Coefficient</ref></type>
+        <definition>typedef GroebnerConfiguration::Coefficient mgb::IdealStreamChecker&lt; Stream &gt;::Coefficient</definition>
+        <argsstring></argsstring>
+        <name>Coefficient</name>
+        <qualifiedname>mgb::IdealStreamChecker::Coefficient</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="536" column="48" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="536" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmgb_1_1_ideal_stream_checker_aea9221abc8790ca9e78124c300060e2d_1aea9221abc8790ca9e78124c300060e2d" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_af1054f5d7d178da47ae7dc2c3de8a5ba_1af1054f5d7d178da47ae7dc2c3de8a5ba" kindref="member">GroebnerConfiguration::VarIndex</ref></type>
+        <definition>typedef GroebnerConfiguration::VarIndex mgb::IdealStreamChecker&lt; Stream &gt;::VarIndex</definition>
+        <argsstring></argsstring>
+        <name>VarIndex</name>
+        <qualifiedname>mgb::IdealStreamChecker::VarIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="537" column="45" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="537" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmgb_1_1_ideal_stream_checker_a5c9e2d5ea9a15b3525a63b8f51047773_1a5c9e2d5ea9a15b3525a63b8f51047773" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a689abdbe85ca79cdeee87350036d4c10_1a689abdbe85ca79cdeee87350036d4c10" kindref="member">GroebnerConfiguration::Exponent</ref></type>
+        <definition>typedef GroebnerConfiguration::Exponent mgb::IdealStreamChecker&lt; Stream &gt;::Exponent</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>mgb::IdealStreamChecker::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="538" column="45" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="538" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmgb_1_1_ideal_stream_checker_ae79c38eb10f053b302bcc17426aeac25_1ae79c38eb10f053b302bcc17426aeac25" prot="public" static="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a4f5b7158eb39c62706456d28cfb65d73_1a4f5b7158eb39c62706456d28cfb65d73" kindref="member">GroebnerConfiguration::Component</ref></type>
+        <definition>typedef GroebnerConfiguration::Component mgb::IdealStreamChecker&lt; Stream &gt;::Component</definition>
+        <argsstring></argsstring>
+        <name>Component</name>
+        <qualifiedname>mgb::IdealStreamChecker::Component</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="539" column="46" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="539" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" prot="private" static="no" mutable="no">
+        <type>Stream &amp;</type>
+        <definition>Stream&amp; mgb::IdealStreamChecker&lt; Stream &gt;::mStream</definition>
+        <argsstring></argsstring>
+        <name>mStream</name>
+        <qualifiedname>mgb::IdealStreamChecker::mStream</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="558" column="12" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="558" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a9b9fd5c78427320b6f25d60a78953406_1a9b9fd5c78427320b6f25d60a78953406" compoundref="mathicgb_8h" startline="825" endline="828">mgb::IdealStreamChecker&lt; Stream &gt;::appendExponent</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_adaed9944688afec3b4c0baa364142752_1adaed9944688afec3b4c0baa364142752" compoundref="mathicgb_8h" startline="807" endline="810">mgb::IdealStreamChecker&lt; Stream &gt;::appendPolynomialBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_acd6b9e8ceaffb1b08b6072d4df41b8c8_1acd6b9e8ceaffb1b08b6072d4df41b8c8" compoundref="mathicgb_8h" startline="813" endline="816">mgb::IdealStreamChecker&lt; Stream &gt;::appendPolynomialBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_aeadb4f011446f31b73314f991d21d099_1aeadb4f011446f31b73314f991d21d099" compoundref="mathicgb_8h" startline="837" endline="840">mgb::IdealStreamChecker&lt; Stream &gt;::appendPolynomialDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a1ef0ddf2dacb9563db11eddc856bff2f_1a1ef0ddf2dacb9563db11eddc856bff2f" compoundref="mathicgb_8h" startline="819" endline="822">mgb::IdealStreamChecker&lt; Stream &gt;::appendTermBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a2aef470271d885a9733c555a2efef716_1a2aef470271d885a9733c555a2efef716" compoundref="mathicgb_8h" startline="831" endline="834">mgb::IdealStreamChecker&lt; Stream &gt;::appendTermDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a64509445848141aa70912d9730bf733c_1a64509445848141aa70912d9730bf733c" compoundref="mathicgb_8h" startline="790" endline="792">mgb::IdealStreamChecker&lt; Stream &gt;::comCount</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a775b35eb3a58d43561be2c5d40a2c279_1a775b35eb3a58d43561be2c5d40a2c279" compoundref="mathicgb_8h" startline="795" endline="798">mgb::IdealStreamChecker&lt; Stream &gt;::idealBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a8d3b84f19ca0785443d5f141264d276d_1a8d3b84f19ca0785443d5f141264d276d" compoundref="mathicgb_8h" startline="801" endline="804">mgb::IdealStreamChecker&lt; Stream &gt;::idealBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a78e8d4118d46da70b1315f46e95e7438_1a78e8d4118d46da70b1315f46e95e7438" compoundref="mathicgb_8h" startline="843" endline="846">mgb::IdealStreamChecker&lt; Stream &gt;::idealDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_ac3c62040696b150c300a7be8e2943841_1ac3c62040696b150c300a7be8e2943841" compoundref="mathicgb_8h" startline="771" endline="774">mgb::IdealStreamChecker&lt; Stream &gt;::IdealStreamChecker</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a6be604adf41bd8ec17da65422d8ebe9c_1a6be604adf41bd8ec17da65422d8ebe9c" compoundref="mathicgb_8h" startline="778" endline="780">mgb::IdealStreamChecker&lt; Stream &gt;::modulus</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a66d9be49a6a9ee9cf8a1c55c62cd63cd_1a66d9be49a6a9ee9cf8a1c55c62cd63cd" compoundref="mathicgb_8h" startline="784" endline="786">mgb::IdealStreamChecker&lt; Stream &gt;::varCount</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" prot="private" static="no" mutable="no">
+        <type><ref refid="classmgb_1_1mgbi_1_1_stream_state_checker" kindref="compound">mgbi::StreamStateChecker</ref></type>
+        <definition>mgbi::StreamStateChecker mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</definition>
+        <argsstring></argsstring>
+        <name>mChecker</name>
+        <qualifiedname>mgb::IdealStreamChecker::mChecker</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="559" column="30" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="559" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a9b9fd5c78427320b6f25d60a78953406_1a9b9fd5c78427320b6f25d60a78953406" compoundref="mathicgb_8h" startline="825" endline="828">mgb::IdealStreamChecker&lt; Stream &gt;::appendExponent</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_adaed9944688afec3b4c0baa364142752_1adaed9944688afec3b4c0baa364142752" compoundref="mathicgb_8h" startline="807" endline="810">mgb::IdealStreamChecker&lt; Stream &gt;::appendPolynomialBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_acd6b9e8ceaffb1b08b6072d4df41b8c8_1acd6b9e8ceaffb1b08b6072d4df41b8c8" compoundref="mathicgb_8h" startline="813" endline="816">mgb::IdealStreamChecker&lt; Stream &gt;::appendPolynomialBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_aeadb4f011446f31b73314f991d21d099_1aeadb4f011446f31b73314f991d21d099" compoundref="mathicgb_8h" startline="837" endline="840">mgb::IdealStreamChecker&lt; Stream &gt;::appendPolynomialDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a1ef0ddf2dacb9563db11eddc856bff2f_1a1ef0ddf2dacb9563db11eddc856bff2f" compoundref="mathicgb_8h" startline="819" endline="822">mgb::IdealStreamChecker&lt; Stream &gt;::appendTermBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a2aef470271d885a9733c555a2efef716_1a2aef470271d885a9733c555a2efef716" compoundref="mathicgb_8h" startline="831" endline="834">mgb::IdealStreamChecker&lt; Stream &gt;::appendTermDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a775b35eb3a58d43561be2c5d40a2c279_1a775b35eb3a58d43561be2c5d40a2c279" compoundref="mathicgb_8h" startline="795" endline="798">mgb::IdealStreamChecker&lt; Stream &gt;::idealBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a8d3b84f19ca0785443d5f141264d276d_1a8d3b84f19ca0785443d5f141264d276d" compoundref="mathicgb_8h" startline="801" endline="804">mgb::IdealStreamChecker&lt; Stream &gt;::idealBegin</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_a78e8d4118d46da70b1315f46e95e7438_1a78e8d4118d46da70b1315f46e95e7438" compoundref="mathicgb_8h" startline="843" endline="846">mgb::IdealStreamChecker&lt; Stream &gt;::idealDone</referencedby>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_ac3c62040696b150c300a7be8e2943841_1ac3c62040696b150c300a7be8e2943841" compoundref="mathicgb_8h" startline="771" endline="774">mgb::IdealStreamChecker&lt; Stream &gt;::IdealStreamChecker</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_ac3c62040696b150c300a7be8e2943841_1ac3c62040696b150c300a7be8e2943841" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mgb::IdealStreamChecker&lt; Stream &gt;::IdealStreamChecker</definition>
+        <argsstring>(Stream &amp;stream)</argsstring>
+        <name>IdealStreamChecker</name>
+        <qualifiedname>mgb::IdealStreamChecker::IdealStreamChecker</qualifiedname>
+        <param>
+          <type>Stream &amp;</type>
+          <declname>stream</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="541" column="5" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="771" bodyend="774"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_a64509445848141aa70912d9730bf733c_1a64509445848141aa70912d9730bf733c" compoundref="mathicgb_8h" startline="790" endline="792">mgb::IdealStreamChecker&lt; Stream &gt;::comCount</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_a6be604adf41bd8ec17da65422d8ebe9c_1a6be604adf41bd8ec17da65422d8ebe9c" compoundref="mathicgb_8h" startline="778" endline="780">mgb::IdealStreamChecker&lt; Stream &gt;::modulus</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_a66d9be49a6a9ee9cf8a1c55c62cd63cd_1a66d9be49a6a9ee9cf8a1c55c62cd63cd" compoundref="mathicgb_8h" startline="784" endline="786">mgb::IdealStreamChecker&lt; Stream &gt;::varCount</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_a6be604adf41bd8ec17da65422d8ebe9c_1a6be604adf41bd8ec17da65422d8ebe9c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmgb_1_1_ideal_stream_checker_a289d2076df5d3deb3fb485ff780d9a1d_1a289d2076df5d3deb3fb485ff780d9a1d" kindref="member">Coefficient</ref></type>
+        <definition>IdealStreamChecker&lt; Stream &gt;::Coefficient mgb::IdealStreamChecker&lt; Stream &gt;::modulus</definition>
+        <argsstring>() const</argsstring>
+        <name>modulus</name>
+        <qualifiedname>mgb::IdealStreamChecker::modulus</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="543" column="17" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="778" bodyend="780"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_ac3c62040696b150c300a7be8e2943841_1ac3c62040696b150c300a7be8e2943841" compoundref="mathicgb_8h" startline="771" endline="774">mgb::IdealStreamChecker&lt; Stream &gt;::IdealStreamChecker</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_a66d9be49a6a9ee9cf8a1c55c62cd63cd_1a66d9be49a6a9ee9cf8a1c55c62cd63cd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmgb_1_1_ideal_stream_checker_aea9221abc8790ca9e78124c300060e2d_1aea9221abc8790ca9e78124c300060e2d" kindref="member">VarIndex</ref></type>
+        <definition>IdealStreamChecker&lt; Stream &gt;::VarIndex mgb::IdealStreamChecker&lt; Stream &gt;::varCount</definition>
+        <argsstring>() const</argsstring>
+        <name>varCount</name>
+        <qualifiedname>mgb::IdealStreamChecker::varCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="544" column="14" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="784" bodyend="786"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_ac3c62040696b150c300a7be8e2943841_1ac3c62040696b150c300a7be8e2943841" compoundref="mathicgb_8h" startline="771" endline="774">mgb::IdealStreamChecker&lt; Stream &gt;::IdealStreamChecker</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_a64509445848141aa70912d9730bf733c_1a64509445848141aa70912d9730bf733c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmgb_1_1_ideal_stream_checker_ae79c38eb10f053b302bcc17426aeac25_1ae79c38eb10f053b302bcc17426aeac25" kindref="member">Component</ref></type>
+        <definition>IdealStreamChecker&lt; Stream &gt;::Component mgb::IdealStreamChecker&lt; Stream &gt;::comCount</definition>
+        <argsstring>() const</argsstring>
+        <name>comCount</name>
+        <qualifiedname>mgb::IdealStreamChecker::comCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="545" column="15" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="790" bodyend="792"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+        <referencedby refid="classmgb_1_1_ideal_stream_checker_ac3c62040696b150c300a7be8e2943841_1ac3c62040696b150c300a7be8e2943841" compoundref="mathicgb_8h" startline="771" endline="774">mgb::IdealStreamChecker&lt; Stream &gt;::IdealStreamChecker</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_a775b35eb3a58d43561be2c5d40a2c279_1a775b35eb3a58d43561be2c5d40a2c279" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamChecker&lt; Stream &gt;::idealBegin</definition>
+        <argsstring>()</argsstring>
+        <name>idealBegin</name>
+        <qualifiedname>mgb::IdealStreamChecker::idealBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="547" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="795" bodyend="798"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_a8d3b84f19ca0785443d5f141264d276d_1a8d3b84f19ca0785443d5f141264d276d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamChecker&lt; Stream &gt;::idealBegin</definition>
+        <argsstring>(size_t polyCount)</argsstring>
+        <name>idealBegin</name>
+        <qualifiedname>mgb::IdealStreamChecker::idealBegin</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>polyCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="548" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="801" bodyend="804"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_adaed9944688afec3b4c0baa364142752_1adaed9944688afec3b4c0baa364142752" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamChecker&lt; Stream &gt;::appendPolynomialBegin</definition>
+        <argsstring>()</argsstring>
+        <name>appendPolynomialBegin</name>
+        <qualifiedname>mgb::IdealStreamChecker::appendPolynomialBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="549" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="807" bodyend="810"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_acd6b9e8ceaffb1b08b6072d4df41b8c8_1acd6b9e8ceaffb1b08b6072d4df41b8c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamChecker&lt; Stream &gt;::appendPolynomialBegin</definition>
+        <argsstring>(size_t termCount)</argsstring>
+        <name>appendPolynomialBegin</name>
+        <qualifiedname>mgb::IdealStreamChecker::appendPolynomialBegin</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>termCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="550" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="813" bodyend="816"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_a1ef0ddf2dacb9563db11eddc856bff2f_1a1ef0ddf2dacb9563db11eddc856bff2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamChecker&lt; Stream &gt;::appendTermBegin</definition>
+        <argsstring>(Component com)</argsstring>
+        <name>appendTermBegin</name>
+        <qualifiedname>mgb::IdealStreamChecker::appendTermBegin</qualifiedname>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_checker_ae79c38eb10f053b302bcc17426aeac25_1ae79c38eb10f053b302bcc17426aeac25" kindref="member">Component</ref></type>
+          <declname>com</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="551" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="819" bodyend="822"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_a9b9fd5c78427320b6f25d60a78953406_1a9b9fd5c78427320b6f25d60a78953406" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamChecker&lt; Stream &gt;::appendExponent</definition>
+        <argsstring>(VarIndex index, Exponent exponent)</argsstring>
+        <name>appendExponent</name>
+        <qualifiedname>mgb::IdealStreamChecker::appendExponent</qualifiedname>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_checker_aea9221abc8790ca9e78124c300060e2d_1aea9221abc8790ca9e78124c300060e2d" kindref="member">VarIndex</ref></type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_checker_a5c9e2d5ea9a15b3525a63b8f51047773_1a5c9e2d5ea9a15b3525a63b8f51047773" kindref="member">Exponent</ref></type>
+          <declname>exponent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="552" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="825" bodyend="828"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_a2aef470271d885a9733c555a2efef716_1a2aef470271d885a9733c555a2efef716" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamChecker&lt; Stream &gt;::appendTermDone</definition>
+        <argsstring>(Coefficient coefficient)</argsstring>
+        <name>appendTermDone</name>
+        <qualifiedname>mgb::IdealStreamChecker::appendTermDone</qualifiedname>
+        <param>
+          <type><ref refid="classmgb_1_1_ideal_stream_checker_a289d2076df5d3deb3fb485ff780d9a1d_1a289d2076df5d3deb3fb485ff780d9a1d" kindref="member">Coefficient</ref></type>
+          <declname>coefficient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="553" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="831" bodyend="834"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_aeadb4f011446f31b73314f991d21d099_1aeadb4f011446f31b73314f991d21d099" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamChecker&lt; Stream &gt;::appendPolynomialDone</definition>
+        <argsstring>()</argsstring>
+        <name>appendPolynomialDone</name>
+        <qualifiedname>mgb::IdealStreamChecker::appendPolynomialDone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="554" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="837" bodyend="840"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+      </memberdef>
+      <memberdef kind="function" id="classmgb_1_1_ideal_stream_checker_a78e8d4118d46da70b1315f46e95e7438_1a78e8d4118d46da70b1315f46e95e7438" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mgb::IdealStreamChecker&lt; Stream &gt;::idealDone</definition>
+        <argsstring>()</argsstring>
+        <name>idealDone</name>
+        <qualifiedname>mgb::IdealStreamChecker::idealDone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="555" column="10" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="843" bodyend="846"/>
+        <references refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" compoundref="mathicgb_8h" startline="559">mgb::IdealStreamChecker&lt; Stream &gt;::mChecker</references>
+        <references refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" compoundref="mathicgb_8h" startline="558">mgb::IdealStreamChecker&lt; Stream &gt;::mStream</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Use this class to check that you are following the correct protocol for calling methods on an ideal stream. This has significant overhead so it is not recommended for production use. If you have built the MathicGB library in debug mode then this is already automatically used for <ref refid="classmgb_1_1_groebner_input_ideal_stream" kindref="compound">GroebnerInputIdealStream</ref>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Pimpl *const</label>
+      </node>
+      <node id="2">
+        <label>Stream &amp;</label>
+      </node>
+      <node id="1">
+        <label>mgb::IdealStreamChecker&lt; Stream &gt;</label>
+        <link refid="classmgb_1_1_ideal_stream_checker"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mStream</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mChecker</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mgb::mgbi::StreamStateChecker</label>
+        <link refid="classmgb_1_1mgbi_1_1_stream_state_checker"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mPimpl</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb.h" line="534" column="3" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="534" bodyend="560"/>
+    <listofallmembers>
+      <member refid="classmgb_1_1_ideal_stream_checker_a9b9fd5c78427320b6f25d60a78953406_1a9b9fd5c78427320b6f25d60a78953406" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>appendExponent</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_adaed9944688afec3b4c0baa364142752_1adaed9944688afec3b4c0baa364142752" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>appendPolynomialBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_acd6b9e8ceaffb1b08b6072d4df41b8c8_1acd6b9e8ceaffb1b08b6072d4df41b8c8" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>appendPolynomialBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_aeadb4f011446f31b73314f991d21d099_1aeadb4f011446f31b73314f991d21d099" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>appendPolynomialDone</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a1ef0ddf2dacb9563db11eddc856bff2f_1a1ef0ddf2dacb9563db11eddc856bff2f" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>appendTermBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a2aef470271d885a9733c555a2efef716_1a2aef470271d885a9733c555a2efef716" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>appendTermDone</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a289d2076df5d3deb3fb485ff780d9a1d_1a289d2076df5d3deb3fb485ff780d9a1d" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>Coefficient</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a64509445848141aa70912d9730bf733c_1a64509445848141aa70912d9730bf733c" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>comCount</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_ae79c38eb10f053b302bcc17426aeac25_1ae79c38eb10f053b302bcc17426aeac25" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>Component</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a5c9e2d5ea9a15b3525a63b8f51047773_1a5c9e2d5ea9a15b3525a63b8f51047773" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>Exponent</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a775b35eb3a58d43561be2c5d40a2c279_1a775b35eb3a58d43561be2c5d40a2c279" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>idealBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a8d3b84f19ca0785443d5f141264d276d_1a8d3b84f19ca0785443d5f141264d276d" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>idealBegin</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a78e8d4118d46da70b1315f46e95e7438_1a78e8d4118d46da70b1315f46e95e7438" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>idealDone</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_ac3c62040696b150c300a7be8e2943841_1ac3c62040696b150c300a7be8e2943841" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>IdealStreamChecker</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_af57ae000be09d64ae1c3a268f414cbd5_1af57ae000be09d64ae1c3a268f414cbd5" prot="private" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>mChecker</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a6be604adf41bd8ec17da65422d8ebe9c_1a6be604adf41bd8ec17da65422d8ebe9c" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>modulus</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_af001f0443228fbcf57dcd2597de34c9c_1af001f0443228fbcf57dcd2597de34c9c" prot="private" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>mStream</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_a66d9be49a6a9ee9cf8a1c55c62cd63cd_1a66d9be49a6a9ee9cf8a1c55c62cd63cd" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>varCount</name></member>
+      <member refid="classmgb_1_1_ideal_stream_checker_aea9221abc8790ca9e78124c300060e2d_1aea9221abc8790ca9e78124c300060e2d" prot="public" virt="non-virtual"><scope>mgb::IdealStreamChecker</scope><name>VarIndex</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

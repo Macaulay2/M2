@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_reducer_hash_8hpp" kind="file" language="C++">
+    <compoundname>ReducerHash.hpp</compoundname>
+    <includedby refid="_reducer_8cpp" local="yes">submodules/mathicgb/src/mathicgb/Reducer.cpp</includedby>
+    <includedby refid="_reducer_hash_8cpp" local="yes">submodules/mathicgb/src/mathicgb/ReducerHash.cpp</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>submodules/mathicgb/src/mathicgb/Reducer.cpp</label>
+        <link refid="_reducer_8cpp"/>
+      </node>
+      <node id="3">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHash.cpp</label>
+        <link refid="_reducer_hash_8cpp"/>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHash.hpp</label>
+        <link refid="_reducer_hash_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_reducer_hash_8hpp_a7516a35d4520cc38cdaa6cabf1a2f2bb_1a7516a35d4520cc38cdaa6cabf1a2f2bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_ae8bc5fe1884fad77a50671c3b5800b2b_1ae8bc5fe1884fad77a50671c3b5800b2b" kindref="member">MATHICGB_NAMESPACE_BEGIN</ref> void</type>
+        <definition>MATHICGB_NAMESPACE_BEGIN void reducerHashDependency</definition>
+        <argsstring>()</argsstring>
+        <name>reducerHashDependency</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerHash.hpp" line="11" column="6" bodyfile="submodules/mathicgb/src/mathicgb/ReducerHash.cpp" bodystart="14" bodyend="14" declfile="submodules/mathicgb/src/mathicgb/ReducerHash.hpp" declline="11" declcolumn="6"/>
+        <referencedby refid="_reducer_8cpp_a30e39450db95717fa0a753e1785607b1_1a30e39450db95717fa0a753e1785607b1" compoundref="_reducer_8cpp" startline="26" endline="34">dummyLinkerFix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>MathicGB<sp/>copyright<sp/>2012<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHICGB_REDUCER_HASH_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_REDUCER_HASH_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><ref refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n" kindref="compound">MATHICGB_NAMESPACE_BEGIN</ref></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>translation<sp/>unit<sp/>has<sp/>to<sp/>expose<sp/>something<sp/>that<sp/>is<sp/>needed<sp/>elsewhere.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Otherwise,<sp/>the<sp/>compiler<sp/>will<sp/>think<sp/>it<sp/>is<sp/>not<sp/>needed<sp/>and<sp/>exclude<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">//<sp/>whole<sp/>thing,<sp/>despite<sp/>there<sp/>being<sp/>important<sp/>global<sp/>objects<sp/>in<sp/>the<sp/>.cpp<sp/>file.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="_reducer_hash_8hpp_a7516a35d4520cc38cdaa6cabf1a2f2bb_1a7516a35d4520cc38cdaa6cabf1a2f2bb" kindref="member">reducerHashDependency</ref>();</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a3dd074a16d8db719c612d38d30802066_1a3dd074a16d8db719c612d38d30802066" kindref="member">MATHICGB_NAMESPACE_END</ref></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/mathicgb/ReducerHash.hpp"/>
+  </compounddef>
+</doxygen>

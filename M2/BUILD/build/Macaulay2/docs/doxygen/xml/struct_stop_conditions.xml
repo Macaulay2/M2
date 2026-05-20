@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_stop_conditions" kind="struct" language="C++" prot="public">
+    <compoundname>StopConditions</compoundname>
+    <includes refid="computation_8h" local="no">computation.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_stop_conditions_a4f98deea5d00fb093caf441434e7a92b_1a4f98deea5d00fb093caf441434e7a92b" prot="public" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool StopConditions::always_stop</definition>
+        <argsstring></argsstring>
+        <name>always_stop</name>
+        <qualifiedname>StopConditions::always_stop</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="87" column="11" bodyfile="Macaulay2/e/interface/computation.h" bodystart="87" bodyend="-1"/>
+        <referencedby refid="class_schreyer_frame_a841049f879cf22f9cdd6670c304afe91_1a841049f879cf22f9cdd6670c304afe91" compoundref="res-schreyer-frame_8cpp" startline="262" endline="436">SchreyerFrame::start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_ab31e9a85c6fe668b304386e2c197f81c_1ab31e9a85c6fe668b304386e2c197f81c" prot="public" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool StopConditions::stop_after_degree</definition>
+        <argsstring></argsstring>
+        <name>stop_after_degree</name>
+        <qualifiedname>StopConditions::stop_after_degree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="88" column="11" bodyfile="Macaulay2/e/interface/computation.h" bodystart="88" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a25cdf35d18839f7e51a1d50af6e2cc49_1a25cdf35d18839f7e51a1d50af6e2cc49" compoundref="f4_8cpp" startline="1130" endline="1246">F4GB::start_computation</referencedby>
+        <referencedby refid="class_schreyer_frame_a841049f879cf22f9cdd6670c304afe91_1a841049f879cf22f9cdd6670c304afe91" compoundref="res-schreyer-frame_8cpp" startline="262" endline="436">SchreyerFrame::start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_af0eb8948eacf5b0a485d4df972cf7a6a_1af0eb8948eacf5b0a485d4df972cf7a6a" prot="public" static="no" mutable="no">
+        <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        <definition>M2_arrayint StopConditions::degree_limit</definition>
+        <argsstring></argsstring>
+        <name>degree_limit</name>
+        <qualifiedname>StopConditions::degree_limit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="89" column="15" bodyfile="Macaulay2/e/interface/computation.h" bodystart="89" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a25cdf35d18839f7e51a1d50af6e2cc49_1a25cdf35d18839f7e51a1d50af6e2cc49" compoundref="f4_8cpp" startline="1130" endline="1246">F4GB::start_computation</referencedby>
+        <referencedby refid="class_schreyer_frame_a841049f879cf22f9cdd6670c304afe91_1a841049f879cf22f9cdd6670c304afe91" compoundref="res-schreyer-frame_8cpp" startline="262" endline="436">SchreyerFrame::start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_a9f8a0cce3f3e0769fdf54754496a833d_1a9f8a0cce3f3e0769fdf54754496a833d" prot="public" static="no" mutable="no">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int StopConditions::basis_element_limit</definition>
+        <argsstring></argsstring>
+        <name>basis_element_limit</name>
+        <qualifiedname>StopConditions::basis_element_limit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="90" column="16" bodyfile="Macaulay2/e/interface/computation.h" bodystart="90" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a9bbffa332b1a5b1fc4179106feb550be_1a9bbffa332b1a5b1fc4179106feb550be" compoundref="f4_8cpp" startline="1092" endline="1112">F4GB::computation_is_complete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_a7ac2b35e704a5563ce04966a2852b823_1a7ac2b35e704a5563ce04966a2852b823" prot="public" static="no" mutable="no">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int StopConditions::syzygy_limit</definition>
+        <argsstring></argsstring>
+        <name>syzygy_limit</name>
+        <qualifiedname>StopConditions::syzygy_limit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="91" column="16" bodyfile="Macaulay2/e/interface/computation.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_adf5b6b85164f2151fd12e1b8ecc52028_1adf5b6b85164f2151fd12e1b8ecc52028" prot="public" static="no" mutable="no">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int StopConditions::pair_limit</definition>
+        <argsstring></argsstring>
+        <name>pair_limit</name>
+        <qualifiedname>StopConditions::pair_limit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="92" column="16" bodyfile="Macaulay2/e/interface/computation.h" bodystart="92" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a9bbffa332b1a5b1fc4179106feb550be_1a9bbffa332b1a5b1fc4179106feb550be" compoundref="f4_8cpp" startline="1092" endline="1112">F4GB::computation_is_complete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_a38979f2d87b315214e69b10d3aff4494_1a38979f2d87b315214e69b10d3aff4494" prot="public" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool StopConditions::use_codim_limit</definition>
+        <argsstring></argsstring>
+        <name>use_codim_limit</name>
+        <qualifiedname>StopConditions::use_codim_limit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="93" column="11" bodyfile="Macaulay2/e/interface/computation.h" bodystart="93" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a9bbffa332b1a5b1fc4179106feb550be_1a9bbffa332b1a5b1fc4179106feb550be" compoundref="f4_8cpp" startline="1092" endline="1112">F4GB::computation_is_complete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_a79aa25ed4949cb43424636dde63a2193_1a79aa25ed4949cb43424636dde63a2193" prot="public" static="no" mutable="no">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int StopConditions::codim_limit</definition>
+        <argsstring></argsstring>
+        <name>codim_limit</name>
+        <qualifiedname>StopConditions::codim_limit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="94" column="16" bodyfile="Macaulay2/e/interface/computation.h" bodystart="94" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a9bbffa332b1a5b1fc4179106feb550be_1a9bbffa332b1a5b1fc4179106feb550be" compoundref="f4_8cpp" startline="1092" endline="1112">F4GB::computation_is_complete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_a23fd5a2f8a95cf65a25aad4c1ac93691_1a23fd5a2f8a95cf65a25aad4c1ac93691" prot="public" static="no" mutable="no">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int StopConditions::subring_limit</definition>
+        <argsstring></argsstring>
+        <name>subring_limit</name>
+        <qualifiedname>StopConditions::subring_limit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="95" column="16" bodyfile="Macaulay2/e/interface/computation.h" bodystart="95" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a9bbffa332b1a5b1fc4179106feb550be_1a9bbffa332b1a5b1fc4179106feb550be" compoundref="f4_8cpp" startline="1092" endline="1112">F4GB::computation_is_complete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_a72f79e5aedb5b8c85fb4286dda419994_1a72f79e5aedb5b8c85fb4286dda419994" prot="public" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool StopConditions::just_min_gens</definition>
+        <argsstring></argsstring>
+        <name>just_min_gens</name>
+        <qualifiedname>StopConditions::just_min_gens</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="96" column="11" bodyfile="Macaulay2/e/interface/computation.h" bodystart="96" bodyend="-1"/>
+        <referencedby refid="class_f4_g_b_a9bbffa332b1a5b1fc4179106feb550be_1a9bbffa332b1a5b1fc4179106feb550be" compoundref="f4_8cpp" startline="1092" endline="1112">F4GB::computation_is_complete</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_stop_conditions_a675859a275966c459d1b6ec207bdedc0_1a675859a275966c459d1b6ec207bdedc0" prot="public" static="no" mutable="no">
+        <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        <definition>M2_arrayint StopConditions::length_limit</definition>
+        <argsstring></argsstring>
+        <name>length_limit</name>
+        <qualifiedname>StopConditions::length_limit</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/computation.h" line="97" column="15" bodyfile="Macaulay2/e/interface/computation.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Bundle of optional early-termination knobs the front end can attach to a long-running <computeroutput><ref refid="class_computation" kindref="compound">Computation</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Each <computeroutput>*_limit</computeroutput> is consulted by the driver after every increment of the matching counter (basis element, syzygy, S-pair, codim, subring, step); <computeroutput><ref refid="struct_stop_conditions_af0eb8948eacf5b0a485d4df972cf7a6a_1af0eb8948eacf5b0a485d4df972cf7a6a" kindref="member">degree_limit</ref></computeroutput> / <computeroutput><ref refid="struct_stop_conditions_a675859a275966c459d1b6ec207bdedc0_1a675859a275966c459d1b6ec207bdedc0" kindref="member">length_limit</ref></computeroutput> cap the homological / degree reach for GB and resolution computations; <computeroutput><ref refid="struct_stop_conditions_a4f98deea5d00fb093caf441434e7a92b_1a4f98deea5d00fb093caf441434e7a92b" kindref="member">always_stop</ref></computeroutput> short-circuits everything; <computeroutput><ref refid="struct_stop_conditions_a72f79e5aedb5b8c85fb4286dda419994_1a72f79e5aedb5b8c85fb4286dda419994" kindref="member">just_min_gens</ref></computeroutput> asks the driver to halt as soon as a minimal generating set is available. <computeroutput><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></computeroutput> flags gate which limits are active. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>M2_arrayint</label>
+        <link refid="class_m2__arrayint"/>
+      </node>
+      <node id="1">
+        <label>StopConditions</label>
+        <link refid="struct_stop_conditions"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>always_stop</edgelabel>
+          <edgelabel>just_min_gens</edgelabel>
+          <edgelabel>stop_after_degree</edgelabel>
+          <edgelabel>use_codim_limit</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>degree_limit</edgelabel>
+          <edgelabel>length_limit</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>basis_element_limit</edgelabel>
+          <edgelabel>codim_limit</edgelabel>
+          <edgelabel>pair_limit</edgelabel>
+          <edgelabel>subring_limit</edgelabel>
+          <edgelabel>syzygy_limit</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>char</label>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/interface/computation.h" line="85" column="1" bodyfile="Macaulay2/e/interface/computation.h" bodystart="86" bodyend="98"/>
+    <listofallmembers>
+      <member refid="struct_stop_conditions_a4f98deea5d00fb093caf441434e7a92b_1a4f98deea5d00fb093caf441434e7a92b" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>always_stop</name></member>
+      <member refid="struct_stop_conditions_a9f8a0cce3f3e0769fdf54754496a833d_1a9f8a0cce3f3e0769fdf54754496a833d" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>basis_element_limit</name></member>
+      <member refid="struct_stop_conditions_a79aa25ed4949cb43424636dde63a2193_1a79aa25ed4949cb43424636dde63a2193" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>codim_limit</name></member>
+      <member refid="struct_stop_conditions_af0eb8948eacf5b0a485d4df972cf7a6a_1af0eb8948eacf5b0a485d4df972cf7a6a" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>degree_limit</name></member>
+      <member refid="struct_stop_conditions_a72f79e5aedb5b8c85fb4286dda419994_1a72f79e5aedb5b8c85fb4286dda419994" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>just_min_gens</name></member>
+      <member refid="struct_stop_conditions_a675859a275966c459d1b6ec207bdedc0_1a675859a275966c459d1b6ec207bdedc0" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>length_limit</name></member>
+      <member refid="struct_stop_conditions_adf5b6b85164f2151fd12e1b8ecc52028_1adf5b6b85164f2151fd12e1b8ecc52028" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>pair_limit</name></member>
+      <member refid="struct_stop_conditions_ab31e9a85c6fe668b304386e2c197f81c_1ab31e9a85c6fe668b304386e2c197f81c" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>stop_after_degree</name></member>
+      <member refid="struct_stop_conditions_a23fd5a2f8a95cf65a25aad4c1ac93691_1a23fd5a2f8a95cf65a25aad4c1ac93691" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>subring_limit</name></member>
+      <member refid="struct_stop_conditions_a7ac2b35e704a5563ce04966a2852b823_1a7ac2b35e704a5563ce04966a2852b823" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>syzygy_limit</name></member>
+      <member refid="struct_stop_conditions_a38979f2d87b315214e69b10d3aff4494_1a38979f2d87b315214e69b10d3aff4494" prot="public" virt="non-virtual"><scope>StopConditions</scope><name>use_codim_limit</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_f4_reducer_8hpp" kind="file" language="C++">
+    <compoundname>F4Reducer.hpp</compoundname>
+    <includes local="no">string</includes>
+    <includedby refid="_g_b_action_8cpp" local="yes">submodules/mathicgb/src/cli/GBAction.cpp</includedby>
+    <includedby refid="_f4_reducer_8cpp" local="yes">submodules/mathicgb/src/mathicgb/F4Reducer.cpp</includedby>
+    <includedby refid="_reducer_8cpp" local="yes">submodules/mathicgb/src/mathicgb/Reducer.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/F4Reducer.hpp</label>
+        <link refid="_f4_reducer_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>string</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>submodules/mathicgb/src/cli/GBAction.cpp</label>
+        <link refid="_g_b_action_8cpp"/>
+      </node>
+      <node id="3">
+        <label>submodules/mathicgb/src/mathicgb/F4Reducer.cpp</label>
+        <link refid="_f4_reducer_8cpp"/>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/F4Reducer.hpp</label>
+        <link refid="_f4_reducer_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>submodules/mathicgb/src/mathicgb/Reducer.cpp</label>
+        <link refid="_reducer_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_f4_reducer_8hpp_ab1ebd43c7bbcd1b0736da85b3df594f7_1ab1ebd43c7bbcd1b0736da85b3df594f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="class_reducer" kindref="compound">Reducer</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; Reducer &gt; makeF4Reducer</definition>
+        <argsstring>(const PolyRing &amp;ring, bool oldType, std::string file, size_t minEntries)</argsstring>
+        <name>makeF4Reducer</name>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>oldType</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>file</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>minEntries</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create an F4 reducer with extra parameters for writing out the matrix. Set file to &quot;&quot; to disable writing of matrices. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4Reducer.hpp" line="15" column="17" bodyfile="submodules/mathicgb/src/mathicgb/F4Reducer.cpp" bodystart="332" bodyend="343" declfile="submodules/mathicgb/src/mathicgb/F4Reducer.hpp" declline="15" declcolumn="17"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af8b703a7a8a0f8ebbdd534ea12ab2ec0_1af8b703a7a8a0f8ebbdd534ea12ab2ec0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="206" endline="208">make_unique</references>
+        <references refid="class_f4_reducer_a6826ec63bf9eacd18078507b9df5c4ac_1a6826ec63bf9eacd18078507b9df5c4aca7a9d5642a4d9d0916c0416744840d8bd" compoundref="_f4_reducer_8cpp" startline="59">F4Reducer::NewType</references>
+        <references refid="class_f4_reducer_a6826ec63bf9eacd18078507b9df5c4ac_1a6826ec63bf9eacd18078507b9df5c4aca0b1a64f4d97602cb0c9b10daa6f651e3" compoundref="_f4_reducer_8cpp" startline="58">F4Reducer::OldType</references>
+        <referencedby refid="class_g_b_action_a69a4ac798f6958ee05121ae226f71681_1a69a4ac798f6958ee05121ae226f71681" compoundref="_g_b_action_8cpp" startline="65" endline="122">GBAction::performAction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_f4_reducer_8hpp_ad4cf49fd583deddf53333f5fe37bc5fc_1ad4cf49fd583deddf53333f5fe37bc5fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void f4ReducerDependency</definition>
+        <argsstring>()</argsstring>
+        <name>f4ReducerDependency</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4Reducer.hpp" line="25" column="6" bodyfile="submodules/mathicgb/src/mathicgb/F4Reducer.cpp" bodystart="53" bodyend="53" declfile="submodules/mathicgb/src/mathicgb/F4Reducer.hpp" declline="25" declcolumn="6"/>
+        <referencedby refid="_reducer_8cpp_a30e39450db95717fa0a753e1785607b1_1a30e39450db95717fa0a753e1785607b1" compoundref="_reducer_8cpp" startline="26" endline="34">dummyLinkerFix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>MathicGB<sp/>copyright<sp/>2012<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHICGB_F4_REDUCER_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_F4_REDUCER_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><ref refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n" kindref="compound">MATHICGB_NAMESPACE_BEGIN</ref></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_reducer" kindref="compound">Reducer</ref>;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_poly_ring" kindref="compound">PolyRing</ref>;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal">std::unique_ptr&lt;Reducer&gt;<sp/><ref refid="_f4_reducer_8hpp_ab1ebd43c7bbcd1b0736da85b3df594f7_1ab1ebd43c7bbcd1b0736da85b3df594f7" kindref="member">makeF4Reducer</ref>(</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_poly_ring" kindref="compound">PolyRing</ref>&amp;<sp/>ring,</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>oldType,</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/>std::string<sp/>file,</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minEntries</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>translation<sp/>unit<sp/>has<sp/>to<sp/>expose<sp/>something<sp/>that<sp/>is<sp/>needed<sp/>elsewhere.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Otherwise,<sp/>the<sp/>compiler<sp/>will<sp/>think<sp/>it<sp/>is<sp/>not<sp/>needed<sp/>and<sp/>exclude<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//<sp/>whole<sp/>thing,<sp/>despite<sp/>there<sp/>being<sp/>important<sp/>global<sp/>objects<sp/>in<sp/>the<sp/>.cpp<sp/>file.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="_f4_reducer_8hpp_ad4cf49fd583deddf53333f5fe37bc5fc_1ad4cf49fd583deddf53333f5fe37bc5fc" kindref="member">f4ReducerDependency</ref>();</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a3dd074a16d8db719c612d38d30802066_1a3dd074a16d8db719c612d38d30802066" kindref="member">MATHICGB_NAMESPACE_END</ref></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/mathicgb/F4Reducer.hpp"/>
+  </compounddef>
+</doxygen>

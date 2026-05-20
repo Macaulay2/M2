@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classschur__poly" kind="class" language="C++" prot="public">
+    <compoundname>schur_poly</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="schur2_8hpp" local="no">schur2.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classschur__poly_a0a5a404ebe46acc5ece6871809e27790_1a0a5a404ebe46acc5ece6871809e27790" prot="public" static="no">
+        <type><ref refid="classschur__poly__iterator" kindref="compound">schur_poly_iterator</ref></type>
+        <definition>typedef schur_poly_iterator schur_poly::iterator</definition>
+        <argsstring></argsstring>
+        <name>iterator</name>
+        <qualifiedname>schur_poly::iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="88" column="31" bodyfile="Macaulay2/e/schur2.hpp" bodystart="88" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="classschur__poly_a7aa957b866c9a5711709cd34c9128fab_1a7aa957b866c9a5711709cd34c9128fab" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class SchurRing2</definition>
+        <argsstring></argsstring>
+        <name>SchurRing2</name>
+        <qualifiedname>schur_poly::SchurRing2</qualifiedname>
+        <param>
+          <type><ref refid="class_schur_ring2" kindref="compound">SchurRing2</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="81" column="16" bodyfile="Macaulay2/e/schur2.hpp" bodystart="81" bodyend="-1"/>
+        <references refid="classschur__poly_a7aa957b866c9a5711709cd34c9128fab_1a7aa957b866c9a5711709cd34c9128fab" compoundref="schur2_8hpp" startline="81">SchurRing2</references>
+        <referencedby refid="classschur__poly_a7aa957b866c9a5711709cd34c9128fab_1a7aa957b866c9a5711709cd34c9128fab" compoundref="schur2_8hpp" startline="81">SchurRing2</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="classschur__poly_a410d983b4bc6c26057a39e1a229682f7_1a410d983b4bc6c26057a39e1a229682f7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class schur_poly_iterator</definition>
+        <argsstring></argsstring>
+        <name>schur_poly_iterator</name>
+        <qualifiedname>schur_poly::schur_poly_iterator</qualifiedname>
+        <param>
+          <type><ref refid="classschur__poly__iterator" kindref="compound">schur_poly_iterator</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="82" column="16" bodyfile="Macaulay2/e/schur2.hpp" bodystart="82" bodyend="-1"/>
+        <references refid="classschur__poly_a410d983b4bc6c26057a39e1a229682f7_1a410d983b4bc6c26057a39e1a229682f7" compoundref="schur2_8hpp" startline="82">schur_poly_iterator</references>
+        <referencedby refid="classschur__poly_a410d983b4bc6c26057a39e1a229682f7_1a410d983b4bc6c26057a39e1a229682f7" compoundref="schur2_8hpp" startline="82">schur_poly_iterator</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classschur__poly_a58a20f2ced3665b2490fe7eecd5c267e_1a58a20f2ced3665b2490fe7eecd5c267e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>schur_poly::VECTOR</definition>
+        <argsstring>(ring_elem) coeffs</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>schur_poly::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="83" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classschur__poly_a12759255affc0f0b424b76a4a39a3a1f_1a12759255affc0f0b424b76a4a39a3a1f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>schur_poly::VECTOR</definition>
+        <argsstring>(schur_word) monoms</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>schur_poly::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="schur2_8hpp_a0e73d97aa9420249caacde8bc4bad2e0_1a0e73d97aa9420249caacde8bc4bad2e0" kindref="member">schur_word</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="84" column="3"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classschur__poly_a79d0d03b94cc34ae7ed6f87dd3434967_1a79d0d03b94cc34ae7ed6f87dd3434967" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classschur__poly_a0a5a404ebe46acc5ece6871809e27790_1a0a5a404ebe46acc5ece6871809e27790" kindref="member">iterator</ref></type>
+        <definition>schur_poly::iterator schur_poly::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>schur_poly::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="90" column="12" bodyfile="Macaulay2/e/schur2.hpp" bodystart="126" bodyend="129"/>
+        <referencedby refid="class_schur_ring2_ab7dd61a061789c2d84f1342c5b2b833e_1ab7dd61a061789c2d84f1342c5b2b833e" compoundref="schur2_8cpp" startline="530" endline="592">SchurRing2::add</referencedby>
+        <referencedby refid="class_schur_ring2_ad1578f60715ed34e2ea5d97e77266426_1ad1578f60715ed34e2ea5d97e77266426" compoundref="schur2_8cpp" startline="365" endline="381">SchurRing2::compare_elems</referencedby>
+        <referencedby refid="class_schur_ring2_a30169b1d79a6a2c1af8c973738908f89_1a30169b1d79a6a2c1af8c973738908f89" compoundref="schur2_8cpp" startline="310" endline="319">SchurRing2::copy</referencedby>
+        <referencedby refid="class_schur_ring2_ad3a800d582d5e63f597235d9e9653ee4_1ad3a800d582d5e63f597235d9e9653ee4" compoundref="schur2_8cpp" startline="202" endline="238">SchurRing2::elem_text_out</referencedby>
+        <referencedby refid="class_schur_ring2_a02900c1203a1ebdd468803efe28ac206_1a02900c1203a1ebdd468803efe28ac206" compoundref="schur2_8cpp" startline="253" endline="271">SchurRing2::is_equal</referencedby>
+        <referencedby refid="class_schur_ring2_a76c9bdd1a33835cf17c12b2ee2206902_1a76c9bdd1a33835cf17c12b2ee2206902" compoundref="schur2_8cpp" startline="407" endline="429">SchurRing2::lift_coeffs</referencedby>
+        <referencedby refid="class_schur_ring2_abbde84b578a5bd8fa27fb5e552a63adf_1abbde84b578a5bd8fa27fb5e552a63adf" compoundref="schur2_8cpp" startline="682" endline="716">SchurRing2::list_form</referencedby>
+        <referencedby refid="class_schur_ring2_ac7a95d6e8429f5bd0b3e1ac4521d0b45_1ac7a95d6e8429f5bd0b3e1ac4521d0b45" compoundref="schur2_8cpp" startline="616" endline="646">SchurRing2::mult</referencedby>
+        <referencedby refid="class_schur_ring2_ac9ac49a4db095af0d585b38257c9fe91_1ac9ac49a4db095af0d585b38257c9fe91" compoundref="schur2_8cpp" startline="600" endline="615">SchurRing2::mult_by_coefficient</referencedby>
+        <referencedby refid="class_schur_ring2_a623d53956d8b59ccf61b75c05f788b68_1a623d53956d8b59ccf61b75c05f788b68" compoundref="schur2_8cpp" startline="496" endline="510">SchurRing2::negate</referencedby>
+        <referencedby refid="class_schur_ring2_acc5125946258aa054ee2afb765e30a9e_1acc5125946258aa054ee2afb765e30a9e" compoundref="schur2_8cpp" startline="383" endline="406">SchurRing2::promote_coeffs</referencedby>
+        <referencedby refid="class_schur_ring2_a5680f1d9cc9631ac0726fa835f098114_1a5680f1d9cc9631ac0726fa835f098114" compoundref="schur2_8cpp" startline="512" endline="528">SchurRing2::truncate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classschur__poly_a9632b4958ef2f19d8c48d0ccff6f73fd_1a9632b4958ef2f19d8c48d0ccff6f73fd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classschur__poly_a0a5a404ebe46acc5ece6871809e27790_1a0a5a404ebe46acc5ece6871809e27790" kindref="member">iterator</ref></type>
+        <definition>schur_poly::iterator schur_poly::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>schur_poly::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="91" column="12" bodyfile="Macaulay2/e/schur2.hpp" bodystart="130" bodyend="133"/>
+        <referencedby refid="class_schur_ring2_ab7dd61a061789c2d84f1342c5b2b833e_1ab7dd61a061789c2d84f1342c5b2b833e" compoundref="schur2_8cpp" startline="530" endline="592">SchurRing2::add</referencedby>
+        <referencedby refid="class_schur_ring2_ad1578f60715ed34e2ea5d97e77266426_1ad1578f60715ed34e2ea5d97e77266426" compoundref="schur2_8cpp" startline="365" endline="381">SchurRing2::compare_elems</referencedby>
+        <referencedby refid="class_schur_ring2_a30169b1d79a6a2c1af8c973738908f89_1a30169b1d79a6a2c1af8c973738908f89" compoundref="schur2_8cpp" startline="310" endline="319">SchurRing2::copy</referencedby>
+        <referencedby refid="class_schur_ring2_ad3a800d582d5e63f597235d9e9653ee4_1ad3a800d582d5e63f597235d9e9653ee4" compoundref="schur2_8cpp" startline="202" endline="238">SchurRing2::elem_text_out</referencedby>
+        <referencedby refid="class_schur_ring2_a02900c1203a1ebdd468803efe28ac206_1a02900c1203a1ebdd468803efe28ac206" compoundref="schur2_8cpp" startline="253" endline="271">SchurRing2::is_equal</referencedby>
+        <referencedby refid="class_schur_ring2_a76c9bdd1a33835cf17c12b2ee2206902_1a76c9bdd1a33835cf17c12b2ee2206902" compoundref="schur2_8cpp" startline="407" endline="429">SchurRing2::lift_coeffs</referencedby>
+        <referencedby refid="class_schur_ring2_ac7a95d6e8429f5bd0b3e1ac4521d0b45_1ac7a95d6e8429f5bd0b3e1ac4521d0b45" compoundref="schur2_8cpp" startline="616" endline="646">SchurRing2::mult</referencedby>
+        <referencedby refid="class_schur_ring2_ac9ac49a4db095af0d585b38257c9fe91_1ac9ac49a4db095af0d585b38257c9fe91" compoundref="schur2_8cpp" startline="600" endline="615">SchurRing2::mult_by_coefficient</referencedby>
+        <referencedby refid="class_schur_ring2_a623d53956d8b59ccf61b75c05f788b68_1a623d53956d8b59ccf61b75c05f788b68" compoundref="schur2_8cpp" startline="496" endline="510">SchurRing2::negate</referencedby>
+        <referencedby refid="class_schur_ring2_acc5125946258aa054ee2afb765e30a9e_1acc5125946258aa054ee2afb765e30a9e" compoundref="schur2_8cpp" startline="383" endline="406">SchurRing2::promote_coeffs</referencedby>
+        <referencedby refid="class_schur_ring2_a5680f1d9cc9631ac0726fa835f098114_1a5680f1d9cc9631ac0726fa835f098114" compoundref="schur2_8cpp" startline="512" endline="528">SchurRing2::truncate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classschur__poly_adbada32692fc86af58167c22e95672e8_1adbada32692fc86af58167c22e95672e8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t schur_poly::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>schur_poly::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="92" column="10" bodyfile="Macaulay2/e/schur2.hpp" bodystart="92" bodyend="92"/>
+        <referencedby refid="class_schur_ring2_ad3a800d582d5e63f597235d9e9653ee4_1ad3a800d582d5e63f597235d9e9653ee4" compoundref="schur2_8cpp" startline="202" endline="238">SchurRing2::elem_text_out</referencedby>
+        <referencedby refid="class_schur_ring2_a1fe66926caff2875758c977fe18778d7_1a1fe66926caff2875758c977fe18778d7" compoundref="schur2_8cpp" startline="273" endline="279">SchurRing2::get_scalar</referencedby>
+        <referencedby refid="class_schur_ring2_a02900c1203a1ebdd468803efe28ac206_1a02900c1203a1ebdd468803efe28ac206" compoundref="schur2_8cpp" startline="253" endline="271">SchurRing2::is_equal</referencedby>
+        <referencedby refid="class_schur_ring2_a3f54a89457225d621c0cc27b58a30e8f_1a3f54a89457225d621c0cc27b58a30e8f" compoundref="schur2_8cpp" startline="240" endline="245">SchurRing2::is_unit</referencedby>
+        <referencedby refid="class_schur_ring2_a7f52e700664bd7767dd737e34953c786_1a7f52e700664bd7767dd737e34953c786" compoundref="schur2_8cpp" startline="247" endline="251">SchurRing2::is_zero</referencedby>
+        <referencedby refid="class_schur_ring2_abbde84b578a5bd8fa27fb5e552a63adf_1abbde84b578a5bd8fa27fb5e552a63adf" compoundref="schur2_8cpp" startline="682" endline="716">SchurRing2::list_form</referencedby>
+        <referencedby refid="class_schur_ring2_a3675266e97cd2335e79c92e012f4e650_1a3675266e97cd2335e79c92e012f4e650" compoundref="schur2_8hpp" startline="186" endline="186">SchurRing2::size</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classschur__poly_a9901ea5c5e6d526cda4f24296715cd7d_1a9901ea5c5e6d526cda4f24296715cd7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void schur_poly::append</definition>
+        <argsstring>(iterator &amp;first, iterator &amp;last)</argsstring>
+        <name>append</name>
+        <qualifiedname>schur_poly::append</qualifiedname>
+        <param>
+          <type><ref refid="classschur__poly_a0a5a404ebe46acc5ece6871809e27790_1a0a5a404ebe46acc5ece6871809e27790" kindref="member">iterator</ref> &amp;</type>
+          <declname>first</declname>
+        </param>
+        <param>
+          <type><ref refid="classschur__poly_a0a5a404ebe46acc5ece6871809e27790_1a0a5a404ebe46acc5ece6871809e27790" kindref="member">iterator</ref> &amp;</type>
+          <declname>last</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="93" column="8" bodyfile="Macaulay2/e/schur2.cpp" bodystart="124" bodyend="128"/>
+        <references refid="classschur__poly_a51cb10fb79f730fd9b1885d76c808e97_1a51cb10fb79f730fd9b1885d76c808e97" compoundref="schur2_8cpp" startline="119" endline="123">appendTerm</references>
+        <references refid="classschur__poly__iterator_ace9a937931641e219151a5e2fc923def_1ace9a937931641e219151a5e2fc923def" compoundref="schur2_8hpp" startline="115" endline="115">schur_poly_iterator::getCoefficient</references>
+        <references refid="classschur__poly__iterator_a2151b11e237f70769ff93108916df895_1a2151b11e237f70769ff93108916df895" compoundref="schur2_8hpp" startline="116" endline="116">schur_poly_iterator::getMonomial</references>
+      </memberdef>
+      <memberdef kind="function" id="classschur__poly_a51cb10fb79f730fd9b1885d76c808e97_1a51cb10fb79f730fd9b1885d76c808e97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void schur_poly::appendTerm</definition>
+        <argsstring>(ring_elem coeff, const_schur_partition monom)</argsstring>
+        <name>appendTerm</name>
+        <qualifiedname>schur_poly::appendTerm</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>coeff</declname>
+        </param>
+        <param>
+          <type><ref refid="schur2_8hpp_aca873c74b0b403ca494c84086283196e_1aca873c74b0b403ca494c84086283196e" kindref="member">const_schur_partition</ref></type>
+          <declname>monom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="94" column="8" bodyfile="Macaulay2/e/schur2.cpp" bodystart="119" bodyend="123"/>
+        <referencedby refid="classschur__poly_a9901ea5c5e6d526cda4f24296715cd7d_1a9901ea5c5e6d526cda4f24296715cd7d" compoundref="schur2_8cpp" startline="124" endline="128">append</referencedby>
+        <referencedby refid="class_schur_ring2_ac84f15a69f0099c8b3aa63bdd275b759_1ac84f15a69f0099c8b3aa63bdd275b759" compoundref="schur2_8cpp" startline="828" endline="834">SchurRing2::SMappendTerm</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="1">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="1">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/schur2.hpp" line="79" column="1" bodyfile="Macaulay2/e/schur2.hpp" bodystart="80" bodyend="95"/>
+    <listofallmembers>
+      <member refid="classschur__poly_a9901ea5c5e6d526cda4f24296715cd7d_1a9901ea5c5e6d526cda4f24296715cd7d" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>append</name></member>
+      <member refid="classschur__poly_a51cb10fb79f730fd9b1885d76c808e97_1a51cb10fb79f730fd9b1885d76c808e97" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>appendTerm</name></member>
+      <member refid="classschur__poly_a79d0d03b94cc34ae7ed6f87dd3434967_1a79d0d03b94cc34ae7ed6f87dd3434967" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>begin</name></member>
+      <member refid="classschur__poly_a9632b4958ef2f19d8c48d0ccff6f73fd_1a9632b4958ef2f19d8c48d0ccff6f73fd" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>end</name></member>
+      <member refid="classschur__poly_a0a5a404ebe46acc5ece6871809e27790_1a0a5a404ebe46acc5ece6871809e27790" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>iterator</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>operator new[]</name></member>
+      <member refid="classschur__poly_a410d983b4bc6c26057a39e1a229682f7_1a410d983b4bc6c26057a39e1a229682f7" prot="private" virt="non-virtual"><scope>schur_poly</scope><name>schur_poly_iterator</name></member>
+      <member refid="classschur__poly_a7aa957b866c9a5711709cd34c9128fab_1a7aa957b866c9a5711709cd34c9128fab" prot="private" virt="non-virtual"><scope>schur_poly</scope><name>SchurRing2</name></member>
+      <member refid="classschur__poly_adbada32692fc86af58167c22e95672e8_1adbada32692fc86af58167c22e95672e8" prot="public" virt="non-virtual"><scope>schur_poly</scope><name>size</name></member>
+      <member refid="classschur__poly_a58a20f2ced3665b2490fe7eecd5c267e_1a58a20f2ced3665b2490fe7eecd5c267e" prot="private" virt="non-virtual"><scope>schur_poly</scope><name>VECTOR</name></member>
+      <member refid="classschur__poly_a12759255affc0f0b424b76a4a39a3a1f_1a12759255affc0f0b424b76a4a39a3a1f" prot="private" virt="non-virtual"><scope>schur_poly</scope><name>VECTOR</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

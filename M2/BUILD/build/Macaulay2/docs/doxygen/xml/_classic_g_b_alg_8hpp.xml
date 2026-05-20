@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_classic_g_b_alg_8hpp" kind="file" language="C++">
+    <compoundname>ClassicGBAlg.hpp</compoundname>
+    <includes local="no">functional</includes>
+    <includedby refid="_g_b_action_8cpp" local="yes">submodules/mathicgb/src/cli/GBAction.cpp</includedby>
+    <includedby refid="mathicgb_8cpp" local="yes">submodules/mathicgb/src/mathicgb.cpp</includedby>
+    <includedby refid="_classic_g_b_alg_8cpp" local="yes">submodules/mathicgb/src/mathicgb/ClassicGBAlg.cpp</includedby>
+    <includedby refid="_m_e_s_classic_g_b_alg_8cpp" local="yes">submodules/mathicgb/src/mathicgb/MESClassicGBAlg.cpp</includedby>
+    <includedby refid="gb-test_8cpp" local="yes">submodules/mathicgb/src/test/gb-test.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/ClassicGBAlg.hpp</label>
+        <link refid="_classic_g_b_alg_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>functional</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>submodules/mathicgb/src/cli/GBAction.cpp</label>
+        <link refid="_g_b_action_8cpp"/>
+      </node>
+      <node id="3">
+        <label>submodules/mathicgb/src/mathicgb.cpp</label>
+        <link refid="mathicgb_8cpp"/>
+      </node>
+      <node id="4">
+        <label>submodules/mathicgb/src/mathicgb/ClassicGBAlg.cpp</label>
+        <link refid="_classic_g_b_alg_8cpp"/>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/ClassicGBAlg.hpp</label>
+        <link refid="_classic_g_b_alg_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>submodules/mathicgb/src/mathicgb/MESClassicGBAlg.cpp</label>
+        <link refid="_m_e_s_classic_g_b_alg_8cpp"/>
+      </node>
+      <node id="6">
+        <label>submodules/mathicgb/src/test/gb-test.cpp</label>
+        <link refid="gb-test_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="struct_classic_g_b_alg_params" prot="public">ClassicGBAlgParams</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_classic_g_b_alg_8hpp_a281ee5b2d9420a0704b785bd4d5b2814_1a281ee5b2d9420a0704b785bd4d5b2814" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_basis" kindref="compound">Basis</ref></type>
+        <definition>Basis computeGBClassicAlg</definition>
+        <argsstring>(Basis &amp;&amp;inputBasis, ClassicGBAlgParams params)</argsstring>
+        <name>computeGBClassicAlg</name>
+        <param>
+          <type><ref refid="class_basis" kindref="compound">Basis</ref> &amp;&amp;</type>
+          <declname>inputBasis</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref></type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ClassicGBAlg.hpp" line="28" column="7" bodyfile="submodules/mathicgb/src/mathicgb/ClassicGBAlg.cpp" bodystart="661" bodyend="682" declfile="submodules/mathicgb/src/mathicgb/ClassicGBAlg.hpp" declline="28" declcolumn="7"/>
+        <references refid="class_classic_g_b_alg_ac5437a2e33cc14385c4e745965b2dbdd_1ac5437a2e33cc14385c4e745965b2dbdd" compoundref="_classic_g_b_alg_8cpp" startline="51" endline="51">ClassicGBAlg::basis</references>
+        <references refid="struct_classic_g_b_alg_params_a354d8561107868fce42fe457a1dfcbc4_1a354d8561107868fce42fe457a1dfcbc4" compoundref="_classic_g_b_alg_8hpp" startline="19">ClassicGBAlgParams::breakAfter</references>
+        <references refid="struct_classic_g_b_alg_params_a89fab524a0f21c3d4224c5b57956e05a_1a89fab524a0f21c3d4224c5b57956e05a" compoundref="_classic_g_b_alg_8hpp" startline="25">ClassicGBAlgParams::callback</references>
+        <references refid="class_classic_g_b_alg_a445764dcc07024920e9d8a195e8add98_1a445764dcc07024920e9d8a195e8add98" compoundref="_classic_g_b_alg_8cpp" startline="314" endline="344">ClassicGBAlg::computeGrobnerBasis</references>
+        <references refid="struct_classic_g_b_alg_params_ada319fbddc969397928eb997dd7fb314_1ada319fbddc969397928eb997dd7fb314" compoundref="_classic_g_b_alg_8hpp" startline="15">ClassicGBAlgParams::monoLookupType</references>
+        <references refid="struct_classic_g_b_alg_params_ab7c5ae05b1e45d9470ab78e4facf355c_1ab7c5ae05b1e45d9470ab78e4facf355c" compoundref="_classic_g_b_alg_8hpp" startline="16">ClassicGBAlgParams::preferSparseReducers</references>
+        <references refid="struct_classic_g_b_alg_params_a3c1e00a1115306a14b396e97bb9ebac9_1a3c1e00a1115306a14b396e97bb9ebac9" compoundref="_classic_g_b_alg_8hpp" startline="20">ClassicGBAlgParams::printInterval</references>
+        <references refid="struct_classic_g_b_alg_params_a4460df62af4fe349fe9fd20073b4dc3e_1a4460df62af4fe349fe9fd20073b4dc3e" compoundref="_classic_g_b_alg_8hpp" startline="14">ClassicGBAlgParams::reducer</references>
+        <references refid="struct_classic_g_b_alg_params_a2aff26b478e81306dff606d6d0e0a9ac_1a2aff26b478e81306dff606d6d0e0a9ac" compoundref="_classic_g_b_alg_8hpp" startline="22">ClassicGBAlgParams::reducerMemoryQuantum</references>
+        <references refid="class_classic_g_b_alg_ab9819a974a707a178c62452a68b9cbf7_1ab9819a974a707a178c62452a68b9cbf7" compoundref="_classic_g_b_alg_8cpp" startline="60" endline="62">ClassicGBAlg::setBreakAfter</references>
+        <references refid="class_classic_g_b_alg_a9bc8c6b0285e409be461aa5344cbcf5b_1a9bc8c6b0285e409be461aa5344cbcf5b" compoundref="_classic_g_b_alg_8cpp" startline="87" endline="89">ClassicGBAlg::setCallback</references>
+        <references refid="class_classic_g_b_alg_ab7dbb247c087c47974183f0e369f8c5e_1ab7dbb247c087c47974183f0e369f8c5e" compoundref="_classic_g_b_alg_8cpp" startline="64" endline="66">ClassicGBAlg::setPrintInterval</references>
+        <references refid="class_classic_g_b_alg_aab0101f61c7cd02b62bdbbd75703539f_1aab0101f61c7cd02b62bdbbd75703539f" compoundref="_classic_g_b_alg_8cpp" startline="72" endline="74">ClassicGBAlg::setReducerMemoryQuantum</references>
+        <references refid="class_classic_g_b_alg_a1457b600322a73c786261f662206b89f_1a1457b600322a73c786261f662206b89f" compoundref="_classic_g_b_alg_8cpp" startline="150" endline="155">ClassicGBAlg::setSPairGroupSize</references>
+        <references refid="class_classic_g_b_alg_a006d79e69af859a005d5664b1fd25863_1a006d79e69af859a005d5664b1fd25863" compoundref="_classic_g_b_alg_8cpp" startline="80" endline="82">ClassicGBAlg::setUseAutoTailReduction</references>
+        <references refid="class_classic_g_b_alg_a8cd6f29229a750a61d3a0a28cdca4f4d_1a8cd6f29229a750a61d3a0a28cdca4f4d" compoundref="_classic_g_b_alg_8cpp" startline="76" endline="78">ClassicGBAlg::setUseAutoTopReduction</references>
+        <references refid="struct_classic_g_b_alg_params_a387ac5bd5edbff601a530b959d271a61_1a387ac5bd5edbff601a530b959d271a61" compoundref="_classic_g_b_alg_8hpp" startline="21">ClassicGBAlgParams::sPairGroupSize</references>
+        <references refid="struct_classic_g_b_alg_params_ad6ea68189b8a10aa73dc902ed07b31ca_1ad6ea68189b8a10aa73dc902ed07b31ca" compoundref="_classic_g_b_alg_8hpp" startline="17">ClassicGBAlgParams::sPairQueueType</references>
+        <references refid="class_poly_basis_a4cd6e3495d54df0ef3caafefbd17fe56_1a4cd6e3495d54df0ef3caafefbd17fe56" compoundref="_poly_basis_8cpp" startline="99" endline="105">PolyBasis::toBasisAndRetireAll</references>
+        <references refid="struct_classic_g_b_alg_params_a4e41ff0dcd3524e14331cfc851034273_1a4e41ff0dcd3524e14331cfc851034273" compoundref="_classic_g_b_alg_8hpp" startline="24">ClassicGBAlgParams::useAutoTailReduction</references>
+        <references refid="struct_classic_g_b_alg_params_a92c1058da9912cee5bc260e9dda1db6c_1a92c1058da9912cee5bc260e9dda1db6c" compoundref="_classic_g_b_alg_8hpp" startline="23">ClassicGBAlgParams::useAutoTopReduction</references>
+        <referencedby refid="_classic_g_b_alg_8cpp_a8d6913cc30de8a7417c3b2409d31d0c0_1a8d6913cc30de8a7417c3b2409d31d0c0" compoundref="_classic_g_b_alg_8cpp" startline="684" endline="689">computeModuleGBClassicAlg</referencedby>
+        <referencedby refid="namespacemgbi_af970d110dada095ad24cff59b827553c_1af970d110dada095ad24cff59b827553c" compoundref="mathicgb_8cpp" startline="913" endline="986">mgbi::internalComputeGroebnerBasis</referencedby>
+        <referencedby refid="class_g_b_action_a69a4ac798f6958ee05121ae226f71681_1a69a4ac798f6958ee05121ae226f71681" compoundref="_g_b_action_8cpp" startline="65" endline="122">GBAction::performAction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_classic_g_b_alg_8hpp_a8d6913cc30de8a7417c3b2409d31d0c0_1a8d6913cc30de8a7417c3b2409d31d0c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_basis" kindref="compound">Basis</ref></type>
+        <definition>Basis computeModuleGBClassicAlg</definition>
+        <argsstring>(Basis &amp;&amp;inputBasis, ClassicGBAlgParams params)</argsstring>
+        <name>computeModuleGBClassicAlg</name>
+        <param>
+          <type><ref refid="class_basis" kindref="compound">Basis</ref> &amp;&amp;</type>
+          <declname>inputBasis</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref></type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ClassicGBAlg.hpp" line="29" column="7" bodyfile="submodules/mathicgb/src/mathicgb/ClassicGBAlg.cpp" bodystart="684" bodyend="689" declfile="submodules/mathicgb/src/mathicgb/ClassicGBAlg.hpp" declline="29" declcolumn="7"/>
+        <references refid="_classic_g_b_alg_8cpp_a281ee5b2d9420a0704b785bd4d5b2814_1a281ee5b2d9420a0704b785bd4d5b2814" compoundref="_classic_g_b_alg_8cpp" startline="661" endline="682">computeGBClassicAlg</references>
+        <referencedby refid="namespacemgbi_af970d110dada095ad24cff59b827553c_1af970d110dada095ad24cff59b827553c" compoundref="mathicgb_8cpp" startline="913" endline="986">mgbi::internalComputeGroebnerBasis</referencedby>
+        <referencedby refid="class_g_b_action_a69a4ac798f6958ee05121ae226f71681_1a69a4ac798f6958ee05121ae226f71681" compoundref="_g_b_action_8cpp" startline="65" endline="122">GBAction::performAction</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>MathicGB<sp/>copyright<sp/>2012<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHICGB_CLASSIC_GB_ALG_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_CLASSIC_GB_ALG_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;functional&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><ref refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n" kindref="compound">MATHICGB_NAMESPACE_BEGIN</ref></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_reducer" kindref="compound">Reducer</ref>;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_basis" kindref="compound">Basis</ref>;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="struct_classic_g_b_alg_params" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref><sp/>{</highlight></codeline>
+<codeline lineno="14" refid="struct_classic_g_b_alg_params_a4460df62af4fe349fe9fd20073b4dc3e_1a4460df62af4fe349fe9fd20073b4dc3e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_reducer" kindref="compound">Reducer</ref>*<sp/><ref refid="struct_classic_g_b_alg_params_a4460df62af4fe349fe9fd20073b4dc3e_1a4460df62af4fe349fe9fd20073b4dc3e" kindref="member">reducer</ref>;</highlight></codeline>
+<codeline lineno="15" refid="struct_classic_g_b_alg_params_ada319fbddc969397928eb997dd7fb314_1ada319fbddc969397928eb997dd7fb314" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="struct_classic_g_b_alg_params_ada319fbddc969397928eb997dd7fb314_1ada319fbddc969397928eb997dd7fb314" kindref="member">monoLookupType</ref>;</highlight></codeline>
+<codeline lineno="16" refid="struct_classic_g_b_alg_params_ab7c5ae05b1e45d9470ab78e4facf355c_1ab7c5ae05b1e45d9470ab78e4facf355c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_classic_g_b_alg_params_ab7c5ae05b1e45d9470ab78e4facf355c_1ab7c5ae05b1e45d9470ab78e4facf355c" kindref="member">preferSparseReducers</ref>;</highlight></codeline>
+<codeline lineno="17" refid="struct_classic_g_b_alg_params_ad6ea68189b8a10aa73dc902ed07b31ca_1ad6ea68189b8a10aa73dc902ed07b31ca" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="struct_classic_g_b_alg_params_ad6ea68189b8a10aa73dc902ed07b31ca_1ad6ea68189b8a10aa73dc902ed07b31ca" kindref="member">sPairQueueType</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="struct_classic_g_b_alg_params_a354d8561107868fce42fe457a1dfcbc4_1a354d8561107868fce42fe457a1dfcbc4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="struct_classic_g_b_alg_params_a354d8561107868fce42fe457a1dfcbc4_1a354d8561107868fce42fe457a1dfcbc4" kindref="member">breakAfter</ref>;</highlight></codeline>
+<codeline lineno="20" refid="struct_classic_g_b_alg_params_a3c1e00a1115306a14b396e97bb9ebac9_1a3c1e00a1115306a14b396e97bb9ebac9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="struct_classic_g_b_alg_params_a3c1e00a1115306a14b396e97bb9ebac9_1a3c1e00a1115306a14b396e97bb9ebac9" kindref="member">printInterval</ref>;</highlight></codeline>
+<codeline lineno="21" refid="struct_classic_g_b_alg_params_a387ac5bd5edbff601a530b959d271a61_1a387ac5bd5edbff601a530b959d271a61" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="struct_classic_g_b_alg_params_a387ac5bd5edbff601a530b959d271a61_1a387ac5bd5edbff601a530b959d271a61" kindref="member">sPairGroupSize</ref>;</highlight></codeline>
+<codeline lineno="22" refid="struct_classic_g_b_alg_params_a2aff26b478e81306dff606d6d0e0a9ac_1a2aff26b478e81306dff606d6d0e0a9ac" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="struct_classic_g_b_alg_params_a2aff26b478e81306dff606d6d0e0a9ac_1a2aff26b478e81306dff606d6d0e0a9ac" kindref="member">reducerMemoryQuantum</ref>;</highlight></codeline>
+<codeline lineno="23" refid="struct_classic_g_b_alg_params_a92c1058da9912cee5bc260e9dda1db6c_1a92c1058da9912cee5bc260e9dda1db6c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_classic_g_b_alg_params_a92c1058da9912cee5bc260e9dda1db6c_1a92c1058da9912cee5bc260e9dda1db6c" kindref="member">useAutoTopReduction</ref>;</highlight></codeline>
+<codeline lineno="24" refid="struct_classic_g_b_alg_params_a4e41ff0dcd3524e14331cfc851034273_1a4e41ff0dcd3524e14331cfc851034273" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="struct_classic_g_b_alg_params_a4e41ff0dcd3524e14331cfc851034273_1a4e41ff0dcd3524e14331cfc851034273" kindref="member">useAutoTailReduction</ref>;</highlight></codeline>
+<codeline lineno="25" refid="struct_classic_g_b_alg_params_a89fab524a0f21c3d4224c5b57956e05a_1a89fab524a0f21c3d4224c5b57956e05a" refkind="member"><highlight class="normal"><sp/><sp/>std::function&lt;<ref refid="classbool" kindref="compound">bool</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">)&gt;<sp/><ref refid="struct_classic_g_b_alg_params_a89fab524a0f21c3d4224c5b57956e05a_1a89fab524a0f21c3d4224c5b57956e05a" kindref="member">callback</ref>;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><ref refid="class_basis" kindref="compound">Basis</ref><sp/><ref refid="_classic_g_b_alg_8hpp_a281ee5b2d9420a0704b785bd4d5b2814_1a281ee5b2d9420a0704b785bd4d5b2814" kindref="member">computeGBClassicAlg</ref>(<ref refid="class_basis" kindref="compound">Basis</ref>&amp;&amp;<sp/>inputBasis,<sp/><ref refid="struct_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref><sp/>params);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><ref refid="class_basis" kindref="compound">Basis</ref><sp/><ref refid="_classic_g_b_alg_8hpp_a8d6913cc30de8a7417c3b2409d31d0c0_1a8d6913cc30de8a7417c3b2409d31d0c0" kindref="member">computeModuleGBClassicAlg</ref>(<ref refid="class_basis" kindref="compound">Basis</ref>&amp;&amp;<sp/>inputBasis,<sp/><ref refid="struct_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref><sp/>params);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a3dd074a16d8db719c612d38d30802066_1a3dd074a16d8db719c612d38d30802066" kindref="member">MATHICGB_NAMESPACE_END</ref></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/mathicgb/ClassicGBAlg.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_b_i_basis" kind="namespace" language="C++">
+    <compoundname>BIBasis</compoundname>
+    <innerclass refid="class_b_i_basis_1_1_fast_allocator" prot="public">BIBasis::FastAllocator</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_boolean_involutive_basis" prot="public">BIBasis::BooleanInvolutiveBasis</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_janet_tree" prot="public">BIBasis::JanetTree</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_launcher" prot="public">BIBasis::Launcher</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_monom" prot="public">BIBasis::Monom</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_monom_d_l" prot="public">BIBasis::MonomDL</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_monom_d_r_l" prot="public">BIBasis::MonomDRL</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_monom_lex" prot="public">BIBasis::MonomLex</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_pointer_less_comparator" prot="public">BIBasis::PointerLessComparator</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_pointer_more_comparator" prot="public">BIBasis::PointerMoreComparator</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_polynom" prot="public">BIBasis::Polynom</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_q_set" prot="public">BIBasis::QSet</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_settings_manager" prot="public">BIBasis::SettingsManager</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_triple" prot="public">BIBasis::Triple</innerclass>
+    <innerclass refid="class_b_i_basis_1_1_t_set" prot="public">BIBasis::TSet</innerclass>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="namespace_b_i_basis_ad4c7f13a40454d473babca6397a6f02b_1ad4c7f13a40454d473babca6397a6f02b" prot="public" static="no" mutable="no">
+        <templateparamlist>
+          <param>
+            <type>typename MonomType</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_b_i_basis_1_1_fast_allocator" kindref="compound">FastAllocator</ref></type>
+        <definition>FastAllocator BIBasis::Polynom&lt; MonomType &gt;::Allocator(sizeof(Polynom&lt; MonomType &gt;))</definition>
+        <argsstring>(sizeof(Polynom&lt; MonomType &gt;))</argsstring>
+        <name>Polynom&lt; MonomType &gt;::Allocator</name>
+        <qualifiedname>BIBasis::Allocator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/polynom.hpp" line="93" column="27"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_b_i_basis_a51c2400bb330b50a038dfbd6151d084d_1a51c2400bb330b50a038dfbd6151d084d" prot="public" static="no" mutable="no">
+        <templateparamlist>
+          <param>
+            <type>typename MonomType</type>
+          </param>
+        </templateparamlist>
+        <type>MonomType</type>
+        <definition>MonomType BIBasis::Polynom&lt; MonomType &gt;::UniteMonom</definition>
+        <argsstring></argsstring>
+        <name>Polynom&lt; MonomType &gt;::UniteMonom</name>
+        <qualifiedname>BIBasis::UniteMonom</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/polynom.hpp" line="96" column="23" bodyfile="Macaulay2/e/bibasis/polynom.hpp" bodystart="96" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_b_i_basis_a83c38bea9fdc24752e5b0abcbe7d1b05_1a83c38bea9fdc24752e5b0abcbe7d1b05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_settings_manager" kindref="compound">SettingsManager</ref> &amp;</type>
+        <definition>SettingsManager &amp; BIBasis::GetSettingsManager</definition>
+        <argsstring>()</argsstring>
+        <name>GetSettingsManager</name>
+        <qualifiedname>BIBasis::GetSettingsManager</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/settings-manager.cpp" line="33" column="21" bodyfile="Macaulay2/e/bibasis/settings-manager.cpp" bodystart="33" bodyend="37" declfile="Macaulay2/e/bibasis/settings-manager.hpp" declline="72" declcolumn="21"/>
+        <referencedby refid="class_b_i_basis_1_1_launcher_a3f33ad4f0779f3e83ef4c02c62b0dbd0_1a3f33ad4f0779f3e83ef4c02c62b0dbd0" compoundref="launcher_8cpp" startline="50" endline="130">BIBasis::Launcher::CheckMatrix</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_launcher_adf7849f2ffaa0bc3daed172deaa5d4d3_1adf7849f2ffaa0bc3daed172deaa5d4d3" compoundref="launcher_8cpp" startline="21" endline="48">BIBasis::Launcher::GetBIBasisMatrix</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/bibasis/allocator.cpp" line="20" column="1"/>
+  </compounddef>
+</doxygen>

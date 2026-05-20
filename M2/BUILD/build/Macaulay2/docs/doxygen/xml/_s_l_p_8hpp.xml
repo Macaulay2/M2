@@ -1,0 +1,1358 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_s_l_p_8hpp" kind="file" language="C++">
+    <compoundname>SLP.hpp</compoundname>
+    <includes refid="mutablemat-defs_8hpp" local="yes">mutablemat-defs.hpp</includes>
+    <includes refid="_s_l_p-defs_8hpp" local="yes">SLP-defs.hpp</includes>
+    <includes refid="_s_l_p-imp_8hpp" local="yes">SLP-imp.hpp</includes>
+    <includes refid="mutablemat-imp_8hpp" local="yes">mutablemat-imp.hpp</includes>
+    <includes refid="buffer_8hpp" local="yes">buffer.hpp</includes>
+    <includes refid="matrix_8hpp" local="yes">matrix.hpp</includes>
+    <includes refid="aring-glue_8hpp" local="yes">aring-glue.hpp</includes>
+    <includedby refid="_n_a_g_8hpp" local="yes">Macaulay2/e/NAG.hpp</includedby>
+    <includedby refid="_s_l_p_8cpp" local="yes">Macaulay2/e/SLP.cpp</includedby>
+    <incdepgraph>
+      <node id="119">
+        <label>../system/mutex.h</label>
+      </node>
+      <node id="26">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="106">
+        <label>SLP-defs.hpp</label>
+        <link refid="_s_l_p-defs_8hpp"/>
+      </node>
+      <node id="107">
+        <label>SLP-imp.hpp</label>
+        <link refid="_s_l_p-imp_8hpp"/>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/SLP.hpp</label>
+        <link refid="_s_l_p_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="106" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="113" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="74">
+        <label>ZZp.hpp</label>
+        <link refid="_z_zp_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+      </node>
+      <node id="81">
+        <label>aring-CC.hpp</label>
+        <link refid="aring-_c_c_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+      </node>
+      <node id="83">
+        <label>aring-CCC.hpp</label>
+        <link refid="aring-_c_c_c_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+      </node>
+      <node id="124">
+        <label>aring-CCi.hpp</label>
+        <link refid="aring-_c_ci_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+      </node>
+      <node id="79">
+        <label>aring-RR.hpp</label>
+        <link refid="aring-_r_r_8hpp"/>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+      </node>
+      <node id="82">
+        <label>aring-RRR.hpp</label>
+        <link refid="aring-_r_r_r_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+      </node>
+      <node id="122">
+        <label>aring-RRi.hpp</label>
+        <link refid="aring-_r_ri_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>aring-gf-flint-big.hpp</label>
+        <link refid="aring-gf-flint-big_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>aring-gf-flint.hpp</label>
+        <link refid="aring-gf-flint_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="120">
+        <label>aring-glue.hpp</label>
+        <link refid="aring-glue_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+      </node>
+      <node id="85">
+        <label>aring-m2-gf.hpp</label>
+        <link refid="aring-m2-gf_8hpp"/>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>aring-qq-flint.hpp</label>
+        <link refid="aring-qq-flint_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="95">
+        <label>aring-qq-gmp.hpp</label>
+        <link refid="aring-qq-gmp_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="94">
+        <label>aring-qq.hpp</label>
+        <link refid="aring-qq_8hpp"/>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="95" relation="include">
+        </childnode>
+      </node>
+      <node id="125">
+        <label>aring-tower.hpp</label>
+        <link refid="aring-tower_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="121">
+        <label>aring-translate.hpp</label>
+        <link refid="aring-translate_8hpp"/>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="124" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>aring-zz-flint.hpp</label>
+        <link refid="aring-zz-flint_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="93">
+        <label>aring-zz-gmp.hpp</label>
+        <link refid="aring-zz-gmp_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="90">
+        <label>aring-zzp-ffpack.hpp</label>
+        <link refid="aring-zzp-ffpack_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>aring-zzp-flint.hpp</label>
+        <link refid="aring-zzp-flint_8hpp"/>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="84">
+        <label>aring-zzp.hpp</label>
+        <link refid="aring-zzp_8hpp"/>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="75">
+        <label>coeffrings.hpp</label>
+        <link refid="coeffrings_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>dmat-gf-flint-big.hpp</label>
+        <link refid="dmat-gf-flint-big_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>dmat-gf-flint.hpp</label>
+        <link refid="dmat-gf-flint_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+      </node>
+      <node id="99">
+        <label>dmat-lu-inplace.hpp</label>
+        <link refid="dmat-lu-inplace_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+      </node>
+      <node id="103">
+        <label>dmat-lu-qq.hpp</label>
+        <link refid="dmat-lu-qq_8hpp"/>
+        <childnode refid="104" relation="include">
+        </childnode>
+      </node>
+      <node id="101">
+        <label>dmat-lu-zzp-ffpack.hpp</label>
+        <link refid="dmat-lu-zzp-ffpack_8hpp"/>
+      </node>
+      <node id="102">
+        <label>dmat-lu-zzp-flint.hpp</label>
+        <link refid="dmat-lu-zzp-flint_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+      <node id="98">
+        <label>dmat-lu.hpp</label>
+        <link refid="dmat-lu_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="99" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="103" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>dmat-qq-flint.hpp</label>
+        <link refid="dmat-qq-flint_8hpp"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+      </node>
+      <node id="104">
+        <label>dmat-qq-interface-flint.hpp</label>
+        <link refid="dmat-qq-interface-flint_8hpp"/>
+      </node>
+      <node id="50">
+        <label>dmat-zz-flint.hpp</label>
+        <link refid="dmat-zz-flint_8hpp"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>dmat-zzp-flint.hpp</label>
+        <link refid="dmat-zzp-flint_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>dmat.hpp</label>
+        <link refid="dmat_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="105">
+        <label>eigen.hpp</label>
+        <link refid="eigen_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="5">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="114">
+        <label>freemod.hpp</label>
+        <link refid="freemod_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="115" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="117">
+        <label>int-bag.hpp</label>
+        <link refid="int-bag_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="87">
+        <label>interface/computation.h</label>
+        <link refid="computation_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>interface/gmp-util.h</label>
+        <link refid="gmp-util_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>interface/random.h</label>
+        <link refid="random_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="97">
+        <label>lapack.hpp</label>
+        <link refid="lapack_8hpp"/>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="77">
+        <label>mat-arith.hpp</label>
+        <link refid="mat-arith_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+      </node>
+      <node id="76">
+        <label>mat-elem-ops.hpp</label>
+        <link refid="mat-elem-ops_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="78">
+        <label>mat-linalg.hpp</label>
+        <link refid="mat-linalg_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>mat-util.hpp</label>
+        <link refid="mat-util_8hpp"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mat.hpp</label>
+        <link refid="mat_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>matrix-con.hpp</label>
+        <link refid="matrix-con_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="113">
+        <label>matrix.hpp</label>
+        <link refid="matrix_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="118">
+        <label>mem.hpp</label>
+        <link refid="mem_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+      </node>
+      <node id="116">
+        <label>monideal.hpp</label>
+        <link refid="monideal_8hpp"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mutablemat-defs.hpp</label>
+        <link refid="mutablemat-defs_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+      </node>
+      <node id="112">
+        <label>mutablemat-imp.hpp</label>
+        <link refid="mutablemat-imp_8hpp"/>
+      </node>
+      <node id="126">
+        <label>mutablemat.hpp</label>
+        <link refid="mutablemat_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="106" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="86">
+        <label>polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+      </node>
+      <node id="89">
+        <label>qring.hpp</label>
+        <link refid="qring_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>relem.hpp</label>
+        <link refid="relem_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="80">
+        <label>ringmap.hpp</label>
+        <link refid="ringmap_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="115">
+        <label>schorder.hpp</label>
+        <link refid="schorder_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="88">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="73">
+        <label>smat.hpp</label>
+        <link refid="smat_8hpp"/>
+        <childnode refid="74" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>text-io.hpp</label>
+        <link refid="text-io_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="110">
+        <label>timing.hpp</label>
+        <link refid="timing_8hpp"/>
+        <childnode refid="111" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>M2/config.h</label>
+      </node>
+      <node id="13">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="23">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="49">
+        <label>algorithm</label>
+      </node>
+      <node id="33">
+        <label>assert.h</label>
+      </node>
+      <node id="16">
+        <label>cassert</label>
+      </node>
+      <node id="111">
+        <label>chrono</label>
+      </node>
+      <node id="44">
+        <label>cstddef</label>
+      </node>
+      <node id="27">
+        <label>cstdio</label>
+      </node>
+      <node id="108">
+        <label>cstdlib</label>
+      </node>
+      <node id="109">
+        <label>dlfcn.h</label>
+      </node>
+      <node id="92">
+        <label>fflas-ffpack/ffpack/ffpack.h</label>
+      </node>
+      <node id="53">
+        <label>flint/flint.h</label>
+      </node>
+      <node id="58">
+        <label>flint/fmpq.h</label>
+      </node>
+      <node id="59">
+        <label>flint/fmpq_mat.h</label>
+      </node>
+      <node id="54">
+        <label>flint/fmpz.h</label>
+      </node>
+      <node id="55">
+        <label>flint/fmpz_mat.h</label>
+      </node>
+      <node id="66">
+        <label>flint/fq_nmod.h</label>
+      </node>
+      <node id="68">
+        <label>flint/fq_nmod_mat.h</label>
+      </node>
+      <node id="71">
+        <label>flint/fq_zech.h</label>
+      </node>
+      <node id="72">
+        <label>flint/fq_zech_mat.h</label>
+      </node>
+      <node id="63">
+        <label>flint/nmod_mat.h</label>
+      </node>
+      <node id="67">
+        <label>flint/nmod_poly.h</label>
+      </node>
+      <node id="100">
+        <label>flint/perm.h</label>
+      </node>
+      <node id="14">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="96">
+        <label>iosfwd</label>
+      </node>
+      <node id="3">
+        <label>iostream</label>
+      </node>
+      <node id="21">
+        <label>memory</label>
+      </node>
+      <node id="123">
+        <label>mpfi.h</label>
+      </node>
+      <node id="91">
+        <label>ratio</label>
+      </node>
+      <node id="25">
+        <label>stddef.h</label>
+      </node>
+      <node id="6">
+        <label>stdexcept</label>
+      </node>
+      <node id="31">
+        <label>stdint.h</label>
+      </node>
+      <node id="11">
+        <label>stdlib.h</label>
+      </node>
+      <node id="7">
+        <label>string</label>
+      </node>
+      <node id="34">
+        <label>string.h</label>
+      </node>
+      <node id="35">
+        <label>type_traits</label>
+      </node>
+      <node id="19">
+        <label>utility</label>
+      </node>
+      <node id="12">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="15">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>Macaulay2/e/NAG.cpp</label>
+        <link refid="_n_a_g_8cpp"/>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/NAG.hpp</label>
+        <link refid="_n_a_g_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/SLP.cpp</label>
+        <link refid="_s_l_p_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/SLP.hpp</label>
+        <link refid="_s_l_p_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/interface/matrix.cpp</label>
+        <link refid="interface_2matrix_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/unit-tests/PointArray.cpp</label>
+        <link refid="_point_array_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <briefdescription>
+<para>Public umbrella header for the templated straight-line-program evaluator (<computeroutput><ref refid="class_s_l_program" kindref="compound">SLProgram</ref></computeroutput> / <computeroutput><ref refid="class_s_l_evaluator_concrete" kindref="compound">SLEvaluatorConcrete</ref></computeroutput>). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>A straight-line program is a DAG whose nodes are inputs, constants, and gate operations: the <computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8" kindref="member">SLProgram::GATE_TYPE</ref></computeroutput> enum in <computeroutput><ref refid="_s_l_p-defs_8hpp" kindref="compound">SLP-defs.hpp</ref></computeroutput> lists exactly <computeroutput>Copy</computeroutput>, <computeroutput>MCopy</computeroutput>, <computeroutput>Sum</computeroutput>, <computeroutput>Product</computeroutput>, <computeroutput>MSum</computeroutput>, <computeroutput>MProduct</computeroutput>, <computeroutput>Det</computeroutput>, and <computeroutput>Divide</computeroutput> (the <computeroutput>M</computeroutput> prefix marks the matrix-valued variant). Callers compile a polynomial system or a Jacobian into one of these once and then evaluate it many times <mdash/> a single forward sweep that shares common subexpressions across outputs and stays cache friendly relative to walking a polynomial AST. Derivatives for Newton-step paths are kept as separately-compiled SLPs for the relevant Jacobian (see <computeroutput><ref refid="class_path_tracker" kindref="compound">PathTracker</ref></computeroutput>&apos;s <computeroutput>slpH</computeroutput> / <computeroutput>slpHxt</computeroutput> / <computeroutput>slpHxtH</computeroutput> / <computeroutput>slpHxH</computeroutput> fields in <computeroutput><ref refid="_n_a_g_8hpp" kindref="compound">NAG.hpp</ref></computeroutput> <mdash/> the trailing <computeroutput>|H</computeroutput> variants pair the derivative with the homotopy for in-step substitution), not produced by reverse-mode autodiff inside the <ref refid="class_s_l_p" kindref="compound">SLP</ref>.</para>
+<para>The implementation is split across three files so the same code can be instantiated over the engine&apos;s numerical rings <computeroutput><ref refid="class_m2_1_1_a_ring_r_r" kindref="compound">M2::ARingRR</ref></computeroutput>, <computeroutput><ref refid="class_m2_1_1_a_ring_c_c" kindref="compound">M2::ARingCC</ref></computeroutput>, <computeroutput><ref refid="class_m2_1_1_a_ring_r_r_r" kindref="compound">M2::ARingRRR</ref></computeroutput>, <computeroutput><ref refid="class_m2_1_1_a_ring_c_c_c" kindref="compound">M2::ARingCCC</ref></computeroutput>: <computeroutput><ref refid="_s_l_p-defs_8hpp" kindref="compound">SLP-defs.hpp</ref></computeroutput> declares <computeroutput><ref refid="class_s_l_program" kindref="compound">SLProgram</ref></computeroutput>, <computeroutput><ref refid="struct_homotopy_algorithm" kindref="compound">HomotopyAlgorithm</ref></computeroutput>, and the value-type templates, <computeroutput><ref refid="_s_l_p-imp_8hpp" kindref="compound">SLP-imp.hpp</ref></computeroutput> provides <computeroutput><ref refid="class_s_l_evaluator_concrete" kindref="compound">SLEvaluatorConcrete</ref>&lt;RT&gt;</computeroutput> and the homotopy implementations, and <computeroutput><ref refid="_s_l_p_8cpp" kindref="compound">SLP.cpp</ref></computeroutput> carries the non-template glue. A separate older <computeroutput><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref></computeroutput> / <computeroutput><ref refid="class_s_l_p" kindref="compound">SLP</ref>&lt;<ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aa56106941a453e03ff5dde0a32d208db_1aa56106941a453e03ff5dde0a32d208db" kindref="member">Field</ref>&gt;</computeroutput> design in <computeroutput><ref refid="_n_a_g_8hpp" kindref="compound">NAG.hpp</ref></computeroutput> is what <computeroutput><ref refid="_n_a_g_8cpp" kindref="compound">NAG.cpp</ref></computeroutput>&apos;s <computeroutput><ref refid="class_path_tracker" kindref="compound">PathTracker</ref></computeroutput> actually uses.</para>
+<para><simplesect kind="see"><para><ref refid="_n_a_g_8hpp" kindref="compound">NAG.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_s_l_p-defs_8hpp" kindref="compound">SLP-defs.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_s_l_p-imp_8hpp" kindref="compound">SLP-imp.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>2015<sp/>Anton<sp/>Leykin<sp/>and<sp/>Mike<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Anton<sp/>Leykin&apos;s<sp/>code<sp/>in<sp/>this<sp/>file<sp/>is<sp/>in<sp/>the<sp/>public<sp/>domain.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_slp_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_slp_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mutablemat-defs_8hpp" kindref="compound">mutablemat-defs.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_s_l_p-defs_8hpp" kindref="compound">SLP-defs.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_s_l_p-imp_8hpp" kindref="compound">SLP-imp.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="mutablemat-imp_8hpp" kindref="compound">mutablemat-imp.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="buffer_8hpp" kindref="compound">buffer.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix_8hpp" kindref="compound">matrix.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="aring-glue_8hpp" kindref="compound">aring-glue.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/SLP.hpp"/>
+  </compounddef>
+</doxygen>

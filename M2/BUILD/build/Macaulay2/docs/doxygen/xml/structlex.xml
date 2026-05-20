@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structlex" kind="struct" language="C++" prot="public">
+    <compoundname>lex</compoundname>
+    <includes refid="franzi-brp_8hpp" local="no">franzi-brp.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structlex_a711c5916b0da13d5ccc46a26512eed74_1a711c5916b0da13d5ccc46a26512eed74" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool lex::operator()</definition>
+        <argsstring>(const brMonomial &amp;lhs, const brMonomial &amp;rhs) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>lex::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>lhs</declname>
+        </param>
+        <param>
+          <type>const <ref refid="franzi-brp_8hpp_a0b7d8b2720cde71ff864b1f7425fa486_1a0b7d8b2720cde71ff864b1f7425fa486" kindref="member">brMonomial</ref> &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/franzi-brp.hpp" line="50" column="8" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="50" bodyend="53"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/franzi-brp.hpp" line="48" column="1" bodyfile="Macaulay2/e/franzi-brp.hpp" bodystart="49" bodyend="54"/>
+    <listofallmembers>
+      <member refid="structlex_a711c5916b0da13d5ccc46a26512eed74_1a711c5916b0da13d5ccc46a26512eed74" prot="public" virt="non-virtual"><scope>lex</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

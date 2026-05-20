@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structmontable__sorter___z_z" kind="struct" language="C++" prot="public">
+    <compoundname>montable_sorter_ZZ</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmontable__sorter___z_z_ae79b8a503efd8f53deca02747e3ee7ce_1ae79b8a503efd8f53deca02747e3ee7ce" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int montable_sorter_ZZ::nvars</definition>
+        <argsstring></argsstring>
+        <name>nvars</name>
+        <qualifiedname>montable_sorter_ZZ::nvars</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.cpp" line="447" column="7" bodyfile="Macaulay2/e/montableZZ.cpp" bodystart="447" bodyend="-1"/>
+        <referencedby refid="structmontable__sorter___z_z_ab08f37cb0c38a615c2bf46f5776baa12_1ab08f37cb0c38a615c2bf46f5776baa12" compoundref="montable_z_z_8cpp" startline="451" endline="457">montable_sorter_ZZ</referencedby>
+        <referencedby refid="structmontable__sorter___z_z_a98c21a7d42f4245b0c248e533c186656_1a98c21a7d42f4245b0c248e533c186656" compoundref="montable_z_z_8cpp" startline="459" endline="475">operator()</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structmontable__sorter___z_z_a0d69435bc088f7ae5464dbd238aa523d_1a0d69435bc088f7ae5464dbd238aa523d" prot="public" static="no" const="no" explicit="no" inline="no" refqual="lvalue" virt="non-virtual">
+        <type>const</type>
+        <definition>const montable_sorter_ZZ::VECTOR</definition>
+        <argsstring>(mpz_srcptr) &amp;coeffs</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>montable_sorter_ZZ::VECTOR</qualifiedname>
+        <param>
+          <type>mpz_srcptr</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.cpp" line="448" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="structmontable__sorter___z_z_af07e10d41b2f897a14248fcf6c747bdd_1af07e10d41b2f897a14248fcf6c747bdd" prot="public" static="no" const="no" explicit="no" inline="no" refqual="lvalue" virt="non-virtual">
+        <type>const</type>
+        <definition>const montable_sorter_ZZ::VECTOR</definition>
+        <argsstring>(exponents_t) &amp;exps</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>montable_sorter_ZZ::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.cpp" line="449" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="structmontable__sorter___z_z_aa5bd747821d9cd29862b69a343754bb2_1aa5bd747821d9cd29862b69a343754bb2" prot="public" static="no" const="no" explicit="no" inline="no" refqual="lvalue" virt="non-virtual">
+        <type>const</type>
+        <definition>const montable_sorter_ZZ::VECTOR</definition>
+        <argsstring>(int) &amp;comps</argsstring>
+        <name>VECTOR</name>
+        <qualifiedname>montable_sorter_ZZ::VECTOR</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.cpp" line="450" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="structmontable__sorter___z_z_ab08f37cb0c38a615c2bf46f5776baa12_1ab08f37cb0c38a615c2bf46f5776baa12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>montable_sorter_ZZ::montable_sorter_ZZ</definition>
+        <argsstring>(int nvars0, const VECTOR(mpz_srcptr) &amp;coeffs0, const VECTOR(exponents_t) &amp;exps0, const VECTOR(int) &amp;comps0)</argsstring>
+        <name>montable_sorter_ZZ</name>
+        <qualifiedname>montable_sorter_ZZ::montable_sorter_ZZ</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structmontable__sorter___z_z_a0d69435bc088f7ae5464dbd238aa523d_1a0d69435bc088f7ae5464dbd238aa523d" kindref="member">VECTOR</ref>(mpz_srcptr) &amp;</type>
+          <declname>coeffs0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structmontable__sorter___z_z_a0d69435bc088f7ae5464dbd238aa523d_1a0d69435bc088f7ae5464dbd238aa523d" kindref="member">VECTOR</ref>(<ref refid="_exponent_vector_8hpp_aec09fab2f897ff3d8346961f38331d12_1aec09fab2f897ff3d8346961f38331d12" kindref="member">exponents_t</ref>) &amp;</type>
+          <declname>exps0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structmontable__sorter___z_z_a0d69435bc088f7ae5464dbd238aa523d_1a0d69435bc088f7ae5464dbd238aa523d" kindref="member">VECTOR</ref>(<ref refid="classint" kindref="compound">int</ref>) &amp;</type>
+          <declname>comps0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.cpp" line="451" column="3" bodyfile="Macaulay2/e/montableZZ.cpp" bodystart="451" bodyend="457"/>
+        <references refid="structmontable__sorter___z_z_ae79b8a503efd8f53deca02747e3ee7ce_1ae79b8a503efd8f53deca02747e3ee7ce" compoundref="montable_z_z_8cpp" startline="447">nvars</references>
+      </memberdef>
+      <memberdef kind="function" id="structmontable__sorter___z_z_a98c21a7d42f4245b0c248e533c186656_1a98c21a7d42f4245b0c248e533c186656" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool montable_sorter_ZZ::operator()</definition>
+        <argsstring>(int x, int y)</argsstring>
+        <name>operator()</name>
+        <qualifiedname>montable_sorter_ZZ::operator()</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/montableZZ.cpp" line="459" column="8" bodyfile="Macaulay2/e/montableZZ.cpp" bodystart="459" bodyend="475"/>
+        <references refid="structmontable__sorter___z_z_ae79b8a503efd8f53deca02747e3ee7ce_1ae79b8a503efd8f53deca02747e3ee7ce" compoundref="montable_z_z_8cpp" startline="447">nvars</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="1">
+        <label>montable_sorter_ZZ</label>
+        <link refid="structmontable__sorter___z_z"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>nvars</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/montableZZ.cpp" line="445" column="1" bodyfile="Macaulay2/e/montableZZ.cpp" bodystart="446" bodyend="495"/>
+    <listofallmembers>
+      <member refid="structmontable__sorter___z_z_ab08f37cb0c38a615c2bf46f5776baa12_1ab08f37cb0c38a615c2bf46f5776baa12" prot="public" virt="non-virtual"><scope>montable_sorter_ZZ</scope><name>montable_sorter_ZZ</name></member>
+      <member refid="structmontable__sorter___z_z_ae79b8a503efd8f53deca02747e3ee7ce_1ae79b8a503efd8f53deca02747e3ee7ce" prot="public" virt="non-virtual"><scope>montable_sorter_ZZ</scope><name>nvars</name></member>
+      <member refid="structmontable__sorter___z_z_a98c21a7d42f4245b0c248e533c186656_1a98c21a7d42f4245b0c248e533c186656" prot="public" virt="non-virtual"><scope>montable_sorter_ZZ</scope><name>operator()</name></member>
+      <member refid="structmontable__sorter___z_z_a0d69435bc088f7ae5464dbd238aa523d_1a0d69435bc088f7ae5464dbd238aa523d" prot="public" virt="non-virtual"><scope>montable_sorter_ZZ</scope><name>VECTOR</name></member>
+      <member refid="structmontable__sorter___z_z_af07e10d41b2f897a14248fcf6c747bdd_1af07e10d41b2f897a14248fcf6c747bdd" prot="public" virt="non-virtual"><scope>montable_sorter_ZZ</scope><name>VECTOR</name></member>
+      <member refid="structmontable__sorter___z_z_aa5bd747821d9cd29862b69a343754bb2_1aa5bd747821d9cd29862b69a343754bb2" prot="public" virt="non-virtual"><scope>montable_sorter_ZZ</scope><name>VECTOR</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

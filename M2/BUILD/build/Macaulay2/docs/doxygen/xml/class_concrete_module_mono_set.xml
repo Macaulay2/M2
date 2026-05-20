@@ -1,0 +1,625 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_concrete_module_mono_set" kind="class" language="C++" prot="public">
+    <compoundname>ConcreteModuleMonoSet</compoundname>
+    <basecompoundref refid="class_module_mono_set" prot="public" virt="non-virtual">ModuleMonoSet</basecompoundref>
+    <innerclass refid="struct_concrete_module_mono_set_1_1_no_data" prot="public">ConcreteModuleMonoSet::NoData</innerclass>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>UseKDTree</declname>
+        <defname>UseKDTree</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>AllowRemovals</declname>
+        <defname>AllowRemovals</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>UseDivMask</declname>
+        <defname>UseDivMask</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" prot="public" static="no">
+        <type><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref></type>
+        <definition>typedef PolyRing::Monoid ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>ConcreteModuleMonoSet::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="18" column="28" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" prot="public" static="no">
+        <type><ref refid="class_static_mono_lookup" kindref="compound">StaticMonoLookup</ref>&lt; UseKDTree, <ref refid="struct_concrete_module_mono_set_1_1_no_data" kindref="compound">NoData</ref>, AllowRemovals, UseDivMask &gt;</type>
+        <definition>typedef StaticMonoLookup&lt;UseKDTree, NoData, AllowRemovals, UseDivMask&gt; ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::Lookup</definition>
+        <argsstring></argsstring>
+        <name>Lookup</name>
+        <qualifiedname>ConcreteModuleMonoSet::Lookup</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="21" column="5" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_concrete_module_mono_set_af6299cb543bfbef04247b7ddf798e0c9_1af6299cb543bfbef04247b7ddf798e0c9" prot="public" static="no">
+        <type><ref refid="class_static_mono_lookup_a9dcee866f5caea31f0dd2edc0a6782e1_1a9dcee866f5caea31f0dd2edc0a6782e1" kindref="member">Lookup::Entry</ref></type>
+        <definition>typedef Lookup::Entry ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::Entry</definition>
+        <argsstring></argsstring>
+        <name>Entry</name>
+        <qualifiedname>ConcreteModuleMonoSet::Entry</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="22" column="34" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_concrete_module_mono_set_a3d8eb54940648f1f73053810a0ab2093_1a3d8eb54940648f1f73053810a0ab2093" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+        <definition>const Monoid&amp; ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mMonoid</definition>
+        <argsstring></argsstring>
+        <name>mMonoid</name>
+        <qualifiedname>ConcreteModuleMonoSet::mMonoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="123" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="123" bodyend="-1"/>
+        <referencedby refid="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" compoundref="_module_mono_set_8cpp" startline="24" endline="31">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::ConcreteModuleMonoSet</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" compoundref="_module_mono_set_8cpp" startline="119" endline="119">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::monoid</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" prot="private" static="no" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mComponentCount</definition>
+        <argsstring></argsstring>
+        <name>mComponentCount</name>
+        <qualifiedname>ConcreteModuleMonoSet::mComponentCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="126" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="126" bodyend="-1"/>
+        <referencedby refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" compoundref="_module_mono_set_8cpp" startline="120" endline="120">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" compoundref="_module_mono_set_8cpp" startline="24" endline="31">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::ConcreteModuleMonoSet</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a9f698f92f6e9bc388a7b9e64db4da66d_1a9f698f92f6e9bc388a7b9e64db4da66d" compoundref="_module_mono_set_8cpp" startline="33" endline="37">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::~ConcreteModuleMonoSet</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" prot="private" static="no" mutable="no">
+        <type><ref refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" kindref="member">Lookup</ref> *const</type>
+        <definition>Lookup* const ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</definition>
+        <argsstring></argsstring>
+        <name>mLookups</name>
+        <qualifiedname>ConcreteModuleMonoSet::mLookups</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="127" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="127" bodyend="-1"/>
+        <referencedby refid="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" compoundref="_module_mono_set_8cpp" startline="24" endline="31">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::ConcreteModuleMonoSet</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a5be488333da098b13ccf162ed1958de8_1a5be488333da098b13ccf162ed1958de8" compoundref="_module_mono_set_8cpp" startline="60" endline="82">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::display</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_acbc18bcdfd78c5219304a2faa79b875d_1acbc18bcdfd78c5219304a2faa79b875d" compoundref="_module_mono_set_8cpp" startline="105" endline="110">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::elementCount</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a383ac234ade789b26df4732fffad720f_1a383ac234ade789b26df4732fffad720f" compoundref="_module_mono_set_8cpp" startline="94" endline="102">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::forAllVirtual</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a380b2afda232a6abf90facb20d560799_1a380b2afda232a6abf90facb20d560799" compoundref="_module_mono_set_8cpp" startline="112" endline="117">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::getMemoryUse</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a35db75bc747699e0289974f16fab3bad_1a35db75bc747699e0289974f16fab3bad" compoundref="_module_mono_set_8cpp" startline="84" endline="92">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::getMonomials</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a1fc33eb7854c3ed54664ccf453aa4a19_1a1fc33eb7854c3ed54664ccf453aa4a19" compoundref="_module_mono_set_8cpp" startline="39" endline="48">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::insert</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_aed51f13ae094a196ed92a96546f75223_1aed51f13ae094a196ed92a96546f75223" compoundref="_module_mono_set_8cpp" startline="50" endline="54">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::member</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a9f698f92f6e9bc388a7b9e64db4da66d_1a9f698f92f6e9bc388a7b9e64db4da66d" compoundref="_module_mono_set_8cpp" startline="33" endline="37">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::~ConcreteModuleMonoSet</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::ConcreteModuleMonoSet</definition>
+        <argsstring>(const Monoid &amp;monoid, const size_t componentCount)</argsstring>
+        <name>ConcreteModuleMonoSet</name>
+        <qualifiedname>ConcreteModuleMonoSet::ConcreteModuleMonoSet</qualifiedname>
+        <param>
+          <type>const <ref refid="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+          <declname>monoid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>componentCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="24" column="3" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="24" bodyend="31"/>
+        <references refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" compoundref="_module_mono_set_8cpp" startline="120" endline="120">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</references>
+        <references refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" compoundref="_module_mono_set_8cpp" startline="126">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mComponentCount</references>
+        <references refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" compoundref="_module_mono_set_8cpp" startline="127">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</references>
+        <references refid="class_concrete_module_mono_set_a3d8eb54940648f1f73053810a0ab2093_1a3d8eb54940648f1f73053810a0ab2093" compoundref="_module_mono_set_8cpp" startline="123">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mMonoid</references>
+        <references refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" compoundref="_module_mono_set_8cpp" startline="119" endline="119">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::monoid</references>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_a9f698f92f6e9bc388a7b9e64db4da66d_1a9f698f92f6e9bc388a7b9e64db4da66d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::~ConcreteModuleMonoSet</definition>
+        <argsstring>()</argsstring>
+        <name>~ConcreteModuleMonoSet</name>
+        <qualifiedname>ConcreteModuleMonoSet::~ConcreteModuleMonoSet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="33" column="11" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="33" bodyend="37"/>
+        <references refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" compoundref="_module_mono_set_8cpp" startline="126">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mComponentCount</references>
+        <references refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" compoundref="_module_mono_set_8cpp" startline="127">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</references>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_a1fc33eb7854c3ed54664ccf453aa4a19_1a1fc33eb7854c3ed54664ccf453aa4a19" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::insert</definition>
+        <argsstring>(ConstMonoRef m)</argsstring>
+        <name>insert</name>
+        <qualifiedname>ConcreteModuleMonoSet::insert</qualifiedname>
+        <reimplements refid="class_module_mono_set_af4412c54e996f042cc63f06e8ec98fcd_1af4412c54e996f042cc63f06e8ec98fcd">insert</reimplements>
+        <param>
+          <type><ref refid="class_module_mono_set_a315870cd5f8090965c62abdf5a04247d_1a315870cd5f8090965c62abdf5a04247d" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Inserts mono into this set if it is not already a member of the ideal generated by this set. Returns true if mono was inserted. If this set was constructed to allow removals, any other module monomials divisible by mono will be removed. A reference to mono is retained but ownership is not passed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="39" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="39" bodyend="48"/>
+        <references refid="class_mono_monoid_ac05d1b7142f0937bc860b22d56cac1e0_1ac05d1b7142f0937bc860b22d56cac1e0" compoundref="_mono_monoid_8hpp" startline="494" endline="497">MonoMonoid&lt; E, HC, SH, SO &gt;::component</references>
+        <references refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" compoundref="_module_mono_set_8cpp" startline="120" endline="120">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_concrete_module_mono_set_aed51f13ae094a196ed92a96546f75223_1aed51f13ae094a196ed92a96546f75223" compoundref="_module_mono_set_8cpp" startline="50" endline="54">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::member</references>
+        <references refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" compoundref="_module_mono_set_8cpp" startline="127">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</references>
+        <references refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" compoundref="_module_mono_set_8cpp" startline="119" endline="119">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::monoid</references>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_aed51f13ae094a196ed92a96546f75223_1aed51f13ae094a196ed92a96546f75223" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>virtual bool ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::member</definition>
+        <argsstring>(ConstMonoRef m)</argsstring>
+        <name>member</name>
+        <qualifiedname>ConcreteModuleMonoSet::member</qualifiedname>
+        <reimplements refid="class_module_mono_set_a3895af14847bf2b523eb75f2dc0b6937_1a3895af14847bf2b523eb75f2dc0b6937">member</reimplements>
+        <param>
+          <type><ref refid="class_module_mono_set_a315870cd5f8090965c62abdf5a04247d_1a315870cd5f8090965c62abdf5a04247d" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+<para>Returns true if mono is a member of the ideal generated by this set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="50" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="50" bodyend="54"/>
+        <references refid="class_mono_monoid_ac05d1b7142f0937bc860b22d56cac1e0_1ac05d1b7142f0937bc860b22d56cac1e0" compoundref="_mono_monoid_8hpp" startline="494" endline="497">MonoMonoid&lt; E, HC, SH, SO &gt;::component</references>
+        <references refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" compoundref="_module_mono_set_8cpp" startline="120" endline="120">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" compoundref="_module_mono_set_8cpp" startline="127">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</references>
+        <references refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" compoundref="_module_mono_set_8cpp" startline="119" endline="119">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::monoid</references>
+        <referencedby refid="class_concrete_module_mono_set_a1fc33eb7854c3ed54664ccf453aa4a19_1a1fc33eb7854c3ed54664ccf453aa4a19" compoundref="_module_mono_set_8cpp" startline="39" endline="48">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_a0c1be679f87f0edfd1b3ff4cdfacde40_1a0c1be679f87f0edfd1b3ff4cdfacde40" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::string</type>
+        <definition>virtual std::string ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::name</definition>
+        <argsstring>() const</argsstring>
+        <name>name</name>
+        <qualifiedname>ConcreteModuleMonoSet::name</qualifiedname>
+        <reimplements refid="class_module_mono_set_a8bf7655d4e206f8a93667e7f30371bb1_1a8bf7655d4e206f8a93667e7f30371bb1">name</reimplements>
+        <briefdescription>
+<para>Returns a descriptive name for the implementation of this set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="56" column="23" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="56" bodyend="58"/>
+        <references refid="class_static_mono_lookup_ab3b58a617381377d63495843e6d2c1fe_1ab3b58a617381377d63495843e6d2c1fe" compoundref="_static_mono_map_8hpp" startline="369" endline="369">StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::getName</references>
+        <references refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" compoundref="_module_mono_set_8cpp" startline="119" endline="119">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::monoid</references>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_a5be488333da098b13ccf162ed1958de8_1a5be488333da098b13ccf162ed1958de8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::display</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>display</name>
+        <qualifiedname>ConcreteModuleMonoSet::display</qualifiedname>
+        <reimplements refid="class_module_mono_set_abf914858d0a96fc458cbfa43ade67b9a_1abf914858d0a96fc458cbfa43ade67b9a">display</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+<para>Prints a human-readable representation of this set to out. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="60" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="60" bodyend="82"/>
+        <references refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" compoundref="_module_mono_set_8cpp" startline="120" endline="120">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</references>
+        <references refid="class_static_mono_lookup_ad143e0f1e2e19f51f50b1e839145b852_1ad143e0f1e2e19f51f50b1e839145b852" compoundref="_static_mono_map_8hpp" startline="156" endline="163">StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::forAll</references>
+        <references refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" compoundref="_module_mono_set_8cpp" startline="127">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</references>
+        <references refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" compoundref="_module_mono_set_8cpp" startline="119" endline="119">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::monoid</references>
+        <references refid="class_static_mono_lookup_a76b40a62f93c18dd2d33b316ccb95fd8_1a76b40a62f93c18dd2d33b316ccb95fd8" compoundref="_static_mono_map_8hpp" startline="367" endline="367">StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;::size</references>
+        <references refid="class_mathic_i_o_a5b5c3c193fcbe871357b5e67467f46de_1a5b5c3c193fcbe871357b5e67467f46de" compoundref="_mathic_i_o_8hpp" startline="579" endline="610">MathicIO&lt; M, BF &gt;::writeMonomial</references>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_a35db75bc747699e0289974f16fab3bad_1a35db75bc747699e0289974f16fab3bad" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::getMonomials</definition>
+        <argsstring>(std::vector&lt; ConstMonoPtr &gt; &amp;monomials) const</argsstring>
+        <name>getMonomials</name>
+        <qualifiedname>ConcreteModuleMonoSet::getMonomials</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="class_module_mono_set_a3c88ea9992d6f36be525eadcd1a00ee4_1a3c88ea9992d6f36be525eadcd1a00ee4" kindref="member">ConstMonoPtr</ref> &gt; &amp;</type>
+          <declname>monomials</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="84" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="84" bodyend="92"/>
+        <references refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" compoundref="_module_mono_set_8cpp" startline="120" endline="120">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</references>
+        <references refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" compoundref="_module_mono_set_8cpp" startline="127">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</references>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_a383ac234ade789b26df4732fffad720f_1a383ac234ade789b26df4732fffad720f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::forAllVirtual</definition>
+        <argsstring>(EntryOutput &amp;consumer)</argsstring>
+        <name>forAllVirtual</name>
+        <qualifiedname>ConcreteModuleMonoSet::forAllVirtual</qualifiedname>
+        <reimplements refid="class_module_mono_set_ae67de5532ca0ab53403c7b0429152b02_1ae67de5532ca0ab53403c7b0429152b02">forAllVirtual</reimplements>
+        <param>
+          <type><ref refid="class_module_mono_set_1_1_entry_output" kindref="compound">EntryOutput</ref> &amp;</type>
+          <declname>consumer</declname>
+        </param>
+        <briefdescription>
+<para>Calls consumer.proceed(mono) for each mono in this set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="94" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="94" bodyend="102"/>
+        <references refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" compoundref="_module_mono_set_8cpp" startline="120" endline="120">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</references>
+        <references refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" compoundref="_module_mono_set_8cpp" startline="127">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</references>
+        <references refid="class_module_mono_set_1_1_entry_output_ac6331527d318635fc56767da5db9bf03_1ac6331527d318635fc56767da5db9bf03">ModuleMonoSet::EntryOutput::proceed</references>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_acbc18bcdfd78c5219304a2faa79b875d_1acbc18bcdfd78c5219304a2faa79b875d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::elementCount</definition>
+        <argsstring>() const</argsstring>
+        <name>elementCount</name>
+        <qualifiedname>ConcreteModuleMonoSet::elementCount</qualifiedname>
+        <reimplements refid="class_module_mono_set_a28963a40098c2ffd075f4dba31c604a5_1a28963a40098c2ffd075f4dba31c604a5">elementCount</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the number of module monomials in this set. Take care not to confuse this with the number of components. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="105" column="18" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="105" bodyend="110"/>
+        <references refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" compoundref="_module_mono_set_8cpp" startline="120" endline="120">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</references>
+        <references refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" compoundref="_module_mono_set_8cpp" startline="127">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</references>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_a380b2afda232a6abf90facb20d560799_1a380b2afda232a6abf90facb20d560799" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>virtual size_t ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::getMemoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>getMemoryUse</name>
+        <qualifiedname>ConcreteModuleMonoSet::getMemoryUse</qualifiedname>
+        <reimplements refid="class_module_mono_set_ab57e51be9e043d4025fb616e3b3bf550_1ab57e51be9e043d4025fb616e3b3bf550">getMemoryUse</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="112" column="18" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="112" bodyend="117"/>
+        <references refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" compoundref="_module_mono_set_8cpp" startline="120" endline="120">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</references>
+        <references refid="class_concrete_module_mono_set_a380b2afda232a6abf90facb20d560799_1a380b2afda232a6abf90facb20d560799" compoundref="_module_mono_set_8cpp" startline="112" endline="117">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::getMemoryUse</references>
+        <references refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" compoundref="_module_mono_set_8cpp" startline="127">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mLookups</references>
+        <referencedby refid="class_concrete_module_mono_set_a380b2afda232a6abf90facb20d560799_1a380b2afda232a6abf90facb20d560799" compoundref="_module_mono_set_8cpp" startline="112" endline="117">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::getMemoryUse</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+        <definition>const Monoid &amp; ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::monoid</definition>
+        <argsstring>() const</argsstring>
+        <name>monoid</name>
+        <qualifiedname>ConcreteModuleMonoSet::monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="119" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="119" bodyend="119"/>
+        <references refid="class_concrete_module_mono_set_a3d8eb54940648f1f73053810a0ab2093_1a3d8eb54940648f1f73053810a0ab2093" compoundref="_module_mono_set_8cpp" startline="123">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mMonoid</references>
+        <referencedby refid="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" compoundref="_module_mono_set_8cpp" startline="24" endline="31">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::ConcreteModuleMonoSet</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a5be488333da098b13ccf162ed1958de8_1a5be488333da098b13ccf162ed1958de8" compoundref="_module_mono_set_8cpp" startline="60" endline="82">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::display</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a1fc33eb7854c3ed54664ccf453aa4a19_1a1fc33eb7854c3ed54664ccf453aa4a19" compoundref="_module_mono_set_8cpp" startline="39" endline="48">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::insert</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_aed51f13ae094a196ed92a96546f75223_1aed51f13ae094a196ed92a96546f75223" compoundref="_module_mono_set_8cpp" startline="50" endline="54">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::member</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a0c1be679f87f0edfd1b3ff4cdfacde40_1a0c1be679f87f0edfd1b3ff4cdfacde40" compoundref="_module_mono_set_8cpp" startline="56" endline="58">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::name</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::componentCount</definition>
+        <argsstring>() const</argsstring>
+        <name>componentCount</name>
+        <qualifiedname>ConcreteModuleMonoSet::componentCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="120" column="10" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="120" bodyend="120"/>
+        <references refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" compoundref="_module_mono_set_8cpp" startline="126">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::mComponentCount</references>
+        <referencedby refid="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" compoundref="_module_mono_set_8cpp" startline="24" endline="31">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::ConcreteModuleMonoSet</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a5be488333da098b13ccf162ed1958de8_1a5be488333da098b13ccf162ed1958de8" compoundref="_module_mono_set_8cpp" startline="60" endline="82">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::display</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_acbc18bcdfd78c5219304a2faa79b875d_1acbc18bcdfd78c5219304a2faa79b875d" compoundref="_module_mono_set_8cpp" startline="105" endline="110">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::elementCount</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a383ac234ade789b26df4732fffad720f_1a383ac234ade789b26df4732fffad720f" compoundref="_module_mono_set_8cpp" startline="94" endline="102">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::forAllVirtual</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a380b2afda232a6abf90facb20d560799_1a380b2afda232a6abf90facb20d560799" compoundref="_module_mono_set_8cpp" startline="112" endline="117">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::getMemoryUse</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a35db75bc747699e0289974f16fab3bad_1a35db75bc747699e0289974f16fab3bad" compoundref="_module_mono_set_8cpp" startline="84" endline="92">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::getMonomials</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_a1fc33eb7854c3ed54664ccf453aa4a19_1a1fc33eb7854c3ed54664ccf453aa4a19" compoundref="_module_mono_set_8cpp" startline="39" endline="48">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::insert</referencedby>
+        <referencedby refid="class_concrete_module_mono_set_aed51f13ae094a196ed92a96546f75223_1aed51f13ae094a196ed92a96546f75223" compoundref="_module_mono_set_8cpp" startline="50" endline="54">ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;::member</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;</label>
+        <link refid="class_concrete_module_mono_set"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ModuleMonoSet</label>
+        <link refid="class_module_mono_set"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>ConcreteModuleMonoSet&lt; UseKDTree, AllowRemovals, UseDivMask &gt;</label>
+        <link refid="class_concrete_module_mono_set"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mComponentCount</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mLookups</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>type</label>
+      </node>
+      <node id="2">
+        <label>ModuleMonoSet</label>
+        <link refid="class_module_mono_set"/>
+      </node>
+      <node id="10">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="11" relation="private-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="4" relation="private-inheritance">
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="13">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>StaticMonoLookup&lt; UseKDTree, Data, AR, DM &gt;</label>
+        <link refid="class_static_mono_lookup"/>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mLookup</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>StaticMonoLookup&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;</label>
+        <link refid="class_static_mono_lookup"/>
+        <childnode refid="21" relation="template-instance">
+          <edgelabel>&lt; UseKDTree, NoData, AllowRemovals, UseDivMask &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>T</label>
+      </node>
+      <node id="5">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="19">
+        <label>char</label>
+      </node>
+      <node id="15">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>size_t</label>
+      </node>
+      <node id="8">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="8" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" line="16" column="1" bodyfile="submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp" bodystart="16" bodyend="128"/>
+    <listofallmembers>
+      <member refid="class_concrete_module_mono_set_a4f8b429af1f9bf6d0d453b18543b267d_1a4f8b429af1f9bf6d0d453b18543b267d" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>componentCount</name></member>
+      <member refid="class_concrete_module_mono_set_ac2b63791f227bbced52d4a70c236c479_1ac2b63791f227bbced52d4a70c236c479" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>ConcreteModuleMonoSet</name></member>
+      <member refid="class_module_mono_set_a3c88ea9992d6f36be525eadcd1a00ee4_1a3c88ea9992d6f36be525eadcd1a00ee4" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_module_mono_set_a315870cd5f8090965c62abdf5a04247d_1a315870cd5f8090965c62abdf5a04247d" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>ConstMonoRef</name></member>
+      <member refid="class_concrete_module_mono_set_a5be488333da098b13ccf162ed1958de8_1a5be488333da098b13ccf162ed1958de8" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>display</name></member>
+      <member refid="class_module_mono_set_a9b5a5867cbdc6928bc3b145d157d7935_1a9b5a5867cbdc6928bc3b145d157d7935" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>displayCodes</name></member>
+      <member refid="class_concrete_module_mono_set_acbc18bcdfd78c5219304a2faa79b875d_1acbc18bcdfd78c5219304a2faa79b875d" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>elementCount</name></member>
+      <member refid="class_concrete_module_mono_set_af6299cb543bfbef04247b7ddf798e0c9_1af6299cb543bfbef04247b7ddf798e0c9" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>Entry</name></member>
+      <member refid="class_module_mono_set_a310bae2c5a9f646209cecf77132c4002_1a310bae2c5a9f646209cecf77132c4002" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>forAll</name></member>
+      <member refid="class_concrete_module_mono_set_a383ac234ade789b26df4732fffad720f_1a383ac234ade789b26df4732fffad720f" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>forAllVirtual</name></member>
+      <member refid="class_concrete_module_mono_set_a380b2afda232a6abf90facb20d560799_1a380b2afda232a6abf90facb20d560799" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>getMemoryUse</name></member>
+      <member refid="class_concrete_module_mono_set_a35db75bc747699e0289974f16fab3bad_1a35db75bc747699e0289974f16fab3bad" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>getMonomials</name></member>
+      <member refid="class_concrete_module_mono_set_a1fc33eb7854c3ed54664ccf453aa4a19_1a1fc33eb7854c3ed54664ccf453aa4a19" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>insert</name></member>
+      <member refid="class_concrete_module_mono_set_a3850e3c3d9bc26c39db02261248ff373_1a3850e3c3d9bc26c39db02261248ff373" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>Lookup</name></member>
+      <member refid="class_module_mono_set_ac34f97525d531105fb85e69e6ef9ea35_1ac34f97525d531105fb85e69e6ef9ea35" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>make</name></member>
+      <member refid="class_concrete_module_mono_set_a63ec98d764283bb82d9858057478aabc_1a63ec98d764283bb82d9858057478aabc" prot="private" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>mComponentCount</name></member>
+      <member refid="class_concrete_module_mono_set_aed51f13ae094a196ed92a96546f75223_1aed51f13ae094a196ed92a96546f75223" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>member</name></member>
+      <member refid="class_concrete_module_mono_set_ae02bfccf56015e3759097d494bd0cfe8_1ae02bfccf56015e3759097d494bd0cfe8" prot="private" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>mLookups</name></member>
+      <member refid="class_concrete_module_mono_set_a3d8eb54940648f1f73053810a0ab2093_1a3d8eb54940648f1f73053810a0ab2093" prot="private" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>mMonoid</name></member>
+      <member refid="class_concrete_module_mono_set_a8061c134903dec51013a901b4e1d91a7_1a8061c134903dec51013a901b4e1d91a7" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>Monoid</name></member>
+      <member refid="class_concrete_module_mono_set_afa1dfa599e15ba4dfb857c74bce6172e_1afa1dfa599e15ba4dfb857c74bce6172e" prot="public" virt="non-virtual"><scope>ConcreteModuleMonoSet</scope><name>monoid</name></member>
+      <member refid="class_concrete_module_mono_set_a0c1be679f87f0edfd1b3ff4cdfacde40_1a0c1be679f87f0edfd1b3ff4cdfacde40" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>name</name></member>
+      <member refid="class_concrete_module_mono_set_a9f698f92f6e9bc388a7b9e64db4da66d_1a9f698f92f6e9bc388a7b9e64db4da66d" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>~ConcreteModuleMonoSet</name></member>
+      <member refid="class_module_mono_set_a530a7a846788e2fd0a1cb5fa3b731fee_1a530a7a846788e2fd0a1cb5fa3b731fee" prot="public" virt="virtual"><scope>ConcreteModuleMonoSet</scope><name>~ModuleMonoSet</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

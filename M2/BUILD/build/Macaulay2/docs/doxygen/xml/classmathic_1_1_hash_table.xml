@@ -1,0 +1,767 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_hash_table" kind="class" language="C++" prot="public">
+    <compoundname>mathic::HashTable</compoundname>
+    <includes refid="_hash_table_8h" local="no">HashTable.h</includes>
+    <innerclass refid="classmathic_1_1_hash_table_1_1_handle" prot="public">mathic::HashTable::Handle</innerclass>
+    <templateparamlist>
+      <param>
+        <type>class C</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmathic_1_1_hash_table_aef66f011353316083f04f2efaeaedbdd_1aef66f011353316083f04f2efaeaedbdd" prot="public" static="no">
+        <type>C</type>
+        <definition>typedef C mathic::HashTable&lt; C &gt;::Configuration</definition>
+        <argsstring></argsstring>
+        <name>Configuration</name>
+        <qualifiedname>mathic::HashTable::Configuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="43" column="15" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_hash_table_a80189ce50161a730fd3848d7360eec43_1a80189ce50161a730fd3848d7360eec43" prot="public" static="no">
+        <type>C::Key</type>
+        <definition>typedef C::Key mathic::HashTable&lt; C &gt;::Key</definition>
+        <argsstring></argsstring>
+        <name>Key</name>
+        <qualifiedname>mathic::HashTable::Key</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="44" column="29" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_hash_table_aa20fb31b8081277a45cc76a5aae7c2af_1aa20fb31b8081277a45cc76a5aae7c2af" prot="public" static="no">
+        <type>C::Value</type>
+        <definition>typedef C::Value mathic::HashTable&lt; C &gt;::Value</definition>
+        <argsstring></argsstring>
+        <name>Value</name>
+        <qualifiedname>mathic::HashTable::Value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="45" column="31" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_ac1900adb5e9e8800923565431cf84bcd_1ac1900adb5e9e8800923565431cf84bcd" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::HashTable&lt; C &gt;::mHashMask</definition>
+        <argsstring></argsstring>
+        <name>mHashMask</name>
+        <qualifiedname>mathic::HashTable::mHashMask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="126" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="126" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0e9f02203210a8a9dbb4d6a4c62aa73_1aa0e9f02203210a8a9dbb4d6a4c62aa73" compoundref="_hash_table_8h" startline="224" endline="235">mathic::HashTable&lt; C &gt;::lookup</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a24d5832edabe491df62a0eca23dc9f4b_1a24d5832edabe491df62a0eca23dc9f4b" compoundref="_hash_table_8h" startline="238" endline="261">mathic::HashTable&lt; C &gt;::remove</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_ab23bd515315c307a72c9dd2de9a23139_1ab23bd515315c307a72c9dd2de9a23139" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::HashTable&lt; C &gt;::mTableSize</definition>
+        <argsstring></argsstring>
+        <name>mTableSize</name>
+        <qualifiedname>mathic::HashTable::mTableSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="128" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="128" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_af8884069e820eac82fcc8a896ad5614e_1af8884069e820eac82fcc8a896ad5614e" compoundref="_hash_table_8h" startline="327" endline="335">mathic::HashTable&lt; C &gt;::computeBinCount</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a36f101adb537c9affd5097a5c134696f_1a36f101adb537c9affd5097a5c134696f" compoundref="_hash_table_8h" startline="316" endline="324">mathic::HashTable&lt; C &gt;::computeNodeCount</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_ab1725db18b0bd3f8b723afc4428ee73b_1ab1725db18b0bd3f8b723afc4428ee73b" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::HashTable&lt; C &gt;::mLogTableSize</definition>
+        <argsstring></argsstring>
+        <name>mLogTableSize</name>
+        <qualifiedname>mathic::HashTable::mLogTableSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="129" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="129" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_a513f1a085a3e38dc9e78562381104362_1a513f1a085a3e38dc9e78562381104362" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::HashTable&lt; C &gt;::mNodeCount</definition>
+        <argsstring></argsstring>
+        <name>mNodeCount</name>
+        <qualifiedname>mathic::HashTable::mNodeCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="131" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="131" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_ac23aa5ecca4eaaba73d366839649d017_1ac23aa5ecca4eaaba73d366839649d017" compoundref="_hash_table_8h" startline="167" endline="173">mathic::HashTable&lt; C &gt;::makeNode</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a24d5832edabe491df62a0eca23dc9f4b_1a24d5832edabe491df62a0eca23dc9f4b" compoundref="_hash_table_8h" startline="238" endline="261">mathic::HashTable&lt; C &gt;::remove</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_a24ffa1c2ac6a5b3a95446b8952efd3a5_1a24ffa1c2ac6a5b3a95446b8952efd3a5" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::HashTable&lt; C &gt;::mBinCount</definition>
+        <argsstring></argsstring>
+        <name>mBinCount</name>
+        <qualifiedname>mathic::HashTable::mBinCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="132" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="132" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a24d5832edabe491df62a0eca23dc9f4b_1a24d5832edabe491df62a0eca23dc9f4b" compoundref="_hash_table_8h" startline="238" endline="261">mathic::HashTable&lt; C &gt;::remove</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_a24fbd297a24a7c5d407826f38b70e27a_1a24fbd297a24a7c5d407826f38b70e27a" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::HashTable&lt; C &gt;::mMaxCountBeforeRebuild</definition>
+        <argsstring></argsstring>
+        <name>mMaxCountBeforeRebuild</name>
+        <qualifiedname>mathic::HashTable::mMaxCountBeforeRebuild</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="134" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="134" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_a9756800241a73ca6c88e82e006ce4d25_1a9756800241a73ca6c88e82e006ce4d25" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double mathic::HashTable&lt; C &gt;::mRebuildThreshold</definition>
+        <argsstring></argsstring>
+        <name>mRebuildThreshold</name>
+        <qualifiedname>mathic::HashTable::mRebuildThreshold</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="137" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="137" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_a96a70e9fdb40409b2a00e182d4ecbfcb_1a96a70e9fdb40409b2a00e182d4ecbfcb" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::HashTable&lt; C &gt;::mAlwaysInsertAtEnd</definition>
+        <argsstring></argsstring>
+        <name>mAlwaysInsertAtEnd</name>
+        <qualifiedname>mathic::HashTable::mAlwaysInsertAtEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="138" column="10" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="138" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_a4d1cd1409eb19c0085ad531c3cdb4c3d_1a4d1cd1409eb19c0085ad531c3cdb4c3d" prot="private" static="no" mutable="no">
+        <type><ref refid="classmemt_1_1_buffer_pool" kindref="compound">memt::BufferPool</ref></type>
+        <definition>memt::BufferPool mathic::HashTable&lt; C &gt;::mNodePool</definition>
+        <argsstring></argsstring>
+        <name>mNodePool</name>
+        <qualifiedname>mathic::HashTable::mNodePool</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="140" column="22" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="140" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_ac23aa5ecca4eaaba73d366839649d017_1ac23aa5ecca4eaaba73d366839649d017" compoundref="_hash_table_8h" startline="167" endline="173">mathic::HashTable&lt; C &gt;::makeNode</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aadb4540c68fa6384fdc74c5adc70dc73_1aadb4540c68fa6384fdc74c5adc70dc73" compoundref="_hash_table_8h" startline="308" endline="313">mathic::HashTable&lt; C &gt;::memoryUse</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a6d4a2bc112940ed13498a12029c4a7e3_1a6d4a2bc112940ed13498a12029c4a7e3" compoundref="_hash_table_8h" startline="162" endline="164">mathic::HashTable&lt; C &gt;::reset</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classmathic_1_1_hash_table_1_1_handle" kindref="compound">Handle</ref> * &gt;</type>
+        <definition>std::vector&lt;Handle *&gt; mathic::HashTable&lt; C &gt;::mHashTable</definition>
+        <argsstring></argsstring>
+        <name>mHashTable</name>
+        <qualifiedname>mathic::HashTable::mHashTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="141" column="17" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="141" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_af8884069e820eac82fcc8a896ad5614e_1af8884069e820eac82fcc8a896ad5614e" compoundref="_hash_table_8h" startline="327" endline="335">mathic::HashTable&lt; C &gt;::computeBinCount</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a36f101adb537c9affd5097a5c134696f_1a36f101adb537c9affd5097a5c134696f" compoundref="_hash_table_8h" startline="316" endline="324">mathic::HashTable&lt; C &gt;::computeNodeCount</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0e9f02203210a8a9dbb4d6a4c62aa73_1aa0e9f02203210a8a9dbb4d6a4c62aa73" compoundref="_hash_table_8h" startline="224" endline="235">mathic::HashTable&lt; C &gt;::lookup</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aadb4540c68fa6384fdc74c5adc70dc73_1aadb4540c68fa6384fdc74c5adc70dc73" compoundref="_hash_table_8h" startline="308" endline="313">mathic::HashTable&lt; C &gt;::memoryUse</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a24d5832edabe491df62a0eca23dc9f4b_1a24d5832edabe491df62a0eca23dc9f4b" compoundref="_hash_table_8h" startline="238" endline="261">mathic::HashTable&lt; C &gt;::remove</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_hash_table_aee8bcf0f6675498e4c771725b8e961ce_1aee8bcf0f6675498e4c771725b8e961ce" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_hash_table_aef66f011353316083f04f2efaeaedbdd_1aef66f011353316083f04f2efaeaedbdd" kindref="member">Configuration</ref></type>
+        <definition>Configuration mathic::HashTable&lt; C &gt;::mConf</definition>
+        <argsstring></argsstring>
+        <name>mConf</name>
+        <qualifiedname>mathic::HashTable::mConf</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="142" column="19" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="142" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_hash_table_ad580fd90072ff340d3ef7a22221bc6dd_1ad580fd90072ff340d3ef7a22221bc6dd" compoundref="_hash_table_8h" startline="83" endline="83">mathic::HashTable&lt; C &gt;::configuration</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a7137e2bbf07ab9f7138c9f5291cabb57_1a7137e2bbf07ab9f7138c9f5291cabb57" compoundref="_hash_table_8h" startline="86" endline="86">mathic::HashTable&lt; C &gt;::configuration</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" compoundref="_hash_table_8h" startline="146" endline="159">mathic::HashTable&lt; C &gt;::HashTable</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0e9f02203210a8a9dbb4d6a4c62aa73_1aa0e9f02203210a8a9dbb4d6a4c62aa73" compoundref="_hash_table_8h" startline="224" endline="235">mathic::HashTable&lt; C &gt;::lookup</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_a24d5832edabe491df62a0eca23dc9f4b_1a24d5832edabe491df62a0eca23dc9f4b" compoundref="_hash_table_8h" startline="238" endline="261">mathic::HashTable&lt; C &gt;::remove</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>mathic::HashTable&lt; C &gt;::HashTable</definition>
+        <argsstring>(const Configuration &amp;conf, unsigned int nbits=10)</argsstring>
+        <name>HashTable</name>
+        <qualifiedname>mathic::HashTable::HashTable</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_hash_table_aef66f011353316083f04f2efaeaedbdd_1aef66f011353316083f04f2efaeaedbdd" kindref="member">Configuration</ref> &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <param>
+          <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nbits</declname>
+          <defval>10</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="78" column="5" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="146" bodyend="159"/>
+        <references refid="classmathic_1_1_hash_table_a96a70e9fdb40409b2a00e182d4ecbfcb_1a96a70e9fdb40409b2a00e182d4ecbfcb" compoundref="_hash_table_8h" startline="138">mathic::HashTable&lt; C &gt;::mAlwaysInsertAtEnd</references>
+        <references refid="classmathic_1_1_hash_table_a24ffa1c2ac6a5b3a95446b8952efd3a5_1a24ffa1c2ac6a5b3a95446b8952efd3a5" compoundref="_hash_table_8h" startline="132">mathic::HashTable&lt; C &gt;::mBinCount</references>
+        <references refid="classmathic_1_1_hash_table_aee8bcf0f6675498e4c771725b8e961ce_1aee8bcf0f6675498e4c771725b8e961ce" compoundref="_hash_table_8h" startline="142">mathic::HashTable&lt; C &gt;::mConf</references>
+        <references refid="classmathic_1_1_hash_table_ac1900adb5e9e8800923565431cf84bcd_1ac1900adb5e9e8800923565431cf84bcd" compoundref="_hash_table_8h" startline="126">mathic::HashTable&lt; C &gt;::mHashMask</references>
+        <references refid="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" compoundref="_hash_table_8h" startline="141">mathic::HashTable&lt; C &gt;::mHashTable</references>
+        <references refid="classmathic_1_1_hash_table_ab1725db18b0bd3f8b723afc4428ee73b_1ab1725db18b0bd3f8b723afc4428ee73b" compoundref="_hash_table_8h" startline="129">mathic::HashTable&lt; C &gt;::mLogTableSize</references>
+        <references refid="classmathic_1_1_hash_table_a24fbd297a24a7c5d407826f38b70e27a_1a24fbd297a24a7c5d407826f38b70e27a" compoundref="_hash_table_8h" startline="134">mathic::HashTable&lt; C &gt;::mMaxCountBeforeRebuild</references>
+        <references refid="classmathic_1_1_hash_table_a513f1a085a3e38dc9e78562381104362_1a513f1a085a3e38dc9e78562381104362" compoundref="_hash_table_8h" startline="131">mathic::HashTable&lt; C &gt;::mNodeCount</references>
+        <references refid="classmathic_1_1_hash_table_a4d1cd1409eb19c0085ad531c3cdb4c3d_1a4d1cd1409eb19c0085ad531c3cdb4c3d" compoundref="_hash_table_8h" startline="140">mathic::HashTable&lt; C &gt;::mNodePool</references>
+        <references refid="classmathic_1_1_hash_table_a9756800241a73ca6c88e82e006ce4d25_1a9756800241a73ca6c88e82e006ce4d25" compoundref="_hash_table_8h" startline="137">mathic::HashTable&lt; C &gt;::mRebuildThreshold</references>
+        <references refid="classmathic_1_1_hash_table_ab23bd515315c307a72c9dd2de9a23139_1ab23bd515315c307a72c9dd2de9a23139" compoundref="_hash_table_8h" startline="128">mathic::HashTable&lt; C &gt;::mTableSize</references>
+        <references refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" compoundref="m2-mem_8h" startline="112">size_t</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_a8a0449ed4e8c61bf13212ae31bff0d44_1a8a0449ed4e8c61bf13212ae31bff0d44" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::HashTable&lt; C &gt;::~HashTable</definition>
+        <argsstring>()</argsstring>
+        <name>~HashTable</name>
+        <qualifiedname>mathic::HashTable::~HashTable</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="80" column="5" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="80" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_ad580fd90072ff340d3ef7a22221bc6dd_1ad580fd90072ff340d3ef7a22221bc6dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_hash_table_aef66f011353316083f04f2efaeaedbdd_1aef66f011353316083f04f2efaeaedbdd" kindref="member">Configuration</ref> &amp;</type>
+        <definition>Configuration &amp; mathic::HashTable&lt; C &gt;::configuration</definition>
+        <argsstring>()</argsstring>
+        <name>configuration</name>
+        <qualifiedname>mathic::HashTable::configuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="83" column="19" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="83" bodyend="83"/>
+        <references refid="classmathic_1_1_hash_table_aee8bcf0f6675498e4c771725b8e961ce_1aee8bcf0f6675498e4c771725b8e961ce" compoundref="_hash_table_8h" startline="142">mathic::HashTable&lt; C &gt;::mConf</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_a7137e2bbf07ab9f7138c9f5291cabb57_1a7137e2bbf07ab9f7138c9f5291cabb57" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_hash_table_aef66f011353316083f04f2efaeaedbdd_1aef66f011353316083f04f2efaeaedbdd" kindref="member">Configuration</ref> const &amp;</type>
+        <definition>Configuration const  &amp; mathic::HashTable&lt; C &gt;::configuration</definition>
+        <argsstring>() const</argsstring>
+        <name>configuration</name>
+        <qualifiedname>mathic::HashTable::configuration</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="86" column="25" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="86" bodyend="86"/>
+        <references refid="classmathic_1_1_hash_table_aee8bcf0f6675498e4c771725b8e961ce_1aee8bcf0f6675498e4c771725b8e961ce" compoundref="_hash_table_8h" startline="142">mathic::HashTable&lt; C &gt;::mConf</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; <ref refid="classbool" kindref="compound">bool</ref>, <ref refid="classmathic_1_1_hash_table_1_1_handle" kindref="compound">Handle</ref> * &gt;</type>
+        <definition>std::pair&lt; bool, typename HashTable&lt; C &gt;::Handle * &gt; mathic::HashTable&lt; C &gt;::insert</definition>
+        <argsstring>(Key const &amp;k, Value const &amp;v)</argsstring>
+        <name>insert</name>
+        <qualifiedname>mathic::HashTable::insert</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_hash_table_a80189ce50161a730fd3848d7360eec43_1a80189ce50161a730fd3848d7360eec43" kindref="member">Key</ref> const &amp;</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_hash_table_aa20fb31b8081277a45cc76a5aae7c2af_1aa20fb31b8081277a45cc76a5aae7c2af" kindref="member">Value</ref> const &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="91" column="15" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="176" bodyend="221"/>
+        <references refid="classmathic_1_1_hash_table_a36f101adb537c9affd5097a5c134696f_1a36f101adb537c9affd5097a5c134696f" compoundref="_hash_table_8h" startline="316" endline="324">mathic::HashTable&lt; C &gt;::computeNodeCount</references>
+        <references refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</references>
+        <references refid="classmathic_1_1_hash_table_1_1_handle_a32df10c11e91696e4c56fea2a5b89a25_1a32df10c11e91696e4c56fea2a5b89a25" compoundref="_hash_table_8h" startline="68" endline="68">mathic::HashTable&lt; C &gt;::Handle::key</references>
+        <references refid="classmathic_1_1_hash_table_ac23aa5ecca4eaaba73d366839649d017_1ac23aa5ecca4eaaba73d366839649d017" compoundref="_hash_table_8h" startline="167" endline="173">mathic::HashTable&lt; C &gt;::makeNode</references>
+        <references refid="classmathic_1_1_hash_table_a96a70e9fdb40409b2a00e182d4ecbfcb_1a96a70e9fdb40409b2a00e182d4ecbfcb" compoundref="_hash_table_8h" startline="138">mathic::HashTable&lt; C &gt;::mAlwaysInsertAtEnd</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_hash_table_aee8bcf0f6675498e4c771725b8e961ce_1aee8bcf0f6675498e4c771725b8e961ce" compoundref="_hash_table_8h" startline="142">mathic::HashTable&lt; C &gt;::mConf</references>
+        <references refid="classmathic_1_1_hash_table_ac1900adb5e9e8800923565431cf84bcd_1ac1900adb5e9e8800923565431cf84bcd" compoundref="_hash_table_8h" startline="126">mathic::HashTable&lt; C &gt;::mHashMask</references>
+        <references refid="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" compoundref="_hash_table_8h" startline="141">mathic::HashTable&lt; C &gt;::mHashTable</references>
+        <references refid="classmathic_1_1_hash_table_ab1725db18b0bd3f8b723afc4428ee73b_1ab1725db18b0bd3f8b723afc4428ee73b" compoundref="_hash_table_8h" startline="129">mathic::HashTable&lt; C &gt;::mLogTableSize</references>
+        <references refid="classmathic_1_1_hash_table_a24fbd297a24a7c5d407826f38b70e27a_1a24fbd297a24a7c5d407826f38b70e27a" compoundref="_hash_table_8h" startline="134">mathic::HashTable&lt; C &gt;::mMaxCountBeforeRebuild</references>
+        <references refid="classmathic_1_1_hash_table_a513f1a085a3e38dc9e78562381104362_1a513f1a085a3e38dc9e78562381104362" compoundref="_hash_table_8h" startline="131">mathic::HashTable&lt; C &gt;::mNodeCount</references>
+        <references refid="classmathic_1_1_hash_table_1_1_handle_ae5551573af2a88db13d897d58de2bb9a_1ae5551573af2a88db13d897d58de2bb9a" compoundref="_hash_table_8h" startline="73">mathic::HashTable&lt; C &gt;::Handle::next</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_aa0e9f02203210a8a9dbb4d6a4c62aa73_1aa0e9f02203210a8a9dbb4d6a4c62aa73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_hash_table_1_1_handle" kindref="compound">Handle</ref> *</type>
+        <definition>HashTable&lt; C &gt;::Handle * mathic::HashTable&lt; C &gt;::lookup</definition>
+        <argsstring>(const Key &amp;k)</argsstring>
+        <name>lookup</name>
+        <qualifiedname>mathic::HashTable::lookup</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_hash_table_a80189ce50161a730fd3848d7360eec43_1a80189ce50161a730fd3848d7360eec43" kindref="member">Key</ref> &amp;</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="95" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="224" bodyend="235"/>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_hash_table_aee8bcf0f6675498e4c771725b8e961ce_1aee8bcf0f6675498e4c771725b8e961ce" compoundref="_hash_table_8h" startline="142">mathic::HashTable&lt; C &gt;::mConf</references>
+        <references refid="classmathic_1_1_hash_table_ac1900adb5e9e8800923565431cf84bcd_1ac1900adb5e9e8800923565431cf84bcd" compoundref="_hash_table_8h" startline="126">mathic::HashTable&lt; C &gt;::mHashMask</references>
+        <references refid="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" compoundref="_hash_table_8h" startline="141">mathic::HashTable&lt; C &gt;::mHashTable</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_a24d5832edabe491df62a0eca23dc9f4b_1a24d5832edabe491df62a0eca23dc9f4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::HashTable&lt; C &gt;::remove</definition>
+        <argsstring>(Handle *&amp;p)</argsstring>
+        <name>remove</name>
+        <qualifiedname>mathic::HashTable::remove</qualifiedname>
+        <param>
+          <type><ref refid="classmathic_1_1_hash_table_1_1_handle" kindref="compound">Handle</ref> *&amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="99" column="10" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="238" bodyend="261"/>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_hash_table_a24ffa1c2ac6a5b3a95446b8952efd3a5_1a24ffa1c2ac6a5b3a95446b8952efd3a5" compoundref="_hash_table_8h" startline="132">mathic::HashTable&lt; C &gt;::mBinCount</references>
+        <references refid="classmathic_1_1_hash_table_aee8bcf0f6675498e4c771725b8e961ce_1aee8bcf0f6675498e4c771725b8e961ce" compoundref="_hash_table_8h" startline="142">mathic::HashTable&lt; C &gt;::mConf</references>
+        <references refid="classmathic_1_1_hash_table_ac1900adb5e9e8800923565431cf84bcd_1ac1900adb5e9e8800923565431cf84bcd" compoundref="_hash_table_8h" startline="126">mathic::HashTable&lt; C &gt;::mHashMask</references>
+        <references refid="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" compoundref="_hash_table_8h" startline="141">mathic::HashTable&lt; C &gt;::mHashTable</references>
+        <references refid="classmathic_1_1_hash_table_a513f1a085a3e38dc9e78562381104362_1a513f1a085a3e38dc9e78562381104362" compoundref="_hash_table_8h" startline="131">mathic::HashTable&lt; C &gt;::mNodeCount</references>
+        <references refid="classmathic_1_1_hash_table_1_1_handle_ae5551573af2a88db13d897d58de2bb9a_1ae5551573af2a88db13d897d58de2bb9a" compoundref="_hash_table_8h" startline="73">mathic::HashTable&lt; C &gt;::Handle::next</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_a6d4a2bc112940ed13498a12029c4a7e3_1a6d4a2bc112940ed13498a12029c4a7e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::HashTable&lt; C &gt;::reset</definition>
+        <argsstring>()</argsstring>
+        <name>reset</name>
+        <qualifiedname>mathic::HashTable::reset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="101" column="10" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="162" bodyend="164"/>
+        <references refid="classmathic_1_1_hash_table_a4d1cd1409eb19c0085ad531c3cdb4c3d_1a4d1cd1409eb19c0085ad531c3cdb4c3d" compoundref="_hash_table_8h" startline="140">mathic::HashTable&lt; C &gt;::mNodePool</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_a329a111e35e4c98de2c77b953c878926_1a329a111e35e4c98de2c77b953c878926" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::HashTable&lt; C &gt;::hardReset</definition>
+        <argsstring>()</argsstring>
+        <name>hardReset</name>
+        <qualifiedname>mathic::HashTable::hardReset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="103" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_aadb4540c68fa6384fdc74c5adc70dc73_1aadb4540c68fa6384fdc74c5adc70dc73" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::HashTable&lt; C &gt;::memoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>memoryUse</name>
+        <qualifiedname>mathic::HashTable::memoryUse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="107" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="308" bodyend="313"/>
+        <references refid="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" compoundref="_hash_table_8h" startline="141">mathic::HashTable&lt; C &gt;::mHashTable</references>
+        <references refid="classmathic_1_1_hash_table_a4d1cd1409eb19c0085ad531c3cdb4c3d_1a4d1cd1409eb19c0085ad531c3cdb4c3d" compoundref="_hash_table_8h" startline="140">mathic::HashTable&lt; C &gt;::mNodePool</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_abd537e1d3db6229fa771086ce0035527_1abd537e1d3db6229fa771086ce0035527" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mathic::HashTable&lt; C &gt;::name</definition>
+        <argsstring>() const</argsstring>
+        <name>name</name>
+        <qualifiedname>mathic::HashTable::name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="111" column="17" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="338" bodyend="341"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmathic_1_1_hash_table_ac23aa5ecca4eaaba73d366839649d017_1ac23aa5ecca4eaaba73d366839649d017" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmathic_1_1_hash_table_1_1_handle" kindref="compound">Handle</ref> *</type>
+        <definition>HashTable&lt; C &gt;::Handle * mathic::HashTable&lt; C &gt;::makeNode</definition>
+        <argsstring>(const Key &amp;k, const Value &amp;v)</argsstring>
+        <name>makeNode</name>
+        <qualifiedname>mathic::HashTable::makeNode</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_hash_table_a80189ce50161a730fd3848d7360eec43_1a80189ce50161a730fd3848d7360eec43" kindref="member">Key</ref> &amp;</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmathic_1_1_hash_table_aa20fb31b8081277a45cc76a5aae7c2af_1aa20fb31b8081277a45cc76a5aae7c2af" kindref="member">Value</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="114" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="167" bodyend="173"/>
+        <references refid="classmathic_1_1_hash_table_a513f1a085a3e38dc9e78562381104362_1a513f1a085a3e38dc9e78562381104362" compoundref="_hash_table_8h" startline="131">mathic::HashTable&lt; C &gt;::mNodeCount</references>
+        <references refid="classmathic_1_1_hash_table_a4d1cd1409eb19c0085ad531c3cdb4c3d_1a4d1cd1409eb19c0085ad531c3cdb4c3d" compoundref="_hash_table_8h" startline="140">mathic::HashTable&lt; C &gt;::mNodePool</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::HashTable&lt; C &gt;::grow</definition>
+        <argsstring>(unsigned int nbits)</argsstring>
+        <name>grow</name>
+        <qualifiedname>mathic::HashTable::grow</qualifiedname>
+        <param>
+          <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nbits</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="116" column="10" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="264" bodyend="305"/>
+        <references refid="classmathic_1_1_hash_table_a36f101adb537c9affd5097a5c134696f_1a36f101adb537c9affd5097a5c134696f" compoundref="_hash_table_8h" startline="316" endline="324">mathic::HashTable&lt; C &gt;::computeNodeCount</references>
+        <references refid="classmathic_1_1_hash_table_1_1_handle_a32df10c11e91696e4c56fea2a5b89a25_1a32df10c11e91696e4c56fea2a5b89a25" compoundref="_hash_table_8h" startline="68" endline="68">mathic::HashTable&lt; C &gt;::Handle::key</references>
+        <references refid="classmathic_1_1_hash_table_a96a70e9fdb40409b2a00e182d4ecbfcb_1a96a70e9fdb40409b2a00e182d4ecbfcb" compoundref="_hash_table_8h" startline="138">mathic::HashTable&lt; C &gt;::mAlwaysInsertAtEnd</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_hash_table_a24ffa1c2ac6a5b3a95446b8952efd3a5_1a24ffa1c2ac6a5b3a95446b8952efd3a5" compoundref="_hash_table_8h" startline="132">mathic::HashTable&lt; C &gt;::mBinCount</references>
+        <references refid="classmathic_1_1_hash_table_aee8bcf0f6675498e4c771725b8e961ce_1aee8bcf0f6675498e4c771725b8e961ce" compoundref="_hash_table_8h" startline="142">mathic::HashTable&lt; C &gt;::mConf</references>
+        <references refid="classmathic_1_1_hash_table_ac1900adb5e9e8800923565431cf84bcd_1ac1900adb5e9e8800923565431cf84bcd" compoundref="_hash_table_8h" startline="126">mathic::HashTable&lt; C &gt;::mHashMask</references>
+        <references refid="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" compoundref="_hash_table_8h" startline="141">mathic::HashTable&lt; C &gt;::mHashTable</references>
+        <references refid="classmathic_1_1_hash_table_ab1725db18b0bd3f8b723afc4428ee73b_1ab1725db18b0bd3f8b723afc4428ee73b" compoundref="_hash_table_8h" startline="129">mathic::HashTable&lt; C &gt;::mLogTableSize</references>
+        <references refid="classmathic_1_1_hash_table_a24fbd297a24a7c5d407826f38b70e27a_1a24fbd297a24a7c5d407826f38b70e27a" compoundref="_hash_table_8h" startline="134">mathic::HashTable&lt; C &gt;::mMaxCountBeforeRebuild</references>
+        <references refid="classmathic_1_1_hash_table_a513f1a085a3e38dc9e78562381104362_1a513f1a085a3e38dc9e78562381104362" compoundref="_hash_table_8h" startline="131">mathic::HashTable&lt; C &gt;::mNodeCount</references>
+        <references refid="classmathic_1_1_hash_table_a9756800241a73ca6c88e82e006ce4d25_1a9756800241a73ca6c88e82e006ce4d25" compoundref="_hash_table_8h" startline="137">mathic::HashTable&lt; C &gt;::mRebuildThreshold</references>
+        <references refid="classmathic_1_1_hash_table_ab23bd515315c307a72c9dd2de9a23139_1ab23bd515315c307a72c9dd2de9a23139" compoundref="_hash_table_8h" startline="128">mathic::HashTable&lt; C &gt;::mTableSize</references>
+        <references refid="classmathic_1_1_hash_table_1_1_handle_ae5551573af2a88db13d897d58de2bb9a_1ae5551573af2a88db13d897d58de2bb9a" compoundref="_hash_table_8h" startline="73">mathic::HashTable&lt; C &gt;::Handle::next</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_a36f101adb537c9affd5097a5c134696f_1a36f101adb537c9affd5097a5c134696f" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::HashTable&lt; C &gt;::computeNodeCount</definition>
+        <argsstring>() const</argsstring>
+        <name>computeNodeCount</name>
+        <qualifiedname>mathic::HashTable::computeNodeCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="120" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="316" bodyend="324"/>
+        <references refid="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" compoundref="_hash_table_8h" startline="141">mathic::HashTable&lt; C &gt;::mHashTable</references>
+        <references refid="classmathic_1_1_hash_table_ab23bd515315c307a72c9dd2de9a23139_1ab23bd515315c307a72c9dd2de9a23139" compoundref="_hash_table_8h" startline="128">mathic::HashTable&lt; C &gt;::mTableSize</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" compoundref="_hash_table_8h" startline="264" endline="305">mathic::HashTable&lt; C &gt;::grow</referencedby>
+        <referencedby refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" compoundref="_hash_table_8h" startline="176" endline="221">mathic::HashTable&lt; C &gt;::insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_hash_table_af8884069e820eac82fcc8a896ad5614e_1af8884069e820eac82fcc8a896ad5614e" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::HashTable&lt; C &gt;::computeBinCount</definition>
+        <argsstring>() const</argsstring>
+        <name>computeBinCount</name>
+        <qualifiedname>mathic::HashTable::computeBinCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/HashTable.h" line="124" column="12" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="327" bodyend="335"/>
+        <references refid="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" compoundref="_hash_table_8h" startline="141">mathic::HashTable&lt; C &gt;::mHashTable</references>
+        <references refid="classmathic_1_1_hash_table_ab23bd515315c307a72c9dd2de9a23139_1ab23bd515315c307a72c9dd2de9a23139" compoundref="_hash_table_8h" startline="128">mathic::HashTable&lt; C &gt;::mTableSize</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="20">
+        <label>C</label>
+      </node>
+      <node id="13">
+        <label>Key</label>
+      </node>
+      <node id="19">
+        <label>T</label>
+      </node>
+      <node id="16">
+        <label>T1</label>
+      </node>
+      <node id="17">
+        <label>T2</label>
+      </node>
+      <node id="14">
+        <label>Value</label>
+      </node>
+      <node id="4">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="9">
+        <label>char</label>
+      </node>
+      <node id="3">
+        <label>double</label>
+      </node>
+      <node id="11">
+        <label>mathic::HashTable&lt; C &gt;::Handle</label>
+        <link refid="classmathic_1_1_hash_table_1_1_handle"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>entry</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>mathic::HashTable&lt; C &gt;</label>
+        <link refid="classmathic_1_1_hash_table"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mBinCount</edgelabel>
+          <edgelabel>mHashMask</edgelabel>
+          <edgelabel>mLogTableSize</edgelabel>
+          <edgelabel>mMaxCountBeforeRebuild</edgelabel>
+          <edgelabel>mNodeCount</edgelabel>
+          <edgelabel>mTableSize</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mRebuildThreshold</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mAlwaysInsertAtEnd</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mNodePool</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mHashTable</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mConf</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>size_t</label>
+      </node>
+      <node id="15">
+        <label>std::pair&lt; T1, T2 &gt;</label>
+        <childnode refid="16" relation="usage">
+          <edgelabel>first_type</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>second_type</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::pair&lt; Key, Value &gt;</label>
+        <childnode refid="13" relation="usage">
+          <edgelabel>first_type</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>second_type</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="template-instance">
+          <edgelabel>&lt; Key, Value &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="19" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; mathic::HashTable::Handle * &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; mathic::HashTable::Handle * &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/HashTable.h" line="41" column="3" bodyfile="submodules/mathic/src/mathic/HashTable.h" bodystart="41" bodyend="143"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_hash_table_af8884069e820eac82fcc8a896ad5614e_1af8884069e820eac82fcc8a896ad5614e" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>computeBinCount</name></member>
+      <member refid="classmathic_1_1_hash_table_a36f101adb537c9affd5097a5c134696f_1a36f101adb537c9affd5097a5c134696f" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>computeNodeCount</name></member>
+      <member refid="classmathic_1_1_hash_table_aef66f011353316083f04f2efaeaedbdd_1aef66f011353316083f04f2efaeaedbdd" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>Configuration</name></member>
+      <member refid="classmathic_1_1_hash_table_ad580fd90072ff340d3ef7a22221bc6dd_1ad580fd90072ff340d3ef7a22221bc6dd" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>configuration</name></member>
+      <member refid="classmathic_1_1_hash_table_a7137e2bbf07ab9f7138c9f5291cabb57_1a7137e2bbf07ab9f7138c9f5291cabb57" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>configuration</name></member>
+      <member refid="classmathic_1_1_hash_table_a58cf81d5a7ef57258e23e475decc1986_1a58cf81d5a7ef57258e23e475decc1986" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>grow</name></member>
+      <member refid="classmathic_1_1_hash_table_a329a111e35e4c98de2c77b953c878926_1a329a111e35e4c98de2c77b953c878926" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>hardReset</name></member>
+      <member refid="classmathic_1_1_hash_table_a0dce2994701ff9a1f4ea9235afd99226_1a0dce2994701ff9a1f4ea9235afd99226" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>HashTable</name></member>
+      <member refid="classmathic_1_1_hash_table_aa0f27e74728d8855e3eb19a35177ee08_1aa0f27e74728d8855e3eb19a35177ee08" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>insert</name></member>
+      <member refid="classmathic_1_1_hash_table_a80189ce50161a730fd3848d7360eec43_1a80189ce50161a730fd3848d7360eec43" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>Key</name></member>
+      <member refid="classmathic_1_1_hash_table_aa0e9f02203210a8a9dbb4d6a4c62aa73_1aa0e9f02203210a8a9dbb4d6a4c62aa73" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>lookup</name></member>
+      <member refid="classmathic_1_1_hash_table_ac23aa5ecca4eaaba73d366839649d017_1ac23aa5ecca4eaaba73d366839649d017" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>makeNode</name></member>
+      <member refid="classmathic_1_1_hash_table_a96a70e9fdb40409b2a00e182d4ecbfcb_1a96a70e9fdb40409b2a00e182d4ecbfcb" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mAlwaysInsertAtEnd</name></member>
+      <member refid="classmathic_1_1_hash_table_a24ffa1c2ac6a5b3a95446b8952efd3a5_1a24ffa1c2ac6a5b3a95446b8952efd3a5" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mBinCount</name></member>
+      <member refid="classmathic_1_1_hash_table_aee8bcf0f6675498e4c771725b8e961ce_1aee8bcf0f6675498e4c771725b8e961ce" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mConf</name></member>
+      <member refid="classmathic_1_1_hash_table_aadb4540c68fa6384fdc74c5adc70dc73_1aadb4540c68fa6384fdc74c5adc70dc73" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>memoryUse</name></member>
+      <member refid="classmathic_1_1_hash_table_ac1900adb5e9e8800923565431cf84bcd_1ac1900adb5e9e8800923565431cf84bcd" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mHashMask</name></member>
+      <member refid="classmathic_1_1_hash_table_a0fa0d1125488197ee6c31efd828e5644_1a0fa0d1125488197ee6c31efd828e5644" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mHashTable</name></member>
+      <member refid="classmathic_1_1_hash_table_ab1725db18b0bd3f8b723afc4428ee73b_1ab1725db18b0bd3f8b723afc4428ee73b" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mLogTableSize</name></member>
+      <member refid="classmathic_1_1_hash_table_a24fbd297a24a7c5d407826f38b70e27a_1a24fbd297a24a7c5d407826f38b70e27a" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mMaxCountBeforeRebuild</name></member>
+      <member refid="classmathic_1_1_hash_table_a513f1a085a3e38dc9e78562381104362_1a513f1a085a3e38dc9e78562381104362" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mNodeCount</name></member>
+      <member refid="classmathic_1_1_hash_table_a4d1cd1409eb19c0085ad531c3cdb4c3d_1a4d1cd1409eb19c0085ad531c3cdb4c3d" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mNodePool</name></member>
+      <member refid="classmathic_1_1_hash_table_a9756800241a73ca6c88e82e006ce4d25_1a9756800241a73ca6c88e82e006ce4d25" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mRebuildThreshold</name></member>
+      <member refid="classmathic_1_1_hash_table_ab23bd515315c307a72c9dd2de9a23139_1ab23bd515315c307a72c9dd2de9a23139" prot="private" virt="non-virtual"><scope>mathic::HashTable</scope><name>mTableSize</name></member>
+      <member refid="classmathic_1_1_hash_table_abd537e1d3db6229fa771086ce0035527_1abd537e1d3db6229fa771086ce0035527" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>name</name></member>
+      <member refid="classmathic_1_1_hash_table_a24d5832edabe491df62a0eca23dc9f4b_1a24d5832edabe491df62a0eca23dc9f4b" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>remove</name></member>
+      <member refid="classmathic_1_1_hash_table_a6d4a2bc112940ed13498a12029c4a7e3_1a6d4a2bc112940ed13498a12029c4a7e3" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>reset</name></member>
+      <member refid="classmathic_1_1_hash_table_aa20fb31b8081277a45cc76a5aae7c2af_1aa20fb31b8081277a45cc76a5aae7c2af" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>Value</name></member>
+      <member refid="classmathic_1_1_hash_table_a8a0449ed4e8c61bf13212ae31bff0d44_1a8a0449ed4e8c61bf13212ae31bff0d44" prot="public" virt="non-virtual"><scope>mathic::HashTable</scope><name>~HashTable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

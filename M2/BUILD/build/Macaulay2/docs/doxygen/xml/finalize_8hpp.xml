@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="finalize_8hpp" kind="file" language="C++">
+    <compoundname>finalize.hpp</compoundname>
+    <includedby refid="comp-gb_8cpp" local="yes">Macaulay2/e/comp-gb.cpp</includedby>
+    <includedby refid="comp-res_8cpp" local="yes">Macaulay2/e/comp-res.cpp</includedby>
+    <includedby refid="comp_8cpp" local="yes">Macaulay2/e/comp.cpp</includedby>
+    <includedby refid="finalize_8cpp" local="yes">Macaulay2/e/finalize.cpp</includedby>
+    <includedby refid="monomial-ideal_8cpp" local="yes">Macaulay2/e/interface/monomial-ideal.cpp</includedby>
+    <includedby refid="mutable-matrix_8cpp" local="yes">Macaulay2/e/interface/mutable-matrix.cpp</includedby>
+    <includedby refid="interface_2ring_8cpp" local="yes">Macaulay2/e/interface/ring.cpp</includedby>
+    <includedby refid="schorder_8cpp" local="yes">Macaulay2/e/schorder.cpp</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>Macaulay2/e/comp-gb.cpp</label>
+        <link refid="comp-gb_8cpp"/>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/comp.cpp</label>
+        <link refid="comp_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/finalize.cpp</label>
+        <link refid="finalize_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/finalize.hpp</label>
+        <link refid="finalize_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/interface/monomial-ideal.cpp</label>
+        <link refid="monomial-ideal_8cpp"/>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/interface/mutable-matrix.cpp</label>
+        <link refid="mutable-matrix_8cpp"/>
+      </node>
+      <node id="8">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="9">
+        <label>Macaulay2/e/schorder.cpp</label>
+        <link refid="schorder_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="finalize_8hpp_a983529769b4c8c9deaff15dcca5f50c5_1a983529769b4c8c9deaff15dcca5f50c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void intern_polyring</definition>
+        <argsstring>(const PolynomialRing *G)</argsstring>
+        <name>intern_polyring</name>
+        <param>
+          <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/finalize.hpp" line="38" column="6" bodyfile="Macaulay2/e/finalize.cpp" bodystart="81" bodyend="98" declfile="Macaulay2/e/finalize.hpp" declline="38" declcolumn="6"/>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <referencedby refid="interface_2ring_8cpp_a1026a18351ef991528fcd1d470631edb_1a1026a18351ef991528fcd1d470631edb" compoundref="interface_2ring_8cpp" startline="119" endline="131">IM2_Ring_polyring</referencedby>
+        <referencedby refid="interface_2ring_8cpp_aacef72d70020c8ebb765550cb4b94845_1aacef72d70020c8ebb765550cb4b94845" compoundref="interface_2ring_8cpp" startline="388" endline="421">IM2_Ring_quotient</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a9e9f0b13f4af591fae20b8a90db7d166_1a9e9f0b13f4af591fae20b8a90db7d166" compoundref="interface_2ring_8cpp" startline="423" endline="451">IM2_Ring_quotient1</referencedby>
+        <referencedby refid="interface_2ring_8cpp_adf037a2001489bec9c3feaf9a025b62e_1adf037a2001489bec9c3feaf9a025b62e" compoundref="interface_2ring_8cpp" startline="453" endline="471">IM2_Ring_schur</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a8f9ead911fec921750c05450ff0ede4c_1a8f9ead911fec921750c05450ff0ede4c" compoundref="interface_2ring_8cpp" startline="153" endline="173">IM2_Ring_skew_polyring</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a77798eb5baa3b5eaeb9e545d5b370c05_1a77798eb5baa3b5eaeb9e545d5b370c05" compoundref="interface_2ring_8cpp" startline="202" endline="221">IM2_Ring_solvable_algebra</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a310d331f80a2b91228fdeaf4ab0ae44c_1a310d331f80a2b91228fdeaf4ab0ae44c" compoundref="interface_2ring_8cpp" startline="175" endline="200">IM2_Ring_weyl_algebra</referencedby>
+        <referencedby refid="interface_2ring_8cpp_a18f4d4b6453ba050df9eb7ebeda4106e_1a18f4d4b6453ba050df9eb7ebeda4106e" compoundref="interface_2ring_8cpp" startline="133" endline="151">rawDividedPowerRing</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="finalize_8hpp_a6501d4db829e3bfb2219f4850e8d224c_1a6501d4db829e3bfb2219f4850e8d224c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void intern_monideal</definition>
+        <argsstring>(MonomialIdeal *G)</argsstring>
+        <name>intern_monideal</name>
+        <param>
+          <type><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/finalize.hpp" line="39" column="6" bodyfile="Macaulay2/e/finalize.cpp" bodystart="55" bodyend="68" declfile="Macaulay2/e/finalize.hpp" declline="39" declcolumn="6"/>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="finalize_8cpp_a46a314f1633907ca5517a427746f3be4_1a46a314f1633907ca5517a427746f3be4" compoundref="finalize_8cpp" startline="20">monideals_nfinalized</references>
+        <references refid="finalize_8cpp_a8edf5905229d913571c2b764ccf7b057_1a8edf5905229d913571c2b764ccf7b057" compoundref="finalize_8cpp" startline="42" endline="54">remove_monideal</references>
+        <referencedby refid="monomial-ideal_8cpp_aa197521218ee5d802a6093d2190dafd4_1aa197521218ee5d802a6093d2190dafd4" compoundref="monomial-ideal_8cpp" startline="196" endline="209">IM2_MonomialIdeal_borel</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_ab6cc1e0297c528f554cf3db686993b1e_1ab6cc1e0297c528f554cf3db686993b1e" compoundref="monomial-ideal_8cpp" startline="97" endline="116">IM2_MonomialIdeal_intersect</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_ae11b81ca7d712e3834893198e907ef5e_1ae11b81ca7d712e3834893198e907ef5e" compoundref="monomial-ideal_8cpp" startline="25" endline="37">IM2_MonomialIdeal_make</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_a99acac47a4860fa944b49b6387d0dc7f_1a99acac47a4860fa944b49b6387d0dc7f" compoundref="monomial-ideal_8cpp" startline="411" endline="425">rawAlexanderDual</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_ad8493080b587ae51aa464e65975b3b6f_1ad8493080b587ae51aa464e65975b3b6f" compoundref="monomial-ideal_8cpp" startline="120" endline="134">rawColonMonomialIdeal1</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_a1ca454918430ce78043dd11dc395f664_1a1ca454918430ce78043dd11dc395f664" compoundref="monomial-ideal_8cpp" startline="136" endline="157">rawColonMonomialIdeal2</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_abb7762bb82f438d49b8ae066826e5ae2_1abb7762bb82f438d49b8ae066826e5ae2" compoundref="monomial-ideal_8cpp" startline="245" endline="260">rawMaximalIndependentSets</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_a5d7ab2ce67e7ffcc3a457ea94f444c1a_1a5d7ab2ce67e7ffcc3a457ea94f444c1a" compoundref="monomial-ideal_8cpp" startline="230" endline="243">rawMonomialMinimalPrimes</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_a9f3975d515f4a9d7c5a09f4492849525_1a9f3975d515f4a9d7c5a09f4492849525" compoundref="monomial-ideal_8cpp" startline="81" endline="95">rawRadicalMonomialIdeal</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_a9a3f12fee39ade208f93ea6758082015_1a9a3f12fee39ade208f93ea6758082015" compoundref="monomial-ideal_8cpp" startline="159" endline="173">rawSaturateMonomialIdeal1</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_a18e55eaa75fe54770e3af1c656a0c3a7_1a18e55eaa75fe54770e3af1c656a0c3a7" compoundref="monomial-ideal_8cpp" startline="175" endline="194">rawSaturateMonomialIdeal2</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="finalize_8hpp_a69ad2638647d139d7c215cbdc820f5cb_1a69ad2638647d139d7c215cbdc820f5cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+        <definition>MutableMatrix * internMutableMatrix</definition>
+        <argsstring>(MutableMatrix *G)</argsstring>
+        <name>internMutableMatrix</name>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/finalize.hpp" line="40" column="15" bodyfile="Macaulay2/e/finalize.cpp" bodystart="200" bodyend="215" declfile="Macaulay2/e/finalize.hpp" declline="40" declcolumn="15"/>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="finalize_8cpp_afe38175c8400dcd128ae6ef52c0d8922_1afe38175c8400dcd128ae6ef52c0d8922" compoundref="finalize_8cpp" startline="23">mutablematrices_nfinalized</references>
+        <references refid="finalize_8cpp_a2acd80d5ff4b2d40403f1d69e3f4178b_1a2acd80d5ff4b2d40403f1d69e3f4178b" compoundref="finalize_8cpp" startline="187" endline="199">remove_MutableMatrix</references>
+        <referencedby refid="mutable-matrix_8cpp_a931b5b33c8d3c6a284676efcc2320bc8_1a931b5b33c8d3c6a284676efcc2320bc8" compoundref="mutable-matrix_8cpp" startline="559" endline="562">IM2_MutableMatrix_copy</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ae7ca8e5752bb4fe629fb061afd6d43d9_1ae7ca8e5752bb4fe629fb061afd6d43d9" compoundref="mutable-matrix_8cpp" startline="54" endline="57">IM2_MutableMatrix_from_matrix</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_acf9a3d588e0184696c2311d613218ee9_1acf9a3d588e0184696c2311d613218ee9" compoundref="mutable-matrix_8cpp" startline="25" endline="36">IM2_MutableMatrix_identity</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ab3226557af75db5c8ddda28285e158fb_1ab3226557af75db5c8ddda28285e158fb" compoundref="mutable-matrix_8cpp" startline="38" endline="52">IM2_MutableMatrix_make</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a862cff19d596b0080d2b0def9f08e537_1a862cff19d596b0080d2b0def9f08e537" compoundref="mutable-matrix_8cpp" startline="579" endline="584">IM2_MutableMatrix_submatrix</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ab94bd0364bf1b960ece9babf86135e1b_1ab94bd0364bf1b960ece9babf86135e1b" compoundref="mutable-matrix_8cpp" startline="586" endline="591">IM2_MutableMatrix_submatrix1</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ab56f195b78da6250362d1fb9bc918cb3_1ab56f195b78da6250362d1fb9bc918cb3" compoundref="mutable-matrix_8cpp" startline="848" endline="860">rawLinAlgInverse</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a80b61957f31008b9ad316b1f85bcf857_1a80b61957f31008b9ad316b1f85bcf857" compoundref="mutable-matrix_8cpp" startline="979" endline="990">rawLinAlgMult</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_a5e6f60d976b604cd7f2a2e0b5ee4a20e_1a5e6f60d976b604cd7f2a2e0b5ee4a20e" compoundref="mutable-matrix_8cpp" startline="886" endline="896">rawLinAlgNullSpace</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_abadc58fcae7ab0e9a456562b729f0be5_1abadc58fcae7ab0e9a456562b729f0be5" compoundref="mutable-matrix_8cpp" startline="862" endline="872">rawLinAlgRREF</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_afdb3e7668111cc28e5c28c215ecb5dc8_1afdb3e7668111cc28e5c28c215ecb5dc8" compoundref="mutable-matrix_8cpp" startline="898" endline="920">rawLinAlgSolve</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_ab9622aed85b87673d691198c54e1ba42_1ab9622aed85b87673d691198c54e1ba42" compoundref="mutable-matrix_8cpp" startline="922" endline="944">rawLinAlgSolveInvertible</referencedby>
+        <referencedby refid="mutable-matrix_8cpp_aee612714d5a0b366b2df6aeb4baed6f5_1aee612714d5a0b366b2df6aeb4baed6f5" compoundref="mutable-matrix_8cpp" startline="542" endline="552">rawMutableMatrixTranspose</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="finalize_8hpp_a06d69d9a01b407a6d9204d01c871fce1_1a06d69d9a01b407a6d9204d01c871fce1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void intern_GB</definition>
+        <argsstring>(GBComputation *G)</argsstring>
+        <name>intern_GB</name>
+        <param>
+          <type><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/finalize.hpp" line="41" column="6" bodyfile="Macaulay2/e/finalize.cpp" bodystart="112" bodyend="130" declfile="Macaulay2/e/finalize.hpp" declline="41" declcolumn="6"/>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="finalize_8cpp_a933b739846e3e582ba30d487117f12b9_1a933b739846e3e582ba30d487117f12b9" compoundref="finalize_8cpp" startline="29">gbs_nfinalized</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="finalize_8cpp_ad5dfbb748fc385e82406d90f81a5deec_1ad5dfbb748fc385e82406d90f81a5deec" compoundref="finalize_8cpp" startline="100" endline="111">remove_gb</references>
+        <referencedby refid="class_g_b_computation_aaff7a8f858cded7550f977b4bf34f01b_1aaff7a8f858cded7550f977b4bf34f01b" compoundref="comp-gb_8cpp" startline="39" endline="206">GBComputation::choose_gb</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="finalize_8hpp_abc48b76918e28478bd41d7d9645360f3_1abc48b76918e28478bd41d7d9645360f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void intern_res</definition>
+        <argsstring>(ResolutionComputation *G)</argsstring>
+        <name>intern_res</name>
+        <param>
+          <type><ref refid="class_resolution_computation" kindref="compound">ResolutionComputation</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/finalize.hpp" line="42" column="6" bodyfile="Macaulay2/e/finalize.cpp" bodystart="144" bodyend="156" declfile="Macaulay2/e/finalize.hpp" declline="42" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="finalize_8hpp_aae491e7c1ab7a0a376e942ab9b46a10e_1aae491e7c1ab7a0a376e942ab9b46a10e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void intern_SchreyerOrder</definition>
+        <argsstring>(SchreyerOrder *G)</argsstring>
+        <name>intern_SchreyerOrder</name>
+        <param>
+          <type><ref refid="class_schreyer_order" kindref="compound">SchreyerOrder</ref> *</type>
+          <declname>G</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/finalize.hpp" line="43" column="6" bodyfile="Macaulay2/e/finalize.cpp" bodystart="171" bodyend="184" declfile="Macaulay2/e/finalize.hpp" declline="43" declcolumn="6"/>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="finalize_8cpp_a62e309e31422eabdd0a945104a8bd60c_1a62e309e31422eabdd0a945104a8bd60c" compoundref="finalize_8cpp" startline="158" endline="170">remove_SchreyerOrder</references>
+        <references refid="finalize_8cpp_ae8c08bdbbed36d87bb9e769980701b56_1ae8c08bdbbed36d87bb9e769980701b56" compoundref="finalize_8cpp" startline="38">schorder_nfinalized</references>
+        <referencedby refid="class_schreyer_order_a3208fb78670aa565bdb57b28a3d36c2c_1a3208fb78670aa565bdb57b28a3d36c2c" compoundref="schorder_8cpp" startline="80" endline="131">SchreyerOrder::create</referencedby>
+        <referencedby refid="class_schreyer_order_ae27a0c303cdaee837b034b6d5a71cea5_1ae27a0c303cdaee837b034b6d5a71cea5" compoundref="schorder_8cpp" startline="29" endline="78">SchreyerOrder::create</referencedby>
+        <referencedby refid="class_schreyer_order_a617f135fc25e9f7bf57615a4d5ce7c22_1a617f135fc25e9f7bf57615a4d5ce7c22" compoundref="schorder_8cpp" startline="11" endline="16">SchreyerOrder::create</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput>intern_*</computeroutput> helpers that register long-lived engine objects with bdwgc finalisers. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares <computeroutput><ref refid="finalize_8hpp_a983529769b4c8c9deaff15dcca5f50c5_1a983529769b4c8c9deaff15dcca5f50c5" kindref="member">intern_polyring</ref></computeroutput>, <computeroutput><ref refid="finalize_8hpp_a6501d4db829e3bfb2219f4850e8d224c_1a6501d4db829e3bfb2219f4850e8d224c" kindref="member">intern_monideal</ref></computeroutput>, <computeroutput><ref refid="finalize_8hpp_a69ad2638647d139d7c215cbdc820f5cb_1a69ad2638647d139d7c215cbdc820f5cb" kindref="member">internMutableMatrix</ref></computeroutput>, <computeroutput><ref refid="finalize_8hpp_a06d69d9a01b407a6d9204d01c871fce1_1a06d69d9a01b407a6d9204d01c871fce1" kindref="member">intern_GB</ref></computeroutput>, <computeroutput><ref refid="finalize_8hpp_abc48b76918e28478bd41d7d9645360f3_1abc48b76918e28478bd41d7d9645360f3" kindref="member">intern_res</ref></computeroutput>, and <computeroutput><ref refid="finalize_8hpp_aae491e7c1ab7a0a376e942ab9b46a10e_1aae491e7c1ab7a0a376e942ab9b46a10e" kindref="member">intern_SchreyerOrder</ref></computeroutput>. Each one takes a freshly constructed engine object that will outlive its caller (typically because it is being returned to the interpreter) and registers it with bdwgc via <computeroutput>GC_REGISTER_FINALIZER</computeroutput> (or <computeroutput>_IGNORE_SELF</computeroutput>) pointing at a per-type <computeroutput>remove_*</computeroutput> trampoline that runs the C++ destructor when the collector decides the object is unreachable. Without this step bdwgc would reclaim the bytes but skip the destructor, leaking any resource the type holds outside the GC heap.</para>
+<para>Objects owned by stack-based holders that delete explicitly do not need to be interned; the in-source comment is precise about &quot;if G will not be freed by its owner.&quot; <computeroutput><ref refid="finalize_8hpp_a69ad2638647d139d7c215cbdc820f5cb_1a69ad2638647d139d7c215cbdc820f5cb" kindref="member">internMutableMatrix</ref></computeroutput> is the one helper that also returns the registered pointer, supporting the <computeroutput><ref refid="m2-mem_8cpp_acc4ce1649a2cfffb5cbc82ee8231a249_1acc4ce1649a2cfffb5cbc82ee8231a249" kindref="member">return</ref> internMutableMatrix(new MutableMatrix(...))</computeroutput> idiom common at engine factory entry points.</para>
+<para><simplesect kind="see"><para><ref refid="newdelete_8hpp" kindref="compound">newdelete.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>2010<sp/>Michael<sp/>E.<sp/>Stillman.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_g_b_computation" kindref="compound">GBComputation</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_resolution_computation" kindref="compound">ResolutionComputation</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_schreyer_order" kindref="compound">SchreyerOrder</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/>These<sp/>functions<sp/>should<sp/>be<sp/>called<sp/>if<sp/>G<sp/>will<sp/>not<sp/>be<sp/>freed<sp/>by<sp/>its<sp/>owner</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="finalize_8hpp_a983529769b4c8c9deaff15dcca5f50c5_1a983529769b4c8c9deaff15dcca5f50c5" kindref="member">intern_polyring</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref><sp/>*<ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref>);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="finalize_8hpp_a6501d4db829e3bfb2219f4850e8d224c_1a6501d4db829e3bfb2219f4850e8d224c" kindref="member">intern_monideal</ref>(<ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref><sp/>*<ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref>);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref><sp/>*<ref refid="finalize_8hpp_a69ad2638647d139d7c215cbdc820f5cb_1a69ad2638647d139d7c215cbdc820f5cb" kindref="member">internMutableMatrix</ref>(<ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref><sp/>*<ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref>);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="finalize_8hpp_a06d69d9a01b407a6d9204d01c871fce1_1a06d69d9a01b407a6d9204d01c871fce1" kindref="member">intern_GB</ref>(<ref refid="class_g_b_computation" kindref="compound">GBComputation</ref><sp/>*<ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref>);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="finalize_8hpp_abc48b76918e28478bd41d7d9645360f3_1abc48b76918e28478bd41d7d9645360f3" kindref="member">intern_res</ref>(<ref refid="class_resolution_computation" kindref="compound">ResolutionComputation</ref><sp/>*<ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref>);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="finalize_8hpp_aae491e7c1ab7a0a376e942ab9b46a10e_1aae491e7c1ab7a0a376e942ab9b46a10e" kindref="member">intern_SchreyerOrder</ref>(<ref refid="class_schreyer_order" kindref="compound">SchreyerOrder</ref><sp/>*<ref refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" kindref="member">G</ref>);</highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/finalize.hpp"/>
+  </compounddef>
+</doxygen>

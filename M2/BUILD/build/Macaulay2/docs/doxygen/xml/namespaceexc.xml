@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespaceexc" kind="namespace" language="C++">
+    <compoundname>exc</compoundname>
+    <innerclass refid="structexc_1_1engine__error" prot="public">exc::engine_error</innerclass>
+    <innerclass refid="structexc_1_1overflow__exception" prot="public">exc::overflow_exception</innerclass>
+    <innerclass refid="structexc_1_1division__by__zero__error" prot="public">exc::division_by_zero_error</innerclass>
+    <innerclass refid="structexc_1_1internal__error" prot="public">exc::internal_error</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="Macaulay2/e/exceptions.hpp" line="38" column="1"/>
+  </compounddef>
+</doxygen>

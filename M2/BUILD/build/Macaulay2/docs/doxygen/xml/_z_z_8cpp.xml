@@ -1,0 +1,864 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_z_z_8cpp" kind="file" language="C++">
+    <compoundname>ZZ.cpp</compoundname>
+    <includes refid="_z_z_8hpp" local="yes">ZZ.hpp</includes>
+    <includes refid="text-io_8hpp" local="yes">text-io.hpp</includes>
+    <includes refid="monoid_8hpp" local="yes">monoid.hpp</includes>
+    <includes refid="relem_8hpp" local="yes">relem.hpp</includes>
+    <includes refid="ringmap_8hpp" local="yes">ringmap.hpp</includes>
+    <includes refid="gbring_8hpp" local="yes">gbring.hpp</includes>
+    <includes refid="aring-zz-gmp_8hpp" local="yes">aring-zz-gmp.hpp</includes>
+    <includes local="no">utility</includes>
+    <includes refid="exceptions_8hpp" local="yes">exceptions.hpp</includes>
+    <incdepgraph>
+      <node id="15">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/ZZ.cpp</label>
+        <link refid="_z_z_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>aring-zz-gmp.hpp</label>
+        <link refid="aring-zz-gmp_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="27">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>gbring.hpp</label>
+        <link refid="gbring_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>interface/gmp-util.h</label>
+        <link refid="gmp-util_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>interface/random.h</label>
+        <link refid="random_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>relem.hpp</label>
+        <link refid="relem_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>ringmap.hpp</label>
+        <link refid="ringmap_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>skew.hpp</label>
+        <link refid="skew_8hpp"/>
+      </node>
+      <node id="29">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>text-io.hpp</label>
+        <link refid="text-io_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>M2/config.h</label>
+      </node>
+      <node id="21">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="10">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="23">
+        <label>assert.h</label>
+      </node>
+      <node id="7">
+        <label>cassert</label>
+      </node>
+      <node id="41">
+        <label>cstddef</label>
+      </node>
+      <node id="16">
+        <label>cstdio</label>
+      </node>
+      <node id="34">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="37">
+        <label>iostream</label>
+      </node>
+      <node id="8">
+        <label>memory</label>
+      </node>
+      <node id="12">
+        <label>stddef.h</label>
+      </node>
+      <node id="28">
+        <label>stdexcept</label>
+      </node>
+      <node id="20">
+        <label>stdint.h</label>
+      </node>
+      <node id="32">
+        <label>stdlib.h</label>
+      </node>
+      <node id="13">
+        <label>string</label>
+      </node>
+      <node id="24">
+        <label>string.h</label>
+      </node>
+      <node id="25">
+        <label>type_traits</label>
+      </node>
+      <node id="5">
+        <label>utility</label>
+      </node>
+      <node id="33">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="14">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_z_z_8cpp_a4b8fa79bd49b1714d5e5d6f406f14fca_1a4b8fa79bd49b1714d5e5d6f406f14fca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int computeHashValue_mpz</definition>
+        <argsstring>(mpz_srcptr a)</argsstring>
+        <name>computeHashValue_mpz</name>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ZZ.cpp" line="14" column="14" bodyfile="Macaulay2/e/ZZ.cpp" bodystart="14" bodyend="17"/>
+        <referencedby refid="class_ring_z_z_a37c5ae213b3c6b88a8d69307935dd17e_1a37c5ae213b3c6b88a8d69307935dd17e" compoundref="_z_z_8cpp" startline="41" endline="44">RingZZ::computeHashValue</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>1995<sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_z_z_8hpp" kindref="compound">ZZ.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="text-io_8hpp" kindref="compound">text-io.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="monoid_8hpp" kindref="compound">monoid.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="relem_8hpp" kindref="compound">relem.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ringmap_8hpp" kindref="compound">ringmap.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="gbring_8hpp" kindref="compound">gbring.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="aring-zz-gmp_8hpp" kindref="compound">aring-zz-gmp.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;utility&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="exceptions_8hpp" kindref="compound">exceptions.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="_z_z_8cpp_a4b8fa79bd49b1714d5e5d6f406f14fca_1a4b8fa79bd49b1714d5e5d6f406f14fca" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="_z_z_8cpp_a4b8fa79bd49b1714d5e5d6f406f14fca_1a4b8fa79bd49b1714d5e5d6f406f14fca" kindref="member">computeHashValue_mpz</ref>(mpz_srcptr<sp/>a)</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(mpz_get_si(a));</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19" refid="class_ring_z_z_a89f71d0296dd12cf415d17300e6cece2_1a89f71d0296dd12cf415d17300e6cece2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a89f71d0296dd12cf415d17300e6cece2_1a89f71d0296dd12cf415d17300e6cece2" kindref="member">RingZZ::initialize_ZZ</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref><sp/>*deg_ring)</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><ref refid="class_ring_a57db5364300d12a9e778ef9794f61962_1a57db5364300d12a9e778ef9794f61962" kindref="member">initialize_ring</ref>(0);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><ref refid="class_ring_afa3a12a60383e4ca91e1e3bf39c74404_1afa3a12a60383e4ca91e1e3bf39c74404" kindref="member">zeroV</ref><sp/>=<sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">from_long</ref>(0);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><ref refid="class_ring_a8f7daf1d07ca87b567292d44b6bc5b72_1a8f7daf1d07ca87b567292d44b6bc5b72" kindref="member">oneV</ref><sp/>=<sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">from_long</ref>(1);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><ref refid="class_ring_a565bd372dea4814e6d775012e45de005_1a565bd372dea4814e6d775012e45de005" kindref="member">minus_oneV</ref><sp/>=<sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">from_long</ref>(-1);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><ref refid="class_ring_ad78d8ea1a78b3ad976f028ac76c8d7c2_1ad78d8ea1a78b3ad976f028ac76c8d7c2" kindref="member">degree_ring</ref><sp/>=<sp/>deg_ring;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><ref refid="class_ring_z_z_a41126f3fea533a3b013798df1ece4022_1a41126f3fea533a3b013798df1ece4022" kindref="member">coeffR</ref><sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="class_m2_1_1_a_ring_z_z_g_m_p" kindref="compound">M2::ARingZZGMP</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="class_ring_z_z_ac9a5773acb8d9f86dbf1c317375504f0_1ac9a5773acb8d9f86dbf1c317375504f0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_ac9a5773acb8d9f86dbf1c317375504f0_1ac9a5773acb8d9f86dbf1c317375504f0" kindref="member">RingZZ::text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/>o<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;ZZ&quot;</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" refkind="member"><highlight class="normal">mpz_ptr<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">RingZZ::new_elem</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="35"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="m2-mem_8h_a6ca24b55fd05d728fa63a538c8f0ec57_1a6ca24b55fd05d728fa63a538c8f0ec57" kindref="member">getmemstructtype</ref>(mpz_ptr);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>mpz_init(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="class_ring_z_z_a37c5ae213b3c6b88a8d69307935dd17e_1a37c5ae213b3c6b88a8d69307935dd17e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a37c5ae213b3c6b88a8d69307935dd17e_1a37c5ae213b3c6b88a8d69307935dd17e" kindref="member">RingZZ::computeHashValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="42"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="_z_z_8hpp_a4b8fa79bd49b1714d5e5d6f406f14fca_1a4b8fa79bd49b1714d5e5d6f406f14fca" kindref="member">computeHashValue_mpz</ref>(a.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="class_ring_z_z_a93f60c7348caad7f332820b455fb3735_1a93f60c7348caad7f332820b455fb3735" refkind="member"><highlight class="normal">std::pair&lt;bool,<sp/>int&gt;<sp/><ref refid="class_ring_z_z_a93f60c7348caad7f332820b455fb3735_1a93f60c7348caad7f332820b455fb3735" kindref="member">RingZZ::get_si</ref>(mpz_srcptr<sp/>n)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>mpz_fits_slong_p(n))<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_pair&lt;bool,<sp/>int&gt;(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>0);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>a<sp/>=<sp/>mpz_get_si(n);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(a);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>==<sp/>b)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_pair&lt;bool,<sp/>int&gt;(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>std::move(b));</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_pair&lt;bool,<sp/>int&gt;(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/>0);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="class_ring_z_z_a56dfe33da6328718f97bec3c02580197_1a56dfe33da6328718f97bec3c02580197" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a56dfe33da6328718f97bec3c02580197_1a56dfe33da6328718f97bec3c02580197" kindref="member">RingZZ::mod_ui</ref>(mpz_srcptr<sp/>n,<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>mpz_t<sp/>ans;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>mpz_init(ans);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>exp<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(mpz_mod_ui(ans,<sp/>n,<sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>));</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>mpz_clear(ans);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>exp;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="class_ring_z_z_ac912f3da751d61f94950c2ccff6d74c0_1ac912f3da751d61f94950c2ccff6d74c0" refkind="member"><highlight class="normal">std::pair&lt;bool,<sp/>long&gt;<sp/><ref refid="class_ring_z_z_ac912f3da751d61f94950c2ccff6d74c0_1ac912f3da751d61f94950c2ccff6d74c0" kindref="member">RingZZ::coerceToLongInteger</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="65"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::pair&lt;bool,<sp/>long&gt;(mpz_fits_slong_p(a.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>()),</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpz_get_si(a.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>()));</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="class_ring_z_z_a8e4dc21105e9afc1a2191904a23eed50_1a8e4dc21105e9afc1a2191904a23eed50" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a8e4dc21105e9afc1a2191904a23eed50_1a8e4dc21105e9afc1a2191904a23eed50" kindref="member">RingZZ::random</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><ref refid="random_8cpp_a8e58c954e0af9e43e4bd52081037528e_1a8e58c954e0af9e43e4bd52081037528e" kindref="member">rawSetRandomInteger</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="class_ring_z_z_ae98d39e3a44b8491cb3236779b98639a_1ae98d39e3a44b8491cb3236779b98639a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_ae98d39e3a44b8491cb3236779b98639a_1ae98d39e3a44b8491cb3236779b98639a" kindref="member">RingZZ::elem_text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o,</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>ap,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_one,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_plus,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_parens)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="82"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>(void)<sp/>p_parens;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>ap.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>[1000];</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*str;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>is_neg<sp/>=<sp/>(<ref refid="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" kindref="member">mask_mpz_cmp_si</ref>(a,<sp/>0)<sp/>==<sp/>-1);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>is_one<sp/>=<sp/>(<ref refid="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" kindref="member">mask_mpz_cmp_si</ref>(a,<sp/>1)<sp/>==<sp/>0<sp/>||<sp/><ref refid="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" kindref="member">mask_mpz_cmp_si</ref>(a,<sp/>-1)<sp/>==<sp/>0);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(mpz_sizeinbase(a,<sp/>10))<sp/>+<sp/>2;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*allocstr<sp/>=<sp/>(size<sp/>&gt;<sp/>1000<sp/>?<sp/><ref refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" kindref="member">newarray_atomic</ref>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">,<sp/>size)<sp/>:<sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!is_neg<sp/>&amp;&amp;<sp/>p_plus)<sp/>o<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;+&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(is_one)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(is_neg)<sp/>o<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;-&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(p_one)<sp/>o<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;1&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>str<sp/>=<sp/>mpz_get_str(allocstr,<sp/>10,<sp/>a);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>o<sp/>&lt;&lt;<sp/>str;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(size<sp/>&gt;<sp/>1000)<sp/><ref refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" kindref="member">freemem</ref>(allocstr);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">RingZZ::from_long</ref>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>n)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="111"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>mpz_set_si(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>n);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="class_ring_z_z_a8ee5f1281f1f753bd5e64aaed8393b52_1a8ee5f1281f1f753bd5e64aaed8393b52" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a8ee5f1281f1f753bd5e64aaed8393b52_1a8ee5f1281f1f753bd5e64aaed8393b52" kindref="member">RingZZ::from_int</ref>(mpz_srcptr<sp/>n)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="120"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/>mpz_set(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>n);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128" refid="class_ring_z_z_a7a0bb92a97cc91d8c86448f52ca700b6_1a7a0bb92a97cc91d8c86448f52ca700b6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a7a0bb92a97cc91d8c86448f52ca700b6_1a7a0bb92a97cc91d8c86448f52ca700b6" kindref="member">RingZZ::from_rational</ref>(mpq_srcptr<sp/>q,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="129"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ok<sp/>=<sp/>mpz_cmp_si(mpq_denref(q),<sp/>1)<sp/>==<sp/>0;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>ok)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8ee5f1281f1f753bd5e64aaed8393b52_1a8ee5f1281f1f753bd5e64aaed8393b52" kindref="member">RingZZ::from_int</ref>(mpq_numref(q));</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="class_ring_z_z_a152d0bf08ab0cfe4391655b242ad9a03_1a152d0bf08ab0cfe4391655b242ad9a03" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a152d0bf08ab0cfe4391655b242ad9a03_1a152d0bf08ab0cfe4391655b242ad9a03" kindref="member">RingZZ::promote</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring_afc47f40ab072db783126111b70693e49_1afc47f40ab072db783126111b70693e49" kindref="member">Ring</ref><sp/>*R,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="137"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/>(void)<sp/>R;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/>(void)<sp/>a;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>(void)<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="class_ring_z_z_af7a09499eca947992c0c34e8805dc505_1af7a09499eca947992c0c34e8805dc505" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_af7a09499eca947992c0c34e8805dc505_1af7a09499eca947992c0c34e8805dc505" kindref="member">RingZZ::lift</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring_afc47f40ab072db783126111b70693e49_1afc47f40ab072db783126111b70693e49" kindref="member">Ring</ref><sp/>*,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="145"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="class_ring_z_z_a4b817d18678e272549c0b7eb2757afc3_1a4b817d18678e272549c0b7eb2757afc3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a4b817d18678e272549c0b7eb2757afc3_1a4b817d18678e272549c0b7eb2757afc3" kindref="member">RingZZ::is_unit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="150"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(<ref refid="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" kindref="member">mask_mpz_cmp_si</ref>(a,<sp/>1)<sp/>==<sp/>0<sp/>||<sp/><ref refid="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" kindref="member">mask_mpz_cmp_si</ref>(a,<sp/>-1)<sp/>==<sp/>0);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155" refid="class_ring_z_z_a55061444e238c33e2dc0a6dce39ba58a_1a55061444e238c33e2dc0a6dce39ba58a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a55061444e238c33e2dc0a6dce39ba58a_1a55061444e238c33e2dc0a6dce39ba58a" kindref="member">RingZZ::is_zero</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="156"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mpz_sgn(a)<sp/>==<sp/>0;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161" refid="class_ring_z_z_ab5a119c4379dd6dd88fb20a9a6cb210e_1ab5a119c4379dd6dd88fb20a9a6cb210e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_ab5a119c4379dd6dd88fb20a9a6cb210e_1ab5a119c4379dd6dd88fb20a9a6cb210e" kindref="member">RingZZ::is_equal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="162"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>b<sp/>=<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mpz_cmp(a,<sp/>b)<sp/>==<sp/>0;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="168" refid="class_ring_z_z_a917ebaa130781e4691a6dbd385844cdf_1a917ebaa130781e4691a6dbd385844cdf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a917ebaa130781e4691a6dbd385844cdf_1a917ebaa130781e4691a6dbd385844cdf" kindref="member">RingZZ::compare_elems</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="169"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>b<sp/>=<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cmp<sp/>=<sp/>mpz_cmp(a,<sp/>b);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(cmp<sp/>&gt;<sp/>0)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(cmp<sp/>==<sp/>0)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-1;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="177" refid="class_ring_z_z_ab4c2830e31e788a913dc68f7a702dba1_1ab4c2830e31e788a913dc68f7a702dba1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_ab4c2830e31e788a913dc68f7a702dba1_1ab4c2830e31e788a913dc68f7a702dba1" kindref="member">RingZZ::is_positive</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="178"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mpz_sgn(a)<sp/>&gt;<sp/>0;</highlight></codeline>
+<codeline lineno="181"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183" refid="class_ring_z_z_af0b3626daa6787f030db4b733484560d_1af0b3626daa6787f030db4b733484560d" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_af0b3626daa6787f030db4b733484560d_1af0b3626daa6787f030db4b733484560d" kindref="member">RingZZ::copy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="184"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/>mpz_set(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>a);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="class_ring_z_z_a891cbf1f66865e539a0cc9915e2db7c2_1a891cbf1f66865e539a0cc9915e2db7c2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a891cbf1f66865e539a0cc9915e2db7c2_1a891cbf1f66865e539a0cc9915e2db7c2" kindref="member">RingZZ::remove</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="195"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/>(void)<sp/>f;</highlight></codeline>
+<codeline lineno="197"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199" refid="class_ring_z_z_ae7576d689b9b7058ff698a44172db9a9_1ae7576d689b9b7058ff698a44172db9a9" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ae7576d689b9b7058ff698a44172db9a9_1ae7576d689b9b7058ff698a44172db9a9" kindref="member">RingZZ::preferred_associate</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="200"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(mpz_sgn(a)<sp/>&gt;=<sp/>0)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">from_long</ref>(1);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">from_long</ref>(-1);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206" refid="class_ring_z_z_a729b46f6de83f969bd2196dc79d989d3_1a729b46f6de83f969bd2196dc79d989d3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a729b46f6de83f969bd2196dc79d989d3_1a729b46f6de83f969bd2196dc79d989d3" kindref="member">RingZZ::lower_associate_divisor</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="207"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>sets<sp/>f<sp/>to<sp/>either<sp/>0,<sp/>1<sp/>or<sp/>-1.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>if<sp/>f<sp/>is<sp/>0,<sp/>do<sp/>f=sign(g),<sp/>else<sp/>f=sign(f)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>return<sp/>whether<sp/>f<sp/>is<sp/>zero</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">RingZZ::new_elem</ref>();</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>b<sp/>=<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sa<sp/>=<sp/>mpz_sgn(a);</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sb<sp/>=<sp/>mpz_sgn(b);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref><sp/>=<sp/>(sa<sp/>==<sp/>0<sp/>?<sp/>sb<sp/>:<sp/>sa);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/>mpz_set_si(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" kindref="member">s</ref>);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);<sp/><sp/></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/>f<sp/>=<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!<ref refid="class_ring_z_z_a55061444e238c33e2dc0a6dce39ba58a_1a55061444e238c33e2dc0a6dce39ba58a" kindref="member">RingZZ::is_zero</ref>(f);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225" refid="class_ring_z_z_a582b412355bb6f112afe01072bb463a8_1a582b412355bb6f112afe01072bb463a8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a582b412355bb6f112afe01072bb463a8_1a582b412355bb6f112afe01072bb463a8" kindref="member">RingZZ::lower_content</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;c,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight><highlight class="comment">//<sp/>c<sp/>is<sp/>a<sp/>content<sp/>elem,<sp/>g<sp/>is<sp/>in<sp/>ring</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_ring_z_z_a55061444e238c33e2dc0a6dce39ba58a_1a55061444e238c33e2dc0a6dce39ba58a" kindref="member">is_zero</ref>(c))</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>c<sp/>=<sp/>g;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">RingZZ::new_elem</ref>();</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>a<sp/>=<sp/>c.get_mpz();</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>b<sp/>=<sp/>g.get_mpz();</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/>mpz_gcd(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>a,<sp/>b);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(mpz_sgn(a)<sp/>==<sp/>-1)</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>mpz_neg(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);<sp/><sp/></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/>c<sp/>=<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243" refid="class_ring_z_z_a2d1f428557ef06073f3a85fafd2e4989_1a2d1f428557ef06073f3a85fafd2e4989" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a2d1f428557ef06073f3a85fafd2e4989_1a2d1f428557ef06073f3a85fafd2e4989" kindref="member">RingZZ::negate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="244"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/>mpz_neg(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="249"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="251" refid="class_ring_z_z_a047bc59d8b68c815039da1942d89b484_1a047bc59d8b68c815039da1942d89b484" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a047bc59d8b68c815039da1942d89b484_1a047bc59d8b68c815039da1942d89b484" kindref="member">RingZZ::add</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="252"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/>mpz_add(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>(),<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="257"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight></codeline>
+<codeline lineno="259" refid="class_ring_z_z_a8bddc728357072904a19559e7239b39a_1a8bddc728357072904a19559e7239b39a" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a8bddc728357072904a19559e7239b39a_1a8bddc728357072904a19559e7239b39a" kindref="member">RingZZ::subtract</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="260"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/>mpz_sub(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>(),<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="265"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267" refid="class_ring_z_z_ac25c05701852ed5eb92da0388f462617_1ac25c05701852ed5eb92da0388f462617" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ac25c05701852ed5eb92da0388f462617_1ac25c05701852ed5eb92da0388f462617" kindref="member">RingZZ::mult</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="268"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/>mpz_mul(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>(),<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275" refid="class_ring_z_z_a6c826745639b4372669aaf034f523951_1a6c826745639b4372669aaf034f523951" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a33ad6fdfa4619161f217f4006990069c_1a33ad6fdfa4619161f217f4006990069c" kindref="member">RingZZ::power</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="276"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(n&lt;0<sp/>&amp;&amp;<sp/>!<ref refid="class_ring_z_z_a4b817d18678e272549c0b7eb2757afc3_1a4b817d18678e272549c0b7eb2757afc3" kindref="member">is_unit</ref>(f))</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="structexc_1_1engine__error" kindref="compound">exc::engine_error</ref>(</highlight><highlight class="stringliteral">&quot;can<sp/>only<sp/>raise<sp/>to<sp/>a<sp/>nonnegative<sp/>power&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>mpz_pow_ui(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>(),<sp/>n);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="286"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="287" refid="class_ring_z_z_a33ad6fdfa4619161f217f4006990069c_1a33ad6fdfa4619161f217f4006990069c" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a33ad6fdfa4619161f217f4006990069c_1a33ad6fdfa4619161f217f4006990069c" kindref="member">RingZZ::power</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/>mpz_srcptr<sp/>n)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="288"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/>std::pair&lt;bool,<sp/>int&gt;<sp/>n1<sp/>=<sp/><ref refid="class_ring_z_z_a93f60c7348caad7f332820b455fb3735_1a93f60c7348caad7f332820b455fb3735" kindref="member">RingZZ::get_si</ref>(n);</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(n1.first)</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a33ad6fdfa4619161f217f4006990069c_1a33ad6fdfa4619161f217f4006990069c" kindref="member">power</ref>(f,<sp/>n1.second);</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="structexc_1_1engine__error" kindref="compound">exc::engine_error</ref>(</highlight><highlight class="stringliteral">&quot;exponent<sp/>too<sp/>large&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="294"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight></codeline>
+<codeline lineno="296" refid="class_ring_z_z_ab87a3190e3779f425e5b896b9eebf67a_1ab87a3190e3779f425e5b896b9eebf67a" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ab87a3190e3779f425e5b896b9eebf67a_1ab87a3190e3779f425e5b896b9eebf67a" kindref="member">RingZZ::invert</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="297"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_ring_z_z_a4b817d18678e272549c0b7eb2757afc3_1a4b817d18678e272549c0b7eb2757afc3" kindref="member">RingZZ::is_unit</ref>(f))</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_af0b3626daa6787f030db4b733484560d_1af0b3626daa6787f030db4b733484560d" kindref="member">RingZZ::copy</ref>(f);</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="structexc_1_1engine__error" kindref="compound">exc::engine_error</ref>(</highlight><highlight class="stringliteral">&quot;division<sp/>by<sp/>a<sp/>non<sp/>unit<sp/>attempted&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="302"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="304" refid="class_ring_z_z_a911ad66000442550b450f18d647a4050_1a911ad66000442550b450f18d647a4050" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a911ad66000442550b450f18d647a4050_1a911ad66000442550b450f18d647a4050" kindref="member">RingZZ::divide</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="305"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_ring_z_z_a55061444e238c33e2dc0a6dce39ba58a_1a55061444e238c33e2dc0a6dce39ba58a" kindref="member">is_zero</ref>(g))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="structexc_1_1division__by__zero__error" kindref="compound">exc::division_by_zero_error</ref>();</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/>mpz_t<sp/>rem;</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/>mpz_init(rem);</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/>mpz_fdiv_qr(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>rem,<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>(),<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(mpz_sgn(rem))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="structexc_1_1engine__error" kindref="compound">exc::engine_error</ref>(</highlight><highlight class="stringliteral">&quot;division<sp/>not<sp/>exact&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/>mpz_clear(rem);</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="315"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight></codeline>
+<codeline lineno="317" refid="class_ring_z_z_a847a4a779621eb3a64600203aaf879f3_1a847a4a779621eb3a64600203aaf879f3" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a847a4a779621eb3a64600203aaf879f3_1a847a4a779621eb3a64600203aaf879f3" kindref="member">RingZZ::remainderAndQuotient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g,</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;quot)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="320"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/>q<sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/>r<sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>gsign<sp/>=<sp/>mpz_sgn(g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/>mpz_t<sp/>gg,<sp/>ghalf;</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/>mpz_init(gg);</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/>mpz_init(ghalf);</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/>mpz_abs(gg,<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/>mpz_fdiv_qr(q,<sp/>r,<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>(),<sp/>gg);</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/>mpz_tdiv_q_2exp(ghalf,<sp/>gg,<sp/>1);</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(mpz_cmp(r,<sp/>ghalf)<sp/>&gt;<sp/>0)<sp/><sp/></highlight><highlight class="comment">//<sp/>r<sp/>&gt;<sp/>ghalf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>mpz_sub(r,<sp/>r,<sp/>gg);</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>mpz_add_ui(q,<sp/>q,<sp/>1);</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(gsign<sp/>&lt;<sp/>0)<sp/>mpz_neg(q,<sp/>q);</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/>mpz_clear(gg);</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/>mpz_clear(ghalf);</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(q);</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(r);</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/>quot<sp/>=<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(q);</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(r);</highlight></codeline>
+<codeline lineno="343"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight></codeline>
+<codeline lineno="345" refid="class_ring_z_z_ac8263af28c79d1ea2f2e796699c48811_1ac8263af28c79d1ea2f2e796699c48811" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ac8263af28c79d1ea2f2e796699c48811_1ac8263af28c79d1ea2f2e796699c48811" kindref="member">RingZZ::remainder</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="346"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>quot;</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>rem<sp/>=<sp/><ref refid="class_ring_z_z_a847a4a779621eb3a64600203aaf879f3_1a847a4a779621eb3a64600203aaf879f3" kindref="member">RingZZ::remainderAndQuotient</ref>(f,<sp/>g,<sp/>quot);</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><ref refid="class_ring_z_z_a891cbf1f66865e539a0cc9915e2db7c2_1a891cbf1f66865e539a0cc9915e2db7c2" kindref="member">remove</ref>(quot);</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>rem;</highlight></codeline>
+<codeline lineno="351"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"></highlight></codeline>
+<codeline lineno="353" refid="class_ring_z_z_a433fcbb6508bb8f33eb7a761a7168e2e_1a433fcbb6508bb8f33eb7a761a7168e2e" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a433fcbb6508bb8f33eb7a761a7168e2e_1a433fcbb6508bb8f33eb7a761a7168e2e" kindref="member">RingZZ::quotient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="354"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>quot;</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>rem<sp/>=<sp/><ref refid="class_ring_z_z_a847a4a779621eb3a64600203aaf879f3_1a847a4a779621eb3a64600203aaf879f3" kindref="member">RingZZ::remainderAndQuotient</ref>(f,<sp/>g,<sp/>quot);</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"><sp/><sp/><ref refid="class_ring_z_z_a891cbf1f66865e539a0cc9915e2db7c2_1a891cbf1f66865e539a0cc9915e2db7c2" kindref="member">remove</ref>(rem);</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>quot;</highlight></codeline>
+<codeline lineno="359"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight></codeline>
+<codeline lineno="361" refid="class_ring_z_z_aa59c4afe4140ba8a01d8daad2aa98d8a_1aa59c4afe4140ba8a01d8daad2aa98d8a" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_aa59c4afe4140ba8a01d8daad2aa98d8a_1aa59c4afe4140ba8a01d8daad2aa98d8a" kindref="member">RingZZ::gcd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="362"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="364"><highlight class="normal"><sp/><sp/>mpz_gcd(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>(),<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="366"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="367"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"></highlight></codeline>
+<codeline lineno="369" refid="class_ring_z_z_ae04281a7162eb05a211c582ba39d65aa_1ae04281a7162eb05a211c582ba39d65aa" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ae04281a7162eb05a211c582ba39d65aa_1ae04281a7162eb05a211c582ba39d65aa" kindref="member">RingZZ::gcd_extended</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g,</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;u,</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;v)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="373"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/>u1<sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/>v1<sp/>=<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>();</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"><sp/><sp/>mpz_gcdext(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>u1,<sp/>v1,<sp/>f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>(),<sp/>g.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(u1);</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(v1);</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/>u<sp/>=<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(u1);</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/>v<sp/>=<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(v1);</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);</highlight></codeline>
+<codeline lineno="384"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="385"><highlight class="normal"></highlight></codeline>
+<codeline lineno="386" refid="class_ring_z_z_a6aff1e51fb01b0d8f392dec440f1e0c6_1a6aff1e51fb01b0d8f392dec440f1e0c6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a6aff1e51fb01b0d8f392dec440f1e0c6_1a6aff1e51fb01b0d8f392dec440f1e0c6" kindref="member">RingZZ::syzygy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a,</highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>b,</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,</highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;y)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="390"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/>assert(!<ref refid="class_ring_z_z_a55061444e238c33e2dc0a6dce39ba58a_1a55061444e238c33e2dc0a6dce39ba58a" kindref="member">is_zero</ref>(b));</highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>First<sp/>check<sp/>the<sp/>special<sp/>cases<sp/>a<sp/>=<sp/>0,<sp/>b<sp/>=<sp/>1,<sp/>-1.<sp/><sp/>Other<sp/>cases:<sp/>use<sp/>gcd.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_ring_z_z_a55061444e238c33e2dc0a6dce39ba58a_1a55061444e238c33e2dc0a6dce39ba58a" kindref="member">RingZZ::is_zero</ref>(a))</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>=<sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">RingZZ::from_long</ref>(1);</highlight></codeline>
+<codeline lineno="396"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>y<sp/>=<sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">RingZZ::from_long</ref>(0);</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/>mpz_srcptr<sp/>bb<sp/>=<sp/>b.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>();</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(mpz_cmp_ui(bb,<sp/>1)<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>=<sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">RingZZ::from_long</ref>(1);</highlight></codeline>
+<codeline lineno="403"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>y<sp/>=<sp/><ref refid="class_ring_z_z_a2d1f428557ef06073f3a85fafd2e4989_1a2d1f428557ef06073f3a85fafd2e4989" kindref="member">RingZZ::negate</ref>(a);</highlight></codeline>
+<codeline lineno="404"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="405"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" kindref="member">mask_mpz_cmp_si</ref>(bb,<sp/>-1)<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="408"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>=<sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">RingZZ::from_long</ref>(1);</highlight></codeline>
+<codeline lineno="409"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>y<sp/>=<sp/><ref refid="class_ring_z_z_af0b3626daa6787f030db4b733484560d_1af0b3626daa6787f030db4b733484560d" kindref="member">RingZZ::copy</ref>(a);</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="411"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="412"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g<sp/>=<sp/><ref refid="class_ring_z_z_aa59c4afe4140ba8a01d8daad2aa98d8a_1aa59c4afe4140ba8a01d8daad2aa98d8a" kindref="member">RingZZ::gcd</ref>(a,<sp/>b);</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"><sp/><sp/>y<sp/>=<sp/><ref refid="class_ring_z_z_a911ad66000442550b450f18d647a4050_1a911ad66000442550b450f18d647a4050" kindref="member">RingZZ::divide</ref>(a,<sp/>g);</highlight></codeline>
+<codeline lineno="414"><highlight class="normal"><sp/><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>=<sp/><ref refid="class_ring_z_z_a911ad66000442550b450f18d647a4050_1a911ad66000442550b450f18d647a4050" kindref="member">RingZZ::divide</ref>(b,<sp/>g);</highlight></codeline>
+<codeline lineno="415"><highlight class="normal"><sp/><sp/><ref refid="class_ring_z_z_a891cbf1f66865e539a0cc9915e2db7c2_1a891cbf1f66865e539a0cc9915e2db7c2" kindref="member">RingZZ::remove</ref>(g);</highlight></codeline>
+<codeline lineno="416"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(mpz_sgn(<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>.get_mpz())<sp/>&gt;<sp/>0)</highlight></codeline>
+<codeline lineno="417"><highlight class="normal"><sp/><sp/><sp/><sp/>y<sp/>=<sp/><ref refid="class_ring_z_z_a2d1f428557ef06073f3a85fafd2e4989_1a2d1f428557ef06073f3a85fafd2e4989" kindref="member">RingZZ::negate</ref>(y);</highlight></codeline>
+<codeline lineno="418"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="419"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref><sp/>=<sp/><ref refid="class_ring_z_z_a2d1f428557ef06073f3a85fafd2e4989_1a2d1f428557ef06073f3a85fafd2e4989" kindref="member">RingZZ::negate</ref>(<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>);</highlight></codeline>
+<codeline lineno="420"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="421"><highlight class="normal"></highlight></codeline>
+<codeline lineno="422" refid="class_ring_z_z_a6ea5ec911621ddd0dc23f1bb2a174fb8_1a6ea5ec911621ddd0dc23f1bb2a174fb8" refkind="member"><highlight class="normal"><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a6ea5ec911621ddd0dc23f1bb2a174fb8_1a6ea5ec911621ddd0dc23f1bb2a174fb8" kindref="member">RingZZ::eval</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring_map" kindref="compound">RingMap</ref><sp/>*map,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="423"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="424"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>map-&gt;<ref refid="class_ring_map_aa041dd8442eeac3e1fdf75e6e4d32bf8_1aa041dd8442eeac3e1fdf75e6e4d32bf8" kindref="member">get_ring</ref>()-&gt;<ref refid="class_ring_acffb3aa37f626fa37bfa72dd6de4733d_1acffb3aa37f626fa37bfa72dd6de4733d" kindref="member">from_int</ref>(f.<ref refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" kindref="member">get_mpz</ref>());</highlight></codeline>
+<codeline lineno="425"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="426"><highlight class="normal"></highlight></codeline>
+<codeline lineno="427"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="428"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="429"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="430"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/ZZ.cpp"/>
+  </compounddef>
+</doxygen>

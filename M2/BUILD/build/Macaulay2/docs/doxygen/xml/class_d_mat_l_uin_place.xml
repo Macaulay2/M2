@@ -1,0 +1,557 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_d_mat_l_uin_place" kind="class" language="C++" prot="public">
+    <compoundname>DMatLUinPlace</compoundname>
+    <includes refid="dmat-lu-inplace_8hpp" local="no">dmat-lu-inplace.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename RT</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_d_mat_l_uin_place_ae67bd07187516fd9ff4817a0813ea955_1ae67bd07187516fd9ff4817a0813ea955" prot="public" static="no">
+        <type>RT</type>
+        <definition>typedef RT DMatLUinPlace&lt; RT &gt;::RingType</definition>
+        <argsstring></argsstring>
+        <name>RingType</name>
+        <qualifiedname>DMatLUinPlace::RingType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="86" column="14" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" prot="public" static="no">
+        <type><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; <ref refid="class_d_mat_l_uin_place_ae67bd07187516fd9ff4817a0813ea955_1ae67bd07187516fd9ff4817a0813ea955" kindref="member">RingType</ref> &gt;</type>
+        <definition>typedef DMat&lt;RingType&gt; DMatLUinPlace&lt; RT &gt;::Mat</definition>
+        <argsstring></argsstring>
+        <name>Mat</name>
+        <qualifiedname>DMatLUinPlace::Mat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="87" column="16" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_d_mat_l_uin_place_a6686191719c3c1dd5847834af770afcc_1a6686191719c3c1dd5847834af770afcc" prot="private" static="no">
+        <type>RingType::ElementType</type>
+        <definition>typedef RingType::ElementType DMatLUinPlace&lt; RT &gt;::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>DMatLUinPlace::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="107" column="42" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="107" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" prot="private" static="no" mutable="no">
+        <type><ref refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" kindref="member">Mat</ref></type>
+        <definition>Mat DMatLUinPlace&lt; RT &gt;::mLU</definition>
+        <argsstring></argsstring>
+        <name>mLU</name>
+        <qualifiedname>DMatLUinPlace::mLU</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="113" column="7" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="113" bodyend="-1"/>
+        <referencedby refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" compoundref="dmat-lu-inplace_8hpp" startline="228" endline="314">DMatLUinPlace&lt; RT &gt;::computeLU</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" compoundref="dmat-lu-inplace_8hpp" startline="160" endline="166">DMatLUinPlace&lt; RT &gt;::DMatLUinPlace</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" compoundref="dmat-lu-inplace_8hpp" startline="169" endline="179">DMatLUinPlace&lt; RT &gt;::findPivot</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_a1108ce384e2f788405d754ad7189506e_1a1108ce384e2f788405d754ad7189506e" compoundref="dmat-lu-inplace_8hpp" startline="95" endline="99">DMatLUinPlace&lt; RT &gt;::LUinPlace</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_afe096c511c4b0cc949c80b6e329d5ff1_1afe096c511c4b0cc949c80b6e329d5ff1" compoundref="dmat-lu-inplace_8hpp" startline="94" endline="94">DMatLUinPlace&lt; RT &gt;::numColumns</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_a18e991408885191019388dffc94d19b1_1a18e991408885191019388dffc94d19b1" compoundref="dmat-lu-inplace_8hpp" startline="93" endline="93">DMatLUinPlace&lt; RT &gt;::numRows</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" compoundref="dmat-lu-inplace_8hpp" startline="92" endline="92">DMatLUinPlace&lt; RT &gt;::ring</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt;</type>
+        <definition>std::vector&lt;size_t&gt; DMatLUinPlace&lt; RT &gt;::mPerm</definition>
+        <argsstring></argsstring>
+        <name>mPerm</name>
+        <qualifiedname>DMatLUinPlace::mPerm</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="114" column="15" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="114" bodyend="-1"/>
+        <referencedby refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" compoundref="dmat-lu-inplace_8hpp" startline="228" endline="314">DMatLUinPlace&lt; RT &gt;::computeLU</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" compoundref="dmat-lu-inplace_8hpp" startline="160" endline="166">DMatLUinPlace&lt; RT &gt;::DMatLUinPlace</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_a9739210c858cf973d9982958559667df_1a9739210c858cf973d9982958559667df" compoundref="dmat-lu-inplace_8hpp" startline="104" endline="104">DMatLUinPlace&lt; RT &gt;::permutation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DMatLUinPlace&lt; RT &gt;::mSign</definition>
+        <argsstring></argsstring>
+        <name>mSign</name>
+        <qualifiedname>DMatLUinPlace::mSign</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="115" column="8" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="115" bodyend="-1"/>
+        <referencedby refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" compoundref="dmat-lu-inplace_8hpp" startline="228" endline="314">DMatLUinPlace&lt; RT &gt;::computeLU</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" compoundref="dmat-lu-inplace_8hpp" startline="160" endline="166">DMatLUinPlace&lt; RT &gt;::DMatLUinPlace</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_ad861cd6fabca55a6672c41d9c414085d_1ad861cd6fabca55a6672c41d9c414085d" compoundref="dmat-lu-inplace_8hpp" startline="103" endline="103">DMatLUinPlace&lt; RT &gt;::signOfPermutation</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DMatLUinPlace&lt; RT &gt;::mIsDone</definition>
+        <argsstring></argsstring>
+        <name>mIsDone</name>
+        <qualifiedname>DMatLUinPlace::mIsDone</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="116" column="8" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="116" bodyend="-1"/>
+        <referencedby refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" compoundref="dmat-lu-inplace_8hpp" startline="228" endline="314">DMatLUinPlace&lt; RT &gt;::computeLU</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" compoundref="dmat-lu-inplace_8hpp" startline="160" endline="166">DMatLUinPlace&lt; RT &gt;::DMatLUinPlace</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt;</type>
+        <definition>std::vector&lt;size_t&gt; DMatLUinPlace&lt; RT &gt;::mPivotColumns</definition>
+        <argsstring></argsstring>
+        <name>mPivotColumns</name>
+        <qualifiedname>DMatLUinPlace::mPivotColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="117" column="15" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="117" bodyend="-1"/>
+        <referencedby refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" compoundref="dmat-lu-inplace_8hpp" startline="228" endline="314">DMatLUinPlace&lt; RT &gt;::computeLU</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_ae704fca6d777b82b03b6a7419fd5298c_1ae704fca6d777b82b03b6a7419fd5298c" compoundref="dmat-lu-inplace_8hpp" startline="105" endline="105">DMatLUinPlace&lt; RT &gt;::pivotColumns</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DMatLUinPlace&lt; RingType &gt;::DMatLUinPlace</definition>
+        <argsstring>(const Mat &amp;A)</argsstring>
+        <name>DMatLUinPlace</name>
+        <qualifiedname>DMatLUinPlace::DMatLUinPlace</qualifiedname>
+        <param>
+          <type>const <ref refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" kindref="member">Mat</ref> &amp;</type>
+          <declname>A</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="90" column="3" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="160" bodyend="166"/>
+        <references refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" compoundref="dmat-lu-inplace_8hpp" startline="116">DMatLUinPlace&lt; RT &gt;::mIsDone</references>
+        <references refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" compoundref="dmat-lu-inplace_8hpp" startline="113">DMatLUinPlace&lt; RT &gt;::mLU</references>
+        <references refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" compoundref="dmat-lu-inplace_8hpp" startline="114">DMatLUinPlace&lt; RT &gt;::mPerm</references>
+        <references refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" compoundref="dmat-lu-inplace_8hpp" startline="115">DMatLUinPlace&lt; RT &gt;::mSign</references>
+        <references refid="class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29_1a29d6106319cc01e580c0ddee6f3ddb29" compoundref="dmat_8hpp" startline="142" endline="142">DMat&lt; ACoeffRing &gt;::numRows</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_d_mat_l_uin_place_ae67bd07187516fd9ff4817a0813ea955_1ae67bd07187516fd9ff4817a0813ea955" kindref="member">RingType</ref> &amp;</type>
+        <definition>const RingType &amp; DMatLUinPlace&lt; RT &gt;::ring</definition>
+        <argsstring>() const</argsstring>
+        <name>ring</name>
+        <qualifiedname>DMatLUinPlace::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="92" column="18" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="92" bodyend="92"/>
+        <references refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" compoundref="dmat-lu-inplace_8hpp" startline="113">DMatLUinPlace&lt; RT &gt;::mLU</references>
+        <referencedby refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" compoundref="dmat-lu-inplace_8hpp" startline="228" endline="314">DMatLUinPlace&lt; RT &gt;::computeLU</referencedby>
+        <referencedby refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" compoundref="dmat-lu-inplace_8hpp" startline="169" endline="179">DMatLUinPlace&lt; RT &gt;::findPivot</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_a18e991408885191019388dffc94d19b1_1a18e991408885191019388dffc94d19b1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long DMatLUinPlace&lt; RT &gt;::numRows</definition>
+        <argsstring>() const</argsstring>
+        <name>numRows</name>
+        <qualifiedname>DMatLUinPlace::numRows</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="93" column="8" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="93" bodyend="93"/>
+        <references refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" compoundref="dmat-lu-inplace_8hpp" startline="113">DMatLUinPlace&lt; RT &gt;::mLU</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_afe096c511c4b0cc949c80b6e329d5ff1_1afe096c511c4b0cc949c80b6e329d5ff1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long DMatLUinPlace&lt; RT &gt;::numColumns</definition>
+        <argsstring>() const</argsstring>
+        <name>numColumns</name>
+        <qualifiedname>DMatLUinPlace::numColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="94" column="8" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="94" bodyend="94"/>
+        <references refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" compoundref="dmat-lu-inplace_8hpp" startline="113">DMatLUinPlace&lt; RT &gt;::mLU</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_a1108ce384e2f788405d754ad7189506e_1a1108ce384e2f788405d754ad7189506e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" kindref="member">Mat</ref> &amp;</type>
+        <definition>const Mat &amp; DMatLUinPlace&lt; RT &gt;::LUinPlace</definition>
+        <argsstring>()</argsstring>
+        <name>LUinPlace</name>
+        <qualifiedname>DMatLUinPlace::LUinPlace</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="95" column="13" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="95" bodyend="99"/>
+        <references refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" compoundref="dmat-lu-inplace_8hpp" startline="228" endline="314">DMatLUinPlace&lt; RT &gt;::computeLU</references>
+        <references refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" compoundref="dmat-lu-inplace_8hpp" startline="113">DMatLUinPlace&lt; RT &gt;::mLU</references>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a2f4ed4c5197c114c87be8351efb14f8d_1a2f4ed4c5197c114c87be8351efb14f8d" compoundref="dmat-lu-qq_8hpp" startline="108" endline="124">DMatLinAlg&lt; M2::ARingQQ &gt;::matrixPLU</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_ad861cd6fabca55a6672c41d9c414085d_1ad861cd6fabca55a6672c41d9c414085d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool DMatLUinPlace&lt; RT &gt;::signOfPermutation</definition>
+        <argsstring>()</argsstring>
+        <name>signOfPermutation</name>
+        <qualifiedname>DMatLUinPlace::signOfPermutation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="103" column="8" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="103" bodyend="103"/>
+        <references refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" compoundref="dmat-lu-inplace_8hpp" startline="115">DMatLUinPlace&lt; RT &gt;::mSign</references>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_a9739210c858cf973d9982958559667df_1a9739210c858cf973d9982958559667df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &amp;</type>
+        <definition>const std::vector&lt; size_t &gt; &amp; DMatLUinPlace&lt; RT &gt;::permutation</definition>
+        <argsstring>()</argsstring>
+        <name>permutation</name>
+        <qualifiedname>DMatLUinPlace::permutation</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="104" column="21" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="104" bodyend="104"/>
+        <references refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" compoundref="dmat-lu-inplace_8hpp" startline="114">DMatLUinPlace&lt; RT &gt;::mPerm</references>
+        <referencedby refid="class_d_mat_lin_alg_3_01_m2_1_1_a_ring_q_q_01_4_a2f4ed4c5197c114c87be8351efb14f8d_1a2f4ed4c5197c114c87be8351efb14f8d" compoundref="dmat-lu-qq_8hpp" startline="108" endline="124">DMatLinAlg&lt; M2::ARingQQ &gt;::matrixPLU</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_ae704fca6d777b82b03b6a7419fd5298c_1ae704fca6d777b82b03b6a7419fd5298c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt; &amp;</type>
+        <definition>const std::vector&lt; size_t &gt; &amp; DMatLUinPlace&lt; RT &gt;::pivotColumns</definition>
+        <argsstring>()</argsstring>
+        <name>pivotColumns</name>
+        <qualifiedname>DMatLUinPlace::pivotColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="105" column="21" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="105" bodyend="105"/>
+        <references refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" compoundref="dmat-lu-inplace_8hpp" startline="117">DMatLUinPlace&lt; RT &gt;::mPivotColumns</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLUinPlace&lt; RingType &gt;::computeLU</definition>
+        <argsstring>()</argsstring>
+        <name>computeLU</name>
+        <qualifiedname>DMatLUinPlace::computeLU</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="109" column="8" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="228" bodyend="314"/>
+        <references refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" compoundref="dmat-lu-inplace_8hpp" startline="169" endline="179">DMatLUinPlace&lt; RT &gt;::findPivot</references>
+        <references refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" compoundref="dmat-lu-inplace_8hpp" startline="116">DMatLUinPlace&lt; RT &gt;::mIsDone</references>
+        <references refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" compoundref="dmat-lu-inplace_8hpp" startline="113">DMatLUinPlace&lt; RT &gt;::mLU</references>
+        <references refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" compoundref="dmat-lu-inplace_8hpp" startline="114">DMatLUinPlace&lt; RT &gt;::mPerm</references>
+        <references refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" compoundref="dmat-lu-inplace_8hpp" startline="117">DMatLUinPlace&lt; RT &gt;::mPivotColumns</references>
+        <references refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" compoundref="dmat-lu-inplace_8hpp" startline="115">DMatLUinPlace&lt; RT &gt;::mSign</references>
+        <references refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" compoundref="dmat-lu-inplace_8hpp" startline="92" endline="92">DMatLUinPlace&lt; RT &gt;::ring</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+        <referencedby refid="class_d_mat_l_uin_place_a1108ce384e2f788405d754ad7189506e_1a1108ce384e2f788405d754ad7189506e" compoundref="dmat-lu-inplace_8hpp" startline="95" endline="99">DMatLUinPlace&lt; RT &gt;::LUinPlace</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DMatLUinPlace&lt; RingType &gt;::findPivot</definition>
+        <argsstring>(size_t row, size_t col)</argsstring>
+        <name>findPivot</name>
+        <qualifiedname>DMatLUinPlace::findPivot</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="110" column="10" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="169" bodyend="179"/>
+        <references refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" compoundref="dmat-lu-inplace_8hpp" startline="113">DMatLUinPlace&lt; RT &gt;::mLU</references>
+        <references refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" compoundref="dmat-lu-inplace_8hpp" startline="92" endline="92">DMatLUinPlace&lt; RT &gt;::ring</references>
+        <referencedby refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" compoundref="dmat-lu-inplace_8hpp" startline="228" endline="314">DMatLUinPlace&lt; RT &gt;::computeLU</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_a9bd09bd2be7a2af9a8e4eec91195fc80_1a9bd09bd2be7a2af9a8e4eec91195fc80" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLUinPlace&lt; M2::ARingGFFlintBig &gt;::computeLU</definition>
+        <argsstring>()</argsstring>
+        <name>computeLU</name>
+        <qualifiedname>DMatLUinPlace::computeLU</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="121" column="27" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="121" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_a4293afe3468041af1449b6004b020443_1a4293afe3468041af1449b6004b020443" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLUinPlace&lt; M2::ARingGFFlint &gt;::computeLU</definition>
+        <argsstring>()</argsstring>
+        <name>computeLU</name>
+        <qualifiedname>DMatLUinPlace::computeLU</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="141" column="27" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="141" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_ac304ff8b097568a9d40f527baed211c8_1ac304ff8b097568a9d40f527baed211c8" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DMatLUinPlace&lt; M2::ARingRRR &gt;::findPivot</definition>
+        <argsstring>(size_t row, size_t col)</argsstring>
+        <name>findPivot</name>
+        <qualifiedname>DMatLUinPlace::findPivot</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="182" column="29" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="182" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_aecd1bc6d3a814713b4850f6ddb334018_1aecd1bc6d3a814713b4850f6ddb334018" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t DMatLUinPlace&lt; M2::ARingCCC &gt;::findPivot</definition>
+        <argsstring>(size_t row, size_t col)</argsstring>
+        <name>findPivot</name>
+        <qualifiedname>DMatLUinPlace::findPivot</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="204" column="29" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="204" bodyend="225"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_af139e186af976f4233e19a671fe53238_1af139e186af976f4233e19a671fe53238" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLUinPlace&lt; M2::ARingRR &gt;::computeLU</definition>
+        <argsstring>()</argsstring>
+        <name>computeLU</name>
+        <qualifiedname>DMatLUinPlace::computeLU</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="317" column="27" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="317" bodyend="362"/>
+      </memberdef>
+      <memberdef kind="function" id="class_d_mat_l_uin_place_a01177f299858dbeff74e5bc1afc6fa6f_1a01177f299858dbeff74e5bc1afc6fa6f" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DMatLUinPlace&lt; M2::ARingCC &gt;::computeLU</definition>
+        <argsstring>()</argsstring>
+        <name>computeLU</name>
+        <qualifiedname>DMatLUinPlace::computeLU</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="365" column="27" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="365" bodyend="409"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>DMatLUinPlace&lt; RT &gt;</label>
+        <link refid="class_d_mat_l_uin_place"/>
+      </node>
+      <node id="2">
+        <label>DMatLUinPlace&lt; RingType &gt;</label>
+        <link refid="class_d_mat_l_uin_place"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; RingType &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>DMat&lt; ACoeffRing &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mNumColumns</edgelabel>
+          <edgelabel>mNumRows</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mArray</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mRowPointers</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>DMat&lt; RingType &gt;</label>
+        <link refid="class_d_mat"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; RingType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>DMatLUinPlace&lt; RT &gt;</label>
+        <link refid="class_d_mat_l_uin_place"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mLU</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mPerm</edgelabel>
+          <edgelabel>mPivotColumns</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mIsDone</edgelabel>
+          <edgelabel>mSign</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ElementType</label>
+      </node>
+      <node id="6">
+        <label>ElementType *</label>
+      </node>
+      <node id="10">
+        <label>T</label>
+      </node>
+      <node id="12">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="4">
+        <label>const ACoeffRing *</label>
+      </node>
+      <node id="5">
+        <label>size_t</label>
+      </node>
+      <node id="9">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="10" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; ElementType * &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="template-instance">
+          <edgelabel>&lt; ElementType * &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>std::vector&lt; size_t &gt;</label>
+        <childnode refid="9" relation="template-instance">
+          <edgelabel>&lt; size_t &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/dmat-lu-inplace.hpp" line="83" column="1" bodyfile="Macaulay2/e/dmat-lu-inplace.hpp" bodystart="84" bodyend="118"/>
+    <listofallmembers>
+      <member refid="class_d_mat_l_uin_place_afae877ea1b197abf592807075cf6a525_1afae877ea1b197abf592807075cf6a525" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>computeLU</name></member>
+      <member refid="class_d_mat_l_uin_place_a9bd09bd2be7a2af9a8e4eec91195fc80_1a9bd09bd2be7a2af9a8e4eec91195fc80" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>computeLU</name></member>
+      <member refid="class_d_mat_l_uin_place_a4293afe3468041af1449b6004b020443_1a4293afe3468041af1449b6004b020443" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>computeLU</name></member>
+      <member refid="class_d_mat_l_uin_place_af139e186af976f4233e19a671fe53238_1af139e186af976f4233e19a671fe53238" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>computeLU</name></member>
+      <member refid="class_d_mat_l_uin_place_a01177f299858dbeff74e5bc1afc6fa6f_1a01177f299858dbeff74e5bc1afc6fa6f" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>computeLU</name></member>
+      <member refid="class_d_mat_l_uin_place_a554f09a01993442a1f1968583c148431_1a554f09a01993442a1f1968583c148431" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>DMatLUinPlace</name></member>
+      <member refid="class_d_mat_l_uin_place_a6686191719c3c1dd5847834af770afcc_1a6686191719c3c1dd5847834af770afcc" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>ElementType</name></member>
+      <member refid="class_d_mat_l_uin_place_aa3ef1b3b0fbf222546a0422806541114_1aa3ef1b3b0fbf222546a0422806541114" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>findPivot</name></member>
+      <member refid="class_d_mat_l_uin_place_ac304ff8b097568a9d40f527baed211c8_1ac304ff8b097568a9d40f527baed211c8" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>findPivot</name></member>
+      <member refid="class_d_mat_l_uin_place_aecd1bc6d3a814713b4850f6ddb334018_1aecd1bc6d3a814713b4850f6ddb334018" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>findPivot</name></member>
+      <member refid="class_d_mat_l_uin_place_a1108ce384e2f788405d754ad7189506e_1a1108ce384e2f788405d754ad7189506e" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>LUinPlace</name></member>
+      <member refid="class_d_mat_l_uin_place_acd5b27b6a300bb6da93368beddb168e7_1acd5b27b6a300bb6da93368beddb168e7" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>Mat</name></member>
+      <member refid="class_d_mat_l_uin_place_a934486be19f3bcd37d3c50356b20b559_1a934486be19f3bcd37d3c50356b20b559" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>mIsDone</name></member>
+      <member refid="class_d_mat_l_uin_place_a4954fe2f74ca167d91ce36904e9d85d2_1a4954fe2f74ca167d91ce36904e9d85d2" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>mLU</name></member>
+      <member refid="class_d_mat_l_uin_place_a85fb70e010654795645c4b99a8f35486_1a85fb70e010654795645c4b99a8f35486" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>mPerm</name></member>
+      <member refid="class_d_mat_l_uin_place_a73a3ba7214539e45fc0f048a18568cb6_1a73a3ba7214539e45fc0f048a18568cb6" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>mPivotColumns</name></member>
+      <member refid="class_d_mat_l_uin_place_a1425ad92b7b922a40857b073789c6cd0_1a1425ad92b7b922a40857b073789c6cd0" prot="private" virt="non-virtual"><scope>DMatLUinPlace</scope><name>mSign</name></member>
+      <member refid="class_d_mat_l_uin_place_afe096c511c4b0cc949c80b6e329d5ff1_1afe096c511c4b0cc949c80b6e329d5ff1" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>numColumns</name></member>
+      <member refid="class_d_mat_l_uin_place_a18e991408885191019388dffc94d19b1_1a18e991408885191019388dffc94d19b1" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>numRows</name></member>
+      <member refid="class_d_mat_l_uin_place_a9739210c858cf973d9982958559667df_1a9739210c858cf973d9982958559667df" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>permutation</name></member>
+      <member refid="class_d_mat_l_uin_place_ae704fca6d777b82b03b6a7419fd5298c_1ae704fca6d777b82b03b6a7419fd5298c" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>pivotColumns</name></member>
+      <member refid="class_d_mat_l_uin_place_a259e0cecfb8e761735148890ebeb8f5c_1a259e0cecfb8e761735148890ebeb8f5c" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>ring</name></member>
+      <member refid="class_d_mat_l_uin_place_ae67bd07187516fd9ff4817a0813ea955_1ae67bd07187516fd9ff4817a0813ea955" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>RingType</name></member>
+      <member refid="class_d_mat_l_uin_place_ad861cd6fabca55a6672c41d9c414085d_1ad861cd6fabca55a6672c41d9c414085d" prot="public" virt="non-virtual"><scope>DMatLUinPlace</scope><name>signOfPermutation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

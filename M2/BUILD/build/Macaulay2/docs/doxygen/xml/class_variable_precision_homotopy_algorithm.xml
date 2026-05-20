@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_variable_precision_homotopy_algorithm" kind="class" language="C++" prot="public">
+    <compoundname>VariablePrecisionHomotopyAlgorithm</compoundname>
+    <includes refid="_s_l_p-defs_8hpp" local="no">SLP-defs.hpp</includes>
+    <briefdescription>
+<para>Tag type selecting the variable-precision homotopy algorithm. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Reserved for adaptive-precision tracking; not yet wired into <computeroutput><ref refid="struct_homotopy_algorithm" kindref="compound">HomotopyAlgorithm</ref>&lt;RT&gt;</computeroutput> for any current ring. </para>
+    </detaileddescription>
+    <location file="Macaulay2/e/SLP-defs.hpp" line="166" column="1" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="167" bodyend="168"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

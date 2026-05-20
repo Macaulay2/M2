@@ -1,0 +1,1147 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="coeffrings_8hpp" kind="file" language="C++">
+    <compoundname>coeffrings.hpp</compoundname>
+    <includes refid="aring_8hpp" local="yes">aring.hpp</includes>
+    <includes refid="ringelem_8hpp" local="yes">ringelem.hpp</includes>
+    <includes refid="_z_z_8hpp" local="yes">ZZ.hpp</includes>
+    <includedby refid="_z_zp_8hpp" local="yes">Macaulay2/e/ZZp.hpp</includedby>
+    <includedby refid="coeffrings_8cpp" local="yes">Macaulay2/e/coeffrings.cpp</includedby>
+    <includedby refid="gbring_8cpp" local="yes">Macaulay2/e/gbring.cpp</includedby>
+    <includedby refid="lapack_8cpp" local="yes">Macaulay2/e/lapack.cpp</includedby>
+    <includedby refid="mat_8cpp" local="yes">Macaulay2/e/mat.cpp</includedby>
+    <includedby refid="ring_8cpp" local="yes">Macaulay2/e/ring.cpp</includedby>
+    <includedby refid="res-f4-m2-interface_8cpp" local="yes">Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</includedby>
+    <incdepgraph>
+      <node id="11">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/coeffrings.hpp</label>
+        <link refid="coeffrings_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="23">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>M2/config.h</label>
+      </node>
+      <node id="17">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="6">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="19">
+        <label>assert.h</label>
+      </node>
+      <node id="3">
+        <label>cassert</label>
+      </node>
+      <node id="41">
+        <label>cstddef</label>
+      </node>
+      <node id="12">
+        <label>cstdio</label>
+      </node>
+      <node id="30">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="33">
+        <label>iostream</label>
+      </node>
+      <node id="4">
+        <label>memory</label>
+      </node>
+      <node id="8">
+        <label>stddef.h</label>
+      </node>
+      <node id="24">
+        <label>stdexcept</label>
+      </node>
+      <node id="16">
+        <label>stdint.h</label>
+      </node>
+      <node id="28">
+        <label>stdlib.h</label>
+      </node>
+      <node id="9">
+        <label>string</label>
+      </node>
+      <node id="20">
+        <label>string.h</label>
+      </node>
+      <node id="21">
+        <label>type_traits</label>
+      </node>
+      <node id="40">
+        <label>utility</label>
+      </node>
+      <node id="29">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="10">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="15">
+        <label>Macaulay2/e/NAG.cpp</label>
+        <link refid="_n_a_g_8cpp"/>
+      </node>
+      <node id="14">
+        <label>Macaulay2/e/NAG.hpp</label>
+        <link refid="_n_a_g_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>Macaulay2/e/NCAlgebras/NCF4.cpp</label>
+        <link refid="_n_c_f4_8cpp"/>
+      </node>
+      <node id="23">
+        <label>Macaulay2/e/NCAlgebras/NCF4.hpp</label>
+        <link refid="_n_c_f4_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>Macaulay2/e/SLP.cpp</label>
+        <link refid="_s_l_p_8cpp"/>
+      </node>
+      <node id="13">
+        <label>Macaulay2/e/SLP.hpp</label>
+        <link refid="_s_l_p_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Macaulay2/e/VectorArithmetic.hpp</label>
+        <link refid="_vector_arithmetic_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/ZZp.cpp</label>
+        <link refid="_z_zp_8cpp"/>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/ZZp.hpp</label>
+        <link refid="_z_zp_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Macaulay2/e/aring-glue.hpp</label>
+        <link refid="aring-glue_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>Macaulay2/e/coeffrings.cpp</label>
+        <link refid="coeffrings_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/coeffrings.hpp</label>
+        <link refid="coeffrings_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+      <node id="11">
+        <label>Macaulay2/e/dmat.cpp</label>
+        <link refid="dmat_8cpp"/>
+      </node>
+      <node id="56">
+        <label>Macaulay2/e/engine.cpp</label>
+        <link refid="engine_8cpp"/>
+      </node>
+      <node id="25">
+        <label>Macaulay2/e/f4/f4-computation.cpp</label>
+        <link refid="f4-computation_8cpp"/>
+      </node>
+      <node id="33">
+        <label>Macaulay2/e/f4/f4-computation.hpp</label>
+        <link refid="f4-computation_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>Macaulay2/e/f4/f4-m2-interface.cpp</label>
+        <link refid="f4-m2-interface_8cpp"/>
+      </node>
+      <node id="28">
+        <label>Macaulay2/e/f4/f4-m2-interface.hpp</label>
+        <link refid="f4-m2-interface_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>Macaulay2/e/f4/f4-spairs.cpp</label>
+        <link refid="f4-spairs_8cpp"/>
+      </node>
+      <node id="30">
+        <label>Macaulay2/e/f4/f4-spairs.hpp</label>
+        <link refid="f4-spairs_8hpp"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>Macaulay2/e/f4/f4-types.hpp</label>
+        <link refid="f4-types_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>Macaulay2/e/f4/f4.cpp</label>
+        <link refid="f4_8cpp"/>
+      </node>
+      <node id="32">
+        <label>Macaulay2/e/f4/f4.hpp</label>
+        <link refid="f4_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>Macaulay2/e/fplll-interface.cpp</label>
+        <link refid="fplll-interface_8cpp"/>
+      </node>
+      <node id="35">
+        <label>Macaulay2/e/gb-f4/Basis.cpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8cpp"/>
+      </node>
+      <node id="34">
+        <label>Macaulay2/e/gb-f4/Basis.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8hpp"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.cpp</label>
+        <link refid="_g_b_f4_computation_8cpp"/>
+      </node>
+      <node id="36">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.hpp</label>
+        <link refid="_g_b_f4_computation_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.cpp</label>
+        <link refid="_g_b_f4_interface_8cpp"/>
+      </node>
+      <node id="38">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.hpp</label>
+        <link refid="_g_b_f4_interface_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>Macaulay2/e/gb-f4/PolynomialList.cpp</label>
+        <link refid="_polynomial_list_8cpp"/>
+      </node>
+      <node id="42">
+        <label>Macaulay2/e/gb-f4/PolynomialList.hpp</label>
+        <link refid="_polynomial_list_8hpp"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>Macaulay2/e/gb-f4/SPairs.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_s_pairs_8hpp"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/gbring.cpp</label>
+        <link refid="gbring_8cpp"/>
+      </node>
+      <node id="57">
+        <label>Macaulay2/e/interface/aring.cpp</label>
+        <link refid="interface_2aring_8cpp"/>
+      </node>
+      <node id="24">
+        <label>Macaulay2/e/interface/groebner.cpp</label>
+        <link refid="groebner_8cpp"/>
+      </node>
+      <node id="16">
+        <label>Macaulay2/e/interface/matrix.cpp</label>
+        <link refid="interface_2matrix_8cpp"/>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="58">
+        <label>Macaulay2/e/interface/ringelement.cpp</label>
+        <link refid="ringelement_8cpp"/>
+      </node>
+      <node id="9">
+        <label>Macaulay2/e/lapack.cpp</label>
+        <link refid="lapack_8cpp"/>
+      </node>
+      <node id="8">
+        <label>Macaulay2/e/mat-arith.hpp</label>
+        <link refid="mat-arith_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Macaulay2/e/mat-linalg.hpp</label>
+        <link refid="mat-linalg_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/mat.cpp</label>
+        <link refid="mat_8cpp"/>
+      </node>
+      <node id="12">
+        <label>Macaulay2/e/mutablemat-defs.hpp</label>
+        <link refid="mutablemat-defs_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Macaulay2/e/mutablemat.hpp</label>
+        <link refid="mutablemat_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>Macaulay2/e/poly.cpp</label>
+        <link refid="poly_8cpp"/>
+      </node>
+      <node id="60">
+        <label>Macaulay2/e/qring.cpp</label>
+        <link refid="qring_8cpp"/>
+      </node>
+      <node id="61">
+        <label>Macaulay2/e/relem.cpp</label>
+        <link refid="relem_8cpp"/>
+      </node>
+      <node id="73">
+        <label>Macaulay2/e/ring.cpp</label>
+        <link refid="ring_8cpp"/>
+      </node>
+      <node id="46">
+        <label>Macaulay2/e/schreyer-resolution/res-dep-graph.cpp</label>
+        <link refid="res-dep-graph_8cpp"/>
+      </node>
+      <node id="52">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.cpp</label>
+        <link refid="res-f4-computation_8cpp"/>
+      </node>
+      <node id="50">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.hpp</label>
+        <link refid="res-f4-computation_8hpp"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</label>
+        <link refid="res-f4-m2-interface_8cpp"/>
+      </node>
+      <node id="47">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.cpp</label>
+        <link refid="res-f4_8cpp"/>
+      </node>
+      <node id="45">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.hpp</label>
+        <link refid="res-f4_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.cpp</label>
+        <link refid="res-poly-ring_8cpp"/>
+      </node>
+      <node id="49">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.hpp</label>
+        <link refid="res-poly-ring_8hpp"/>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.cpp</label>
+        <link refid="res-schreyer-frame_8cpp"/>
+      </node>
+      <node id="55">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp</label>
+        <link refid="res-schreyer-frame_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/smat.hpp</label>
+        <link refid="smat_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>Macaulay2/e/unit-tests/ARingRRiTest.cpp</label>
+        <link refid="_a_ring_r_ri_test_8cpp"/>
+      </node>
+      <node id="69">
+        <label>Macaulay2/e/unit-tests/ARingZZpTest.cpp</label>
+        <link refid="_a_ring_z_zp_test_8cpp"/>
+      </node>
+      <node id="63">
+        <label>Macaulay2/e/unit-tests/DMatZZpTest.cpp</label>
+        <link refid="_d_mat_z_zp_test_8cpp"/>
+      </node>
+      <node id="40">
+        <label>Macaulay2/e/unit-tests/MatrixIOTest.cpp</label>
+        <link refid="_matrix_i_o_test_8cpp"/>
+      </node>
+      <node id="64">
+        <label>Macaulay2/e/unit-tests/NCGroebnerTest.cpp</label>
+        <link refid="_n_c_groebner_test_8cpp"/>
+      </node>
+      <node id="44">
+        <label>Macaulay2/e/unit-tests/NewF4Test.cpp</label>
+        <link refid="_new_f4_test_8cpp"/>
+      </node>
+      <node id="17">
+        <label>Macaulay2/e/unit-tests/PointArray.cpp</label>
+        <link refid="_point_array_8cpp"/>
+      </node>
+      <node id="65">
+        <label>Macaulay2/e/unit-tests/RingCCCTest.cpp</label>
+        <link refid="_ring_c_c_c_test_8cpp"/>
+      </node>
+      <node id="66">
+        <label>Macaulay2/e/unit-tests/RingQQTest.cpp</label>
+        <link refid="_ring_q_q_test_8cpp"/>
+      </node>
+      <node id="67">
+        <label>Macaulay2/e/unit-tests/RingRRRTest.cpp</label>
+        <link refid="_ring_r_r_r_test_8cpp"/>
+      </node>
+      <node id="70">
+        <label>Macaulay2/e/unit-tests/RingZZpTest.cpp</label>
+        <link refid="_ring_z_zp_test_8cpp"/>
+      </node>
+      <node id="71">
+        <label>Macaulay2/e/unit-tests/fromStream.cpp</label>
+        <link refid="from_stream_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_coefficient_ring_z_zp" prot="public">CoefficientRingZZp</innerclass>
+    <innerclass refid="class_coefficient_ring_r" prot="public">CoefficientRingR</innerclass>
+    <innerclass refid="class_coefficient_ring_r_1_1_element" prot="public">CoefficientRingR::Element</innerclass>
+    <innerclass refid="class_coefficient_ring_r_1_1_element_array" prot="public">CoefficientRingR::ElementArray</innerclass>
+    <briefdescription>
+<para>Two <computeroutput>SimpleARing</computeroutput>-style coefficient adapters: <computeroutput><ref refid="class_coefficient_ring_z_zp" kindref="compound">CoefficientRingZZp</ref></computeroutput> and <computeroutput><ref refid="class_coefficient_ring_r" kindref="compound">CoefficientRingR</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares <computeroutput><ref refid="class_coefficient_ring_z_zp" kindref="compound">CoefficientRingZZp</ref></computeroutput>, the engine&apos;s discrete-log <computeroutput>Z/p</computeroutput> implementation: a <computeroutput>SimpleARing&lt;<ref refid="class_coefficient_ring_z_zp" kindref="compound">CoefficientRingZZp</ref>&gt;</computeroutput> CRTP class that represents each non-zero residue as its exponent index relative to a generator and uses parallel <computeroutput><ref refid="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" kindref="member">log_table</ref></computeroutput> / <computeroutput><ref refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" kindref="member">exp_table</ref></computeroutput> arrays of size <computeroutput><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref></computeroutput> to move between the index world and the residue world. Multiplication and division of non-zero elements become <computeroutput><ref refid="_g_f_8cpp_aaac226e2362493e94aadfa5fe9cad553_1aaac226e2362493e94aadfa5fe9cad553" kindref="member">modulus_add</ref></computeroutput> / <computeroutput><ref refid="_g_f_8cpp_aaaf836fc6998d71b15d5714f52bc5ffc_1aaaf836fc6998d71b15d5714f52bc5ffc" kindref="member">modulus_sub</ref></computeroutput> on the indices modulo <computeroutput><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref> - 1</computeroutput> with no table lookup; addition and subtraction first hop to residues via <computeroutput><ref refid="godbolt_test_8cpp_a03485ec97789fc4ca249bd9e2b38c3ae_1a03485ec97789fc4ca249bd9e2b38c3ae" kindref="member">exp_table</ref></computeroutput>, do a <computeroutput><ref refid="_g_f_8cpp_aaac226e2362493e94aadfa5fe9cad553_1aaac226e2362493e94aadfa5fe9cad553" kindref="member">modulus_add</ref></computeroutput> / <computeroutput><ref refid="_g_f_8cpp_aaaf836fc6998d71b15d5714f52bc5ffc_1aaaf836fc6998d71b15d5714f52bc5ffc" kindref="member">modulus_sub</ref></computeroutput> mod <computeroutput><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref></computeroutput>, and hop back via <computeroutput><ref refid="godbolt_test_8cpp_a884cdfe3c728d7bff06c5a094f7e2194_1a884cdfe3c728d7bff06c5a094f7e2194" kindref="member">log_table</ref></computeroutput>. Inversion of a non-zero index <computeroutput>a</computeroutput> is <computeroutput><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref> - 1 - a</computeroutput> and <computeroutput>negate</computeroutput> shifts by <computeroutput>(<ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref> - 1) / 2</computeroutput> (the index of <computeroutput>-1</computeroutput>). The class is used for the small primes that the matching <ref refid="namespace_m2" kindref="compound">M2</ref> raw entry point accepts (<computeroutput>2 &lt;= <ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref> &lt;= 32749</computeroutput>, per <computeroutput><ref refid="aring_8h" kindref="compound">interface/aring.h</ref></computeroutput>).</para>
+<para>Also declares <computeroutput><ref refid="class_coefficient_ring_r" kindref="compound">CoefficientRingR</ref></computeroutput>, the generic adapter that wraps an arbitrary <computeroutput>const Ring*</computeroutput> in the same operation surface <mdash/> forwarding <computeroutput>add</computeroutput> / <computeroutput>mult</computeroutput> / <computeroutput><ref refid="godbolt_test_8cpp_acb0e524578d913d164058b989f113b93_1acb0e524578d913d164058b989f113b93" kindref="member">subtract</ref></computeroutput> / <computeroutput>invert</computeroutput> / ... to the wrapped ring&apos;s methods, and exposing <computeroutput>Element</computeroutput> (a <computeroutput><ref refid="class_m2_1_1_element_impl" kindref="compound">M2::ElementImpl</ref></computeroutput> subclass) and <computeroutput><ref refid="class_element_array" kindref="compound">ElementArray</ref></computeroutput> helpers for managed temporaries. This is the catch-all implementation used wherever code that expects a <computeroutput>CoefficientRing</computeroutput> interface needs to talk to a ring that doesn&apos;t have a faster specialisation.</para>
+<para><simplesect kind="see"><para><ref refid="aring_8hpp" kindref="compound">aring.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="aring-glue_8hpp" kindref="compound">aring-glue.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="_z_zp_8hpp" kindref="compound">ZZp.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>2005<sp/><sp/>Michael<sp/>E.<sp/>Stillman</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_coeffrings_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_coeffrings_hpp_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_z__mod" kindref="compound">Z_mod</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="aring_8hpp" kindref="compound">aring.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ringelem_8hpp" kindref="compound">ringelem.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_z_z_8hpp" kindref="compound">ZZ.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="class_coefficient_ring_z_zp" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_coefficient_ring_z_zp_a194b0df250c74c070d6ef575d8a898e6_1a194b0df250c74c070d6ef575d8a898e6" kindref="member">CoefficientRingZZp</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_m2_1_1_simple_a_ring" kindref="compound">M2::SimpleARing</ref>&lt;CoefficientRingZZp&gt;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="64" refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>;</highlight></codeline>
+<codeline lineno="65" refid="class_coefficient_ring_z_zp_ada725eab162844ec35f581255c5aa409_1ada725eab162844ec35f581255c5aa409" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_ada725eab162844ec35f581255c5aa409_1ada725eab162844ec35f581255c5aa409" kindref="member">p1</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>p-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="class_coefficient_ring_z_zp_a3fc5903bc52fa90f98562bbc054d4231_1a3fc5903bc52fa90f98562bbc054d4231" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a3fc5903bc52fa90f98562bbc054d4231_1a3fc5903bc52fa90f98562bbc054d4231" kindref="member">minus_one</ref>;</highlight></codeline>
+<codeline lineno="67" refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>;</highlight></codeline>
+<codeline lineno="68" refid="class_coefficient_ring_z_zp_a58819387755b98ce33cff888e65fabe5_1a58819387755b98ce33cff888e65fabe5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="class_coefficient_ring_z_zp_a58819387755b98ce33cff888e65fabe5_1a58819387755b98ce33cff888e65fabe5" kindref="member">log_table</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>0..p-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*<ref refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" kindref="member">exp_table</ref>;<sp/><sp/></highlight><highlight class="comment">//<sp/>0..p-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="class_coefficient_ring_z_zp_a4f8aa8c080e4a22570e3ac178df1aa28_1a4f8aa8c080e4a22570e3ac178df1aa28" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a4f8aa8c080e4a22570e3ac178df1aa28_1a4f8aa8c080e4a22570e3ac178df1aa28" kindref="member">modulus_add</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>t<sp/>=<sp/>a<sp/>+<sp/>b;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(t<sp/>&lt;<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref><sp/>?<sp/>t<sp/>:<sp/>t<sp/>-<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="class_coefficient_ring_z_zp_aded64fc101068d1840bb2964f09e89bb_1aded64fc101068d1840bb2964f09e89bb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_aded64fc101068d1840bb2964f09e89bb_1aded64fc101068d1840bb2964f09e89bb" kindref="member">modulus_sub</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>)</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>t<sp/>=<sp/>a<sp/>-<sp/>b;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(t<sp/>&lt;<sp/>0<sp/>?<sp/>t<sp/>+<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref><sp/>:<sp/>t);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="84" refid="class_coefficient_ring_z_zp_ae6804a4e4346d36fa6e876441120e2c1_1ae6804a4e4346d36fa6e876441120e2c1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_z__mod" kindref="compound">Z_mod</ref><sp/><ref refid="class_coefficient_ring_z_zp_ae6804a4e4346d36fa6e876441120e2c1_1ae6804a4e4346d36fa6e876441120e2c1" kindref="member">ring_type</ref>;</highlight></codeline>
+<codeline lineno="85" refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref>;</highlight></codeline>
+<codeline lineno="86" refid="class_coefficient_ring_z_zp_a4f1d9058b126e6bbeeee47630dc7b964_1a4f1d9058b126e6bbeeee47630dc7b964" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/><ref refid="class_coefficient_ring_z_zp_a4f1d9058b126e6bbeeee47630dc7b964_1a4f1d9058b126e6bbeeee47630dc7b964" kindref="member">ElementType</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="class_coefficient_ring_z_zp_a00ba1fbef10cd4fea28b9f875089457b_1a00ba1fbef10cd4fea28b9f875089457b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::vector&lt;elem&gt;<sp/><ref refid="class_coefficient_ring_z_zp_a00ba1fbef10cd4fea28b9f875089457b_1a00ba1fbef10cd4fea28b9f875089457b" kindref="member">ElementContainerType</ref>;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="class_coefficient_ring_z_zp_a194b0df250c74c070d6ef575d8a898e6_1a194b0df250c74c070d6ef575d8a898e6" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_coefficient_ring_z_zp_a194b0df250c74c070d6ef575d8a898e6_1a194b0df250c74c070d6ef575d8a898e6" kindref="member">CoefficientRingZZp</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>p0,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*log,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*exps)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>(p0),<sp/><ref refid="class_coefficient_ring_z_zp_ada725eab162844ec35f581255c5aa409_1ada725eab162844ec35f581255c5aa409" kindref="member">p1</ref>(<ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref><sp/>-<sp/>1),<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>(<ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref><sp/>-<sp/>1),<sp/><ref refid="class_coefficient_ring_z_zp_a58819387755b98ce33cff888e65fabe5_1a58819387755b98ce33cff888e65fabe5" kindref="member">log_table</ref>(log),<sp/><ref refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" kindref="member">exp_table</ref>(exps)</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref><sp/>==<sp/>2)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_z_zp_a3fc5903bc52fa90f98562bbc054d4231_1a3fc5903bc52fa90f98562bbc054d4231" kindref="member">minus_one</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_z_zp_a3fc5903bc52fa90f98562bbc054d4231_1a3fc5903bc52fa90f98562bbc054d4231" kindref="member">minus_one</ref><sp/>=<sp/>(<ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref><sp/>-<sp/>1)<sp/>/<sp/>2;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;char<sp/>%d\n&quot;</highlight><highlight class="normal">,<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;exp:<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;<ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>;<sp/>i++)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;%d<sp/>&quot;</highlight><highlight class="normal">,<sp/><ref refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" kindref="member">exp_table</ref>[i]);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;\nlog:<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;<ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>;<sp/>i++)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;%d<sp/>&quot;</highlight><highlight class="normal">,<sp/><ref refid="class_coefficient_ring_z_zp_a58819387755b98ce33cff888e65fabe5_1a58819387755b98ce33cff888e65fabe5" kindref="member">log_table</ref>[i]);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="class_coefficient_ring_z_zp_a29c526e016411e00e0d35c8d19b35dbd_1a29c526e016411e00e0d35c8d19b35dbd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a29c526e016411e00e0d35c8d19b35dbd_1a29c526e016411e00e0d35c8d19b35dbd" kindref="member">set_from_long</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>a)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="112"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>a<sp/>=<sp/>a<sp/>%<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>&lt;<sp/>0)<sp/>a<sp/>+=<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a58819387755b98ce33cff888e65fabe5_1a58819387755b98ce33cff888e65fabe5" kindref="member">log_table</ref>[a];</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="118" refid="class_coefficient_ring_z_zp_a89455bf7d389a35e3eefcd1fa0c1b7ba_1a89455bf7d389a35e3eefcd1fa0c1b7ba" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a89455bf7d389a35e3eefcd1fa0c1b7ba_1a89455bf7d389a35e3eefcd1fa0c1b7ba" kindref="member">set_from_mpz</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>mpz_t<sp/>a)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="119"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>mpz_t<sp/>tmp;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>mpz_init_set_si(tmp,<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Convert<sp/>int<sp/>p<sp/>to<sp/>mpz_t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>mpz_mod(a,<sp/>a,<sp/>tmp);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>a<sp/>=<sp/>a<sp/>mod<sp/>p<sp/>(always<sp/>non-negative)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>mpz_clear(tmp);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a58819387755b98ce33cff888e65fabe5_1a58819387755b98ce33cff888e65fabe5" kindref="member">log_table</ref>[mpz_get_si(a)];</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="class_coefficient_ring_z_zp_aec634f909044f6c3d4ada0bc296c1183_1aec634f909044f6c3d4ada0bc296c1183" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_aec634f909044f6c3d4ada0bc296c1183_1aec634f909044f6c3d4ada0bc296c1183" kindref="member">coerceToLongInteger</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;f)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="128"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n<sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" kindref="member">exp_table</ref>[f];</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(n<sp/>&gt;<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref><sp/>/<sp/>2)<sp/>n<sp/>-=<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>n;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="134" refid="class_coefficient_ring_z_zp_a6eaa640a7efa249fcf72b6b2d0bd6ebb_1a6eaa640a7efa249fcf72b6b2d0bd6ebb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a6eaa640a7efa249fcf72b6b2d0bd6ebb_1a6eaa640a7efa249fcf72b6b2d0bd6ebb" kindref="member">to_int</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>f)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" kindref="member">exp_table</ref>[f];<sp/>}</highlight></codeline>
+<codeline lineno="135" refid="class_coefficient_ring_z_zp_a4106e68f027000c9583ef11489fd0b8d_1a4106e68f027000c9583ef11489fd0b8d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a4106e68f027000c9583ef11489fd0b8d_1a4106e68f027000c9583ef11489fd0b8d" kindref="member">init</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/>(void)<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="136" refid="class_coefficient_ring_z_zp_a340ec7deaedca94a8bb8f798a78ec8d2_1a340ec7deaedca94a8bb8f798a78ec8d2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a340ec7deaedca94a8bb8f798a78ec8d2_1a340ec7deaedca94a8bb8f798a78ec8d2" kindref="member">clear</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/>{<sp/>(void)<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="137" refid="class_coefficient_ring_z_zp_a7f713ed2ac9ed392da0b2b5bb3bb4282_1a7f713ed2ac9ed392da0b2b5bb3bb4282" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a7f713ed2ac9ed392da0b2b5bb3bb4282_1a7f713ed2ac9ed392da0b2b5bb3bb4282" kindref="member">init_set</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a;<sp/>}</highlight></codeline>
+<codeline lineno="138" refid="class_coefficient_ring_z_zp_a4682a4e2810bd68ed80b1937c6f13c9c_1a4682a4e2810bd68ed80b1937c6f13c9c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a4682a4e2810bd68ed80b1937c6f13c9c_1a4682a4e2810bd68ed80b1937c6f13c9c" kindref="member">set_zero</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="139" refid="class_coefficient_ring_z_zp_a4b7c254a37d8d300e59335f2d1b6e18c_1a4b7c254a37d8d300e59335f2d1b6e18c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a4b7c254a37d8d300e59335f2d1b6e18c_1a4b7c254a37d8d300e59335f2d1b6e18c" kindref="member">set</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a;<sp/>}</highlight></codeline>
+<codeline lineno="140" refid="class_coefficient_ring_z_zp_ae253e57d4f5c24800c327f881b024218_1ae253e57d4f5c24800c327f881b024218" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_ae253e57d4f5c24800c327f881b024218_1ae253e57d4f5c24800c327f881b024218" kindref="member">is_zero</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>==<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="141" refid="class_coefficient_ring_z_zp_a89c95faeb64b6f376142528de454e66e_1a89c95faeb64b6f376142528de454e66e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a89c95faeb64b6f376142528de454e66e_1a89c95faeb64b6f376142528de454e66e" kindref="member">is_equal</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a<sp/>==<sp/>b;<sp/>}</highlight></codeline>
+<codeline lineno="142" refid="class_coefficient_ring_z_zp_a745cc11193598d82007f1c695b78e7eb_1a745cc11193598d82007f1c695b78e7eb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a745cc11193598d82007f1c695b78e7eb_1a745cc11193598d82007f1c695b78e7eb" kindref="member">invert</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="143"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>==<sp/>0)</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>0;<sp/><sp/></highlight><highlight class="comment">//<sp/>this<sp/>is<sp/>the<sp/>case<sp/>a<sp/>==<sp/>ONE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref><sp/>-<sp/>1<sp/>-<sp/>a;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150" refid="class_coefficient_ring_z_zp_aa18e3d6486a20fcb91b68d473c0855e0_1aa18e3d6486a20fcb91b68d473c0855e0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_aa18e3d6486a20fcb91b68d473c0855e0_1aa18e3d6486a20fcb91b68d473c0855e0" kindref="member">add</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="151"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>==<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>)</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>b;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(b<sp/>==<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>)</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n<sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a4f8aa8c080e4a22570e3ac178df1aa28_1a4f8aa8c080e4a22570e3ac178df1aa28" kindref="member">modulus_add</ref>(<ref refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" kindref="member">exp_table</ref>[a],<sp/><ref refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" kindref="member">exp_table</ref>[b],<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a58819387755b98ce33cff888e65fabe5_1a58819387755b98ce33cff888e65fabe5" kindref="member">log_table</ref>[n];</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="class_coefficient_ring_z_zp_a2c45e4a06c9f47d76bc021bb4ee8ad97_1a2c45e4a06c9f47d76bc021bb4ee8ad97" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a2c45e4a06c9f47d76bc021bb4ee8ad97_1a2c45e4a06c9f47d76bc021bb4ee8ad97" kindref="member">negate</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="164"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a4f8aa8c080e4a22570e3ac178df1aa28_1a4f8aa8c080e4a22570e3ac178df1aa28" kindref="member">modulus_add</ref>(a,<sp/><ref refid="class_coefficient_ring_z_zp_a3fc5903bc52fa90f98562bbc054d4231_1a3fc5903bc52fa90f98562bbc054d4231" kindref="member">minus_one</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ada725eab162844ec35f581255c5aa409_1ada725eab162844ec35f581255c5aa409" kindref="member">p1</ref>);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168" refid="class_coefficient_ring_z_zp_a0f7e9a37f82710a1ef47d1c569a277fd_1a0f7e9a37f82710a1ef47d1c569a277fd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a0f7e9a37f82710a1ef47d1c569a277fd_1a0f7e9a37f82710a1ef47d1c569a277fd" kindref="member">subtract</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="169"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(b<sp/>==<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>)</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>==<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>)</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a4f8aa8c080e4a22570e3ac178df1aa28_1a4f8aa8c080e4a22570e3ac178df1aa28" kindref="member">modulus_add</ref>(b,<sp/><ref refid="class_coefficient_ring_z_zp_a3fc5903bc52fa90f98562bbc054d4231_1a3fc5903bc52fa90f98562bbc054d4231" kindref="member">minus_one</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ada725eab162844ec35f581255c5aa409_1ada725eab162844ec35f581255c5aa409" kindref="member">p1</ref>);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n<sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_aded64fc101068d1840bb2964f09e89bb_1aded64fc101068d1840bb2964f09e89bb" kindref="member">modulus_sub</ref>(<ref refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" kindref="member">exp_table</ref>[a],<sp/><ref refid="class_coefficient_ring_z_zp_a03219d82b8c233734c9f965375ae0fbd_1a03219d82b8c233734c9f965375ae0fbd" kindref="member">exp_table</ref>[b],<sp/><ref refid="class_coefficient_ring_z_zp_af698e4348b1d00dc81874d67146fd44b_1af698e4348b1d00dc81874d67146fd44b" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a58819387755b98ce33cff888e65fabe5_1a58819387755b98ce33cff888e65fabe5" kindref="member">log_table</ref>[n];</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181" refid="class_coefficient_ring_z_zp_a94835b5a6070fb6298f4042807359ba7_1a94835b5a6070fb6298f4042807359ba7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a94835b5a6070fb6298f4042807359ba7_1a94835b5a6070fb6298f4042807359ba7" kindref="member">subtract_multiple</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="182"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>we<sp/>assume:<sp/>a,<sp/>b<sp/>are<sp/>NONZERO!!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>result<sp/>-=<sp/>a*b</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>ab<sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a4f8aa8c080e4a22570e3ac178df1aa28_1a4f8aa8c080e4a22570e3ac178df1aa28" kindref="member">modulus_add</ref>(a,<sp/>b,<sp/><ref refid="class_coefficient_ring_z_zp_ada725eab162844ec35f581255c5aa409_1ada725eab162844ec35f581255c5aa409" kindref="member">p1</ref>);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_z_zp_a0f7e9a37f82710a1ef47d1c569a277fd_1a0f7e9a37f82710a1ef47d1c569a277fd" kindref="member">subtract</ref>(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>ab);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>if<sp/>(result==zero)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>result<sp/>=<sp/>ab;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>int<sp/>n<sp/>=<sp/>modulus_sub(exp_table[result],<sp/>exp_table[ab],<sp/>p);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>result<sp/>=<sp/>log_table[n];</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="class_coefficient_ring_z_zp_aa4106c57e09f8dd9247f9de8c816d8e5_1aa4106c57e09f8dd9247f9de8c816d8e5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_aa4106c57e09f8dd9247f9de8c816d8e5_1aa4106c57e09f8dd9247f9de8c816d8e5" kindref="member">mult</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="198"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>==<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref><sp/>||<sp/>b<sp/>==<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>)</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_a4f8aa8c080e4a22570e3ac178df1aa28_1a4f8aa8c080e4a22570e3ac178df1aa28" kindref="member">modulus_add</ref>(a,<sp/>b,<sp/><ref refid="class_coefficient_ring_z_zp_ada725eab162844ec35f581255c5aa409_1ada725eab162844ec35f581255c5aa409" kindref="member">p1</ref>);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="class_coefficient_ring_z_zp_a3f377de7d0ac91d89c8c682f04e3d69d_1a3f377de7d0ac91d89c8c682f04e3d69d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a3f377de7d0ac91d89c8c682f04e3d69d_1a3f377de7d0ac91d89c8c682f04e3d69d" kindref="member">divide</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="206"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a<sp/>==<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref><sp/>||<sp/>b<sp/>==<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>)</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_aa6dfbd4df92f0e6f297e34f1878dbf25_1aa6dfbd4df92f0e6f297e34f1878dbf25" kindref="member">zero</ref>;</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_z_zp_aded64fc101068d1840bb2964f09e89bb_1aded64fc101068d1840bb2964f09e89bb" kindref="member">modulus_sub</ref>(a,<sp/>b,<sp/><ref refid="class_coefficient_ring_z_zp_ada725eab162844ec35f581255c5aa409_1ada725eab162844ec35f581255c5aa409" kindref="member">p1</ref>);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213" refid="class_coefficient_ring_z_zp_a37e32b5231ec47fb50301603a20f76b9_1a37e32b5231ec47fb50301603a20f76b9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a37e32b5231ec47fb50301603a20f76b9_1a37e32b5231ec47fb50301603a20f76b9" kindref="member">to_ring_elem</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="214"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref>(a);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218" refid="class_coefficient_ring_z_zp_ad1039263c59d81c73df9e7ee95ecb0b4_1ad1039263c59d81c73df9e7ee95ecb0b4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_ad1039263c59d81c73df9e7ee95ecb0b4_1ad1039263c59d81c73df9e7ee95ecb0b4" kindref="member">from_ring_elem</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;a)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="219"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a.<ref refid="unionring__elem_aef4bc99b676c369a6a0a05e13601ced3_1aef4bc99b676c369a6a0a05e13601ced3" kindref="member">get_int</ref>();</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223" refid="class_coefficient_ring_z_zp_a468d1e8667d1cbb68f34e3348301c1a0_1a468d1e8667d1cbb68f34e3348301c1a0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a468d1e8667d1cbb68f34e3348301c1a0_1a468d1e8667d1cbb68f34e3348301c1a0" kindref="member">swap</ref>(<ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;a,<sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>&amp;b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="224"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_z_zp_ab6470c229705f2aee103d9fac27a5923_1ab6470c229705f2aee103d9fac27a5923" kindref="member">elem</ref><sp/>tmp<sp/>=<sp/>a;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>a<sp/>=<sp/>b;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>b<sp/>=<sp/>tmp;</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_z_zp_a985293cc42e8c9ca5ad1eaa9c6a8e3a0_1a985293cc42e8c9ca5ad1eaa9c6a8e3a0" kindref="member">elem_text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o,</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ElementType<sp/>a,</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_one<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_plus<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_parens<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="251" refid="class_coefficient_ring_r" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" kindref="member">CoefficientRingR</ref></highlight></codeline>
+<codeline lineno="252"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="253" refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*<ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>;</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="256" refid="class_coefficient_ring_r_a1f4407e4d69c728bd677194772f1e07a_1a1f4407e4d69c728bd677194772f1e07a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/><ref refid="class_coefficient_ring_r_a1f4407e4d69c728bd677194772f1e07a_1a1f4407e4d69c728bd677194772f1e07a" kindref="member">ring_type</ref>;</highlight></codeline>
+<codeline lineno="257" refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref>;</highlight></codeline>
+<codeline lineno="258" refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/><ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref>;</highlight></codeline>
+<codeline lineno="259" refid="class_coefficient_ring_r_af1dc85cfb7a831bb231084e0ac6e9ac0_1af1dc85cfb7a831bb231084e0ac6e9ac0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_af1dc85cfb7a831bb231084e0ac6e9ac0_1af1dc85cfb7a831bb231084e0ac6e9ac0" kindref="member">VECTOR</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref>)<sp/>ElementContainerType;</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269" refid="class_coefficient_ring_r_1_1_element" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_coefficient_ring_r_1_1_element_a3dd2a90800051dc3631f149b618f0a14_1a3dd2a90800051dc3631f149b618f0a14" kindref="member">Element</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_m2_1_1_element_impl" kindref="compound">M2::ElementImpl</ref>&lt;ElementType&gt;,<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structour__new__delete" kindref="compound">our_new_delete</ref></highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="272" refid="class_coefficient_ring_r_1_1_element_a3dd2a90800051dc3631f149b618f0a14_1a3dd2a90800051dc3631f149b618f0a14" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_1_1_element_a3dd2a90800051dc3631f149b618f0a14_1a3dd2a90800051dc3631f149b618f0a14" kindref="member">Element</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" kindref="member">CoefficientRingR</ref><sp/>&amp;ring)<sp/>{<sp/>ring.<ref refid="class_coefficient_ring_r_af9205fc585fe72e91eea2a427d851843_1af9205fc585fe72e91eea2a427d851843" kindref="member">init</ref>(<ref refid="class_m2_1_1_element_impl_ad27575a45232e01307ad52b61a1bed61_1ad27575a45232e01307ad52b61a1bed61" kindref="member">mValue</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="273" refid="class_coefficient_ring_r_1_1_element_a1ecd1179cdbd97775ccc341acbbc98ac_1a1ecd1179cdbd97775ccc341acbbc98ac" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_r_1_1_element_a1ecd1179cdbd97775ccc341acbbc98ac_1a1ecd1179cdbd97775ccc341acbbc98ac" kindref="member">Element</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" kindref="member">CoefficientRingR</ref><sp/>&amp;ring,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref><sp/>&amp;<ref refid="class_m2_1_1_element_impl_a114e53625b3801500bf26a30eb10d856_1a114e53625b3801500bf26a30eb10d856" kindref="member">value</ref>)</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>ring.<ref refid="class_coefficient_ring_r_a36d1f7295817c94ceb7d7125fc810d2e_1a36d1f7295817c94ceb7d7125fc810d2e" kindref="member">init_set</ref>(<ref refid="class_m2_1_1_element_impl_ad27575a45232e01307ad52b61a1bed61_1ad27575a45232e01307ad52b61a1bed61" kindref="member">mValue</ref>,<sp/><ref refid="class_m2_1_1_element_impl_a114e53625b3801500bf26a30eb10d856_1a114e53625b3801500bf26a30eb10d856" kindref="member">value</ref>);</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="288" refid="class_coefficient_ring_r_1_1_element_array" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_coefficient_ring_r_1_1_element_array_abdb0e22d8e6245eddeeadf65a960fe20_1abdb0e22d8e6245eddeeadf65a960fe20" kindref="member">ElementArray</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structour__new__delete" kindref="compound">our_new_delete</ref></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="290" refid="class_coefficient_ring_r_1_1_element_array_ab99969951417f319b676d605da8dba79_1ab99969951417f319b676d605da8dba79" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref><sp/>*<ref refid="class_coefficient_ring_r_1_1_element_array_ab99969951417f319b676d605da8dba79_1ab99969951417f319b676d605da8dba79" kindref="member">mData</ref>;</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="292" refid="class_coefficient_ring_r_1_1_element_array_abdb0e22d8e6245eddeeadf65a960fe20_1abdb0e22d8e6245eddeeadf65a960fe20" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_r_1_1_element_array_abdb0e22d8e6245eddeeadf65a960fe20_1abdb0e22d8e6245eddeeadf65a960fe20" kindref="member">ElementArray</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" kindref="member">CoefficientRingR</ref><sp/>&amp;ring,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size)</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_coefficient_ring_r_1_1_element_array_ab99969951417f319b676d605da8dba79_1ab99969951417f319b676d605da8dba79" kindref="member">mData</ref>(<ref refid="newdelete_8hpp_a8e45ca33f2628740d647f3bdf832b96d_1a8e45ca33f2628740d647f3bdf832b96d" kindref="member">newarray</ref>(<ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref>,<sp/>size))</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>size;<sp/>i++)<sp/>ring.<ref refid="class_coefficient_ring_r_af9205fc585fe72e91eea2a427d851843_1af9205fc585fe72e91eea2a427d851843" kindref="member">init</ref>(<ref refid="class_coefficient_ring_r_1_1_element_array_ab99969951417f319b676d605da8dba79_1ab99969951417f319b676d605da8dba79" kindref="member">mData</ref>[i]);</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="297" refid="class_coefficient_ring_r_1_1_element_array_a0d806864f7fc85a3579797bcd6c1dfc5_1a0d806864f7fc85a3579797bcd6c1dfc5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_r_1_1_element_array_a0d806864f7fc85a3579797bcd6c1dfc5_1a0d806864f7fc85a3579797bcd6c1dfc5" kindref="member">~ElementArray</ref>()<sp/>{<sp/><ref refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" kindref="member">freemem</ref>(<ref refid="class_coefficient_ring_r_1_1_element_array_ab99969951417f319b676d605da8dba79_1ab99969951417f319b676d605da8dba79" kindref="member">mData</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="298" refid="class_coefficient_ring_r_1_1_element_array_a73120bf40806140527d93327253479dc_1a73120bf40806140527d93327253479dc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref><sp/>&amp;<ref refid="class_coefficient_ring_r_1_1_element_array_a73120bf40806140527d93327253479dc_1a73120bf40806140527d93327253479dc" kindref="member">operator[]</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>idx)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_1_1_element_array_ab99969951417f319b676d605da8dba79_1ab99969951417f319b676d605da8dba79" kindref="member">mData</ref>[idx];<sp/>}</highlight></codeline>
+<codeline lineno="299" refid="class_coefficient_ring_r_1_1_element_array_a193a0b912573e07902ac467448b1ab34_1a193a0b912573e07902ac467448b1ab34" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref><sp/>&amp;<ref refid="class_coefficient_ring_r_1_1_element_array_a193a0b912573e07902ac467448b1ab34_1a193a0b912573e07902ac467448b1ab34" kindref="member">operator[]</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>idx)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_1_1_element_array_ab99969951417f319b676d605da8dba79_1ab99969951417f319b676d605da8dba79" kindref="member">mData</ref>[idx];<sp/>}</highlight></codeline>
+<codeline lineno="300" refid="class_coefficient_ring_r_1_1_element_array_ab3e32efa8f4618abc906365ebc0fad1a_1ab3e32efa8f4618abc906365ebc0fad1a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref><sp/>*<ref refid="class_coefficient_ring_r_1_1_element_array_ab3e32efa8f4618abc906365ebc0fad1a_1ab3e32efa8f4618abc906365ebc0fad1a" kindref="member">data</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_1_1_element_array_ab99969951417f319b676d605da8dba79_1ab99969951417f319b676d605da8dba79" kindref="member">mData</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="301" refid="class_coefficient_ring_r_1_1_element_array_a4d2b20450ccfaf2ca19b06a0e6dba235_1a4d2b20450ccfaf2ca19b06a0e6dba235" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a6bcaa5a3c7d169e85c912a77509ae6a6_1a6bcaa5a3c7d169e85c912a77509ae6a6" kindref="member">ElementType</ref><sp/>*<ref refid="class_coefficient_ring_r_1_1_element_array_a4d2b20450ccfaf2ca19b06a0e6dba235_1a4d2b20450ccfaf2ca19b06a0e6dba235" kindref="member">data</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_1_1_element_array_ab99969951417f319b676d605da8dba79_1ab99969951417f319b676d605da8dba79" kindref="member">mData</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="304" refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_coefficient_ring_r_a9427f02492b6b9156c467a4746047256_1a9427f02492b6b9156c467a4746047256" kindref="member">CoefficientRingR</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*R0)<sp/>:<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>(R0)<sp/>{}</highlight></codeline>
+<codeline lineno="305" refid="class_coefficient_ring_r_a36d1f7295817c94ceb7d7125fc810d2e_1a36d1f7295817c94ceb7d7125fc810d2e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a36d1f7295817c94ceb7d7125fc810d2e_1a36d1f7295817c94ceb7d7125fc810d2e" kindref="member">init_set</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a;<sp/>}</highlight></codeline>
+<codeline lineno="306" refid="class_coefficient_ring_r_af9205fc585fe72e91eea2a427d851843_1af9205fc585fe72e91eea2a427d851843" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_af9205fc585fe72e91eea2a427d851843_1af9205fc585fe72e91eea2a427d851843" kindref="member">init</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;zero();<sp/>}</highlight></codeline>
+<codeline lineno="307" refid="class_coefficient_ring_r_a63b417ef02718d6363198e7a83ea71e8_1a63b417ef02718d6363198e7a83ea71e8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a63b417ef02718d6363198e7a83ea71e8_1a63b417ef02718d6363198e7a83ea71e8" kindref="member">clear</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/>(void)<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309" refid="class_coefficient_ring_r_a7dde5c0614861b4c47baf0484a8322ca_1a7dde5c0614861b4c47baf0484a8322ca" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a7dde5c0614861b4c47baf0484a8322ca_1a7dde5c0614861b4c47baf0484a8322ca" kindref="member">set_zero</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;zero();<sp/>}</highlight></codeline>
+<codeline lineno="310" refid="class_coefficient_ring_r_ad39131a957167f406627feec7ce7cc5e_1ad39131a957167f406627feec7ce7cc5e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_ad39131a957167f406627feec7ce7cc5e_1ad39131a957167f406627feec7ce7cc5e" kindref="member">set</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a;<sp/>}</highlight></codeline>
+<codeline lineno="311" refid="class_coefficient_ring_r_ad5e5ed790edaf40bc1c4a6acbd825c9a_1ad5e5ed790edaf40bc1c4a6acbd825c9a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_ad5e5ed790edaf40bc1c4a6acbd825c9a_1ad5e5ed790edaf40bc1c4a6acbd825c9a" kindref="member">set_from_long</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;from_long(a);<sp/>}</highlight></codeline>
+<codeline lineno="312" refid="class_coefficient_ring_r_a910f2ff7b991149489e9cea60e527563_1a910f2ff7b991149489e9cea60e527563" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a910f2ff7b991149489e9cea60e527563_1a910f2ff7b991149489e9cea60e527563" kindref="member">set_from_mpz</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/>mpz_t<sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;from_int(a);<sp/>}</highlight></codeline>
+<codeline lineno="313" refid="class_coefficient_ring_r_ae816c227d149c2edc25e55847f3a57c3_1ae816c227d149c2edc25e55847f3a57c3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_ae816c227d149c2edc25e55847f3a57c3_1ae816c227d149c2edc25e55847f3a57c3" kindref="member">is_zero</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;is_zero(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="314" refid="class_coefficient_ring_r_afda9e33cbd9e04e46696f0e56cdc8a5a_1afda9e33cbd9e04e46696f0e56cdc8a5a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_afda9e33cbd9e04e46696f0e56cdc8a5a_1afda9e33cbd9e04e46696f0e56cdc8a5a" kindref="member">is_equal</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;is_equal(a,<sp/>b);<sp/>}</highlight></codeline>
+<codeline lineno="315" refid="class_coefficient_ring_r_a911e7beef46df8d976380af889b0e4dc_1a911e7beef46df8d976380af889b0e4dc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a911e7beef46df8d976380af889b0e4dc_1a911e7beef46df8d976380af889b0e4dc" kindref="member">is_unit</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>f)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;is_unit(f);<sp/>}</highlight></codeline>
+<codeline lineno="316" refid="class_coefficient_ring_r_aef37cea92f29b30b3ed678b65cc3db6a_1aef37cea92f29b30b3ed678b65cc3db6a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_aef37cea92f29b30b3ed678b65cc3db6a_1aef37cea92f29b30b3ed678b65cc3db6a" kindref="member">invert</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;invert(a);<sp/>}</highlight></codeline>
+<codeline lineno="317" refid="class_coefficient_ring_r_a618250607f5beb401af79b2d0e1a778e_1a618250607f5beb401af79b2d0e1a778e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a618250607f5beb401af79b2d0e1a778e_1a618250607f5beb401af79b2d0e1a778e" kindref="member">subtract_multiple</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const<sp/></highlight></codeline>
+<codeline lineno="318"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>result<sp/>-=<sp/>a*b</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>tmp<sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;mult(a,b);</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;subtract(<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,tmp);</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"></highlight></codeline>
+<codeline lineno="324" refid="class_coefficient_ring_r_ae6ac9430457679f855af6398e2c50199_1ae6ac9430457679f855af6398e2c50199" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_ae6ac9430457679f855af6398e2c50199_1ae6ac9430457679f855af6398e2c50199" kindref="member">add</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;add(a,<sp/>b);<sp/>}</highlight></codeline>
+<codeline lineno="325" refid="class_coefficient_ring_r_aa585dca2d7be123a072e231e8c1452f0_1aa585dca2d7be123a072e231e8c1452f0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_aa585dca2d7be123a072e231e8c1452f0_1aa585dca2d7be123a072e231e8c1452f0" kindref="member">negate</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;negate(a);<sp/>}</highlight></codeline>
+<codeline lineno="326" refid="class_coefficient_ring_r_aa82da8d26da8b5baad1b352c5d1a367f_1aa82da8d26da8b5baad1b352c5d1a367f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_aa82da8d26da8b5baad1b352c5d1a367f_1aa82da8d26da8b5baad1b352c5d1a367f" kindref="member">subtract</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="327"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;subtract(a,<sp/>b);</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight></codeline>
+<codeline lineno="331" refid="class_coefficient_ring_r_afb17bcf04fc7d90c7226798b8ad443bf_1afb17bcf04fc7d90c7226798b8ad443bf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_afb17bcf04fc7d90c7226798b8ad443bf_1afb17bcf04fc7d90c7226798b8ad443bf" kindref="member">mult</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;mult(a,<sp/>b);<sp/>}</highlight></codeline>
+<codeline lineno="332" refid="class_coefficient_ring_r_aaea242279a6f6085e04456500c87cf95_1aaea242279a6f6085e04456500c87cf95" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_aaea242279a6f6085e04456500c87cf95_1aaea242279a6f6085e04456500c87cf95" kindref="member">divide</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>a,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>b)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_coefficient_ring_r_a6939e55c37adde8de8f97b984363c44d_1a6939e55c37adde8de8f97b984363c44d" kindref="member">R</ref>-&gt;divide(a,<sp/>b);<sp/>}</highlight></codeline>
+<codeline lineno="333" refid="class_coefficient_ring_r_a243c74a922e310c12a44c12455d2e59e_1a243c74a922e310c12a44c12455d2e59e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a243c74a922e310c12a44c12455d2e59e_1a243c74a922e310c12a44c12455d2e59e" kindref="member">to_ring_elem</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a;<sp/>}</highlight></codeline>
+<codeline lineno="334" refid="class_coefficient_ring_r_a48984464b741d68fd90ee397ac02e029_1a48984464b741d68fd90ee397ac02e029" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a48984464b741d68fd90ee397ac02e029_1a48984464b741d68fd90ee397ac02e029" kindref="member">from_ring_elem</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/>a;<sp/>}</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>do<sp/>not<sp/>make<sp/>the<sp/>return<sp/>type<sp/>here<sp/>a<sp/>reference,<sp/>otherwise</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>dangling<sp/>references<sp/>become<sp/>very<sp/>easy<sp/>to<sp/>make</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="337" refid="class_coefficient_ring_r_a81e6b91ec0451a799a58a057ef7b25df_1a81e6b91ec0451a799a58a057ef7b25df" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/><ref refid="class_coefficient_ring_r_a81e6b91ec0451a799a58a057ef7b25df_1a81e6b91ec0451a799a58a057ef7b25df" kindref="member">from_ring_elem_const</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;a)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a;<sp/>}</highlight></codeline>
+<codeline lineno="338" refid="class_coefficient_ring_r_afaa4fe1095ab5c5e43a6f3a00329b6f9_1afaa4fe1095ab5c5e43a6f3a00329b6f9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_afaa4fe1095ab5c5e43a6f3a00329b6f9_1afaa4fe1095ab5c5e43a6f3a00329b6f9" kindref="member">swap</ref>(<ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;a,<sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>&amp;b)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="339"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_coefficient_ring_r_ae321a637e6c1f4963d11af50eb4dc98b_1ae321a637e6c1f4963d11af50eb4dc98b" kindref="member">elem</ref><sp/>tmp<sp/>=<sp/>a;</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/>a<sp/>=<sp/>b;</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/>b<sp/>=<sp/>tmp;</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_a3a6d400dc9f7a0cf28b15b2581366c30_1a3a6d400dc9f7a0cf28b15b2581366c30" kindref="member">elem_text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o,</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ElementType<sp/>a,</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_one<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_plus<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_parens<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="351" refid="class_coefficient_ring_r_afaecd76a3211d309dd872fb9c7dd8cd2_1afaecd76a3211d309dd872fb9c7dd8cd2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_coefficient_ring_r_afaecd76a3211d309dd872fb9c7dd8cd2_1afaecd76a3211d309dd872fb9c7dd8cd2" kindref="member">text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/>o<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;CoefficientRingR&quot;</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="352"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="354"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="355"><highlight class="normal"></highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="358"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="359"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/coeffrings.hpp"/>
+  </compounddef>
+</doxygen>

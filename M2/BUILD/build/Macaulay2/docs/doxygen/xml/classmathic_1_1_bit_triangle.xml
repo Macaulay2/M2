@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_bit_triangle" kind="class" language="C++" prot="public">
+    <compoundname>mathic::BitTriangle</compoundname>
+    <includes refid="_bit_triangle_8h" local="no">BitTriangle.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; <ref refid="classbool" kindref="compound">bool</ref> &gt; &gt;</type>
+        <definition>std::vector&lt;std::vector&lt;bool&gt; &gt; mathic::BitTriangle::mColumns</definition>
+        <argsstring></argsstring>
+        <name>mColumns</name>
+        <qualifiedname>mathic::BitTriangle::mColumns</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BitTriangle.h" line="81" column="13" bodyfile="submodules/mathic/src/mathic/BitTriangle.h" bodystart="81" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_bit_triangle_aadcfc5dce452842aee8f2a31ca7ea692_1aadcfc5dce452842aee8f2a31ca7ea692" compoundref="_bit_triangle_8h" startline="33" endline="37">addColumn</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_aa1c6715ebf000cfeab086ab4ff583892_1aa1c6715ebf000cfeab086ab4ff583892" compoundref="_bit_triangle_8h" startline="41" endline="45">bit</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_a49ead6e9ba6c96a9c1166e6bb1a47cac_1a49ead6e9ba6c96a9c1166e6bb1a47cac" compoundref="_bit_triangle_8h" startline="25" endline="25">columnCount</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_a50ed8dc5e808c4f85cef03f561d94ca6_1a50ed8dc5e808c4f85cef03f561d94ca6" compoundref="_bit_triangle_8h" startline="28" endline="28">empty</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_a013911c05b7193c3e794032538c2b802_1a013911c05b7193c3e794032538c2b802" compoundref="mathic_2_bit_triangle_8cpp" startline="5" endline="14">getMemoryUse</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_a18937b535f197da47bba2abff34d9c56_1a18937b535f197da47bba2abff34d9c56" compoundref="_bit_triangle_8h" startline="60" endline="64">setBit</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_bit_triangle_a49ead6e9ba6c96a9c1166e6bb1a47cac_1a49ead6e9ba6c96a9c1166e6bb1a47cac" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::BitTriangle::columnCount</definition>
+        <argsstring>() const</argsstring>
+        <name>columnCount</name>
+        <qualifiedname>mathic::BitTriangle::columnCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BitTriangle.h" line="25" column="8" bodyfile="submodules/mathic/src/mathic/BitTriangle.h" bodystart="25" bodyend="25"/>
+        <references refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" compoundref="_bit_triangle_8h" startline="81">mColumns</references>
+        <referencedby refid="classmathic_1_1_bit_triangle_aa1c6715ebf000cfeab086ab4ff583892_1aa1c6715ebf000cfeab086ab4ff583892" compoundref="_bit_triangle_8h" startline="41" endline="45">bit</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_aafcc8c4936ddabcefc79fb5534dcb78d_1aafcc8c4936ddabcefc79fb5534dcb78d" compoundref="_bit_triangle_8h" startline="49" endline="56">bitUnordered</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_a18937b535f197da47bba2abff34d9c56_1a18937b535f197da47bba2abff34d9c56" compoundref="_bit_triangle_8h" startline="60" endline="64">setBit</referencedby>
+        <referencedby refid="classmathic_1_1_bit_triangle_a37ca2f28d529a4d1c88060324899a3e1_1a37ca2f28d529a4d1c88060324899a3e1" compoundref="_bit_triangle_8h" startline="68" endline="75">setBitUnordered</referencedby>
+        <referencedby refid="test_2_bit_triangle_8cpp_a1c693fa2b45d1f3de2870086ea7b8f5c_1a1c693fa2b45d1f3de2870086ea7b8f5c" compoundref="test_2_bit_triangle_8cpp" startline="8" endline="20">TEST</referencedby>
+        <referencedby refid="test_2_bit_triangle_8cpp_a33cbd95b3c2b65b8a112cb2a47a6cabe_1a33cbd95b3c2b65b8a112cb2a47a6cabe" compoundref="test_2_bit_triangle_8cpp" startline="22" endline="70">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bit_triangle_a50ed8dc5e808c4f85cef03f561d94ca6_1a50ed8dc5e808c4f85cef03f561d94ca6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::BitTriangle::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>mathic::BitTriangle::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BitTriangle.h" line="28" column="6" bodyfile="submodules/mathic/src/mathic/BitTriangle.h" bodystart="28" bodyend="28"/>
+        <references refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" compoundref="_bit_triangle_8h" startline="81">mColumns</references>
+        <referencedby refid="test_2_bit_triangle_8cpp_a1c693fa2b45d1f3de2870086ea7b8f5c_1a1c693fa2b45d1f3de2870086ea7b8f5c" compoundref="test_2_bit_triangle_8cpp" startline="8" endline="20">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bit_triangle_aadcfc5dce452842aee8f2a31ca7ea692_1aadcfc5dce452842aee8f2a31ca7ea692" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::BitTriangle::addColumn</definition>
+        <argsstring>()</argsstring>
+        <name>addColumn</name>
+        <qualifiedname>mathic::BitTriangle::addColumn</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BitTriangle.h" line="33" column="6" bodyfile="submodules/mathic/src/mathic/BitTriangle.h" bodystart="33" bodyend="37"/>
+        <references refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" compoundref="_bit_triangle_8h" startline="81">mColumns</references>
+        <referencedby refid="test_2_bit_triangle_8cpp_a1c693fa2b45d1f3de2870086ea7b8f5c_1a1c693fa2b45d1f3de2870086ea7b8f5c" compoundref="test_2_bit_triangle_8cpp" startline="8" endline="20">TEST</referencedby>
+        <referencedby refid="test_2_bit_triangle_8cpp_a33cbd95b3c2b65b8a112cb2a47a6cabe_1a33cbd95b3c2b65b8a112cb2a47a6cabe" compoundref="test_2_bit_triangle_8cpp" startline="22" endline="70">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bit_triangle_aa1c6715ebf000cfeab086ab4ff583892_1aa1c6715ebf000cfeab086ab4ff583892" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="mathic_2src_2mathic_2stdinc_8h_ae2036df0f75d42d6498411a4d23cc4da_1ae2036df0f75d42d6498411a4d23cc4da" kindref="member">MATHIC_INLINE</ref> <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>MATHIC_INLINE bool mathic::BitTriangle::bit</definition>
+        <argsstring>(size_t column, size_t row) const</argsstring>
+        <name>bit</name>
+        <qualifiedname>mathic::BitTriangle::bit</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>column</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>row</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BitTriangle.h" line="41" column="20" bodyfile="submodules/mathic/src/mathic/BitTriangle.h" bodystart="41" bodyend="45"/>
+        <references refid="classmathic_1_1_bit_triangle_a49ead6e9ba6c96a9c1166e6bb1a47cac_1a49ead6e9ba6c96a9c1166e6bb1a47cac" compoundref="_bit_triangle_8h" startline="25" endline="25">columnCount</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_ae2036df0f75d42d6498411a4d23cc4da_1ae2036df0f75d42d6498411a4d23cc4da" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="62">MATHIC_INLINE</references>
+        <references refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" compoundref="_bit_triangle_8h" startline="81">mColumns</references>
+        <referencedby refid="classmathic_1_1_bit_triangle_aafcc8c4936ddabcefc79fb5534dcb78d_1aafcc8c4936ddabcefc79fb5534dcb78d" compoundref="_bit_triangle_8h" startline="49" endline="56">bitUnordered</referencedby>
+        <referencedby refid="test_2_bit_triangle_8cpp_a33cbd95b3c2b65b8a112cb2a47a6cabe_1a33cbd95b3c2b65b8a112cb2a47a6cabe" compoundref="test_2_bit_triangle_8cpp" startline="22" endline="70">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bit_triangle_aafcc8c4936ddabcefc79fb5534dcb78d_1aafcc8c4936ddabcefc79fb5534dcb78d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::BitTriangle::bitUnordered</definition>
+        <argsstring>(size_t x, size_t y) const</argsstring>
+        <name>bitUnordered</name>
+        <qualifiedname>mathic::BitTriangle::bitUnordered</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BitTriangle.h" line="49" column="6" bodyfile="submodules/mathic/src/mathic/BitTriangle.h" bodystart="49" bodyend="56"/>
+        <references refid="classmathic_1_1_bit_triangle_aa1c6715ebf000cfeab086ab4ff583892_1aa1c6715ebf000cfeab086ab4ff583892" compoundref="_bit_triangle_8h" startline="41" endline="45">bit</references>
+        <references refid="classmathic_1_1_bit_triangle_a49ead6e9ba6c96a9c1166e6bb1a47cac_1a49ead6e9ba6c96a9c1166e6bb1a47cac" compoundref="_bit_triangle_8h" startline="25" endline="25">columnCount</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="test_2_bit_triangle_8cpp_a33cbd95b3c2b65b8a112cb2a47a6cabe_1a33cbd95b3c2b65b8a112cb2a47a6cabe" compoundref="test_2_bit_triangle_8cpp" startline="22" endline="70">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bit_triangle_a18937b535f197da47bba2abff34d9c56_1a18937b535f197da47bba2abff34d9c56" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="mathic_2src_2mathic_2stdinc_8h_ae2036df0f75d42d6498411a4d23cc4da_1ae2036df0f75d42d6498411a4d23cc4da" kindref="member">MATHIC_INLINE</ref> void</type>
+        <definition>MATHIC_INLINE void mathic::BitTriangle::setBit</definition>
+        <argsstring>(size_t column, size_t row, bool value)</argsstring>
+        <name>setBit</name>
+        <qualifiedname>mathic::BitTriangle::setBit</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>column</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BitTriangle.h" line="60" column="20" bodyfile="submodules/mathic/src/mathic/BitTriangle.h" bodystart="60" bodyend="64"/>
+        <references refid="classmathic_1_1_bit_triangle_a49ead6e9ba6c96a9c1166e6bb1a47cac_1a49ead6e9ba6c96a9c1166e6bb1a47cac" compoundref="_bit_triangle_8h" startline="25" endline="25">columnCount</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_ae2036df0f75d42d6498411a4d23cc4da_1ae2036df0f75d42d6498411a4d23cc4da" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="62">MATHIC_INLINE</references>
+        <references refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" compoundref="_bit_triangle_8h" startline="81">mColumns</references>
+        <referencedby refid="classmathic_1_1_bit_triangle_a37ca2f28d529a4d1c88060324899a3e1_1a37ca2f28d529a4d1c88060324899a3e1" compoundref="_bit_triangle_8h" startline="68" endline="75">setBitUnordered</referencedby>
+        <referencedby refid="test_2_bit_triangle_8cpp_a33cbd95b3c2b65b8a112cb2a47a6cabe_1a33cbd95b3c2b65b8a112cb2a47a6cabe" compoundref="test_2_bit_triangle_8cpp" startline="22" endline="70">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bit_triangle_a37ca2f28d529a4d1c88060324899a3e1_1a37ca2f28d529a4d1c88060324899a3e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::BitTriangle::setBitUnordered</definition>
+        <argsstring>(size_t x, size_t y, bool value)</argsstring>
+        <name>setBitUnordered</name>
+        <qualifiedname>mathic::BitTriangle::setBitUnordered</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BitTriangle.h" line="68" column="6" bodyfile="submodules/mathic/src/mathic/BitTriangle.h" bodystart="68" bodyend="75"/>
+        <references refid="classmathic_1_1_bit_triangle_a49ead6e9ba6c96a9c1166e6bb1a47cac_1a49ead6e9ba6c96a9c1166e6bb1a47cac" compoundref="_bit_triangle_8h" startline="25" endline="25">columnCount</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="classmathic_1_1_bit_triangle_a18937b535f197da47bba2abff34d9c56_1a18937b535f197da47bba2abff34d9c56" compoundref="_bit_triangle_8h" startline="60" endline="64">setBit</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="test_2_bit_triangle_8cpp_a33cbd95b3c2b65b8a112cb2a47a6cabe_1a33cbd95b3c2b65b8a112cb2a47a6cabe" compoundref="test_2_bit_triangle_8cpp" startline="22" endline="70">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_bit_triangle_a013911c05b7193c3e794032538c2b802_1a013911c05b7193c3e794032538c2b802" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mathic::BitTriangle::getMemoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>getMemoryUse</name>
+        <qualifiedname>mathic::BitTriangle::getMemoryUse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/BitTriangle.h" line="77" column="8" bodyfile="submodules/mathic/src/mathic/BitTriangle.cpp" bodystart="5" bodyend="14"/>
+        <references refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" compoundref="_bit_triangle_8h" startline="81">mColumns</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="6">
+        <label>T</label>
+      </node>
+      <node id="4">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="1">
+        <label>mathic::BitTriangle</label>
+        <link refid="classmathic_1_1_bit_triangle"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mColumns</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; std::vector&lt; bool &gt; &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; std::vector&lt; bool &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/BitTriangle.h" line="22" column="3" bodyfile="submodules/mathic/src/mathic/BitTriangle.h" bodystart="22" bodyend="82"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_bit_triangle_aadcfc5dce452842aee8f2a31ca7ea692_1aadcfc5dce452842aee8f2a31ca7ea692" prot="public" virt="non-virtual"><scope>mathic::BitTriangle</scope><name>addColumn</name></member>
+      <member refid="classmathic_1_1_bit_triangle_aa1c6715ebf000cfeab086ab4ff583892_1aa1c6715ebf000cfeab086ab4ff583892" prot="public" virt="non-virtual"><scope>mathic::BitTriangle</scope><name>bit</name></member>
+      <member refid="classmathic_1_1_bit_triangle_aafcc8c4936ddabcefc79fb5534dcb78d_1aafcc8c4936ddabcefc79fb5534dcb78d" prot="public" virt="non-virtual"><scope>mathic::BitTriangle</scope><name>bitUnordered</name></member>
+      <member refid="classmathic_1_1_bit_triangle_a49ead6e9ba6c96a9c1166e6bb1a47cac_1a49ead6e9ba6c96a9c1166e6bb1a47cac" prot="public" virt="non-virtual"><scope>mathic::BitTriangle</scope><name>columnCount</name></member>
+      <member refid="classmathic_1_1_bit_triangle_a50ed8dc5e808c4f85cef03f561d94ca6_1a50ed8dc5e808c4f85cef03f561d94ca6" prot="public" virt="non-virtual"><scope>mathic::BitTriangle</scope><name>empty</name></member>
+      <member refid="classmathic_1_1_bit_triangle_a013911c05b7193c3e794032538c2b802_1a013911c05b7193c3e794032538c2b802" prot="public" virt="non-virtual"><scope>mathic::BitTriangle</scope><name>getMemoryUse</name></member>
+      <member refid="classmathic_1_1_bit_triangle_a3af6cd07e5a22b74823999e0a24bfde3_1a3af6cd07e5a22b74823999e0a24bfde3" prot="private" virt="non-virtual"><scope>mathic::BitTriangle</scope><name>mColumns</name></member>
+      <member refid="classmathic_1_1_bit_triangle_a18937b535f197da47bba2abff34d9c56_1a18937b535f197da47bba2abff34d9c56" prot="public" virt="non-virtual"><scope>mathic::BitTriangle</scope><name>setBit</name></member>
+      <member refid="classmathic_1_1_bit_triangle_a37ca2f28d529a4d1c88060324899a3e1_1a37ca2f28d529a4d1c88060324899a3e1" prot="public" virt="non-virtual"><scope>mathic::BitTriangle</scope><name>setBitUnordered</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

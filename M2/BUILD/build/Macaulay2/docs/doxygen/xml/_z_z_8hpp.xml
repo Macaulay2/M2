@@ -1,0 +1,3111 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_z_z_8hpp" kind="file" language="C++">
+    <compoundname>ZZ.hpp</compoundname>
+    <includes refid="_macaulay2_2e_2error_8h" local="yes">error.h</includes>
+    <includes refid="ring_8hpp" local="yes">ring.hpp</includes>
+    <includes local="no">cstddef</includes>
+    <includedby refid="_g_f_8cpp" local="yes">Macaulay2/e/GF.cpp</includedby>
+    <includedby refid="_free_algebra_8cpp" local="yes">Macaulay2/e/NCAlgebras/FreeAlgebra.cpp</includedby>
+    <includedby refid="_z_z_8cpp" local="yes">Macaulay2/e/ZZ.cpp</includedby>
+    <includedby refid="_z_zp_8cpp" local="yes">Macaulay2/e/ZZp.cpp</includedby>
+    <includedby refid="aring-zz-flint_8hpp" local="yes">Macaulay2/e/aring-zz-flint.hpp</includedby>
+    <includedby refid="aring-zz-gmp_8hpp" local="yes">Macaulay2/e/aring-zz-gmp.hpp</includedby>
+    <includedby refid="coeffrings_8hpp" local="yes">Macaulay2/e/coeffrings.hpp</includedby>
+    <includedby refid="dpoly_8cpp" local="yes">Macaulay2/e/dpoly.cpp</includedby>
+    <includedby refid="gbring_8cpp" local="yes">Macaulay2/e/gbring.cpp</includedby>
+    <includedby refid="hermite_8hpp" local="yes">Macaulay2/e/hermite.hpp</includedby>
+    <includedby refid="interface_2ring_8cpp" local="yes">Macaulay2/e/interface/ring.cpp</includedby>
+    <includedby refid="poly_8cpp" local="yes">Macaulay2/e/poly.cpp</includedby>
+    <includedby refid="ring_8cpp" local="yes">Macaulay2/e/ring.cpp</includedby>
+    <includedby refid="ring_8hpp" local="yes">Macaulay2/e/ring.hpp</includedby>
+    <includedby refid="res-f4-m2-interface_8cpp" local="yes">Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</includedby>
+    <includedby refid="schur_8cpp" local="yes">Macaulay2/e/schur.cpp</includedby>
+    <includedby refid="schur2_8cpp" local="yes">Macaulay2/e/schur2.cpp</includedby>
+    <includedby refid="_ring_test_8hpp" local="yes">Macaulay2/e/unit-tests/RingTest.hpp</includedby>
+    <incdepgraph>
+      <node id="14">
+        <label>ExponentList.hpp</label>
+        <link refid="_exponent_list_8hpp"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>ExponentVector.hpp</label>
+        <link refid="_exponent_vector_8hpp"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>aring.hpp</label>
+        <link refid="aring_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>buffer.hpp</label>
+        <link refid="buffer_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>error.h</label>
+        <link refid="_macaulay2_2e_2error_8h"/>
+      </node>
+      <node id="26">
+        <label>exceptions.hpp</label>
+        <link refid="exceptions_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>hash.hpp</label>
+        <link refid="hash_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>imonorder.hpp</label>
+        <link refid="imonorder_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>interface/m2-mem.h</label>
+        <link refid="m2-mem_8h"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>interface/monomial-ordering.h</label>
+        <link refid="monomial-ordering_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>monoid.hpp</label>
+        <link refid="monoid_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>newdelete.hpp</label>
+        <link refid="newdelete_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>overflow.hpp</label>
+        <link refid="overflow_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="1" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ringelem.hpp</label>
+        <link refid="ringelem_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>style.hpp</label>
+        <link refid="style_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>util.hpp</label>
+        <link refid="util_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>M2/config.h</label>
+      </node>
+      <node id="20">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="9">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="22">
+        <label>assert.h</label>
+      </node>
+      <node id="6">
+        <label>cassert</label>
+      </node>
+      <node id="40">
+        <label>cstddef</label>
+      </node>
+      <node id="15">
+        <label>cstdio</label>
+      </node>
+      <node id="33">
+        <label>gc/gc_allocator.h</label>
+      </node>
+      <node id="36">
+        <label>iostream</label>
+      </node>
+      <node id="7">
+        <label>memory</label>
+      </node>
+      <node id="11">
+        <label>stddef.h</label>
+      </node>
+      <node id="27">
+        <label>stdexcept</label>
+      </node>
+      <node id="19">
+        <label>stdint.h</label>
+      </node>
+      <node id="31">
+        <label>stdlib.h</label>
+      </node>
+      <node id="12">
+        <label>string</label>
+      </node>
+      <node id="23">
+        <label>string.h</label>
+      </node>
+      <node id="24">
+        <label>type_traits</label>
+      </node>
+      <node id="4">
+        <label>utility</label>
+      </node>
+      <node id="32">
+        <label>valgrind/memcheck.h</label>
+      </node>
+      <node id="13">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="134">
+        <label>Macaulay2/e/BasicPolyList.cpp</label>
+        <link refid="_basic_poly_list_8cpp"/>
+      </node>
+      <node id="135">
+        <label>Macaulay2/e/Eschreyer.cpp</label>
+        <link refid="_eschreyer_8cpp"/>
+      </node>
+      <node id="136">
+        <label>Macaulay2/e/Eschreyer.hpp</label>
+        <link refid="_eschreyer_8hpp"/>
+        <childnode refid="135" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="137" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/GF.cpp</label>
+        <link refid="_g_f_8cpp"/>
+      </node>
+      <node id="238">
+        <label>Macaulay2/e/GF.hpp</label>
+        <link refid="_g_f_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="138">
+        <label>Macaulay2/e/LLL.cpp</label>
+        <link refid="_l_l_l_8cpp"/>
+      </node>
+      <node id="239">
+        <label>Macaulay2/e/LLL.hpp</label>
+        <link refid="_l_l_l_8hpp"/>
+        <childnode refid="138" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+      </node>
+      <node id="100">
+        <label>Macaulay2/e/M2FreeAlgebra.cpp</label>
+        <link refid="_m2_free_algebra_8cpp"/>
+      </node>
+      <node id="99">
+        <label>Macaulay2/e/M2FreeAlgebra.hpp</label>
+        <link refid="_m2_free_algebra_8hpp"/>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="102">
+        <label>Macaulay2/e/M2FreeAlgebraQuotient.cpp</label>
+        <link refid="_m2_free_algebra_quotient_8cpp"/>
+      </node>
+      <node id="101">
+        <label>Macaulay2/e/M2FreeAlgebraQuotient.hpp</label>
+        <link refid="_m2_free_algebra_quotient_8hpp"/>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="103" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Macaulay2/e/NAG.cpp</label>
+        <link refid="_n_a_g_8cpp"/>
+      </node>
+      <node id="9">
+        <label>Macaulay2/e/NAG.hpp</label>
+        <link refid="_n_a_g_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebra.cpp</label>
+        <link refid="_free_algebra_8cpp"/>
+      </node>
+      <node id="105">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebra.hpp</label>
+        <link refid="_free_algebra_8hpp"/>
+        <childnode refid="99" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="106" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="111" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+      </node>
+      <node id="107">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebraQuotient.cpp</label>
+        <link refid="_free_algebra_quotient_8cpp"/>
+      </node>
+      <node id="106">
+        <label>Macaulay2/e/NCAlgebras/FreeAlgebraQuotient.hpp</label>
+        <link refid="_free_algebra_quotient_8hpp"/>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Macaulay2/e/NCAlgebras/NCF4.cpp</label>
+        <link refid="_n_c_f4_8cpp"/>
+      </node>
+      <node id="17">
+        <label>Macaulay2/e/NCAlgebras/NCF4.hpp</label>
+        <link refid="_n_c_f4_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="109">
+        <label>Macaulay2/e/NCAlgebras/NCGroebner.cpp</label>
+        <link refid="_n_c_groebner_8cpp"/>
+      </node>
+      <node id="110">
+        <label>Macaulay2/e/NCAlgebras/NCReduction.cpp</label>
+        <link refid="_n_c_reduction_8cpp"/>
+      </node>
+      <node id="103">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.cpp</label>
+        <link refid="nc-res-computation_8cpp"/>
+      </node>
+      <node id="108">
+        <label>Macaulay2/e/NCResolutions/nc-res-computation.hpp</label>
+        <link refid="nc-res-computation_8hpp"/>
+        <childnode refid="103" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Macaulay2/e/SLP.cpp</label>
+        <link refid="_s_l_p_8cpp"/>
+      </node>
+      <node id="13">
+        <label>Macaulay2/e/SLP.hpp</label>
+        <link refid="_s_l_p_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Macaulay2/e/VectorArithmetic.hpp</label>
+        <link refid="_vector_arithmetic_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/ZZ.cpp</label>
+        <link refid="_z_z_8cpp"/>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/ZZ.hpp</label>
+        <link refid="_z_z_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="211" relation="include">
+        </childnode>
+        <childnode refid="213" relation="include">
+        </childnode>
+        <childnode refid="266" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Macaulay2/e/ZZp.cpp</label>
+        <link refid="_z_zp_8cpp"/>
+      </node>
+      <node id="86">
+        <label>Macaulay2/e/ZZp.hpp</label>
+        <link refid="_z_zp_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+      </node>
+      <node id="248">
+        <label>Macaulay2/e/aring-CC.cpp</label>
+        <link refid="aring-_c_c_8cpp"/>
+      </node>
+      <node id="247">
+        <label>Macaulay2/e/aring-CC.hpp</label>
+        <link refid="aring-_c_c_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="248" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="249" relation="include">
+        </childnode>
+      </node>
+      <node id="251">
+        <label>Macaulay2/e/aring-CCC.cpp</label>
+        <link refid="aring-_c_c_c_8cpp"/>
+      </node>
+      <node id="250">
+        <label>Macaulay2/e/aring-CCC.hpp</label>
+        <link refid="aring-_c_c_c_8hpp"/>
+        <childnode refid="251" relation="include">
+        </childnode>
+        <childnode refid="252" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="187" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="254" relation="include">
+        </childnode>
+      </node>
+      <node id="253">
+        <label>Macaulay2/e/aring-CCi.cpp</label>
+        <link refid="aring-_c_ci_8cpp"/>
+      </node>
+      <node id="252">
+        <label>Macaulay2/e/aring-CCi.hpp</label>
+        <link refid="aring-_c_ci_8hpp"/>
+        <childnode refid="253" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+      </node>
+      <node id="256">
+        <label>Macaulay2/e/aring-RR.cpp</label>
+        <link refid="aring-_r_r_8cpp"/>
+      </node>
+      <node id="255">
+        <label>Macaulay2/e/aring-RR.hpp</label>
+        <link refid="aring-_r_r_8hpp"/>
+        <childnode refid="247" relation="include">
+        </childnode>
+        <childnode refid="256" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="249" relation="include">
+        </childnode>
+        <childnode refid="257" relation="include">
+        </childnode>
+      </node>
+      <node id="259">
+        <label>Macaulay2/e/aring-RRR.cpp</label>
+        <link refid="aring-_r_r_r_8cpp"/>
+      </node>
+      <node id="258">
+        <label>Macaulay2/e/aring-RRR.hpp</label>
+        <link refid="aring-_r_r_r_8hpp"/>
+        <childnode refid="250" relation="include">
+        </childnode>
+        <childnode refid="252" relation="include">
+        </childnode>
+        <childnode refid="259" relation="include">
+        </childnode>
+        <childnode refid="260" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="254" relation="include">
+        </childnode>
+        <childnode refid="262" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="261">
+        <label>Macaulay2/e/aring-RRi.cpp</label>
+        <link refid="aring-_r_ri_8cpp"/>
+      </node>
+      <node id="260">
+        <label>Macaulay2/e/aring-RRi.hpp</label>
+        <link refid="aring-_r_ri_8hpp"/>
+        <childnode refid="252" relation="include">
+        </childnode>
+        <childnode refid="261" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+      </node>
+      <node id="207">
+        <label>Macaulay2/e/aring-gf-flint-big.cpp</label>
+        <link refid="aring-gf-flint-big_8cpp"/>
+      </node>
+      <node id="208">
+        <label>Macaulay2/e/aring-gf-flint.cpp</label>
+        <link refid="aring-gf-flint_8cpp"/>
+      </node>
+      <node id="8">
+        <label>Macaulay2/e/aring-glue.hpp</label>
+        <link refid="aring-glue_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="223">
+        <label>Macaulay2/e/aring-m2-gf.cpp</label>
+        <link refid="aring-m2-gf_8cpp"/>
+      </node>
+      <node id="224">
+        <label>Macaulay2/e/aring-m2-gf.hpp</label>
+        <link refid="aring-m2-gf_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="223" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="113">
+        <label>Macaulay2/e/aring-qq-flint.cpp</label>
+        <link refid="aring-qq-flint_8cpp"/>
+      </node>
+      <node id="112">
+        <label>Macaulay2/e/aring-qq-flint.hpp</label>
+        <link refid="aring-qq-flint_8hpp"/>
+        <childnode refid="113" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="115" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+      </node>
+      <node id="118">
+        <label>Macaulay2/e/aring-qq-gmp.cpp</label>
+        <link refid="aring-qq-gmp_8cpp"/>
+      </node>
+      <node id="117">
+        <label>Macaulay2/e/aring-qq-gmp.hpp</label>
+        <link refid="aring-qq-gmp_8hpp"/>
+        <childnode refid="118" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+      </node>
+      <node id="114">
+        <label>Macaulay2/e/aring-qq.hpp</label>
+        <link refid="aring-qq_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Macaulay2/e/aring-translate.hpp</label>
+        <link refid="aring-translate_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>Macaulay2/e/aring-zz-flint.cpp</label>
+        <link refid="aring-zz-flint_8cpp"/>
+      </node>
+      <node id="6">
+        <label>Macaulay2/e/aring-zz-flint.hpp</label>
+        <link refid="aring-zz-flint_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+      </node>
+      <node id="84">
+        <label>Macaulay2/e/aring-zz-gmp.cpp</label>
+        <link refid="aring-zz-gmp_8cpp"/>
+      </node>
+      <node id="83">
+        <label>Macaulay2/e/aring-zz-gmp.hpp</label>
+        <link refid="aring-zz-gmp_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="263">
+        <label>Macaulay2/e/aring-zzp-ffpack.cpp</label>
+        <link refid="aring-zzp-ffpack_8cpp"/>
+      </node>
+      <node id="264">
+        <label>Macaulay2/e/aring-zzp-flint.cpp</label>
+        <link refid="aring-zzp-flint_8cpp"/>
+      </node>
+      <node id="265">
+        <label>Macaulay2/e/aring-zzp.cpp</label>
+        <link refid="aring-zzp_8cpp"/>
+      </node>
+      <node id="195">
+        <label>Macaulay2/e/assprime.cpp</label>
+        <link refid="assprime_8cpp"/>
+      </node>
+      <node id="194">
+        <label>Macaulay2/e/assprime.hpp</label>
+        <link refid="assprime_8hpp"/>
+        <childnode refid="195" relation="include">
+        </childnode>
+        <childnode refid="158" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+      </node>
+      <node id="139">
+        <label>Macaulay2/e/bibasis/bibasis.cpp</label>
+        <link refid="bibasis_8cpp"/>
+      </node>
+      <node id="140">
+        <label>Macaulay2/e/bibasis/involutive.hpp</label>
+        <link refid="involutive_8hpp"/>
+        <childnode refid="141" relation="include">
+        </childnode>
+        <childnode refid="142" relation="include">
+        </childnode>
+      </node>
+      <node id="141">
+        <label>Macaulay2/e/bibasis/launcher.cpp</label>
+        <link refid="launcher_8cpp"/>
+      </node>
+      <node id="142">
+        <label>Macaulay2/e/bibasis/launcher.hpp</label>
+        <link refid="launcher_8hpp"/>
+        <childnode refid="139" relation="include">
+        </childnode>
+        <childnode refid="141" relation="include">
+        </childnode>
+      </node>
+      <node id="91">
+        <label>Macaulay2/e/coeffrings.cpp</label>
+        <link refid="coeffrings_8cpp"/>
+      </node>
+      <node id="85">
+        <label>Macaulay2/e/coeffrings.hpp</label>
+        <link refid="coeffrings_8hpp"/>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="143">
+        <label>Macaulay2/e/comp-gb-declared.cpp</label>
+        <link refid="comp-gb-declared_8cpp"/>
+      </node>
+      <node id="229">
+        <label>Macaulay2/e/comp-gb-declared.hpp</label>
+        <link refid="comp-gb-declared_8hpp"/>
+        <childnode refid="143" relation="include">
+        </childnode>
+        <childnode refid="226" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="95">
+        <label>Macaulay2/e/comp-gb.cpp</label>
+        <link refid="comp-gb_8cpp"/>
+      </node>
+      <node id="45">
+        <label>Macaulay2/e/comp-res.cpp</label>
+        <link refid="comp-res_8cpp"/>
+      </node>
+      <node id="120">
+        <label>Macaulay2/e/cra.cpp</label>
+        <link refid="cra_8cpp"/>
+      </node>
+      <node id="96">
+        <label>Macaulay2/e/debug.cpp</label>
+        <link refid="debug_8cpp"/>
+      </node>
+      <node id="145">
+        <label>Macaulay2/e/det.cpp</label>
+        <link refid="det_8cpp"/>
+      </node>
+      <node id="144">
+        <label>Macaulay2/e/det.hpp</label>
+        <link refid="det_8hpp"/>
+        <childnode refid="145" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>Macaulay2/e/dmat-lu-inplace.hpp</label>
+        <link refid="dmat-lu-inplace_8hpp"/>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>Macaulay2/e/dmat-lu.hpp</label>
+        <link refid="dmat-lu_8hpp"/>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="115">
+        <label>Macaulay2/e/dmat-qq-flint.hpp</label>
+        <link refid="dmat-qq-flint_8hpp"/>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>Macaulay2/e/dmat-zz-flint.hpp</label>
+        <link refid="dmat-zz-flint_8hpp"/>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>Macaulay2/e/dmat.cpp</label>
+        <link refid="dmat_8cpp"/>
+      </node>
+      <node id="67">
+        <label>Macaulay2/e/dmat.hpp</label>
+        <link refid="dmat_8hpp"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+      </node>
+      <node id="93">
+        <label>Macaulay2/e/dpoly.cpp</label>
+        <link refid="dpoly_8cpp"/>
+      </node>
+      <node id="76">
+        <label>Macaulay2/e/eigen.cpp</label>
+        <link refid="eigen_8cpp"/>
+      </node>
+      <node id="75">
+        <label>Macaulay2/e/eigen.hpp</label>
+        <link refid="eigen_8hpp"/>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>Macaulay2/e/engine.cpp</label>
+        <link refid="engine_8cpp"/>
+      </node>
+      <node id="19">
+        <label>Macaulay2/e/f4/f4-computation.cpp</label>
+        <link refid="f4-computation_8cpp"/>
+      </node>
+      <node id="27">
+        <label>Macaulay2/e/f4/f4-computation.hpp</label>
+        <link refid="f4-computation_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Macaulay2/e/f4/f4-m2-interface.cpp</label>
+        <link refid="f4-m2-interface_8cpp"/>
+      </node>
+      <node id="22">
+        <label>Macaulay2/e/f4/f4-m2-interface.hpp</label>
+        <link refid="f4-m2-interface_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>Macaulay2/e/f4/f4-spairs.cpp</label>
+        <link refid="f4-spairs_8cpp"/>
+      </node>
+      <node id="24">
+        <label>Macaulay2/e/f4/f4-spairs.hpp</label>
+        <link refid="f4-spairs_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Macaulay2/e/f4/f4-types.hpp</label>
+        <link refid="f4-types_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>Macaulay2/e/f4/f4.cpp</label>
+        <link refid="f4_8cpp"/>
+      </node>
+      <node id="26">
+        <label>Macaulay2/e/f4/f4.hpp</label>
+        <link refid="f4_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="121">
+        <label>Macaulay2/e/f4/hilb-fcn.cpp</label>
+        <link refid="hilb-fcn_8cpp"/>
+      </node>
+      <node id="196">
+        <label>Macaulay2/e/finalize.cpp</label>
+        <link refid="finalize_8cpp"/>
+      </node>
+      <node id="74">
+        <label>Macaulay2/e/fplll-interface.cpp</label>
+        <link refid="fplll-interface_8cpp"/>
+      </node>
+      <node id="123">
+        <label>Macaulay2/e/frac.cpp</label>
+        <link refid="frac_8cpp"/>
+      </node>
+      <node id="122">
+        <label>Macaulay2/e/frac.hpp</label>
+        <link refid="frac_8hpp"/>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="242">
+        <label>Macaulay2/e/fractionfreeLU.cpp</label>
+        <link refid="fractionfree_l_u_8cpp"/>
+      </node>
+      <node id="241">
+        <label>Macaulay2/e/fractionfreeLU.hpp</label>
+        <link refid="fractionfree_l_u_8hpp"/>
+        <childnode refid="242" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+      </node>
+      <node id="146">
+        <label>Macaulay2/e/franzi-interface.cpp</label>
+        <link refid="franzi-interface_8cpp"/>
+      </node>
+      <node id="125">
+        <label>Macaulay2/e/freemod.cpp</label>
+        <link refid="freemod_8cpp"/>
+      </node>
+      <node id="124">
+        <label>Macaulay2/e/freemod.hpp</label>
+        <link refid="freemod_8hpp"/>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+        <childnode refid="129" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="131" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="133" relation="include">
+        </childnode>
+        <childnode refid="182" relation="include">
+        </childnode>
+        <childnode refid="183" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="184" relation="include">
+        </childnode>
+      </node>
+      <node id="148">
+        <label>Macaulay2/e/gauss.cpp</label>
+        <link refid="gauss_8cpp"/>
+      </node>
+      <node id="147">
+        <label>Macaulay2/e/gauss.hpp</label>
+        <link refid="gauss_8hpp"/>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="148" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="149">
+        <label>Macaulay2/e/gb-default.cpp</label>
+        <link refid="gb-default_8cpp"/>
+      </node>
+      <node id="230">
+        <label>Macaulay2/e/gb-default.hpp</label>
+        <link refid="gb-default_8hpp"/>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="149" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>Macaulay2/e/gb-f4/Basis.cpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8cpp"/>
+      </node>
+      <node id="28">
+        <label>Macaulay2/e/gb-f4/Basis.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_basis_8hpp"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.cpp</label>
+        <link refid="_g_b_f4_computation_8cpp"/>
+      </node>
+      <node id="30">
+        <label>Macaulay2/e/gb-f4/GBF4Computation.hpp</label>
+        <link refid="_g_b_f4_computation_8hpp"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.cpp</label>
+        <link refid="_g_b_f4_interface_8cpp"/>
+      </node>
+      <node id="32">
+        <label>Macaulay2/e/gb-f4/GBF4Interface.hpp</label>
+        <link refid="_g_b_f4_interface_8hpp"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>Macaulay2/e/gb-f4/PolynomialList.cpp</label>
+        <link refid="_polynomial_list_8cpp"/>
+      </node>
+      <node id="36">
+        <label>Macaulay2/e/gb-f4/PolynomialList.hpp</label>
+        <link refid="_polynomial_list_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>Macaulay2/e/gb-f4/SPairs.hpp</label>
+        <link refid="_macaulay2_2e_2gb-f4_2_s_pairs_8hpp"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="151">
+        <label>Macaulay2/e/gb-homog2.cpp</label>
+        <link refid="gb-homog2_8cpp"/>
+      </node>
+      <node id="150">
+        <label>Macaulay2/e/gb-homog2.hpp</label>
+        <link refid="gb-homog2_8hpp"/>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+      </node>
+      <node id="153">
+        <label>Macaulay2/e/gb-sugarless.cpp</label>
+        <link refid="gb-sugarless_8cpp"/>
+      </node>
+      <node id="152">
+        <label>Macaulay2/e/gb-sugarless.hpp</label>
+        <link refid="gb-sugarless_8hpp"/>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="153" relation="include">
+        </childnode>
+      </node>
+      <node id="155">
+        <label>Macaulay2/e/gb-toric.cpp</label>
+        <link refid="gb-toric_8cpp"/>
+      </node>
+      <node id="154">
+        <label>Macaulay2/e/gb-toric.hpp</label>
+        <link refid="gb-toric_8hpp"/>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="155" relation="include">
+        </childnode>
+      </node>
+      <node id="226">
+        <label>Macaulay2/e/gb-walk.cpp</label>
+        <link refid="gb-walk_8cpp"/>
+      </node>
+      <node id="225">
+        <label>Macaulay2/e/gb-walk.hpp</label>
+        <link refid="gb-walk_8hpp"/>
+        <childnode refid="226" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>Macaulay2/e/gbring.cpp</label>
+        <link refid="gbring_8cpp"/>
+      </node>
+      <node id="126">
+        <label>Macaulay2/e/gbweight.cpp</label>
+        <link refid="gbweight_8cpp"/>
+      </node>
+      <node id="97">
+        <label>Macaulay2/e/hermite.cpp</label>
+        <link refid="hermite_8cpp"/>
+      </node>
+      <node id="94">
+        <label>Macaulay2/e/hermite.hpp</label>
+        <link refid="hermite_8hpp"/>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+      </node>
+      <node id="127">
+        <label>Macaulay2/e/hilb.cpp</label>
+        <link refid="hilb_8cpp"/>
+      </node>
+      <node id="52">
+        <label>Macaulay2/e/interface/aring.cpp</label>
+        <link refid="interface_2aring_8cpp"/>
+      </node>
+      <node id="156">
+        <label>Macaulay2/e/interface/cone.cpp</label>
+        <link refid="cone_8cpp"/>
+      </node>
+      <node id="128">
+        <label>Macaulay2/e/interface/cra.cpp</label>
+        <link refid="interface_2cra_8cpp"/>
+      </node>
+      <node id="157">
+        <label>Macaulay2/e/interface/factory.cpp</label>
+        <link refid="factory_8cpp"/>
+      </node>
+      <node id="129">
+        <label>Macaulay2/e/interface/freemodule.cpp</label>
+        <link refid="freemodule_8cpp"/>
+      </node>
+      <node id="18">
+        <label>Macaulay2/e/interface/groebner.cpp</label>
+        <link refid="groebner_8cpp"/>
+      </node>
+      <node id="11">
+        <label>Macaulay2/e/interface/matrix.cpp</label>
+        <link refid="interface_2matrix_8cpp"/>
+      </node>
+      <node id="186">
+        <label>Macaulay2/e/interface/monoid.cpp</label>
+        <link refid="interface_2monoid_8cpp"/>
+      </node>
+      <node id="158">
+        <label>Macaulay2/e/interface/monomial-ideal.cpp</label>
+        <link refid="monomial-ideal_8cpp"/>
+      </node>
+      <node id="159">
+        <label>Macaulay2/e/interface/mutable-matrix.cpp</label>
+        <link refid="mutable-matrix_8cpp"/>
+      </node>
+      <node id="187">
+        <label>Macaulay2/e/interface/polyroots.cpp</label>
+        <link refid="polyroots_8cpp"/>
+      </node>
+      <node id="53">
+        <label>Macaulay2/e/interface/ring.cpp</label>
+        <link refid="interface_2ring_8cpp"/>
+      </node>
+      <node id="54">
+        <label>Macaulay2/e/interface/ringelement.cpp</label>
+        <link refid="ringelement_8cpp"/>
+      </node>
+      <node id="130">
+        <label>Macaulay2/e/interface/ringmap.cpp</label>
+        <link refid="interface_2ringmap_8cpp"/>
+      </node>
+      <node id="131">
+        <label>Macaulay2/e/interreduce.cpp</label>
+        <link refid="interreduce_8cpp"/>
+      </node>
+      <node id="78">
+        <label>Macaulay2/e/lapack.cpp</label>
+        <link refid="lapack_8cpp"/>
+      </node>
+      <node id="77">
+        <label>Macaulay2/e/lapack.hpp</label>
+        <link refid="lapack_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="160">
+        <label>Macaulay2/e/localring.cpp</label>
+        <link refid="localring_8cpp"/>
+      </node>
+      <node id="188">
+        <label>Macaulay2/e/localring.hpp</label>
+        <link refid="localring_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="160" relation="include">
+        </childnode>
+        <childnode refid="189" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="79">
+        <label>Macaulay2/e/mat-arith.hpp</label>
+        <link refid="mat-arith_8hpp"/>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>Macaulay2/e/mat-linalg.hpp</label>
+        <link refid="mat-linalg_8hpp"/>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>Macaulay2/e/mat.cpp</label>
+        <link refid="mat_8cpp"/>
+      </node>
+      <node id="240">
+        <label>Macaulay2/e/mat.hpp</label>
+        <link refid="mat_8hpp"/>
+        <childnode refid="239" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="196" relation="include">
+        </childnode>
+        <childnode refid="241" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="189" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="243" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="161">
+        <label>Macaulay2/e/matrix-con.cpp</label>
+        <link refid="matrix-con_8cpp"/>
+      </node>
+      <node id="191">
+        <label>Macaulay2/e/matrix-con.hpp</label>
+        <link refid="matrix-con_8hpp"/>
+        <childnode refid="135" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="140" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="144" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="146" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="148" relation="include">
+        </childnode>
+        <childnode refid="149" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+        <childnode refid="153" relation="include">
+        </childnode>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="155" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+        <childnode refid="156" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="160" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="161" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+        <childnode refid="163" relation="include">
+        </childnode>
+        <childnode refid="165" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="166" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="168" relation="include">
+        </childnode>
+        <childnode refid="169" relation="include">
+        </childnode>
+        <childnode refid="192" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+        <childnode refid="172" relation="include">
+        </childnode>
+        <childnode refid="174" relation="include">
+        </childnode>
+        <childnode refid="176" relation="include">
+        </childnode>
+        <childnode refid="177" relation="include">
+        </childnode>
+        <childnode refid="179" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="132">
+        <label>Macaulay2/e/matrix-kbasis.cpp</label>
+        <link refid="matrix-kbasis_8cpp"/>
+      </node>
+      <node id="111">
+        <label>Macaulay2/e/matrix-ncbasis.cpp</label>
+        <link refid="matrix-ncbasis_8cpp"/>
+      </node>
+      <node id="162">
+        <label>Macaulay2/e/matrix-sort.cpp</label>
+        <link refid="matrix-sort_8cpp"/>
+      </node>
+      <node id="164">
+        <label>Macaulay2/e/matrix-stream.cpp</label>
+        <link refid="matrix-stream_8cpp"/>
+      </node>
+      <node id="163">
+        <label>Macaulay2/e/matrix-stream.hpp</label>
+        <link refid="matrix-stream_8hpp"/>
+        <childnode refid="134" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="164" relation="include">
+        </childnode>
+      </node>
+      <node id="165">
+        <label>Macaulay2/e/matrix-symm.cpp</label>
+        <link refid="matrix-symm_8cpp"/>
+      </node>
+      <node id="104">
+        <label>Macaulay2/e/matrix.cpp</label>
+        <link refid="matrix_8cpp"/>
+      </node>
+      <node id="133">
+        <label>Macaulay2/e/matrix.hpp</label>
+        <link refid="matrix_8hpp"/>
+        <childnode refid="134" relation="include">
+        </childnode>
+        <childnode refid="135" relation="include">
+        </childnode>
+        <childnode refid="136" relation="include">
+        </childnode>
+        <childnode refid="138" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="139" relation="include">
+        </childnode>
+        <childnode refid="140" relation="include">
+        </childnode>
+        <childnode refid="141" relation="include">
+        </childnode>
+        <childnode refid="142" relation="include">
+        </childnode>
+        <childnode refid="143" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="144" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="146" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="147" relation="include">
+        </childnode>
+        <childnode refid="149" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="154" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="156" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+        <childnode refid="157" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="158" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="160" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="161" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+        <childnode refid="162" relation="include">
+        </childnode>
+        <childnode refid="163" relation="include">
+        </childnode>
+        <childnode refid="165" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="166" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="168" relation="include">
+        </childnode>
+        <childnode refid="169" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+        <childnode refid="171" relation="include">
+        </childnode>
+        <childnode refid="173" relation="include">
+        </childnode>
+        <childnode refid="175" relation="include">
+        </childnode>
+        <childnode refid="178" relation="include">
+        </childnode>
+        <childnode refid="179" relation="include">
+        </childnode>
+        <childnode refid="180" relation="include">
+        </childnode>
+        <childnode refid="137" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="198">
+        <label>Macaulay2/e/monideal-minprimes.cpp</label>
+        <link refid="monideal-minprimes_8cpp"/>
+      </node>
+      <node id="197">
+        <label>Macaulay2/e/monideal-minprimes.hpp</label>
+        <link refid="monideal-minprimes_8hpp"/>
+        <childnode refid="158" relation="include">
+        </childnode>
+        <childnode refid="198" relation="include">
+        </childnode>
+      </node>
+      <node id="199">
+        <label>Macaulay2/e/monideal.cpp</label>
+        <link refid="monideal_8cpp"/>
+      </node>
+      <node id="193">
+        <label>Macaulay2/e/monideal.hpp</label>
+        <link refid="monideal_8hpp"/>
+        <childnode refid="194" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="196" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="158" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="133" relation="include">
+        </childnode>
+        <childnode refid="197" relation="include">
+        </childnode>
+        <childnode refid="199" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="200" relation="include">
+        </childnode>
+        <childnode refid="201" relation="include">
+        </childnode>
+        <childnode refid="202" relation="include">
+        </childnode>
+        <childnode refid="192" relation="include">
+        </childnode>
+        <childnode refid="203" relation="include">
+        </childnode>
+        <childnode refid="204" relation="include">
+        </childnode>
+        <childnode refid="171" relation="include">
+        </childnode>
+        <childnode refid="205" relation="include">
+        </childnode>
+        <childnode refid="173" relation="include">
+        </childnode>
+      </node>
+      <node id="227">
+        <label>Macaulay2/e/monoid.cpp</label>
+        <link refid="monoid_8cpp"/>
+      </node>
+      <node id="190">
+        <label>Macaulay2/e/mutablecomplex.cpp</label>
+        <link refid="mutablecomplex_8cpp"/>
+      </node>
+      <node id="189">
+        <label>Macaulay2/e/mutablecomplex.hpp</label>
+        <link refid="mutablecomplex_8hpp"/>
+        <childnode refid="160" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>Macaulay2/e/mutablemat-defs.hpp</label>
+        <link refid="mutablemat-defs_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+      </node>
+      <node id="73">
+        <label>Macaulay2/e/mutablemat.hpp</label>
+        <link refid="mutablemat_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="243">
+        <label>Macaulay2/e/ntl-interface.cpp</label>
+        <link refid="ntl-interface_8cpp"/>
+      </node>
+      <node id="167">
+        <label>Macaulay2/e/pfaff.cpp</label>
+        <link refid="pfaff_8cpp"/>
+      </node>
+      <node id="166">
+        <label>Macaulay2/e/pfaff.hpp</label>
+        <link refid="pfaff_8hpp"/>
+        <childnode refid="167" relation="include">
+        </childnode>
+      </node>
+      <node id="80">
+        <label>Macaulay2/e/points.cpp</label>
+        <link refid="points_8cpp"/>
+      </node>
+      <node id="56">
+        <label>Macaulay2/e/poly.cpp</label>
+        <link refid="poly_8cpp"/>
+      </node>
+      <node id="206">
+        <label>Macaulay2/e/poly.hpp</label>
+        <link refid="_macaulay2_2e_2poly_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="207" relation="include">
+        </childnode>
+        <childnode refid="208" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="163" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="209" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="171" relation="include">
+        </childnode>
+        <childnode refid="178" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+        <childnode refid="210" relation="include">
+        </childnode>
+        <childnode refid="212" relation="include">
+        </childnode>
+        <childnode refid="216" relation="include">
+        </childnode>
+        <childnode refid="218" relation="include">
+        </childnode>
+        <childnode refid="220" relation="include">
+        </childnode>
+      </node>
+      <node id="168">
+        <label>Macaulay2/e/polyquotient.cpp</label>
+        <link refid="polyquotient_8cpp"/>
+      </node>
+      <node id="209">
+        <label>Macaulay2/e/polyquotient.hpp</label>
+        <link refid="polyquotient_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="168" relation="include">
+        </childnode>
+        <childnode refid="169" relation="include">
+        </childnode>
+      </node>
+      <node id="169">
+        <label>Macaulay2/e/polyring.cpp</label>
+        <link refid="_macaulay2_2e_2polyring_8cpp"/>
+      </node>
+      <node id="222">
+        <label>Macaulay2/e/polyring.hpp</label>
+        <link refid="_macaulay2_2e_2polyring_8hpp"/>
+        <childnode refid="136" relation="include">
+        </childnode>
+        <childnode refid="223" relation="include">
+        </childnode>
+        <childnode refid="224" relation="include">
+        </childnode>
+        <childnode refid="143" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="147" relation="include">
+        </childnode>
+        <childnode refid="149" relation="include">
+        </childnode>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="225" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+        <childnode refid="227" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+        <childnode refid="206" relation="include">
+        </childnode>
+        <childnode refid="168" relation="include">
+        </childnode>
+        <childnode refid="209" relation="include">
+        </childnode>
+        <childnode refid="169" relation="include">
+        </childnode>
+        <childnode refid="201" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+        <childnode refid="228" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="182" relation="include">
+        </childnode>
+        <childnode refid="183" relation="include">
+        </childnode>
+        <childnode refid="173" relation="include">
+        </childnode>
+        <childnode refid="175" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="179" relation="include">
+        </childnode>
+        <childnode refid="137" relation="include">
+        </childnode>
+        <childnode refid="184" relation="include">
+        </childnode>
+        <childnode refid="235" relation="include">
+        </childnode>
+        <childnode refid="236" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>Macaulay2/e/qring.cpp</label>
+        <link refid="qring_8cpp"/>
+      </node>
+      <node id="200">
+        <label>Macaulay2/e/reducedgb-ZZ.cpp</label>
+        <link refid="reducedgb-_z_z_8cpp"/>
+      </node>
+      <node id="231">
+        <label>Macaulay2/e/reducedgb-ZZ.hpp</label>
+        <link refid="reducedgb-_z_z_8hpp"/>
+        <childnode refid="200" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+      </node>
+      <node id="201">
+        <label>Macaulay2/e/reducedgb-field-local.cpp</label>
+        <link refid="reducedgb-field-local_8cpp"/>
+      </node>
+      <node id="233">
+        <label>Macaulay2/e/reducedgb-field-local.hpp</label>
+        <link refid="reducedgb-field-local_8hpp"/>
+        <childnode refid="201" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+      </node>
+      <node id="202">
+        <label>Macaulay2/e/reducedgb-field.cpp</label>
+        <link refid="reducedgb-field_8cpp"/>
+      </node>
+      <node id="232">
+        <label>Macaulay2/e/reducedgb-field.hpp</label>
+        <link refid="reducedgb-field_8hpp"/>
+        <childnode refid="233" relation="include">
+        </childnode>
+        <childnode refid="202" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+      </node>
+      <node id="192">
+        <label>Macaulay2/e/reducedgb-marked.cpp</label>
+        <link refid="reducedgb-marked_8cpp"/>
+      </node>
+      <node id="234">
+        <label>Macaulay2/e/reducedgb-marked.hpp</label>
+        <link refid="reducedgb-marked_8hpp"/>
+        <childnode refid="143" relation="include">
+        </childnode>
+        <childnode refid="226" relation="include">
+        </childnode>
+        <childnode refid="192" relation="include">
+        </childnode>
+      </node>
+      <node id="170">
+        <label>Macaulay2/e/reducedgb.cpp</label>
+        <link refid="reducedgb_8cpp"/>
+      </node>
+      <node id="228">
+        <label>Macaulay2/e/reducedgb.hpp</label>
+        <link refid="reducedgb_8hpp"/>
+        <childnode refid="143" relation="include">
+        </childnode>
+        <childnode refid="229" relation="include">
+        </childnode>
+        <childnode refid="149" relation="include">
+        </childnode>
+        <childnode refid="230" relation="include">
+        </childnode>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="231" relation="include">
+        </childnode>
+        <childnode refid="232" relation="include">
+        </childnode>
+        <childnode refid="234" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>Macaulay2/e/relem.cpp</label>
+        <link refid="relem_8cpp"/>
+      </node>
+      <node id="237">
+        <label>Macaulay2/e/relem.hpp</label>
+        <link refid="relem_8hpp"/>
+        <childnode refid="238" relation="include">
+        </childnode>
+        <childnode refid="138" relation="include">
+        </childnode>
+        <childnode refid="239" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="207" relation="include">
+        </childnode>
+        <childnode refid="208" relation="include">
+        </childnode>
+        <childnode refid="223" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="147" relation="include">
+        </childnode>
+        <childnode refid="149" relation="include">
+        </childnode>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="156" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+        <childnode refid="157" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+        <childnode refid="187" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="160" relation="include">
+        </childnode>
+        <childnode refid="240" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="168" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="175" relation="include">
+        </childnode>
+        <childnode refid="179" relation="include">
+        </childnode>
+        <childnode refid="213" relation="include">
+        </childnode>
+        <childnode refid="235" relation="include">
+        </childnode>
+        <childnode refid="244" relation="include">
+        </childnode>
+      </node>
+      <node id="203">
+        <label>Macaulay2/e/res-a0-pair.hpp</label>
+        <link refid="res-a0-pair_8hpp"/>
+        <childnode refid="204" relation="include">
+        </childnode>
+      </node>
+      <node id="182">
+        <label>Macaulay2/e/res-a0-poly.cpp</label>
+        <link refid="res-a0-poly_8cpp"/>
+      </node>
+      <node id="204">
+        <label>Macaulay2/e/res-a0-poly.hpp</label>
+        <link refid="res-a0-poly_8hpp"/>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="182" relation="include">
+        </childnode>
+        <childnode refid="172" relation="include">
+        </childnode>
+        <childnode refid="171" relation="include">
+        </childnode>
+      </node>
+      <node id="172">
+        <label>Macaulay2/e/res-a0.cpp</label>
+        <link refid="res-a0_8cpp"/>
+      </node>
+      <node id="171">
+        <label>Macaulay2/e/res-a0.hpp</label>
+        <link refid="res-a0_8hpp"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="172" relation="include">
+        </childnode>
+      </node>
+      <node id="183">
+        <label>Macaulay2/e/res-a1-poly.cpp</label>
+        <link refid="res-a1-poly_8cpp"/>
+      </node>
+      <node id="205">
+        <label>Macaulay2/e/res-a1-poly.hpp</label>
+        <link refid="res-a1-poly_8hpp"/>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="183" relation="include">
+        </childnode>
+        <childnode refid="174" relation="include">
+        </childnode>
+        <childnode refid="173" relation="include">
+        </childnode>
+      </node>
+      <node id="174">
+        <label>Macaulay2/e/res-a1.cpp</label>
+        <link refid="res-a1_8cpp"/>
+      </node>
+      <node id="173">
+        <label>Macaulay2/e/res-a1.hpp</label>
+        <link refid="res-a1_8hpp"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="174" relation="include">
+        </childnode>
+      </node>
+      <node id="176">
+        <label>Macaulay2/e/res-a2-gb.cpp</label>
+        <link refid="res-a2-gb_8cpp"/>
+      </node>
+      <node id="177">
+        <label>Macaulay2/e/res-a2.cpp</label>
+        <link refid="res-a2_8cpp"/>
+      </node>
+      <node id="175">
+        <label>Macaulay2/e/res-a2.hpp</label>
+        <link refid="res-a2_8hpp"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="176" relation="include">
+        </childnode>
+        <childnode refid="177" relation="include">
+        </childnode>
+      </node>
+      <node id="178">
+        <label>Macaulay2/e/ring-vecs.cpp</label>
+        <link refid="ring-vecs_8cpp"/>
+      </node>
+      <node id="92">
+        <label>Macaulay2/e/ring.cpp</label>
+        <link refid="ring_8cpp"/>
+      </node>
+      <node id="98">
+        <label>Macaulay2/e/ring.hpp</label>
+        <link refid="ring_8hpp"/>
+        <childnode refid="99" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="1" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="124" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+        <childnode refid="157" relation="include">
+        </childnode>
+        <childnode refid="129" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="186" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+        <childnode refid="187" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="206" relation="include">
+        </childnode>
+        <childnode refid="168" relation="include">
+        </childnode>
+        <childnode refid="169" relation="include">
+        </childnode>
+        <childnode refid="222" relation="include">
+        </childnode>
+        <childnode refid="237" relation="include">
+        </childnode>
+        <childnode refid="178" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="246" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="235" relation="include">
+        </childnode>
+        <childnode refid="236" relation="include">
+        </childnode>
+      </node>
+      <node id="179">
+        <label>Macaulay2/e/ringmap.cpp</label>
+        <link refid="ringmap_8cpp"/>
+      </node>
+      <node id="246">
+        <label>Macaulay2/e/ringmap.hpp</label>
+        <link refid="ringmap_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="247" relation="include">
+        </childnode>
+        <childnode refid="250" relation="include">
+        </childnode>
+        <childnode refid="252" relation="include">
+        </childnode>
+        <childnode refid="255" relation="include">
+        </childnode>
+        <childnode refid="258" relation="include">
+        </childnode>
+        <childnode refid="260" relation="include">
+        </childnode>
+        <childnode refid="207" relation="include">
+        </childnode>
+        <childnode refid="208" relation="include">
+        </childnode>
+        <childnode refid="223" relation="include">
+        </childnode>
+        <childnode refid="113" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="263" relation="include">
+        </childnode>
+        <childnode refid="264" relation="include">
+        </childnode>
+        <childnode refid="265" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="160" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="178" relation="include">
+        </childnode>
+        <childnode refid="179" relation="include">
+        </childnode>
+        <childnode refid="213" relation="include">
+        </childnode>
+        <childnode refid="235" relation="include">
+        </childnode>
+      </node>
+      <node id="181">
+        <label>Macaulay2/e/sagbi.cpp</label>
+        <link refid="sagbi_8cpp"/>
+      </node>
+      <node id="180">
+        <label>Macaulay2/e/sagbi.hpp</label>
+        <link refid="sagbi_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+      </node>
+      <node id="137">
+        <label>Macaulay2/e/schorder.cpp</label>
+        <link refid="schorder_8cpp"/>
+      </node>
+      <node id="40">
+        <label>Macaulay2/e/schreyer-resolution/res-dep-graph.cpp</label>
+        <link refid="res-dep-graph_8cpp"/>
+      </node>
+      <node id="46">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.cpp</label>
+        <link refid="res-f4-computation_8cpp"/>
+      </node>
+      <node id="44">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-computation.hpp</label>
+        <link refid="res-f4-computation_8hpp"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>Macaulay2/e/schreyer-resolution/res-f4-m2-interface.cpp</label>
+        <link refid="res-f4-m2-interface_8cpp"/>
+      </node>
+      <node id="41">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.cpp</label>
+        <link refid="res-f4_8cpp"/>
+      </node>
+      <node id="39">
+        <label>Macaulay2/e/schreyer-resolution/res-f4.hpp</label>
+        <link refid="res-f4_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.cpp</label>
+        <link refid="res-poly-ring_8cpp"/>
+      </node>
+      <node id="43">
+        <label>Macaulay2/e/schreyer-resolution/res-poly-ring.hpp</label>
+        <link refid="res-poly-ring_8hpp"/>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.cpp</label>
+        <link refid="res-schreyer-frame_8cpp"/>
+      </node>
+      <node id="49">
+        <label>Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp</label>
+        <link refid="res-schreyer-frame_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="211">
+        <label>Macaulay2/e/schur.cpp</label>
+        <link refid="schur_8cpp"/>
+      </node>
+      <node id="210">
+        <label>Macaulay2/e/schur.hpp</label>
+        <link refid="schur_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="211" relation="include">
+        </childnode>
+      </node>
+      <node id="213">
+        <label>Macaulay2/e/schur2.cpp</label>
+        <link refid="schur2_8cpp"/>
+      </node>
+      <node id="212">
+        <label>Macaulay2/e/schur2.hpp</label>
+        <link refid="schur2_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="213" relation="include">
+        </childnode>
+        <childnode refid="214" relation="include">
+        </childnode>
+      </node>
+      <node id="215">
+        <label>Macaulay2/e/schurSn.cpp</label>
+        <link refid="schur_sn_8cpp"/>
+      </node>
+      <node id="214">
+        <label>Macaulay2/e/schurSn.hpp</label>
+        <link refid="schur_sn_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="215" relation="include">
+        </childnode>
+      </node>
+      <node id="217">
+        <label>Macaulay2/e/skewpoly.cpp</label>
+        <link refid="skewpoly_8cpp"/>
+      </node>
+      <node id="216">
+        <label>Macaulay2/e/skewpoly.hpp</label>
+        <link refid="skewpoly_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="217" relation="include">
+        </childnode>
+      </node>
+      <node id="87">
+        <label>Macaulay2/e/smat.hpp</label>
+        <link refid="smat_8hpp"/>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+      </node>
+      <node id="219">
+        <label>Macaulay2/e/solvable.cpp</label>
+        <link refid="solvable_8cpp"/>
+      </node>
+      <node id="218">
+        <label>Macaulay2/e/solvable.hpp</label>
+        <link refid="solvable_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="219" relation="include">
+        </childnode>
+      </node>
+      <node id="185">
+        <label>Macaulay2/e/spair.cpp</label>
+        <link refid="spair_8cpp"/>
+      </node>
+      <node id="184">
+        <label>Macaulay2/e/spair.hpp</label>
+        <link refid="spair_8hpp"/>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="175" relation="include">
+        </childnode>
+        <childnode refid="185" relation="include">
+        </childnode>
+      </node>
+      <node id="235">
+        <label>Macaulay2/e/tower.cpp</label>
+        <link refid="tower_8cpp"/>
+      </node>
+      <node id="244">
+        <label>Macaulay2/e/tower.hpp</label>
+        <link refid="tower_8hpp"/>
+        <childnode refid="157" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="235" relation="include">
+        </childnode>
+        <childnode refid="245" relation="include">
+        </childnode>
+      </node>
+      <node id="254">
+        <label>Macaulay2/e/unit-tests/ARingCCCTest.cpp</label>
+        <link refid="_a_ring_c_c_c_test_8cpp"/>
+      </node>
+      <node id="249">
+        <label>Macaulay2/e/unit-tests/ARingCCTest.cpp</label>
+        <link refid="_a_ring_c_c_test_8cpp"/>
+      </node>
+      <node id="116">
+        <label>Macaulay2/e/unit-tests/ARingQQFlintTest.cpp</label>
+        <link refid="_a_ring_q_q_flint_test_8cpp"/>
+      </node>
+      <node id="119">
+        <label>Macaulay2/e/unit-tests/ARingQQGmpTest.cpp</label>
+        <link refid="_a_ring_q_q_gmp_test_8cpp"/>
+      </node>
+      <node id="262">
+        <label>Macaulay2/e/unit-tests/ARingRRRTest.cpp</label>
+        <link refid="_a_ring_r_r_r_test_8cpp"/>
+      </node>
+      <node id="257">
+        <label>Macaulay2/e/unit-tests/ARingRRTest.cpp</label>
+        <link refid="_a_ring_r_r_test_8cpp"/>
+      </node>
+      <node id="59">
+        <label>Macaulay2/e/unit-tests/ARingRRiTest.cpp</label>
+        <link refid="_a_ring_r_ri_test_8cpp"/>
+      </node>
+      <node id="82">
+        <label>Macaulay2/e/unit-tests/ARingZZTest.cpp</label>
+        <link refid="_a_ring_z_z_test_8cpp"/>
+      </node>
+      <node id="88">
+        <label>Macaulay2/e/unit-tests/ARingZZpTest.cpp</label>
+        <link refid="_a_ring_z_zp_test_8cpp"/>
+      </node>
+      <node id="81">
+        <label>Macaulay2/e/unit-tests/DMatTest.hpp</label>
+        <link refid="_d_mat_test_8hpp"/>
+        <childnode refid="60" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>Macaulay2/e/unit-tests/DMatZZpTest.cpp</label>
+        <link refid="_d_mat_z_zp_test_8cpp"/>
+      </node>
+      <node id="34">
+        <label>Macaulay2/e/unit-tests/MatrixIOTest.cpp</label>
+        <link refid="_matrix_i_o_test_8cpp"/>
+      </node>
+      <node id="61">
+        <label>Macaulay2/e/unit-tests/NCGroebnerTest.cpp</label>
+        <link refid="_n_c_groebner_test_8cpp"/>
+      </node>
+      <node id="38">
+        <label>Macaulay2/e/unit-tests/NewF4Test.cpp</label>
+        <link refid="_new_f4_test_8cpp"/>
+      </node>
+      <node id="12">
+        <label>Macaulay2/e/unit-tests/PointArray.cpp</label>
+        <link refid="_point_array_8cpp"/>
+      </node>
+      <node id="236">
+        <label>Macaulay2/e/unit-tests/PolyRingTest.cpp</label>
+        <link refid="_poly_ring_test_8cpp"/>
+      </node>
+      <node id="62">
+        <label>Macaulay2/e/unit-tests/RingCCCTest.cpp</label>
+        <link refid="_ring_c_c_c_test_8cpp"/>
+      </node>
+      <node id="63">
+        <label>Macaulay2/e/unit-tests/RingQQTest.cpp</label>
+        <link refid="_ring_q_q_test_8cpp"/>
+      </node>
+      <node id="64">
+        <label>Macaulay2/e/unit-tests/RingRRRTest.cpp</label>
+        <link refid="_ring_r_r_r_test_8cpp"/>
+      </node>
+      <node id="266">
+        <label>Macaulay2/e/unit-tests/RingTest.hpp</label>
+        <link refid="_ring_test_8hpp"/>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="245" relation="include">
+        </childnode>
+        <childnode refid="267" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+      </node>
+      <node id="245">
+        <label>Macaulay2/e/unit-tests/RingTowerTest.cpp</label>
+        <link refid="_ring_tower_test_8cpp"/>
+      </node>
+      <node id="267">
+        <label>Macaulay2/e/unit-tests/RingZZTest.cpp</label>
+        <link refid="_ring_z_z_test_8cpp"/>
+      </node>
+      <node id="89">
+        <label>Macaulay2/e/unit-tests/RingZZpTest.cpp</label>
+        <link refid="_ring_z_zp_test_8cpp"/>
+      </node>
+      <node id="90">
+        <label>Macaulay2/e/unit-tests/fromStream.cpp</label>
+        <link refid="from_stream_8cpp"/>
+      </node>
+      <node id="221">
+        <label>Macaulay2/e/weylalg.cpp</label>
+        <link refid="weylalg_8cpp"/>
+      </node>
+      <node id="220">
+        <label>Macaulay2/e/weylalg.hpp</label>
+        <link refid="weylalg_8hpp"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="221" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_ring_z_z" prot="public">RingZZ</innerclass>
+    <innernamespace refid="namespace_m2">M2</innernamespace>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int mask_mpz_cmp_si</definition>
+        <argsstring>(mpz_srcptr x, long int i)</argsstring>
+        <name>mask_mpz_cmp_si</name>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>long <ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ZZ.hpp" line="51" column="23" bodyfile="Macaulay2/e/ZZ.hpp" bodystart="51" bodyend="54"/>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_ring_z_z_ae98d39e3a44b8491cb3236779b98639a_1ae98d39e3a44b8491cb3236779b98639a" compoundref="_z_z_8cpp" startline="77" endline="108">RingZZ::elem_text_out</referencedby>
+        <referencedby refid="class_g_b_ring_a1e733a0119e3fc47cc401ee46c8cde44_1a1e733a0119e3fc47cc401ee46c8cde44" compoundref="gbring_8cpp" startline="1315" endline="1367">GBRing::gbvector_remove_content_ZZ</referencedby>
+        <referencedby refid="class_ring_z_z_a4b817d18678e272549c0b7eb2757afc3_1a4b817d18678e272549c0b7eb2757afc3" compoundref="_z_z_8cpp" startline="149" endline="153">RingZZ::is_unit</referencedby>
+        <referencedby refid="class_g_b_ring_aca59f330d6da36d51307f4e44aeced91_1aca59f330d6da36d51307f4e44aeced91" compoundref="gbring_8cpp" startline="1303" endline="1313">GBRing::lower_content_ZZ</referencedby>
+        <referencedby refid="class_ring_z_z_a6aff1e51fb01b0d8f392dec440f1e0c6_1a6aff1e51fb01b0d8f392dec440f1e0c6" compoundref="_z_z_8cpp" startline="386" endline="420">RingZZ::syzygy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="_z_z_8hpp_a1f4574027050a384c381d7d7f0bf80d3_1a1f4574027050a384c381d7d7f0bf80d3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int mask_mpq_cmp_si</definition>
+        <argsstring>(mpq_srcptr x, long int i, long int j)</argsstring>
+        <name>mask_mpq_cmp_si</name>
+        <param>
+          <type>mpq_srcptr</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>long <ref refid="classint" kindref="compound">int</ref></type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>long <ref refid="classint" kindref="compound">int</ref></type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ZZ.hpp" line="55" column="23" bodyfile="Macaulay2/e/ZZ.hpp" bodystart="55" bodyend="58"/>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+      <memberdef kind="function" id="_z_z_8hpp_a4b8fa79bd49b1714d5e5d6f406f14fca_1a4b8fa79bd49b1714d5e5d6f406f14fca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>unsigned int computeHashValue_mpz</definition>
+        <argsstring>(mpz_srcptr a)</argsstring>
+        <name>computeHashValue_mpz</name>
+        <param>
+          <type>mpz_srcptr</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ZZ.hpp" line="190" column="14" bodyfile="Macaulay2/e/ZZ.cpp" bodystart="14" bodyend="17" declfile="Macaulay2/e/ZZ.hpp" declline="190" declcolumn="14"/>
+        <referencedby refid="class_ring_z_z_a37c5ae213b3c6b88a8d69307935dd17e_1a37c5ae213b3c6b88a8d69307935dd17e" compoundref="_z_z_8cpp" startline="41" endline="44">RingZZ::computeHashValue</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Legacy <computeroutput><ref refid="class_ring_z_z" kindref="compound">RingZZ</ref></computeroutput> <mdash/> a <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput>-derived integer ring backed by GMP <computeroutput>mpz_t</computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="class_ring_z_z" kindref="compound">RingZZ</ref></computeroutput> is the engine&apos;s original integer-ring class, pre-dating the <computeroutput>aring</computeroutput> framework. It inherits from <computeroutput><ref refid="class_ring" kindref="compound">Ring</ref></computeroutput> directly, uses <computeroutput>mpz_ptr</computeroutput> as its <computeroutput>element_type</computeroutput>, and is the type of the global <computeroutput><ref refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" kindref="member">globalZZ</ref></computeroutput> instance created by <computeroutput><ref refid="class_poly_ring_acc6bb5c36b5a782e8fdb2c179500c057_1acc6bb5c36b5a782e8fdb2c179500c057" kindref="member">PolyRing::make_trivial_ZZ_poly_ring()</ref></computeroutput> (per the in-source comment near the constructors). The class also <computeroutput>friend</computeroutput>s <computeroutput><ref refid="class_m2_1_1_a_ring_z_z_g_m_p" kindref="compound">M2::ARingZZGMP</ref></computeroutput> and carries an <computeroutput>ARingZZGMP* coeffR</computeroutput> exposed by <computeroutput>get_ARing()</computeroutput>, so callers on the legacy side can hand the aring view to code that prefers it.</para>
+<para>Three integer rings coexist today: <computeroutput><ref refid="class_ring_z_z" kindref="compound">RingZZ</ref></computeroutput> (this file, GMP) <mdash/> which is what <computeroutput>ring.cpp::makeIntegerRing</computeroutput> actually returns as <computeroutput>new <ref refid="class_ring_z_z" kindref="compound">RingZZ</ref></computeroutput> <mdash/> plus the two aring siblings <computeroutput><ref refid="class_m2_1_1_a_ring_z_z_g_m_p" kindref="compound">M2::ARingZZGMP</ref></computeroutput> (GMP via the aring framework, <computeroutput><ref refid="aring-zz-gmp_8hpp" kindref="compound">aring-zz-gmp.hpp</ref></computeroutput>) and <computeroutput><ref refid="class_m2_1_1_a_ring_z_z" kindref="compound">M2::ARingZZ</ref></computeroutput> (FLINT via the aring framework, <computeroutput><ref refid="aring-zz-flint_8hpp" kindref="compound">aring-zz-flint.hpp</ref></computeroutput>). <computeroutput><ref refid="class_ring_z_z" kindref="compound">RingZZ</ref></computeroutput> itself holds an <computeroutput>ARingZZGMP *coeffR</computeroutput> (exposed by <computeroutput>get_ARing()</computeroutput>) and uses it via <computeroutput><ref refid="class_ring_z_z_a07b8b408b5d8c42feeb4fd8cda71025a_1a07b8b408b5d8c42feeb4fd8cda71025a" kindref="member">RingZZ::makeMutableMatrix</ref></computeroutput> to build <computeroutput><ref refid="class_mutable_mat" kindref="compound">MutableMat</ref>&lt;<ref refid="class_d_mat" kindref="compound">DMat</ref>&lt; ARingZZGMP&gt;&gt;</computeroutput> / <computeroutput><ref refid="class_mutable_mat" kindref="compound">MutableMat</ref>&lt;<ref refid="class_s_mat" kindref="compound">SMat</ref>&lt;ARingZZGMP&gt;&gt;</computeroutput> for mutable matrices; the FLINT-backed <computeroutput>ARingZZ</computeroutput> is used directly by the dense linear-algebra path via <computeroutput><ref refid="class_d_mat" kindref="compound">DMat</ref>&lt;ARingZZ&gt;</computeroutput> (alias <computeroutput><ref refid="mat-linalg_8hpp_a17cd0b1de2304a89fac04d27c1a2a30d_1a17cd0b1de2304a89fac04d27c1a2a30d" kindref="member">DMatZZ</ref></computeroutput>). The two <computeroutput><ref refid="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" kindref="member">mask_mpz_cmp_si</ref></computeroutput> / <computeroutput><ref refid="_z_z_8hpp_a1f4574027050a384c381d7d7f0bf80d3_1a1f4574027050a384c381d7d7f0bf80d3" kindref="member">mask_mpq_cmp_si</ref></computeroutput> wrapper functions at the top of the header exist purely to silence GMP&apos;s old-style-cast warnings, as the adjacent in-source comment notes.</para>
+<para><simplesect kind="see"><para><ref refid="aring-zz-flint_8hpp" kindref="compound">aring-zz-flint.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="aring-zz-gmp_8hpp" kindref="compound">aring-zz-gmp.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="aring_8hpp" kindref="compound">aring.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="aring-glue_8hpp" kindref="compound">aring-glue.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Copyright<sp/>1995<sp/>Michael<sp/>E.<sp/>Stillman.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_ZZ_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_ZZ_hh_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="_macaulay2_2e_2error_8h" kindref="compound">error.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ring_8hpp" kindref="compound">ring.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstddef&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_m2" kindref="compound">M2</ref><sp/>{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_m2_1_1_a_ring_z_z_g_m_p" kindref="compound">ARingZZGMP</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>lines<sp/>are<sp/>here<sp/>only<sp/>to<sp/>remove<sp/>complaints<sp/>about<sp/>old<sp/>style<sp/>casts</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">//<sp/>from<sp/>gmp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="_z_z_8hpp_a4fdbcec93cf372e693113cc2bd1e2c73_1a4fdbcec93cf372e693113cc2bd1e2c73" kindref="member">mask_mpz_cmp_si</ref>(mpz_srcptr<sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mpz_cmp_si(<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,<sp/>i);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="55" refid="_z_z_8hpp_a1f4574027050a384c381d7d7f0bf80d3_1a1f4574027050a384c381d7d7f0bf80d3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="_z_z_8hpp_a1f4574027050a384c381d7d7f0bf80d3_1a1f4574027050a384c381d7d7f0bf80d3" kindref="member">mask_mpq_cmp_si</ref>(mpq_srcptr<sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mpq_cmp_si(<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,<sp/>i,<sp/>j);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="class_ring_z_z" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_ring_z_z_a3a476da58e485be51dfd07dce72ff239_1a3a476da58e485be51dfd07dce72ff239" kindref="member">RingZZ</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="class_ring_afc47f40ab072db783126111b70693e49_1afc47f40ab072db783126111b70693e49" kindref="member">Ring</ref></highlight></codeline>
+<codeline lineno="73"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="74" refid="class_ring_z_z_ad3ff00679a0c4c1d840207a4abed7ced_1ad3ff00679a0c4c1d840207a4abed7ced" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_m2_1_1_a_ring_z_z_g_m_p" kindref="compound">M2::ARingZZGMP</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>mpz_ptr<sp/><ref refid="class_ring_z_z_a8a8bb80c8283c2f727a07c69c6358659_1a8a8bb80c8283c2f727a07c69c6358659" kindref="member">new_elem</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="class_ring_z_z_a41126f3fea533a3b013798df1ece4022_1a41126f3fea533a3b013798df1ece4022" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_m2_1_1_a_ring_z_z_g_m_p" kindref="compound">M2::ARingZZGMP</ref><sp/>*<ref refid="class_ring_z_z_a41126f3fea533a3b013798df1ece4022_1a41126f3fea533a3b013798df1ece4022" kindref="member">coeffR</ref>;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="81" refid="class_ring_z_z_a5c2079568859b05ac29dd171ef911107_1a5c2079568859b05ac29dd171ef911107" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a5c2079568859b05ac29dd171ef911107_1a5c2079568859b05ac29dd171ef911107" kindref="member">~RingZZ</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="83" refid="class_ring_z_z_ae6496eb0a44188d4069c3fe4e339453b_1ae6496eb0a44188d4069c3fe4e339453b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>mpz_ptr<sp/><ref refid="class_ring_z_z_ae6496eb0a44188d4069c3fe4e339453b_1ae6496eb0a44188d4069c3fe4e339453b" kindref="member">element_type</ref>;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Creation<sp/>of<sp/>globalZZ<sp/>is<sp/>done<sp/>in<sp/>PolyRing::make_trivial_ZZ_poly_ring</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>These<sp/>two<sp/>routines<sp/>should<sp/>not<sp/>be<sp/>called<sp/>from<sp/>elsewhere</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="class_ring_z_z_a3a476da58e485be51dfd07dce72ff239_1a3a476da58e485be51dfd07dce72ff239" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_ring_z_z_a3a476da58e485be51dfd07dce72ff239_1a3a476da58e485be51dfd07dce72ff239" kindref="member">RingZZ</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a89f71d0296dd12cf415d17300e6cece2_1a89f71d0296dd12cf415d17300e6cece2" kindref="member">initialize_ZZ</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref><sp/>*deg_ring);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="class_ring_z_z_ad8941018c5e2e9598a177e28e0d3a1ac_1ad8941018c5e2e9598a177e28e0d3a1ac" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_ring_z_z_a3a476da58e485be51dfd07dce72ff239_1a3a476da58e485be51dfd07dce72ff239" kindref="member">RingZZ</ref><sp/>*<ref refid="class_ring_z_z_ad8941018c5e2e9598a177e28e0d3a1ac_1ad8941018c5e2e9598a177e28e0d3a1ac" kindref="member">cast_to_RingZZ</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="93" refid="class_ring_z_z_ae2e7358f72fd363b0291b08034b65d72_1ae2e7358f72fd363b0291b08034b65d72" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a3a476da58e485be51dfd07dce72ff239_1a3a476da58e485be51dfd07dce72ff239" kindref="member">RingZZ</ref><sp/>*<ref refid="class_ring_z_z_ae2e7358f72fd363b0291b08034b65d72_1ae2e7358f72fd363b0291b08034b65d72" kindref="member">cast_to_RingZZ</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="94" refid="class_ring_z_z_a8b2d7fe0923e55fd71f9ff6b73bbbc3e_1a8b2d7fe0923e55fd71f9ff6b73bbbc3e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_m2_1_1_a_ring_z_z_g_m_p" kindref="compound">M2::ARingZZGMP</ref><sp/>*<ref refid="class_ring_z_z_a8b2d7fe0923e55fd71f9ff6b73bbbc3e_1a8b2d7fe0923e55fd71f9ff6b73bbbc3e" kindref="member">get_ARing</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="95"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a41126f3fea533a3b013798df1ece4022_1a41126f3fea533a3b013798df1ece4022" kindref="member">coeffR</ref>;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref><sp/>*<ref refid="class_ring_z_z_a07b8b408b5d8c42feeb4fd8cda71025a_1a07b8b408b5d8c42feeb4fd8cda71025a" kindref="member">makeMutableMatrix</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nrows,</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>ncols,</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>dense)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>are<sp/>all<sp/>the<sp/>routines<sp/>required<sp/>by<sp/>&apos;ring&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="class_ring_z_z_abb30a9b8ce352dca9bb31333eb156dc3_1abb30a9b8ce352dca9bb31333eb156dc3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_abb30a9b8ce352dca9bb31333eb156dc3_1abb30a9b8ce352dca9bb31333eb156dc3" kindref="member">is_ZZ</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="105" refid="class_ring_z_z_ab7c436a4c21091fd901a6136283cd767_1ab7c436a4c21091fd901a6136283cd767" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532d" kindref="member">CoefficientType</ref><sp/><ref refid="class_ring_z_z_ab7c436a4c21091fd901a6136283cd767_1ab7c436a4c21091fd901a6136283cd767" kindref="member">coefficient_type</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_ring_a9e57707e3d58a95caee2f12f741f532d_1a9e57707e3d58a95caee2f12f741f532da76f8086b75bdd0581c27856e8881671a" kindref="member">COEFF_ZZ</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_ac9a5773acb8d9f86dbf1c317375504f0_1ac9a5773acb8d9f86dbf1c317375504f0" kindref="member">text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a56dfe33da6328718f97bec3c02580197_1a56dfe33da6328718f97bec3c02580197" kindref="member">mod_ui</ref>(mpz_srcptr<sp/>n,<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" kindref="member">p</ref>);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::pair&lt;bool,<sp/>int&gt;<sp/><ref refid="class_ring_z_z_a93f60c7348caad7f332820b455fb3735_1a93f60c7348caad7f332820b455fb3735" kindref="member">get_si</ref>(mpz_srcptr<sp/>n);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>base<sp/>ring<sp/>of<sp/>a<sp/>is<sp/>ZZ:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>To<sp/>get<sp/>a<sp/>bignum<sp/>from<sp/>a<sp/>RingElement<sp/>a,<sp/>use:<sp/>a.get_value().get_mpz()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>To<sp/>get<sp/>a<sp/>bignum<sp/>from<sp/>an<sp/>ring_elem<sp/><sp/>a,<sp/>use:<sp/>a.get_mpz()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a37c5ae213b3c6b88a8d69307935dd17e_1a37c5ae213b3c6b88a8d69307935dd17e" kindref="member">computeHashValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>std::pair&lt;bool,<sp/>long&gt;<sp/><ref refid="class_ring_z_z_ac912f3da751d61f94950c2ccff6d74c0_1ac912f3da751d61f94950c2ccff6d74c0" kindref="member">coerceToLongInteger</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a62f0ce64ee20c653555de36b8ddc8d07_1a62f0ce64ee20c653555de36b8ddc8d07" kindref="member">from_long</ref>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a8ee5f1281f1f753bd5e64aaed8393b52_1a8ee5f1281f1f753bd5e64aaed8393b52" kindref="member">from_int</ref>(mpz_srcptr<sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a7a0bb92a97cc91d8c86448f52ca700b6_1a7a0bb92a97cc91d8c86448f52ca700b6" kindref="member">from_rational</ref>(mpq_srcptr<sp/>q,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a152d0bf08ab0cfe4391655b242ad9a03_1a152d0bf08ab0cfe4391655b242ad9a03" kindref="member">promote</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*R,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_af7a09499eca947992c0c34e8805dc505_1af7a09499eca947992c0c34e8805dc505" kindref="member">lift</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring" kindref="compound">Ring</ref><sp/>*R,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ae7576d689b9b7058ff698a44172db9a9_1ae7576d689b9b7058ff698a44172db9a9" kindref="member">preferred_associate</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a729b46f6de83f969bd2196dc79d989d3_1a729b46f6de83f969bd2196dc79d989d3" kindref="member">lower_associate_divisor</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a582b412355bb6f112afe01072bb463a8_1a582b412355bb6f112afe01072bb463a8" kindref="member">lower_content</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;c,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;<sp/><sp/></highlight><highlight class="comment">//<sp/>c<sp/>is<sp/>a<sp/>content<sp/>elem,<sp/>g<sp/>is<sp/>in<sp/>ring</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_ab4c2830e31e788a913dc68f7a702dba1_1ab4c2830e31e788a913dc68f7a702dba1" kindref="member">is_positive</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a4b817d18678e272549c0b7eb2757afc3_1a4b817d18678e272549c0b7eb2757afc3" kindref="member">is_unit</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a55061444e238c33e2dc0a6dce39ba58a_1a55061444e238c33e2dc0a6dce39ba58a" kindref="member">is_zero</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_ab5a119c4379dd6dd88fb20a9a6cb210e_1ab5a119c4379dd6dd88fb20a9a6cb210e" kindref="member">is_equal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a917ebaa130781e4691a6dbd385844cdf_1a917ebaa130781e4691a6dbd385844cdf" kindref="member">compare_elems</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_af0b3626daa6787f030db4b733484560d_1af0b3626daa6787f030db4b733484560d" kindref="member">copy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a891cbf1f66865e539a0cc9915e2db7c2_1a891cbf1f66865e539a0cc9915e2db7c2" kindref="member">remove</ref>(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>0<sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>internal_negate_to(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>internal_add_to(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>internal_subtract_to(<ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;f,<sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a2d1f428557ef06073f3a85fafd2e4989_1a2d1f428557ef06073f3a85fafd2e4989" kindref="member">negate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a047bc59d8b68c815039da1942d89b484_1a047bc59d8b68c815039da1942d89b484" kindref="member">add</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a8bddc728357072904a19559e7239b39a_1a8bddc728357072904a19559e7239b39a" kindref="member">subtract</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ac25c05701852ed5eb92da0388f462617_1ac25c05701852ed5eb92da0388f462617" kindref="member">mult</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a33ad6fdfa4619161f217f4006990069c_1a33ad6fdfa4619161f217f4006990069c" kindref="member">power</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/>mpz_srcptr<sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a33ad6fdfa4619161f217f4006990069c_1a33ad6fdfa4619161f217f4006990069c" kindref="member">power</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ab87a3190e3779f425e5b896b9eebf67a_1ab87a3190e3779f425e5b896b9eebf67a" kindref="member">invert</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a911ad66000442550b450f18d647a4050_1a911ad66000442550b450f18d647a4050" kindref="member">divide</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ac8263af28c79d1ea2f2e796699c48811_1ac8263af28c79d1ea2f2e796699c48811" kindref="member">remainder</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a433fcbb6508bb8f33eb7a761a7168e2e_1a433fcbb6508bb8f33eb7a761a7168e2e" kindref="member">quotient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a847a4a779621eb3a64600203aaf879f3_1a847a4a779621eb3a64600203aaf879f3" kindref="member">remainderAndQuotient</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g,</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;quot)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_aa59c4afe4140ba8a01d8daad2aa98d8a_1aa59c4afe4140ba8a01d8daad2aa98d8a" kindref="member">gcd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_ae04281a7162eb05a211c582ba39d65aa_1ae04281a7162eb05a211c582ba39d65aa" kindref="member">gcd_extended</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>g,</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;u,</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;v)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_a6aff1e51fb01b0d8f392dec440f1e0c6_1a6aff1e51fb01b0d8f392dec440f1e0c6" kindref="member">syzygy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>a,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>b,</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;<ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>,</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>&amp;y)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a8e4dc21105e9afc1a2191904a23eed50_1a8e4dc21105e9afc1a2191904a23eed50" kindref="member">random</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_ring_z_z_ae98d39e3a44b8491cb3236779b98639a_1ae98d39e3a44b8491cb3236779b98639a" kindref="member">elem_text_out</ref>(<ref refid="classbuffer" kindref="compound">buffer</ref><sp/>&amp;o,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_one<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_plus<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>p_parens<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/><ref refid="class_ring_z_z_a6ea5ec911621ddd0dc23f1bb2a174fb8_1a6ea5ec911621ddd0dc23f1bb2a174fb8" kindref="member">eval</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_ring_map" kindref="compound">RingMap</ref><sp/>*map,</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="unionring__elem" kindref="compound">ring_elem</ref><sp/>f,</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>first_var)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="_z_z_8hpp_a4b8fa79bd49b1714d5e5d6f406f14fca_1a4b8fa79bd49b1714d5e5d6f406f14fca" kindref="member">computeHashValue_mpz</ref>(mpz_srcptr<sp/>a);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/ZZ.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1801 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classhilb__comp" kind="class" language="C++" prot="public">
+    <compoundname>hilb_comp</compoundname>
+    <basecompoundref refid="class_mutable_engine_object" prot="public" virt="non-virtual">MutableEngineObject</basecompoundref>
+    <includes refid="hilb_8hpp" local="no">hilb.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classhilb__comp_a53bd1c3a172ba3a289dc9d3bcc28c3fd_1a53bd1c3a172ba3a289dc9d3bcc28c3fd" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+        <definition>const PolynomialRing* hilb_comp::S</definition>
+        <argsstring></argsstring>
+        <name>S</name>
+        <qualifiedname>hilb_comp::S</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="92" column="24" bodyfile="Macaulay2/e/hilb.hpp" bodystart="92" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+        <definition>const PolynomialRing* hilb_comp::R</definition>
+        <argsstring></argsstring>
+        <name>R</name>
+        <qualifiedname>hilb_comp::R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="93" column="24" bodyfile="Macaulay2/e/hilb.hpp" bodystart="93" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+        <referencedby refid="classhilb__comp_a627dc77213c80eb3a20db5d67c73eef2_1a627dc77213c80eb3a20db5d67c73eef2" compoundref="hilb_8cpp" startline="325" endline="342">reset</referencedby>
+        <referencedby refid="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" compoundref="hilb_8cpp" startline="618" endline="652">stats</referencedby>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+        <referencedby refid="classhilb__comp_ac8ac7f8024616fd5514707edf081b966_1ac8ac7f8024616fd5514707edf081b966" compoundref="hilb_8cpp" startline="607" endline="616">value</referencedby>
+        <referencedby refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" compoundref="hilb_8cpp" startline="401" endline="420">~hilb_comp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_ad3894293525272b88e8a3b3a44f79f77_1ad3894293525272b88e8a3b3a44f79f77" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_monoid" kindref="compound">Monoid</ref> *</type>
+        <definition>const Monoid* hilb_comp::M</definition>
+        <argsstring></argsstring>
+        <name>M</name>
+        <qualifiedname>hilb_comp::M</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="94" column="16" bodyfile="Macaulay2/e/hilb.hpp" bodystart="94" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_af0a64bcacdeb9fd78d4eba85ff93cacb_1af0a64bcacdeb9fd78d4eba85ff93cacb" compoundref="hilb_8cpp" startline="665" endline="679">hilbertNumerator</referencedby>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a14a810ae420e669620e8fa6ccdb54e67_1a14a810ae420e669620e8fa6ccdb54e67" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_monoid" kindref="compound">Monoid</ref> *</type>
+        <definition>const Monoid* hilb_comp::D</definition>
+        <argsstring></argsstring>
+        <name>D</name>
+        <qualifiedname>hilb_comp::D</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="95" column="16" bodyfile="Macaulay2/e/hilb.hpp" bodystart="95" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" compoundref="hilb_8cpp" startline="401" endline="420">~hilb_comp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_af736b62155f6e31f3113c370492caa04_1af736b62155f6e31f3113c370492caa04" prot="private" static="no" mutable="no">
+        <type><ref refid="classstash" kindref="compound">stash</ref> *</type>
+        <definition>stash* hilb_comp::mi_stash</definition>
+        <argsstring></argsstring>
+        <name>mi_stash</name>
+        <qualifiedname>hilb_comp::mi_stash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="97" column="9" bodyfile="Macaulay2/e/hilb.hpp" bodystart="97" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+        <referencedby refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" compoundref="hilb_8cpp" startline="401" endline="420">~hilb_comp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a363cdba70257dac4a3170cc52aa1e029_1a363cdba70257dac4a3170cc52aa1e029" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix* hilb_comp::input_mat</definition>
+        <argsstring></argsstring>
+        <name>input_mat</name>
+        <qualifiedname>hilb_comp::input_mat</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="100" column="16" bodyfile="Macaulay2/e/hilb.hpp" bodystart="100" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a53ae58e37fd377df1a37b9653db026ba_1a53ae58e37fd377df1a37b9653db026ba" compoundref="hilb_8cpp" startline="314" endline="324">next_monideal</referencedby>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a1ea6f2c69afba1e24f207751add3ba15_1a1ea6f2c69afba1e24f207751add3ba15" prot="private" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem hilb_comp::result_poincare</definition>
+        <argsstring></argsstring>
+        <name>result_poincare</name>
+        <qualifiedname>hilb_comp::result_poincare</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="101" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="101" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+        <referencedby refid="classhilb__comp_ac8ac7f8024616fd5514707edf081b966_1ac8ac7f8024616fd5514707edf081b966" compoundref="hilb_8cpp" startline="607" endline="616">value</referencedby>
+        <referencedby refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" compoundref="hilb_8cpp" startline="401" endline="420">~hilb_comp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_aa6f7d43ec9e4562603957e31a33ee886_1aa6f7d43ec9e4562603957e31a33ee886" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::this_comp</definition>
+        <argsstring></argsstring>
+        <name>this_comp</name>
+        <qualifiedname>hilb_comp::this_comp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="103" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="103" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a53ae58e37fd377df1a37b9653db026ba_1a53ae58e37fd377df1a37b9653db026ba" compoundref="hilb_8cpp" startline="314" endline="324">next_monideal</referencedby>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a84371e1ff4aa19e7a224d94dd34bda88_1a84371e1ff4aa19e7a224d94dd34bda88" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::n_components</definition>
+        <argsstring></argsstring>
+        <name>n_components</name>
+        <qualifiedname>hilb_comp::n_components</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="104" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="104" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1293f9736c38f3f57d5b7183777ae976_1a1293f9736c38f3f57d5b7183777ae976" compoundref="hilb_8cpp" startline="422" endline="444">calc</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" prot="private" static="no" mutable="no">
+        <type><ref refid="structhilb__step" kindref="compound">hilb_step</ref> *</type>
+        <definition>hilb_step* hilb_comp::current</definition>
+        <argsstring></argsstring>
+        <name>current</name>
+        <qualifiedname>hilb_comp::current</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="108" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="108" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a2297d3132c632cff6c84895323bbd273_1a2297d3132c632cff6c84895323bbd273" compoundref="hilb_8cpp" startline="602" endline="605">is_done</referencedby>
+        <referencedby refid="classhilb__comp_a53ae58e37fd377df1a37b9653db026ba_1a53ae58e37fd377df1a37b9653db026ba" compoundref="hilb_8cpp" startline="314" endline="324">next_monideal</referencedby>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+        <referencedby refid="classhilb__comp_a627dc77213c80eb3a20db5d67c73eef2_1a627dc77213c80eb3a20db5d67c73eef2" compoundref="hilb_8cpp" startline="325" endline="342">reset</referencedby>
+        <referencedby refid="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" compoundref="hilb_8cpp" startline="618" endline="652">stats</referencedby>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+        <referencedby refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" compoundref="hilb_8cpp" startline="401" endline="420">~hilb_comp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a71751d40c5da3c0c15d02e0e688cc3d4_1a71751d40c5da3c0c15d02e0e688cc3d4" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::nsteps</definition>
+        <argsstring></argsstring>
+        <name>nsteps</name>
+        <qualifiedname>hilb_comp::nsteps</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="111" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="111" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1293f9736c38f3f57d5b7183777ae976_1a1293f9736c38f3f57d5b7183777ae976" compoundref="hilb_8cpp" startline="422" endline="444">calc</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" compoundref="hilb_8cpp" startline="618" endline="652">stats</referencedby>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_ab9b2b669b05273c8dffb865f51d19e07_1ab9b2b669b05273c8dffb865f51d19e07" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::depth</definition>
+        <argsstring></argsstring>
+        <name>depth</name>
+        <qualifiedname>hilb_comp::depth</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="112" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="112" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+        <referencedby refid="classhilb__comp_a627dc77213c80eb3a20db5d67c73eef2_1a627dc77213c80eb3a20db5d67c73eef2" compoundref="hilb_8cpp" startline="325" endline="342">reset</referencedby>
+        <referencedby refid="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" compoundref="hilb_8cpp" startline="618" endline="652">stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_abffabb8ba437e66109360d0cca05c701_1abffabb8ba437e66109360d0cca05c701" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::maxdepth</definition>
+        <argsstring></argsstring>
+        <name>maxdepth</name>
+        <qualifiedname>hilb_comp::maxdepth</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="113" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="113" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+        <referencedby refid="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" compoundref="hilb_8cpp" startline="618" endline="652">stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a0f3ae2b0df12cf3b7afca1e6a41ccaf5_1a0f3ae2b0df12cf3b7afca1e6a41ccaf5" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::nideal</definition>
+        <argsstring></argsstring>
+        <name>nideal</name>
+        <qualifiedname>hilb_comp::nideal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="114" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="114" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" compoundref="hilb_8cpp" startline="618" endline="652">stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a40a2df4a8c021a4a9e555226ce22a765_1a40a2df4a8c021a4a9e555226ce22a765" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::nrecurse</definition>
+        <argsstring></argsstring>
+        <name>nrecurse</name>
+        <qualifiedname>hilb_comp::nrecurse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="115" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="115" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+        <referencedby refid="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" compoundref="hilb_8cpp" startline="618" endline="652">stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_af484dd390b9dad53a08d168e9dcfb415_1af484dd390b9dad53a08d168e9dcfb415" prot="private" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem hilb_comp::one</definition>
+        <argsstring></argsstring>
+        <name>one</name>
+        <qualifiedname>hilb_comp::one</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="118" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="118" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+        <referencedby refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" compoundref="hilb_8cpp" startline="401" endline="420">~hilb_comp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a2d1ef88be8bd94f76476371ede71f098_1a2d1ef88be8bd94f76476371ede71f098" prot="private" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem hilb_comp::minus_one</definition>
+        <argsstring></argsstring>
+        <name>minus_one</name>
+        <qualifiedname>hilb_comp::minus_one</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="119" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="119" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" compoundref="hilb_8cpp" startline="401" endline="420">~hilb_comp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a5632de14ee725b188237ae3542eeb622_1a5632de14ee725b188237ae3542eeb622" prot="private" static="no" mutable="no">
+        <type><ref refid="gbring_8hpp_a4b3f8e88af1cc26075f7af0f961adb96_1a4b3f8e88af1cc26075f7af0f961adb96" kindref="member">monomial</ref></type>
+        <definition>monomial hilb_comp::LOCAL_deg1</definition>
+        <argsstring></argsstring>
+        <name>LOCAL_deg1</name>
+        <qualifiedname>hilb_comp::LOCAL_deg1</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="123" column="12" bodyfile="Macaulay2/e/hilb.hpp" bodystart="123" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+        <referencedby refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" compoundref="hilb_8cpp" startline="401" endline="420">~hilb_comp</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a3458ac9927f5636bf18013af98e2bf11_1a3458ac9927f5636bf18013af98e2bf11" prot="private" static="no" mutable="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>gc_vector&lt;int&gt; hilb_comp::LOCAL_vp</definition>
+        <argsstring></argsstring>
+        <name>LOCAL_vp</name>
+        <qualifiedname>hilb_comp::LOCAL_vp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="124" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="124" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classhilb__comp_a76b5d57541e72c3c75eb66f5c78f7797_1a76b5d57541e72c3c75eb66f5c78f7797" prot="private" static="no" mutable="no">
+        <type><ref refid="classpartition__table" kindref="compound">partition_table</ref></type>
+        <definition>partition_table hilb_comp::part_table</definition>
+        <argsstring></argsstring>
+        <name>part_table</name>
+        <qualifiedname>hilb_comp::part_table</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="125" column="19" bodyfile="Macaulay2/e/hilb.hpp" bodystart="125" bodyend="-1"/>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a53ae58e37fd377df1a37b9653db026ba_1a53ae58e37fd377df1a37b9653db026ba" compoundref="hilb_8cpp" startline="314" endline="324">next_monideal</referencedby>
+        <referencedby refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::step</definition>
+        <argsstring>()</argsstring>
+        <name>step</name>
+        <qualifiedname>hilb_comp::step</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="127" column="7" bodyfile="Macaulay2/e/hilb.cpp" bodystart="446" bodyend="498"/>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213acc1882220d0fc15d30917e7479b550df" compoundref="computation_8h" startline="69">COMP_COMPUTING</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <references refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</references>
+        <references refid="classhilb__comp_a363cdba70257dac4a3170cc52aa1e029_1a363cdba70257dac4a3170cc52aa1e029" compoundref="hilb_8hpp" startline="100">input_mat</references>
+        <references refid="classhilb__comp_a84371e1ff4aa19e7a224d94dd34bda88_1a84371e1ff4aa19e7a224d94dd34bda88" compoundref="hilb_8hpp" startline="104">n_components</references>
+        <references refid="classhilb__comp_a53ae58e37fd377df1a37b9653db026ba_1a53ae58e37fd377df1a37b9653db026ba" compoundref="hilb_8cpp" startline="314" endline="324">next_monideal</references>
+        <references refid="classhilb__comp_a71751d40c5da3c0c15d02e0e688cc3d4_1a71751d40c5da3c0c15d02e0e688cc3d4" compoundref="hilb_8hpp" startline="111">nsteps</references>
+        <references refid="classhilb__comp_af484dd390b9dad53a08d168e9dcfb415_1af484dd390b9dad53a08d168e9dcfb415" compoundref="hilb_8hpp" startline="118">one</references>
+        <references refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" compoundref="hilb_8hpp" startline="93">R</references>
+        <references refid="classhilb__comp_a1ea6f2c69afba1e24f207751add3ba15_1a1ea6f2c69afba1e24f207751add3ba15" compoundref="hilb_8hpp" startline="101">result_poincare</references>
+        <references refid="classhilb__comp_aa6f7d43ec9e4562603957e31a33ee886_1aa6f7d43ec9e4562603957e31a33ee886" compoundref="hilb_8hpp" startline="103">this_comp</references>
+        <referencedby refid="classhilb__comp_a1293f9736c38f3f57d5b7183777ae976_1a1293f9736c38f3f57d5b7183777ae976" compoundref="hilb_8cpp" startline="422" endline="444">calc</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void hilb_comp::recurse</definition>
+        <argsstring>(MonomialIdeal *&amp;I, const_varpower pivot_vp)</argsstring>
+        <name>recurse</name>
+        <qualifiedname>hilb_comp::recurse</qualifiedname>
+        <param>
+          <type><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref> *&amp;</type>
+          <declname>I</declname>
+        </param>
+        <param>
+          <type><ref refid="_exponent_list_8hpp_a32c7462759c905470880b0dba58f00ad_1a32c7462759c905470880b0dba58f00ad" kindref="member">const_varpower</ref></type>
+          <declname>pivot_vp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="128" column="8" bodyfile="Macaulay2/e/hilb.cpp" bodystart="500" bodyend="522"/>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <references refid="classhilb__comp_ab9b2b669b05273c8dffb865f51d19e07_1ab9b2b669b05273c8dffb865f51d19e07" compoundref="hilb_8hpp" startline="112">depth</references>
+        <references refid="hilb_8cpp_a63f6b21008951d3bb1a9454d9eaa2a58_1a63f6b21008951d3bb1a9454d9eaa2a58" compoundref="hilb_8cpp" startline="267" endline="312">iquotient_and_sum</references>
+        <references refid="classhilb__comp_a5632de14ee725b188237ae3542eeb622_1a5632de14ee725b188237ae3542eeb622" compoundref="hilb_8hpp" startline="123">LOCAL_deg1</references>
+        <references refid="classhilb__comp_ad3894293525272b88e8a3b3a44f79f77_1ad3894293525272b88e8a3b3a44f79f77" compoundref="hilb_8hpp" startline="94">M</references>
+        <references refid="classhilb__comp_abffabb8ba437e66109360d0cca05c701_1abffabb8ba437e66109360d0cca05c701" compoundref="hilb_8hpp" startline="113">maxdepth</references>
+        <references refid="classhilb__comp_af736b62155f6e31f3113c370492caa04_1af736b62155f6e31f3113c370492caa04" compoundref="hilb_8hpp" startline="97">mi_stash</references>
+        <references refid="classhilb__comp_a40a2df4a8c021a4a9e555226ce22a765_1a40a2df4a8c021a4a9e555226ce22a765" compoundref="hilb_8hpp" startline="115">nrecurse</references>
+        <references refid="classhilb__comp_af484dd390b9dad53a08d168e9dcfb415_1af484dd390b9dad53a08d168e9dcfb415" compoundref="hilb_8hpp" startline="118">one</references>
+        <references refid="classhilb__comp_a76b5d57541e72c3c75eb66f5c78f7797_1a76b5d57541e72c3c75eb66f5c78f7797" compoundref="hilb_8hpp" startline="125">part_table</references>
+        <references refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" compoundref="hilb_8hpp" startline="93">R</references>
+        <referencedby refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" compoundref="hilb_8cpp" startline="524" endline="600">do_ideal</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void hilb_comp::do_ideal</definition>
+        <argsstring>(MonomialIdeal *I)</argsstring>
+        <name>do_ideal</name>
+        <qualifiedname>hilb_comp::do_ideal</qualifiedname>
+        <param>
+          <type><ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref> *</type>
+          <declname>I</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="129" column="8" bodyfile="Macaulay2/e/hilb.cpp" bodystart="524" bodyend="600"/>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <references refid="classhilb__comp_a14a810ae420e669620e8fa6ccdb54e67_1a14a810ae420e669620e8fa6ccdb54e67" compoundref="hilb_8hpp" startline="95">D</references>
+        <references refid="hilb_8cpp_a03bad5894f2bdf668a2576c602eb92bb_1a03bad5894f2bdf668a2576c602eb92bb" compoundref="hilb_8cpp" startline="236" endline="265">find_pivot</references>
+        <references refid="class_monomial_ideal_afe1dc12b60db24c5d81b73e075dd25e0_1afe1dc12b60db24c5d81b73e075dd25e0" compoundref="monideal_8cpp" startline="177" endline="180">MonomialIdeal::first_elem</references>
+        <references refid="res-tasking-example_8cpp_acc0eea0b8cd2df09e6f3c2bade95a903_1acc0eea0b8cd2df09e6f3c2bade95a903" compoundref="res-tasking-example_8cpp" startline="44">G</references>
+        <references refid="class_exponent_list_a6353b867b000fa4475bf606d5a652027_1a6353b867b000fa4475bf606d5a652027" compoundref="_exponent_list_8cpp" startline="304" endline="349">ExponentList&lt; int, true &gt;::lcm</references>
+        <references refid="classhilb__comp_a5632de14ee725b188237ae3542eeb622_1a5632de14ee725b188237ae3542eeb622" compoundref="hilb_8hpp" startline="123">LOCAL_deg1</references>
+        <references refid="classhilb__comp_a3458ac9927f5636bf18013af98e2bf11_1a3458ac9927f5636bf18013af98e2bf11" compoundref="hilb_8hpp" startline="124">LOCAL_vp</references>
+        <references refid="classhilb__comp_ad3894293525272b88e8a3b3a44f79f77_1ad3894293525272b88e8a3b3a44f79f77" compoundref="hilb_8hpp" startline="94">M</references>
+        <references refid="classhilb__comp_a2d1ef88be8bd94f76476371ede71f098_1a2d1ef88be8bd94f76476371ede71f098" compoundref="hilb_8hpp" startline="119">minus_one</references>
+        <references refid="classhilb__comp_a0f3ae2b0df12cf3b7afca1e6a41ccaf5_1a0f3ae2b0df12cf3b7afca1e6a41ccaf5" compoundref="hilb_8hpp" startline="114">nideal</references>
+        <references refid="classhilb__comp_af484dd390b9dad53a08d168e9dcfb415_1af484dd390b9dad53a08d168e9dcfb415" compoundref="hilb_8hpp" startline="118">one</references>
+        <references refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" compoundref="hilb_8hpp" startline="93">R</references>
+        <references refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" compoundref="hilb_8cpp" startline="500" endline="522">recurse</references>
+        <references refid="class_monomial_ideal_ad580a2b46747af408644100b72524118_1ad580a2b46747af408644100b72524118" compoundref="monideal_8cpp" startline="182" endline="185">MonomialIdeal::second_elem</references>
+        <references refid="class_monomial_ideal_a8b45926eb887916f25218f4c74cf5f86_1a8b45926eb887916f25218f4c74cf5f86" compoundref="monideal_8hpp" startline="180" endline="180">MonomialIdeal::size</references>
+        <references refid="class_monomial_ideal_ac2fd2b1ce0a2b49250b9a22144007e0e_1ac2fd2b1ce0a2b49250b9a22144007e0e" compoundref="monideal_8hpp" startline="181" endline="181">MonomialIdeal::topvar</references>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>hilb_comp::hilb_comp</definition>
+        <argsstring>(const PolynomialRing *R, const Matrix *M)</argsstring>
+        <name>hilb_comp</name>
+        <qualifiedname>hilb_comp::hilb_comp</qualifiedname>
+        <param>
+          <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="132" column="3" bodyfile="Macaulay2/e/hilb.cpp" bodystart="343" bodyend="369"/>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <references refid="classhilb__comp_a14a810ae420e669620e8fa6ccdb54e67_1a14a810ae420e669620e8fa6ccdb54e67" compoundref="hilb_8hpp" startline="95">D</references>
+        <references refid="classhilb__comp_a363cdba70257dac4a3170cc52aa1e029_1a363cdba70257dac4a3170cc52aa1e029" compoundref="hilb_8hpp" startline="100">input_mat</references>
+        <references refid="classhilb__comp_a5632de14ee725b188237ae3542eeb622_1a5632de14ee725b188237ae3542eeb622" compoundref="hilb_8hpp" startline="123">LOCAL_deg1</references>
+        <references refid="classhilb__comp_ad3894293525272b88e8a3b3a44f79f77_1ad3894293525272b88e8a3b3a44f79f77" compoundref="hilb_8hpp" startline="94">M</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" compoundref="polyroots_8cpp" startline="50">max</references>
+        <references refid="classhilb__comp_abffabb8ba437e66109360d0cca05c701_1abffabb8ba437e66109360d0cca05c701" compoundref="hilb_8hpp" startline="113">maxdepth</references>
+        <references refid="classhilb__comp_af736b62155f6e31f3113c370492caa04_1af736b62155f6e31f3113c370492caa04" compoundref="hilb_8hpp" startline="97">mi_stash</references>
+        <references refid="classhilb__comp_a2d1ef88be8bd94f76476371ede71f098_1a2d1ef88be8bd94f76476371ede71f098" compoundref="hilb_8hpp" startline="119">minus_one</references>
+        <references refid="classhilb__comp_a84371e1ff4aa19e7a224d94dd34bda88_1a84371e1ff4aa19e7a224d94dd34bda88" compoundref="hilb_8hpp" startline="104">n_components</references>
+        <references refid="classhilb__comp_a53ae58e37fd377df1a37b9653db026ba_1a53ae58e37fd377df1a37b9653db026ba" compoundref="hilb_8cpp" startline="314" endline="324">next_monideal</references>
+        <references refid="classhilb__comp_a0f3ae2b0df12cf3b7afca1e6a41ccaf5_1a0f3ae2b0df12cf3b7afca1e6a41ccaf5" compoundref="hilb_8hpp" startline="114">nideal</references>
+        <references refid="classhilb__comp_a40a2df4a8c021a4a9e555226ce22a765_1a40a2df4a8c021a4a9e555226ce22a765" compoundref="hilb_8hpp" startline="115">nrecurse</references>
+        <references refid="classhilb__comp_a71751d40c5da3c0c15d02e0e688cc3d4_1a71751d40c5da3c0c15d02e0e688cc3d4" compoundref="hilb_8hpp" startline="111">nsteps</references>
+        <references refid="classhilb__comp_af484dd390b9dad53a08d168e9dcfb415_1af484dd390b9dad53a08d168e9dcfb415" compoundref="hilb_8hpp" startline="118">one</references>
+        <references refid="classhilb__comp_a76b5d57541e72c3c75eb66f5c78f7797_1a76b5d57541e72c3c75eb66f5c78f7797" compoundref="hilb_8hpp" startline="125">part_table</references>
+        <references refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" compoundref="hilb_8hpp" startline="93">R</references>
+        <references refid="classhilb__comp_a1ea6f2c69afba1e24f207751add3ba15_1a1ea6f2c69afba1e24f207751add3ba15" compoundref="hilb_8hpp" startline="101">result_poincare</references>
+        <references refid="classhilb__comp_a53bd1c3a172ba3a289dc9d3bcc28c3fd_1a53bd1c3a172ba3a289dc9d3bcc28c3fd" compoundref="hilb_8hpp" startline="92">S</references>
+        <references refid="classhilb__comp_aa6f7d43ec9e4562603957e31a33ee886_1aa6f7d43ec9e4562603957e31a33ee886" compoundref="hilb_8hpp" startline="103">this_comp</references>
+        <referencedby refid="classhilb__comp_af0a64bcacdeb9fd78d4eba85ff93cacb_1af0a64bcacdeb9fd78d4eba85ff93cacb" compoundref="hilb_8cpp" startline="665" endline="679">hilbertNumerator</referencedby>
+        <referencedby refid="classhilb__comp_a418950915ada42bcdfb7e462ca45080f_1a418950915ada42bcdfb7e462ca45080f" compoundref="hilb_8cpp" startline="689" endline="702">hilbertNumerator</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>hilb_comp::hilb_comp</definition>
+        <argsstring>(const PolynomialRing *R, const MonomialIdeal *I)</argsstring>
+        <name>hilb_comp</name>
+        <qualifiedname>hilb_comp::hilb_comp</qualifiedname>
+        <param>
+          <type>const <ref refid="class_polynomial_ring" kindref="compound">PolynomialRing</ref> *</type>
+          <declname>R</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref> *</type>
+          <declname>I</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="133" column="3" bodyfile="Macaulay2/e/hilb.cpp" bodystart="371" bodyend="399"/>
+        <references refid="class_monomial_ideal_a8fa041292638d27022f628135eeef86a_1a8fa041292638d27022f628135eeef86a" compoundref="monideal_8cpp" startline="187" endline="193">MonomialIdeal::copy</references>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <references refid="classhilb__comp_a14a810ae420e669620e8fa6ccdb54e67_1a14a810ae420e669620e8fa6ccdb54e67" compoundref="hilb_8hpp" startline="95">D</references>
+        <references refid="classhilb__comp_a363cdba70257dac4a3170cc52aa1e029_1a363cdba70257dac4a3170cc52aa1e029" compoundref="hilb_8hpp" startline="100">input_mat</references>
+        <references refid="classhilb__comp_a5632de14ee725b188237ae3542eeb622_1a5632de14ee725b188237ae3542eeb622" compoundref="hilb_8hpp" startline="123">LOCAL_deg1</references>
+        <references refid="classhilb__comp_ad3894293525272b88e8a3b3a44f79f77_1ad3894293525272b88e8a3b3a44f79f77" compoundref="hilb_8hpp" startline="94">M</references>
+        <references refid="classhilb__comp_abffabb8ba437e66109360d0cca05c701_1abffabb8ba437e66109360d0cca05c701" compoundref="hilb_8hpp" startline="113">maxdepth</references>
+        <references refid="classhilb__comp_af736b62155f6e31f3113c370492caa04_1af736b62155f6e31f3113c370492caa04" compoundref="hilb_8hpp" startline="97">mi_stash</references>
+        <references refid="classhilb__comp_a2d1ef88be8bd94f76476371ede71f098_1a2d1ef88be8bd94f76476371ede71f098" compoundref="hilb_8hpp" startline="119">minus_one</references>
+        <references refid="classhilb__comp_a84371e1ff4aa19e7a224d94dd34bda88_1a84371e1ff4aa19e7a224d94dd34bda88" compoundref="hilb_8hpp" startline="104">n_components</references>
+        <references refid="classhilb__comp_a0f3ae2b0df12cf3b7afca1e6a41ccaf5_1a0f3ae2b0df12cf3b7afca1e6a41ccaf5" compoundref="hilb_8hpp" startline="114">nideal</references>
+        <references refid="classhilb__comp_a40a2df4a8c021a4a9e555226ce22a765_1a40a2df4a8c021a4a9e555226ce22a765" compoundref="hilb_8hpp" startline="115">nrecurse</references>
+        <references refid="classhilb__comp_a71751d40c5da3c0c15d02e0e688cc3d4_1a71751d40c5da3c0c15d02e0e688cc3d4" compoundref="hilb_8hpp" startline="111">nsteps</references>
+        <references refid="classhilb__comp_af484dd390b9dad53a08d168e9dcfb415_1af484dd390b9dad53a08d168e9dcfb415" compoundref="hilb_8hpp" startline="118">one</references>
+        <references refid="classhilb__comp_a76b5d57541e72c3c75eb66f5c78f7797_1a76b5d57541e72c3c75eb66f5c78f7797" compoundref="hilb_8hpp" startline="125">part_table</references>
+        <references refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" compoundref="hilb_8hpp" startline="93">R</references>
+        <references refid="classhilb__comp_a627dc77213c80eb3a20db5d67c73eef2_1a627dc77213c80eb3a20db5d67c73eef2" compoundref="hilb_8cpp" startline="325" endline="342">reset</references>
+        <references refid="classhilb__comp_a1ea6f2c69afba1e24f207751add3ba15_1a1ea6f2c69afba1e24f207751add3ba15" compoundref="hilb_8hpp" startline="101">result_poincare</references>
+        <references refid="classhilb__comp_a53bd1c3a172ba3a289dc9d3bcc28c3fd_1a53bd1c3a172ba3a289dc9d3bcc28c3fd" compoundref="hilb_8hpp" startline="92">S</references>
+        <references refid="classhilb__comp_aa6f7d43ec9e4562603957e31a33ee886_1aa6f7d43ec9e4562603957e31a33ee886" compoundref="hilb_8hpp" startline="103">this_comp</references>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>hilb_comp::~hilb_comp</definition>
+        <argsstring>()</argsstring>
+        <name>~hilb_comp</name>
+        <qualifiedname>hilb_comp::~hilb_comp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="134" column="3" bodyfile="Macaulay2/e/hilb.cpp" bodystart="401" bodyend="420"/>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <references refid="classhilb__comp_a14a810ae420e669620e8fa6ccdb54e67_1a14a810ae420e669620e8fa6ccdb54e67" compoundref="hilb_8hpp" startline="95">D</references>
+        <references refid="classhilb__comp_a5632de14ee725b188237ae3542eeb622_1a5632de14ee725b188237ae3542eeb622" compoundref="hilb_8hpp" startline="123">LOCAL_deg1</references>
+        <references refid="classhilb__comp_af736b62155f6e31f3113c370492caa04_1af736b62155f6e31f3113c370492caa04" compoundref="hilb_8hpp" startline="97">mi_stash</references>
+        <references refid="classhilb__comp_a2d1ef88be8bd94f76476371ede71f098_1a2d1ef88be8bd94f76476371ede71f098" compoundref="hilb_8hpp" startline="119">minus_one</references>
+        <references refid="classhilb__comp_af484dd390b9dad53a08d168e9dcfb415_1af484dd390b9dad53a08d168e9dcfb415" compoundref="hilb_8hpp" startline="118">one</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" compoundref="hilb_8hpp" startline="93">R</references>
+        <references refid="classhilb__comp_a1ea6f2c69afba1e24f207751add3ba15_1a1ea6f2c69afba1e24f207751add3ba15" compoundref="hilb_8hpp" startline="101">result_poincare</references>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_a627dc77213c80eb3a20db5d67c73eef2_1a627dc77213c80eb3a20db5d67c73eef2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void hilb_comp::reset</definition>
+        <argsstring>()</argsstring>
+        <name>reset</name>
+        <qualifiedname>hilb_comp::reset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="136" column="8" bodyfile="Macaulay2/e/hilb.cpp" bodystart="325" bodyend="342"/>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <references refid="classhilb__comp_ab9b2b669b05273c8dffb865f51d19e07_1ab9b2b669b05273c8dffb865f51d19e07" compoundref="hilb_8hpp" startline="112">depth</references>
+        <references refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" compoundref="hilb_8hpp" startline="93">R</references>
+        <referencedby refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" compoundref="hilb_8cpp" startline="371" endline="399">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a53ae58e37fd377df1a37b9653db026ba_1a53ae58e37fd377df1a37b9653db026ba" compoundref="hilb_8cpp" startline="314" endline="324">next_monideal</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_a53ae58e37fd377df1a37b9653db026ba_1a53ae58e37fd377df1a37b9653db026ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void hilb_comp::next_monideal</definition>
+        <argsstring>()</argsstring>
+        <name>next_monideal</name>
+        <qualifiedname>hilb_comp::next_monideal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="137" column="8" bodyfile="Macaulay2/e/hilb.cpp" bodystart="314" bodyend="324"/>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <references refid="classhilb__comp_a363cdba70257dac4a3170cc52aa1e029_1a363cdba70257dac4a3170cc52aa1e029" compoundref="hilb_8hpp" startline="100">input_mat</references>
+        <references refid="classhilb__comp_a76b5d57541e72c3c75eb66f5c78f7797_1a76b5d57541e72c3c75eb66f5c78f7797" compoundref="hilb_8hpp" startline="125">part_table</references>
+        <references refid="classhilb__comp_a627dc77213c80eb3a20db5d67c73eef2_1a627dc77213c80eb3a20db5d67c73eef2" compoundref="hilb_8cpp" startline="325" endline="342">reset</references>
+        <references refid="classhilb__comp_aa6f7d43ec9e4562603957e31a33ee886_1aa6f7d43ec9e4562603957e31a33ee886" compoundref="hilb_8hpp" startline="103">this_comp</references>
+        <referencedby refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</referencedby>
+        <referencedby refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_a1293f9736c38f3f57d5b7183777ae976_1a1293f9736c38f3f57d5b7183777ae976" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::calc</definition>
+        <argsstring>(int nsteps)</argsstring>
+        <name>calc</name>
+        <qualifiedname>hilb_comp::calc</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nsteps</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="138" column="7" bodyfile="Macaulay2/e/hilb.cpp" bodystart="422" bodyend="444"/>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a3db879f5519e91c07967fa94797a495b" compoundref="computation_8h" startline="67">COMP_DONE_STEPS</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213af7f83acff45b8cb3944b17a21c048b06" compoundref="computation_8h" startline="55">COMP_INTERRUPTED</references>
+        <references refid="classhilb__comp_a84371e1ff4aa19e7a224d94dd34bda88_1a84371e1ff4aa19e7a224d94dd34bda88" compoundref="hilb_8hpp" startline="104">n_components</references>
+        <references refid="classhilb__comp_a71751d40c5da3c0c15d02e0e688cc3d4_1a71751d40c5da3c0c15d02e0e688cc3d4" compoundref="hilb_8hpp" startline="111">nsteps</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" compoundref="hilb_8cpp" startline="446" endline="498">step</references>
+        <references refid="interrupted_8cpp_a5035d07c37876dc3b866e1d4457ff390_1a5035d07c37876dc3b866e1d4457ff390" compoundref="interrupted_8cpp" startline="6" endline="6">system_interrupted</references>
+        <referencedby refid="classhilb__comp_af0a64bcacdeb9fd78d4eba85ff93cacb_1af0a64bcacdeb9fd78d4eba85ff93cacb" compoundref="hilb_8cpp" startline="665" endline="679">hilbertNumerator</referencedby>
+        <referencedby refid="classhilb__comp_a418950915ada42bcdfb7e462ca45080f_1a418950915ada42bcdfb7e462ca45080f" compoundref="hilb_8cpp" startline="689" endline="702">hilbertNumerator</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_a2297d3132c632cff6c84895323bbd273_1a2297d3132c632cff6c84895323bbd273" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::is_done</definition>
+        <argsstring>() const</argsstring>
+        <name>is_done</name>
+        <qualifiedname>hilb_comp::is_done</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="139" column="7" bodyfile="Macaulay2/e/hilb.cpp" bodystart="602" bodyend="605"/>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <referencedby refid="classhilb__comp_ac8ac7f8024616fd5514707edf081b966_1ac8ac7f8024616fd5514707edf081b966" compoundref="hilb_8cpp" startline="607" endline="616">value</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_ac8ac7f8024616fd5514707edf081b966_1ac8ac7f8024616fd5514707edf081b966" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * hilb_comp::value</definition>
+        <argsstring>()</argsstring>
+        <name>value</name>
+        <qualifiedname>hilb_comp::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="140" column="15" bodyfile="Macaulay2/e/hilb.cpp" bodystart="607" bodyend="616"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="classhilb__comp_a2297d3132c632cff6c84895323bbd273_1a2297d3132c632cff6c84895323bbd273" compoundref="hilb_8cpp" startline="602" endline="605">is_done</references>
+        <references refid="class_ring_element_ab978463e39096a4e0d1ecc0720f9acf3_1ab978463e39096a4e0d1ecc0720f9acf3" compoundref="relem_8cpp" startline="20" endline="23">RingElement::make_raw</references>
+        <references refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" compoundref="hilb_8hpp" startline="93">R</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="classhilb__comp_a1ea6f2c69afba1e24f207751add3ba15_1a1ea6f2c69afba1e24f207751add3ba15" compoundref="hilb_8hpp" startline="101">result_poincare</references>
+        <referencedby refid="classhilb__comp_af0a64bcacdeb9fd78d4eba85ff93cacb_1af0a64bcacdeb9fd78d4eba85ff93cacb" compoundref="hilb_8cpp" startline="665" endline="679">hilbertNumerator</referencedby>
+        <referencedby refid="classhilb__comp_a418950915ada42bcdfb7e462ca45080f_1a418950915ada42bcdfb7e462ca45080f" compoundref="hilb_8cpp" startline="689" endline="702">hilbertNumerator</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void hilb_comp::stats</definition>
+        <argsstring>() const</argsstring>
+        <name>stats</name>
+        <qualifiedname>hilb_comp::stats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="141" column="8" bodyfile="Macaulay2/e/hilb.cpp" bodystart="618" bodyend="652"/>
+        <references refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" compoundref="hilb_8hpp" startline="108">current</references>
+        <references refid="classhilb__comp_ab9b2b669b05273c8dffb865f51d19e07_1ab9b2b669b05273c8dffb865f51d19e07" compoundref="hilb_8hpp" startline="112">depth</references>
+        <references refid="classhilb__comp_abffabb8ba437e66109360d0cca05c701_1abffabb8ba437e66109360d0cca05c701" compoundref="hilb_8hpp" startline="113">maxdepth</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <references refid="classhilb__comp_a0f3ae2b0df12cf3b7afca1e6a41ccaf5_1a0f3ae2b0df12cf3b7afca1e6a41ccaf5" compoundref="hilb_8hpp" startline="114">nideal</references>
+        <references refid="classhilb__comp_a40a2df4a8c021a4a9e555226ce22a765_1a40a2df4a8c021a4a9e555226ce22a765" compoundref="hilb_8hpp" startline="115">nrecurse</references>
+        <references refid="classhilb__comp_a71751d40c5da3c0c15d02e0e688cc3d4_1a71751d40c5da3c0c15d02e0e688cc3d4" compoundref="hilb_8hpp" startline="111">nsteps</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" compoundref="hilb_8hpp" startline="93">R</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classhilb__comp_aea718756e9b698709ed8959488eaf3b7_1aea718756e9b698709ed8959488eaf3b7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_comp::coeff_of</definition>
+        <argsstring>(const RingElement *h, int deg)</argsstring>
+        <name>coeff_of</name>
+        <qualifiedname>hilb_comp::coeff_of</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+          <declname>h</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>deg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="147" column="14" bodyfile="Macaulay2/e/hilb.cpp" bodystart="704" bodyend="740"/>
+        <references refid="class_ring_a73bec90f6a8598b3c5cdc201b068589a_1a73bec90f6a8598b3c5cdc201b068589a" compoundref="ring_8hpp" startline="241" endline="241">Ring::cast_to_PolynomialRing</references>
+        <references refid="class_ring_a3d64baae17fd73c1e9b0ed62898e558f_1a3d64baae17fd73c1e9b0ed62898e558f" compoundref="ring_8cpp" startline="236" endline="241">Ring::coerceToLongInteger</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="class_ring_element_aeeacf97a0fec2e1e7ea86d9050a84d83_1aeeacf97a0fec2e1e7ea86d9050a84d83" compoundref="relem_8hpp" startline="77" endline="77">RingElement::get_ring</references>
+        <references refid="class_ring_element_a82fc5ddcc26a6f2efe867bff0088d54b_1a82fc5ddcc26a6f2efe867bff0088d54b" compoundref="relem_8hpp" startline="75" endline="75">RingElement::get_value</references>
+        <references refid="class_polynomial_ring_a2df3a41ac565c2c2e2662b903dfd29c4_1a2df3a41ac565c2c2e2662b903dfd29c4" compoundref="_macaulay2_2e_2polyring_8hpp" startline="196" endline="196">PolynomialRing::getCoefficientRing</references>
+        <references refid="class_polynomial_ring_a6cf397b11498a6d0cd65d20898bd697c_1a6cf397b11498a6d0cd65d20898bd697c" compoundref="_macaulay2_2e_2polyring_8hpp" startline="278" endline="278">PolynomialRing::getMonoid</references>
+        <references refid="class_polynomial_ring_aece123c61c00a4f07a6008badec14362_1aece123c61c00a4f07a6008badec14362" compoundref="_macaulay2_2e_2polyring_8hpp" startline="192" endline="192">PolynomialRing::n_vars</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="class_monoid_a134514e900a32c809126bf4dd6c891c4_1a134514e900a32c809126bf4dd6c891c4" compoundref="monoid_8cpp" startline="747" endline="750">Monoid::to_expvector</references>
+        <referencedby refid="classgb2__comp_a3dd71774b568ffecb3fdad084c99b929_1a3dd71774b568ffecb3fdad084c99b929" compoundref="res-a2-gb_8cpp" startline="684" endline="799">gb2_comp::calc_gb</referencedby>
+        <referencedby refid="classgb_a_ab2bc5a2ed6c4e647bed584475f7fb7d5_1ab2bc5a2ed6c4e647bed584475f7fb7d5" compoundref="gb-default_8cpp" startline="2396" endline="2608">gbA::do_computation</referencedby>
+        <referencedby refid="class_hilbert_controller_a88ed4434dd989eeed88b334c68e9d217_1a88ed4434dd989eeed88b334c68e9d217" compoundref="hilb-fcn_8cpp" startline="42" endline="53">HilbertController::setDegree</referencedby>
+        <referencedby refid="class_g_b__comp_a14b1b8f16312e3b92ec569a77f9d93c0_1a14b1b8f16312e3b92ec569a77f9d93c0" compoundref="gb-homog2_8cpp" startline="796" endline="961">GB_comp::start_computation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_af0a64bcacdeb9fd78d4eba85ff93cacb_1af0a64bcacdeb9fd78d4eba85ff93cacb" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * hilb_comp::hilbertNumerator</definition>
+        <argsstring>(const Matrix *M)</argsstring>
+        <name>hilbertNumerator</name>
+        <qualifiedname>hilb_comp::hilbertNumerator</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="156" column="23" bodyfile="Macaulay2/e/hilb.cpp" bodystart="665" bodyend="679"/>
+        <references refid="classhilb__comp_a1293f9736c38f3f57d5b7183777ae976_1a1293f9736c38f3f57d5b7183777ae976" compoundref="hilb_8cpp" startline="422" endline="444">calc</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</references>
+        <references refid="classhilb__comp_ad3894293525272b88e8a3b3a44f79f77_1ad3894293525272b88e8a3b3a44f79f77" compoundref="hilb_8hpp" startline="94">M</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="classhilb__comp_ac8ac7f8024616fd5514707edf081b966_1ac8ac7f8024616fd5514707edf081b966" compoundref="hilb_8cpp" startline="607" endline="616">value</references>
+        <referencedby refid="classgb2__comp_a3dd71774b568ffecb3fdad084c99b929_1a3dd71774b568ffecb3fdad084c99b929" compoundref="res-a2-gb_8cpp" startline="684" endline="799">gb2_comp::calc_gb</referencedby>
+        <referencedby refid="classgb_a_ab2bc5a2ed6c4e647bed584475f7fb7d5_1ab2bc5a2ed6c4e647bed584475f7fb7d5" compoundref="gb-default_8cpp" startline="2396" endline="2608">gbA::do_computation</referencedby>
+        <referencedby refid="classgb2__comp_ac1dfde176b3cbe111b64625991abf554_1ac1dfde176b3cbe111b64625991abf554" compoundref="res-a2-gb_8cpp" startline="846" endline="863">gb2_comp::hilbertNumerator</referencedby>
+        <referencedby refid="classhilb__comp_afdeb61bb141b426956ee3ed86bf2427b_1afdeb61bb141b426956ee3ed86bf2427b" compoundref="hilb_8cpp" startline="681" endline="687">hilbertNumerator</referencedby>
+        <referencedby refid="groebner_8cpp_a03ff5e5f21668e4bcd827c4d774c1c71_1a03ff5e5f21668e4bcd827c4d774c1c71" compoundref="groebner_8cpp" startline="58" endline="72">IM2_Matrix_Hilbert</referencedby>
+        <referencedby refid="monomial-ideal_8cpp_ae9af86080991d2b36c679c27a4e3b8ac_1ae9af86080991d2b36c679c27a4e3b8ac" compoundref="monomial-ideal_8cpp" startline="262" endline="276">IM2_MonomialIdeal_Hilbert</referencedby>
+        <referencedby refid="class_hilbert_controller_a5b82ddac829f6bf3cfb509f1cc724f09_1a5b82ddac829f6bf3cfb509f1cc724f09" compoundref="hilb-fcn_8cpp" startline="68" endline="80">HilbertController::recomputeHilbertFunction</referencedby>
+        <referencedby refid="classgb2__comp_a20af8990a8b4adc14304e48b9cb4ff5c_1a20af8990a8b4adc14304e48b9cb4ff5c" compoundref="res-a2-gb_8cpp" startline="11" endline="73">gb2_comp::setup</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_afdeb61bb141b426956ee3ed86bf2427b_1afdeb61bb141b426956ee3ed86bf2427b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * hilb_comp::hilbertNumerator</definition>
+        <argsstring>(const FreeModule *F)</argsstring>
+        <name>hilbertNumerator</name>
+        <qualifiedname>hilb_comp::hilbertNumerator</qualifiedname>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="162" column="22" bodyfile="Macaulay2/e/hilb.cpp" bodystart="681" bodyend="687"/>
+        <references refid="classhilb__comp_af0a64bcacdeb9fd78d4eba85ff93cacb_1af0a64bcacdeb9fd78d4eba85ff93cacb" compoundref="hilb_8cpp" startline="665" endline="679">hilbertNumerator</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+      </memberdef>
+      <memberdef kind="function" id="classhilb__comp_a418950915ada42bcdfb7e462ca45080f_1a418950915ada42bcdfb7e462ca45080f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_ring_element" kindref="compound">RingElement</ref> *</type>
+        <definition>RingElement * hilb_comp::hilbertNumerator</definition>
+        <argsstring>(const MonomialIdeal *I)</argsstring>
+        <name>hilbertNumerator</name>
+        <qualifiedname>hilb_comp::hilbertNumerator</qualifiedname>
+        <param>
+          <type>const <ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref> *</type>
+          <declname>I</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="164" column="23" bodyfile="Macaulay2/e/hilb.cpp" bodystart="689" bodyend="702"/>
+        <references refid="classhilb__comp_a1293f9736c38f3f57d5b7183777ae976_1a1293f9736c38f3f57d5b7183777ae976" compoundref="hilb_8cpp" startline="422" endline="444">calc</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="class_ring_aaef445fe5a6fd99cd99a9d0df7634259_1aaef445fe5a6fd99cd99a9d0df7634259" compoundref="ring_8hpp" startline="159" endline="159">Ring::get_degree_ring</references>
+        <references refid="class_monomial_ideal_aef478e527af8db4406c3114b63e30c46_1aef478e527af8db4406c3114b63e30c46" compoundref="monideal_8hpp" startline="184" endline="184">MonomialIdeal::get_ring</references>
+        <references refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" compoundref="hilb_8cpp" startline="343" endline="369">hilb_comp</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="classhilb__comp_ac8ac7f8024616fd5514707edf081b966_1ac8ac7f8024616fd5514707edf081b966" compoundref="hilb_8cpp" startline="607" endline="616">value</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><ref refid="class_computation" kindref="compound">Computation</ref> of Hilbert functions. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>hilb_comp</label>
+        <link refid="classhilb__comp"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="13">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+        <childnode refid="66" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="42" relation="private-inheritance">
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="44" relation="public-inheritance">
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="38" relation="private-inheritance">
+        </childnode>
+        <childnode refid="41" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="29" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="29" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="52">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="44">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="45" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="36" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="31">
+        <label>CoefficientType</label>
+      </node>
+      <node id="76">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="33" relation="public-inheritance">
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>T</label>
+      </node>
+      <node id="71">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="33" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="25">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="29">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="23">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="27" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>char</label>
+      </node>
+      <node id="12">
+        <label>const ARing *</label>
+      </node>
+      <node id="28">
+        <label>const void *</label>
+      </node>
+      <node id="18">
+        <label>double</label>
+      </node>
+      <node id="61">
+        <label>overflow_type *</label>
+      </node>
+      <node id="79">
+        <label>gc_vector&lt; MonomialIdeal * &gt;</label>
+      </node>
+      <node id="58">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="60">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="77">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="1">
+        <label>hilb_comp</label>
+        <link refid="classhilb__comp"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>R</edgelabel>
+          <edgelabel>S</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>D</edgelabel>
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>mi_stash</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>input_mat</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>one</edgelabel>
+          <edgelabel>result_poincare</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>LOCAL_deg1</edgelabel>
+          <edgelabel>depth</edgelabel>
+          <edgelabel>maxdepth</edgelabel>
+          <edgelabel>n_components</edgelabel>
+          <edgelabel>nideal</edgelabel>
+          <edgelabel>nrecurse</edgelabel>
+          <edgelabel>nsteps</edgelabel>
+          <edgelabel>this_comp</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>current</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>LOCAL_vp</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>part_table</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>hilb_step</label>
+        <link refid="structhilb__step"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>down</edgelabel>
+          <edgelabel>up</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>first_sum</edgelabel>
+          <edgelabel>i</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>h0</edgelabel>
+          <edgelabel>h1</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>monids</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="17">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>long</label>
+      </node>
+      <node id="46">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="47" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="50" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>mon_part</label>
+      </node>
+      <node id="22">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="21">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="19">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="20">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="80">
+        <label>partition_table</label>
+        <link refid="classpartition__table"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>dad</edgelabel>
+          <edgelabel>n_sets</edgelabel>
+          <edgelabel>n_vars</edgelabel>
+          <edgelabel>occurs</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>adad</edgelabel>
+          <edgelabel>aoccurs</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>mi_stash</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>size_t</label>
+      </node>
+      <node id="68">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>spinLock</label>
+      </node>
+      <node id="67">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="56">
+        <label>std::string</label>
+        <childnode refid="57" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="11" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="29" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="56" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/hilb.hpp" line="90" column="1" bodyfile="Macaulay2/e/hilb.hpp" bodystart="91" bodyend="168"/>
+    <listofallmembers>
+      <member refid="classhilb__comp_a1293f9736c38f3f57d5b7183777ae976_1a1293f9736c38f3f57d5b7183777ae976" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>calc</name></member>
+      <member refid="classhilb__comp_aea718756e9b698709ed8959488eaf3b7_1aea718756e9b698709ed8959488eaf3b7" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>coeff_of</name></member>
+      <member refid="classhilb__comp_a6b50c622b5c675607bf8d0e8226a31bb_1a6b50c622b5c675607bf8d0e8226a31bb" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>current</name></member>
+      <member refid="classhilb__comp_a14a810ae420e669620e8fa6ccdb54e67_1a14a810ae420e669620e8fa6ccdb54e67" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>D</name></member>
+      <member refid="classhilb__comp_ab9b2b669b05273c8dffb865f51d19e07_1ab9b2b669b05273c8dffb865f51d19e07" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>depth</name></member>
+      <member refid="classhilb__comp_a1a7399de6a6a311303ba3f8bd1bb94ed_1a1a7399de6a6a311303ba3f8bd1bb94ed" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>do_ideal</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>hash</name></member>
+      <member refid="classhilb__comp_a5e885ebee094e3e3fcef2afa40f9951e_1a5e885ebee094e3e3fcef2afa40f9951e" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>hilb_comp</name></member>
+      <member refid="classhilb__comp_ab791c2d3fd1945454a81743ef0c5074b_1ab791c2d3fd1945454a81743ef0c5074b" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>hilb_comp</name></member>
+      <member refid="classhilb__comp_af0a64bcacdeb9fd78d4eba85ff93cacb_1af0a64bcacdeb9fd78d4eba85ff93cacb" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>hilbertNumerator</name></member>
+      <member refid="classhilb__comp_afdeb61bb141b426956ee3ed86bf2427b_1afdeb61bb141b426956ee3ed86bf2427b" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>hilbertNumerator</name></member>
+      <member refid="classhilb__comp_a418950915ada42bcdfb7e462ca45080f_1a418950915ada42bcdfb7e462ca45080f" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>hilbertNumerator</name></member>
+      <member refid="classhilb__comp_a363cdba70257dac4a3170cc52aa1e029_1a363cdba70257dac4a3170cc52aa1e029" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>input_mat</name></member>
+      <member refid="classhilb__comp_a2297d3132c632cff6c84895323bbd273_1a2297d3132c632cff6c84895323bbd273" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>is_done</name></member>
+      <member refid="classhilb__comp_a5632de14ee725b188237ae3542eeb622_1a5632de14ee725b188237ae3542eeb622" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>LOCAL_deg1</name></member>
+      <member refid="classhilb__comp_a3458ac9927f5636bf18013af98e2bf11_1a3458ac9927f5636bf18013af98e2bf11" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>LOCAL_vp</name></member>
+      <member refid="classhilb__comp_ad3894293525272b88e8a3b3a44f79f77_1ad3894293525272b88e8a3b3a44f79f77" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>M</name></member>
+      <member refid="classhilb__comp_abffabb8ba437e66109360d0cca05c701_1abffabb8ba437e66109360d0cca05c701" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>maxdepth</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>mHashValue</name></member>
+      <member refid="classhilb__comp_af736b62155f6e31f3113c370492caa04_1af736b62155f6e31f3113c370492caa04" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>mi_stash</name></member>
+      <member refid="classhilb__comp_a2d1ef88be8bd94f76476371ede71f098_1a2d1ef88be8bd94f76476371ede71f098" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>minus_one</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>MutableEngineObject</name></member>
+      <member refid="classhilb__comp_a84371e1ff4aa19e7a224d94dd34bda88_1a84371e1ff4aa19e7a224d94dd34bda88" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>n_components</name></member>
+      <member refid="classhilb__comp_a53ae58e37fd377df1a37b9653db026ba_1a53ae58e37fd377df1a37b9653db026ba" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>next_monideal</name></member>
+      <member refid="classhilb__comp_a0f3ae2b0df12cf3b7afca1e6a41ccaf5_1a0f3ae2b0df12cf3b7afca1e6a41ccaf5" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>nideal</name></member>
+      <member refid="classhilb__comp_a40a2df4a8c021a4a9e555226ce22a765_1a40a2df4a8c021a4a9e555226ce22a765" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>nrecurse</name></member>
+      <member refid="classhilb__comp_a71751d40c5da3c0c15d02e0e688cc3d4_1a71751d40c5da3c0c15d02e0e688cc3d4" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>nsteps</name></member>
+      <member refid="classhilb__comp_af484dd390b9dad53a08d168e9dcfb415_1af484dd390b9dad53a08d168e9dcfb415" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>one</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>our_gc_cleanup</name></member>
+      <member refid="classhilb__comp_a76b5d57541e72c3c75eb66f5c78f7797_1a76b5d57541e72c3c75eb66f5c78f7797" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>part_table</name></member>
+      <member refid="classhilb__comp_a4b6df35fe5c38c928d7d9f4621762abf_1a4b6df35fe5c38c928d7d9f4621762abf" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>R</name></member>
+      <member refid="classhilb__comp_a61d2c8d5f0b281119a612a510962784a_1a61d2c8d5f0b281119a612a510962784a" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>recurse</name></member>
+      <member refid="classhilb__comp_a627dc77213c80eb3a20db5d67c73eef2_1a627dc77213c80eb3a20db5d67c73eef2" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>reset</name></member>
+      <member refid="classhilb__comp_a1ea6f2c69afba1e24f207751add3ba15_1a1ea6f2c69afba1e24f207751add3ba15" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>result_poincare</name></member>
+      <member refid="classhilb__comp_a53bd1c3a172ba3a289dc9d3bcc28c3fd_1a53bd1c3a172ba3a289dc9d3bcc28c3fd" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>S</name></member>
+      <member refid="classhilb__comp_a41ba97596697340553026a940c9104e0_1a41ba97596697340553026a940c9104e0" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>stats</name></member>
+      <member refid="classhilb__comp_a51fa9c57b7a209e2e418583ca50df221_1a51fa9c57b7a209e2e418583ca50df221" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>step</name></member>
+      <member refid="classhilb__comp_aa6f7d43ec9e4562603957e31a33ee886_1aa6f7d43ec9e4562603957e31a33ee886" prot="private" virt="non-virtual"><scope>hilb_comp</scope><name>this_comp</name></member>
+      <member refid="classhilb__comp_ac8ac7f8024616fd5514707edf081b966_1ac8ac7f8024616fd5514707edf081b966" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>value</name></member>
+      <member refid="classhilb__comp_a73ff73dc87477503de70e0ae201cb371_1a73ff73dc87477503de70e0ae201cb371" prot="public" virt="non-virtual"><scope>hilb_comp</scope><name>~hilb_comp</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>hilb_comp</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>hilb_comp</scope><name>~our_gc_cleanup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,530 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_betti_display" kind="class" language="C++" prot="public">
+    <compoundname>BettiDisplay</compoundname>
+    <includes refid="betti_8hpp" local="no">betti.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int BettiDisplay::mLoDegree</definition>
+        <argsstring></argsstring>
+        <name>mLoDegree</name>
+        <qualifiedname>BettiDisplay::mLoDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="84" column="7" bodyfile="Macaulay2/e/betti.hpp" bodystart="84" bodyend="-1"/>
+        <referencedby refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" compoundref="betti_8cpp" startline="5" endline="9">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a7cf0eebcafd9885f4fafb6b11ab93866_1a7cf0eebcafd9885f4fafb6b11ab93866" compoundref="betti_8cpp" startline="22" endline="31">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a4bfb4eedd621c7a73ab061dc7ff0e1e5_1a4bfb4eedd621c7a73ab061dc7ff0e1e5" compoundref="betti_8cpp" startline="11" endline="20">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_ad687aa7e61f89e8eaaa82926c7573780_1ad687aa7e61f89e8eaaa82926c7573780" compoundref="betti_8cpp" startline="71" endline="80">entry</referencedby>
+        <referencedby refid="class_betti_display_a18ca86334cb86514d21bb301d72293c0_1a18ca86334cb86514d21bb301d72293c0" compoundref="betti_8cpp" startline="82" endline="85">getBetti</referencedby>
+        <referencedby refid="class_betti_display_a238851096565ffeae79013f1ad9bf2bf_1a238851096565ffeae79013f1ad9bf2bf" compoundref="betti_8hpp" startline="75" endline="75">loDegree</referencedby>
+        <referencedby refid="class_betti_display_a58685c837d3dc0dc14de9fcfb66b64f3_1a58685c837d3dc0dc14de9fcfb66b64f3" compoundref="betti_8cpp" startline="58" endline="70">resize</referencedby>
+        <referencedby refid="class_betti_display_af156f89bdd69d68cd2c6b6f56767647c_1af156f89bdd69d68cd2c6b6f56767647c" compoundref="betti_8cpp" startline="33" endline="40">swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int BettiDisplay::mHiDegree</definition>
+        <argsstring></argsstring>
+        <name>mHiDegree</name>
+        <qualifiedname>BettiDisplay::mHiDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="85" column="7" bodyfile="Macaulay2/e/betti.hpp" bodystart="85" bodyend="-1"/>
+        <referencedby refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" compoundref="betti_8cpp" startline="5" endline="9">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a7cf0eebcafd9885f4fafb6b11ab93866_1a7cf0eebcafd9885f4fafb6b11ab93866" compoundref="betti_8cpp" startline="22" endline="31">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a4bfb4eedd621c7a73ab061dc7ff0e1e5_1a4bfb4eedd621c7a73ab061dc7ff0e1e5" compoundref="betti_8cpp" startline="11" endline="20">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_ad687aa7e61f89e8eaaa82926c7573780_1ad687aa7e61f89e8eaaa82926c7573780" compoundref="betti_8cpp" startline="71" endline="80">entry</referencedby>
+        <referencedby refid="class_betti_display_a18ca86334cb86514d21bb301d72293c0_1a18ca86334cb86514d21bb301d72293c0" compoundref="betti_8cpp" startline="82" endline="85">getBetti</referencedby>
+        <referencedby refid="class_betti_display_a04ac60cb0c266b3051acc3ea732824f6_1a04ac60cb0c266b3051acc3ea732824f6" compoundref="betti_8hpp" startline="76" endline="76">hiDegree</referencedby>
+        <referencedby refid="class_betti_display_a58685c837d3dc0dc14de9fcfb66b64f3_1a58685c837d3dc0dc14de9fcfb66b64f3" compoundref="betti_8cpp" startline="58" endline="70">resize</referencedby>
+        <referencedby refid="class_betti_display_af156f89bdd69d68cd2c6b6f56767647c_1af156f89bdd69d68cd2c6b6f56767647c" compoundref="betti_8cpp" startline="33" endline="40">swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int BettiDisplay::mHiLength</definition>
+        <argsstring></argsstring>
+        <name>mHiLength</name>
+        <qualifiedname>BettiDisplay::mHiLength</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="86" column="7" bodyfile="Macaulay2/e/betti.hpp" bodystart="86" bodyend="-1"/>
+        <referencedby refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" compoundref="betti_8cpp" startline="5" endline="9">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a7cf0eebcafd9885f4fafb6b11ab93866_1a7cf0eebcafd9885f4fafb6b11ab93866" compoundref="betti_8cpp" startline="22" endline="31">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a4bfb4eedd621c7a73ab061dc7ff0e1e5_1a4bfb4eedd621c7a73ab061dc7ff0e1e5" compoundref="betti_8cpp" startline="11" endline="20">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_ad687aa7e61f89e8eaaa82926c7573780_1ad687aa7e61f89e8eaaa82926c7573780" compoundref="betti_8cpp" startline="71" endline="80">entry</referencedby>
+        <referencedby refid="class_betti_display_a18ca86334cb86514d21bb301d72293c0_1a18ca86334cb86514d21bb301d72293c0" compoundref="betti_8cpp" startline="82" endline="85">getBetti</referencedby>
+        <referencedby refid="class_betti_display_a4ce131c03f0d8570cc4e338361c785a6_1a4ce131c03f0d8570cc4e338361c785a6" compoundref="betti_8hpp" startline="77" endline="77">length</referencedby>
+        <referencedby refid="class_betti_display_a58685c837d3dc0dc14de9fcfb66b64f3_1a58685c837d3dc0dc14de9fcfb66b64f3" compoundref="betti_8cpp" startline="58" endline="70">resize</referencedby>
+        <referencedby refid="class_betti_display_af156f89bdd69d68cd2c6b6f56767647c_1af156f89bdd69d68cd2c6b6f56767647c" compoundref="betti_8cpp" startline="33" endline="40">swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_betti_display_ae4a35203e348589debdc1b9dd3207d7e_1ae4a35203e348589debdc1b9dd3207d7e" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int BettiDisplay::mNLevels</definition>
+        <argsstring></argsstring>
+        <name>mNLevels</name>
+        <qualifiedname>BettiDisplay::mNLevels</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="87" column="7" bodyfile="Macaulay2/e/betti.hpp" bodystart="87" bodyend="-1"/>
+        <referencedby refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" compoundref="betti_8cpp" startline="5" endline="9">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a7cf0eebcafd9885f4fafb6b11ab93866_1a7cf0eebcafd9885f4fafb6b11ab93866" compoundref="betti_8cpp" startline="22" endline="31">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a4bfb4eedd621c7a73ab061dc7ff0e1e5_1a4bfb4eedd621c7a73ab061dc7ff0e1e5" compoundref="betti_8cpp" startline="11" endline="20">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_ad687aa7e61f89e8eaaa82926c7573780_1ad687aa7e61f89e8eaaa82926c7573780" compoundref="betti_8cpp" startline="71" endline="80">entry</referencedby>
+        <referencedby refid="class_betti_display_af156f89bdd69d68cd2c6b6f56767647c_1af156f89bdd69d68cd2c6b6f56767647c" compoundref="betti_8cpp" startline="33" endline="40">swap</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* BettiDisplay::mValues</definition>
+        <argsstring></argsstring>
+        <name>mValues</name>
+        <qualifiedname>BettiDisplay::mValues</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="88" column="7" bodyfile="Macaulay2/e/betti.hpp" bodystart="88" bodyend="-1"/>
+        <referencedby refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" compoundref="betti_8cpp" startline="5" endline="9">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a7cf0eebcafd9885f4fafb6b11ab93866_1a7cf0eebcafd9885f4fafb6b11ab93866" compoundref="betti_8cpp" startline="22" endline="31">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_a4bfb4eedd621c7a73ab061dc7ff0e1e5_1a4bfb4eedd621c7a73ab061dc7ff0e1e5" compoundref="betti_8cpp" startline="11" endline="20">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_ad687aa7e61f89e8eaaa82926c7573780_1ad687aa7e61f89e8eaaa82926c7573780" compoundref="betti_8cpp" startline="71" endline="80">entry</referencedby>
+        <referencedby refid="class_betti_display_a18ca86334cb86514d21bb301d72293c0_1a18ca86334cb86514d21bb301d72293c0" compoundref="betti_8cpp" startline="82" endline="85">getBetti</referencedby>
+        <referencedby refid="class_betti_display_af156f89bdd69d68cd2c6b6f56767647c_1af156f89bdd69d68cd2c6b6f56767647c" compoundref="betti_8cpp" startline="33" endline="40">swap</referencedby>
+        <referencedby refid="class_betti_display_a3bebefbc7182c3909b863593ccf37bd0_1a3bebefbc7182c3909b863593ccf37bd0" compoundref="betti_8cpp" startline="52" endline="56">~BettiDisplay</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BettiDisplay::BettiDisplay</definition>
+        <argsstring>()</argsstring>
+        <name>BettiDisplay</name>
+        <qualifiedname>BettiDisplay::BettiDisplay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="58" column="3" bodyfile="Macaulay2/e/betti.cpp" bodystart="5" bodyend="9"/>
+        <references refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" compoundref="betti_8hpp" startline="85">mHiDegree</references>
+        <references refid="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" compoundref="betti_8hpp" startline="86">mHiLength</references>
+        <references refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" compoundref="betti_8hpp" startline="84">mLoDegree</references>
+        <references refid="class_betti_display_ae4a35203e348589debdc1b9dd3207d7e_1ae4a35203e348589debdc1b9dd3207d7e" compoundref="betti_8hpp" startline="87">mNLevels</references>
+        <references refid="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" compoundref="betti_8hpp" startline="88">mValues</references>
+        <referencedby refid="class_betti_display_a7cf0eebcafd9885f4fafb6b11ab93866_1a7cf0eebcafd9885f4fafb6b11ab93866" compoundref="betti_8cpp" startline="22" endline="31">BettiDisplay</referencedby>
+        <referencedby refid="class_betti_display_aa598df3fdf0d4ee82505e7f339df1452_1aa598df3fdf0d4ee82505e7f339df1452" compoundref="betti_8cpp" startline="42" endline="50">operator=</referencedby>
+        <referencedby refid="class_betti_display_a58685c837d3dc0dc14de9fcfb66b64f3_1a58685c837d3dc0dc14de9fcfb66b64f3" compoundref="betti_8cpp" startline="58" endline="70">resize</referencedby>
+        <referencedby refid="class_betti_display_af156f89bdd69d68cd2c6b6f56767647c_1af156f89bdd69d68cd2c6b6f56767647c" compoundref="betti_8cpp" startline="33" endline="40">swap</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_a4bfb4eedd621c7a73ab061dc7ff0e1e5_1a4bfb4eedd621c7a73ab061dc7ff0e1e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BettiDisplay::BettiDisplay</definition>
+        <argsstring>(int lodegree, int hidegree, int hilen)</argsstring>
+        <name>BettiDisplay</name>
+        <qualifiedname>BettiDisplay::BettiDisplay</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>lodegree</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>hidegree</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>hilen</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="59" column="3" bodyfile="Macaulay2/e/betti.cpp" bodystart="11" bodyend="20"/>
+        <references refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" compoundref="betti_8hpp" startline="85">mHiDegree</references>
+        <references refid="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" compoundref="betti_8hpp" startline="86">mHiLength</references>
+        <references refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" compoundref="betti_8hpp" startline="84">mLoDegree</references>
+        <references refid="class_betti_display_ae4a35203e348589debdc1b9dd3207d7e_1ae4a35203e348589debdc1b9dd3207d7e" compoundref="betti_8hpp" startline="87">mNLevels</references>
+        <references refid="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" compoundref="betti_8hpp" startline="88">mValues</references>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_a7cf0eebcafd9885f4fafb6b11ab93866_1a7cf0eebcafd9885f4fafb6b11ab93866" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BettiDisplay::BettiDisplay</definition>
+        <argsstring>(const BettiDisplay &amp;B)</argsstring>
+        <name>BettiDisplay</name>
+        <qualifiedname>BettiDisplay::BettiDisplay</qualifiedname>
+        <param>
+          <type>const <ref refid="class_betti_display" kindref="compound">BettiDisplay</ref> &amp;</type>
+          <declname>B</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="62" column="3" bodyfile="Macaulay2/e/betti.cpp" bodystart="22" bodyend="31"/>
+        <references refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" compoundref="betti_8cpp" startline="5" endline="9">BettiDisplay</references>
+        <references refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" compoundref="betti_8hpp" startline="85">mHiDegree</references>
+        <references refid="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" compoundref="betti_8hpp" startline="86">mHiLength</references>
+        <references refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" compoundref="betti_8hpp" startline="84">mLoDegree</references>
+        <references refid="class_betti_display_ae4a35203e348589debdc1b9dd3207d7e_1ae4a35203e348589debdc1b9dd3207d7e" compoundref="betti_8hpp" startline="87">mNLevels</references>
+        <references refid="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" compoundref="betti_8hpp" startline="88">mValues</references>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_aa598df3fdf0d4ee82505e7f339df1452_1aa598df3fdf0d4ee82505e7f339df1452" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_betti_display" kindref="compound">BettiDisplay</ref> &amp;</type>
+        <definition>BettiDisplay &amp; BettiDisplay::operator=</definition>
+        <argsstring>(const BettiDisplay &amp;B)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>BettiDisplay::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_betti_display" kindref="compound">BettiDisplay</ref> &amp;</type>
+          <declname>B</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="63" column="16" bodyfile="Macaulay2/e/betti.cpp" bodystart="42" bodyend="50"/>
+        <references refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" compoundref="betti_8cpp" startline="5" endline="9">BettiDisplay</references>
+        <references refid="monsort_8hpp_a418905a17a22ba6c0f5ef26b07b99325_1a418905a17a22ba6c0f5ef26b07b99325" compoundref="monsort_8hpp" startline="125">swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_a3bebefbc7182c3909b863593ccf37bd0_1a3bebefbc7182c3909b863593ccf37bd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BettiDisplay::~BettiDisplay</definition>
+        <argsstring>()</argsstring>
+        <name>~BettiDisplay</name>
+        <qualifiedname>BettiDisplay::~BettiDisplay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="64" column="3" bodyfile="Macaulay2/e/betti.cpp" bodystart="52" bodyend="56"/>
+        <references refid="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" compoundref="betti_8hpp" startline="88">mValues</references>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_af156f89bdd69d68cd2c6b6f56767647c_1af156f89bdd69d68cd2c6b6f56767647c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BettiDisplay::swap</definition>
+        <argsstring>(BettiDisplay &amp;B)</argsstring>
+        <name>swap</name>
+        <qualifiedname>BettiDisplay::swap</qualifiedname>
+        <param>
+          <type><ref refid="class_betti_display" kindref="compound">BettiDisplay</ref> &amp;</type>
+          <declname>B</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="65" column="8" bodyfile="Macaulay2/e/betti.cpp" bodystart="33" bodyend="40"/>
+        <references refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" compoundref="betti_8cpp" startline="5" endline="9">BettiDisplay</references>
+        <references refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" compoundref="betti_8hpp" startline="85">mHiDegree</references>
+        <references refid="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" compoundref="betti_8hpp" startline="86">mHiLength</references>
+        <references refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" compoundref="betti_8hpp" startline="84">mLoDegree</references>
+        <references refid="class_betti_display_ae4a35203e348589debdc1b9dd3207d7e_1ae4a35203e348589debdc1b9dd3207d7e" compoundref="betti_8hpp" startline="87">mNLevels</references>
+        <references refid="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" compoundref="betti_8hpp" startline="88">mValues</references>
+        <references refid="namespacestd_ad33a269e67f055aaa18f57f76b015387_1ad33a269e67f055aaa18f57f76b015387" compoundref="mpreal_8h" startline="3242" endline="3245">std::swap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_ad687aa7e61f89e8eaaa82926c7573780_1ad687aa7e61f89e8eaaa82926c7573780" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref> &amp;</type>
+        <definition>int &amp; BettiDisplay::entry</definition>
+        <argsstring>(int deg, int lev)</argsstring>
+        <name>entry</name>
+        <qualifiedname>BettiDisplay::entry</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>deg</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>lev</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="66" column="7" bodyfile="Macaulay2/e/betti.cpp" bodystart="71" bodyend="80"/>
+        <references refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" compoundref="betti_8hpp" startline="85">mHiDegree</references>
+        <references refid="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" compoundref="betti_8hpp" startline="86">mHiLength</references>
+        <references refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" compoundref="betti_8hpp" startline="84">mLoDegree</references>
+        <references refid="class_betti_display_ae4a35203e348589debdc1b9dd3207d7e_1ae4a35203e348589debdc1b9dd3207d7e" compoundref="betti_8hpp" startline="87">mNLevels</references>
+        <references refid="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" compoundref="betti_8hpp" startline="88">mValues</references>
+        <referencedby refid="classres2__comp_a9de8a02cf92ebf72c148d470a47bf7e8_1a9de8a02cf92ebf72c148d470a47bf7e8" compoundref="res-a0_8cpp" startline="1816" endline="1832">res2_comp::betti_skeleton</referencedby>
+        <referencedby refid="class_schreyer_frame_a4abd5cf9d202f0055ced815e0fcc9317_1a4abd5cf9d202f0055ced815e0fcc9317" compoundref="res-schreyer-frame_8cpp" startline="988" endline="1008">SchreyerFrame::getBettiFrame</referencedby>
+        <referencedby refid="class_betti_display_a58685c837d3dc0dc14de9fcfb66b64f3_1a58685c837d3dc0dc14de9fcfb66b64f3" compoundref="betti_8cpp" startline="58" endline="70">resize</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_a18ca86334cb86514d21bb301d72293c0_1a18ca86334cb86514d21bb301d72293c0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        <definition>M2_arrayint BettiDisplay::getBetti</definition>
+        <argsstring>() const</argsstring>
+        <name>getBetti</name>
+        <qualifiedname>BettiDisplay::getBetti</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="68" column="15" bodyfile="Macaulay2/e/betti.cpp" bodystart="82" bodyend="85"/>
+        <references refid="class_betti_display_af1659b530289390fbb0e0c46f5ababfd_1af1659b530289390fbb0e0c46f5ababfd" compoundref="betti_8cpp" startline="100" endline="145">betti_make</references>
+        <references refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" compoundref="betti_8hpp" startline="85">mHiDegree</references>
+        <references refid="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" compoundref="betti_8hpp" startline="86">mHiLength</references>
+        <references refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" compoundref="betti_8hpp" startline="84">mLoDegree</references>
+        <references refid="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" compoundref="betti_8hpp" startline="88">mValues</references>
+        <referencedby refid="classres2__comp_a9de8a02cf92ebf72c148d470a47bf7e8_1a9de8a02cf92ebf72c148d470a47bf7e8" compoundref="res-a0_8cpp" startline="1816" endline="1832">res2_comp::betti_skeleton</referencedby>
+        <referencedby refid="class_betti_display_aceb8b4e611c0194f03ec9020e485fce2_1aceb8b4e611c0194f03ec9020e485fce2" compoundref="betti_8cpp" startline="87" endline="91">displayBetti</referencedby>
+        <referencedby refid="class_schreyer_frame_a4abd5cf9d202f0055ced815e0fcc9317_1a4abd5cf9d202f0055ced815e0fcc9317" compoundref="res-schreyer-frame_8cpp" startline="988" endline="1008">SchreyerFrame::getBettiFrame</referencedby>
+        <referencedby refid="class_f4_res_computation_a56fe30ca7b53e22fad8e4f505d8c0a5e_1a56fe30ca7b53e22fad8e4f505d8c0a5e" compoundref="res-f4-computation_8cpp" startline="214" endline="231">F4ResComputation::minimal_betti</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_aceb8b4e611c0194f03ec9020e485fce2_1aceb8b4e611c0194f03ec9020e485fce2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BettiDisplay::displayBetti</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>displayBetti</name>
+        <qualifiedname>BettiDisplay::displayBetti</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="69" column="8" bodyfile="Macaulay2/e/betti.cpp" bodystart="87" bodyend="91"/>
+        <references refid="class_betti_display_adf70cf4cbab30f30bbf82122240dee1f_1adf70cf4cbab30f30bbf82122240dee1f" compoundref="betti_8cpp" startline="147" endline="179">betti_display</references>
+        <references refid="class_betti_display_a18ca86334cb86514d21bb301d72293c0_1a18ca86334cb86514d21bb301d72293c0" compoundref="betti_8cpp" startline="82" endline="85">getBetti</references>
+        <referencedby refid="class_betti_display_a1e8f6b2da5f0a6d8d46afa31cda99682_1a1e8f6b2da5f0a6d8d46afa31cda99682" compoundref="betti_8cpp" startline="93" endline="98">output</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_a1e8f6b2da5f0a6d8d46afa31cda99682_1a1e8f6b2da5f0a6d8d46afa31cda99682" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BettiDisplay::output</definition>
+        <argsstring>() const</argsstring>
+        <name>output</name>
+        <qualifiedname>BettiDisplay::output</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="70" column="8" bodyfile="Macaulay2/e/betti.cpp" bodystart="93" bodyend="98"/>
+        <references refid="class_betti_display_aceb8b4e611c0194f03ec9020e485fce2_1aceb8b4e611c0194f03ec9020e485fce2" compoundref="betti_8cpp" startline="87" endline="91">displayBetti</references>
+        <references refid="classbuffer_a39972fb7c929bb9e42ed60cddbc1109f_1a39972fb7c929bb9e42ed60cddbc1109f" compoundref="buffer_8hpp" startline="70" endline="74">buffer::str</references>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_a58685c837d3dc0dc14de9fcfb66b64f3_1a58685c837d3dc0dc14de9fcfb66b64f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BettiDisplay::resize</definition>
+        <argsstring>(int new_lo_degree, int new_hi_degree, int new_length)</argsstring>
+        <name>resize</name>
+        <qualifiedname>BettiDisplay::resize</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>new_lo_degree</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>new_hi_degree</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>new_length</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="72" column="8" bodyfile="Macaulay2/e/betti.cpp" bodystart="58" bodyend="70"/>
+        <references refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" compoundref="betti_8cpp" startline="5" endline="9">BettiDisplay</references>
+        <references refid="class_betti_display_ad687aa7e61f89e8eaaa82926c7573780_1ad687aa7e61f89e8eaaa82926c7573780" compoundref="betti_8cpp" startline="71" endline="80">entry</references>
+        <references refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" compoundref="betti_8hpp" startline="85">mHiDegree</references>
+        <references refid="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" compoundref="betti_8hpp" startline="86">mHiLength</references>
+        <references refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" compoundref="betti_8hpp" startline="84">mLoDegree</references>
+        <references refid="monsort_8hpp_a418905a17a22ba6c0f5ef26b07b99325_1a418905a17a22ba6c0f5ef26b07b99325" compoundref="monsort_8hpp" startline="125">swap</references>
+        <referencedby refid="class_schreyer_frame_a2e9d6a02bbdf20e16703110b876f1c61_1a2e9d6a02bbdf20e16703110b876f1c61" compoundref="res-schreyer-frame_8cpp" startline="141" endline="260">SchreyerFrame::minimalBettiNumbers</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_a238851096565ffeae79013f1ad9bf2bf_1a238851096565ffeae79013f1ad9bf2bf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int BettiDisplay::loDegree</definition>
+        <argsstring>() const</argsstring>
+        <name>loDegree</name>
+        <qualifiedname>BettiDisplay::loDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="75" column="7" bodyfile="Macaulay2/e/betti.hpp" bodystart="75" bodyend="75"/>
+        <references refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" compoundref="betti_8hpp" startline="84">mLoDegree</references>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_a04ac60cb0c266b3051acc3ea732824f6_1a04ac60cb0c266b3051acc3ea732824f6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int BettiDisplay::hiDegree</definition>
+        <argsstring>() const</argsstring>
+        <name>hiDegree</name>
+        <qualifiedname>BettiDisplay::hiDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="76" column="7" bodyfile="Macaulay2/e/betti.hpp" bodystart="76" bodyend="76"/>
+        <references refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" compoundref="betti_8hpp" startline="85">mHiDegree</references>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_a4ce131c03f0d8570cc4e338361c785a6_1a4ce131c03f0d8570cc4e338361c785a6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int BettiDisplay::length</definition>
+        <argsstring>() const</argsstring>
+        <name>length</name>
+        <qualifiedname>BettiDisplay::length</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="77" column="7" bodyfile="Macaulay2/e/betti.hpp" bodystart="77" bodyend="77"/>
+        <references refid="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" compoundref="betti_8hpp" startline="86">mHiLength</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_betti_display_af1659b530289390fbb0e0c46f5ababfd_1af1659b530289390fbb0e0c46f5ababfd" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        <definition>M2_arrayint BettiDisplay::betti_make</definition>
+        <argsstring>(int lo, int hi, int len, int *bettis)</argsstring>
+        <name>betti_make</name>
+        <qualifiedname>BettiDisplay::betti_make</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>hi</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>bettis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="81" column="22" bodyfile="Macaulay2/e/betti.cpp" bodystart="100" bodyend="145"/>
+        <references refid="m2-types_8cpp_a84a8e7c0bac25be533dcc0125ff14c50_1a84a8e7c0bac25be533dcc0125ff14c50" compoundref="m2-types_8cpp" startline="6" endline="12">M2_makearrayint</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_betti_display_a18ca86334cb86514d21bb301d72293c0_1a18ca86334cb86514d21bb301d72293c0" compoundref="betti_8cpp" startline="82" endline="85">getBetti</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_betti_display_adf70cf4cbab30f30bbf82122240dee1f_1adf70cf4cbab30f30bbf82122240dee1f" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BettiDisplay::betti_display</definition>
+        <argsstring>(buffer &amp;o, M2_arrayint ar)</argsstring>
+        <name>betti_display</name>
+        <qualifiedname>BettiDisplay::betti_display</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>ar</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/betti.hpp" line="82" column="15" bodyfile="Macaulay2/e/betti.cpp" bodystart="147" bodyend="179"/>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <references refid="classbuffer_a951d0ac37be11c66758cd97298c052d9_1a951d0ac37be11c66758cd97298c052d9" compoundref="buffer_8cpp" startline="35" endline="35">buffer::put</references>
+        <referencedby refid="class_betti_display_aceb8b4e611c0194f03ec9020e485fce2_1aceb8b4e611c0194f03ec9020e485fce2" compoundref="betti_8cpp" startline="87" endline="91">displayBetti</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Engine-side Betti table: a <computeroutput>(degree, homological level)</computeroutput> rectangle of integers. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Storage is a single flat <computeroutput>int* <ref refid="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" kindref="member">mValues</ref></computeroutput> of size <computeroutput>(<ref refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" kindref="member">mHiDegree</ref> - <ref refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" kindref="member">mLoDegree</ref> + 1) * <ref refid="class_betti_display_ae4a35203e348589debdc1b9dd3207d7e_1ae4a35203e348589debdc1b9dd3207d7e" kindref="member">mNLevels</ref></computeroutput>, indexed via <computeroutput>entry(deg, lev)</computeroutput>. The user-facing bounds (<computeroutput><ref refid="class_betti_display_a238851096565ffeae79013f1ad9bf2bf_1a238851096565ffeae79013f1ad9bf2bf" kindref="member">loDegree</ref></computeroutput> / <computeroutput><ref refid="class_betti_display_a04ac60cb0c266b3051acc3ea732824f6_1a04ac60cb0c266b3051acc3ea732824f6" kindref="member">hiDegree</ref></computeroutput> / <computeroutput><ref refid="class_betti_display_a4ce131c03f0d8570cc4e338361c785a6_1a4ce131c03f0d8570cc4e338361c785a6" kindref="member">length</ref></computeroutput>) are the requested dimensions; the actual non-zero region may be tighter. <computeroutput><ref refid="class_betti_display_aceb8b4e611c0194f03ec9020e485fce2_1aceb8b4e611c0194f03ec9020e485fce2" kindref="member">displayBetti</ref></computeroutput> / <computeroutput><ref refid="class_betti_display_a1e8f6b2da5f0a6d8d46afa31cda99682_1a1e8f6b2da5f0a6d8d46afa31cda99682" kindref="member">output</ref></computeroutput> print in the conventional triangular layout the front end shows for <computeroutput>betti</computeroutput> queries, and <computeroutput><ref refid="class_betti_display_a18ca86334cb86514d21bb301d72293c0_1a18ca86334cb86514d21bb301d72293c0" kindref="member">getBetti</ref></computeroutput> flattens to an <computeroutput><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></computeroutput> for the interpreter. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>BettiDisplay</label>
+        <link refid="class_betti_display"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mHiDegree</edgelabel>
+          <edgelabel>mHiLength</edgelabel>
+          <edgelabel>mLoDegree</edgelabel>
+          <edgelabel>mNLevels</edgelabel>
+          <edgelabel>mValues</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/betti.hpp" line="55" column="1" bodyfile="Macaulay2/e/betti.hpp" bodystart="56" bodyend="89"/>
+    <listofallmembers>
+      <member refid="class_betti_display_adf70cf4cbab30f30bbf82122240dee1f_1adf70cf4cbab30f30bbf82122240dee1f" prot="private" virt="non-virtual"><scope>BettiDisplay</scope><name>betti_display</name></member>
+      <member refid="class_betti_display_af1659b530289390fbb0e0c46f5ababfd_1af1659b530289390fbb0e0c46f5ababfd" prot="private" virt="non-virtual"><scope>BettiDisplay</scope><name>betti_make</name></member>
+      <member refid="class_betti_display_a883e78c6a75bf5ba95f5c9bbdb70e937_1a883e78c6a75bf5ba95f5c9bbdb70e937" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>BettiDisplay</name></member>
+      <member refid="class_betti_display_a4bfb4eedd621c7a73ab061dc7ff0e1e5_1a4bfb4eedd621c7a73ab061dc7ff0e1e5" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>BettiDisplay</name></member>
+      <member refid="class_betti_display_a7cf0eebcafd9885f4fafb6b11ab93866_1a7cf0eebcafd9885f4fafb6b11ab93866" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>BettiDisplay</name></member>
+      <member refid="class_betti_display_aceb8b4e611c0194f03ec9020e485fce2_1aceb8b4e611c0194f03ec9020e485fce2" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>displayBetti</name></member>
+      <member refid="class_betti_display_ad687aa7e61f89e8eaaa82926c7573780_1ad687aa7e61f89e8eaaa82926c7573780" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>entry</name></member>
+      <member refid="class_betti_display_a18ca86334cb86514d21bb301d72293c0_1a18ca86334cb86514d21bb301d72293c0" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>getBetti</name></member>
+      <member refid="class_betti_display_a04ac60cb0c266b3051acc3ea732824f6_1a04ac60cb0c266b3051acc3ea732824f6" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>hiDegree</name></member>
+      <member refid="class_betti_display_a4ce131c03f0d8570cc4e338361c785a6_1a4ce131c03f0d8570cc4e338361c785a6" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>length</name></member>
+      <member refid="class_betti_display_a238851096565ffeae79013f1ad9bf2bf_1a238851096565ffeae79013f1ad9bf2bf" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>loDegree</name></member>
+      <member refid="class_betti_display_a4e351f240755f3271753782ff85ba9a2_1a4e351f240755f3271753782ff85ba9a2" prot="private" virt="non-virtual"><scope>BettiDisplay</scope><name>mHiDegree</name></member>
+      <member refid="class_betti_display_ad7fa719733916b06409d9172942c6834_1ad7fa719733916b06409d9172942c6834" prot="private" virt="non-virtual"><scope>BettiDisplay</scope><name>mHiLength</name></member>
+      <member refid="class_betti_display_ad271592291121d03014bbddc72a92e77_1ad271592291121d03014bbddc72a92e77" prot="private" virt="non-virtual"><scope>BettiDisplay</scope><name>mLoDegree</name></member>
+      <member refid="class_betti_display_ae4a35203e348589debdc1b9dd3207d7e_1ae4a35203e348589debdc1b9dd3207d7e" prot="private" virt="non-virtual"><scope>BettiDisplay</scope><name>mNLevels</name></member>
+      <member refid="class_betti_display_a9e32540acba0c8f23c89a90b6ed9719e_1a9e32540acba0c8f23c89a90b6ed9719e" prot="private" virt="non-virtual"><scope>BettiDisplay</scope><name>mValues</name></member>
+      <member refid="class_betti_display_aa598df3fdf0d4ee82505e7f339df1452_1aa598df3fdf0d4ee82505e7f339df1452" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>operator=</name></member>
+      <member refid="class_betti_display_a1e8f6b2da5f0a6d8d46afa31cda99682_1a1e8f6b2da5f0a6d8d46afa31cda99682" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>output</name></member>
+      <member refid="class_betti_display_a58685c837d3dc0dc14de9fcfb66b64f3_1a58685c837d3dc0dc14de9fcfb66b64f3" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>resize</name></member>
+      <member refid="class_betti_display_af156f89bdd69d68cd2c6b6f56767647c_1af156f89bdd69d68cd2c6b6f56767647c" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>swap</name></member>
+      <member refid="class_betti_display_a3bebefbc7182c3909b863593ccf37bd0_1a3bebefbc7182c3909b863593ccf37bd0" prot="public" virt="non-virtual"><scope>BettiDisplay</scope><name>~BettiDisplay</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

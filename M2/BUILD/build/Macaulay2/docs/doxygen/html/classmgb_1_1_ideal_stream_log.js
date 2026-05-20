@@ -1,0 +1,27 @@
+var classmgb_1_1_ideal_stream_log =
+[
+    [ "Coefficient", "classmgb_1_1_ideal_stream_log_a4dee05511bf14b2defda30f5c5358926.html#a4dee05511bf14b2defda30f5c5358926", null ],
+    [ "Component", "classmgb_1_1_ideal_stream_log_a89f32f47c8bb7e35e8f6b2e2c761dab2.html#a89f32f47c8bb7e35e8f6b2e2c761dab2", null ],
+    [ "Exponent", "classmgb_1_1_ideal_stream_log_a8b15898f0bc9bb300d47fa91b88d82be.html#a8b15898f0bc9bb300d47fa91b88d82be", null ],
+    [ "VarIndex", "classmgb_1_1_ideal_stream_log_ad9859d5753aaae5a82739ed1d94f200c.html#ad9859d5753aaae5a82739ed1d94f200c", null ],
+    [ "IdealStreamLog", "classmgb_1_1_ideal_stream_log_a1c797d493f87bb40db84e07f7141eea1.html#a1c797d493f87bb40db84e07f7141eea1", null ],
+    [ "IdealStreamLog", "classmgb_1_1_ideal_stream_log_a4b9e19e55524bf6b844e29a905aec198.html#a4b9e19e55524bf6b844e29a905aec198", null ],
+    [ "~IdealStreamLog", "classmgb_1_1_ideal_stream_log_a93f9adb3e9766967fb2407e0b0d3f8e1.html#a93f9adb3e9766967fb2407e0b0d3f8e1", null ],
+    [ "appendExponent", "classmgb_1_1_ideal_stream_log_ac102adcb54dcb8973e58498ca68a4eee.html#ac102adcb54dcb8973e58498ca68a4eee", null ],
+    [ "appendPolynomialBegin", "classmgb_1_1_ideal_stream_log_ab6829d72069cc33d75f62b9ba2b78caa.html#ab6829d72069cc33d75f62b9ba2b78caa", null ],
+    [ "appendPolynomialBegin", "classmgb_1_1_ideal_stream_log_a5114e0cc4da6e0a30de970ac8b2cede9.html#a5114e0cc4da6e0a30de970ac8b2cede9", null ],
+    [ "appendPolynomialDone", "classmgb_1_1_ideal_stream_log_ad7bb4d6d1840b38150c13d73b8317f54.html#ad7bb4d6d1840b38150c13d73b8317f54", null ],
+    [ "appendTermBegin", "classmgb_1_1_ideal_stream_log_af4b1e04fc2d46c9fe92f526c71d1bd68.html#af4b1e04fc2d46c9fe92f526c71d1bd68", null ],
+    [ "appendTermDone", "classmgb_1_1_ideal_stream_log_aa5ca55870b3574eee7a2bb61991fa00b.html#aa5ca55870b3574eee7a2bb61991fa00b", null ],
+    [ "comCount", "classmgb_1_1_ideal_stream_log_a0a717f6f8607608cc98679cfdc2fdf86.html#a0a717f6f8607608cc98679cfdc2fdf86", null ],
+    [ "idealBegin", "classmgb_1_1_ideal_stream_log_a48131d365375f38b518ab739b5056f81.html#a48131d365375f38b518ab739b5056f81", null ],
+    [ "idealBegin", "classmgb_1_1_ideal_stream_log_a8bcc6ea79bc23ed8cc6d9fb160c06bc7.html#a8bcc6ea79bc23ed8cc6d9fb160c06bc7", null ],
+    [ "idealDone", "classmgb_1_1_ideal_stream_log_ac2aa1e3f06e92d19bde25557d55e2810.html#ac2aa1e3f06e92d19bde25557d55e2810", null ],
+    [ "modulus", "classmgb_1_1_ideal_stream_log_a2e98a6c23b7f8f107f47b86d7cdc8bd8.html#a2e98a6c23b7f8f107f47b86d7cdc8bd8", null ],
+    [ "varCount", "classmgb_1_1_ideal_stream_log_aa3f73a3c5adfb5d141f294375d50b719.html#aa3f73a3c5adfb5d141f294375d50b719", null ],
+    [ "mComCount", "classmgb_1_1_ideal_stream_log_a914392d50fe55c6c67d22f8317616f9a.html#a914392d50fe55c6c67d22f8317616f9a", null ],
+    [ "mLog", "classmgb_1_1_ideal_stream_log_a890645186579e3056fd1b614224d160e.html#a890645186579e3056fd1b614224d160e", null ],
+    [ "mModulus", "classmgb_1_1_ideal_stream_log_a77ae2fd9e5d7ab0ede9a8f69c0616384.html#a77ae2fd9e5d7ab0ede9a8f69c0616384", null ],
+    [ "mStream", "classmgb_1_1_ideal_stream_log_ace11cf0aaedda0a0af555ca6de870c47.html#ace11cf0aaedda0a0af555ca6de870c47", null ],
+    [ "mVarCount", "classmgb_1_1_ideal_stream_log_a013bfb86956a61ee6610ffd3a94b12ab.html#a013bfb86956a61ee6610ffd3a94b12ab", null ]
+];

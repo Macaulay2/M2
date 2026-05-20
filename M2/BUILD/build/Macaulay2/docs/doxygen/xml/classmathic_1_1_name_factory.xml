@@ -1,0 +1,325 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_name_factory" kind="class" language="C++" prot="public">
+    <compoundname>mathic::NameFactory</compoundname>
+    <includes refid="_name_factory_8h" local="no">NameFactory.h</includes>
+    <templateparamlist>
+      <param>
+        <type>class AbstractProduct</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmathic_1_1_name_factory_ab863c01e146250b520886d583f5a71d0_1ab863c01e146250b520886d583f5a71d0" prot="public" static="no">
+        <type>std::unique_ptr&lt; AbstractProduct &gt;(*</type>
+        <definition>typedef std::unique_ptr&lt; AbstractProduct &gt;(* mathic::NameFactory&lt; AbstractProduct &gt;::FactoryFunction) ()</definition>
+        <argsstring>)()</argsstring>
+        <name>FactoryFunction</name>
+        <qualifiedname>mathic::NameFactory::FactoryFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="26" column="5" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmathic_1_1_name_factory_a7b19a3a111609c15422318b9a81ffcbd_1a7b19a3a111609c15422318b9a81ffcbd" prot="private" static="no">
+        <type>std::pair&lt; std::string, <ref refid="classmathic_1_1_name_factory_ab863c01e146250b520886d583f5a71d0_1ab863c01e146250b520886d583f5a71d0" kindref="member">FactoryFunction</ref> &gt;</type>
+        <definition>typedef std::pair&lt;std::string, FactoryFunction&gt; mathic::NameFactory&lt; AbstractProduct &gt;::Pair</definition>
+        <argsstring></argsstring>
+        <name>Pair</name>
+        <qualifiedname>mathic::NameFactory::Pair</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="50" column="23" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_name_factory_a9cf76174ea8f51736463cc609d47708e_1a9cf76174ea8f51736463cc609d47708e" prot="private" static="no">
+        <type>std::vector&lt; <ref refid="classmathic_1_1_name_factory_a7b19a3a111609c15422318b9a81ffcbd_1a7b19a3a111609c15422318b9a81ffcbd" kindref="member">Pair</ref><ref refid="class_pair" kindref="compound">Pair</ref> &gt;::const_iterator</type>
+        <definition>typedef std::vector&lt;Pair&gt;::const_iterator mathic::NameFactory&lt; AbstractProduct &gt;::const_iterator</definition>
+        <argsstring></argsstring>
+        <name>const_iterator</name>
+        <qualifiedname>mathic::NameFactory::const_iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="51" column="51" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_name_factory_a83506fa9399ec6944f585a54419172a6_1a83506fa9399ec6944f585a54419172a6" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classmathic_1_1_name_factory_a7b19a3a111609c15422318b9a81ffcbd_1a7b19a3a111609c15422318b9a81ffcbd" kindref="member">Pair</ref><ref refid="class_pair" kindref="compound">Pair</ref> &gt;</type>
+        <definition>std::vector&lt;Pair&gt; mathic::NameFactory&lt; AbstractProduct &gt;::_pairs</definition>
+        <argsstring></argsstring>
+        <name>_pairs</name>
+        <qualifiedname>mathic::NameFactory::_pairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="52" column="17" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="52" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_name_factory_ad4b92bbb2114a93de481dbc2f383a8e0_1ad4b92bbb2114a93de481dbc2f383a8e0" compoundref="_name_factory_8h" startline="100" endline="105">mathic::NameFactory&lt; AbstractProduct &gt;::createNullOnUnknown</referencedby>
+        <referencedby refid="classmathic_1_1_name_factory_ae2b72599f7815134967e24327218880a_1ae2b72599f7815134967e24327218880a" compoundref="_name_factory_8h" startline="136" endline="138">mathic::NameFactory&lt; AbstractProduct &gt;::empty</referencedby>
+        <referencedby refid="classmathic_1_1_name_factory_aeeac77b19bedaa2e54777527cd835422_1aeeac77b19bedaa2e54777527cd835422" compoundref="_name_factory_8h" startline="125" endline="133">mathic::NameFactory&lt; AbstractProduct &gt;::namesWithPrefix</referencedby>
+        <referencedby refid="classmathic_1_1_name_factory_a3e58486c3d12b70e4697c0c52c235071_1a3e58486c3d12b70e4697c0c52c235071" compoundref="_name_factory_8h" startline="119" endline="122">mathic::NameFactory&lt; AbstractProduct &gt;::registerProduct</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmathic_1_1_name_factory_a47bd451f1c561ff168bed46b0d6bd1a0_1a47bd451f1c561ff168bed46b0d6bd1a0" prot="private" static="no" mutable="no">
+        <type>const std::string</type>
+        <definition>const std::string mathic::NameFactory&lt; AbstractProduct &gt;::_abstractName</definition>
+        <argsstring></argsstring>
+        <name>_abstractName</name>
+        <qualifiedname>mathic::NameFactory::_abstractName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="53" column="23" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="53" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_name_factory_a3580e6cf8bd3c00fa8b2a729704a1109_1a3580e6cf8bd3c00fa8b2a729704a1109" compoundref="_name_factory_8h" startline="141" endline="143">mathic::NameFactory&lt; AbstractProduct &gt;::abstractProductName</referencedby>
+        <referencedby refid="classmathic_1_1_name_factory_a94f535509217ae43aa7792963f500ed6_1a94f535509217ae43aa7792963f500ed6" compoundref="_name_factory_8h" startline="24" endline="24">mathic::NameFactory&lt; AbstractProduct &gt;::NameFactory</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_name_factory_a94f535509217ae43aa7792963f500ed6_1a94f535509217ae43aa7792963f500ed6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::NameFactory&lt; AbstractProduct &gt;::NameFactory</definition>
+        <argsstring>(const char *abstractName)</argsstring>
+        <name>NameFactory</name>
+        <qualifiedname>mathic::NameFactory::NameFactory</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <declname>abstractName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>abstractName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name for those things that are being generated in general. Used for error messages. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="24" column="5" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="24" bodyend="24"/>
+        <references refid="classmathic_1_1_name_factory_a47bd451f1c561ff168bed46b0d6bd1a0_1a47bd451f1c561ff168bed46b0d6bd1a0" compoundref="_name_factory_8h" startline="53">mathic::NameFactory&lt; AbstractProduct &gt;::_abstractName</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_name_factory_a3e58486c3d12b70e4697c0c52c235071_1a3e58486c3d12b70e4697c0c52c235071" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::NameFactory&lt; AbstractProduct &gt;::registerProduct</definition>
+        <argsstring>(const std::string &amp;name, FactoryFunction function)</argsstring>
+        <name>registerProduct</name>
+        <qualifiedname>mathic::NameFactory::registerProduct</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type><ref refid="classmathic_1_1_name_factory_ab863c01e146250b520886d583f5a71d0_1ab863c01e146250b520886d583f5a71d0" kindref="member">FactoryFunction</ref></type>
+          <declname>function</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="27" column="10" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="119" bodyend="122"/>
+        <references refid="classmathic_1_1_name_factory_a83506fa9399ec6944f585a54419172a6_1a83506fa9399ec6944f585a54419172a6" compoundref="_name_factory_8h" startline="52">mathic::NameFactory&lt; AbstractProduct &gt;::_pairs</references>
+        <references refid="classmathic_1_1_name_factory_ad4b92bbb2114a93de481dbc2f383a8e0_1ad4b92bbb2114a93de481dbc2f383a8e0" compoundref="_name_factory_8h" startline="100" endline="105">mathic::NameFactory&lt; AbstractProduct &gt;::createNullOnUnknown</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <referencedby refid="namespacemathic_ae2ee6eec18c6929acca83853938cb9c0_1ae2ee6eec18c6929acca83853938cb9c0" compoundref="_name_factory_8h" startline="153" endline="161">mathic::nameFactoryRegister</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_name_factory_ad4b92bbb2114a93de481dbc2f383a8e0_1ad4b92bbb2114a93de481dbc2f383a8e0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; AbstractProduct &gt;</type>
+        <definition>std::unique_ptr&lt; AbstractProduct &gt; mathic::NameFactory&lt; AbstractProduct &gt;::createNullOnUnknown</definition>
+        <argsstring>(const std::string &amp;name) const</argsstring>
+        <name>createNullOnUnknown</name>
+        <qualifiedname>mathic::NameFactory::createNullOnUnknown</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Calls the function registered to the parameter name and returns the result. Returns null if name has not been registered. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="32" column="7" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="100" bodyend="105"/>
+        <references refid="classmathic_1_1_name_factory_a83506fa9399ec6944f585a54419172a6_1a83506fa9399ec6944f585a54419172a6" compoundref="_name_factory_8h" startline="52">mathic::NameFactory&lt; AbstractProduct &gt;::_pairs</references>
+        <referencedby refid="classmathic_1_1_name_factory_ad87b32dd29792e6f18b4caff5ea1fb22_1ad87b32dd29792e6f18b4caff5ea1fb22" compoundref="_name_factory_8h" startline="109" endline="115">mathic::NameFactory&lt; AbstractProduct &gt;::create</referencedby>
+        <referencedby refid="namespacemathic_a5161d236e6a9f0aee1175763046f56dc_1a5161d236e6a9f0aee1175763046f56dc" compoundref="_name_factory_8h" startline="165" endline="167">mathic::createWithPrefix</referencedby>
+        <referencedby refid="classmathic_1_1_name_factory_a3e58486c3d12b70e4697c0c52c235071_1a3e58486c3d12b70e4697c0c52c235071" compoundref="_name_factory_8h" startline="119" endline="122">mathic::NameFactory&lt; AbstractProduct &gt;::registerProduct</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_name_factory_ad87b32dd29792e6f18b4caff5ea1fb22_1ad87b32dd29792e6f18b4caff5ea1fb22" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; AbstractProduct &gt;</type>
+        <definition>std::unique_ptr&lt; AbstractProduct &gt; mathic::NameFactory&lt; AbstractProduct &gt;::create</definition>
+        <argsstring>(const std::string &amp;name) const</argsstring>
+        <name>create</name>
+        <qualifiedname>mathic::NameFactory::create</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Calls the function registered to the parameter name and returns the result. Throws an exception if name has not been registered. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="36" column="21" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="109" bodyend="115"/>
+        <references refid="classmathic_1_1_name_factory_a3580e6cf8bd3c00fa8b2a729704a1109_1a3580e6cf8bd3c00fa8b2a729704a1109" compoundref="_name_factory_8h" startline="141" endline="143">mathic::NameFactory&lt; AbstractProduct &gt;::abstractProductName</references>
+        <references refid="classmathic_1_1_name_factory_ad4b92bbb2114a93de481dbc2f383a8e0_1ad4b92bbb2114a93de481dbc2f383a8e0" compoundref="_name_factory_8h" startline="100" endline="105">mathic::NameFactory&lt; AbstractProduct &gt;::createNullOnUnknown</references>
+        <references refid="namespacemathic_a6f3ced7c6d6da355df764f8a67555ed3_1a6f3ced7c6d6da355df764f8a67555ed3" compoundref="submodules_2mathic_2src_2mathic_2error_8h" startline="33" endline="35">mathic::throwError</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_name_factory_aeeac77b19bedaa2e54777527cd835422_1aeeac77b19bedaa2e54777527cd835422" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::NameFactory&lt; AbstractProduct &gt;::namesWithPrefix</definition>
+        <argsstring>(const std::string &amp;prefix, std::vector&lt; std::string &gt; &amp;names) const</argsstring>
+        <name>namesWithPrefix</name>
+        <qualifiedname>mathic::NameFactory::namesWithPrefix</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::string &gt; &amp;</type>
+          <declname>names</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Inserts into names all registered names that have the indicated prefix in lexicographic increasing order. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="40" column="10" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="125" bodyend="133"/>
+        <references refid="classmathic_1_1_name_factory_a83506fa9399ec6944f585a54419172a6_1a83506fa9399ec6944f585a54419172a6" compoundref="_name_factory_8h" startline="52">mathic::NameFactory&lt; AbstractProduct &gt;::_pairs</references>
+        <references refid="_suffix_tree_8cpp_a268cb68e13e7e5362dae595c483ad349_1a268cb68e13e7e5362dae595c483ad349" compoundref="_suffix_tree_8cpp" startline="80" endline="84">prefix</references>
+        <referencedby refid="namespacemathic_a8bc76a489da03be98d7c5d602cfa30d1_1a8bc76a489da03be98d7c5d602cfa30d1" compoundref="_name_factory_8h" startline="171" endline="198">mathic::uniqueNameWithPrefix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_name_factory_a3580e6cf8bd3c00fa8b2a729704a1109_1a3580e6cf8bd3c00fa8b2a729704a1109" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mathic::NameFactory&lt; AbstractProduct &gt;::abstractProductName</definition>
+        <argsstring>() const</argsstring>
+        <name>abstractProductName</name>
+        <qualifiedname>mathic::NameFactory::abstractProductName</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the name of the kinds of things being created. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="44" column="17" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="141" bodyend="143"/>
+        <references refid="classmathic_1_1_name_factory_a47bd451f1c561ff168bed46b0d6bd1a0_1a47bd451f1c561ff168bed46b0d6bd1a0" compoundref="_name_factory_8h" startline="53">mathic::NameFactory&lt; AbstractProduct &gt;::_abstractName</references>
+        <referencedby refid="classmathic_1_1_name_factory_ad87b32dd29792e6f18b4caff5ea1fb22_1ad87b32dd29792e6f18b4caff5ea1fb22" compoundref="_name_factory_8h" startline="109" endline="115">mathic::NameFactory&lt; AbstractProduct &gt;::create</referencedby>
+        <referencedby refid="namespacemathic_a8bc76a489da03be98d7c5d602cfa30d1_1a8bc76a489da03be98d7c5d602cfa30d1" compoundref="_name_factory_8h" startline="171" endline="198">mathic::uniqueNameWithPrefix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_name_factory_ae2b72599f7815134967e24327218880a_1ae2b72599f7815134967e24327218880a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::NameFactory&lt; AbstractProduct &gt;::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>mathic::NameFactory::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if no names have been registered. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/NameFactory.h" line="47" column="10" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="136" bodyend="138"/>
+        <references refid="classmathic_1_1_name_factory_a83506fa9399ec6944f585a54419172a6_1a83506fa9399ec6944f585a54419172a6" compoundref="_name_factory_8h" startline="52">mathic::NameFactory&lt; AbstractProduct &gt;::_pairs</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A <ref refid="classmathic_1_1_name_factory" kindref="compound">NameFactory</ref> takes a name and then creates an instance of a class that has been previously registered under that name. This is done in a general way using templates.</para>
+<para>None of this is very efficient currently. However, the interface can be implemented much more efficiently if that becomes necessary. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>mathic::NameFactory&lt; AbstractProduct &gt;</label>
+        <link refid="classmathic_1_1_name_factory"/>
+      </node>
+      <node id="2">
+        <label>mathic::NameFactory&lt; mathic::Action &gt;</label>
+        <link refid="classmathic_1_1_name_factory"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mathic::Action &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>T</label>
+      </node>
+      <node id="1">
+        <label>mathic::NameFactory&lt; AbstractProduct &gt;</label>
+        <link refid="classmathic_1_1_name_factory"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_pairs</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_abstractName</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="5">
+        <label>std::string</label>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; Pair &gt;</label>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; Pair &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/NameFactory.h" line="20" column="3" bodyfile="submodules/mathic/src/mathic/NameFactory.h" bodystart="20" bodyend="54"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_name_factory_a47bd451f1c561ff168bed46b0d6bd1a0_1a47bd451f1c561ff168bed46b0d6bd1a0" prot="private" virt="non-virtual"><scope>mathic::NameFactory</scope><name>_abstractName</name></member>
+      <member refid="classmathic_1_1_name_factory_a83506fa9399ec6944f585a54419172a6_1a83506fa9399ec6944f585a54419172a6" prot="private" virt="non-virtual"><scope>mathic::NameFactory</scope><name>_pairs</name></member>
+      <member refid="classmathic_1_1_name_factory_a3580e6cf8bd3c00fa8b2a729704a1109_1a3580e6cf8bd3c00fa8b2a729704a1109" prot="public" virt="non-virtual"><scope>mathic::NameFactory</scope><name>abstractProductName</name></member>
+      <member refid="classmathic_1_1_name_factory_a9cf76174ea8f51736463cc609d47708e_1a9cf76174ea8f51736463cc609d47708e" prot="private" virt="non-virtual"><scope>mathic::NameFactory</scope><name>const_iterator</name></member>
+      <member refid="classmathic_1_1_name_factory_ad87b32dd29792e6f18b4caff5ea1fb22_1ad87b32dd29792e6f18b4caff5ea1fb22" prot="public" virt="non-virtual"><scope>mathic::NameFactory</scope><name>create</name></member>
+      <member refid="classmathic_1_1_name_factory_ad4b92bbb2114a93de481dbc2f383a8e0_1ad4b92bbb2114a93de481dbc2f383a8e0" prot="public" virt="non-virtual"><scope>mathic::NameFactory</scope><name>createNullOnUnknown</name></member>
+      <member refid="classmathic_1_1_name_factory_ae2b72599f7815134967e24327218880a_1ae2b72599f7815134967e24327218880a" prot="public" virt="non-virtual"><scope>mathic::NameFactory</scope><name>empty</name></member>
+      <member refid="classmathic_1_1_name_factory_ab863c01e146250b520886d583f5a71d0_1ab863c01e146250b520886d583f5a71d0" prot="public" virt="non-virtual"><scope>mathic::NameFactory</scope><name>FactoryFunction</name></member>
+      <member refid="classmathic_1_1_name_factory_a94f535509217ae43aa7792963f500ed6_1a94f535509217ae43aa7792963f500ed6" prot="public" virt="non-virtual"><scope>mathic::NameFactory</scope><name>NameFactory</name></member>
+      <member refid="classmathic_1_1_name_factory_aeeac77b19bedaa2e54777527cd835422_1aeeac77b19bedaa2e54777527cd835422" prot="public" virt="non-virtual"><scope>mathic::NameFactory</scope><name>namesWithPrefix</name></member>
+      <member refid="classmathic_1_1_name_factory_a7b19a3a111609c15422318b9a81ffcbd_1a7b19a3a111609c15422318b9a81ffcbd" prot="private" virt="non-virtual"><scope>mathic::NameFactory</scope><name>Pair</name></member>
+      <member refid="classmathic_1_1_name_factory_a3e58486c3d12b70e4697c0c52c235071_1a3e58486c3d12b70e4697c0c52c235071" prot="public" virt="non-virtual"><scope>mathic::NameFactory</scope><name>registerProduct</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

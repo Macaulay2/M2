@@ -1,0 +1,348 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classtableau2" kind="class" language="C++" prot="public">
+    <compoundname>tableau2</compoundname>
+    <includes refid="schur2_8hpp" local="no">schur2.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="classtableau2_a7aa957b866c9a5711709cd34c9128fab_1a7aa957b866c9a5711709cd34c9128fab" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class SchurRing2</definition>
+        <argsstring></argsstring>
+        <name>SchurRing2</name>
+        <qualifiedname>tableau2::SchurRing2</qualifiedname>
+        <param>
+          <type><ref refid="class_schur_ring2" kindref="compound">SchurRing2</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="54" column="16" bodyfile="Macaulay2/e/schur2.hpp" bodystart="54" bodyend="-1"/>
+        <references refid="classtableau2_a7aa957b866c9a5711709cd34c9128fab_1a7aa957b866c9a5711709cd34c9128fab" compoundref="schur2_8hpp" startline="54">SchurRing2</references>
+        <referencedby refid="classtableau2_a7aa957b866c9a5711709cd34c9128fab_1a7aa957b866c9a5711709cd34c9128fab" compoundref="schur2_8hpp" startline="54">SchurRing2</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtableau2_ae80febcaae90570b75ba4773ba38f561_1ae80febcaae90570b75ba4773ba38f561" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int tableau2::maxwt</definition>
+        <argsstring></argsstring>
+        <name>maxwt</name>
+        <qualifiedname>tableau2::maxwt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="56" column="7" bodyfile="Macaulay2/e/schur2.hpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="classtableau2_a6bce3582822b1f7d222818967065be97_1a6bce3582822b1f7d222818967065be97" compoundref="schur2_8cpp" startline="16" endline="26">initialize</referencedby>
+        <referencedby refid="classtableau2_a3a7b60e99e54d5772cfe5e5a560e28b0_1a3a7b60e99e54d5772cfe5e5a560e28b0">initialize</referencedby>
+        <referencedby refid="classtableau2_a9ab56b9e5b833203ce64328f008f9b5f_1a9ab56b9e5b833203ce64328f008f9b5f" compoundref="schur2_8cpp" startline="28" endline="37">resize</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classtableau2_adf6733f424582e6401d143b159e52f59_1adf6733f424582e6401d143b159e52f59" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int tableau2::wt</definition>
+        <argsstring></argsstring>
+        <name>wt</name>
+        <qualifiedname>tableau2::wt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="57" column="7" bodyfile="Macaulay2/e/schur2.hpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="classtableau2_a3eae519f07add02ea904da4fa299e6d6_1a3eae519f07add02ea904da4fa299e6d6" compoundref="schur2_8cpp" startline="39" endline="48">elem</referencedby>
+        <referencedby refid="classtableau2_a6bce3582822b1f7d222818967065be97_1a6bce3582822b1f7d222818967065be97" compoundref="schur2_8cpp" startline="16" endline="26">initialize</referencedby>
+        <referencedby refid="classtableau2_a9ab56b9e5b833203ce64328f008f9b5f_1a9ab56b9e5b833203ce64328f008f9b5f" compoundref="schur2_8cpp" startline="28" endline="37">resize</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classtableau2_a0624a3f26d83ccb7e5edc609da1cbed6_1a0624a3f26d83ccb7e5edc609da1cbed6" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* tableau2::lambda</definition>
+        <argsstring></argsstring>
+        <name>lambda</name>
+        <qualifiedname>tableau2::lambda</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="58" column="7" bodyfile="Macaulay2/e/schur2.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="classtableau2_ae55746fb725e1613591b29e4bee15c8d_1ae55746fb725e1613591b29e4bee15c8d" compoundref="schur2_8cpp" startline="72" endline="82">display</referencedby>
+        <referencedby refid="classtableau2_a97e1e389c0c8f41101f28deb25457bc6_1a97e1e389c0c8f41101f28deb25457bc6" compoundref="schur2_8cpp" startline="50" endline="70">fill</referencedby>
+        <referencedby refid="classtableau2_a6bce3582822b1f7d222818967065be97_1a6bce3582822b1f7d222818967065be97" compoundref="schur2_8cpp" startline="16" endline="26">initialize</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classtableau2_ae5f09ecc5de990e06855baa032b6989f_1ae5f09ecc5de990e06855baa032b6989f" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* tableau2::p</definition>
+        <argsstring></argsstring>
+        <name>p</name>
+        <qualifiedname>tableau2::p</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="59" column="7" bodyfile="Macaulay2/e/schur2.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="classtableau2_ae55746fb725e1613591b29e4bee15c8d_1ae55746fb725e1613591b29e4bee15c8d" compoundref="schur2_8cpp" startline="72" endline="82">display</referencedby>
+        <referencedby refid="classtableau2_a97e1e389c0c8f41101f28deb25457bc6_1a97e1e389c0c8f41101f28deb25457bc6" compoundref="schur2_8cpp" startline="50" endline="70">fill</referencedby>
+        <referencedby refid="classtableau2_a6bce3582822b1f7d222818967065be97_1a6bce3582822b1f7d222818967065be97" compoundref="schur2_8cpp" startline="16" endline="26">initialize</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classtableau2_a23fa17ab02b46053ccb92049ee16ede2_1a23fa17ab02b46053ccb92049ee16ede2" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* tableau2::xloc</definition>
+        <argsstring></argsstring>
+        <name>xloc</name>
+        <qualifiedname>tableau2::xloc</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="60" column="7" bodyfile="Macaulay2/e/schur2.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="classtableau2_a3eae519f07add02ea904da4fa299e6d6_1a3eae519f07add02ea904da4fa299e6d6" compoundref="schur2_8cpp" startline="39" endline="48">elem</referencedby>
+        <referencedby refid="classtableau2_a97e1e389c0c8f41101f28deb25457bc6_1a97e1e389c0c8f41101f28deb25457bc6" compoundref="schur2_8cpp" startline="50" endline="70">fill</referencedby>
+        <referencedby refid="classtableau2_a6bce3582822b1f7d222818967065be97_1a6bce3582822b1f7d222818967065be97" compoundref="schur2_8cpp" startline="16" endline="26">initialize</referencedby>
+        <referencedby refid="classtableau2_a9ab56b9e5b833203ce64328f008f9b5f_1a9ab56b9e5b833203ce64328f008f9b5f" compoundref="schur2_8cpp" startline="28" endline="37">resize</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classtableau2_ad2d2312ce460373ef83dec566b65407b_1ad2d2312ce460373ef83dec566b65407b" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref> *</type>
+        <definition>int* tableau2::yloc</definition>
+        <argsstring></argsstring>
+        <name>yloc</name>
+        <qualifiedname>tableau2::yloc</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="62" column="7" bodyfile="Macaulay2/e/schur2.hpp" bodystart="62" bodyend="-1"/>
+        <referencedby refid="classtableau2_a3eae519f07add02ea904da4fa299e6d6_1a3eae519f07add02ea904da4fa299e6d6" compoundref="schur2_8cpp" startline="39" endline="48">elem</referencedby>
+        <referencedby refid="classtableau2_a97e1e389c0c8f41101f28deb25457bc6_1a97e1e389c0c8f41101f28deb25457bc6" compoundref="schur2_8cpp" startline="50" endline="70">fill</referencedby>
+        <referencedby refid="classtableau2_a6bce3582822b1f7d222818967065be97_1a6bce3582822b1f7d222818967065be97" compoundref="schur2_8cpp" startline="16" endline="26">initialize</referencedby>
+        <referencedby refid="classtableau2_a9ab56b9e5b833203ce64328f008f9b5f_1a9ab56b9e5b833203ce64328f008f9b5f" compoundref="schur2_8cpp" startline="28" endline="37">resize</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtableau2_a3a7b60e99e54d5772cfe5e5a560e28b0_1a3a7b60e99e54d5772cfe5e5a560e28b0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tableau2::initialize</definition>
+        <argsstring>(int nvars)</argsstring>
+        <name>initialize</name>
+        <qualifiedname>tableau2::initialize</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nvars</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="65" column="8"/>
+        <references refid="classtableau2_ae80febcaae90570b75ba4773ba38f561_1ae80febcaae90570b75ba4773ba38f561" compoundref="schur2_8hpp" startline="56">maxwt</references>
+      </memberdef>
+      <memberdef kind="function" id="classtableau2_a6bce3582822b1f7d222818967065be97_1a6bce3582822b1f7d222818967065be97" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tableau2::initialize</definition>
+        <argsstring>(int maxrows, int maxwt)</argsstring>
+        <name>initialize</name>
+        <qualifiedname>tableau2::initialize</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>maxrows</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>maxwt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="66" column="8" bodyfile="Macaulay2/e/schur2.cpp" bodystart="16" bodyend="26"/>
+        <references refid="classtableau2_a0624a3f26d83ccb7e5edc609da1cbed6_1a0624a3f26d83ccb7e5edc609da1cbed6" compoundref="schur2_8hpp" startline="58">lambda</references>
+        <references refid="classtableau2_ae80febcaae90570b75ba4773ba38f561_1ae80febcaae90570b75ba4773ba38f561" compoundref="schur2_8hpp" startline="56">maxwt</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="classtableau2_ae5f09ecc5de990e06855baa032b6989f_1ae5f09ecc5de990e06855baa032b6989f" compoundref="schur2_8hpp" startline="59">p</references>
+        <references refid="schur_8hpp_a06d8c6285a003f55bbe9e9c3fd17a7b0_1a06d8c6285a003f55bbe9e9c3fd17a7b0" compoundref="schur_8hpp" startline="38">SCHUR_MAX_WT</references>
+        <references refid="classtableau2_adf6733f424582e6401d143b159e52f59_1adf6733f424582e6401d143b159e52f59" compoundref="schur2_8hpp" startline="57">wt</references>
+        <references refid="classtableau2_a23fa17ab02b46053ccb92049ee16ede2_1a23fa17ab02b46053ccb92049ee16ede2" compoundref="schur2_8hpp" startline="60">xloc</references>
+        <references refid="classtableau2_ad2d2312ce460373ef83dec566b65407b_1ad2d2312ce460373ef83dec566b65407b" compoundref="schur2_8hpp" startline="62">yloc</references>
+      </memberdef>
+      <memberdef kind="function" id="classtableau2_a3dc0c4751187ec560480edff95405086_1a3dc0c4751187ec560480edff95405086" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>tableau2::tableau2</definition>
+        <argsstring>()</argsstring>
+        <name>tableau2</name>
+        <qualifiedname>tableau2::tableau2</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="67" column="3" bodyfile="Macaulay2/e/schur2.hpp" bodystart="67" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classtableau2_a88ac9c9f61fea5af9eeca78bd2b891f8_1a88ac9c9f61fea5af9eeca78bd2b891f8" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>tableau2::~tableau2</definition>
+        <argsstring>()</argsstring>
+        <name>~tableau2</name>
+        <qualifiedname>tableau2::~tableau2</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="68" column="3" bodyfile="Macaulay2/e/schur2.hpp" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classtableau2_a9ab56b9e5b833203ce64328f008f9b5f_1a9ab56b9e5b833203ce64328f008f9b5f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tableau2::resize</definition>
+        <argsstring>(int max_wt)</argsstring>
+        <name>resize</name>
+        <qualifiedname>tableau2::resize</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>max_wt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="69" column="8" bodyfile="Macaulay2/e/schur2.cpp" bodystart="28" bodyend="37"/>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="classtableau2_ae80febcaae90570b75ba4773ba38f561_1ae80febcaae90570b75ba4773ba38f561" compoundref="schur2_8hpp" startline="56">maxwt</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="schur_8hpp_a06d8c6285a003f55bbe9e9c3fd17a7b0_1a06d8c6285a003f55bbe9e9c3fd17a7b0" compoundref="schur_8hpp" startline="38">SCHUR_MAX_WT</references>
+        <references refid="classtableau2_adf6733f424582e6401d143b159e52f59_1adf6733f424582e6401d143b159e52f59" compoundref="schur2_8hpp" startline="57">wt</references>
+        <references refid="classtableau2_a23fa17ab02b46053ccb92049ee16ede2_1a23fa17ab02b46053ccb92049ee16ede2" compoundref="schur2_8hpp" startline="60">xloc</references>
+        <references refid="classtableau2_ad2d2312ce460373ef83dec566b65407b_1ad2d2312ce460373ef83dec566b65407b" compoundref="schur2_8hpp" startline="62">yloc</references>
+      </memberdef>
+      <memberdef kind="function" id="classtableau2_a3eae519f07add02ea904da4fa299e6d6_1a3eae519f07add02ea904da4fa299e6d6" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int tableau2::elem</definition>
+        <argsstring>(int x, int y) const</argsstring>
+        <name>elem</name>
+        <qualifiedname>tableau2::elem</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="71" column="7" bodyfile="Macaulay2/e/schur2.cpp" bodystart="39" bodyend="48"/>
+        <references refid="classtableau2_adf6733f424582e6401d143b159e52f59_1adf6733f424582e6401d143b159e52f59" compoundref="schur2_8hpp" startline="57">wt</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <references refid="classtableau2_a23fa17ab02b46053ccb92049ee16ede2_1a23fa17ab02b46053ccb92049ee16ede2" compoundref="schur2_8hpp" startline="60">xloc</references>
+        <references refid="classtableau2_ad2d2312ce460373ef83dec566b65407b_1ad2d2312ce460373ef83dec566b65407b" compoundref="schur2_8hpp" startline="62">yloc</references>
+        <referencedby refid="classtableau2_ae55746fb725e1613591b29e4bee15c8d_1ae55746fb725e1613591b29e4bee15c8d" compoundref="schur2_8cpp" startline="72" endline="82">display</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classtableau2_a97e1e389c0c8f41101f28deb25457bc6_1a97e1e389c0c8f41101f28deb25457bc6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tableau2::fill</definition>
+        <argsstring>(int *lamb, int *pp)</argsstring>
+        <name>fill</name>
+        <qualifiedname>tableau2::fill</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>lamb</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>pp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="72" column="8" bodyfile="Macaulay2/e/schur2.cpp" bodystart="50" bodyend="70"/>
+        <references refid="classtableau2_a0624a3f26d83ccb7e5edc609da1cbed6_1a0624a3f26d83ccb7e5edc609da1cbed6" compoundref="schur2_8hpp" startline="58">lambda</references>
+        <references refid="classtableau2_ae5f09ecc5de990e06855baa032b6989f_1ae5f09ecc5de990e06855baa032b6989f" compoundref="schur2_8hpp" startline="59">p</references>
+        <references refid="classtableau2_a23fa17ab02b46053ccb92049ee16ede2_1a23fa17ab02b46053ccb92049ee16ede2" compoundref="schur2_8hpp" startline="60">xloc</references>
+        <references refid="classtableau2_ad2d2312ce460373ef83dec566b65407b_1ad2d2312ce460373ef83dec566b65407b" compoundref="schur2_8hpp" startline="62">yloc</references>
+      </memberdef>
+      <memberdef kind="function" id="classtableau2_ae55746fb725e1613591b29e4bee15c8d_1ae55746fb725e1613591b29e4bee15c8d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tableau2::display</definition>
+        <argsstring>() const</argsstring>
+        <name>display</name>
+        <qualifiedname>tableau2::display</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schur2.hpp" line="73" column="8" bodyfile="Macaulay2/e/schur2.cpp" bodystart="72" bodyend="82"/>
+        <references refid="classtableau2_a3eae519f07add02ea904da4fa299e6d6_1a3eae519f07add02ea904da4fa299e6d6" compoundref="schur2_8cpp" startline="39" endline="48">elem</references>
+        <references refid="classtableau2_a0624a3f26d83ccb7e5edc609da1cbed6_1a0624a3f26d83ccb7e5edc609da1cbed6" compoundref="schur2_8hpp" startline="58">lambda</references>
+        <references refid="classtableau2_ae5f09ecc5de990e06855baa032b6989f_1ae5f09ecc5de990e06855baa032b6989f" compoundref="schur2_8hpp" startline="59">p</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="1">
+        <label>tableau2</label>
+        <link refid="classtableau2"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>lambda</edgelabel>
+          <edgelabel>maxwt</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>wt</edgelabel>
+          <edgelabel>xloc</edgelabel>
+          <edgelabel>yloc</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/schur2.hpp" line="52" column="1" bodyfile="Macaulay2/e/schur2.hpp" bodystart="53" bodyend="74"/>
+    <listofallmembers>
+      <member refid="classtableau2_ae55746fb725e1613591b29e4bee15c8d_1ae55746fb725e1613591b29e4bee15c8d" prot="private" virt="non-virtual"><scope>tableau2</scope><name>display</name></member>
+      <member refid="classtableau2_a3eae519f07add02ea904da4fa299e6d6_1a3eae519f07add02ea904da4fa299e6d6" prot="private" virt="non-virtual"><scope>tableau2</scope><name>elem</name></member>
+      <member refid="classtableau2_a97e1e389c0c8f41101f28deb25457bc6_1a97e1e389c0c8f41101f28deb25457bc6" prot="private" virt="non-virtual"><scope>tableau2</scope><name>fill</name></member>
+      <member refid="classtableau2_a3a7b60e99e54d5772cfe5e5a560e28b0_1a3a7b60e99e54d5772cfe5e5a560e28b0" prot="private" virt="non-virtual"><scope>tableau2</scope><name>initialize</name></member>
+      <member refid="classtableau2_a6bce3582822b1f7d222818967065be97_1a6bce3582822b1f7d222818967065be97" prot="private" virt="non-virtual"><scope>tableau2</scope><name>initialize</name></member>
+      <member refid="classtableau2_a0624a3f26d83ccb7e5edc609da1cbed6_1a0624a3f26d83ccb7e5edc609da1cbed6" prot="private" virt="non-virtual"><scope>tableau2</scope><name>lambda</name></member>
+      <member refid="classtableau2_ae80febcaae90570b75ba4773ba38f561_1ae80febcaae90570b75ba4773ba38f561" prot="private" virt="non-virtual"><scope>tableau2</scope><name>maxwt</name></member>
+      <member refid="classtableau2_ae5f09ecc5de990e06855baa032b6989f_1ae5f09ecc5de990e06855baa032b6989f" prot="private" virt="non-virtual"><scope>tableau2</scope><name>p</name></member>
+      <member refid="classtableau2_a9ab56b9e5b833203ce64328f008f9b5f_1a9ab56b9e5b833203ce64328f008f9b5f" prot="private" virt="non-virtual"><scope>tableau2</scope><name>resize</name></member>
+      <member refid="classtableau2_a7aa957b866c9a5711709cd34c9128fab_1a7aa957b866c9a5711709cd34c9128fab" prot="private" virt="non-virtual"><scope>tableau2</scope><name>SchurRing2</name></member>
+      <member refid="classtableau2_a3dc0c4751187ec560480edff95405086_1a3dc0c4751187ec560480edff95405086" prot="private" virt="non-virtual"><scope>tableau2</scope><name>tableau2</name></member>
+      <member refid="classtableau2_adf6733f424582e6401d143b159e52f59_1adf6733f424582e6401d143b159e52f59" prot="private" virt="non-virtual"><scope>tableau2</scope><name>wt</name></member>
+      <member refid="classtableau2_a23fa17ab02b46053ccb92049ee16ede2_1a23fa17ab02b46053ccb92049ee16ede2" prot="private" virt="non-virtual"><scope>tableau2</scope><name>xloc</name></member>
+      <member refid="classtableau2_ad2d2312ce460373ef83dec566b65407b_1ad2d2312ce460373ef83dec566b65407b" prot="private" virt="non-virtual"><scope>tableau2</scope><name>yloc</name></member>
+      <member refid="classtableau2_a88ac9c9f61fea5af9eeca78bd2b891f8_1a88ac9c9f61fea5af9eeca78bd2b891f8" prot="private" virt="non-virtual"><scope>tableau2</scope><name>~tableau2</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

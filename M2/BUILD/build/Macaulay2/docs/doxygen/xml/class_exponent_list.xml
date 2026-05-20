@@ -1,0 +1,862 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_exponent_list" kind="class" language="C++" prot="public">
+    <compoundname>ExponentList</compoundname>
+    <includes refid="_exponent_list_8hpp" local="no">ExponentList.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class E</type>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>L</declname>
+        <defname>L</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_exponent_list_a5503f66b5432156e9f779a49fc958bd4_1a5503f66b5432156e9f779a49fc958bd4" prot="private" static="no">
+        <type><ref refid="class_exponent_list_iterator" kindref="compound">ExponentListIterator</ref>&lt; E, L &gt;</type>
+        <definition>using ExponentList&lt; E, L &gt;::Iterator =  ExponentListIterator&lt;E, L&gt;</definition>
+        <argsstring></argsstring>
+        <name>Iterator</name>
+        <qualifiedname>ExponentList::Iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="63" column="3" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="63" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" prot="public" static="no">
+        <type>E</type>
+        <definition>typedef E ExponentList&lt; E, L &gt;::Exponent</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>ExponentList::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="67" column="13" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_exponent_list_aff34f885d628d6845ef89837bf7f2cb7_1aff34f885d628d6845ef89837bf7f2cb7" prot="public" static="no">
+        <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref> *</type>
+        <definition>typedef Exponent* ExponentList&lt; E, L &gt;::Exponents</definition>
+        <argsstring></argsstring>
+        <name>Exponents</name>
+        <qualifiedname>ExponentList::Exponents</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="68" column="20" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" prot="public" static="no">
+        <type>const <ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref> *</type>
+        <definition>typedef const Exponent* ExponentList&lt; E, L &gt;::ConstExponents</definition>
+        <argsstring></argsstring>
+        <name>ConstExponents</name>
+        <qualifiedname>ExponentList::ConstExponents</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="69" column="26" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_exponent_list_a3bd46eea96259044d291b6663ed31e2b_1a3bd46eea96259044d291b6663ed31e2b" prot="public" static="no">
+        <type>std::make_unsigned&lt; <ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref> &gt;::type</type>
+        <definition>typedef std::make_unsigned&lt;Exponent&gt;::type ExponentList&lt; E, L &gt;::HashExponent</definition>
+        <argsstring></argsstring>
+        <name>HashExponent</name>
+        <qualifiedname>ExponentList::HashExponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="70" column="46" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" prot="public" static="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref> &gt;</type>
+        <definition>typedef gc_vector&lt;Exponent&gt; ExponentList&lt; E, L &gt;::Vector</definition>
+        <argsstring></argsstring>
+        <name>Vector</name>
+        <qualifiedname>ExponentList::Vector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="71" column="21" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="71" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_exponent_list_aa371dac2182865696d13f66c8a6ff237_1aa371dac2182865696d13f66c8a6ff237" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class ExponentListIterator&lt; E, L &gt;</definition>
+        <argsstring></argsstring>
+        <name>ExponentListIterator&lt; E, L &gt;</name>
+        <qualifiedname>ExponentList::ExponentListIterator&lt; E, L &gt;</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_iterator" kindref="compound">ExponentListIterator</ref>&lt; E, L &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="1" column="0" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_exponent_list_a49c1dda26e1794071a241df52ce77bc1_1a49c1dda26e1794071a241df52ce77bc1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_exponent_list_a3bd46eea96259044d291b6663ed31e2b_1a3bd46eea96259044d291b6663ed31e2b" kindref="member">HashExponent</ref></type>
+        <definition>static HashExponent ExponentList&lt; E, L &gt;::computeHashValue</definition>
+        <argsstring>(ConstExponents vp)</argsstring>
+        <name>computeHashValue</name>
+        <qualifiedname>ExponentList::computeHashValue</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="73" column="23" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="73" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a920862509eb101ceffe75d61900f2bae_1a920862509eb101ceffe75d61900f2bae" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::elem_text_out</definition>
+        <argsstring>(buffer &amp;o, ConstExponents m, bool p_one=true)</argsstring>
+        <name>elem_text_out</name>
+        <qualifiedname>ExponentList::elem_text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>p_one</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="81" column="15" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="81" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_aac8e99dc487f106581be327f116c3953_1aac8e99dc487f106581be327f116c3953" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref></type>
+        <definition>static const Exponent ExponentList&lt; E, L &gt;::length</definition>
+        <argsstring>(ConstExponents m)</argsstring>
+        <name>length</name>
+        <qualifiedname>ExponentList::length</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="102" column="25" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="102" bodyend="108"/>
+        <referencedby refid="class_exponent_list_a39cea8f841c34eb30580a2318ac22ec4_1a39cea8f841c34eb30580a2318ac22ec4" compoundref="_exponent_list_8hpp" startline="143" endline="156">ExponentList&lt; int, true &gt;::compare</referencedby>
+        <referencedby refid="class_exponent_list_a9921b7b5ae8c2d301e539ca00419aed6_1a9921b7b5ae8c2d301e539ca00419aed6" compoundref="_exponent_list_8hpp" startline="137" endline="140">ExponentList&lt; int, true &gt;::copy</referencedby>
+        <referencedby refid="class_exponent_list_a94eccfbc2d4e39fcef2fc2e510b1e4e4_1a94eccfbc2d4e39fcef2fc2e510b1e4e4" compoundref="_exponent_list_8cpp" startline="396" endline="435">ExponentList&lt; int, true &gt;::erase</referencedby>
+        <referencedby refid="class_exponent_list_a805334ea88831c93da08bca254fe6e9b_1a805334ea88831c93da08bca254fe6e9b" compoundref="_exponent_list_8cpp" startline="352" endline="393">ExponentList&lt; int, true &gt;::gcd</referencedby>
+        <referencedby refid="class_exponent_list_ae5f5da2ea1046f06369a00e1658b83e1_1ae5f5da2ea1046f06369a00e1658b83e1" compoundref="_exponent_list_8hpp" startline="119" endline="122">ExponentList&lt; int, true &gt;::is_equal</referencedby>
+        <referencedby refid="class_exponent_list_a21f3bfebd0ccebbf64e5216e1fd5a014_1a21f3bfebd0ccebbf64e5216e1fd5a014" compoundref="_exponent_list_8hpp" startline="118" endline="118">ExponentList&lt; int, true &gt;::is_one</referencedby>
+        <referencedby refid="class_exponent_list_a6353b867b000fa4475bf606d5a652027_1a6353b867b000fa4475bf606d5a652027" compoundref="_exponent_list_8cpp" startline="304" endline="349">ExponentList&lt; int, true &gt;::lcm</referencedby>
+        <referencedby refid="class_exponent_list_a94eb234b6b38a513b9b4b436d16a605d_1a94eb234b6b38a513b9b4b436d16a605d" compoundref="_exponent_list_8cpp" startline="242" endline="301">ExponentList&lt; int, true &gt;::monsyz</referencedby>
+        <referencedby refid="class_exponent_list_a6a491949bdc39b77a66387d425836158_1a6a491949bdc39b77a66387d425836158" compoundref="_exponent_list_8cpp" startline="92" endline="140">ExponentList&lt; int, true &gt;::mult</referencedby>
+        <referencedby refid="class_exponent_list_a727729f43af6a8d06245b5cfb6ff069b_1a727729f43af6a8d06245b5cfb6ff069b" compoundref="_exponent_list_8cpp" startline="143" endline="190">ExponentList&lt; int, true &gt;::quotient</referencedby>
+        <referencedby refid="class_exponent_list_a2f79771dea5e1bd963858834c6a66285_1a2f79771dea5e1bd963858834c6a66285" compoundref="_exponent_list_8cpp" startline="438" endline="450">ExponentList&lt; int, true &gt;::radical</referencedby>
+        <referencedby refid="class_exponent_list_aa3b6bdd7cd94aded4877bf9c6a076c77_1aa3b6bdd7cd94aded4877bf9c6a076c77" compoundref="_exponent_list_8cpp" startline="52" endline="58">ExponentList&lt; int, true &gt;::to_arrayint</referencedby>
+        <referencedby refid="class_exponent_list_a74cdb54ff6096225d58a6b73b0c0f59d_1a74cdb54ff6096225d58a6b73b0c0f59d" compoundref="_exponent_list_8hpp" startline="124" endline="128">ExponentList&lt; int, true &gt;::topvar</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_ab26cfca0164c7fa8450fd2b1b83e968e_1ab26cfca0164c7fa8450fd2b1b83e968e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref></type>
+        <definition>static const Exponent ExponentList&lt; E, L &gt;::npairs</definition>
+        <argsstring>(ConstExponents m)</argsstring>
+        <name>npairs</name>
+        <qualifiedname>ExponentList::npairs</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="109" column="25" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="109" bodyend="115"/>
+        <referencedby refid="class_exponent_list_ad89ccabb453992b47814880cf10293ee_1ad89ccabb453992b47814880cf10293ee" compoundref="_exponent_list_8hpp" startline="200" endline="206">ExponentList&lt; int, true &gt;::is_pure_power</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a5610b3460f56c45a6f54d034b55f6be1_1a5610b3460f56c45a6f54d034b55f6be1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::one</definition>
+        <argsstring>(Vector &amp;result)</argsstring>
+        <name>one</name>
+        <qualifiedname>ExponentList::one</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="117" column="15" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a21f3bfebd0ccebbf64e5216e1fd5a014_1a21f3bfebd0ccebbf64e5216e1fd5a014" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>static bool ExponentList&lt; E, L &gt;::is_one</definition>
+        <argsstring>(ConstExponents a)</argsstring>
+        <name>is_one</name>
+        <qualifiedname>ExponentList::is_one</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="118" column="15" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="118" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_ae5f5da2ea1046f06369a00e1658b83e1_1ae5f5da2ea1046f06369a00e1658b83e1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>static bool ExponentList&lt; E, L &gt;::is_equal</definition>
+        <argsstring>(ConstExponents a, ConstExponents b)</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>ExponentList::is_equal</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="119" column="15" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="119" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a74cdb54ff6096225d58a6b73b0c0f59d_1a74cdb54ff6096225d58a6b73b0c0f59d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref></type>
+        <definition>static Exponent ExponentList&lt; E, L &gt;::topvar</definition>
+        <argsstring>(ConstExponents a)</argsstring>
+        <name>topvar</name>
+        <qualifiedname>ExponentList::topvar</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="124" column="19" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="124" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_aedb7f52aae3a3400ec67997e6515120a_1aedb7f52aae3a3400ec67997e6515120a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::var</definition>
+        <argsstring>(Exponent v, Exponent e, Vector &amp;result)</argsstring>
+        <name>var</name>
+        <qualifiedname>ExponentList::var</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref></type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref></type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="129" column="15" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="129" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a9921b7b5ae8c2d301e539ca00419aed6_1a9921b7b5ae8c2d301e539ca00419aed6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::copy</definition>
+        <argsstring>(ConstExponents vp, Vector &amp;result)</argsstring>
+        <name>copy</name>
+        <qualifiedname>ExponentList::copy</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="137" column="15" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="137" bodyend="140"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a39cea8f841c34eb30580a2318ac22ec4_1a39cea8f841c34eb30580a2318ac22ec4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>static int ExponentList&lt; E, L &gt;::compare</definition>
+        <argsstring>(ConstExponents a, ConstExponents b)</argsstring>
+        <name>compare</name>
+        <qualifiedname>ExponentList::compare</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="143" column="14" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="143" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_aeccce8422040414a1073f9cf625a5808_1aeccce8422040414a1073f9cf625a5808" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::to_expvector</definition>
+        <argsstring>(int n, ConstExponents a, exponents::Exponents result)</argsstring>
+        <name>to_expvector</name>
+        <qualifiedname>ExponentList::to_expvector</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_vector_ad99f1f24f7a14bdc93dc6d5db5068c59_1ad99f1f24f7a14bdc93dc6d5db5068c59" kindref="member">exponents::Exponents</ref></type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="158" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a7621b2c9174ae326b2081929bf829794_1a7621b2c9174ae326b2081929bf829794" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::from_expvector</definition>
+        <argsstring>(int n, exponents::ConstExponents a, Vector &amp;result)</argsstring>
+        <name>from_expvector</name>
+        <qualifiedname>ExponentList::from_expvector</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_vector_ad01ecd3f63da19ad4eb93d3326ad66b2_1ad01ecd3f63da19ad4eb93d3326ad66b2" kindref="member">exponents::ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="159" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_aa3b6bdd7cd94aded4877bf9c6a076c77_1aa3b6bdd7cd94aded4877bf9c6a076c77" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+        <definition>static M2_arrayint ExponentList&lt; E, L &gt;::to_arrayint</definition>
+        <argsstring>(ConstExponents vp)</argsstring>
+        <name>to_arrayint</name>
+        <qualifiedname>ExponentList::to_arrayint</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="162" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a6cea2b61ef2f1115c3137cfcac1c92a1_1a6cea2b61ef2f1115c3137cfcac1c92a1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::from_arrayint</definition>
+        <argsstring>(M2_arrayint m, Vector &amp;result)</argsstring>
+        <name>from_arrayint</name>
+        <qualifiedname>ExponentList::from_arrayint</qualifiedname>
+        <param>
+          <type><ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="163" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a62cea695d46f55c62939763970f589bc_1a62cea695d46f55c62939763970f589bc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="struct_t" kindref="compound">T</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref></type>
+        <definition>static Exponent ExponentList&lt; E, L &gt;::weight</definition>
+        <argsstring>(ConstExponents m, const std::vector&lt; T &gt; &amp;wts)</argsstring>
+        <name>weight</name>
+        <qualifiedname>ExponentList::weight</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt; &amp;</type>
+          <declname>wts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="166" column="19" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="166" bodyend="173"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a8f93a2bbf849dc82e50a7170dfafd371_1a8f93a2bbf849dc82e50a7170dfafd371" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref></type>
+        <definition>static Exponent ExponentList&lt; E, L &gt;::simple_degree</definition>
+        <argsstring>(ConstExponents m)</argsstring>
+        <name>simple_degree</name>
+        <qualifiedname>ExponentList::simple_degree</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="174" column="19" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="174" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a6a491949bdc39b77a66387d425836158_1a6a491949bdc39b77a66387d425836158" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::mult</definition>
+        <argsstring>(ConstExponents a, ConstExponents b, Vector &amp;result)</argsstring>
+        <name>mult</name>
+        <qualifiedname>ExponentList::mult</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="181" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a727729f43af6a8d06245b5cfb6ff069b_1a727729f43af6a8d06245b5cfb6ff069b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::quotient</definition>
+        <argsstring>(ConstExponents a, ConstExponents b, Vector &amp;result)</argsstring>
+        <name>quotient</name>
+        <qualifiedname>ExponentList::quotient</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="183" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_afd77d7ad562847d818e83f6b8d849639_1afd77d7ad562847d818e83f6b8d849639" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::power</definition>
+        <argsstring>(ConstExponents a, Exponent n, Vector &amp;result)</argsstring>
+        <name>power</name>
+        <qualifiedname>ExponentList::power</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="184" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a94eb234b6b38a513b9b4b436d16a605d_1a94eb234b6b38a513b9b4b436d16a605d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::monsyz</definition>
+        <argsstring>(ConstExponents a, ConstExponents b, Vector &amp;sa, Vector &amp;sb)</argsstring>
+        <name>monsyz</name>
+        <qualifiedname>ExponentList::monsyz</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>sa</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>sb</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="186" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a9c83a81f082134cd5653a11c6561a1c1_1a9c83a81f082134cd5653a11c6561a1c1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>static bool ExponentList&lt; E, L &gt;::divides</definition>
+        <argsstring>(ConstExponents a, ConstExponents b)</argsstring>
+        <name>divides</name>
+        <qualifiedname>ExponentList::divides</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="192" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a6353b867b000fa4475bf606d5a652027_1a6353b867b000fa4475bf606d5a652027" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::lcm</definition>
+        <argsstring>(ConstExponents a, ConstExponents b, Vector &amp;result)</argsstring>
+        <name>lcm</name>
+        <qualifiedname>ExponentList::lcm</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="193" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a805334ea88831c93da08bca254fe6e9b_1a805334ea88831c93da08bca254fe6e9b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::gcd</definition>
+        <argsstring>(ConstExponents a, ConstExponents b, Vector &amp;result)</argsstring>
+        <name>gcd</name>
+        <qualifiedname>ExponentList::gcd</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="194" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a94eccfbc2d4e39fcef2fc2e510b1e4e4_1a94eccfbc2d4e39fcef2fc2e510b1e4e4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::erase</definition>
+        <argsstring>(ConstExponents a, ConstExponents b, Vector &amp;result)</argsstring>
+        <name>erase</name>
+        <qualifiedname>ExponentList::erase</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="197" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a2f79771dea5e1bd963858834c6a66285_1a2f79771dea5e1bd963858834c6a66285" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ExponentList&lt; E, L &gt;::radical</definition>
+        <argsstring>(ConstExponents a, Vector &amp;result)</argsstring>
+        <name>radical</name>
+        <qualifiedname>ExponentList::radical</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" kindref="member">Vector</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="198" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_ad89ccabb453992b47814880cf10293ee_1ad89ccabb453992b47814880cf10293ee" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>static bool ExponentList&lt; E, L &gt;::is_pure_power</definition>
+        <argsstring>(ConstExponents a, Exponent &amp;v, Exponent &amp;e)</argsstring>
+        <name>is_pure_power</name>
+        <qualifiedname>ExponentList::is_pure_power</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref> &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="200" column="15" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="200" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="class_exponent_list_a13862d9f1e89d05d0a337e626f0e2e4d_1a13862d9f1e89d05d0a337e626f0e2e4d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" kindref="member">Exponent</ref></type>
+        <definition>static Exponent ExponentList&lt; E, L &gt;::buchberger_moeller_keep</definition>
+        <argsstring>(ConstExponents m, ConstExponents p, ConstExponents q, ConstExponents pq)</argsstring>
+        <name>buchberger_moeller_keep</name>
+        <qualifiedname>ExponentList::buchberger_moeller_keep</qualifiedname>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>q</declname>
+        </param>
+        <param>
+          <type><ref refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" kindref="member">ConstExponents</ref></type>
+          <declname>pq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ExponentList.hpp" line="212" column="19" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="212" bodyend="221"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Implements operations on monomials represented as a list of (var, pow)&apos;s</para>
+<para>This class implements monomial operations on lists of variable and exponent pairs. No allocation is done by any of these routines.</para>
+<para>The format for is an array [length, v1, e1, ..., vr, er] with v1 &gt; v2 &gt; ... &gt; vr &gt;= 0, and all exponents ei &gt; 0 and length is 2r+1. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>ExponentList&lt; E, L &gt;</label>
+        <link refid="class_exponent_list"/>
+      </node>
+      <node id="2">
+        <label>ExponentList&lt; int, true &gt;</label>
+        <link refid="class_exponent_list"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; int, true &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ExponentList&lt; long, false &gt;</label>
+        <link refid="class_exponent_list"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; long, false &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>ExponentList&lt; myword, false &gt;</label>
+        <link refid="class_exponent_list"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; myword, false &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="Macaulay2/e/ExponentList.hpp" line="61" column="1" bodyfile="Macaulay2/e/ExponentList.hpp" bodystart="62" bodyend="222"/>
+    <listofallmembers>
+      <member refid="class_exponent_list_a13862d9f1e89d05d0a337e626f0e2e4d_1a13862d9f1e89d05d0a337e626f0e2e4d" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>buchberger_moeller_keep</name></member>
+      <member refid="class_exponent_list_a39cea8f841c34eb30580a2318ac22ec4_1a39cea8f841c34eb30580a2318ac22ec4" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>compare</name></member>
+      <member refid="class_exponent_list_a49c1dda26e1794071a241df52ce77bc1_1a49c1dda26e1794071a241df52ce77bc1" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>computeHashValue</name></member>
+      <member refid="class_exponent_list_a5550766d027348c2a12398694cb9f103_1a5550766d027348c2a12398694cb9f103" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>ConstExponents</name></member>
+      <member refid="class_exponent_list_a9921b7b5ae8c2d301e539ca00419aed6_1a9921b7b5ae8c2d301e539ca00419aed6" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>copy</name></member>
+      <member refid="class_exponent_list_a9c83a81f082134cd5653a11c6561a1c1_1a9c83a81f082134cd5653a11c6561a1c1" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>divides</name></member>
+      <member refid="class_exponent_list_a920862509eb101ceffe75d61900f2bae_1a920862509eb101ceffe75d61900f2bae" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>elem_text_out</name></member>
+      <member refid="class_exponent_list_a94eccfbc2d4e39fcef2fc2e510b1e4e4_1a94eccfbc2d4e39fcef2fc2e510b1e4e4" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>erase</name></member>
+      <member refid="class_exponent_list_a5df13f91b14bfcbde5db0e81ccebe125_1a5df13f91b14bfcbde5db0e81ccebe125" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>Exponent</name></member>
+      <member refid="class_exponent_list_aa371dac2182865696d13f66c8a6ff237_1aa371dac2182865696d13f66c8a6ff237" prot="private" virt="non-virtual"><scope>ExponentList</scope><name>ExponentListIterator&lt; E, L &gt;</name></member>
+      <member refid="class_exponent_list_aff34f885d628d6845ef89837bf7f2cb7_1aff34f885d628d6845ef89837bf7f2cb7" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>Exponents</name></member>
+      <member refid="class_exponent_list_a6cea2b61ef2f1115c3137cfcac1c92a1_1a6cea2b61ef2f1115c3137cfcac1c92a1" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>from_arrayint</name></member>
+      <member refid="class_exponent_list_a7621b2c9174ae326b2081929bf829794_1a7621b2c9174ae326b2081929bf829794" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>from_expvector</name></member>
+      <member refid="class_exponent_list_a805334ea88831c93da08bca254fe6e9b_1a805334ea88831c93da08bca254fe6e9b" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>gcd</name></member>
+      <member refid="class_exponent_list_a3bd46eea96259044d291b6663ed31e2b_1a3bd46eea96259044d291b6663ed31e2b" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>HashExponent</name></member>
+      <member refid="class_exponent_list_ae5f5da2ea1046f06369a00e1658b83e1_1ae5f5da2ea1046f06369a00e1658b83e1" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>is_equal</name></member>
+      <member refid="class_exponent_list_a21f3bfebd0ccebbf64e5216e1fd5a014_1a21f3bfebd0ccebbf64e5216e1fd5a014" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>is_one</name></member>
+      <member refid="class_exponent_list_ad89ccabb453992b47814880cf10293ee_1ad89ccabb453992b47814880cf10293ee" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>is_pure_power</name></member>
+      <member refid="class_exponent_list_a5503f66b5432156e9f779a49fc958bd4_1a5503f66b5432156e9f779a49fc958bd4" prot="private" virt="non-virtual"><scope>ExponentList</scope><name>Iterator</name></member>
+      <member refid="class_exponent_list_a6353b867b000fa4475bf606d5a652027_1a6353b867b000fa4475bf606d5a652027" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>lcm</name></member>
+      <member refid="class_exponent_list_aac8e99dc487f106581be327f116c3953_1aac8e99dc487f106581be327f116c3953" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>length</name></member>
+      <member refid="class_exponent_list_a94eb234b6b38a513b9b4b436d16a605d_1a94eb234b6b38a513b9b4b436d16a605d" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>monsyz</name></member>
+      <member refid="class_exponent_list_a6a491949bdc39b77a66387d425836158_1a6a491949bdc39b77a66387d425836158" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>mult</name></member>
+      <member refid="class_exponent_list_ab26cfca0164c7fa8450fd2b1b83e968e_1ab26cfca0164c7fa8450fd2b1b83e968e" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>npairs</name></member>
+      <member refid="class_exponent_list_a5610b3460f56c45a6f54d034b55f6be1_1a5610b3460f56c45a6f54d034b55f6be1" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>one</name></member>
+      <member refid="class_exponent_list_afd77d7ad562847d818e83f6b8d849639_1afd77d7ad562847d818e83f6b8d849639" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>power</name></member>
+      <member refid="class_exponent_list_a727729f43af6a8d06245b5cfb6ff069b_1a727729f43af6a8d06245b5cfb6ff069b" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>quotient</name></member>
+      <member refid="class_exponent_list_a2f79771dea5e1bd963858834c6a66285_1a2f79771dea5e1bd963858834c6a66285" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>radical</name></member>
+      <member refid="class_exponent_list_a8f93a2bbf849dc82e50a7170dfafd371_1a8f93a2bbf849dc82e50a7170dfafd371" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>simple_degree</name></member>
+      <member refid="class_exponent_list_aa3b6bdd7cd94aded4877bf9c6a076c77_1aa3b6bdd7cd94aded4877bf9c6a076c77" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>to_arrayint</name></member>
+      <member refid="class_exponent_list_aeccce8422040414a1073f9cf625a5808_1aeccce8422040414a1073f9cf625a5808" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>to_expvector</name></member>
+      <member refid="class_exponent_list_a74cdb54ff6096225d58a6b73b0c0f59d_1a74cdb54ff6096225d58a6b73b0c0f59d" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>topvar</name></member>
+      <member refid="class_exponent_list_aedb7f52aae3a3400ec67997e6515120a_1aedb7f52aae3a3400ec67997e6515120a" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>var</name></member>
+      <member refid="class_exponent_list_a25ec6a209670e1178b393c76d318d369_1a25ec6a209670e1178b393c76d318d369" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>Vector</name></member>
+      <member refid="class_exponent_list_a62cea695d46f55c62939763970f589bc_1a62cea695d46f55c62939763970f589bc" prot="public" virt="non-virtual"><scope>ExponentList</scope><name>weight</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

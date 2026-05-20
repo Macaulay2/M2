@@ -1,0 +1,560 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row" kind="class" language="C++" prot="public">
+    <compoundname>MATHICGB_NAMESPACE_BEGIN::DenseRow</compoundname>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af4b75bab134e79b800c6fdad7df965e8_1af4b75bab134e79b800c6fdad7df965e8" prot="public" static="no">
+        <type><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a05f6b0ae8f6a6e135b0e290c25fe0e4e_1a05f6b0ae8f6a6e135b0e290c25fe0e4e" kindref="member">uint16</ref></type>
+        <definition>typedef uint16 MATHICGB_NAMESPACE_BEGIN::DenseRow::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::Scalar</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="39" column="20" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3b74e06cce99fb0d7242442ef13b003f_1a3b74e06cce99fb0d7242442ef13b003f" prot="public" static="no">
+        <type><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a1134b580f8da4de94ca6b1de4d37975e_1a1134b580f8da4de94ca6b1de4d37975e" kindref="member">uint32</ref></type>
+        <definition>typedef uint32 MATHICGB_NAMESPACE_BEGIN::DenseRow::ScalarProduct</definition>
+        <argsstring></argsstring>
+        <name>ScalarProduct</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::ScalarProduct</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="40" column="20" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a11bb0f713d624b344aeafa8a67a874f7_1a11bb0f713d624b344aeafa8a67a874f7" prot="public" static="no">
+        <type><ref refid="checksource_2_scanner_8hpp_a29940ae63ec06c9998bba873e25407ad_1a29940ae63ec06c9998bba873e25407ad" kindref="member">uint64</ref></type>
+        <definition>typedef uint64 MATHICGB_NAMESPACE_BEGIN::DenseRow::ScalarProductSum</definition>
+        <argsstring></argsstring>
+        <name>ScalarProductSum</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::ScalarProductSum</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="41" column="20" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a11bb0f713d624b344aeafa8a67a874f7_1a11bb0f713d624b344aeafa8a67a874f7" kindref="member">ScalarProductSum</ref> &gt;</type>
+        <definition>std::vector&lt;ScalarProductSum&gt; MATHICGB_NAMESPACE_BEGIN::DenseRow::mEntries</definition>
+        <argsstring></argsstring>
+        <name>mEntries</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::mEntries</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="191" column="17" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="191" bodyend="-1"/>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a97a5785346d4b6238c2f0183146e41fa_1a97a5785346d4b6238c2f0183146e41fa" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="116" endline="123">addRow</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8bdd1154c37307c1687eee75973f548c_1a8bdd1154c37307c1687eee75973f548c" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="126" endline="166">addRowMultiple</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a642a72ec863b5ef0f48f419fc7d77b62_1a642a72ec863b5ef0f48f419fc7d77b62" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="96" endline="96">appendTo</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a157c04959b0f7f2db2c43a589b288bb6_1a157c04959b0f7f2db2c43a589b288bb6" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="81" endline="84">clear</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="78" endline="78">colCount</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af68ff922211fbc01949c519fd71a3288_1af68ff922211fbc01949c519fd71a3288" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="64" endline="64">DenseRow</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2112315da0150450afc6d7072fa78440_1a2112315da0150450afc6d7072fa78440" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="79" endline="79">empty</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2413fcea0a589585e643abc500a7ee56_1a2413fcea0a589585e643abc500a7ee56" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="98" endline="114">makeUnitary</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a9df90be5745fa28c1dc1d765a9201cc6_1a9df90be5745fa28c1dc1d765a9201cc6" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="86" endline="89">operator[]</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8f679ca8f9b9bf60f184eda8c7829668_1a8f679ca8f9b9bf60f184eda8c7829668" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="91" endline="94">operator[]</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3dbc5e9230f94d1f22fc5ee20e441ce5_1a3dbc5e9230f94d1f22fc5ee20e441ce5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="168" endline="188">rowReduceByUnitary</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_accd71fa7d1c245807951f4af3ff53bec_1accd71fa7d1c245807951f4af3ff53bec" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="67" endline="76">takeModulus</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a393a2ef35adbc74dbe4f430cdb1eaa37_1a393a2ef35adbc74dbe4f430cdb1eaa37" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3b74e06cce99fb0d7242442ef13b003f_1a3b74e06cce99fb0d7242442ef13b003f" kindref="member">ScalarProduct</ref></type>
+        <definition>static ScalarProduct MATHICGB_NAMESPACE_BEGIN::DenseRow::product</definition>
+        <argsstring>(const Scalar a, const Scalar b)</argsstring>
+        <name>product</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::product</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af4b75bab134e79b800c6fdad7df965e8_1af4b75bab134e79b800c6fdad7df965e8" kindref="member">Scalar</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af4b75bab134e79b800c6fdad7df965e8_1af4b75bab134e79b800c6fdad7df965e8" kindref="member">Scalar</ref></type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="43" column="26" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="43" bodyend="45"/>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2413fcea0a589585e643abc500a7ee56_1a2413fcea0a589585e643abc500a7ee56" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="98" endline="114">makeUnitary</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_ae9e940e67564dd580537ef1ec0a61d4a_1ae9e940e67564dd580537ef1ec0a61d4a" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="47" endline="53">multiplyAdd</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_ae9e940e67564dd580537ef1ec0a61d4a_1ae9e940e67564dd580537ef1ec0a61d4a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MATHICGB_NAMESPACE_BEGIN::DenseRow::multiplyAdd</definition>
+        <argsstring>(const Scalar a, const Scalar b, ScalarProductSum &amp;x)</argsstring>
+        <name>multiplyAdd</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::multiplyAdd</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af4b75bab134e79b800c6fdad7df965e8_1af4b75bab134e79b800c6fdad7df965e8" kindref="member">Scalar</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af4b75bab134e79b800c6fdad7df965e8_1af4b75bab134e79b800c6fdad7df965e8" kindref="member">Scalar</ref></type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a11bb0f713d624b344aeafa8a67a874f7_1a11bb0f713d624b344aeafa8a67a874f7" kindref="member">ScalarProductSum</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="47" column="17" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="47" bodyend="53"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a393a2ef35adbc74dbe4f430cdb1eaa37_1a393a2ef35adbc74dbe4f430cdb1eaa37" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="43" endline="45">product</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8bdd1154c37307c1687eee75973f548c_1a8bdd1154c37307c1687eee75973f548c" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="126" endline="166">addRowMultiple</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_affd11ab39ff788c867b7d29874af1fd9_1affd11ab39ff788c867b7d29874af1fd9" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MATHICGB_NAMESPACE_BEGIN::DenseRow::add</definition>
+        <argsstring>(const Scalar a, ScalarProductSum &amp;sum)</argsstring>
+        <name>add</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::add</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af4b75bab134e79b800c6fdad7df965e8_1af4b75bab134e79b800c6fdad7df965e8" kindref="member">Scalar</ref></type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a11bb0f713d624b344aeafa8a67a874f7_1a11bb0f713d624b344aeafa8a67a874f7" kindref="member">ScalarProductSum</ref> &amp;</type>
+          <declname>sum</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="55" column="17" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="55" bodyend="57"/>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a97a5785346d4b6238c2f0183146e41fa_1a97a5785346d4b6238c2f0183146e41fa" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="116" endline="123">addRow</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a7bf1fa49bbdf2b0295fc3e96a5890dcc_1a7bf1fa49bbdf2b0295fc3e96a5890dcc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af4b75bab134e79b800c6fdad7df965e8_1af4b75bab134e79b800c6fdad7df965e8" kindref="member">Scalar</ref></type>
+        <definition>Scalar MATHICGB_NAMESPACE_BEGIN::DenseRow::modulusOf</definition>
+        <argsstring>(ScalarProductSum x, Scalar modulus)</argsstring>
+        <name>modulusOf</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::modulusOf</qualifiedname>
+        <param>
+          <type><ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a11bb0f713d624b344aeafa8a67a874f7_1a11bb0f713d624b344aeafa8a67a874f7" kindref="member">ScalarProductSum</ref></type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af4b75bab134e79b800c6fdad7df965e8_1af4b75bab134e79b800c6fdad7df965e8" kindref="member">Scalar</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="59" column="12" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="59" bodyend="61"/>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2413fcea0a589585e643abc500a7ee56_1a2413fcea0a589585e643abc500a7ee56" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="98" endline="114">makeUnitary</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3dbc5e9230f94d1f22fc5ee20e441ce5_1a3dbc5e9230f94d1f22fc5ee20e441ce5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="168" endline="188">rowReduceByUnitary</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_accd71fa7d1c245807951f4af3ff53bec_1accd71fa7d1c245807951f4af3ff53bec" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="67" endline="76">takeModulus</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a61fb3756c56ec808bf95e1d1c14afbfe_1a61fb3756c56ec808bf95e1d1c14afbfe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MATHICGB_NAMESPACE_BEGIN::DenseRow::DenseRow</definition>
+        <argsstring>()</argsstring>
+        <name>DenseRow</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::DenseRow</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="63" column="5" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="63" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af68ff922211fbc01949c519fd71a3288_1af68ff922211fbc01949c519fd71a3288" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MATHICGB_NAMESPACE_BEGIN::DenseRow::DenseRow</definition>
+        <argsstring>(size_t colCount)</argsstring>
+        <name>DenseRow</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::DenseRow</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>colCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="64" column="5" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="64" bodyend="64"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="78" endline="78">colCount</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_accd71fa7d1c245807951f4af3ff53bec_1accd71fa7d1c245807951f4af3ff53bec" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MATHICGB_NAMESPACE_BEGIN::DenseRow::takeModulus</definition>
+        <argsstring>(const SparseMatrix::Scalar modulus)</argsstring>
+        <name>takeModulus</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::takeModulus</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <briefdescription>
+<para>returns false if all entries are zero </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="67" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="67" bodyend="76"/>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a7bf1fa49bbdf2b0295fc3e96a5890dcc_1a7bf1fa49bbdf2b0295fc3e96a5890dcc" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="59" endline="61">modulusOf</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t MATHICGB_NAMESPACE_BEGIN::DenseRow::colCount</definition>
+        <argsstring>() const</argsstring>
+        <name>colCount</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::colCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="78" column="12" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="78" bodyend="78"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a97a5785346d4b6238c2f0183146e41fa_1a97a5785346d4b6238c2f0183146e41fa" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="116" endline="123">addRow</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8bdd1154c37307c1687eee75973f548c_1a8bdd1154c37307c1687eee75973f548c" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="126" endline="166">addRowMultiple</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a157c04959b0f7f2db2c43a589b288bb6_1a157c04959b0f7f2db2c43a589b288bb6" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="81" endline="84">clear</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af68ff922211fbc01949c519fd71a3288_1af68ff922211fbc01949c519fd71a3288" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="64" endline="64">DenseRow</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2413fcea0a589585e643abc500a7ee56_1a2413fcea0a589585e643abc500a7ee56" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="98" endline="114">makeUnitary</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a9df90be5745fa28c1dc1d765a9201cc6_1a9df90be5745fa28c1dc1d765a9201cc6" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="86" endline="89">operator[]</referencedby>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8f679ca8f9b9bf60f184eda8c7829668_1a8f679ca8f9b9bf60f184eda8c7829668" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="91" endline="94">operator[]</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2112315da0150450afc6d7072fa78440_1a2112315da0150450afc6d7072fa78440" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MATHICGB_NAMESPACE_BEGIN::DenseRow::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="79" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="79" bodyend="79"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a45306678f821408d44aa25a3f68d8b57_1a45306678f821408d44aa25a3f68d8b57" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="402" endline="556">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonForm</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a157c04959b0f7f2db2c43a589b288bb6_1a157c04959b0f7f2db2c43a589b288bb6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MATHICGB_NAMESPACE_BEGIN::DenseRow::clear</definition>
+        <argsstring>(size_t colCount=0)</argsstring>
+        <name>clear</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::clear</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>colCount</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="81" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="81" bodyend="84"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="78" endline="78">colCount</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a45306678f821408d44aa25a3f68d8b57_1a45306678f821408d44aa25a3f68d8b57" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="402" endline="556">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonForm</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a300ae6201167713c02e6b1dc776f958d_1a300ae6201167713c02e6b1dc776f958d" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="324" endline="400">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonFormSparse</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a9df90be5745fa28c1dc1d765a9201cc6_1a9df90be5745fa28c1dc1d765a9201cc6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a11bb0f713d624b344aeafa8a67a874f7_1a11bb0f713d624b344aeafa8a67a874f7" kindref="member">ScalarProductSum</ref> &amp;</type>
+        <definition>ScalarProductSum &amp; MATHICGB_NAMESPACE_BEGIN::DenseRow::operator[]</definition>
+        <argsstring>(size_t col)</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="86" column="22" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="86" bodyend="89"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="78" endline="78">colCount</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8f679ca8f9b9bf60f184eda8c7829668_1a8f679ca8f9b9bf60f184eda8c7829668" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a11bb0f713d624b344aeafa8a67a874f7_1a11bb0f713d624b344aeafa8a67a874f7" kindref="member">ScalarProductSum</ref> const &amp;</type>
+        <definition>ScalarProductSum const  &amp; MATHICGB_NAMESPACE_BEGIN::DenseRow::operator[]</definition>
+        <argsstring>(size_t col) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="91" column="28" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="91" bodyend="94"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="78" endline="78">colCount</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a642a72ec863b5ef0f48f419fc7d77b62_1a642a72ec863b5ef0f48f419fc7d77b62" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MATHICGB_NAMESPACE_BEGIN::DenseRow::appendTo</definition>
+        <argsstring>(SparseMatrix &amp;matrix)</argsstring>
+        <name>appendTo</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::appendTo</qualifiedname>
+        <param>
+          <type><ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref> &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="96" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="96" bodyend="96"/>
+        <references refid="class_sparse_matrix_a208a0c7bd2235f1f2217530b84433bbc_1a208a0c7bd2235f1f2217530b84433bbc" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="177" endline="190">SparseMatrix::appendRow</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a300ae6201167713c02e6b1dc776f958d_1a300ae6201167713c02e6b1dc776f958d" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="324" endline="400">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonFormSparse</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2413fcea0a589585e643abc500a7ee56_1a2413fcea0a589585e643abc500a7ee56" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MATHICGB_NAMESPACE_BEGIN::DenseRow::makeUnitary</definition>
+        <argsstring>(const SparseMatrix::Scalar modulus, const size_t lead)</argsstring>
+        <name>makeUnitary</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::makeUnitary</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <param>
+          <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>lead</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="98" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="98" bodyend="114"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="78" endline="78">colCount</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a28d9918e2284f4342cafe28e8cb3103e_1a28d9918e2284f4342cafe28e8cb3103e" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="34" endline="39">modularInverse</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a7bf1fa49bbdf2b0295fc3e96a5890dcc_1a7bf1fa49bbdf2b0295fc3e96a5890dcc" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="59" endline="61">modulusOf</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a393a2ef35adbc74dbe4f430cdb1eaa37_1a393a2ef35adbc74dbe4f430cdb1eaa37" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="43" endline="45">product</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a45306678f821408d44aa25a3f68d8b57_1a45306678f821408d44aa25a3f68d8b57" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="402" endline="556">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonForm</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a300ae6201167713c02e6b1dc776f958d_1a300ae6201167713c02e6b1dc776f958d" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="324" endline="400">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonFormSparse</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a97a5785346d4b6238c2f0183146e41fa_1a97a5785346d4b6238c2f0183146e41fa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MATHICGB_NAMESPACE_BEGIN::DenseRow::addRow</definition>
+        <argsstring>(const SparseMatrix &amp;matrix, SparseMatrix::RowIndex row)</argsstring>
+        <name>addRow</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::addRow</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref> &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type><ref refid="class_sparse_matrix_abc95decca7dd099bbbace0771eab8ce2_1abc95decca7dd099bbbace0771eab8ce2" kindref="member">SparseMatrix::RowIndex</ref></type>
+          <declname>row</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="116" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="116" bodyend="123"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_affd11ab39ff788c867b7d29874af1fd9_1affd11ab39ff788c867b7d29874af1fd9" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="55" endline="57">add</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="78" endline="78">colCount</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+        <references refid="class_sparse_matrix_ad9fe5f5a2455d3a86d2f1be34aad933a_1ad9fe5f5a2455d3a86d2f1be34aad933a" compoundref="_sparse_matrix_8hpp" startline="126" endline="130">SparseMatrix::rowBegin</references>
+        <references refid="class_sparse_matrix_ab78c27fba04c0e3a58ac9a6dbce2f4fa_1ab78c27fba04c0e3a58ac9a6dbce2f4fa" compoundref="_sparse_matrix_8hpp" startline="96" endline="96">SparseMatrix::rowCount</references>
+        <references refid="class_sparse_matrix_ad259276dc9d681df0652d08f96739de7_1ad259276dc9d681df0652d08f96739de7" compoundref="_sparse_matrix_8hpp" startline="138" endline="142">SparseMatrix::rowEnd</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a300ae6201167713c02e6b1dc776f958d_1a300ae6201167713c02e6b1dc776f958d" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="324" endline="400">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonFormSparse</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8bdd1154c37307c1687eee75973f548c_1a8bdd1154c37307c1687eee75973f548c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iter</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void MATHICGB_NAMESPACE_BEGIN::DenseRow::addRowMultiple</definition>
+        <argsstring>(const SparseMatrix::Scalar multiple, const Iter begin, const Iter end)</argsstring>
+        <name>addRowMultiple</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::addRowMultiple</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+          <declname>multiple</declname>
+        </param>
+        <param>
+          <type>const Iter</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const Iter</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="126" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="126" bodyend="166"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="78" endline="78">colCount</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_ae4acd93960b49dcfb83405c068dbd024_1ae4acd93960b49dcfb83405c068dbd024" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="113">MATHICGB_RESTRICT</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_ae9e940e67564dd580537ef1ec0a61d4a_1ae9e940e67564dd580537ef1ec0a61d4a" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="47" endline="53">multiplyAdd</references>
+        <referencedby refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3dbc5e9230f94d1f22fc5ee20e441ce5_1a3dbc5e9230f94d1f22fc5ee20e441ce5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="168" endline="188">rowReduceByUnitary</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3dbc5e9230f94d1f22fc5ee20e441ce5_1a3dbc5e9230f94d1f22fc5ee20e441ce5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MATHICGB_NAMESPACE_BEGIN::DenseRow::rowReduceByUnitary</definition>
+        <argsstring>(const SparseMatrix::RowIndex pivotRow, const SparseMatrix &amp;matrix, const SparseMatrix::Scalar modulus)</argsstring>
+        <name>rowReduceByUnitary</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::DenseRow::rowReduceByUnitary</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_abc95decca7dd099bbbace0771eab8ce2_1abc95decca7dd099bbbace0771eab8ce2" kindref="member">SparseMatrix::RowIndex</ref></type>
+          <declname>pivotRow</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref> &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="168" column="10" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="168" bodyend="188"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8bdd1154c37307c1687eee75973f548c_1a8bdd1154c37307c1687eee75973f548c" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="126" endline="166">addRowMultiple</references>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="191">mEntries</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a0b52415959bcc9003149d9afa1e6114b_1a0b52415959bcc9003149d9afa1e6114b" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="83" endline="88">modularNegativeNonZero</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a7bf1fa49bbdf2b0295fc3e96a5890dcc_1a7bf1fa49bbdf2b0295fc3e96a5890dcc" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="59" endline="61">modulusOf</references>
+        <references refid="class_sparse_matrix_ad9fe5f5a2455d3a86d2f1be34aad933a_1ad9fe5f5a2455d3a86d2f1be34aad933a" compoundref="_sparse_matrix_8hpp" startline="126" endline="130">SparseMatrix::rowBegin</references>
+        <references refid="class_sparse_matrix_ad259276dc9d681df0652d08f96739de7_1ad259276dc9d681df0652d08f96739de7" compoundref="_sparse_matrix_8hpp" startline="138" endline="142">SparseMatrix::rowEnd</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_ac7964ffd86494b97c7452d67c1c903fe_1ac7964ffd86494b97c7452d67c1c903fe" compoundref="_sparse_matrix_8hpp" startline="299" endline="299">SparseMatrix::ConstRowIterator::scalar</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a45306678f821408d44aa25a3f68d8b57_1a45306678f821408d44aa25a3f68d8b57" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="402" endline="556">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonForm</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a300ae6201167713c02e6b1dc776f958d_1a300ae6201167713c02e6b1dc776f958d" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="324" endline="400">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonFormSparse</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>MATHICGB_NAMESPACE_BEGIN::DenseRow</label>
+        <link refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ScalarProductSum</label>
+      </node>
+      <node id="5">
+        <label>T</label>
+      </node>
+      <node id="4">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; ScalarProductSum &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; ScalarProductSum &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="37" column="3" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="37" bodyend="192"/>
+    <listofallmembers>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_affd11ab39ff788c867b7d29874af1fd9_1affd11ab39ff788c867b7d29874af1fd9" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>add</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a97a5785346d4b6238c2f0183146e41fa_1a97a5785346d4b6238c2f0183146e41fa" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>addRow</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8bdd1154c37307c1687eee75973f548c_1a8bdd1154c37307c1687eee75973f548c" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>addRowMultiple</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a642a72ec863b5ef0f48f419fc7d77b62_1a642a72ec863b5ef0f48f419fc7d77b62" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>appendTo</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a157c04959b0f7f2db2c43a589b288bb6_1a157c04959b0f7f2db2c43a589b288bb6" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>clear</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a0ba84ebb2dd13347cd5a0ee39849f6ba_1a0ba84ebb2dd13347cd5a0ee39849f6ba" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>colCount</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a61fb3756c56ec808bf95e1d1c14afbfe_1a61fb3756c56ec808bf95e1d1c14afbfe" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>DenseRow</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af68ff922211fbc01949c519fd71a3288_1af68ff922211fbc01949c519fd71a3288" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>DenseRow</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2112315da0150450afc6d7072fa78440_1a2112315da0150450afc6d7072fa78440" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>empty</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2413fcea0a589585e643abc500a7ee56_1a2413fcea0a589585e643abc500a7ee56" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>makeUnitary</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a49dea6a31976c61046cc950664a1e495_1a49dea6a31976c61046cc950664a1e495" prot="private" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>mEntries</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a7bf1fa49bbdf2b0295fc3e96a5890dcc_1a7bf1fa49bbdf2b0295fc3e96a5890dcc" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>modulusOf</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_ae9e940e67564dd580537ef1ec0a61d4a_1ae9e940e67564dd580537ef1ec0a61d4a" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>multiplyAdd</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a9df90be5745fa28c1dc1d765a9201cc6_1a9df90be5745fa28c1dc1d765a9201cc6" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>operator[]</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a8f679ca8f9b9bf60f184eda8c7829668_1a8f679ca8f9b9bf60f184eda8c7829668" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>operator[]</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a393a2ef35adbc74dbe4f430cdb1eaa37_1a393a2ef35adbc74dbe4f430cdb1eaa37" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>product</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3dbc5e9230f94d1f22fc5ee20e441ce5_1a3dbc5e9230f94d1f22fc5ee20e441ce5" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>rowReduceByUnitary</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_af4b75bab134e79b800c6fdad7df965e8_1af4b75bab134e79b800c6fdad7df965e8" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>Scalar</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3b74e06cce99fb0d7242442ef13b003f_1a3b74e06cce99fb0d7242442ef13b003f" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>ScalarProduct</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a11bb0f713d624b344aeafa8a67a874f7_1a11bb0f713d624b344aeafa8a67a874f7" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>ScalarProductSum</name></member>
+      <member refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_accd71fa7d1c245807951f4af3ff53bec_1accd71fa7d1c245807951f4af3ff53bec" prot="public" virt="non-virtual"><scope>MATHICGB_NAMESPACE_BEGIN::DenseRow</scope><name>takeModulus</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

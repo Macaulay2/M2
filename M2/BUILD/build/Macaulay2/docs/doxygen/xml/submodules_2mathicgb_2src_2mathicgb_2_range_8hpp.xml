@@ -1,0 +1,1585 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" kind="file" language="C++">
+    <compoundname>Range.hpp</compoundname>
+    <includes local="no">limits</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">utility</includes>
+    <includes local="no">type_traits</includes>
+    <includes local="no">iterator</includes>
+    <includedby refid="_mono_arena_8hpp" local="yes">submodules/mathicgb/src/mathicgb/MonoArena.hpp</includedby>
+    <includedby refid="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" local="yes">submodules/mathicgb/src/mathicgb/Poly.hpp</includedby>
+    <includedby refid="_range_8cpp" local="yes">submodules/mathicgb/src/test/Range.cpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/Range.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>iterator</label>
+      </node>
+      <node id="2">
+        <label>limits</label>
+      </node>
+      <node id="5">
+        <label>type_traits</label>
+      </node>
+      <node id="4">
+        <label>utility</label>
+      </node>
+      <node id="3">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="8">
+        <label>submodules/mathicgb/src/cli/GBAction.cpp</label>
+        <link refid="_g_b_action_8cpp"/>
+      </node>
+      <node id="9">
+        <label>submodules/mathicgb/src/cli/SigGBAction.cpp</label>
+        <link refid="_sig_g_b_action_8cpp"/>
+      </node>
+      <node id="5">
+        <label>submodules/mathicgb/src/mathicgb.cpp</label>
+        <link refid="mathicgb_8cpp"/>
+      </node>
+      <node id="6">
+        <label>submodules/mathicgb/src/mathicgb/Basis.cpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_basis_8cpp"/>
+      </node>
+      <node id="7">
+        <label>submodules/mathicgb/src/mathicgb/Basis.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_basis_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>submodules/mathicgb/src/mathicgb/ClassicGBAlg.cpp</label>
+        <link refid="_classic_g_b_alg_8cpp"/>
+      </node>
+      <node id="37">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp</label>
+        <link refid="mathicgb_2_f4_matrix_builder_8cpp"/>
+      </node>
+      <node id="36">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp</label>
+        <link refid="_f4_matrix_builder_8hpp"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder2.cpp</label>
+        <link refid="_f4_matrix_builder2_8cpp"/>
+      </node>
+      <node id="39">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixBuilder2.hpp</label>
+        <link refid="_f4_matrix_builder2_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixProjection.cpp</label>
+        <link refid="_f4_matrix_projection_8cpp"/>
+      </node>
+      <node id="42">
+        <label>submodules/mathicgb/src/mathicgb/F4MatrixProjection.hpp</label>
+        <link refid="_f4_matrix_projection_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>submodules/mathicgb/src/mathicgb/F4ProtoMatrix.cpp</label>
+        <link refid="_f4_proto_matrix_8cpp"/>
+      </node>
+      <node id="41">
+        <label>submodules/mathicgb/src/mathicgb/F4ProtoMatrix.hpp</label>
+        <link refid="_f4_proto_matrix_8hpp"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>submodules/mathicgb/src/mathicgb/F4Reducer.cpp</label>
+        <link refid="_f4_reducer_8cpp"/>
+      </node>
+      <node id="11">
+        <label>submodules/mathicgb/src/mathicgb/MESClassicGBAlg.cpp</label>
+        <link refid="_m_e_s_classic_g_b_alg_8cpp"/>
+      </node>
+      <node id="12">
+        <label>submodules/mathicgb/src/mathicgb/MathicIO.hpp</label>
+        <link refid="_mathic_i_o_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>submodules/mathicgb/src/mathicgb/ModuleMonoSet.cpp</label>
+        <link refid="_module_mono_set_8cpp"/>
+      </node>
+      <node id="2">
+        <label>submodules/mathicgb/src/mathicgb/MonoArena.hpp</label>
+        <link refid="_mono_arena_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>submodules/mathicgb/src/mathicgb/MonoLookup.cpp</label>
+        <link refid="_mono_lookup_8cpp"/>
+      </node>
+      <node id="26">
+        <label>submodules/mathicgb/src/mathicgb/MonoProcessor.hpp</label>
+        <link refid="_mono_processor_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>submodules/mathicgb/src/mathicgb/Poly.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>submodules/mathicgb/src/mathicgb/PolyBasis.cpp</label>
+        <link refid="_poly_basis_8cpp"/>
+      </node>
+      <node id="45">
+        <label>submodules/mathicgb/src/mathicgb/PolyBasis.hpp</label>
+        <link refid="_poly_basis_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>submodules/mathicgb/src/mathicgb/PolyHashTable.cpp</label>
+        <link refid="_poly_hash_table_8cpp"/>
+      </node>
+      <node id="47">
+        <label>submodules/mathicgb/src/mathicgb/PolyHashTable.hpp</label>
+        <link refid="_poly_hash_table_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>submodules/mathicgb/src/mathicgb/QuadMatrix.cpp</label>
+        <link refid="_quad_matrix_8cpp"/>
+      </node>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/Range.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>submodules/mathicgb/src/mathicgb/Reducer.cpp</label>
+        <link refid="_reducer_8cpp"/>
+      </node>
+      <node id="53">
+        <label>submodules/mathicgb/src/mathicgb/ReducerDedup.cpp</label>
+        <link refid="_reducer_dedup_8cpp"/>
+      </node>
+      <node id="49">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHash.cpp</label>
+        <link refid="_reducer_hash_8cpp"/>
+      </node>
+      <node id="50">
+        <label>submodules/mathicgb/src/mathicgb/ReducerHashPack.cpp</label>
+        <link refid="_reducer_hash_pack_8cpp"/>
+      </node>
+      <node id="54">
+        <label>submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp</label>
+        <link refid="_reducer_no_dedup_8cpp"/>
+      </node>
+      <node id="55">
+        <label>submodules/mathicgb/src/mathicgb/ReducerPack.cpp</label>
+        <link refid="_reducer_pack_8cpp"/>
+      </node>
+      <node id="56">
+        <label>submodules/mathicgb/src/mathicgb/ReducerPackDedup.cpp</label>
+        <link refid="_reducer_pack_dedup_8cpp"/>
+      </node>
+      <node id="15">
+        <label>submodules/mathicgb/src/mathicgb/SPairs.cpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8cpp"/>
+      </node>
+      <node id="46">
+        <label>submodules/mathicgb/src/mathicgb/SPairs.hpp</label>
+        <link refid="submodules_2mathicgb_2src_2mathicgb_2_s_pairs_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>submodules/mathicgb/src/mathicgb/SigPolyBasis.cpp</label>
+        <link refid="_sig_poly_basis_8cpp"/>
+      </node>
+      <node id="27">
+        <label>submodules/mathicgb/src/mathicgb/SigPolyBasis.hpp</label>
+        <link refid="_sig_poly_basis_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairQueue.cpp</label>
+        <link refid="_sig_s_pair_queue_8cpp"/>
+      </node>
+      <node id="31">
+        <label>submodules/mathicgb/src/mathicgb/SigSPairs.cpp</label>
+        <link refid="_sig_s_pairs_8cpp"/>
+      </node>
+      <node id="33">
+        <label>submodules/mathicgb/src/mathicgb/SignatureGB.cpp</label>
+        <link refid="_signature_g_b_8cpp"/>
+      </node>
+      <node id="32">
+        <label>submodules/mathicgb/src/mathicgb/SignatureGB.hpp</label>
+        <link refid="_signature_g_b_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>submodules/mathicgb/src/mathicgb/SparseMatrix.cpp</label>
+        <link refid="mathicgb_2_sparse_matrix_8cpp"/>
+      </node>
+      <node id="34">
+        <label>submodules/mathicgb/src/mathicgb/StaticMonoMap.hpp</label>
+        <link refid="_static_mono_map_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>submodules/mathicgb/src/mathicgb/TypicalReducer.cpp</label>
+        <link refid="_typical_reducer_8cpp"/>
+      </node>
+      <node id="52">
+        <label>submodules/mathicgb/src/mathicgb/TypicalReducer.hpp</label>
+        <link refid="_typical_reducer_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>submodules/mathicgb/src/mathicgb/io-util.cpp</label>
+        <link refid="io-util_8cpp"/>
+      </node>
+      <node id="19">
+        <label>submodules/mathicgb/src/test/F4MatrixBuilder.cpp</label>
+        <link refid="test_2_f4_matrix_builder_8cpp"/>
+      </node>
+      <node id="20">
+        <label>submodules/mathicgb/src/test/F4MatrixReducer.cpp</label>
+        <link refid="test_2_f4_matrix_reducer_8cpp"/>
+      </node>
+      <node id="21">
+        <label>submodules/mathicgb/src/test/MathicIO.cpp</label>
+        <link refid="_mathic_i_o_8cpp"/>
+      </node>
+      <node id="3">
+        <label>submodules/mathicgb/src/test/MonoMonoid.cpp</label>
+        <link refid="_mono_monoid_8cpp"/>
+      </node>
+      <node id="22">
+        <label>submodules/mathicgb/src/test/QuadMatrixBuilder.cpp</label>
+        <link refid="test_2_quad_matrix_builder_8cpp"/>
+      </node>
+      <node id="57">
+        <label>submodules/mathicgb/src/test/Range.cpp</label>
+        <link refid="_range_8cpp"/>
+      </node>
+      <node id="23">
+        <label>submodules/mathicgb/src/test/SparseMatrix.cpp</label>
+        <link refid="test_2_sparse_matrix_8cpp"/>
+      </node>
+      <node id="24">
+        <label>submodules/mathicgb/src/test/gb-test.cpp</label>
+        <link refid="gb-test_8cpp"/>
+      </node>
+      <node id="25">
+        <label>submodules/mathicgb/src/test/poly-test.cpp</label>
+        <link refid="poly-test_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_range" prot="public">Range</innerclass>
+    <innerclass refid="class_zip" prot="public">Zip</innerclass>
+    <innerclass refid="class_int_iterator" prot="public">IntIterator</innerclass>
+    <innerclass refid="class_opposite_pair_iterator" prot="public">OppositePairIterator</innerclass>
+    <innerclass refid="struct_flatten_namespace_1_1_inner_iterator_type" prot="public">FlattenNamespace::InnerIteratorType</innerclass>
+    <innerclass refid="class_flatten" prot="public">Flatten</innerclass>
+    <innernamespace refid="namespace_flatten_namespace">FlattenNamespace</innernamespace>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iterator</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_range" kindref="compound">Range</ref>&lt; Iterator &gt;</type>
+        <definition>Range&lt; Iterator &gt; range</definition>
+        <argsstring>(Iterator begin, Iterator end)</argsstring>
+        <name>range</name>
+        <param>
+          <type>Iterator</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>Iterator</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Convenience function for constructing a <ref refid="class_range" kindref="compound">Range</ref> object. This function removes the need to explicitly specify the types involved. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="49" column="7" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="49" bodyend="51"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <referencedby refid="class_poly_a4001d9cf292c8a18e7f8dfd3924b307d_1a4001d9cf292c8a18e7f8dfd3924b307d" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="112" endline="117">Poly::append</referencedby>
+        <referencedby refid="class_poly_a5d14eda3390274d811a30376fc4ed6a8_1a5d14eda3390274d811a30376fc4ed6a8" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="175" endline="177">Poly::coefRange</referencedby>
+        <referencedby refid="classmathic_1_1_pair_queue_1_1_column_a974c0c51fc1462af93435b597aa9dee3_1a974c0c51fc1462af93435b597aa9dee3" compoundref="_pair_queue_8h" startline="386" endline="458">mathic::PairQueue&lt; C &gt;::Column::create</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_polynom_ae7aecc7aab69483b371c091d053e75de_1ae7aecc7aab69483b371c091d053e75de" compoundref="polynom_8hpp" startline="660" endline="694">BIBasis::Polynom&lt; MonomType &gt;::Find</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="515" endline="523">flatten</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="236" endline="241">indexRange</referencedby>
+        <referencedby refid="class_poly_a733f0cd36ae85d4575ffd4adb209b39d_1a733f0cd36ae85d4575ffd4adb209b39d" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="210" endline="212">Poly::monoRange</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="328" endline="333">oppositePairRange</referencedby>
+        <referencedby refid="classmathic_1_1_geobucket_a2cdd0f42ac014b10ca81a78fadc1356f_1a2cdd0f42ac014b10ca81a78fadc1356f" compoundref="_geobucket_8h" startline="345" endline="400">mathic::Geobucket&lt; C &gt;::push</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a4d96f7191671639e0ce5fe26d194b9ff_1a4d96f7191671639e0ce5fe26d194b9ff" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="55" endline="57">range</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae9db2446a287a468c5893fdcb41aba27_1ae9db2446a287a468c5893fdcb41aba27" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="284" endline="288">rangeToVector</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a45306678f821408d44aa25a3f68d8b57_1a45306678f821408d44aa25a3f68d8b57" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="402" endline="556">MATHICGB_NAMESPACE_BEGIN::reduceToEchelonForm</referencedby>
+        <referencedby refid="class_poly_a2be630ddab22e1bb42d8eb9416825cfd_1a2be630ddab22e1bb42d8eb9416825cfd" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="256" endline="256">Poly::termRange</referencedby>
+        <referencedby refid="_range_8cpp_a66f4f53727985fc43d232a409888af50_1a66f4f53727985fc43d232a409888af50" compoundref="_range_8cpp" startline="114" endline="132">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a3e981b823bb11c62da02b74ec8127f9b_1a3e981b823bb11c62da02b74ec8127f9b" compoundref="_range_8cpp" startline="86" endline="92">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a5e643fa2056570404cc58642ffe2ced0_1a5e643fa2056570404cc58642ffe2ced0" compoundref="_range_8cpp" startline="28" endline="84">TEST</referencedby>
+        <referencedby refid="_range_8cpp_ab24720a28edd968900a767fd14a1fe7c_1ab24720a28edd968900a767fd14a1fe7c" compoundref="_range_8cpp" startline="94" endline="112">TEST</referencedby>
+        <referencedby refid="_n_c_groebner_test_8cpp_a443eb3562c04232a03076f74252ca336_1a443eb3562c04232a03076f74252ca336" compoundref="_n_c_groebner_test_8cpp" startline="54" endline="77">testMemoryBlock</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="127" endline="134">zip</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a4d96f7191671639e0ce5fe26d194b9ff_1a4d96f7191671639e0ce5fe26d194b9ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class RangeParam</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(range(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">std::begin</ref>(r), <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">std::end</ref>(r)))</type>
+        <definition>decltype(range(std::begin(r), std::end(r))) range</definition>
+        <argsstring>(RangeParam &amp;&amp;r)</argsstring>
+        <name>range</name>
+        <param>
+          <type>RangeParam &amp;&amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>As range(std::begin(r), std::end(r)). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="55" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="55" bodyend="57"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iterator1</type>
+          </param>
+          <param>
+            <type>class Iterator2</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_zip" kindref="compound">Zip</ref>&lt; Iterator1, Iterator2 &gt;</type>
+        <definition>Zip&lt; Iterator1, Iterator2 &gt; makeZip</definition>
+        <argsstring>(const Iterator1 &amp;it1, const Iterator2 &amp;it2)</argsstring>
+        <name>makeZip</name>
+        <param>
+          <type>const Iterator1 &amp;</type>
+          <declname>it1</declname>
+        </param>
+        <param>
+          <type>const Iterator2 &amp;</type>
+          <declname>it2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a <ref refid="class_zip" kindref="compound">Zip</ref> iterator out of it1 and it2. This is a convenience function that removes the need to specify the iterator types explicitly.</para>
+<para>There would rarely (never?) be a need to call this function directly. Prefer to call <ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip()</ref> directly. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="118" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="118" bodyend="123"/>
+        <referencedby refid="class_poly_a68059d976d906aefc4b27ffb3f161413_1a68059d976d906aefc4b27ffb3f161413" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="254" endline="254">Poly::begin</referencedby>
+        <referencedby refid="class_poly_a3bb1f2f4573f50b3a66dca85a91ea995_1a3bb1f2f4573f50b3a66dca85a91ea995" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="255" endline="255">Poly::end</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="127" endline="134">zip</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iterator1</type>
+          </param>
+          <param>
+            <type>class Iterator2</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" kindref="member">makeZip</ref>(begin1, begin2), <ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" kindref="member">makeZip</ref>(end1, end2)))</type>
+        <definition>decltype(range(makeZip(begin1, begin2), makeZip(end1, end2))) zip</definition>
+        <argsstring>(const Iterator1 &amp;begin1, const Iterator1 &amp;end1, const Iterator2 &amp;begin2, const Iterator2 &amp;end2)</argsstring>
+        <name>zip</name>
+        <param>
+          <type>const Iterator1 &amp;</type>
+          <declname>begin1</declname>
+        </param>
+        <param>
+          <type>const Iterator1 &amp;</type>
+          <declname>end1</declname>
+        </param>
+        <param>
+          <type>const Iterator2 &amp;</type>
+          <declname>begin2</declname>
+        </param>
+        <param>
+          <type>const Iterator2 &amp;</type>
+          <declname>end2</declname>
+        </param>
+        <briefdescription>
+<para>As zip(range(begin1, end1), range(begin2, end2)). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="127" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="127" bodyend="134"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="118" endline="123">makeZip</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="361" endline="382">adjPairRange</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="236" endline="241">indexRange</referencedby>
+        <referencedby refid="_range_8cpp_a2226b9ad1565ee6ba2561c72fc0b6a02_1a2226b9ad1565ee6ba2561c72fc0b6a02" compoundref="_range_8cpp" startline="143" endline="159">TEST</referencedby>
+        <referencedby refid="_range_8cpp_ab24720a28edd968900a767fd14a1fe7c_1ab24720a28edd968900a767fd14a1fe7c" compoundref="_range_8cpp" startline="94" endline="112">TEST</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a0824d4debb2fd67c97f840ee65d3d470_1a0824d4debb2fd67c97f840ee65d3d470" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="152" endline="168">zip</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a0824d4debb2fd67c97f840ee65d3d470_1a0824d4debb2fd67c97f840ee65d3d470" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Range1</type>
+          </param>
+          <param>
+            <type>class Range2</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(zip(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">std::begin</ref>(range1), <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">std::end</ref>(range1), <ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">std::begin</ref>(range2), <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">std::end</ref>(range2)))</type>
+        <definition>decltype(zip(std::begin(range1), std::end(range1), std::begin(range2), std::end(range2))) zip</definition>
+        <argsstring>(Range1 &amp;&amp;range1, Range2 &amp;&amp;range2)</argsstring>
+        <name>zip</name>
+        <param>
+          <type>Range1 &amp;&amp;</type>
+          <declname>range1</declname>
+        </param>
+        <param>
+          <type>Range2 &amp;&amp;</type>
+          <declname>range2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Zips two ranges into a single range of pairs.</para>
+<para>Example: std::vector&lt;std::string&gt; a = {&quot;hello&quot;, &quot;world&quot;}; std::vector&lt;int&gt; b = {4, 2, 1, 0}; for (const auto&amp; p : zip(a, b)) std::cout &lt;&lt; p.first &lt;&lt; p.second &lt;&lt; &apos; &apos;;</para>
+<para>The output will be &quot;hello4 world2 &quot;. If the ranges have different lengths then the length of the range will be the length of the first range. If the first range is longer than the second one, this means you will likely run into undefined behavior. We can&apos;t even do an assert for that because it&apos;s perfectly reasonable to use giant implicitly represented ranges for the second parameter and if that&apos;s a forward iterator, doing std::distance on it might never terminate or take a very long time. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="152" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="152" bodyend="168"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="127" endline="134">zip</references>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_range" kindref="compound">Range</ref>&lt; <ref refid="class_int_iterator" kindref="compound">IntIterator</ref>&lt; <ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref> &gt; &gt;</type>
+        <definition>Range&lt; IntIterator&lt; Integer &gt; &gt; intRange</definition>
+        <argsstring>(Integer begin, Integer end)</argsstring>
+        <name>intRange</name>
+        <param>
+          <type><ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref></type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type><ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref></type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a half-open interval of integers [begin, end) that is compatible with range-for.</para>
+<para>Example: for (auto x : intRange(5, 10) std::cout &lt;&lt; &apos; &apos; &lt;&lt; x; The output will be &quot; 5 6 7 8 9&quot;. See <ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" kindref="member">indexRange()</ref> for further examples of how this sort of thing can be useful. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="210" column="7" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="210" bodyend="212"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="236" endline="241">indexRange</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_abb6dd0cee8dc314bc20d8dfe2447ce8c_1abb6dd0cee8dc314bc20d8dfe2447ce8c" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="222" endline="224">intRange</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a927154c78a6f5f6e40ee6dfd2924a8d7_1a927154c78a6f5f6e40ee6dfd2924a8d7" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="216" endline="218">intRange</referencedby>
+        <referencedby refid="_range_8cpp_a644382711514e516e6610247d6d7d5ff_1a644382711514e516e6610247d6d7d5ff" compoundref="_range_8cpp" startline="161" endline="173">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a6f64e1f7114dffb30e01026243096937_1a6f64e1f7114dffb30e01026243096937" compoundref="_range_8cpp" startline="134" endline="141">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a66f4f53727985fc43d232a409888af50_1a66f4f53727985fc43d232a409888af50" compoundref="_range_8cpp" startline="114" endline="132">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a2226b9ad1565ee6ba2561c72fc0b6a02_1a2226b9ad1565ee6ba2561c72fc0b6a02" compoundref="_range_8cpp" startline="143" endline="159">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a927154c78a6f5f6e40ee6dfd2924a8d7_1a927154c78a6f5f6e40ee6dfd2924a8d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref></type>
+          </param>
+        </templateparamlist>
+        <type>decltype(intRange&lt; <ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref> &gt;(0, 0))</type>
+        <definition>decltype(intRange&lt; Integer &gt;(0, 0)) intRange</definition>
+        <argsstring>(Integer end)</argsstring>
+        <name>intRange</name>
+        <param>
+          <type><ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref></type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para>As intRange(Integer(0), end). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="216" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="216" bodyend="218"/>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="210" endline="212">intRange</references>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_abb6dd0cee8dc314bc20d8dfe2447ce8c_1abb6dd0cee8dc314bc20d8dfe2447ce8c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>decltype(intRange&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref> &gt;(0, 0))</type>
+        <definition>decltype(intRange&lt; size_t &gt;(0, 0)) intRange</definition>
+        <argsstring>()</argsstring>
+        <name>intRange</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>As intRange&lt;size_t&gt;(0, max) where max is the maximum representable integer of type <ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref> as indicated by std::numeric_limits. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="222" column="13" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="222" bodyend="224"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="210" endline="212">intRange</references>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iterator</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>, <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>), <ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>()))</type>
+        <definition>decltype(zip(range(begin, end), intRange())) indexRange</definition>
+        <argsstring>(const Iterator &amp;begin, const Iterator &amp;end)</argsstring>
+        <name>indexRange</name>
+        <param>
+          <type>const Iterator &amp;</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const Iterator &amp;</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Adds indices to the elements of the range, specifying the offset of each element in the range. Equivalent to zip(range(begin, end), <ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange()</ref>).</para>
+<para>Example: const char*[] strs = {&quot;hello&quot;, &quot;world&quot;, &quot;!&quot;}; for (const auto&amp; p : indexRange(strs)) std::cout &lt;&lt; &apos; &apos; &lt;&lt; p.first &lt;&lt; p.second;</para>
+<para>The output will be &quot; hello0 world1 !2&quot;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="236" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="236" bodyend="241"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="210" endline="212">intRange</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="127" endline="134">zip</references>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac7c31094532879c18b4754024a5244c1_1ac7c31094532879c18b4754024a5244c1" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="245" endline="249">indexRange</referencedby>
+        <referencedby refid="_range_8cpp_a6f64e1f7114dffb30e01026243096937_1a6f64e1f7114dffb30e01026243096937" compoundref="_range_8cpp" startline="134" endline="141">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac7c31094532879c18b4754024a5244c1_1ac7c31094532879c18b4754024a5244c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="class_range" kindref="compound">Range</ref></type>
+          </param>
+        </templateparamlist>
+        <type>decltype(indexRange(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">std::begin</ref>(r), <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">std::end</ref>(r)))</type>
+        <definition>decltype(indexRange(std::begin(r), std::end(r))) indexRange</definition>
+        <argsstring>(Range &amp;&amp;r)</argsstring>
+        <name>indexRange</name>
+        <param>
+          <type><ref refid="class_range" kindref="compound">Range</ref> &amp;&amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>As indexRange(std::begin(r), std::end(r)). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="245" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="245" bodyend="249"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="236" endline="241">indexRange</references>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iterator</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(std::vector&lt; typename std::decay&lt; decltype(*<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>)&gt;::type &gt;(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>, <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>))</type>
+        <definition>decltype(std::vector&lt; typename std::decay&lt; decltype(*begin)&gt;::type &gt;(begin, end)) rangeToVector</definition>
+        <argsstring>(Iterator begin, Iterator end)</argsstring>
+        <name>rangeToVector</name>
+        <param>
+          <type>Iterator</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>Iterator</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para>As rangeToVector(range(begin, end)). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="256" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="256" bodyend="263"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <referencedby refid="class_poly_a70682d7f33f8d45a6699524f07239e1f_1a70682d7f33f8d45a6699524f07239e1f" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="64" endline="89">Poly::polyWithTermsDescending</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae9db2446a287a468c5893fdcb41aba27_1ae9db2446a287a468c5893fdcb41aba27" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="284" endline="288">rangeToVector</referencedby>
+        <referencedby refid="_range_8cpp_a644382711514e516e6610247d6d7d5ff_1a644382711514e516e6610247d6d7d5ff" compoundref="_range_8cpp" startline="161" endline="173">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a6f64e1f7114dffb30e01026243096937_1a6f64e1f7114dffb30e01026243096937" compoundref="_range_8cpp" startline="134" endline="141">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a66f4f53727985fc43d232a409888af50_1a66f4f53727985fc43d232a409888af50" compoundref="_range_8cpp" startline="114" endline="132">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a2226b9ad1565ee6ba2561c72fc0b6a02_1a2226b9ad1565ee6ba2561c72fc0b6a02" compoundref="_range_8cpp" startline="143" endline="159">TEST</referencedby>
+        <referencedby refid="_range_8cpp_a3e981b823bb11c62da02b74ec8127f9b_1a3e981b823bb11c62da02b74ec8127f9b" compoundref="_range_8cpp" startline="86" endline="92">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae9db2446a287a468c5893fdcb41aba27_1ae9db2446a287a468c5893fdcb41aba27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class RangeParam</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(rangeToVector(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">std::begin</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>), <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">std::end</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>)))</type>
+        <definition>decltype(rangeToVector(std::begin(range), std::end(range))) rangeToVector</definition>
+        <argsstring>(RangeParam &amp;&amp;range)</argsstring>
+        <name>rangeToVector</name>
+        <param>
+          <type>RangeParam &amp;&amp;</type>
+          <declname>range</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts a range into a vector. This is a convenience function. When using this function, it is not necessary to name the type of the vector. It is also not necessary to give a name to the range object.</para>
+<para>Example: const char*[] strs = {&quot;hello&quot;, &quot;world&quot;, &quot;!&quot;}; auto v = rangeToVector(indexRange(strs));</para>
+<para>Without rangeToVector, the last line would have to be replaced by</para>
+<para>auto r = indexRange(strs); std::vector&lt;std::pair&lt;const char*, size_t&gt;&gt; v(r.begin(), r.end());</para>
+<para>The return type is std::vector&lt;T&gt; where <ref refid="struct_t" kindref="compound">T</ref> is whatever type is contained in the range, after stripping references and other qualifiers. So if the iterators in the range return const <ref refid="struct_t" kindref="compound">T</ref>&amp;, the return type will still be std::vector&lt;T&gt;. More precisely, if the returned type is S, the returned type will be std::vector&lt;std::decay&lt;S&gt;::type&gt;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="284" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="284" bodyend="288"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="256" endline="263">rangeToVector</references>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iterator</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_range" kindref="compound">Range</ref>&lt; <ref refid="class_opposite_pair_iterator" kindref="compound">OppositePairIterator</ref>&lt; Iterator &gt; &gt;</type>
+        <definition>Range&lt; OppositePairIterator&lt; Iterator &gt; &gt; oppositePairRange</definition>
+        <argsstring>(const Iterator &amp;begin, const Iterator &amp;end)</argsstring>
+        <name>oppositePairRange</name>
+        <param>
+          <type>const Iterator &amp;</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const Iterator &amp;</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para>As oppositePairRange(range(begin, end)). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="328" column="7" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="328" bodyend="333"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="361" endline="382">adjPairRange</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a8088919b7df24a4491403a5a098a5030_1a8088919b7df24a4491403a5a098a5030" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="352" endline="356">oppositePairRange</referencedby>
+        <referencedby refid="_range_8cpp_a2226b9ad1565ee6ba2561c72fc0b6a02_1a2226b9ad1565ee6ba2561c72fc0b6a02" compoundref="_range_8cpp" startline="143" endline="159">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a8088919b7df24a4491403a5a098a5030_1a8088919b7df24a4491403a5a098a5030" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class RangeParam</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(oppositePairRange(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">std::begin</ref>(r), <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">std::end</ref>(r)))</type>
+        <definition>decltype(oppositePairRange(std::begin(r), std::end(r))) oppositePairRange</definition>
+        <argsstring>(RangeParam &amp;&amp;r)</argsstring>
+        <name>oppositePairRange</name>
+        <param>
+          <type>RangeParam &amp;&amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Swaps the elements of the pairs in a range of pairs.</para>
+<para>Example: auto print = [](std::pair&lt;int,  int&gt; p) { std::cout &lt;&lt; &apos;(&apos; &lt;&lt; p.first &lt;&lt; &apos;,&apos; &lt;&lt; p.second &lt;&lt; &apos;)&apos;; auto r = zip(intRange(1, 3), intRange(101, 103)); for (auto p : r) print(p); std::cout &lt;&lt; &apos;<linebreak/>
+&apos;; for (auto p : oppositePairRange(r)) print(p);</para>
+<para>The output will be</para>
+<para>(1,101)(2,102)(3,103) (101,1)(102,2)(103,3) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="352" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="352" bodyend="356"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="328" endline="333">oppositePairRange</references>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iterator</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(<ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>, <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>, <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>, <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)))</type>
+        <definition>decltype(oppositePairRange(zip(end, end, end, end))) adjPairRange</definition>
+        <argsstring>(const Iterator &amp;begin, const Iterator &amp;end)</argsstring>
+        <name>adjPairRange</name>
+        <param>
+          <type>const Iterator &amp;</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const Iterator &amp;</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para>As adjPairRange(range(begin, end)). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="361" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="361" bodyend="382"/>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="328" endline="333">oppositePairRange</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="127" endline="134">zip</references>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae771518c5a873ade457c00b9c14aa262_1ae771518c5a873ade457c00b9c14aa262" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="385" endline="389">adjPairRange</referencedby>
+        <referencedby refid="class_mono_arena_a8dca8f3974e6b80254b7dc8d43e219c8_1a8dca8f3974e6b80254b7dc8d43e219c8" compoundref="_mono_arena_8hpp" startline="179" endline="188">MonoArena&lt; M &gt;::debugAssertValid</referencedby>
+        <referencedby refid="_range_8cpp_a644382711514e516e6610247d6d7d5ff_1a644382711514e516e6610247d6d7d5ff" compoundref="_range_8cpp" startline="161" endline="173">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae771518c5a873ade457c00b9c14aa262_1ae771518c5a873ade457c00b9c14aa262" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class RangeParam</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(adjPairRange(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">std::begin</ref>(r), <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">std::end</ref>(r)))</type>
+        <definition>decltype(adjPairRange(std::begin(r), std::end(r))) adjPairRange</definition>
+        <argsstring>(RangeParam &amp;&amp;r)</argsstring>
+        <name>adjPairRange</name>
+        <param>
+          <type>RangeParam &amp;&amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="385" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="385" bodyend="389"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="361" endline="382">adjPairRange</references>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_aa369f8bcda9e6303823e38e73138e5d3_1aa369f8bcda9e6303823e38e73138e5d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class OuterIterator</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool operator==</definition>
+        <argsstring>(const Flatten&lt; OuterIterator &gt; &amp;a, const Flatten&lt; OuterIterator &gt; &amp;b)</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="class_flatten" kindref="compound">Flatten</ref>&lt; OuterIterator &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_flatten" kindref="compound">Flatten</ref>&lt; OuterIterator &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="490" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="490" bodyend="495"/>
+        <references refid="class_flatten_a67ec661392e13b6a13207b0aa5b87ee9_1a67ec661392e13b6a13207b0aa5b87ee9" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="455" endline="465">Flatten&lt; OuterIterator &gt;::equal</references>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_affb4e3320f9f12ed574576602fff6a64_1affb4e3320f9f12ed574576602fff6a64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class OuterIterator</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const Flatten&lt; OuterIterator &gt; &amp;a, const Flatten&lt; OuterIterator &gt; &amp;b)</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="class_flatten" kindref="compound">Flatten</ref>&lt; OuterIterator &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_flatten" kindref="compound">Flatten</ref>&lt; OuterIterator &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="498" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="498" bodyend="503"/>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_adaeea0a0b7b95964908f585a13564439_1adaeea0a0b7b95964908f585a13564439" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class OuterIterator</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_flatten" kindref="compound">Flatten</ref>&lt; OuterIterator &gt;</type>
+        <definition>Flatten&lt; OuterIterator &gt; makeFlatten</definition>
+        <argsstring>(OuterIterator outerIterator, OuterIterator outerEnd)</argsstring>
+        <name>makeFlatten</name>
+        <param>
+          <type>OuterIterator</type>
+          <declname>outerIterator</declname>
+        </param>
+        <param>
+          <type>OuterIterator</type>
+          <declname>outerEnd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="506" column="9" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="506" bodyend="511"/>
+        <referencedby refid="class_mono_arena_aa7f311819aab1f82a18b58dff4298d58_1aa7f311819aab1f82a18b58dff4298d58" compoundref="_mono_arena_8hpp" startline="57" endline="59">MonoArena&lt; M &gt;::begin</referencedby>
+        <referencedby refid="class_mono_arena_a2e61a780b1b14ff3adc12cb005e2f247_1a2e61a780b1b14ff3adc12cb005e2f247" compoundref="_mono_arena_8hpp" startline="61" endline="63">MonoArena&lt; M &gt;::end</referencedby>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="515" endline="523">flatten</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class OuterIterator</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="class_range" kindref="compound">Range</ref>&lt; <ref refid="class_flatten" kindref="compound">Flatten</ref>&lt; OuterIterator &gt; &gt;</type>
+        <definition>Range&lt; Flatten&lt; OuterIterator &gt; &gt; flatten</definition>
+        <argsstring>(OuterIterator outerBegin, OuterIterator outerEnd)</argsstring>
+        <name>flatten</name>
+        <param>
+          <type>OuterIterator</type>
+          <declname>outerBegin</declname>
+        </param>
+        <param>
+          <type>OuterIterator</type>
+          <declname>outerEnd</declname>
+        </param>
+        <briefdescription>
+<para>As flatten(range(begin, end)). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="515" column="7" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="515" bodyend="523"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_adaeea0a0b7b95964908f585a13564439_1adaeea0a0b7b95964908f585a13564439" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="506" endline="511">makeFlatten</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <referencedby refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac50b9f187388ef8c61db8ae22fcaede1_1ac50b9f187388ef8c61db8ae22fcaede1" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="537" endline="541">flatten</referencedby>
+        <referencedby refid="_range_8cpp_ad1d2660ac4f6602569efb76d1961b2e9_1ad1d2660ac4f6602569efb76d1961b2e9" compoundref="_range_8cpp" startline="175" endline="185">TEST</referencedby>
+        <referencedby refid="_range_8cpp_aacc5a5e3d0a77abd066b48c29f453c69_1aacc5a5e3d0a77abd066b48c29f453c69" compoundref="_range_8cpp" startline="187" endline="215">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac50b9f187388ef8c61db8ae22fcaede1_1ac50b9f187388ef8c61db8ae22fcaede1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class OuterRange</type>
+          </param>
+        </templateparamlist>
+        <type>decltype(flatten(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">std::begin</ref>(outerRange), <ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">std::end</ref>(outerRange)))</type>
+        <definition>decltype(flatten(std::begin(outerRange), std::end(outerRange))) flatten</definition>
+        <argsstring>(OuterRange &amp;&amp;outerRange)</argsstring>
+        <name>flatten</name>
+        <param>
+          <type>OuterRange &amp;&amp;</type>
+          <declname>outerRange</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a range of the union of all (inner) ranges in outerRange.</para>
+<para>Example: std::vector&lt;std::list&lt;int&gt;&gt; v(3); v[0].push_back(1); v[2].push_back(2); v[2].push_back(3); for (const auto&amp; i : flatten(v)) std::cout &lt;&lt; i &lt;&lt; &apos; &apos;;</para>
+<para>The output is &quot;1 2 3 &quot;; </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="537" column="6" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="537" bodyend="541"/>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="515" endline="523">flatten</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>MathicGB<sp/>copyright<sp/>2013<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATHICGB_RANGE_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATHICGB_RANGE_GUARD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;limits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;utility&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;type_traits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iterator&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><ref refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n" kindref="compound">MATHICGB_NAMESPACE_BEGIN</ref></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Read<sp/>on,<sp/>this<sp/>file<sp/>contains<sp/>several<sp/>free-standing<sp/>functions<sp/>that<sp/>make<sp/>use</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">//<sp/>of<sp/>the<sp/>range<sp/>concept<sp/>and<sp/>Range<sp/>class.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iter&gt;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_range" kindref="compound">Range</ref><sp/>{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="31" refid="class_range_aea58fe1242169fa39903c8d61a6d923f_1aea58fe1242169fa39903c8d61a6d923f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>Iter<sp/><ref refid="class_range_aea58fe1242169fa39903c8d61a6d923f_1aea58fe1242169fa39903c8d61a6d923f" kindref="member">Iterator</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="class_range_ae171443b8cfa341fa4d6c06f904d8b1b_1ae171443b8cfa341fa4d6c06f904d8b1b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_range_ae171443b8cfa341fa4d6c06f904d8b1b_1ae171443b8cfa341fa4d6c06f904d8b1b" kindref="member">Range</ref>(<ref refid="class_range_aea58fe1242169fa39903c8d61a6d923f_1aea58fe1242169fa39903c8d61a6d923f" kindref="member">Iterator</ref><sp/><ref refid="class_range_aed53bb8cb3dcc7ae7fac4d4e25fd7edd_1aed53bb8cb3dcc7ae7fac4d4e25fd7edd" kindref="member">begin</ref>,<sp/><ref refid="class_range_aea58fe1242169fa39903c8d61a6d923f_1aea58fe1242169fa39903c8d61a6d923f" kindref="member">Iterator</ref><sp/><ref refid="class_range_abb1c40df44cef12b669791d7b7467656_1abb1c40df44cef12b669791d7b7467656" kindref="member">end</ref>):<sp/><ref refid="class_range_a5e8f673e658fb3d85cbcd1a29125b16a_1a5e8f673e658fb3d85cbcd1a29125b16a" kindref="member">mBegin</ref>(<ref refid="class_range_aed53bb8cb3dcc7ae7fac4d4e25fd7edd_1aed53bb8cb3dcc7ae7fac4d4e25fd7edd" kindref="member">begin</ref>),<sp/><ref refid="class_range_acffe958addd6fa07284857c3147fd0d8_1acffe958addd6fa07284857c3147fd0d8" kindref="member">mEnd</ref>(<ref refid="class_range_abb1c40df44cef12b669791d7b7467656_1abb1c40df44cef12b669791d7b7467656" kindref="member">end</ref>)<sp/>{}</highlight></codeline>
+<codeline lineno="34" refid="class_range_a1857dacaa453f2c47f3c6b3289473461_1a1857dacaa453f2c47f3c6b3289473461" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_range_a1857dacaa453f2c47f3c6b3289473461_1a1857dacaa453f2c47f3c6b3289473461" kindref="member">Range</ref>(std::pair&lt;Iterator,<sp/>Iterator&gt;<sp/>pair):</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_range_a5e8f673e658fb3d85cbcd1a29125b16a_1a5e8f673e658fb3d85cbcd1a29125b16a" kindref="member">mBegin</ref>(pair.first),<sp/><ref refid="class_range_acffe958addd6fa07284857c3147fd0d8_1acffe958addd6fa07284857c3147fd0d8" kindref="member">mEnd</ref>(pair.second)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>{}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="class_range_a81c34b42c58da01ef0905a7619e14515_1a81c34b42c58da01ef0905a7619e14515" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_range_aea58fe1242169fa39903c8d61a6d923f_1aea58fe1242169fa39903c8d61a6d923f" kindref="member">Iterator</ref><sp/><ref refid="class_range_a81c34b42c58da01ef0905a7619e14515_1a81c34b42c58da01ef0905a7619e14515" kindref="member">begin</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_range_a5e8f673e658fb3d85cbcd1a29125b16a_1a5e8f673e658fb3d85cbcd1a29125b16a" kindref="member">mBegin</ref>;}</highlight></codeline>
+<codeline lineno="39" refid="class_range_a3a809070d2ade6093c97d3ca089edb72_1a3a809070d2ade6093c97d3ca089edb72" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_range_aea58fe1242169fa39903c8d61a6d923f_1aea58fe1242169fa39903c8d61a6d923f" kindref="member">Iterator</ref><sp/><ref refid="class_range_a3a809070d2ade6093c97d3ca089edb72_1a3a809070d2ade6093c97d3ca089edb72" kindref="member">end</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_range_acffe958addd6fa07284857c3147fd0d8_1acffe958addd6fa07284857c3147fd0d8" kindref="member">mEnd</ref>;}</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="42" refid="class_range_a5e8f673e658fb3d85cbcd1a29125b16a_1a5e8f673e658fb3d85cbcd1a29125b16a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_range_aea58fe1242169fa39903c8d61a6d923f_1aea58fe1242169fa39903c8d61a6d923f" kindref="member">Iterator</ref><sp/><ref refid="class_range_a5e8f673e658fb3d85cbcd1a29125b16a_1a5e8f673e658fb3d85cbcd1a29125b16a" kindref="member">mBegin</ref>;</highlight></codeline>
+<codeline lineno="43" refid="class_range_acffe958addd6fa07284857c3147fd0d8_1acffe958addd6fa07284857c3147fd0d8" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_range_aea58fe1242169fa39903c8d61a6d923f_1aea58fe1242169fa39903c8d61a6d923f" kindref="member">Iterator</ref><sp/><ref refid="class_range_acffe958addd6fa07284857c3147fd0d8_1acffe958addd6fa07284857c3147fd0d8" kindref="member">mEnd</ref>;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator&gt;</highlight></codeline>
+<codeline lineno="49" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" refkind="member"><highlight class="normal"><ref refid="class_range" kindref="compound">Range&lt;Iterator&gt;</ref><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(Iterator<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/>Iterator<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_range" kindref="compound">Range&lt;Iterator&gt;</ref>(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>RangeParam&gt;</highlight></codeline>
+<codeline lineno="55" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a4d96f7191671639e0ce5fe26d194b9ff_1a4d96f7191671639e0ce5fe26d194b9ff" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(RangeParam&amp;&amp;<sp/>r)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(std::begin(r),<sp/>std::end(r)))<sp/>{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(std::begin(r),<sp/>std::end(r));</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="comment">//<sp/>***<sp/>Zipping<sp/>ranges<sp/>together</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator1,<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator2&gt;</highlight></codeline>
+<codeline lineno="67" refid="class_zip" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_zip_a8ec37d2eca9d6eabe8e857a895196e69_1a8ec37d2eca9d6eabe8e857a895196e69" kindref="member">Zip</ref><sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="69" refid="class_zip_ad0774694834b733b706f23e33d2f4340_1ad0774694834b733b706f23e33d2f4340" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(*std::declval&lt;Iterator1&gt;())<sp/><ref refid="class_zip_ad0774694834b733b706f23e33d2f4340_1ad0774694834b733b706f23e33d2f4340" kindref="member">ValueType1</ref>;</highlight></codeline>
+<codeline lineno="70" refid="class_zip_a4e5baf247c12bae45567bdb6b35d9f4c_1a4e5baf247c12bae45567bdb6b35d9f4c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(*std::declval&lt;Iterator2&gt;())<sp/><ref refid="class_zip_a4e5baf247c12bae45567bdb6b35d9f4c_1a4e5baf247c12bae45567bdb6b35d9f4c" kindref="member">ValueType2</ref>;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="class_zip_aa47f29ce09a4faee554a8d828542cb2d_1aa47f29ce09a4faee554a8d828542cb2d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::forward_iterator_tag<sp/><ref refid="class_zip_aa47f29ce09a4faee554a8d828542cb2d_1aa47f29ce09a4faee554a8d828542cb2d" kindref="member">iterator_category</ref>;</highlight></codeline>
+<codeline lineno="77" refid="class_zip_abfc82719e84a4247bbded61213dbab8f_1abfc82719e84a4247bbded61213dbab8f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::pair&lt;ValueType1,<sp/>ValueType2&gt;<sp/><ref refid="class_zip_abfc82719e84a4247bbded61213dbab8f_1abfc82719e84a4247bbded61213dbab8f" kindref="member">value_type</ref>;</highlight></codeline>
+<codeline lineno="78" refid="class_zip_aa1938285fb9d39f3d077e43472c27d45_1aa1938285fb9d39f3d077e43472c27d45" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>ptrdiff_t<sp/><ref refid="class_zip_aa1938285fb9d39f3d077e43472c27d45_1aa1938285fb9d39f3d077e43472c27d45" kindref="member">difference_type</ref>;</highlight></codeline>
+<codeline lineno="79" refid="class_zip_aecab1630efa5ed4258fb803769e92d3f_1aecab1630efa5ed4258fb803769e92d3f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_zip_abfc82719e84a4247bbded61213dbab8f_1abfc82719e84a4247bbded61213dbab8f" kindref="member">value_type</ref>*<sp/><ref refid="class_zip_aecab1630efa5ed4258fb803769e92d3f_1aecab1630efa5ed4258fb803769e92d3f" kindref="member">pointer</ref>;</highlight></codeline>
+<codeline lineno="80" refid="class_zip_a9d4ca616cd6573fd0a489f09d790aab1_1a9d4ca616cd6573fd0a489f09d790aab1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_zip_abfc82719e84a4247bbded61213dbab8f_1abfc82719e84a4247bbded61213dbab8f" kindref="member">value_type</ref>&amp;<sp/><ref refid="class_zip_a9d4ca616cd6573fd0a489f09d790aab1_1a9d4ca616cd6573fd0a489f09d790aab1" kindref="member">reference</ref>;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="class_zip_a8ec37d2eca9d6eabe8e857a895196e69_1a8ec37d2eca9d6eabe8e857a895196e69" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_zip_a8ec37d2eca9d6eabe8e857a895196e69_1a8ec37d2eca9d6eabe8e857a895196e69" kindref="member">Zip</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="83" refid="class_zip_a2113c951bc59a13bd7b17d91c8a6267c_1a2113c951bc59a13bd7b17d91c8a6267c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_zip_a2113c951bc59a13bd7b17d91c8a6267c_1a2113c951bc59a13bd7b17d91c8a6267c" kindref="member">Zip</ref>(Iterator1<sp/>it1,<sp/>Iterator2<sp/>it2):<sp/><ref refid="class_zip_ad3ce759ea1e7b802bf0262e67cf734eb_1ad3ce759ea1e7b802bf0262e67cf734eb" kindref="member">mIt1</ref>(it1),<sp/><ref refid="class_zip_aefbf8125134d75778af2995394c6d2fd_1aefbf8125134d75778af2995394c6d2fd" kindref="member">mIt2</ref>(it2)<sp/>{}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="class_zip_a7c22baa21c72f26b793123285cad01f0_1a7c22baa21c72f26b793123285cad01f0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_zip_a8ec37d2eca9d6eabe8e857a895196e69_1a8ec37d2eca9d6eabe8e857a895196e69" kindref="member">Zip</ref>&amp;<sp/><ref refid="class_zip_a7c22baa21c72f26b793123285cad01f0_1a7c22baa21c72f26b793123285cad01f0" kindref="member">operator++</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>++<ref refid="class_zip_ad3ce759ea1e7b802bf0262e67cf734eb_1ad3ce759ea1e7b802bf0262e67cf734eb" kindref="member">mIt1</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>++<ref refid="class_zip_aefbf8125134d75778af2995394c6d2fd_1aefbf8125134d75778af2995394c6d2fd" kindref="member">mIt2</ref>;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="class_zip_af8e67c0d58da6198fe4e1f558006b44d_1af8e67c0d58da6198fe4e1f558006b44d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_zip_abfc82719e84a4247bbded61213dbab8f_1abfc82719e84a4247bbded61213dbab8f" kindref="member">value_type</ref><sp/><ref refid="class_zip_af8e67c0d58da6198fe4e1f558006b44d_1af8e67c0d58da6198fe4e1f558006b44d" kindref="member">operator*</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>cannot<sp/>use<sp/>std::make_pair<sp/>here.<sp/>If<sp/>.first<sp/>or<sp/>.second<sp/>is<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>reference,<sp/>then<sp/>std::make_pair<sp/>will<sp/>remove<sp/>the<sp/>reference<sp/>and<sp/>then<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>conversion<sp/>to<sp/>value_type<sp/>will<sp/>add<sp/>the<sp/>reference<sp/>back<sp/>in<sp/>-<sp/>but<sp/>now<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>reference<sp/>is<sp/>not<sp/>what<sp/>was<sp/>originally<sp/>referenced,<sp/>instead<sp/>it<sp/>is<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>reference<sp/>to<sp/>the<sp/>temporary<sp/>object<sp/>returned<sp/>by<sp/>std::make_pair,<sp/>which</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>then<sp/>promptly<sp/>goes<sp/>out<sp/>of<sp/>scope,<sp/>leading<sp/>to<sp/>undefined<sp/>behavior.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_zip_abfc82719e84a4247bbded61213dbab8f_1abfc82719e84a4247bbded61213dbab8f" kindref="member">value_type</ref>(*<ref refid="class_zip_ad3ce759ea1e7b802bf0262e67cf734eb_1ad3ce759ea1e7b802bf0262e67cf734eb" kindref="member">mIt1</ref>,<sp/>*<ref refid="class_zip_aefbf8125134d75778af2995394c6d2fd_1aefbf8125134d75778af2995394c6d2fd" kindref="member">mIt2</ref>);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="class_zip_a19ac278753aa313823976c415654ca68_1a19ac278753aa313823976c415654ca68" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_zip_a19ac278753aa313823976c415654ca68_1a19ac278753aa313823976c415654ca68" kindref="member">operator!=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_zip_a8ec37d2eca9d6eabe8e857a895196e69_1a8ec37d2eca9d6eabe8e857a895196e69" kindref="member">Zip</ref>&amp;<sp/>it)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_zip_ad3ce759ea1e7b802bf0262e67cf734eb_1ad3ce759ea1e7b802bf0262e67cf734eb" kindref="member">mIt1</ref><sp/>!=<sp/>it.<ref refid="class_zip_ad3ce759ea1e7b802bf0262e67cf734eb_1ad3ce759ea1e7b802bf0262e67cf734eb" kindref="member">mIt1</ref>;}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="class_zip_a3ab97fffe71bdf90bbaca1ed62a4a358_1a3ab97fffe71bdf90bbaca1ed62a4a358" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_zip_a3ab97fffe71bdf90bbaca1ed62a4a358_1a3ab97fffe71bdf90bbaca1ed62a4a358" kindref="member">operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_zip_a8ec37d2eca9d6eabe8e857a895196e69_1a8ec37d2eca9d6eabe8e857a895196e69" kindref="member">Zip</ref>&amp;<sp/>it)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_zip_ad3ce759ea1e7b802bf0262e67cf734eb_1ad3ce759ea1e7b802bf0262e67cf734eb" kindref="member">mIt1</ref><sp/>==<sp/>it.<ref refid="class_zip_ad3ce759ea1e7b802bf0262e67cf734eb_1ad3ce759ea1e7b802bf0262e67cf734eb" kindref="member">mIt1</ref>;}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="108" refid="class_zip_ad3ce759ea1e7b802bf0262e67cf734eb_1ad3ce759ea1e7b802bf0262e67cf734eb" refkind="member"><highlight class="normal"><sp/><sp/>Iterator1<sp/><ref refid="class_zip_ad3ce759ea1e7b802bf0262e67cf734eb_1ad3ce759ea1e7b802bf0262e67cf734eb" kindref="member">mIt1</ref>;</highlight></codeline>
+<codeline lineno="109" refid="class_zip_aefbf8125134d75778af2995394c6d2fd_1aefbf8125134d75778af2995394c6d2fd" refkind="member"><highlight class="normal"><sp/><sp/>Iterator2<sp/><ref refid="class_zip_aefbf8125134d75778af2995394c6d2fd_1aefbf8125134d75778af2995394c6d2fd" kindref="member">mIt2</ref>;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator1,<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator2&gt;</highlight></codeline>
+<codeline lineno="118" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" kindref="member">makeZip</ref>(</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator1&amp;<sp/>it1,</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator2&amp;<sp/>it2</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">)<sp/>-&gt;<sp/><ref refid="class_zip" kindref="compound">Zip&lt;Iterator1, Iterator2&gt;</ref><sp/>{</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_zip" kindref="compound">Zip&lt;Iterator1, Iterator2&gt;</ref>(it1,<sp/>it2);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator1,<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator2&gt;</highlight></codeline>
+<codeline lineno="127" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator1&amp;<sp/>begin1,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator1&amp;<sp/>end1,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator2&amp;<sp/>begin2,</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator2&amp;<sp/>end2</highlight></codeline>
+<codeline lineno="132"><highlight class="normal">)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" kindref="member">makeZip</ref>(begin1,<sp/>begin2),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" kindref="member">makeZip</ref>(end1,<sp/>end2)))<sp/>{</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" kindref="member">makeZip</ref>(begin1,<sp/>begin2),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_af0363a53e16d31c1e5f9373f647432a5_1af0363a53e16d31c1e5f9373f647432a5" kindref="member">makeZip</ref>(end1,<sp/>end2));</highlight></codeline>
+<codeline lineno="134"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Range1,<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Range2&gt;</highlight></codeline>
+<codeline lineno="152" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a0824d4debb2fd67c97f840ee65d3d470_1a0824d4debb2fd67c97f840ee65d3d470" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(Range1&amp;&amp;<sp/>range1,<sp/>Range2&amp;&amp;<sp/>range2)<sp/>-&gt;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::begin(range1),</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::end(range1),</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::begin(range2),</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::end(range2)</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/>)</highlight></codeline>
+<codeline lineno="161"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>std::begin(range1),</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>std::end(range1),</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>std::begin(range2),</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>std::end(range2)</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/>);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="comment">//<sp/>***<sp/>Implicitly<sp/>represented<sp/>ranges<sp/>of<sp/>integers</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Integer&gt;</highlight></codeline>
+<codeline lineno="175" refid="class_int_iterator" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_int_iterator_a4430a0fd90b37530f26f9da00dd67a34_1a4430a0fd90b37530f26f9da00dd67a34" kindref="member">IntIterator</ref><sp/>{</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="179" refid="class_int_iterator_a91a1a220301bc6ab24973c22f499c5bf_1a91a1a220301bc6ab24973c22f499c5bf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::forward_iterator_tag<sp/><ref refid="class_int_iterator_a91a1a220301bc6ab24973c22f499c5bf_1a91a1a220301bc6ab24973c22f499c5bf" kindref="member">iterator_category</ref>;</highlight></codeline>
+<codeline lineno="180" refid="class_int_iterator_aabdf16390b8be98d69006f295487ed63_1aabdf16390b8be98d69006f295487ed63" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref><sp/><ref refid="class_int_iterator_aabdf16390b8be98d69006f295487ed63_1aabdf16390b8be98d69006f295487ed63" kindref="member">value_type</ref>;</highlight></codeline>
+<codeline lineno="181" refid="class_int_iterator_a32888bc012cc6ac1479da3ef58e677af_1a32888bc012cc6ac1479da3ef58e677af" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>ptrdiff_t<sp/><ref refid="class_int_iterator_a32888bc012cc6ac1479da3ef58e677af_1a32888bc012cc6ac1479da3ef58e677af" kindref="member">difference_type</ref>;</highlight></codeline>
+<codeline lineno="182" refid="class_int_iterator_a36edf36ceb1a4a2adac16955c938424e_1a36edf36ceb1a4a2adac16955c938424e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_int_iterator_aabdf16390b8be98d69006f295487ed63_1aabdf16390b8be98d69006f295487ed63" kindref="member">value_type</ref>*<sp/><ref refid="class_int_iterator_a36edf36ceb1a4a2adac16955c938424e_1a36edf36ceb1a4a2adac16955c938424e" kindref="member">pointer</ref>;</highlight></codeline>
+<codeline lineno="183" refid="class_int_iterator_a417182c1a5bcc33fffbaf71d43c9b336_1a417182c1a5bcc33fffbaf71d43c9b336" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_int_iterator_aabdf16390b8be98d69006f295487ed63_1aabdf16390b8be98d69006f295487ed63" kindref="member">value_type</ref>&amp;<sp/><ref refid="class_int_iterator_a417182c1a5bcc33fffbaf71d43c9b336_1a417182c1a5bcc33fffbaf71d43c9b336" kindref="member">reference</ref>;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="class_int_iterator_a4430a0fd90b37530f26f9da00dd67a34_1a4430a0fd90b37530f26f9da00dd67a34" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_int_iterator_a4430a0fd90b37530f26f9da00dd67a34_1a4430a0fd90b37530f26f9da00dd67a34" kindref="member">IntIterator</ref>(<ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref><sp/>integer):<sp/><ref refid="class_int_iterator_ac5e6bdd132bf8eba26d615dc54e446f7_1ac5e6bdd132bf8eba26d615dc54e446f7" kindref="member">mInteger</ref>(integer)<sp/>{}</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="class_int_iterator_a950a87f4989852f5ac4a45470a38ed89_1a950a87f4989852f5ac4a45470a38ed89" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_int_iterator_aabdf16390b8be98d69006f295487ed63_1aabdf16390b8be98d69006f295487ed63" kindref="member">value_type</ref><sp/><ref refid="class_int_iterator_a950a87f4989852f5ac4a45470a38ed89_1a950a87f4989852f5ac4a45470a38ed89" kindref="member">operator*</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_int_iterator_ac5e6bdd132bf8eba26d615dc54e446f7_1ac5e6bdd132bf8eba26d615dc54e446f7" kindref="member">mInteger</ref>;}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189" refid="class_int_iterator_ad6c2224d74b829d49af94aa218f50734_1ad6c2224d74b829d49af94aa218f50734" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_int_iterator_a4430a0fd90b37530f26f9da00dd67a34_1a4430a0fd90b37530f26f9da00dd67a34" kindref="member">IntIterator</ref>&amp;<sp/><ref refid="class_int_iterator_ad6c2224d74b829d49af94aa218f50734_1ad6c2224d74b829d49af94aa218f50734" kindref="member">operator++</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>++<ref refid="class_int_iterator_ac5e6bdd132bf8eba26d615dc54e446f7_1ac5e6bdd132bf8eba26d615dc54e446f7" kindref="member">mInteger</ref>;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="class_int_iterator_a3dd2f5d2a85320b741ed3e56e4c121aa_1a3dd2f5d2a85320b741ed3e56e4c121aa" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_int_iterator_a3dd2f5d2a85320b741ed3e56e4c121aa_1a3dd2f5d2a85320b741ed3e56e4c121aa" kindref="member">operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_int_iterator_a4430a0fd90b37530f26f9da00dd67a34_1a4430a0fd90b37530f26f9da00dd67a34" kindref="member">IntIterator</ref>&amp;<sp/>it)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>**</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>==<sp/>*it;}</highlight></codeline>
+<codeline lineno="195" refid="class_int_iterator_a56bd4d575effddad46160082ed4419fa_1a56bd4d575effddad46160082ed4419fa" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_int_iterator_a56bd4d575effddad46160082ed4419fa_1a56bd4d575effddad46160082ed4419fa" kindref="member">operator!=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_int_iterator_a4430a0fd90b37530f26f9da00dd67a34_1a4430a0fd90b37530f26f9da00dd67a34" kindref="member">IntIterator</ref>&amp;<sp/>it)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>**</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>!=<sp/>*it;}</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="198" refid="class_int_iterator_ac5e6bdd132bf8eba26d615dc54e446f7_1ac5e6bdd132bf8eba26d615dc54e446f7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref><sp/><ref refid="class_int_iterator_ac5e6bdd132bf8eba26d615dc54e446f7_1ac5e6bdd132bf8eba26d615dc54e446f7" kindref="member">mInteger</ref>;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Integer&gt;</highlight></codeline>
+<codeline lineno="210" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" refkind="member"><highlight class="normal"><ref refid="class_range" kindref="compound">Range&lt;IntIterator&lt;Integer&gt;</ref>&gt;<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(<ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref><sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref><sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_range" kindref="compound">Range&lt;IntIterator&lt;Integer&gt;</ref>&gt;(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Integer&gt;</highlight></codeline>
+<codeline lineno="216" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a927154c78a6f5f6e40ee6dfd2924a8d7_1a927154c78a6f5f6e40ee6dfd2924a8d7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(<ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref><sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange&lt;Integer&gt;</ref>(0,<sp/>0))<sp/>{</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>(<ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref>(0),<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_abb6dd0cee8dc314bc20d8dfe2447ce8c_1abb6dd0cee8dc314bc20d8dfe2447ce8c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>()<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange&lt;size_t&gt;</ref>(0,<sp/>0))<sp/>{</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange&lt;size_t&gt;</ref>(0,<sp/>std::numeric_limits&lt;size_t&gt;::max());</highlight></codeline>
+<codeline lineno="224"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator&gt;</highlight></codeline>
+<codeline lineno="236" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" kindref="member">indexRange</ref>(</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator&amp;<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator&amp;<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref></highlight></codeline>
+<codeline lineno="239"><highlight class="normal">)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>()))<sp/>{</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>),<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a75f2e30c567a6713645b4b48dc3b72a4_1a75f2e30c567a6713645b4b48dc3b72a4" kindref="member">intRange</ref>());</highlight></codeline>
+<codeline lineno="241"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Range&gt;</highlight></codeline>
+<codeline lineno="245" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac7c31094532879c18b4754024a5244c1_1ac7c31094532879c18b4754024a5244c1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" kindref="member">indexRange</ref>(</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><ref refid="class_range" kindref="compound">Range</ref>&amp;&amp;<sp/>r</highlight></codeline>
+<codeline lineno="247"><highlight class="normal">)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" kindref="member">indexRange</ref>(std::begin(r),<sp/>std::end(r)))<sp/>{</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae4a7e79e5ffdfac3a2020c84ae0247d8_1ae4a7e79e5ffdfac3a2020c84ae0247d8" kindref="member">indexRange</ref>(std::begin(r),<sp/>std::end(r));</highlight></codeline>
+<codeline lineno="249"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight><highlight class="comment">//<sp/>***<sp/>Conversion<sp/>from<sp/>range<sp/>to<sp/>container</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator&gt;</highlight></codeline>
+<codeline lineno="256" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/>Iterator<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/>Iterator<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref></highlight></codeline>
+<codeline lineno="259"><highlight class="normal">)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/>std::vector&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::decay&lt;</highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(*begin)&gt;::type&gt;(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)</highlight></codeline>
+<codeline lineno="261"><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::vector&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::decay&lt;</highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(*begin)&gt;::type&gt;(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="263"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>RangeParam&gt;</highlight></codeline>
+<codeline lineno="284" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae9db2446a287a468c5893fdcb41aba27_1ae9db2446a287a468c5893fdcb41aba27" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/>RangeParam&amp;&amp;<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref></highlight></codeline>
+<codeline lineno="286"><highlight class="normal">)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(std::begin(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>),<sp/>std::end(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>)))<sp/>{</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a5e4e8b70b4f78e50324fafccd09e61cd_1a5e4e8b70b4f78e50324fafccd09e61cd" kindref="member">rangeToVector</ref>(std::begin(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>),<sp/>std::end(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>));</highlight></codeline>
+<codeline lineno="288"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight><highlight class="comment">//<sp/>***<sp/>Range<sp/>of<sp/>adjacent<sp/>pairs</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator&gt;</highlight></codeline>
+<codeline lineno="296" refid="class_opposite_pair_iterator" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_opposite_pair_iterator_af41a9cd7a3f55d3ff1af05bac3a31a0b_1af41a9cd7a3f55d3ff1af05bac3a31a0b" kindref="member">OppositePairIterator</ref><sp/>{</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="298" refid="class_opposite_pair_iterator_ab87ea5c41077facd4dc564ad95047f2b_1ab87ea5c41077facd4dc564ad95047f2b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">((*std::declval&lt;Iterator&gt;()).first)<sp/><ref refid="class_opposite_pair_iterator_ab87ea5c41077facd4dc564ad95047f2b_1ab87ea5c41077facd4dc564ad95047f2b" kindref="member">InnerValueType1</ref>;</highlight></codeline>
+<codeline lineno="299" refid="class_opposite_pair_iterator_aff07643899b5105ec02b23590b32aa7f_1aff07643899b5105ec02b23590b32aa7f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">((*std::declval&lt;Iterator&gt;()).second)<sp/><ref refid="class_opposite_pair_iterator_aff07643899b5105ec02b23590b32aa7f_1aff07643899b5105ec02b23590b32aa7f" kindref="member">InnerValueType2</ref>;</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="301" refid="class_opposite_pair_iterator_a407f60ecf4dbb2869b6116c2359577d5_1a407f60ecf4dbb2869b6116c2359577d5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Iterator::iterator_category<sp/><ref refid="class_opposite_pair_iterator_a407f60ecf4dbb2869b6116c2359577d5_1a407f60ecf4dbb2869b6116c2359577d5" kindref="member">iterator_category</ref>;</highlight></codeline>
+<codeline lineno="302" refid="class_opposite_pair_iterator_a3368541bdfa1a0df3d5ef7767bc36165_1a3368541bdfa1a0df3d5ef7767bc36165" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::pair&lt;InnerValueType2,<sp/>InnerValueType1&gt;<sp/><ref refid="class_opposite_pair_iterator_a3368541bdfa1a0df3d5ef7767bc36165_1a3368541bdfa1a0df3d5ef7767bc36165" kindref="member">value_type</ref>;</highlight></codeline>
+<codeline lineno="303" refid="class_opposite_pair_iterator_a48a80cbe5f9efa592cfbfd4424ad9534_1a48a80cbe5f9efa592cfbfd4424ad9534" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Iterator::difference_type<sp/><ref refid="class_opposite_pair_iterator_a48a80cbe5f9efa592cfbfd4424ad9534_1a48a80cbe5f9efa592cfbfd4424ad9534" kindref="member">difference_type</ref>;</highlight></codeline>
+<codeline lineno="304" refid="class_opposite_pair_iterator_aca3adbcd3cc7d01448f4193a1f52a2c8_1aca3adbcd3cc7d01448f4193a1f52a2c8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_opposite_pair_iterator_a3368541bdfa1a0df3d5ef7767bc36165_1a3368541bdfa1a0df3d5ef7767bc36165" kindref="member">value_type</ref><sp/>*<ref refid="class_opposite_pair_iterator_aca3adbcd3cc7d01448f4193a1f52a2c8_1aca3adbcd3cc7d01448f4193a1f52a2c8" kindref="member">pointer</ref>;</highlight></codeline>
+<codeline lineno="305" refid="class_opposite_pair_iterator_aba56406aabaf636e90f436dd558c931e_1aba56406aabaf636e90f436dd558c931e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="class_opposite_pair_iterator_a3368541bdfa1a0df3d5ef7767bc36165_1a3368541bdfa1a0df3d5ef7767bc36165" kindref="member">value_type</ref><sp/>&amp;<ref refid="class_opposite_pair_iterator_aba56406aabaf636e90f436dd558c931e_1aba56406aabaf636e90f436dd558c931e" kindref="member">reference</ref>;</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307" refid="class_opposite_pair_iterator_af41a9cd7a3f55d3ff1af05bac3a31a0b_1af41a9cd7a3f55d3ff1af05bac3a31a0b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_opposite_pair_iterator_af41a9cd7a3f55d3ff1af05bac3a31a0b_1af41a9cd7a3f55d3ff1af05bac3a31a0b" kindref="member">OppositePairIterator</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="308" refid="class_opposite_pair_iterator_a56dd69857798a81b579d68d35246af6b_1a56dd69857798a81b579d68d35246af6b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_opposite_pair_iterator_a56dd69857798a81b579d68d35246af6b_1a56dd69857798a81b579d68d35246af6b" kindref="member">OppositePairIterator</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator&amp;<sp/>it):<sp/><ref refid="class_opposite_pair_iterator_aa176d8dbbc1d5585b34362df6a39cc75_1aa176d8dbbc1d5585b34362df6a39cc75" kindref="member">mIt</ref>(it)<sp/>{}</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight></codeline>
+<codeline lineno="310" refid="class_opposite_pair_iterator_a4aaa0ac36e36c0940d801337fd550eef_1a4aaa0ac36e36c0940d801337fd550eef" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_opposite_pair_iterator_af41a9cd7a3f55d3ff1af05bac3a31a0b_1af41a9cd7a3f55d3ff1af05bac3a31a0b" kindref="member">OppositePairIterator</ref>&amp;<sp/><ref refid="class_opposite_pair_iterator_a4aaa0ac36e36c0940d801337fd550eef_1a4aaa0ac36e36c0940d801337fd550eef" kindref="member">operator++</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/>++<ref refid="class_opposite_pair_iterator_aa176d8dbbc1d5585b34362df6a39cc75_1aa176d8dbbc1d5585b34362df6a39cc75" kindref="member">mIt</ref>;</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"></highlight></codeline>
+<codeline lineno="315" refid="class_opposite_pair_iterator_ab95cf6e8b9ab340f8d6e14cbae679e2e_1ab95cf6e8b9ab340f8d6e14cbae679e2e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_opposite_pair_iterator_a3368541bdfa1a0df3d5ef7767bc36165_1a3368541bdfa1a0df3d5ef7767bc36165" kindref="member">value_type</ref><sp/><ref refid="class_opposite_pair_iterator_ab95cf6e8b9ab340f8d6e14cbae679e2e_1ab95cf6e8b9ab340f8d6e14cbae679e2e" kindref="member">operator*</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_opposite_pair_iterator_a3368541bdfa1a0df3d5ef7767bc36165_1a3368541bdfa1a0df3d5ef7767bc36165" kindref="member">value_type</ref>((*mIt).second,<sp/>(*mIt).first);</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319" refid="class_opposite_pair_iterator_ab695e0804f5357e446607fcd1dc11185_1ab695e0804f5357e446607fcd1dc11185" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_opposite_pair_iterator_ab695e0804f5357e446607fcd1dc11185_1ab695e0804f5357e446607fcd1dc11185" kindref="member">operator!=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_opposite_pair_iterator_af41a9cd7a3f55d3ff1af05bac3a31a0b_1af41a9cd7a3f55d3ff1af05bac3a31a0b" kindref="member">OppositePairIterator</ref>&amp;<sp/>it)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_opposite_pair_iterator_aa176d8dbbc1d5585b34362df6a39cc75_1aa176d8dbbc1d5585b34362df6a39cc75" kindref="member">mIt</ref><sp/>!=<sp/>it.<ref refid="class_opposite_pair_iterator_aa176d8dbbc1d5585b34362df6a39cc75_1aa176d8dbbc1d5585b34362df6a39cc75" kindref="member">mIt</ref>;}</highlight></codeline>
+<codeline lineno="320" refid="class_opposite_pair_iterator_a5673f042bdccdfeff2696f0274d4b6e6_1a5673f042bdccdfeff2696f0274d4b6e6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_opposite_pair_iterator_a5673f042bdccdfeff2696f0274d4b6e6_1a5673f042bdccdfeff2696f0274d4b6e6" kindref="member">operator==</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_opposite_pair_iterator_af41a9cd7a3f55d3ff1af05bac3a31a0b_1af41a9cd7a3f55d3ff1af05bac3a31a0b" kindref="member">OppositePairIterator</ref>&amp;<sp/>it)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_opposite_pair_iterator_aa176d8dbbc1d5585b34362df6a39cc75_1aa176d8dbbc1d5585b34362df6a39cc75" kindref="member">mIt</ref><sp/>==<sp/>it.<ref refid="class_opposite_pair_iterator_aa176d8dbbc1d5585b34362df6a39cc75_1aa176d8dbbc1d5585b34362df6a39cc75" kindref="member">mIt</ref>;}</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="323" refid="class_opposite_pair_iterator_aa176d8dbbc1d5585b34362df6a39cc75_1aa176d8dbbc1d5585b34362df6a39cc75" refkind="member"><highlight class="normal"><sp/><sp/>Iterator<sp/><ref refid="class_opposite_pair_iterator_aa176d8dbbc1d5585b34362df6a39cc75_1aa176d8dbbc1d5585b34362df6a39cc75" kindref="member">mIt</ref>;</highlight></codeline>
+<codeline lineno="324"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator&gt;</highlight></codeline>
+<codeline lineno="328" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" refkind="member"><highlight class="normal"><ref refid="class_range" kindref="compound">Range&lt;OppositePairIterator&lt;Iterator&gt;</ref>&gt;<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator&amp;<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator&amp;<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref></highlight></codeline>
+<codeline lineno="331"><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range&lt;OppositePairIterator&lt;Iterator&gt;</ref>&gt;(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>);</highlight></codeline>
+<codeline lineno="333"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"></highlight></codeline>
+<codeline lineno="351"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>RangeParam&gt;</highlight></codeline>
+<codeline lineno="352" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a8088919b7df24a4491403a5a098a5030_1a8088919b7df24a4491403a5a098a5030" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/>RangeParam&amp;&amp;<sp/>r</highlight></codeline>
+<codeline lineno="354"><highlight class="normal">)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(std::begin(r),<sp/>std::end(r)))<sp/>{</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(std::begin(r),<sp/>std::end(r));</highlight></codeline>
+<codeline lineno="356"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight></codeline>
+<codeline lineno="358"><highlight class="normal"></highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>Iterator&gt;</highlight></codeline>
+<codeline lineno="361" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref>(</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator&amp;<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Iterator&amp;<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref></highlight></codeline>
+<codeline lineno="364"><highlight class="normal">)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(<ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)))<sp/>{</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref><sp/>==<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>)</highlight></codeline>
+<codeline lineno="366"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(<ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>));</highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>a<sp/>bit<sp/>tricky.<sp/>What<sp/>we<sp/>really<sp/>want<sp/>is</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>zip(begin,<sp/>end<sp/>-<sp/>1,<sp/>begin<sp/>+<sp/>1,<sp/>end)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="369"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>-1<sp/>is<sp/>bad<sp/>because<sp/>we<sp/>want<sp/>this<sp/>to<sp/>work<sp/>for<sp/>forward<sp/>iterators</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>that<sp/>do<sp/>not<sp/>have<sp/>operator--().<sp/>We<sp/>cannot<sp/>just<sp/>leave<sp/>out<sp/>the<sp/>-1<sp/>because</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>zip<sp/>defines<sp/>the<sp/>length<sp/>of<sp/>the<sp/>range<sp/>according<sp/>to<sp/>the<sp/>first<sp/>component</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="372"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>range.<sp/>However,<sp/>if<sp/>we<sp/>swap<sp/>the<sp/>ranges<sp/>around<sp/>to</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>zip(begin<sp/>+<sp/>1,<sp/>end,<sp/>begin,<sp/>end<sp/>-<sp/>1)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>then<sp/>we<sp/>can<sp/>replace<sp/>this<sp/>by</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>zip(begin<sp/>+<sp/>1,<sp/>end,<sp/>begin,<sp/>end)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>because<sp/>zip<sp/>does<sp/>not<sp/>actually<sp/>care<sp/>about<sp/>the<sp/>length<sp/>of<sp/>the<sp/>second<sp/>range.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="377"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>problem<sp/>now<sp/>is<sp/>that<sp/>the<sp/>pairs<sp/>of<sp/>elements<sp/>will<sp/>be<sp/>the<sp/>wrong<sp/>way</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>around,<sp/>but<sp/>oppositePairRange<sp/>solves<sp/>that<sp/>nicely.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>pastBegin<sp/>=<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>;</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/>++pastBegin;</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a37fe78b24a3cde9b89639bd576b5f541_1a37fe78b24a3cde9b89639bd576b5f541" kindref="member">oppositePairRange</ref>(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a29d045d9800793ef42fae9da995ce52b_1a29d045d9800793ef42fae9da995ce52b" kindref="member">zip</ref>(pastBegin,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>,<sp/><ref refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" kindref="member">begin</ref>,<sp/><ref refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" kindref="member">end</ref>));</highlight></codeline>
+<codeline lineno="382"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+<codeline lineno="384"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>RangeParam&gt;</highlight></codeline>
+<codeline lineno="385" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ae771518c5a873ade457c00b9c14aa262_1ae771518c5a873ade457c00b9c14aa262" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref>(</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"><sp/><sp/>RangeParam&amp;&amp;<sp/>r</highlight></codeline>
+<codeline lineno="387"><highlight class="normal">)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref>(std::begin(r),<sp/>std::end(r)))<sp/>{</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a015465b34e2f8e0c1b61cc2ea76c4add_1a015465b34e2f8e0c1b61cc2ea76c4add" kindref="member">adjPairRange</ref>(std::begin(r),<sp/>std::end(r));</highlight></codeline>
+<codeline lineno="389"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"></highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight><highlight class="comment">//<sp/>***<sp/>Flatten<sp/>range<sp/>of<sp/>ranges<sp/>into<sp/>a<sp/>single<sp/>range</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="392"><highlight class="normal"></highlight></codeline>
+<codeline lineno="393" refid="namespace_flatten_namespace" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_flatten_namespace" kindref="compound">FlattenNamespace</ref><sp/>{</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>OuterIterator&gt;</highlight></codeline>
+<codeline lineno="395" refid="struct_flatten_namespace_1_1_inner_iterator_type" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="struct_flatten_namespace_1_1_inner_iterator_type" kindref="compound">InnerIteratorType</ref><sp/>{</highlight></codeline>
+<codeline lineno="396" refid="struct_flatten_namespace_1_1_inner_iterator_type_ad6e5d13a72be08133aae9fcd25defd54_1ad6e5d13a72be08133aae9fcd25defd54" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::decay&lt;</highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(std::begin(*OuterIterator()))&gt;<ref refid="struct_flatten_namespace_1_1_inner_iterator_type_ad6e5d13a72be08133aae9fcd25defd54_1ad6e5d13a72be08133aae9fcd25defd54" kindref="member">::type</ref><sp/><ref refid="struct_flatten_namespace_1_1_inner_iterator_type_ad6e5d13a72be08133aae9fcd25defd54_1ad6e5d13a72be08133aae9fcd25defd54" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="398"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"></highlight></codeline>
+<codeline lineno="405"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>OuterIterator&gt;</highlight></codeline>
+<codeline lineno="406" refid="class_flatten" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_flatten_a787eb2d7b5095871610fd75c074b476d_1a787eb2d7b5095871610fd75c074b476d" kindref="member">Flatten</ref><sp/>{</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="408"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Yes,<sp/>it<sp/>would<sp/>inded<sp/>make<sp/>more<sp/>sense<sp/>to<sp/>inline<sp/>what<sp/>InnerIteratorType&lt;&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="409"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>does<sp/>here.<sp/>That<sp/>worked<sp/>fine<sp/>on<sp/>gcc<sp/>4.7.3.<sp/>It<sp/>did<sp/>not<sp/>compile<sp/>on</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>MSVC<sp/>2012.<sp/>I<sp/>spent<sp/>a<sp/>lot<sp/>of<sp/>time<sp/>trying<sp/>to<sp/>track<sp/>down<sp/>the<sp/>problem</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="411"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>and<sp/>as<sp/>far<sp/>as<sp/>I<sp/>can<sp/>tell,<sp/>it<sp/>is<sp/>a<sp/>compiler<sp/>bug.<sp/>The<sp/>work-around</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="412"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>with<sp/>InnerIteratorType<sp/>works<sp/>and<sp/>I&apos;m<sp/>going<sp/>to<sp/>leave<sp/>it<sp/>at<sp/>that.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="413"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="struct_flatten_namespace_1_1_inner_iterator_type_ad6e5d13a72be08133aae9fcd25defd54_1ad6e5d13a72be08133aae9fcd25defd54" kindref="member">FlattenNamespace::InnerIteratorType&lt;OuterIterator&gt;::type</ref></highlight></codeline>
+<codeline lineno="414" refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" kindref="member">InnerIterator</ref>;</highlight></codeline>
+<codeline lineno="415"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::iterator_traits&lt;InnerIterator&gt;::difference_type</highlight></codeline>
+<codeline lineno="416" refid="class_flatten_a4ceb35215cb2548fe1c6a6dad4279e73_1a4ceb35215cb2548fe1c6a6dad4279e73" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flatten_a4ceb35215cb2548fe1c6a6dad4279e73_1a4ceb35215cb2548fe1c6a6dad4279e73" kindref="member">difference_type</ref>;</highlight></codeline>
+<codeline lineno="417" refid="class_flatten_ae0d415b362361be6cb8e3a9e05f0130d_1ae0d415b362361be6cb8e3a9e05f0130d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::iterator_traits&lt;InnerIterator&gt;::value_type<sp/><ref refid="class_flatten_ae0d415b362361be6cb8e3a9e05f0130d_1ae0d415b362361be6cb8e3a9e05f0130d" kindref="member">value_type</ref>;</highlight></codeline>
+<codeline lineno="418" refid="class_flatten_a10c68786520e358516dc1abac72bbef3_1a10c68786520e358516dc1abac72bbef3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::iterator_traits&lt;InnerIterator&gt;::pointer<sp/><ref refid="class_flatten_a10c68786520e358516dc1abac72bbef3_1a10c68786520e358516dc1abac72bbef3" kindref="member">pointer</ref>;</highlight></codeline>
+<codeline lineno="419" refid="class_flatten_a7e829ef644e345c7e92a2e743a848a03_1a7e829ef644e345c7e92a2e743a848a03" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::iterator_traits&lt;InnerIterator&gt;::reference<sp/><ref refid="class_flatten_a7e829ef644e345c7e92a2e743a848a03_1a7e829ef644e345c7e92a2e743a848a03" kindref="member">reference</ref>;</highlight></codeline>
+<codeline lineno="420"><highlight class="normal"></highlight></codeline>
+<codeline lineno="421"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>It<sp/>would<sp/>be<sp/>possible<sp/>to<sp/>do<sp/>something<sp/>fancy<sp/>here<sp/>to<sp/>identify<sp/>the<sp/>exact</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="422"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>most<sp/>general<sp/>iterator<sp/>category.<sp/>I<sp/>have<sp/>not<sp/>done<sp/>that<sp/>since<sp/>I<sp/>have<sp/>not</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="423"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>needed<sp/>it<sp/>so<sp/>far.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="424" refid="class_flatten_a494785d5dac519f485f6ef1e0fe3041a_1a494785d5dac519f485f6ef1e0fe3041a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::forward_iterator_tag<sp/><ref refid="class_flatten_a494785d5dac519f485f6ef1e0fe3041a_1a494785d5dac519f485f6ef1e0fe3041a" kindref="member">iterator_category</ref>;</highlight></codeline>
+<codeline lineno="425"><highlight class="normal"></highlight></codeline>
+<codeline lineno="426" refid="class_flatten_a787eb2d7b5095871610fd75c074b476d_1a787eb2d7b5095871610fd75c074b476d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flatten_a787eb2d7b5095871610fd75c074b476d_1a787eb2d7b5095871610fd75c074b476d" kindref="member">Flatten</ref>()<sp/>{}</highlight></codeline>
+<codeline lineno="427" refid="class_flatten_a6f0a4bb29200ae2749995eea18bf794c_1a6f0a4bb29200ae2749995eea18bf794c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flatten_a6f0a4bb29200ae2749995eea18bf794c_1a6f0a4bb29200ae2749995eea18bf794c" kindref="member">Flatten</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>OuterIterator<sp/>outerBegin,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>OuterIterator<sp/>outerEnd):</highlight></codeline>
+<codeline lineno="428"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>(outerBegin),</highlight></codeline>
+<codeline lineno="429"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flatten_a9635eb53d3842d4702b7727285cb569a_1a9635eb53d3842d4702b7727285cb569a" kindref="member">mOuterEnd</ref>(outerEnd)</highlight></codeline>
+<codeline lineno="430"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="431"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_flatten_a6492d38ca99aee603b729a79df9758de_1a6492d38ca99aee603b729a79df9758de" kindref="member">adjustOuter</ref>();</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" kindref="member">debugAssertValid</ref>());</highlight></codeline>
+<codeline lineno="433"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="434"><highlight class="normal"></highlight></codeline>
+<codeline lineno="435" refid="class_flatten_a7990167a76fe3f7a510e37562f2da65e_1a7990167a76fe3f7a510e37562f2da65e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flatten_a787eb2d7b5095871610fd75c074b476d_1a787eb2d7b5095871610fd75c074b476d" kindref="member">Flatten</ref>&amp;<sp/><ref refid="class_flatten_a7990167a76fe3f7a510e37562f2da65e_1a7990167a76fe3f7a510e37562f2da65e" kindref="member">operator++</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="436"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" kindref="member">debugAssertValid</ref>());</highlight></codeline>
+<codeline lineno="437"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(!<ref refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" kindref="member">atEnd</ref>());</highlight></codeline>
+<codeline lineno="438"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" kindref="member">mInner</ref><sp/>!=<sp/>std::end(*<ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>));</highlight></codeline>
+<codeline lineno="439"><highlight class="normal"></highlight></codeline>
+<codeline lineno="440"><highlight class="normal"><sp/><sp/><sp/><sp/>++<ref refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" kindref="member">mInner</ref>;</highlight></codeline>
+<codeline lineno="441"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" kindref="member">mInner</ref><sp/>==<sp/>std::end(*<ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>))<sp/>{</highlight></codeline>
+<codeline lineno="442"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>++<ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>;</highlight></codeline>
+<codeline lineno="443"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_flatten_a6492d38ca99aee603b729a79df9758de_1a6492d38ca99aee603b729a79df9758de" kindref="member">adjustOuter</ref>();</highlight></codeline>
+<codeline lineno="444"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="445"><highlight class="normal"></highlight></codeline>
+<codeline lineno="446"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" kindref="member">debugAssertValid</ref>());</highlight></codeline>
+<codeline lineno="447"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="448"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="449"><highlight class="normal"></highlight></codeline>
+<codeline lineno="450" refid="class_flatten_a58ed7aa4007f74f4845afe03cc0f25a9_1a58ed7aa4007f74f4845afe03cc0f25a9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(*std::declval&lt;InnerIterator&gt;())<sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal">*()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(!<ref refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" kindref="member">atEnd</ref>());</highlight></codeline>
+<codeline lineno="452"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*<ref refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" kindref="member">mInner</ref>;</highlight></codeline>
+<codeline lineno="453"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="454"><highlight class="normal"></highlight></codeline>
+<codeline lineno="455" refid="class_flatten_a67ec661392e13b6a13207b0aa5b87ee9_1a67ec661392e13b6a13207b0aa5b87ee9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_flatten_a67ec661392e13b6a13207b0aa5b87ee9_1a67ec661392e13b6a13207b0aa5b87ee9" kindref="member">equal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_flatten_a787eb2d7b5095871610fd75c074b476d_1a787eb2d7b5095871610fd75c074b476d" kindref="member">Flatten</ref>&amp;<sp/>f)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="456"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" kindref="member">debugAssertValid</ref>());</highlight></codeline>
+<codeline lineno="457"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(f.<ref refid="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" kindref="member">debugAssertValid</ref>());</highlight></codeline>
+<codeline lineno="458"><highlight class="normal"></highlight></codeline>
+<codeline lineno="459"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" kindref="member">atEnd</ref>())</highlight></codeline>
+<codeline lineno="460"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>f.<ref refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" kindref="member">atEnd</ref>();</highlight></codeline>
+<codeline lineno="461"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(f.<ref refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" kindref="member">atEnd</ref>())</highlight></codeline>
+<codeline lineno="462"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="463"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="464"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" kindref="member">mInner</ref><sp/>==<sp/>f.<ref refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" kindref="member">mInner</ref>;</highlight></codeline>
+<codeline lineno="465"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="466"><highlight class="normal"></highlight></codeline>
+<codeline lineno="467" refid="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_flatten_a2bf4af32bfdad0ba0f19cee08087dc99_1a2bf4af32bfdad0ba0f19cee08087dc99" kindref="member">debugAssertValid</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="468"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" kindref="member">MATHICGB_ASSERT</ref>(<ref refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" kindref="member">atEnd</ref>()<sp/>||<sp/><ref refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" kindref="member">mInner</ref><sp/>!=<sp/>std::end(*<ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>));</highlight></codeline>
+<codeline lineno="469"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="470"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="471"><highlight class="normal"></highlight></codeline>
+<codeline lineno="472"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="473" refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" kindref="member">atEnd</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref><sp/>==<sp/><ref refid="class_flatten_a9635eb53d3842d4702b7727285cb569a_1a9635eb53d3842d4702b7727285cb569a" kindref="member">mOuterEnd</ref>;}</highlight></codeline>
+<codeline lineno="474"><highlight class="normal"></highlight></codeline>
+<codeline lineno="475" refid="class_flatten_a6492d38ca99aee603b729a79df9758de_1a6492d38ca99aee603b729a79df9758de" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_flatten_a6492d38ca99aee603b729a79df9758de_1a6492d38ca99aee603b729a79df9758de" kindref="member">adjustOuter</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="476"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(;<sp/>!<ref refid="class_flatten_a89ccc2d8c89eda5a12042611a057e923_1a89ccc2d8c89eda5a12042611a057e923" kindref="member">atEnd</ref>();<sp/>++<ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="477"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::begin(*<ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>)<sp/>!=<sp/>std::end(*<ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>))<sp/>{</highlight></codeline>
+<codeline lineno="478"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" kindref="member">mInner</ref><sp/>=<sp/>std::begin(*<ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>);</highlight></codeline>
+<codeline lineno="479"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="480"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="481"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="482"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="483"><highlight class="normal"></highlight></codeline>
+<codeline lineno="484" refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_flatten_ac75ae24c2cdc360826f14499c8b49f2c_1ac75ae24c2cdc360826f14499c8b49f2c" kindref="member">InnerIterator</ref><sp/><ref refid="class_flatten_a48cb8665379bdef7339aa4b5366c2c36_1a48cb8665379bdef7339aa4b5366c2c36" kindref="member">mInner</ref>;</highlight></codeline>
+<codeline lineno="485" refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" refkind="member"><highlight class="normal"><sp/><sp/>OuterIterator<sp/><ref refid="class_flatten_a693ba53ccc2d80a6f79fcf10280874d4_1a693ba53ccc2d80a6f79fcf10280874d4" kindref="member">mOuter</ref>;</highlight></codeline>
+<codeline lineno="486" refid="class_flatten_a9635eb53d3842d4702b7727285cb569a_1a9635eb53d3842d4702b7727285cb569a" refkind="member"><highlight class="normal"><sp/><sp/>OuterIterator<sp/><ref refid="class_flatten_a9635eb53d3842d4702b7727285cb569a_1a9635eb53d3842d4702b7727285cb569a" kindref="member">mOuterEnd</ref>;</highlight></codeline>
+<codeline lineno="487"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="488"><highlight class="normal"></highlight></codeline>
+<codeline lineno="489"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>OuterIterator&gt;</highlight></codeline>
+<codeline lineno="490" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_aa369f8bcda9e6303823e38e73138e5d3_1aa369f8bcda9e6303823e38e73138e5d3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_aa369f8bcda9e6303823e38e73138e5d3_1aa369f8bcda9e6303823e38e73138e5d3" kindref="member">operator==</ref>(</highlight></codeline>
+<codeline lineno="491"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_flatten" kindref="compound">Flatten&lt;OuterIterator&gt;</ref>&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="492"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_flatten" kindref="compound">Flatten&lt;OuterIterator&gt;</ref>&amp;<sp/>b</highlight></codeline>
+<codeline lineno="493"><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="494"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a.<ref refid="class_flatten_a67ec661392e13b6a13207b0aa5b87ee9_1a67ec661392e13b6a13207b0aa5b87ee9" kindref="member">equal</ref>(b);</highlight></codeline>
+<codeline lineno="495"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="496"><highlight class="normal"></highlight></codeline>
+<codeline lineno="497"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>OuterIterator&gt;</highlight></codeline>
+<codeline lineno="498" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_affb4e3320f9f12ed574576602fff6a64_1affb4e3320f9f12ed574576602fff6a64" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_affb4e3320f9f12ed574576602fff6a64_1affb4e3320f9f12ed574576602fff6a64" kindref="member">operator!=</ref>(</highlight></codeline>
+<codeline lineno="499"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_flatten" kindref="compound">Flatten&lt;OuterIterator&gt;</ref>&amp;<sp/>a,</highlight></codeline>
+<codeline lineno="500"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_flatten" kindref="compound">Flatten&lt;OuterIterator&gt;</ref>&amp;<sp/>b</highlight></codeline>
+<codeline lineno="501"><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="502"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!(a<sp/>==<sp/>b);</highlight></codeline>
+<codeline lineno="503"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="504"><highlight class="normal"></highlight></codeline>
+<codeline lineno="505"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>OuterIterator&gt;</highlight></codeline>
+<codeline lineno="506" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_adaeea0a0b7b95964908f585a13564439_1adaeea0a0b7b95964908f585a13564439" refkind="member"><highlight class="normal"><ref refid="class_flatten" kindref="compound">Flatten&lt;OuterIterator&gt;</ref><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_adaeea0a0b7b95964908f585a13564439_1adaeea0a0b7b95964908f585a13564439" kindref="member">makeFlatten</ref>(</highlight></codeline>
+<codeline lineno="507"><highlight class="normal"><sp/><sp/>OuterIterator<sp/>outerIterator,<sp/></highlight></codeline>
+<codeline lineno="508"><highlight class="normal"><sp/><sp/>OuterIterator<sp/>outerEnd</highlight></codeline>
+<codeline lineno="509"><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="510"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_flatten" kindref="compound">Flatten&lt;OuterIterator&gt;</ref>(outerIterator,<sp/>outerEnd);</highlight></codeline>
+<codeline lineno="511"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="512"><highlight class="normal"></highlight></codeline>
+<codeline lineno="514"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>OuterIterator&gt;</highlight></codeline>
+<codeline lineno="515" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" refkind="member"><highlight class="normal"><ref refid="class_range" kindref="compound">Range&lt;Flatten&lt;OuterIterator&gt;</ref>&gt;<sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten</ref>(</highlight></codeline>
+<codeline lineno="516"><highlight class="normal"><sp/><sp/>OuterIterator<sp/>outerBegin,</highlight></codeline>
+<codeline lineno="517"><highlight class="normal"><sp/><sp/>OuterIterator<sp/>outerEnd</highlight></codeline>
+<codeline lineno="518"><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="519"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" kindref="member">range</ref>(</highlight></codeline>
+<codeline lineno="520"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_adaeea0a0b7b95964908f585a13564439_1adaeea0a0b7b95964908f585a13564439" kindref="member">makeFlatten</ref>(outerBegin,<sp/>outerEnd),</highlight></codeline>
+<codeline lineno="521"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_adaeea0a0b7b95964908f585a13564439_1adaeea0a0b7b95964908f585a13564439" kindref="member">makeFlatten</ref>(outerEnd,<sp/>outerEnd)</highlight></codeline>
+<codeline lineno="522"><highlight class="normal"><sp/><sp/>);</highlight></codeline>
+<codeline lineno="523"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="524"><highlight class="normal"></highlight></codeline>
+<codeline lineno="536"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>OuterRange&gt;</highlight></codeline>
+<codeline lineno="537" refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac50b9f187388ef8c61db8ae22fcaede1_1ac50b9f187388ef8c61db8ae22fcaede1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten</ref>(</highlight></codeline>
+<codeline lineno="538"><highlight class="normal"><sp/><sp/>OuterRange&amp;&amp;<sp/>outerRange</highlight></codeline>
+<codeline lineno="539"><highlight class="normal">)<sp/>-&gt;<sp/></highlight><highlight class="keyword">decltype</highlight><highlight class="normal">(<ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten</ref>(std::begin(outerRange),<sp/>std::end(outerRange)))<sp/>{</highlight></codeline>
+<codeline lineno="540"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_a9fabc29e1c3725135cf960581059c8e1_1a9fabc29e1c3725135cf960581059c8e1" kindref="member">flatten</ref>(std::begin(outerRange),<sp/>std::end(outerRange));</highlight></codeline>
+<codeline lineno="541"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="542"><highlight class="normal"></highlight></codeline>
+<codeline lineno="543"><highlight class="normal"><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a3dd074a16d8db719c612d38d30802066_1a3dd074a16d8db719c612d38d30802066" kindref="member">MATHICGB_NAMESPACE_END</ref></highlight></codeline>
+<codeline lineno="544"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/mathicgb/Range.hpp"/>
+  </compounddef>
+</doxygen>

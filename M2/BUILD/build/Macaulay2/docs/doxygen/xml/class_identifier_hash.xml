@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_identifier_hash" kind="class" language="C++" prot="public">
+    <compoundname>IdentifierHash</compoundname>
+    <includes refid="_basic_poly_8hpp" local="no">BasicPoly.hpp</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_identifier_hash_a8ab592b81560295a17496ac7451735b9_1a8ab592b81560295a17496ac7451735b9" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::string &gt;</type>
+        <definition>std::vector&lt;std::string&gt; IdentifierHash::mAllocatedStrings</definition>
+        <argsstring></argsstring>
+        <name>mAllocatedStrings</name>
+        <qualifiedname>IdentifierHash::mAllocatedStrings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/BasicPoly.hpp" line="109" column="15" bodyfile="Macaulay2/e/BasicPoly.hpp" bodystart="109" bodyend="-1"/>
+        <referencedby refid="class_identifier_hash_a0a8f5fea26cd7043edc2e315a53da3a4_1a0a8f5fea26cd7043edc2e315a53da3a4" compoundref="_basic_poly_8hpp" startline="113" endline="121">IdentifierHash</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_identifier_hash_ab5d8976ce91f04be0910c1cd687d1c2c_1ab5d8976ce91f04be0910c1cd687d1c2c" prot="private" static="no" mutable="no">
+        <type>std::unordered_map&lt; std::string_view, <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>std::unordered_map&lt;std::string_view, int&gt; IdentifierHash::mMap</definition>
+        <argsstring></argsstring>
+        <name>mMap</name>
+        <qualifiedname>IdentifierHash::mMap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/BasicPoly.hpp" line="110" column="22" bodyfile="Macaulay2/e/BasicPoly.hpp" bodystart="110" bodyend="-1"/>
+        <referencedby refid="class_identifier_hash_a19f73cee41bebee1372d40b41ffef836_1a19f73cee41bebee1372d40b41ffef836" compoundref="_basic_poly_8hpp" startline="123" endline="127">find</referencedby>
+        <referencedby refid="class_identifier_hash_a0a8f5fea26cd7043edc2e315a53da3a4_1a0a8f5fea26cd7043edc2e315a53da3a4" compoundref="_basic_poly_8hpp" startline="113" endline="121">IdentifierHash</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_identifier_hash_a84ce4ef8de78b86382e3e97b7c5b43fa_1a84ce4ef8de78b86382e3e97b7c5b43fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IdentifierHash::IdentifierHash</definition>
+        <argsstring>()=default</argsstring>
+        <name>IdentifierHash</name>
+        <qualifiedname>IdentifierHash::IdentifierHash</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/BasicPoly.hpp" line="112" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="class_identifier_hash_a0a8f5fea26cd7043edc2e315a53da3a4_1a0a8f5fea26cd7043edc2e315a53da3a4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>IdentifierHash::IdentifierHash</definition>
+        <argsstring>(std::vector&lt; std::string &gt; &amp;idens)</argsstring>
+        <name>IdentifierHash</name>
+        <qualifiedname>IdentifierHash::IdentifierHash</qualifiedname>
+        <param>
+          <type>std::vector&lt; std::string &gt; &amp;</type>
+          <declname>idens</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/BasicPoly.hpp" line="113" column="3" bodyfile="Macaulay2/e/BasicPoly.hpp" bodystart="113" bodyend="121"/>
+        <references refid="class_identifier_hash_a8ab592b81560295a17496ac7451735b9_1a8ab592b81560295a17496ac7451735b9" compoundref="_basic_poly_8hpp" startline="109">mAllocatedStrings</references>
+        <references refid="class_identifier_hash_ab5d8976ce91f04be0910c1cd687d1c2c_1ab5d8976ce91f04be0910c1cd687d1c2c" compoundref="_basic_poly_8hpp" startline="110">mMap</references>
+      </memberdef>
+      <memberdef kind="function" id="class_identifier_hash_a19f73cee41bebee1372d40b41ffef836_1a19f73cee41bebee1372d40b41ffef836" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int IdentifierHash::find</definition>
+        <argsstring>(std::string_view s) const</argsstring>
+        <name>find</name>
+        <qualifiedname>IdentifierHash::find</qualifiedname>
+        <param>
+          <type>std::string_view</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/BasicPoly.hpp" line="123" column="8" bodyfile="Macaulay2/e/BasicPoly.hpp" bodystart="123" bodyend="127"/>
+        <references refid="class_identifier_hash_ab5d8976ce91f04be0910c1cd687d1c2c_1ab5d8976ce91f04be0910c1cd687d1c2c" compoundref="_basic_poly_8hpp" startline="110">mMap</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <referencedby refid="_basic_poly_list_parser_8cpp_a0e64ee6f5c0bc61c161bc78e13ce5cfb_1a0e64ee6f5c0bc61c161bc78e13ce5cfb" compoundref="_basic_poly_list_parser_8cpp" startline="96" endline="111">readIdentifier</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><ref refid="class_identifier_hash" kindref="compound">IdentifierHash</ref>: used to facilitate parsing of polynomials from strings and files. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>IdentifierHash</label>
+        <link refid="class_identifier_hash"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mAllocatedStrings</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mMap</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>K</label>
+      </node>
+      <node id="6">
+        <label>T</label>
+      </node>
+      <node id="10">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="9">
+        <label>std::basic_string_view&lt; Char &gt;</label>
+      </node>
+      <node id="3">
+        <label>std::string</label>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>std::string_view</label>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>std::unordered_map&lt; K, T &gt;</label>
+        <childnode refid="12" relation="usage">
+          <edgelabel>keys</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::unordered_map&lt; std::string_view, int &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>keys</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; std::string_view, int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/BasicPoly.hpp" line="106" column="1" bodyfile="Macaulay2/e/BasicPoly.hpp" bodystart="107" bodyend="128"/>
+    <listofallmembers>
+      <member refid="class_identifier_hash_a19f73cee41bebee1372d40b41ffef836_1a19f73cee41bebee1372d40b41ffef836" prot="public" virt="non-virtual"><scope>IdentifierHash</scope><name>find</name></member>
+      <member refid="class_identifier_hash_a84ce4ef8de78b86382e3e97b7c5b43fa_1a84ce4ef8de78b86382e3e97b7c5b43fa" prot="public" virt="non-virtual"><scope>IdentifierHash</scope><name>IdentifierHash</name></member>
+      <member refid="class_identifier_hash_a0a8f5fea26cd7043edc2e315a53da3a4_1a0a8f5fea26cd7043edc2e315a53da3a4" prot="public" virt="non-virtual"><scope>IdentifierHash</scope><name>IdentifierHash</name></member>
+      <member refid="class_identifier_hash_a8ab592b81560295a17496ac7451735b9_1a8ab592b81560295a17496ac7451735b9" prot="private" virt="non-virtual"><scope>IdentifierHash</scope><name>mAllocatedStrings</name></member>
+      <member refid="class_identifier_hash_ab5d8976ce91f04be0910c1cd687d1c2c_1ab5d8976ce91f04be0910c1cd687d1c2c" prot="private" virt="non-virtual"><scope>IdentifierHash</scope><name>mMap</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

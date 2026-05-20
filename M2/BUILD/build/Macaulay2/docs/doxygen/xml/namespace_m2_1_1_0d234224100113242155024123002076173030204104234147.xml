@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_m2_1_1_0d234224100113242155024123002076173030204104234147" kind="namespace" language="C++">
+    <compoundname>M2</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="M2/Macaulay2/e/aring-tower.cpp" line="186" column="1"/>
+  </compounddef>
+</doxygen>

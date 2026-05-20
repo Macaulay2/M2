@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_schreyer_frame_1_1_level" kind="struct" language="C++" prot="private">
+    <compoundname>SchreyerFrame::Level</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_schreyer_frame_1_1_level_a7c262eb987643c2cda4baf260bb8fbf5_1a7c262eb987643c2cda4baf260bb8fbf5" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_schreyer_frame_a2e81a03992e5beca83586384f3200cfb_1a2e81a03992e5beca83586384f3200cfb" kindref="member">FrameElement</ref> &gt;</type>
+        <definition>std::vector&lt;FrameElement&gt; SchreyerFrame::Level::mElements</definition>
+        <argsstring></argsstring>
+        <name>mElements</name>
+        <qualifiedname>SchreyerFrame::Level::mElements</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp" line="240" column="17" bodyfile="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_schreyer_frame_1_1_level_aa14a803027e9b8d12694ea9042e203d4_1aa14a803027e9b8d12694ea9042e203d4" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_res_schreyer_order" kindref="compound">ResSchreyerOrder</ref></type>
+        <definition>ResSchreyerOrder SchreyerFrame::Level::mSchreyerOrder</definition>
+        <argsstring></argsstring>
+        <name>mSchreyerOrder</name>
+        <qualifiedname>SchreyerFrame::Level::mSchreyerOrder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp" line="241" column="22" bodyfile="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp" bodystart="241" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>One homological level of the frame: the <computeroutput><ref refid="class_schreyer_frame_a2e81a03992e5beca83586384f3200cfb_1a2e81a03992e5beca83586384f3200cfb" kindref="member">FrameElement</ref></computeroutput>s living at that level plus the Schreyer order used to break ties among them. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="struct_schreyer_frame_1_1_level_a7c262eb987643c2cda4baf260bb8fbf5_1a7c262eb987643c2cda4baf260bb8fbf5" kindref="member">mElements</ref></computeroutput> is indexed by <computeroutput><ref refid="res-monomial-types_8hpp_a0ebe4a3f6e95e1de53e835b3db65b784_1a0ebe4a3f6e95e1de53e835b3db65b784" kindref="member">component_index</ref></computeroutput>. <computeroutput><ref refid="struct_schreyer_frame_1_1_level_aa14a803027e9b8d12694ea9042e203d4_1aa14a803027e9b8d12694ea9042e203d4" kindref="member">mSchreyerOrder</ref></computeroutput> carries the per-level data that the next level&apos;s monomial order needs to inherit. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="8">
+        <label>ElementArray</label>
+        <link refid="class_element_array"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ResPolynomial</label>
+        <link refid="class_res_polynomial"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>npoly_destructor</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>coeffs</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>monoms</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>ResSchreyerOrder</label>
+        <link refid="struct_res_schreyer_order"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mTotalMonom</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mTieBreaker</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>SchreyerFrame::Level</label>
+        <link refid="struct_schreyer_frame_1_1_level"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mElements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mSchreyerOrder</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>SchreyerFrameTypes::FrameElement</label>
+        <link refid="struct_schreyer_frame_types_1_1_frame_element"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+          <edgelabel>mMonom</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mDegree</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mSyzygy</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>T</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>int32_t</label>
+      </node>
+      <node id="7">
+        <label>long</label>
+      </node>
+      <node id="11">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="12" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; SchreyerFrameTypes::FrameElement &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; SchreyerFrameTypes::FrameElement &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>std::vector&lt; component_index &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; component_index &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>std::vector&lt; res_monomial_word &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; res_monomial_word &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>std::vector&lt; res_packed_monomial &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; res_packed_monomial &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp" line="238" column="3" bodyfile="Macaulay2/e/schreyer-resolution/res-schreyer-frame.hpp" bodystart="239" bodyend="242"/>
+    <listofallmembers>
+      <member refid="struct_schreyer_frame_1_1_level_a7c262eb987643c2cda4baf260bb8fbf5_1a7c262eb987643c2cda4baf260bb8fbf5" prot="public" virt="non-virtual"><scope>SchreyerFrame::Level</scope><name>mElements</name></member>
+      <member refid="struct_schreyer_frame_1_1_level_aa14a803027e9b8d12694ea9042e203d4_1aa14a803027e9b8d12694ea9042e203d4" prot="public" virt="non-virtual"><scope>SchreyerFrame::Level</scope><name>mSchreyerOrder</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

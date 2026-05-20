@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_comparer" kind="class" language="C++" prot="public">
+    <compoundname>mathic::Comparer</compoundname>
+    <includes refid="_comparer_8h" local="no">Comparer.h</includes>
+    <templateparamlist>
+      <param>
+        <type>class C</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_comparer_a4a5c58d6248d538785ac8b60386674d4_1a4a5c58d6248d538785ac8b60386674d4" prot="private" static="no" mutable="no">
+        <type>const C &amp;</type>
+        <definition>const C&amp; mathic::Comparer&lt; C &gt;::_conf</definition>
+        <argsstring></argsstring>
+        <name>_conf</name>
+        <qualifiedname>mathic::Comparer::_conf</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Comparer.h" line="14" column="13" bodyfile="submodules/mathic/src/mathic/Comparer.h" bodystart="14" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_comparer_a927f58baf03cfcb7bb7894fa576c5e0e_1a927f58baf03cfcb7bb7894fa576c5e0e" compoundref="_comparer_8h" startline="8" endline="8">mathic::Comparer&lt; C &gt;::Comparer</referencedby>
+        <referencedby refid="classmathic_1_1_comparer_a132b3ff2060b2ee75f2ab3103ede800b_1a132b3ff2060b2ee75f2ab3103ede800b" compoundref="_comparer_8h" startline="10" endline="12">mathic::Comparer&lt; C &gt;::operator()</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_comparer_a927f58baf03cfcb7bb7894fa576c5e0e_1a927f58baf03cfcb7bb7894fa576c5e0e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::Comparer&lt; C &gt;::Comparer</definition>
+        <argsstring>(const C &amp;conf)</argsstring>
+        <name>Comparer</name>
+        <qualifiedname>mathic::Comparer::Comparer</qualifiedname>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Comparer.h" line="8" column="3" bodyfile="submodules/mathic/src/mathic/Comparer.h" bodystart="8" bodyend="8"/>
+        <references refid="classmathic_1_1_comparer_a4a5c58d6248d538785ac8b60386674d4_1a4a5c58d6248d538785ac8b60386674d4" compoundref="_comparer_8h" startline="14">mathic::Comparer&lt; C &gt;::_conf</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_comparer_a132b3ff2060b2ee75f2ab3103ede800b_1a132b3ff2060b2ee75f2ab3103ede800b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class A</type>
+          </param>
+          <param>
+            <type>class B</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::Comparer&lt; C &gt;::operator()</definition>
+        <argsstring>(const A &amp;a, const B &amp;b) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>mathic::Comparer::operator()</qualifiedname>
+        <param>
+          <type>const A &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const B &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/Comparer.h" line="10" column="8" bodyfile="submodules/mathic/src/mathic/Comparer.h" bodystart="10" bodyend="12"/>
+        <references refid="classmathic_1_1_comparer_a4a5c58d6248d538785ac8b60386674d4_1a4a5c58d6248d538785ac8b60386674d4" compoundref="_comparer_8h" startline="14">mathic::Comparer&lt; C &gt;::_conf</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>C</label>
+      </node>
+      <node id="1">
+        <label>mathic::Comparer&lt; C &gt;</label>
+        <link refid="classmathic_1_1_comparer"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_conf</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/Comparer.h" line="6" column="5" bodyfile="submodules/mathic/src/mathic/Comparer.h" bodystart="6" bodyend="15"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_comparer_a4a5c58d6248d538785ac8b60386674d4_1a4a5c58d6248d538785ac8b60386674d4" prot="private" virt="non-virtual"><scope>mathic::Comparer</scope><name>_conf</name></member>
+      <member refid="classmathic_1_1_comparer_a927f58baf03cfcb7bb7894fa576c5e0e_1a927f58baf03cfcb7bb7894fa576c5e0e" prot="public" virt="non-virtual"><scope>mathic::Comparer</scope><name>Comparer</name></member>
+      <member refid="classmathic_1_1_comparer_a132b3ff2060b2ee75f2ab3103ede800b_1a132b3ff2060b2ee75f2ab3103ede800b" prot="public" virt="non-virtual"><scope>mathic::Comparer</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m2_1_1_simple_a_ring_1_1_element_array" kind="class" language="C++" prot="public">
+    <compoundname>M2::SimpleARing::ElementArray</compoundname>
+    <includes refid="aring_8hpp" local="no">aring.hpp</includes>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_m2_1_1_simple_a_ring_1_1_element_array_a35dbdde5f1988748fa6a7fb69fbda477_1a35dbdde5f1988748fa6a7fb69fbda477" prot="private" static="no">
+        <type>ARing::ElementType</type>
+        <definition>typedef ARing::ElementType M2::SimpleARing&lt; ARing &gt;::ElementArray::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>M2::SimpleARing::ElementArray::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="176" column="41" bodyfile="Macaulay2/e/aring.hpp" bodystart="176" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_m2_1_1_simple_a_ring_1_1_element_array_a02fabcbb13ad7fa8b323d1109f44e74d_1a02fabcbb13ad7fa8b323d1109f44e74d" prot="private" static="no" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t M2::SimpleARing&lt; ARing &gt;::ElementArray::mSize</definition>
+        <argsstring></argsstring>
+        <name>mSize</name>
+        <qualifiedname>M2::SimpleARing::ElementArray::mSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="177" column="18" bodyfile="Macaulay2/e/aring.hpp" bodystart="177" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_simple_a_ring_1_1_element_array_a4a354c76ac3788f5d79ae211ebea66d9_1a4a354c76ac3788f5d79ae211ebea66d9" compoundref="aring_8hpp" startline="181" endline="185">M2::SimpleARing&lt; ARing &gt;::ElementArray::ElementArray</referencedby>
+        <referencedby refid="class_m2_1_1_simple_a_ring_1_1_element_array_ad351b8a9dddac0c55b12531b8a764fe4_1ad351b8a9dddac0c55b12531b8a764fe4" compoundref="aring_8hpp" startline="186" endline="189">M2::SimpleARing&lt; ARing &gt;::ElementArray::~ElementArray</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_m2_1_1_simple_a_ring_1_1_element_array_ac210298f90699b6d08d8f0c7abc412ee_1ac210298f90699b6d08d8f0c7abc412ee" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="class_m2_1_1_simple_a_ring_1_1_element_array_a35dbdde5f1988748fa6a7fb69fbda477_1a35dbdde5f1988748fa6a7fb69fbda477" kindref="member">ElementType</ref>[]&gt;</type>
+        <definition>std::unique_ptr&lt;ElementType[]&gt; M2::SimpleARing&lt; ARing &gt;::ElementArray::mData</definition>
+        <argsstring></argsstring>
+        <name>mData</name>
+        <qualifiedname>M2::SimpleARing::ElementArray::mData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="178" column="21" bodyfile="Macaulay2/e/aring.hpp" bodystart="178" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_simple_a_ring_1_1_element_array_ae0db45985a73d67c6d7d63434ea192db_1ae0db45985a73d67c6d7d63434ea192db" compoundref="aring_8hpp" startline="192" endline="192">M2::SimpleARing&lt; ARing &gt;::ElementArray::data</referencedby>
+        <referencedby refid="class_m2_1_1_simple_a_ring_1_1_element_array_a791def35cf252a813bbb8964768da1ac_1a791def35cf252a813bbb8964768da1ac" compoundref="aring_8hpp" startline="193" endline="193">M2::SimpleARing&lt; ARing &gt;::ElementArray::data</referencedby>
+        <referencedby refid="class_m2_1_1_simple_a_ring_1_1_element_array_a4a354c76ac3788f5d79ae211ebea66d9_1a4a354c76ac3788f5d79ae211ebea66d9" compoundref="aring_8hpp" startline="181" endline="185">M2::SimpleARing&lt; ARing &gt;::ElementArray::ElementArray</referencedby>
+        <referencedby refid="class_m2_1_1_simple_a_ring_1_1_element_array_a224047b6e4bab3d6f8e947e8941407b3_1a224047b6e4bab3d6f8e947e8941407b3" compoundref="aring_8hpp" startline="190" endline="190">M2::SimpleARing&lt; ARing &gt;::ElementArray::operator[]</referencedby>
+        <referencedby refid="class_m2_1_1_simple_a_ring_1_1_element_array_ab5298c09be8f19380290e92baf5c2216_1ab5298c09be8f19380290e92baf5c2216" compoundref="aring_8hpp" startline="191" endline="191">M2::SimpleARing&lt; ARing &gt;::ElementArray::operator[]</referencedby>
+        <referencedby refid="class_m2_1_1_simple_a_ring_1_1_element_array_ad351b8a9dddac0c55b12531b8a764fe4_1ad351b8a9dddac0c55b12531b8a764fe4" compoundref="aring_8hpp" startline="186" endline="189">M2::SimpleARing&lt; ARing &gt;::ElementArray::~ElementArray</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_m2_1_1_simple_a_ring_1_1_element_array_a4a354c76ac3788f5d79ae211ebea66d9_1a4a354c76ac3788f5d79ae211ebea66d9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2::SimpleARing&lt; ARing &gt;::ElementArray::ElementArray</definition>
+        <argsstring>(const ARing &amp;ring, size_t size)</argsstring>
+        <name>ElementArray</name>
+        <qualifiedname>M2::SimpleARing::ElementArray::ElementArray</qualifiedname>
+        <param>
+          <type>const <ref refid="class_a_ring" kindref="compound">ARing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="181" column="5" bodyfile="Macaulay2/e/aring.hpp" bodystart="181" bodyend="185"/>
+        <references refid="class_m2_1_1_simple_a_ring_1_1_element_array_ac210298f90699b6d08d8f0c7abc412ee_1ac210298f90699b6d08d8f0c7abc412ee" compoundref="aring_8hpp" startline="178">M2::SimpleARing&lt; ARing &gt;::ElementArray::mData</references>
+        <references refid="class_m2_1_1_simple_a_ring_1_1_element_array_a02fabcbb13ad7fa8b323d1109f44e74d_1a02fabcbb13ad7fa8b323d1109f44e74d" compoundref="aring_8hpp" startline="177">M2::SimpleARing&lt; ARing &gt;::ElementArray::mSize</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_simple_a_ring_1_1_element_array_ad351b8a9dddac0c55b12531b8a764fe4_1ad351b8a9dddac0c55b12531b8a764fe4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2::SimpleARing&lt; ARing &gt;::ElementArray::~ElementArray</definition>
+        <argsstring>()</argsstring>
+        <name>~ElementArray</name>
+        <qualifiedname>M2::SimpleARing::ElementArray::~ElementArray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="186" column="5" bodyfile="Macaulay2/e/aring.hpp" bodystart="186" bodyend="189"/>
+        <references refid="class_m2_1_1_simple_a_ring_1_1_element_array_ac210298f90699b6d08d8f0c7abc412ee_1ac210298f90699b6d08d8f0c7abc412ee" compoundref="aring_8hpp" startline="178">M2::SimpleARing&lt; ARing &gt;::ElementArray::mData</references>
+        <references refid="class_m2_1_1_simple_a_ring_1_1_element_array_a02fabcbb13ad7fa8b323d1109f44e74d_1a02fabcbb13ad7fa8b323d1109f44e74d" compoundref="aring_8hpp" startline="177">M2::SimpleARing&lt; ARing &gt;::ElementArray::mSize</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_simple_a_ring_1_1_element_array_a224047b6e4bab3d6f8e947e8941407b3_1a224047b6e4bab3d6f8e947e8941407b3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m2_1_1_simple_a_ring_1_1_element_array_a35dbdde5f1988748fa6a7fb69fbda477_1a35dbdde5f1988748fa6a7fb69fbda477" kindref="member">ElementType</ref> &amp;</type>
+        <definition>ElementType &amp; M2::SimpleARing&lt; ARing &gt;::ElementArray::operator[]</definition>
+        <argsstring>(size_t idx)</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>M2::SimpleARing::ElementArray::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="190" column="17" bodyfile="Macaulay2/e/aring.hpp" bodystart="190" bodyend="190"/>
+        <references refid="class_m2_1_1_simple_a_ring_1_1_element_array_ac210298f90699b6d08d8f0c7abc412ee_1ac210298f90699b6d08d8f0c7abc412ee" compoundref="aring_8hpp" startline="178">M2::SimpleARing&lt; ARing &gt;::ElementArray::mData</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_simple_a_ring_1_1_element_array_ab5298c09be8f19380290e92baf5c2216_1ab5298c09be8f19380290e92baf5c2216" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_m2_1_1_simple_a_ring_1_1_element_array_a35dbdde5f1988748fa6a7fb69fbda477_1a35dbdde5f1988748fa6a7fb69fbda477" kindref="member">ElementType</ref> &amp;</type>
+        <definition>const ElementType &amp; M2::SimpleARing&lt; ARing &gt;::ElementArray::operator[]</definition>
+        <argsstring>(size_t idx) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>M2::SimpleARing::ElementArray::operator[]</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="191" column="23" bodyfile="Macaulay2/e/aring.hpp" bodystart="191" bodyend="191"/>
+        <references refid="class_m2_1_1_simple_a_ring_1_1_element_array_ac210298f90699b6d08d8f0c7abc412ee_1ac210298f90699b6d08d8f0c7abc412ee" compoundref="aring_8hpp" startline="178">M2::SimpleARing&lt; ARing &gt;::ElementArray::mData</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_simple_a_ring_1_1_element_array_ae0db45985a73d67c6d7d63434ea192db_1ae0db45985a73d67c6d7d63434ea192db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_m2_1_1_simple_a_ring_1_1_element_array_a35dbdde5f1988748fa6a7fb69fbda477_1a35dbdde5f1988748fa6a7fb69fbda477" kindref="member">ElementType</ref> *</type>
+        <definition>ElementType * M2::SimpleARing&lt; ARing &gt;::ElementArray::data</definition>
+        <argsstring>()</argsstring>
+        <name>data</name>
+        <qualifiedname>M2::SimpleARing::ElementArray::data</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="192" column="17" bodyfile="Macaulay2/e/aring.hpp" bodystart="192" bodyend="192"/>
+        <references refid="class_m2_1_1_simple_a_ring_1_1_element_array_ac210298f90699b6d08d8f0c7abc412ee_1ac210298f90699b6d08d8f0c7abc412ee" compoundref="aring_8hpp" startline="178">M2::SimpleARing&lt; ARing &gt;::ElementArray::mData</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_simple_a_ring_1_1_element_array_a791def35cf252a813bbb8964768da1ac_1a791def35cf252a813bbb8964768da1ac" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_m2_1_1_simple_a_ring_1_1_element_array_a35dbdde5f1988748fa6a7fb69fbda477_1a35dbdde5f1988748fa6a7fb69fbda477" kindref="member">ElementType</ref> *</type>
+        <definition>const ElementType * M2::SimpleARing&lt; ARing &gt;::ElementArray::data</definition>
+        <argsstring>() const</argsstring>
+        <name>data</name>
+        <qualifiedname>M2::SimpleARing::ElementArray::data</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="193" column="23" bodyfile="Macaulay2/e/aring.hpp" bodystart="193" bodyend="193"/>
+        <references refid="class_m2_1_1_simple_a_ring_1_1_element_array_ac210298f90699b6d08d8f0c7abc412ee_1ac210298f90699b6d08d8f0c7abc412ee" compoundref="aring_8hpp" startline="178">M2::SimpleARing&lt; ARing &gt;::ElementArray::mData</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A wrapper for an array of <ref refid="class_m2_1_1_simple_a_ring_1_1_element_array_a35dbdde5f1988748fa6a7fb69fbda477_1a35dbdde5f1988748fa6a7fb69fbda477" kindref="member">ElementType</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class is intended to replace dynamically allocated arrays of <ref refid="class_m2_1_1_simple_a_ring_1_1_element_array_a35dbdde5f1988748fa6a7fb69fbda477_1a35dbdde5f1988748fa6a7fb69fbda477" kindref="member">ElementType</ref>. In particular, this will correctly clear the data from the ring upon destruction </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>M2::SimpleARing&lt; ARing &gt;::ElementArray</label>
+        <link refid="class_m2_1_1_simple_a_ring_1_1_element_array"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mSize</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mData</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>T</label>
+      </node>
+      <node id="4">
+        <label>fq_zech_struct</label>
+      </node>
+      <node id="2">
+        <label>size_t</label>
+      </node>
+      <node id="5">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="6" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::unique_ptr&lt; ElementType[]&gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; ElementType[]&gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/aring.hpp" line="174" column="3" bodyfile="Macaulay2/e/aring.hpp" bodystart="175" bodyend="194"/>
+    <listofallmembers>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_array_ae0db45985a73d67c6d7d63434ea192db_1ae0db45985a73d67c6d7d63434ea192db" prot="public" virt="non-virtual"><scope>M2::SimpleARing::ElementArray</scope><name>data</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_array_a791def35cf252a813bbb8964768da1ac_1a791def35cf252a813bbb8964768da1ac" prot="public" virt="non-virtual"><scope>M2::SimpleARing::ElementArray</scope><name>data</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_array_a4a354c76ac3788f5d79ae211ebea66d9_1a4a354c76ac3788f5d79ae211ebea66d9" prot="public" virt="non-virtual"><scope>M2::SimpleARing::ElementArray</scope><name>ElementArray</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_array_a35dbdde5f1988748fa6a7fb69fbda477_1a35dbdde5f1988748fa6a7fb69fbda477" prot="private" virt="non-virtual"><scope>M2::SimpleARing::ElementArray</scope><name>ElementType</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_array_ac210298f90699b6d08d8f0c7abc412ee_1ac210298f90699b6d08d8f0c7abc412ee" prot="private" virt="non-virtual"><scope>M2::SimpleARing::ElementArray</scope><name>mData</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_array_a02fabcbb13ad7fa8b323d1109f44e74d_1a02fabcbb13ad7fa8b323d1109f44e74d" prot="private" virt="non-virtual"><scope>M2::SimpleARing::ElementArray</scope><name>mSize</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_array_a224047b6e4bab3d6f8e947e8941407b3_1a224047b6e4bab3d6f8e947e8941407b3" prot="public" virt="non-virtual"><scope>M2::SimpleARing::ElementArray</scope><name>operator[]</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_array_ab5298c09be8f19380290e92baf5c2216_1ab5298c09be8f19380290e92baf5c2216" prot="public" virt="non-virtual"><scope>M2::SimpleARing::ElementArray</scope><name>operator[]</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_array_ad351b8a9dddac0c55b12531b8a764fe4_1ad351b8a9dddac0c55b12531b8a764fe4" prot="public" virt="non-virtual"><scope>M2::SimpleARing::ElementArray</scope><name>~ElementArray</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

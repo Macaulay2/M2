@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_b3d38d59b4c2838db1435537a095b99c" kind="dir">
+    <compoundname>M2</compoundname>
+    <innerdir refid="dir_efecf65b8a774a622af976e6fb93bbda">M2/Macaulay2</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="M2/"/>
+  </compounddef>
+</doxygen>

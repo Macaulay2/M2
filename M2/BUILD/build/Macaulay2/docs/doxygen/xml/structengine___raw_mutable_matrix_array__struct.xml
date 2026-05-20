@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structengine___raw_mutable_matrix_array__struct" kind="struct" language="C++" prot="public">
+    <compoundname>engine_RawMutableMatrixArray_struct</compoundname>
+    <includes refid="m2-types_8h" local="no">m2-types.h</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structengine___raw_mutable_matrix_array__struct_afa6dd82949d8602a8e6115a064f65c96_1afa6dd82949d8602a8e6115a064f65c96" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int engine_RawMutableMatrixArray::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <qualifiedname>engine_RawMutableMatrixArray_struct::len</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/m2-types.h" line="183" column="46" bodyfile="Macaulay2/e/interface/m2-types.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structengine___raw_mutable_matrix_array__struct_acc24d2a9c930e49d9175d5e39221f78a_1acc24d2a9c930e49d9175d5e39221f78a" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+        <definition>struct MutableMatrix* engine_RawMutableMatrixArray::array[]</definition>
+        <argsstring>[]</argsstring>
+        <name>array</name>
+        <qualifiedname>engine_RawMutableMatrixArray_struct::array</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/m2-types.h" line="183" column="69" bodyfile="Macaulay2/e/interface/m2-types.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MutableMatrix</label>
+        <link refid="class_mutable_matrix"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>engine_RawMutableMatrixArray</label>
+        <link refid="structengine___raw_mutable_matrix_array__struct"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="5">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/interface/m2-types.h" line="183" column="1" bodyfile="Macaulay2/e/interface/m2-types.h" bodystart="183" bodyend="183"/>
+    <listofallmembers>
+      <member refid="structengine___raw_mutable_matrix_array__struct_acc24d2a9c930e49d9175d5e39221f78a_1acc24d2a9c930e49d9175d5e39221f78a" prot="public" virt="non-virtual"><scope>engine_RawMutableMatrixArray_struct</scope><name>array</name></member>
+      <member refid="structengine___raw_mutable_matrix_array__struct_afa6dd82949d8602a8e6115a064f65c96_1afa6dd82949d8602a8e6115a064f65c96" prot="public" virt="non-virtual"><scope>engine_RawMutableMatrixArray_struct</scope><name>len</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

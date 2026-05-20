@@ -1,0 +1,4 @@
+var struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_make =
+[
+    [ "make", "struct_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory_1_1_make_a01da01b1877e16d0942ea6d5c6adbfcb.html#a01da01b1877e16d0942ea6d5c6adbfcb", null ]
+];

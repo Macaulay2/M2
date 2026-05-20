@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_new_term" kind="struct" language="C++" prot="public">
+    <compoundname>NewTerm</compoundname>
+    <includes refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" local="no">PolyRing.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_new_term_ad437e1d01b3db9dde76445a6a9ee64d9_1ad437e1d01b3db9dde76445a6a9ee64d9" prot="public" static="no" mutable="no">
+        <type><ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a80cb6ead37274d3269811733b43fca9b_1a80cb6ead37274d3269811733b43fca9b" kindref="member">coefficient</ref></type>
+        <definition>coefficient NewTerm::coef</definition>
+        <argsstring></argsstring>
+        <name>coef</name>
+        <qualifiedname>NewTerm::coef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="206" column="15" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="206" bodyend="-1"/>
+        <referencedby refid="class_reducer_dedup_1_1_configuration_a5f74224e9c0149beee08fc59b20f050f_1a5f74224e9c0149beee08fc59b20f050f" compoundref="_reducer_dedup_8cpp" startline="50" endline="55">ReducerDedup&lt; Queue &gt;::Configuration::deduplicate</referencedby>
+        <referencedby refid="class_reducer_dedup_ad6512ca042c49d6fd9dd61e0d2d5cee0_1ad6512ca042c49d6fd9dd61e0d2d5cee0" compoundref="_reducer_dedup_8cpp" startline="81" endline="95">ReducerDedup&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a0cadee6b69935771144f2da77919bc07_1a0cadee6b69935771144f2da77919bc07" compoundref="_reducer_no_dedup_8cpp" startline="74" endline="88">ReducerNoDedup&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="struct_new_term_a87760eb3a2e6c303817f79dbd55f6c31_1a87760eb3a2e6c303817f79dbd55f6c31" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="209" endline="212">operator NewConstTerm</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_new_term_aa338d1a9020c5fd68754052505462a6d_1aa338d1a9020c5fd68754052505462a6d" prot="public" static="no" mutable="no">
+        <type><ref refid="class_mono_monoid" kindref="compound">MonoMonoid</ref>&lt; <ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_a1efe19df2fcd8857762c3020006d410f_1a1efe19df2fcd8857762c3020006d410f" kindref="member">exponent</ref> &gt;::MonoPtr</type>
+        <definition>MonoMonoid&lt;exponent&gt;::MonoPtr NewTerm::mono</definition>
+        <argsstring></argsstring>
+        <name>mono</name>
+        <qualifiedname>NewTerm::mono</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="207" column="24" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="207" bodyend="-1"/>
+        <referencedby refid="class_reducer_dedup_1_1_configuration_a2c8d26dde09491c8c1fbfaac82039bb5_1a2c8d26dde09491c8c1fbfaac82039bb5" compoundref="_reducer_dedup_8cpp" startline="47" endline="49">ReducerDedup&lt; Queue &gt;::Configuration::compare</referencedby>
+        <referencedby refid="class_reducer_no_dedup_1_1_configuration_aecda33dd29d94c2e1f084b1e2589b505_1aecda33dd29d94c2e1f084b1e2589b505" compoundref="_reducer_no_dedup_8cpp" startline="47" endline="49">ReducerNoDedup&lt; Queue &gt;::Configuration::compare</referencedby>
+        <referencedby refid="class_reducer_dedup_1_1_configuration_a5f74224e9c0149beee08fc59b20f050f_1a5f74224e9c0149beee08fc59b20f050f" compoundref="_reducer_dedup_8cpp" startline="50" endline="55">ReducerDedup&lt; Queue &gt;::Configuration::deduplicate</referencedby>
+        <referencedby refid="struct_reducer_pack_dedup_1_1_multiple_with_pos_aa650d49d672ee548e2b52392203cd8d9_1aa650d49d672ee548e2b52392203cd8d9" compoundref="_reducer_pack_dedup_8cpp" startline="183" endline="199">ReducerPackDedup&lt; Queue &gt;::MultipleWithPos::destroy</referencedby>
+        <referencedby refid="class_reducer_dedup_a76d9f43fe44c15966efa41ec80a9b587_1a76d9f43fe44c15966efa41ec80a9b587" compoundref="_reducer_dedup_8cpp" startline="98" endline="109">ReducerDedup&lt; Queue &gt;::insert</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a31652c56c45e6505af07dfbc5e3c556b_1a31652c56c45e6505af07dfbc5e3c556b" compoundref="_reducer_no_dedup_8cpp" startline="91" endline="102">ReducerNoDedup&lt; Queue &gt;::insert</referencedby>
+        <referencedby refid="class_reducer_dedup_ad6512ca042c49d6fd9dd61e0d2d5cee0_1ad6512ca042c49d6fd9dd61e0d2d5cee0" compoundref="_reducer_dedup_8cpp" startline="81" endline="95">ReducerDedup&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a0cadee6b69935771144f2da77919bc07_1a0cadee6b69935771144f2da77919bc07" compoundref="_reducer_no_dedup_8cpp" startline="74" endline="88">ReducerNoDedup&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="struct_new_term_a87760eb3a2e6c303817f79dbd55f6c31_1a87760eb3a2e6c303817f79dbd55f6c31" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="209" endline="212">operator NewConstTerm</referencedby>
+        <referencedby refid="class_reducer_dedup_ae9e00ae9cb4a6d8526000213c5d06daa_1ae9e00ae9cb4a6d8526000213c5d06daa" compoundref="_reducer_dedup_8cpp" startline="146" endline="163">ReducerDedup&lt; Queue &gt;::resetReducer</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a8c94483e1dc1e5ad90079e335589c14d_1a8c94483e1dc1e5ad90079e335589c14d" compoundref="_reducer_no_dedup_8cpp" startline="142" endline="159">ReducerNoDedup&lt; Queue &gt;::resetReducer</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_new_term_a87760eb3a2e6c303817f79dbd55f6c31_1a87760eb3a2e6c303817f79dbd55f6c31" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NewTerm::operator NewConstTerm</definition>
+        <argsstring>() const</argsstring>
+        <name>operator NewConstTerm</name>
+        <qualifiedname>NewTerm::operator NewConstTerm</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="209" column="3" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="209" bodyend="212"/>
+        <references refid="struct_new_term_ad437e1d01b3db9dde76445a6a9ee64d9_1ad437e1d01b3db9dde76445a6a9ee64d9" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="206">coef</references>
+        <references refid="struct_new_term_aa338d1a9020c5fd68754052505462a6d_1aa338d1a9020c5fd68754052505462a6d" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="207">mono</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="10">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="11" relation="private-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="4" relation="private-inheritance">
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>NewTerm</label>
+        <link refid="struct_new_term"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>coef</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mono</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="13">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>T</label>
+      </node>
+      <node id="5">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="19">
+        <label>char</label>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+      <node id="15">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>size_t</label>
+      </node>
+      <node id="8">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="9" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="8" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/PolyRing.hpp" line="205" column="1" bodyfile="submodules/mathicgb/src/mathicgb/PolyRing.hpp" bodystart="205" bodyend="213"/>
+    <listofallmembers>
+      <member refid="struct_new_term_ad437e1d01b3db9dde76445a6a9ee64d9_1ad437e1d01b3db9dde76445a6a9ee64d9" prot="public" virt="non-virtual"><scope>NewTerm</scope><name>coef</name></member>
+      <member refid="struct_new_term_aa338d1a9020c5fd68754052505462a6d_1aa338d1a9020c5fd68754052505462a6d" prot="public" virt="non-virtual"><scope>NewTerm</scope><name>mono</name></member>
+      <member refid="struct_new_term_a87760eb3a2e6c303817f79dbd55f6c31_1a87760eb3a2e6c303817f79dbd55f6c31" prot="public" virt="non-virtual"><scope>NewTerm</scope><name>operator NewConstTerm</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

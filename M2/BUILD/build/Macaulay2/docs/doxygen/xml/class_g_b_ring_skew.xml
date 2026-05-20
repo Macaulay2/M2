@@ -1,0 +1,1060 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_g_b_ring_skew" kind="class" language="C++" prot="public">
+    <compoundname>GBRingSkew</compoundname>
+    <basecompoundref refid="class_g_b_ring" prot="public" virt="non-virtual">GBRing</basecompoundref>
+    <includes refid="gbring_8hpp" local="no">gbring.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_g_b_ring_skew_ad4c704d9d86ad47c4c3af5c247853b4d_1ad4c704d9d86ad47c4c3af5c247853b4d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class GBRing</definition>
+        <argsstring></argsstring>
+        <name>GBRing</name>
+        <qualifiedname>GBRingSkew::GBRing</qualifiedname>
+        <param>
+          <type><ref refid="class_g_b_ring" kindref="compound">GBRing</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gbring.hpp" line="633" column="16" bodyfile="Macaulay2/e/gbring.hpp" bodystart="633" bodyend="-1"/>
+        <references refid="class_g_b_ring_skew_ad4c704d9d86ad47c4c3af5c247853b4d_1ad4c704d9d86ad47c4c3af5c247853b4d" compoundref="gbring_8hpp" startline="633">GBRing</references>
+        <referencedby refid="class_g_b_ring_skew_ad4c704d9d86ad47c4c3af5c247853b4d_1ad4c704d9d86ad47c4c3af5c247853b4d" compoundref="gbring_8hpp" startline="633">GBRing</referencedby>
+        <referencedby refid="class_g_b_ring_skew_a8ca06db04c2f746ef05a8e58adaa39a0_1a8ca06db04c2f746ef05a8e58adaa39a0" compoundref="gbring_8cpp" startline="128" endline="145">GBRingSkew</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="protected-func">
+      <memberdef kind="function" id="class_g_b_ring_skew_a8ca06db04c2f746ef05a8e58adaa39a0_1a8ca06db04c2f746ef05a8e58adaa39a0" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GBRingSkew::GBRingSkew</definition>
+        <argsstring>(const Ring *K0, const Monoid *M0, SkewMultiplication skew0)</argsstring>
+        <name>GBRingSkew</name>
+        <qualifiedname>GBRingSkew::GBRingSkew</qualifiedname>
+        <param>
+          <type>const <ref refid="class_ring" kindref="compound">Ring</ref> *</type>
+          <declname>K0</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_monoid" kindref="compound">Monoid</ref> *</type>
+          <declname>M0</declname>
+        </param>
+        <param>
+          <type><ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref></type>
+          <declname>skew0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gbring.hpp" line="634" column="3" bodyfile="Macaulay2/e/gbring.cpp" bodystart="128" bodyend="145"/>
+        <references refid="class_g_b_ring_a50f22fae695c5c32ecbfc44dd15fc841_1a50f22fae695c5c32ecbfc44dd15fc841" compoundref="gbring_8hpp" startline="144">GBRing::_is_skew</references>
+        <references refid="class_g_b_ring_a8a0a29b31e9006fcc9c9f078b00366d6_1a8a0a29b31e9006fcc9c9f078b00366d6" compoundref="gbring_8hpp" startline="145">GBRing::_skew</references>
+        <references refid="class_g_b_ring_af8d4c7839e5a839e06f6ccb51f2b0cec_1af8d4c7839e5a839e06f6ccb51f2b0cec" compoundref="gbring_8hpp" startline="147">GBRing::_skew_monoms</references>
+        <references refid="class_monoid_af796c73504cb5e1cdb2737b73468eb04_1af796c73504cb5e1cdb2737b73468eb04" compoundref="monoid_8cpp" startline="742" endline="745">Monoid::from_expvector</references>
+        <references refid="class_g_b_ring_skew_ad4c704d9d86ad47c4c3af5c247853b4d_1ad4c704d9d86ad47c4c3af5c247853b4d" compoundref="gbring_8hpp" startline="633">GBRing</references>
+        <references refid="class_monoid_a6f3936578edf5076153f30833bc552fe_1a6f3936578edf5076153f30833bc552fe" compoundref="monoid_8cpp" startline="455" endline="461">Monoid::make_one</references>
+        <references refid="class_monoid_a686ece7cc294cc80866870573c1e625b_1a686ece7cc294cc80866870573c1e625b" compoundref="monoid_8hpp" startline="203" endline="203">Monoid::n_vars</references>
+        <references refid="newdelete_8hpp_a8e45ca33f2628740d647f3bdf832b96d_1a8e45ca33f2628740d647f3bdf832b96d" compoundref="newdelete_8hpp" startline="80">newarray</references>
+        <references refid="newdelete_8hpp_a2b649d56ac729e3aeea956a89d0c03ea_1a2b649d56ac729e3aeea956a89d0c03ea" compoundref="newdelete_8hpp" startline="91" endline="92">newarray_atomic_clear</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_g_b_ring_skew_acbd8bcaeb9a8832232d21a0e435a95d6_1acbd8bcaeb9a8832232d21a0e435a95d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="structgbvector" kindref="compound">gbvector</ref> *</type>
+        <definition>gbvector * GBRingSkew::mult_by_term1</definition>
+        <argsstring>(const FreeModule *F, const gbvector *f, ring_elem u, const int *monom, int comp)</argsstring>
+        <name>mult_by_term1</name>
+        <qualifiedname>GBRingSkew::mult_by_term1</qualifiedname>
+        <reimplements refid="class_g_b_ring_af900b5bc821a565386a962fc8699359f_1af900b5bc821a565386a962fc8699359f">mult_by_term1</reimplements>
+        <param>
+          <type>const <ref refid="class_free_module" kindref="compound">FreeModule</ref> *</type>
+          <declname>F</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structgbvector" kindref="compound">gbvector</ref> *</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classint" kindref="compound">int</ref> *</type>
+          <declname>monom</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gbring.hpp" line="637" column="20" bodyfile="Macaulay2/e/gbring.cpp" bodystart="154" bodyend="187"/>
+        <references refid="class_g_b_ring_a8a0a29b31e9006fcc9c9f078b00366d6_1a8a0a29b31e9006fcc9c9f078b00366d6" compoundref="gbring_8hpp" startline="145">GBRing::_skew</references>
+        <references refid="monoid_8hpp_a337de43f0792d2f0364a64ba9905116d_1a337de43f0792d2f0364a64ba9905116d" compoundref="monoid_8hpp" startline="60">ALLOCATE_EXPONENTS</references>
+        <references refid="structgbvector_a185cb3a8e35ce8178aac8ab39a79c4be_1a185cb3a8e35ce8178aac8ab39a79c4be" compoundref="gbring_8hpp" startline="79">gbvector::coeff</references>
+        <references refid="structgbvector_a857b617c77d0b7e4b5ec6e2bf8d73b89_1a857b617c77d0b7e4b5ec6e2bf8d73b89" compoundref="gbring_8hpp" startline="80">gbvector::comp</references>
+        <references refid="class_g_b_ring_a59f7a4d07f034e8f646b1114af6ac26c_1a59f7a4d07f034e8f646b1114af6ac26c" compoundref="gbring_8hpp" startline="163">GBRing::exp_size</references>
+        <references refid="class_g_b_ring_aeb6e7165284697483910f5c635b6389c_1aeb6e7165284697483910f5c635b6389c" compoundref="gbring_8cpp" startline="541" endline="555">GBRing::gbvector_get_lead_exponents</references>
+        <references refid="class_g_b_ring_ad095d4e9734992cec2bb1101d200f270_1ad095d4e9734992cec2bb1101d200f270" compoundref="gbring_8hpp" startline="132">GBRing::K</references>
+        <references refid="class_g_b_ring_ab18e35a60f14b50cc320b0b53fe49a80_1ab18e35a60f14b50cc320b0b53fe49a80" compoundref="gbring_8hpp" startline="131">GBRing::M</references>
+        <references refid="structgbvector_a3ee5a8a3a86ab0049158832984336233_1a3ee5a8a3a86ab0049158832984336233" compoundref="gbring_8hpp" startline="81">gbvector::monom</references>
+        <references refid="class_g_b_ring_ab2137f6b54e7e8f18dd6684f327ad193_1ab2137f6b54e7e8f18dd6684f327ad193" compoundref="gbring_8cpp" startline="28" endline="32">GBRing::new_raw_term</references>
+        <references refid="structgbvector_a3cc2bd9a347521ac3e6d6d89de1a3a26_1a3cc2bd9a347521ac3e6d6d89de1a3a26" compoundref="gbring_8hpp" startline="78">gbvector::next</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+      </memberdef>
+      <memberdef kind="function" id="class_g_b_ring_skew_a0b302697d300f657d465fe2c18a71e4c_1a0b302697d300f657d465fe2c18a71e4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>GBRingSkew::~GBRingSkew</definition>
+        <argsstring>()</argsstring>
+        <name>~GBRingSkew</name>
+        <qualifiedname>GBRingSkew::~GBRingSkew</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gbring.hpp" line="642" column="11" bodyfile="Macaulay2/e/gbring.cpp" bodystart="53" bodyend="53"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_g_b_ring" kindref="compound">GBRing</ref></computeroutput> specialisation for skew-commutative (exterior-like) polynomial rings. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="class_g_b_ring_skew_acbd8bcaeb9a8832232d21a0e435a95d6_1acbd8bcaeb9a8832232d21a0e435a95d6" kindref="member">mult_by_term1</ref></computeroutput> applies the sign changes prescribed by the <computeroutput><ref refid="class_skew_multiplication" kindref="compound">SkewMultiplication</ref></computeroutput> table when monomial variables are reordered, and returns zero when a squared skew variable would appear. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>GBRingSkew</label>
+        <link refid="class_g_b_ring_skew"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="16">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>GBRingSkew</label>
+        <link refid="class_g_b_ring_skew"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+        <childnode refid="66" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="74" relation="public-inheritance">
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="44" relation="private-inheritance">
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="46" relation="public-inheritance">
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="40" relation="private-inheritance">
+        </childnode>
+        <childnode refid="43" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="53">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="46">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="47" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="36" relation="public-inheritance">
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="38" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>CoefficientType</label>
+      </node>
+      <node id="76">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="35" relation="public-inheritance">
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>T</label>
+      </node>
+      <node id="71">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="35" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="28">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="4">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="26">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="28" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="29">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="30" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>char</label>
+      </node>
+      <node id="15">
+        <label>const ARing *</label>
+      </node>
+      <node id="31">
+        <label>const void *</label>
+      </node>
+      <node id="21">
+        <label>double</label>
+      </node>
+      <node id="62">
+        <label>overflow_type *</label>
+      </node>
+      <node id="59">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="61">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="77">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="8">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="20">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>long</label>
+      </node>
+      <node id="48">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="41" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="52" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>mon_part</label>
+      </node>
+      <node id="25">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="24">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="22">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="23">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="7">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="17">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>size_t</label>
+      </node>
+      <node id="68">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>spinLock</label>
+      </node>
+      <node id="67">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="57">
+        <label>std::string</label>
+        <childnode refid="58" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="14" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="57" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gbring.hpp" line="630" column="1" bodyfile="Macaulay2/e/gbring.hpp" bodystart="631" bodyend="643"/>
+    <listofallmembers>
+      <member refid="class_g_b_ring_a295f3854f35179b3097db2be224f608c_1a295f3854f35179b3097db2be224f608c" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>_coeffs_ZZ</name></member>
+      <member refid="class_g_b_ring_a50f22fae695c5c32ecbfc44dd15fc841_1a50f22fae695c5c32ecbfc44dd15fc841" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>_is_skew</name></member>
+      <member refid="class_g_b_ring_a8b5fb2535dd68891e23f20cdf5ae8278_1a8b5fb2535dd68891e23f20cdf5ae8278" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>_nvars</name></member>
+      <member refid="class_g_b_ring_a186bc6fc58cda53e76beb84e1d798436_1a186bc6fc58cda53e76beb84e1d798436" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>_one</name></member>
+      <member refid="class_g_b_ring_a27ecce1541fb99889a582be71154ebd2_1a27ecce1541fb99889a582be71154ebd2" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>_schreyer_encoded</name></member>
+      <member refid="class_g_b_ring_a8a0a29b31e9006fcc9c9f078b00366d6_1a8a0a29b31e9006fcc9c9f078b00366d6" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>_skew</name></member>
+      <member refid="class_g_b_ring_af8d4c7839e5a839e06f6ccb51f2b0cec_1af8d4c7839e5a839e06f6ccb51f2b0cec" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>_skew_monoms</name></member>
+      <member refid="class_g_b_ring_ad46927e1abf1f4130575aae7c283d2a5_1ad46927e1abf1f4130575aae7c283d2a5" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>_up_order</name></member>
+      <member refid="class_g_b_ring_a17e77cb79fa42def9b3ae80053b6c8b8_1a17e77cb79fa42def9b3ae80053b6c8b8" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>create_PolynomialRing</name></member>
+      <member refid="class_g_b_ring_a10f2695991307adabbeb34846253fb99_1a10f2695991307adabbeb34846253fb99" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>create_SkewPolynomialRing</name></member>
+      <member refid="class_g_b_ring_ad12e7b69c2b1373a00ec8dbc93652b5a_1ad12e7b69c2b1373a00ec8dbc93652b5a" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>create_SolvableAlgebra</name></member>
+      <member refid="class_g_b_ring_a05ecb179015c01c8e1eed19121ce894a_1a05ecb179015c01c8e1eed19121ce894a" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>create_WeylAlgebra</name></member>
+      <member refid="class_g_b_ring_af0c8062a983d5134e774ebdd6134849b_1af0c8062a983d5134e774ebdd6134849b" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>divide_coeff_exact_to_ZZ</name></member>
+      <member refid="class_g_b_ring_a53c55dcc78f657e6604ed393f95e2443_1a53c55dcc78f657e6604ed393f95e2443" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>divide_exponents</name></member>
+      <member refid="class_g_b_ring_a59f7a4d07f034e8f646b1114af6ac26c_1a59f7a4d07f034e8f646b1114af6ac26c" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>exp_size</name></member>
+      <member refid="class_g_b_ring_a80d5c086c90b27c66fa71f1a981b4b23_1a80d5c086c90b27c66fa71f1a981b4b23" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>exponent_byte_size</name></member>
+      <member refid="class_g_b_ring_aec396d24ac4f99a5f28f625e35be921b_1aec396d24ac4f99a5f28f625e35be921b" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>exponent_syzygy</name></member>
+      <member refid="class_g_b_ring_a06013ee5e64da3c480b850ae7889d7ad_1a06013ee5e64da3c480b850ae7889d7ad" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>exponents_delete</name></member>
+      <member refid="class_g_b_ring_aecb1378eabf8e141cb0585a3295d35ec_1aecb1378eabf8e141cb0585a3295d35ec" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>exponents_make</name></member>
+      <member refid="class_g_b_ring_ad4652bcddb9ef7bd64bae3b7ba3b415c_1ad4652bcddb9ef7bd64bae3b7ba3b415c" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>find_coeff</name></member>
+      <member refid="class_g_b_ring_aa2f5fe0aa05b477594d3ac4d07ee0058_1aa2f5fe0aa05b477594d3ac4d07ee0058" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>find_reduction_coeffs</name></member>
+      <member refid="class_g_b_ring_af665256677dbacdd120699f789c3324b_1af665256677dbacdd120699f789c3324b" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>find_reduction_coeffs_ZZ</name></member>
+      <member refid="class_g_b_ring_a905b35d3951130dfa1a1a4f1c2451934_1a905b35d3951130dfa1a1a4f1c2451934" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>find_reduction_monomial</name></member>
+      <member refid="class_g_b_ring_skew_ad4c704d9d86ad47c4c3af5c247853b4d_1ad4c704d9d86ad47c4c3af5c247853b4d" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>GBRing</name></member>
+      <member refid="class_g_b_ring_a4d40785224b05053db73ed77bde42454_1a4d40785224b05053db73ed77bde42454" prot="protected" virt="non-virtual" ambiguityscope="GBRing::"><scope>GBRingSkew</scope><name>GBRing</name></member>
+      <member refid="class_g_b_ring_skew_a8ca06db04c2f746ef05a8e58adaa39a0_1a8ca06db04c2f746ef05a8e58adaa39a0" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>GBRingSkew</name></member>
+      <member refid="class_g_b_ring_ad185a1fa27c0b16d63710fc6bd9dee50_1ad185a1fa27c0b16d63710fc6bd9dee50" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_add_to</name></member>
+      <member refid="class_g_b_ring_a33945a2f152e6d12058054bd019852f1_1a33945a2f152e6d12058054bd019852f1" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_add_to_zzp</name></member>
+      <member refid="class_g_b_ring_adbec8391abd6e009e654e9d55418a70a_1adbec8391abd6e009e654e9d55418a70a" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_apply</name></member>
+      <member refid="class_g_b_ring_ad33bcc734198e7897adb604ba3ce496f_1ad33bcc734198e7897adb604ba3ce496f" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_auto_reduce</name></member>
+      <member refid="class_g_b_ring_ae65a7627bd058c821166a08b809a01ee_1ae65a7627bd058c821166a08b809a01ee" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_auto_reduce_ZZ</name></member>
+      <member refid="class_g_b_ring_a674a3d928c5be2590f3dc86b28b6e606_1a674a3d928c5be2590f3dc86b28b6e606" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_cancel_lead_terms</name></member>
+      <member refid="class_g_b_ring_aa33675bbff101ef659dd14965c3b6d47_1aa33675bbff101ef659dd14965c3b6d47" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_combine_lead_terms_ZZ</name></member>
+      <member refid="class_g_b_ring_ad01d89118af92f90a4fddc868207507d_1ad01d89118af92f90a4fddc868207507d" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_compare</name></member>
+      <member refid="class_g_b_ring_a064dd4586ea5eddb6a478178323bf6b7_1a064dd4586ea5eddb6a478178323bf6b7" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_copy</name></member>
+      <member refid="class_g_b_ring_ad7bae20923f7a95c1eccfd768509c307_1ad7bae20923f7a95c1eccfd768509c307" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_copy_term</name></member>
+      <member refid="class_g_b_ring_aeb6e7165284697483910f5c635b6389c_1aeb6e7165284697483910f5c635b6389c" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_get_lead_exponents</name></member>
+      <member refid="class_g_b_ring_a2c8da52ae046ea9ed0fa12cb77d78412_1a2c8da52ae046ea9ed0fa12cb77d78412" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_get_lead_monomial</name></member>
+      <member refid="class_g_b_ring_a3ed0c395bd449aae7ea793be10c6b439_1a3ed0c395bd449aae7ea793be10c6b439" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_is_equal</name></member>
+      <member refid="class_g_b_ring_a71b113730b3a61cf5ab4deb433dcb880_1a71b113730b3a61cf5ab4deb433dcb880" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_is_zero</name></member>
+      <member refid="class_g_b_ring_a529bfbae3a3a041de6d03b4884178f86_1a529bfbae3a3a041de6d03b4884178f86" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_lead_component</name></member>
+      <member refid="class_g_b_ring_abe5947e46187cfef4129d3e79242eecd_1abe5947e46187cfef4129d3e79242eecd" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_lead_term</name></member>
+      <member refid="class_g_b_ring_afeaed3291c13ef62999099775e240f9a_1afeaed3291c13ef62999099775e240f9a" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_mult_by_coeff</name></member>
+      <member refid="class_g_b_ring_a01f58677cb88684cb222496e809ca37a_1a01f58677cb88684cb222496e809ca37a" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_mult_by_coeff_to</name></member>
+      <member refid="class_g_b_ring_a779fc5d732f3fff8c606a072efaa213f_1a779fc5d732f3fff8c606a072efaa213f" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_mult_by_term</name></member>
+      <member refid="class_g_b_ring_add4ac00b67f4b9173f987f9feba981ab_1add4ac00b67f4b9173f987f9feba981ab" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_multidegree</name></member>
+      <member refid="class_g_b_ring_af357213b35a416911ff7deb0429e9e19_1af357213b35a416911ff7deb0429e9e19" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_n_terms</name></member>
+      <member refid="class_g_b_ring_aca5a23777a32c57fbc2f9ff856bb7ef2_1aca5a23777a32c57fbc2f9ff856bb7ef2" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_negate_to</name></member>
+      <member refid="class_g_b_ring_a69a1ccb6453fb286acd94bb12a43ad29_1a69a1ccb6453fb286acd94bb12a43ad29" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_parallel_lead_terms</name></member>
+      <member refid="class_g_b_ring_a8c282dfa296c18829e5533a1e4ae0b25_1a8c282dfa296c18829e5533a1e4ae0b25" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_raw_term</name></member>
+      <member refid="class_g_b_ring_af7a734c4e5823893fefbe32df757ccc1_1af7a734c4e5823893fefbe32df757ccc1" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_reduce_lead_term</name></member>
+      <member refid="class_g_b_ring_acb112de83c051cb9c8e242d2b361954a_1acb112de83c051cb9c8e242d2b361954a" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_reduce_lead_term</name></member>
+      <member refid="class_g_b_ring_a12e5c76b7447cc22f4eace4967cead9f_1a12e5c76b7447cc22f4eace4967cead9f" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_reduce_lead_term_ZZ</name></member>
+      <member refid="class_g_b_ring_ac9a085e7e74f76b8c55da04ebaded5f1_1ac9a085e7e74f76b8c55da04ebaded5f1" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_reduce_with_marked_lead_term</name></member>
+      <member refid="class_g_b_ring_a15a21edcd629abbde8800b5d793d3efc_1a15a21edcd629abbde8800b5d793d3efc" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_remove</name></member>
+      <member refid="class_g_b_ring_aa165ba7fd8fae65f9604f5d950be016f_1aa165ba7fd8fae65f9604f5d950be016f" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_remove_content</name></member>
+      <member refid="class_g_b_ring_ae4cdfc52621035e6153438b4dc1b2494_1ae4cdfc52621035e6153438b4dc1b2494" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_remove_content</name></member>
+      <member refid="class_g_b_ring_a1e733a0119e3fc47cc401ee46c8cde44_1a1e733a0119e3fc47cc401ee46c8cde44" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_remove_content_ZZ</name></member>
+      <member refid="class_g_b_ring_aeaf04d81756de31637079b664b3867ad_1aeaf04d81756de31637079b664b3867ad" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_remove_term</name></member>
+      <member refid="class_g_b_ring_a9ecf69d04d0d670046a92b2ae6306b60_1a9ecf69d04d0d670046a92b2ae6306b60" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_replace_2by2_ZZ</name></member>
+      <member refid="class_g_b_ring_ada6ed07ce18ba6cd5690aca095ab79c6_1ada6ed07ce18ba6cd5690aca095ab79c6" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_size</name></member>
+      <member refid="class_g_b_ring_ada52875a8c756693e431a535283be409_1ada52875a8c756693e431a535283be409" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_sort</name></member>
+      <member refid="class_g_b_ring_a868fb80c116b163e82cd604d5c2d94fb_1a868fb80c116b163e82cd604d5c2d94fb" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_term</name></member>
+      <member refid="class_g_b_ring_aa773f8670bdf4385326634e96f661bc6_1aa773f8670bdf4385326634e96f661bc6" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_term</name></member>
+      <member refid="class_g_b_ring_aef4ad183dcbea0c44fda44d421acff12_1aef4ad183dcbea0c44fda44d421acff12" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_term_exponents</name></member>
+      <member refid="class_g_b_ring_a40a465a3de806be7f52d11170de27175_1a40a465a3de806be7f52d11170de27175" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_text_out</name></member>
+      <member refid="class_g_b_ring_ae89433e1c575c4daf8b9b38956d2f4e5_1ae89433e1c575c4daf8b9b38956d2f4e5" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>gbvector_zero</name></member>
+      <member refid="class_g_b_ring_a9323d7c9d5680055d8a5492babc8f644_1a9323d7c9d5680055d8a5492babc8f644" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>get_flattened_coefficients</name></member>
+      <member refid="class_g_b_ring_aa442261acc3d173cd7364588addb518c_1aa442261acc3d173cd7364588addb518c" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>get_flattened_monoid</name></member>
+      <member refid="class_g_b_ring_a0085db00b90316ffeaa571ceec932ca9_1a0085db00b90316ffeaa571ceec932ca9" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>is_schreyer_encoded</name></member>
+      <member refid="class_g_b_ring_a20d82135da7bf384bd82da3281d0b3fe_1a20d82135da7bf384bd82da3281d0b3fe" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>is_skew_commutative</name></member>
+      <member refid="class_g_b_ring_a7cae54fa26aff923ccec46b0288322ae_1a7cae54fa26aff923ccec46b0288322ae" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>is_solvable</name></member>
+      <member refid="class_g_b_ring_a20401386cece66aca659e61610895442_1a20401386cece66aca659e61610895442" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>is_weyl</name></member>
+      <member refid="class_g_b_ring_a85ca1bcfc842c07614ba07dc6956a505_1a85ca1bcfc842c07614ba07dc6956a505" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>is_weyl_algebra</name></member>
+      <member refid="class_g_b_ring_ad095d4e9734992cec2bb1101d200f270_1ad095d4e9734992cec2bb1101d200f270" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>K</name></member>
+      <member refid="class_g_b_ring_aca59f330d6da36d51307f4e44aeced91_1aca59f330d6da36d51307f4e44aeced91" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>lower_content_ZZ</name></member>
+      <member refid="class_g_b_ring_ab18e35a60f14b50cc320b0b53fe49a80_1ab18e35a60f14b50cc320b0b53fe49a80" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>M</name></member>
+      <member refid="class_g_b_ring_a1614a1bf19d46b9ce7730621d3df9b3b_1a1614a1bf19d46b9ce7730621d3df9b3b" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>mem</name></member>
+      <member refid="class_g_b_ring_ac90a0aa4ca50a2a23d0e6c36434d827a_1ac90a0aa4ca50a2a23d0e6c36434d827a" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>memstats</name></member>
+      <member refid="class_g_b_ring_a38563d2598cab5a0c18d84850bf68ad2_1a38563d2598cab5a0c18d84850bf68ad2" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>monom_size</name></member>
+      <member refid="class_g_b_ring_a11b185a808d5cf7c23ef7ef1d0365e9a_1a11b185a808d5cf7c23ef7ef1d0365e9a" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>mult_by_term</name></member>
+      <member refid="class_g_b_ring_skew_acbd8bcaeb9a8832232d21a0e435a95d6_1acbd8bcaeb9a8832232d21a0e435a95d6" prot="public" virt="virtual"><scope>GBRingSkew</scope><name>mult_by_term1</name></member>
+      <member refid="class_g_b_ring_a7b40c44162686a7e6e53cca689f80b4b_1a7b40c44162686a7e6e53cca689f80b4b" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>n_skew_commutative_vars</name></member>
+      <member refid="class_g_b_ring_adbe13bf9147c68bf0d5167eca152761c_1adbe13bf9147c68bf0d5167eca152761c" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>n_vars</name></member>
+      <member refid="class_g_b_ring_ab2137f6b54e7e8f18dd6684f327ad193_1ab2137f6b54e7e8f18dd6684f327ad193" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>new_raw_term</name></member>
+      <member refid="class_g_b_ring_af5f0ad97485e897100f5f7eadb98e3fb_1af5f0ad97485e897100f5f7eadb98e3fb" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>one</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>operator new[]</name></member>
+      <member refid="class_g_b_ring_a9936f18de22cc5abfd20df7863025e83_1a9936f18de22cc5abfd20df7863025e83" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>reduce_lead_term_heap</name></member>
+      <member refid="class_g_b_ring_a6ca45da4cd9310cb1a5641284217a8fd_1a6ca45da4cd9310cb1a5641284217a8fd" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>reduce_marked_lead_term_heap</name></member>
+      <member refid="class_g_b_ring_a5c174562cdda141aa6ab8624ef3a5684_1a5c174562cdda141aa6ab8624ef3a5684" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>skew_monomial_var</name></member>
+      <member refid="class_g_b_ring_a5d59e6dae0f5577851fab1de2efde254_1a5d59e6dae0f5577851fab1de2efde254" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>skew_mult_sign</name></member>
+      <member refid="class_g_b_ring_a16347931931f7f9b0c36c6503e299bd1_1a16347931931f7f9b0c36c6503e299bd1" prot="public" virt="non-virtual"><scope>GBRingSkew</scope><name>skew_variable</name></member>
+      <member refid="class_g_b_ring_a5785f984197c2a2c03ffeb6700d7831c_1a5785f984197c2a2c03ffeb6700d7831c" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>solvable</name></member>
+      <member refid="class_g_b_ring_a08290dc9e64e8e63c1bcb8339ea0ed6f_1a08290dc9e64e8e63c1bcb8339ea0ed6f" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>weyl</name></member>
+      <member refid="class_g_b_ring_a02b699e6b4925db2b7d4f42362c7f49c_1a02b699e6b4925db2b7d4f42362c7f49c" prot="protected" virt="non-virtual"><scope>GBRingSkew</scope><name>zzp</name></member>
+      <member refid="class_g_b_ring_ac38429b841a20143641edad2660646a3_1ac38429b841a20143641edad2660646a3" prot="public" virt="virtual"><scope>GBRingSkew</scope><name>~GBRing</name></member>
+      <member refid="class_g_b_ring_skew_a0b302697d300f657d465fe2c18a71e4c_1a0b302697d300f657d465fe2c18a71e4c" prot="public" virt="virtual"><scope>GBRingSkew</scope><name>~GBRingSkew</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

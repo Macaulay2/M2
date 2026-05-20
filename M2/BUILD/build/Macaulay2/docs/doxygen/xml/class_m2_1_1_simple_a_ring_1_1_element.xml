@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_m2_1_1_simple_a_ring_1_1_element" kind="class" language="C++" prot="public">
+    <compoundname>M2::SimpleARing::Element</compoundname>
+    <basecompoundref refid="class_m2_1_1_element_impl" prot="public" virt="non-virtual">M2::ElementImpl&lt; ARing::ElementType &gt;</basecompoundref>
+    <includes refid="aring_8hpp" local="no">aring.hpp</includes>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_m2_1_1_simple_a_ring_1_1_element_ac93225ff047aa810d08153c1466c760b_1ac93225ff047aa810d08153c1466c760b" prot="private" static="no">
+        <type>ARing::ElementType</type>
+        <definition>typedef ARing::ElementType M2::SimpleARing&lt; ARing &gt;::Element::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>M2::SimpleARing::Element::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="152" column="41" bodyfile="Macaulay2/e/aring.hpp" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_m2_1_1_simple_a_ring_1_1_element_a5e3ebe7ebf5bd8b26dfa7a66f9a95042_1a5e3ebe7ebf5bd8b26dfa7a66f9a95042" prot="private" static="no">
+        <type><ref refid="class_m2_1_1_element_impl_a82ecb671917487995f45cd715c603e84_1a82ecb671917487995f45cd715c603e84" kindref="member">ElementImpl</ref>&lt; <ref refid="class_m2_1_1_simple_a_ring_1_1_element_ac93225ff047aa810d08153c1466c760b_1ac93225ff047aa810d08153c1466c760b" kindref="member">ElementType</ref> &gt;</type>
+        <definition>typedef ElementImpl&lt;ElementType&gt; M2::SimpleARing&lt; ARing &gt;::Element::Impl</definition>
+        <argsstring></argsstring>
+        <name>Impl</name>
+        <qualifiedname>M2::SimpleARing::Element::Impl</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="153" column="25" bodyfile="Macaulay2/e/aring.hpp" bodystart="153" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_m2_1_1_simple_a_ring_1_1_element_ae8f8ffd8a3e6a7539b314996a98a3466_1ae8f8ffd8a3e6a7539b314996a98a3466" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2::SimpleARing&lt; ARing &gt;::Element::Element</definition>
+        <argsstring>(const ARing &amp;ring)</argsstring>
+        <name>Element</name>
+        <qualifiedname>M2::SimpleARing::Element::Element</qualifiedname>
+        <param>
+          <type>const <ref refid="class_a_ring" kindref="compound">ARing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="156" column="14" bodyfile="Macaulay2/e/aring.hpp" bodystart="156" bodyend="161"/>
+        <references refid="class_m2_1_1_element_impl_ad27575a45232e01307ad52b61a1bed61_1ad27575a45232e01307ad52b61a1bed61" compoundref="aring_8hpp" startline="117">M2::ElementImpl&lt; ElementType &gt;::mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_simple_a_ring_1_1_element_a11197c038e98bff75f1aadadd93c0420_1a11197c038e98bff75f1aadadd93c0420" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2::SimpleARing&lt; ARing &gt;::Element::Element</definition>
+        <argsstring>(const ARing &amp;ring, const ElementType &amp;other)</argsstring>
+        <name>Element</name>
+        <qualifiedname>M2::SimpleARing::Element::Element</qualifiedname>
+        <param>
+          <type>const <ref refid="class_a_ring" kindref="compound">ARing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_m2_1_1_simple_a_ring_1_1_element_ac93225ff047aa810d08153c1466c760b_1ac93225ff047aa810d08153c1466c760b" kindref="member">ElementType</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="162" column="5" bodyfile="Macaulay2/e/aring.hpp" bodystart="162" bodyend="165"/>
+        <references refid="class_m2_1_1_element_impl_ad27575a45232e01307ad52b61a1bed61_1ad27575a45232e01307ad52b61a1bed61" compoundref="aring_8hpp" startline="117">M2::ElementImpl&lt; ElementType &gt;::mValue</references>
+      </memberdef>
+      <memberdef kind="function" id="class_m2_1_1_simple_a_ring_1_1_element_a36f782645706bfc97e0f71a929516ec8_1a36f782645706bfc97e0f71a929516ec8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>M2::SimpleARing&lt; ARing &gt;::Element::~Element</definition>
+        <argsstring>()</argsstring>
+        <name>~Element</name>
+        <qualifiedname>M2::SimpleARing::Element::~Element</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/aring.hpp" line="166" column="5" bodyfile="Macaulay2/e/aring.hpp" bodystart="166" bodyend="166"/>
+        <references refid="class_m2_1_1_element_impl_ad27575a45232e01307ad52b61a1bed61_1ad27575a45232e01307ad52b61a1bed61" compoundref="aring_8hpp" startline="117">M2::ElementImpl&lt; ElementType &gt;::mValue</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A wrapper class for <ref refid="class_m2_1_1_simple_a_ring_1_1_element_ac93225ff047aa810d08153c1466c760b_1ac93225ff047aa810d08153c1466c760b" kindref="member">ElementType</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>M2::ElementImpl&lt; ElementType &gt;</label>
+        <link refid="class_m2_1_1_element_impl"/>
+      </node>
+      <node id="2">
+        <label>M2::ElementImpl&lt; ARing::ElementType &gt;</label>
+        <link refid="class_m2_1_1_element_impl"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; ARing::ElementType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>M2::SimpleARing&lt; ARing &gt;::Element</label>
+        <link refid="class_m2_1_1_simple_a_ring_1_1_element"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>ElementType</label>
+      </node>
+      <node id="4">
+        <label>M2::ElementImpl&lt; ElementType &gt;</label>
+        <link refid="class_m2_1_1_element_impl"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>M2::ElementImpl&lt; ARing::ElementType &gt;</label>
+        <link refid="class_m2_1_1_element_impl"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; ARing::ElementType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>M2::SimpleARing&lt; ARing &gt;::Element</label>
+        <link refid="class_m2_1_1_simple_a_ring_1_1_element"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/aring.hpp" line="150" column="3" bodyfile="Macaulay2/e/aring.hpp" bodystart="151" bodyend="167"/>
+    <listofallmembers>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_ae8f8ffd8a3e6a7539b314996a98a3466_1ae8f8ffd8a3e6a7539b314996a98a3466" prot="public" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>Element</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_a11197c038e98bff75f1aadadd93c0420_1a11197c038e98bff75f1aadadd93c0420" prot="public" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>Element</name></member>
+      <member refid="class_m2_1_1_element_impl_a82ecb671917487995f45cd715c603e84_1a82ecb671917487995f45cd715c603e84" prot="protected" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>ElementImpl</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_ac93225ff047aa810d08153c1466c760b_1ac93225ff047aa810d08153c1466c760b" prot="private" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>ElementType</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_a5e3ebe7ebf5bd8b26dfa7a66f9a95042_1a5e3ebe7ebf5bd8b26dfa7a66f9a95042" prot="private" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>Impl</name></member>
+      <member refid="class_m2_1_1_element_impl_ad27575a45232e01307ad52b61a1bed61_1ad27575a45232e01307ad52b61a1bed61" prot="protected" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>mValue</name></member>
+      <member refid="class_m2_1_1_element_impl_abcd20949d46dabb8ffac940cc236b6dd_1abcd20949d46dabb8ffac940cc236b6dd" prot="public" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>operator const ElementType &amp;</name></member>
+      <member refid="class_m2_1_1_element_impl_ac71bed284b0c2494e6d53975808b7755_1ac71bed284b0c2494e6d53975808b7755" prot="public" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>operator ElementType &amp;</name></member>
+      <member refid="class_m2_1_1_element_impl_adcec2611060003f70c4875ca7e71c1cb_1adcec2611060003f70c4875ca7e71c1cb" prot="protected" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>operator=</name></member>
+      <member refid="class_m2_1_1_element_impl_a114e53625b3801500bf26a30eb10d856_1a114e53625b3801500bf26a30eb10d856" prot="public" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>value</name></member>
+      <member refid="class_m2_1_1_simple_a_ring_1_1_element_a36f782645706bfc97e0f71a929516ec8_1a36f782645706bfc97e0f71a929516ec8" prot="public" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>~Element</name></member>
+      <member refid="class_m2_1_1_element_impl_a51f0e8cebad2dd2a7cb7903ca04a6985_1a51f0e8cebad2dd2a7cb7903ca04a6985" prot="protected" virt="non-virtual"><scope>M2::SimpleARing::Element</scope><name>~ElementImpl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

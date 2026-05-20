@@ -1,0 +1,2484 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_path_tracker" kind="class" language="C++" prot="public">
+    <compoundname>PathTracker</compoundname>
+    <basecompoundref refid="class_mutable_engine_object" prot="public" virt="non-virtual">MutableEngineObject</basecompoundref>
+    <includes refid="_n_a_g_8hpp" local="no">NAG.hpp</includes>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="class_path_tracker_a161ddc433b0d36f23cae4fd25517b026_1a161ddc433b0d36f23cae4fd25517b026" prot="private" static="yes" mutable="no">
+        <type><ref refid="class_path_tracker" kindref="compound">PathTracker</ref> *</type>
+        <definition>PathTracker * PathTracker::catalog</definition>
+        <argsstring>[MAX_NUM_PATH_TRACKERS]</argsstring>
+        <name>catalog</name>
+        <qualifiedname>PathTracker::catalog</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="643" column="22" bodyfile="Macaulay2/e/NAG.hpp" bodystart="643" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a7bad1f2c9ebd3f4dd761d6f7a7aab6a4_1a7bad1f2c9ebd3f4dd761d6f7a7aab6a4" prot="private" static="yes" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::num_path_trackers</definition>
+        <argsstring></argsstring>
+        <name>num_path_trackers</name>
+        <qualifiedname>PathTracker::num_path_trackers</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="644" column="14" bodyfile="Macaulay2/e/NAG.hpp" bodystart="644" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_path_tracker_a405b8ccef552779c8ac650f229b4fcb9_1a405b8ccef552779c8ac650f229b4fcb9" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::number</definition>
+        <argsstring></argsstring>
+        <name>number</name>
+        <qualifiedname>PathTracker::number</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="646" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="646" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_afc040ae55e4ca3170715c6d5f5c72213_1afc040ae55e4ca3170715c6d5f5c72213" compoundref="_n_a_g_8cpp" startline="2158" endline="2185">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_abee8a01f58c4c2bd6b493cf66bc17a90_1abee8a01f58c4c2bd6b493cf66bc17a90" prot="private" static="no" mutable="no">
+        <type><ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>Matrix* PathTracker::target</definition>
+        <argsstring></argsstring>
+        <name>target</name>
+        <qualifiedname>PathTracker::target</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="648" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="648" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a133ba2b54a2a9b8d470595f57375991d_1a133ba2b54a2a9b8d470595f57375991d" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix* PathTracker::H</definition>
+        <argsstring></argsstring>
+        <name>H</name>
+        <qualifiedname>PathTracker::H</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="649" column="16" bodyfile="Macaulay2/e/NAG.hpp" bodystart="649" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a400a8e34419176da883fcadfe7206c8d_1a400a8e34419176da883fcadfe7206c8d" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * PathTracker::S</definition>
+        <argsstring></argsstring>
+        <name>S</name>
+        <qualifiedname>PathTracker::S</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="649" column="18" bodyfile="Macaulay2/e/NAG.hpp" bodystart="649" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a33a2e7b1b39160a449004c2390394911_1a33a2e7b1b39160a449004c2390394911" compoundref="_n_a_g_8cpp" startline="1436" endline="1510">make</referencedby>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a33988cc421a375b22e2c16543309bcd9_1a33988cc421a375b22e2c16543309bcd9" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * PathTracker::T</definition>
+        <argsstring></argsstring>
+        <name>T</name>
+        <qualifiedname>PathTracker::T</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="649" column="20" bodyfile="Macaulay2/e/NAG.hpp" bodystart="649" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a33a2e7b1b39160a449004c2390394911_1a33a2e7b1b39160a449004c2390394911" compoundref="_n_a_g_8cpp" startline="1436" endline="1510">make</referencedby>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_aa30633a219b7e49233b8bd76165f76bb_1aa30633a219b7e49233b8bd76165f76bb" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram* PathTracker::slpH</definition>
+        <argsstring></argsstring>
+        <name>slpH</name>
+        <qualifiedname>PathTracker::slpH</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="650" column="23" bodyfile="Macaulay2/e/NAG.hpp" bodystart="650" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a23533b89316b671f26f08be095cbfffb_1a23533b89316b671f26f08be095cbfffb" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram * PathTracker::slpHxt</definition>
+        <argsstring></argsstring>
+        <name>slpHxt</name>
+        <qualifiedname>PathTracker::slpHxt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="650" column="28" bodyfile="Macaulay2/e/NAG.hpp" bodystart="650" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a2df549b7cfbb44105963c46e9490440b_1a2df549b7cfbb44105963c46e9490440b" compoundref="_n_a_g_8hpp" startline="659" endline="695">evaluate_slpHxt</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_ae5189069c0ffad23911fd5630c130fa8_1ae5189069c0ffad23911fd5630c130fa8" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram * PathTracker::slpHxtH</definition>
+        <argsstring></argsstring>
+        <name>slpHxtH</name>
+        <qualifiedname>PathTracker::slpHxtH</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="650" column="35" bodyfile="Macaulay2/e/NAG.hpp" bodystart="650" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a96da5ddedb2b145d13af717150e3e7e6_1a96da5ddedb2b145d13af717150e3e7e6" compoundref="_n_a_g_8hpp" startline="696" endline="702">evaluate_slpHxtH</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a2cd7d8f28d9cadc4926555a8ab3375a6_1a2cd7d8f28d9cadc4926555a8ab3375a6" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram * PathTracker::slpHxH</definition>
+        <argsstring></argsstring>
+        <name>slpHxH</name>
+        <qualifiedname>PathTracker::slpHxH</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="651" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="651" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" compoundref="_n_a_g_8hpp" startline="703" endline="728">evaluate_slpHxH</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_aa9355527bc954cf13580a96ed934fd19_1aa9355527bc954cf13580a96ed934fd19" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram * PathTracker::slpS</definition>
+        <argsstring></argsstring>
+        <name>slpS</name>
+        <qualifiedname>PathTracker::slpS</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="652" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="652" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a48aa26199099a2ee8b66984688ab8857_1a48aa26199099a2ee8b66984688ab8857" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram * PathTracker::slpSx</definition>
+        <argsstring></argsstring>
+        <name>slpSx</name>
+        <qualifiedname>PathTracker::slpSx</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="652" column="12" bodyfile="Macaulay2/e/NAG.hpp" bodystart="652" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_ac10bf538f56336475d6450bcc81725ab_1ac10bf538f56336475d6450bcc81725ab" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram * PathTracker::slpSxS</definition>
+        <argsstring></argsstring>
+        <name>slpSxS</name>
+        <qualifiedname>PathTracker::slpSxS</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="652" column="18" bodyfile="Macaulay2/e/NAG.hpp" bodystart="652" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" compoundref="_n_a_g_8hpp" startline="703" endline="728">evaluate_slpHxH</referencedby>
+        <referencedby refid="class_path_tracker_a2df549b7cfbb44105963c46e9490440b_1a2df549b7cfbb44105963c46e9490440b" compoundref="_n_a_g_8hpp" startline="659" endline="695">evaluate_slpHxt</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a858a1e47311a5c3c28b67269b4f18d77_1a858a1e47311a5c3c28b67269b4f18d77" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram * PathTracker::slpT</definition>
+        <argsstring></argsstring>
+        <name>slpT</name>
+        <qualifiedname>PathTracker::slpT</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="652" column="25" bodyfile="Macaulay2/e/NAG.hpp" bodystart="652" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_ac3590d1085ad5bc3a72183d3bba1073d_1ac3590d1085ad5bc3a72183d3bba1073d" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram * PathTracker::slpTx</definition>
+        <argsstring></argsstring>
+        <name>slpTx</name>
+        <qualifiedname>PathTracker::slpTx</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="652" column="30" bodyfile="Macaulay2/e/NAG.hpp" bodystart="652" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_af9420a8391049441ce3865fa4abde64c_1af9420a8391049441ce3865fa4abde64c" prot="private" static="no" mutable="no">
+        <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+        <definition>StraightLineProgram * PathTracker::slpTxT</definition>
+        <argsstring></argsstring>
+        <name>slpTxT</name>
+        <qualifiedname>PathTracker::slpTxT</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="653" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="653" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" compoundref="_n_a_g_8hpp" startline="703" endline="728">evaluate_slpHxH</referencedby>
+        <referencedby refid="class_path_tracker_a2df549b7cfbb44105963c46e9490440b_1a2df549b7cfbb44105963c46e9490440b" compoundref="_n_a_g_8hpp" startline="659" endline="695">evaluate_slpHxt</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a9395bfa136d9afb2c5773d8d46de3cb0_1a9395bfa136d9afb2c5773d8d46de3cb0" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double PathTracker::productST</definition>
+        <argsstring></argsstring>
+        <name>productST</name>
+        <qualifiedname>PathTracker::productST</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="654" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="654" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" compoundref="_n_a_g_8hpp" startline="703" endline="728">evaluate_slpHxH</referencedby>
+        <referencedby refid="class_path_tracker_a2df549b7cfbb44105963c46e9490440b_1a2df549b7cfbb44105963c46e9490440b" compoundref="_n_a_g_8hpp" startline="659" endline="695">evaluate_slpHxt</referencedby>
+        <referencedby refid="class_path_tracker_a33a2e7b1b39160a449004c2390394911_1a33a2e7b1b39160a449004c2390394911" compoundref="_n_a_g_8cpp" startline="1436" endline="1510">make</referencedby>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_ad2862e1f59acc25bb67400b5f0cc58b6_1ad2862e1f59acc25bb67400b5f0cc58b6" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double PathTracker::bigT</definition>
+        <argsstring></argsstring>
+        <name>bigT</name>
+        <qualifiedname>PathTracker::bigT</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="655" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="655" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" compoundref="_n_a_g_8hpp" startline="703" endline="728">evaluate_slpHxH</referencedby>
+        <referencedby refid="class_path_tracker_a2df549b7cfbb44105963c46e9490440b_1a2df549b7cfbb44105963c46e9490440b" compoundref="_n_a_g_8hpp" startline="659" endline="695">evaluate_slpHxt</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_ad1d2039d5bf83de7a87eb993e97294e0_1ad1d2039d5bf83de7a87eb993e97294e0" prot="private" static="no" mutable="no">
+        <type>double *</type>
+        <definition>double* PathTracker::DMforPN</definition>
+        <argsstring></argsstring>
+        <name>DMforPN</name>
+        <qualifiedname>PathTracker::DMforPN</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="656" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="656" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" compoundref="_n_a_g_8cpp" startline="1418" endline="1423">PathTracker</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+        <referencedby refid="class_path_tracker_a4782b126d8e062ba0bb1280f26ec4850_1a4782b126d8e062ba0bb1280f26ec4850" compoundref="_n_a_g_8cpp" startline="1425" endline="1430">~PathTracker</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a31866e236e9265a49027eeec4461b638_1a31866e236e9265a49027eeec4461b638" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double PathTracker::maxDegreeTo3halves</definition>
+        <argsstring></argsstring>
+        <name>maxDegreeTo3halves</name>
+        <qualifiedname>PathTracker::maxDegreeTo3halves</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="657" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="657" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_ac445d627234faab01fe0c1962e75f00b_1ac445d627234faab01fe0c1962e75f00b" prot="private" static="no" mutable="no">
+        <type>const <ref refid="_n_a_g_8hpp_aac3f153b43e30e4004c50123561bb145_1aac3f153b43e30e4004c50123561bb145" kindref="member">CCC</ref> *</type>
+        <definition>const CCC* PathTracker::C</definition>
+        <argsstring></argsstring>
+        <name>C</name>
+        <qualifiedname>PathTracker::C</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="730" column="13" bodyfile="Macaulay2/e/NAG.hpp" bodystart="730" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_ab9adb8a56c79cefde7fd8e690b9db78c_1ab9adb8a56c79cefde7fd8e690b9db78c" compoundref="_n_a_g_8cpp" startline="2100" endline="2126">getAllSolutions</referencedby>
+        <referencedby refid="class_path_tracker_adb2bcbb75ca6962f177e0d322e12bad0_1adb2bcbb75ca6962f177e0d322e12bad0" compoundref="_n_a_g_8cpp" startline="2074" endline="2098">getSolution</referencedby>
+        <referencedby refid="class_path_tracker_a0b092463cf91fcc4e02252ec4c6d3a4d_1a0b092463cf91fcc4e02252ec4c6d3a4d" compoundref="_n_a_g_8cpp" startline="2140" endline="2147">getSolutionLastT</referencedby>
+        <referencedby refid="class_path_tracker_af50f313e11d0a83a32c0d31a8e980171_1af50f313e11d0a83a32c0d31a8e980171" compoundref="_n_a_g_8cpp" startline="2149" endline="2156">getSolutionRcond</referencedby>
+        <referencedby refid="class_path_tracker_acde233c44f3f5138d3c289cf684ca08b_1acde233c44f3f5138d3c289cf684ca08b" compoundref="_n_a_g_8cpp" startline="1978" endline="2072">refine</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a2d094d3cdfd26bdde15a46fb47dae732_1a2d094d3cdfd26bdde15a46fb47dae732" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> *</type>
+        <definition>const PolyRing* PathTracker::homotopy_R</definition>
+        <argsstring></argsstring>
+        <name>homotopy_R</name>
+        <qualifiedname>PathTracker::homotopy_R</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="731" column="18" bodyfile="Macaulay2/e/NAG.hpp" bodystart="731" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a3ab9680165cf93e43d78b1d2c0084628_1a3ab9680165cf93e43d78b1d2c0084628" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::n_coords</definition>
+        <argsstring></argsstring>
+        <name>n_coords</name>
+        <qualifiedname>PathTracker::n_coords</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="733" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="733" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_ab9adb8a56c79cefde7fd8e690b9db78c_1ab9adb8a56c79cefde7fd8e690b9db78c" compoundref="_n_a_g_8cpp" startline="2100" endline="2126">getAllSolutions</referencedby>
+        <referencedby refid="class_path_tracker_adb2bcbb75ca6962f177e0d322e12bad0_1adb2bcbb75ca6962f177e0d322e12bad0" compoundref="_n_a_g_8cpp" startline="2074" endline="2098">getSolution</referencedby>
+        <referencedby refid="class_path_tracker_acde233c44f3f5138d3c289cf684ca08b_1acde233c44f3f5138d3c289cf684ca08b" compoundref="_n_a_g_8cpp" startline="1978" endline="2072">refine</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::n_sols</definition>
+        <argsstring></argsstring>
+        <name>n_sols</name>
+        <qualifiedname>PathTracker::n_sols</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="734" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="734" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_ab9adb8a56c79cefde7fd8e690b9db78c_1ab9adb8a56c79cefde7fd8e690b9db78c" compoundref="_n_a_g_8cpp" startline="2100" endline="2126">getAllSolutions</referencedby>
+        <referencedby refid="class_path_tracker_adb2bcbb75ca6962f177e0d322e12bad0_1adb2bcbb75ca6962f177e0d322e12bad0" compoundref="_n_a_g_8cpp" startline="2074" endline="2098">getSolution</referencedby>
+        <referencedby refid="class_path_tracker_a0b092463cf91fcc4e02252ec4c6d3a4d_1a0b092463cf91fcc4e02252ec4c6d3a4d" compoundref="_n_a_g_8cpp" startline="2140" endline="2147">getSolutionLastT</referencedby>
+        <referencedby refid="class_path_tracker_af50f313e11d0a83a32c0d31a8e980171_1af50f313e11d0a83a32c0d31a8e980171" compoundref="_n_a_g_8cpp" startline="2149" endline="2156">getSolutionRcond</referencedby>
+        <referencedby refid="class_path_tracker_a7f23ef75fff95c7086d8e0cb302f68fd_1a7f23ef75fff95c7086d8e0cb302f68fd" compoundref="_n_a_g_8cpp" startline="2128" endline="2132">getSolutionStatus</referencedby>
+        <referencedby refid="class_path_tracker_a2d89445e8a36120c048cdf6891dce4bd_1a2d89445e8a36120c048cdf6891dce4bd" compoundref="_n_a_g_8cpp" startline="2134" endline="2138">getSolutionSteps</referencedby>
+        <referencedby refid="class_path_tracker_acde233c44f3f5138d3c289cf684ca08b_1acde233c44f3f5138d3c289cf684ca08b" compoundref="_n_a_g_8cpp" startline="1978" endline="2072">refine</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+        <referencedby refid="class_path_tracker_a4782b126d8e062ba0bb1280f26ec4850_1a4782b126d8e062ba0bb1280f26ec4850" compoundref="_n_a_g_8cpp" startline="1425" endline="1430">~PathTracker</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_solution" kindref="compound">Solution</ref> *</type>
+        <definition>Solution* PathTracker::raw_solutions</definition>
+        <argsstring></argsstring>
+        <name>raw_solutions</name>
+        <qualifiedname>PathTracker::raw_solutions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="735" column="12" bodyfile="Macaulay2/e/NAG.hpp" bodystart="735" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_ab9adb8a56c79cefde7fd8e690b9db78c_1ab9adb8a56c79cefde7fd8e690b9db78c" compoundref="_n_a_g_8cpp" startline="2100" endline="2126">getAllSolutions</referencedby>
+        <referencedby refid="class_path_tracker_adb2bcbb75ca6962f177e0d322e12bad0_1adb2bcbb75ca6962f177e0d322e12bad0" compoundref="_n_a_g_8cpp" startline="2074" endline="2098">getSolution</referencedby>
+        <referencedby refid="class_path_tracker_a0b092463cf91fcc4e02252ec4c6d3a4d_1a0b092463cf91fcc4e02252ec4c6d3a4d" compoundref="_n_a_g_8cpp" startline="2140" endline="2147">getSolutionLastT</referencedby>
+        <referencedby refid="class_path_tracker_af50f313e11d0a83a32c0d31a8e980171_1af50f313e11d0a83a32c0d31a8e980171" compoundref="_n_a_g_8cpp" startline="2149" endline="2156">getSolutionRcond</referencedby>
+        <referencedby refid="class_path_tracker_a7f23ef75fff95c7086d8e0cb302f68fd_1a7f23ef75fff95c7086d8e0cb302f68fd" compoundref="_n_a_g_8cpp" startline="2128" endline="2132">getSolutionStatus</referencedby>
+        <referencedby refid="class_path_tracker_a2d89445e8a36120c048cdf6891dce4bd_1a2d89445e8a36120c048cdf6891dce4bd" compoundref="_n_a_g_8cpp" startline="2134" endline="2138">getSolutionSteps</referencedby>
+        <referencedby refid="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" compoundref="_n_a_g_8cpp" startline="1418" endline="1423">PathTracker</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+        <referencedby refid="class_path_tracker_a4782b126d8e062ba0bb1280f26ec4850_1a4782b126d8e062ba0bb1280f26ec4850" compoundref="_n_a_g_8cpp" startline="1425" endline="1430">~PathTracker</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a15d009040061b980d53af9a59682dcf4_1a15d009040061b980d53af9a59682dcf4" prot="private" static="no" mutable="no">
+        <type><ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>Matrix* PathTracker::solutions</definition>
+        <argsstring></argsstring>
+        <name>solutions</name>
+        <qualifiedname>PathTracker::solutions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="736" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="736" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_ab9adb8a56c79cefde7fd8e690b9db78c_1ab9adb8a56c79cefde7fd8e690b9db78c" compoundref="_n_a_g_8cpp" startline="2100" endline="2126">getAllSolutions</referencedby>
+        <referencedby refid="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" compoundref="_n_a_g_8cpp" startline="1418" endline="1423">PathTracker</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool PathTracker::is_projective</definition>
+        <argsstring></argsstring>
+        <name>is_projective</name>
+        <qualifiedname>PathTracker::is_projective</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="739" column="11" bodyfile="Macaulay2/e/NAG.hpp" bodystart="739" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" compoundref="_n_a_g_8hpp" startline="703" endline="728">evaluate_slpHxH</referencedby>
+        <referencedby refid="class_path_tracker_a2df549b7cfbb44105963c46e9490440b_1a2df549b7cfbb44105963c46e9490440b" compoundref="_n_a_g_8hpp" startline="659" endline="695">evaluate_slpHxt</referencedby>
+        <referencedby refid="class_path_tracker_a96da5ddedb2b145d13af717150e3e7e6_1a96da5ddedb2b145d13af717150e3e7e6" compoundref="_n_a_g_8hpp" startline="696" endline="702">evaluate_slpHxtH</referencedby>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a">rawTrackPaths</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a39a4c23554e81e8fdf1fd5636af62ec6_1a39a4c23554e81e8fdf1fd5636af62ec6" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+        <definition>gmp_RR PathTracker::init_dt</definition>
+        <argsstring></argsstring>
+        <name>init_dt</name>
+        <qualifiedname>PathTracker::init_dt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="740" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="740" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a">rawTrackPaths</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_ac9c308b3e9289b76143083131b8367f1_1ac9c308b3e9289b76143083131b8367f1" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+        <definition>gmp_RR PathTracker::min_dt</definition>
+        <argsstring></argsstring>
+        <name>min_dt</name>
+        <qualifiedname>PathTracker::min_dt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="740" column="18" bodyfile="Macaulay2/e/NAG.hpp" bodystart="740" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a">rawTrackPaths</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_adeb837651e78dfe4cf85dfdf46581eb2_1adeb837651e78dfe4cf85dfdf46581eb2" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+        <definition>gmp_RR PathTracker::dt_increase_factor</definition>
+        <argsstring></argsstring>
+        <name>dt_increase_factor</name>
+        <qualifiedname>PathTracker::dt_increase_factor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="741" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="741" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a">rawTrackPaths</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a87a7c5a2b8f68e0a1a749b4cfcd34d4a_1a87a7c5a2b8f68e0a1a749b4cfcd34d4a" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+        <definition>gmp_RR PathTracker::dt_decrease_factor</definition>
+        <argsstring></argsstring>
+        <name>dt_decrease_factor</name>
+        <qualifiedname>PathTracker::dt_decrease_factor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="741" column="29" bodyfile="Macaulay2/e/NAG.hpp" bodystart="741" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a">rawTrackPaths</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_aaaec1c8c0087925fc1e2996bd44f533c_1aaaec1c8c0087925fc1e2996bd44f533c" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::num_successes_before_increase</definition>
+        <argsstring></argsstring>
+        <name>num_successes_before_increase</name>
+        <qualifiedname>PathTracker::num_successes_before_increase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="742" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="742" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a">rawTrackPaths</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a980804c674164fe19aa82c8adcbadec9_1a980804c674164fe19aa82c8adcbadec9" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+        <definition>gmp_RR PathTracker::epsilon</definition>
+        <argsstring></argsstring>
+        <name>epsilon</name>
+        <qualifiedname>PathTracker::epsilon</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="743" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="743" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a">rawTrackPaths</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a258650f2f881fe2cbe45e3cb92db7f6e_1a258650f2f881fe2cbe45e3cb92db7f6e" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::max_corr_steps</definition>
+        <argsstring></argsstring>
+        <name>max_corr_steps</name>
+        <qualifiedname>PathTracker::max_corr_steps</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="744" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="744" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a">rawTrackPaths</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a16b565e37a8a54cc06c054ade257e386_1a16b565e37a8a54cc06c054ade257e386" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+        <definition>gmp_RR PathTracker::end_zone_factor</definition>
+        <argsstring></argsstring>
+        <name>end_zone_factor</name>
+        <qualifiedname>PathTracker::end_zone_factor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="745" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="745" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_ada19913cba2c24bbc2139c1f8329a7f3_1ada19913cba2c24bbc2139c1f8329a7f3" prot="private" static="no" mutable="no">
+        <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+        <definition>gmp_RR PathTracker::infinity_threshold</definition>
+        <argsstring></argsstring>
+        <name>infinity_threshold</name>
+        <qualifiedname>PathTracker::infinity_threshold</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="746" column="10" bodyfile="Macaulay2/e/NAG.hpp" bodystart="746" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_path_tracker_a77502e04122173a9850cff8e3e579f59_1a77502e04122173a9850cff8e3e579f59" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::pred_type</definition>
+        <argsstring></argsstring>
+        <name>pred_type</name>
+        <qualifiedname>PathTracker::pred_type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="747" column="7" bodyfile="Macaulay2/e/NAG.hpp" bodystart="747" bodyend="-1"/>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+        <referencedby refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a">rawTrackPaths</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_path_tracker_a2df549b7cfbb44105963c46e9490440b_1a2df549b7cfbb44105963c46e9490440b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void PathTracker::evaluate_slpHxt</definition>
+        <argsstring>(int n, const complex *x0t0, complex *Hxt)</argsstring>
+        <name>evaluate_slpHxt</name>
+        <qualifiedname>PathTracker::evaluate_slpHxt</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcomplex" kindref="compound">complex</ref> *</type>
+          <declname>x0t0</declname>
+        </param>
+        <param>
+          <type><ref refid="classcomplex" kindref="compound">complex</ref> *</type>
+          <declname>Hxt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="659" column="8" bodyfile="Macaulay2/e/NAG.hpp" bodystart="659" bodyend="695"/>
+        <references refid="class_path_tracker_ad2862e1f59acc25bb67400b5f0cc58b6_1ad2862e1f59acc25bb67400b5f0cc58b6" compoundref="_n_a_g_8hpp" startline="655">bigT</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" compoundref="_n_a_g_8hpp" startline="739">is_projective</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="class_path_tracker_a9395bfa136d9afb2c5773d8d46de3cb0_1a9395bfa136d9afb2c5773d8d46de3cb0" compoundref="_n_a_g_8hpp" startline="654">productST</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="class_path_tracker_a23533b89316b671f26f08be095cbfffb_1a23533b89316b671f26f08be095cbfffb" compoundref="_n_a_g_8hpp" startline="650">slpHxt</references>
+        <references refid="class_path_tracker_ac10bf538f56336475d6450bcc81725ab_1ac10bf538f56336475d6450bcc81725ab" compoundref="_n_a_g_8hpp" startline="652">slpSxS</references>
+        <references refid="class_path_tracker_af9420a8391049441ce3865fa4abde64c_1af9420a8391049441ce3865fa4abde64c" compoundref="_n_a_g_8hpp" startline="653">slpTxT</references>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_a96da5ddedb2b145d13af717150e3e7e6_1a96da5ddedb2b145d13af717150e3e7e6" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void PathTracker::evaluate_slpHxtH</definition>
+        <argsstring>(int n, const complex *x0t0, complex *HxtH)</argsstring>
+        <name>evaluate_slpHxtH</name>
+        <qualifiedname>PathTracker::evaluate_slpHxtH</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcomplex" kindref="compound">complex</ref> *</type>
+          <declname>x0t0</declname>
+        </param>
+        <param>
+          <type><ref refid="classcomplex" kindref="compound">complex</ref> *</type>
+          <declname>HxtH</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="696" column="8" bodyfile="Macaulay2/e/NAG.hpp" bodystart="696" bodyend="702"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" compoundref="_n_a_g_8hpp" startline="739">is_projective</references>
+        <references refid="class_path_tracker_ae5189069c0ffad23911fd5630c130fa8_1ae5189069c0ffad23911fd5630c130fa8" compoundref="_n_a_g_8hpp" startline="650">slpHxtH</references>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void PathTracker::evaluate_slpHxH</definition>
+        <argsstring>(int n, const complex *x0t0, complex *HxH)</argsstring>
+        <name>evaluate_slpHxH</name>
+        <qualifiedname>PathTracker::evaluate_slpHxH</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcomplex" kindref="compound">complex</ref> *</type>
+          <declname>x0t0</declname>
+        </param>
+        <param>
+          <type><ref refid="classcomplex" kindref="compound">complex</ref> *</type>
+          <declname>HxH</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="703" column="8" bodyfile="Macaulay2/e/NAG.hpp" bodystart="703" bodyend="728"/>
+        <references refid="class_path_tracker_ad2862e1f59acc25bb67400b5f0cc58b6_1ad2862e1f59acc25bb67400b5f0cc58b6" compoundref="_n_a_g_8hpp" startline="655">bigT</references>
+        <references refid="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" compoundref="_n_a_g_8hpp" startline="739">is_projective</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="class_path_tracker_a9395bfa136d9afb2c5773d8d46de3cb0_1a9395bfa136d9afb2c5773d8d46de3cb0" compoundref="_n_a_g_8hpp" startline="654">productST</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="class_path_tracker_a2cd7d8f28d9cadc4926555a8ab3375a6_1a2cd7d8f28d9cadc4926555a8ab3375a6" compoundref="_n_a_g_8hpp" startline="651">slpHxH</references>
+        <references refid="class_path_tracker_ac10bf538f56336475d6450bcc81725ab_1ac10bf538f56336475d6450bcc81725ab" compoundref="_n_a_g_8hpp" startline="652">slpSxS</references>
+        <references refid="class_path_tracker_af9420a8391049441ce3865fa4abde64c_1af9420a8391049441ce3865fa4abde64c" compoundref="_n_a_g_8hpp" startline="653">slpTxT</references>
+        <referencedby refid="class_path_tracker_acde233c44f3f5138d3c289cf684ca08b_1acde233c44f3f5138d3c289cf684ca08b" compoundref="_n_a_g_8cpp" startline="1978" endline="2072">refine</referencedby>
+        <referencedby refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" compoundref="_n_a_g_8cpp" startline="1640" endline="1976">track</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void PathTracker::make_slps</definition>
+        <argsstring>()</argsstring>
+        <name>make_slps</name>
+        <qualifiedname>PathTracker::make_slps</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="749" column="8"/>
+        <references refid="class_path_tracker_a87a7c5a2b8f68e0a1a749b4cfcd34d4a_1a87a7c5a2b8f68e0a1a749b4cfcd34d4a" compoundref="_n_a_g_8hpp" startline="741">dt_decrease_factor</references>
+        <references refid="class_path_tracker_adeb837651e78dfe4cf85dfdf46581eb2_1adeb837651e78dfe4cf85dfdf46581eb2" compoundref="_n_a_g_8hpp" startline="741">dt_increase_factor</references>
+        <references refid="class_path_tracker_a16b565e37a8a54cc06c054ade257e386_1a16b565e37a8a54cc06c054ade257e386" compoundref="_n_a_g_8hpp" startline="745">end_zone_factor</references>
+        <references refid="class_path_tracker_a980804c674164fe19aa82c8adcbadec9_1a980804c674164fe19aa82c8adcbadec9" compoundref="_n_a_g_8hpp" startline="743">epsilon</references>
+        <references refid="class_path_tracker_ada19913cba2c24bbc2139c1f8329a7f3_1ada19913cba2c24bbc2139c1f8329a7f3" compoundref="_n_a_g_8hpp" startline="746">infinity_threshold</references>
+        <references refid="class_path_tracker_a39a4c23554e81e8fdf1fd5636af62ec6_1a39a4c23554e81e8fdf1fd5636af62ec6" compoundref="_n_a_g_8hpp" startline="740">init_dt</references>
+        <references refid="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" compoundref="_n_a_g_8hpp" startline="739">is_projective</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_path_tracker_a258650f2f881fe2cbe45e3cb92db7f6e_1a258650f2f881fe2cbe45e3cb92db7f6e" compoundref="_n_a_g_8hpp" startline="744">max_corr_steps</references>
+        <references refid="class_path_tracker_ac9c308b3e9289b76143083131b8367f1_1ac9c308b3e9289b76143083131b8367f1" compoundref="_n_a_g_8hpp" startline="740">min_dt</references>
+        <references refid="class_path_tracker_aaaec1c8c0087925fc1e2996bd44f533c_1aaaec1c8c0087925fc1e2996bd44f533c" compoundref="_n_a_g_8hpp" startline="742">num_successes_before_increase</references>
+        <references refid="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" compoundref="_n_a_g_8cpp" startline="1418" endline="1423">PathTracker</references>
+        <references refid="class_path_tracker_a77502e04122173a9850cff8e3e579f59_1a77502e04122173a9850cff8e3e579f59" compoundref="_n_a_g_8hpp" startline="747">pred_type</references>
+        <references refid="class_path_tracker_a9395bfa136d9afb2c5773d8d46de3cb0_1a9395bfa136d9afb2c5773d8d46de3cb0" compoundref="_n_a_g_8hpp" startline="654">productST</references>
+        <references refid="class_path_tracker_a400a8e34419176da883fcadfe7206c8d_1a400a8e34419176da883fcadfe7206c8d" compoundref="_n_a_g_8hpp" startline="649">S</references>
+        <references refid="class_path_tracker_a33988cc421a375b22e2c16543309bcd9_1a33988cc421a375b22e2c16543309bcd9" compoundref="_n_a_g_8hpp" startline="649">T</references>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>PathTracker::PathTracker</definition>
+        <argsstring>()</argsstring>
+        <name>PathTracker</name>
+        <qualifiedname>PathTracker::PathTracker</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="751" column="3" bodyfile="Macaulay2/e/NAG.cpp" bodystart="1418" bodyend="1423"/>
+        <references refid="class_path_tracker_ad1d2039d5bf83de7a87eb993e97294e0_1ad1d2039d5bf83de7a87eb993e97294e0" compoundref="_n_a_g_8hpp" startline="656">DMforPN</references>
+        <references refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" compoundref="_n_a_g_8hpp" startline="735">raw_solutions</references>
+        <references refid="class_path_tracker_a15d009040061b980d53af9a59682dcf4_1a15d009040061b980d53af9a59682dcf4" compoundref="_n_a_g_8hpp" startline="736">solutions</references>
+        <referencedby refid="class_path_tracker_a2f22a8e1a69d62d52999ab1ad74b6c0d_1a2f22a8e1a69d62d52999ab1ad74b6c0d" compoundref="_n_a_g_8cpp" startline="1516" endline="1556">make</referencedby>
+        <referencedby refid="class_path_tracker_a33a2e7b1b39160a449004c2390394911_1a33a2e7b1b39160a449004c2390394911" compoundref="_n_a_g_8cpp" startline="1436" endline="1510">make</referencedby>
+        <referencedby refid="class_path_tracker_ad51edd3cf7d7f6aa4c24279fa881162f_1ad51edd3cf7d7f6aa4c24279fa881162f" compoundref="_n_a_g_8cpp" startline="1559" endline="1569">make</referencedby>
+        <referencedby refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2">make_slps</referencedby>
+        <referencedby refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" compoundref="_n_a_g_8cpp" startline="1571" endline="1595">rawSetParametersPT</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_path_tracker_a2f22a8e1a69d62d52999ab1ad74b6c0d_1a2f22a8e1a69d62d52999ab1ad74b6c0d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_path_tracker" kindref="compound">PathTracker</ref> *</type>
+        <definition>PathTracker * PathTracker::make</definition>
+        <argsstring>(const Matrix *)</argsstring>
+        <name>make</name>
+        <qualifiedname>PathTracker::make</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <defname>HH</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="754" column="23" bodyfile="Macaulay2/e/NAG.cpp" bodystart="1516" bodyend="1556"/>
+        <references refid="_n_a_g_8hpp_af953ec5a0bccb24a5977c42b06372f51_1af953ec5a0bccb24a5977c42b06372f51" compoundref="_n_a_g_8hpp" startline="190" endline="193">cast_to_CCC</references>
+        <references refid="class_ring_a5865f77be73c587eb610137880c3ad83_1a5865f77be73c587eb610137880c3ad83" compoundref="ring_8hpp" startline="243" endline="243">Ring::cast_to_PolyRing</references>
+        <references refid="class_matrix_a0dd3516d8526ad736fe69848aacd1406_1a0dd3516d8526ad736fe69848aacd1406" compoundref="matrix_8cpp" startline="307" endline="310">Matrix::elem</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_matrix_a0bceb9b9d23e40a81ac64f6c112ef441_1a0bceb9b9d23e40a81ac64f6c112ef441" compoundref="matrix_8hpp" startline="130" endline="130">Matrix::get_ring</references>
+        <references refid="class_polynomial_ring_ab1df58ad0edec3c434ad9bdd193a1d9e_1ab1df58ad0edec3c434ad9bdd193a1d9e" compoundref="_macaulay2_2e_2polyring_8hpp" startline="273" endline="273">PolynomialRing::getCoefficients</references>
+        <references refid="class_straight_line_program_a9d0ae0a788a288a228439fdd310de1d9_1a9d0ae0a788a288a228439fdd310de1d9" compoundref="_n_a_g_8cpp" startline="31" endline="37">StraightLineProgram::make</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+        <references refid="class_matrix_a7d4293b74029beb92af3d47fdcb7c18c_1a7d4293b74029beb92af3d47fdcb7c18c" compoundref="matrix_8hpp" startline="142" endline="142">Matrix::n_rows</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" compoundref="_n_a_g_8cpp" startline="1418" endline="1423">PathTracker</references>
+        <referencedby refid="interface_2matrix_8cpp_a0f4ebbab38fe3fbaef9f2ce20d995338_1a0f4ebbab38fe3fbaef9f2ce20d995338" compoundref="interface_2matrix_8cpp" startline="1008" endline="1016">rawPathTracker</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_a90bdf68f128408d293544044c3f76384_1a90bdf68f128408d293544044c3f76384" compoundref="interface_2matrix_8cpp" startline="996" endline="1006">rawPathTrackerPrecookedSLPs</referencedby>
+        <referencedby refid="interface_2matrix_8cpp_abdf9c7ba04c4ccc081f2e50decae8c71_1abdf9c7ba04c4ccc081f2e50decae8c71" compoundref="interface_2matrix_8cpp" startline="1018" endline="1028">rawPathTrackerProjective</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_a33a2e7b1b39160a449004c2390394911_1a33a2e7b1b39160a449004c2390394911" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_path_tracker" kindref="compound">PathTracker</ref> *</type>
+        <definition>PathTracker * PathTracker::make</definition>
+        <argsstring>(const Matrix *S, const Matrix *T, gmp_RR productST)</argsstring>
+        <name>make</name>
+        <qualifiedname>PathTracker::make</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>S</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>T</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>productST</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="755" column="23" bodyfile="Macaulay2/e/NAG.cpp" bodystart="1436" bodyend="1510"/>
+        <references refid="_n_a_g_8hpp_af953ec5a0bccb24a5977c42b06372f51_1af953ec5a0bccb24a5977c42b06372f51" compoundref="_n_a_g_8hpp" startline="190" endline="193">cast_to_CCC</references>
+        <references refid="_n_a_g_8hpp_aa49ea4bd7747cc3dc1c587fca105f763_1aa49ea4bd7747cc3dc1c587fca105f763" compoundref="_n_a_g_8cpp" startline="2196" endline="2203">degree_ring_elem</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_polynomial_ring_ab1df58ad0edec3c434ad9bdd193a1d9e_1ab1df58ad0edec3c434ad9bdd193a1d9e" compoundref="_macaulay2_2e_2polyring_8hpp" startline="273" endline="273">PolynomialRing::getCoefficients</references>
+        <references refid="class_straight_line_program_a9d0ae0a788a288a228439fdd310de1d9_1a9d0ae0a788a288a228439fdd310de1d9" compoundref="_n_a_g_8cpp" startline="31" endline="37">StraightLineProgram::make</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" compoundref="_n_a_g_8cpp" startline="1418" endline="1423">PathTracker</references>
+        <references refid="class_path_tracker_a9395bfa136d9afb2c5773d8d46de3cb0_1a9395bfa136d9afb2c5773d8d46de3cb0" compoundref="_n_a_g_8hpp" startline="654">productST</references>
+        <references refid="class_path_tracker_a400a8e34419176da883fcadfe7206c8d_1a400a8e34419176da883fcadfe7206c8d" compoundref="_n_a_g_8hpp" startline="649">S</references>
+        <references refid="class_path_tracker_a33988cc421a375b22e2c16543309bcd9_1a33988cc421a375b22e2c16543309bcd9" compoundref="_n_a_g_8hpp" startline="649">T</references>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_ad51edd3cf7d7f6aa4c24279fa881162f_1ad51edd3cf7d7f6aa4c24279fa881162f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_path_tracker" kindref="compound">PathTracker</ref> *</type>
+        <definition>PathTracker * PathTracker::make</definition>
+        <argsstring>(StraightLineProgram *slp_pred, StraightLineProgram *slp_corr)</argsstring>
+        <name>make</name>
+        <qualifiedname>PathTracker::make</qualifiedname>
+        <param>
+          <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+          <declname>slp_pred</declname>
+        </param>
+        <param>
+          <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+          <declname>slp_corr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="759" column="23" bodyfile="Macaulay2/e/NAG.cpp" bodystart="1559" bodyend="1569"/>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <references refid="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" compoundref="_n_a_g_8cpp" startline="1418" endline="1423">PathTracker</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_path_tracker_a4782b126d8e062ba0bb1280f26ec4850_1a4782b126d8e062ba0bb1280f26ec4850" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>PathTracker::~PathTracker</definition>
+        <argsstring>()</argsstring>
+        <name>~PathTracker</name>
+        <qualifiedname>PathTracker::~PathTracker</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="762" column="11" bodyfile="Macaulay2/e/NAG.cpp" bodystart="1425" bodyend="1430"/>
+        <references refid="class_path_tracker_ad1d2039d5bf83de7a87eb993e97294e0_1ad1d2039d5bf83de7a87eb993e97294e0" compoundref="_n_a_g_8hpp" startline="656">DMforPN</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" compoundref="_n_a_g_8hpp" startline="734">n_sols</references>
+        <references refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" compoundref="_n_a_g_8hpp" startline="735">raw_solutions</references>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_afc040ae55e4ca3170715c6d5f5c72213_1afc040ae55e4ca3170715c6d5f5c72213" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void PathTracker::text_out</definition>
+        <argsstring>(buffer &amp;o) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>PathTracker::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="764" column="8" bodyfile="Macaulay2/e/NAG.cpp" bodystart="2158" bodyend="2185"/>
+        <references refid="class_path_tracker_a405b8ccef552779c8ac650f229b4fcb9_1a405b8ccef552779c8ac650f229b4fcb9" compoundref="_n_a_g_8hpp" startline="646">number</references>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_adb2bcbb75ca6962f177e0d322e12bad0_1adb2bcbb75ca6962f177e0d322e12bad0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>Matrix * PathTracker::getSolution</definition>
+        <argsstring>(int)</argsstring>
+        <name>getSolution</name>
+        <qualifiedname>PathTracker::getSolution</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <defname>solN</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="765" column="11" bodyfile="Macaulay2/e/NAG.cpp" bodystart="2074" bodyend="2098"/>
+        <references refid="class_path_tracker_ac445d627234faab01fe0c1962e75f00b_1ac445d627234faab01fe0c1962e75f00b" compoundref="_n_a_g_8hpp" startline="730">C</references>
+        <references refid="_n_a_g_8hpp_aa53d6b109fa38828101e25838f74c4b3_1aa53d6b109fa38828101e25838f74c4b3" compoundref="_n_a_g_8hpp" startline="195" endline="202">from_doubles</references>
+        <references refid="classcomplex_a788e4c6d25000ceb96667892619cc5b0_1a788e4c6d25000ceb96667892619cc5b0" compoundref="_n_a_g_8hpp" startline="353" endline="353">complex::getimaginary</references>
+        <references refid="classcomplex_a1537cecd6776605bcaadcf2076ab1e90_1a1537cecd6776605bcaadcf2076ab1e90" compoundref="_n_a_g_8hpp" startline="352" endline="352">complex::getreal</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_path_tracker_a3ab9680165cf93e43d78b1d2c0084628_1a3ab9680165cf93e43d78b1d2c0084628" compoundref="_n_a_g_8hpp" startline="733">n_coords</references>
+        <references refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" compoundref="_n_a_g_8hpp" startline="734">n_sols</references>
+        <references refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" compoundref="_n_a_g_8hpp" startline="735">raw_solutions</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="class_matrix_constructor_a719118a871e65c356db8ea6ce844d6ce_1a719118a871e65c356db8ea6ce844d6ce" compoundref="matrix-con_8cpp" startline="54" endline="57">MatrixConstructor::set_entry</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+        <referencedby refid="_n_a_g_8h_a23126258db9c9ebee7cd3f5295651955_1a23126258db9c9ebee7cd3f5295651955" compoundref="_n_a_g_8cpp" startline="1602" endline="1605">rawGetSolutionPT</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_ab9adb8a56c79cefde7fd8e690b9db78c_1ab9adb8a56c79cefde7fd8e690b9db78c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>Matrix * PathTracker::getAllSolutions</definition>
+        <argsstring>()</argsstring>
+        <name>getAllSolutions</name>
+        <qualifiedname>PathTracker::getAllSolutions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="766" column="11" bodyfile="Macaulay2/e/NAG.cpp" bodystart="2100" bodyend="2126"/>
+        <references refid="class_path_tracker_ac445d627234faab01fe0c1962e75f00b_1ac445d627234faab01fe0c1962e75f00b" compoundref="_n_a_g_8hpp" startline="730">C</references>
+        <references refid="_n_a_g_8hpp_aa53d6b109fa38828101e25838f74c4b3_1aa53d6b109fa38828101e25838f74c4b3" compoundref="_n_a_g_8hpp" startline="195" endline="202">from_doubles</references>
+        <references refid="classcomplex_a788e4c6d25000ceb96667892619cc5b0_1a788e4c6d25000ceb96667892619cc5b0" compoundref="_n_a_g_8hpp" startline="353" endline="353">complex::getimaginary</references>
+        <references refid="classcomplex_a1537cecd6776605bcaadcf2076ab1e90_1a1537cecd6776605bcaadcf2076ab1e90" compoundref="_n_a_g_8hpp" startline="352" endline="352">complex::getreal</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_path_tracker_a3ab9680165cf93e43d78b1d2c0084628_1a3ab9680165cf93e43d78b1d2c0084628" compoundref="_n_a_g_8hpp" startline="733">n_coords</references>
+        <references refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" compoundref="_n_a_g_8hpp" startline="734">n_sols</references>
+        <references refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" compoundref="_n_a_g_8hpp" startline="735">raw_solutions</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="class_matrix_constructor_a719118a871e65c356db8ea6ce844d6ce_1a719118a871e65c356db8ea6ce844d6ce" compoundref="matrix-con_8cpp" startline="54" endline="57">MatrixConstructor::set_entry</references>
+        <references refid="class_path_tracker_a15d009040061b980d53af9a59682dcf4_1a15d009040061b980d53af9a59682dcf4" compoundref="_n_a_g_8hpp" startline="736">solutions</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+        <referencedby refid="_n_a_g_8h_ae42f6d1d5240d28b33496f4d293cbb34_1ae42f6d1d5240d28b33496f4d293cbb34" compoundref="_n_a_g_8cpp" startline="1607" endline="1610">rawGetAllSolutionsPT</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_a7f23ef75fff95c7086d8e0cb302f68fd_1a7f23ef75fff95c7086d8e0cb302f68fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::getSolutionStatus</definition>
+        <argsstring>(int)</argsstring>
+        <name>getSolutionStatus</name>
+        <qualifiedname>PathTracker::getSolutionStatus</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <defname>solN</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="767" column="7" bodyfile="Macaulay2/e/NAG.cpp" bodystart="2128" bodyend="2132"/>
+        <references refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" compoundref="_n_a_g_8hpp" startline="734">n_sols</references>
+        <references refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" compoundref="_n_a_g_8hpp" startline="735">raw_solutions</references>
+        <referencedby refid="_n_a_g_8h_a29844a6dcdd30f7113d3d5b675f19ff2_1a29844a6dcdd30f7113d3d5b675f19ff2" compoundref="_n_a_g_8cpp" startline="1612" endline="1615">rawGetSolutionStatusPT</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_a2d89445e8a36120c048cdf6891dce4bd_1a2d89445e8a36120c048cdf6891dce4bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::getSolutionSteps</definition>
+        <argsstring>(int)</argsstring>
+        <name>getSolutionSteps</name>
+        <qualifiedname>PathTracker::getSolutionSteps</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <defname>solN</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="768" column="7" bodyfile="Macaulay2/e/NAG.cpp" bodystart="2134" bodyend="2138"/>
+        <references refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" compoundref="_n_a_g_8hpp" startline="734">n_sols</references>
+        <references refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" compoundref="_n_a_g_8hpp" startline="735">raw_solutions</references>
+        <referencedby refid="_n_a_g_8h_aa2ce24b2ed0d0db501cb4c7ccc9ef40c_1aa2ce24b2ed0d0db501cb4c7ccc9ef40c" compoundref="_n_a_g_8cpp" startline="1617" endline="1620">rawGetSolutionStepsPT</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_a0b092463cf91fcc4e02252ec4c6d3a4d_1a0b092463cf91fcc4e02252ec4c6d3a4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a6eccee6b0e1f76f43c18bdd9c422b8fb_1a6eccee6b0e1f76f43c18bdd9c422b8fb" kindref="member">gmp_RRorNull</ref></type>
+        <definition>gmp_RRorNull PathTracker::getSolutionLastT</definition>
+        <argsstring>(int)</argsstring>
+        <name>getSolutionLastT</name>
+        <qualifiedname>PathTracker::getSolutionLastT</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <defname>solN</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="769" column="16" bodyfile="Macaulay2/e/NAG.cpp" bodystart="2140" bodyend="2147"/>
+        <references refid="class_path_tracker_ac445d627234faab01fe0c1962e75f00b_1ac445d627234faab01fe0c1962e75f00b" compoundref="_n_a_g_8hpp" startline="730">C</references>
+        <references refid="m2-mem_8h_a6ca24b55fd05d728fa63a538c8f0ec57_1a6ca24b55fd05d728fa63a538c8f0ec57" compoundref="m2-mem_8h" startline="141">getmemstructtype</references>
+        <references refid="gmp-util_8h_a8eb5bf01e101b45627045ebad26a4b1c_1a8eb5bf01e101b45627045ebad26a4b1c" compoundref="gmp-util_8h" startline="143" endline="147">moveTo_gmpRR</references>
+        <references refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" compoundref="_n_a_g_8hpp" startline="734">n_sols</references>
+        <references refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" compoundref="_n_a_g_8hpp" startline="735">raw_solutions</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_n_a_g_8h_a480249322eacab3bce87ece89ddd5c23_1a480249322eacab3bce87ece89ddd5c23" compoundref="_n_a_g_8cpp" startline="1622" endline="1625">rawGetSolutionLastTvaluePT</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_af50f313e11d0a83a32c0d31a8e980171_1af50f313e11d0a83a32c0d31a8e980171" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a6eccee6b0e1f76f43c18bdd9c422b8fb_1a6eccee6b0e1f76f43c18bdd9c422b8fb" kindref="member">gmp_RRorNull</ref></type>
+        <definition>gmp_RRorNull PathTracker::getSolutionRcond</definition>
+        <argsstring>(int)</argsstring>
+        <name>getSolutionRcond</name>
+        <qualifiedname>PathTracker::getSolutionRcond</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <defname>solN</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="770" column="16" bodyfile="Macaulay2/e/NAG.cpp" bodystart="2149" bodyend="2156"/>
+        <references refid="class_path_tracker_ac445d627234faab01fe0c1962e75f00b_1ac445d627234faab01fe0c1962e75f00b" compoundref="_n_a_g_8hpp" startline="730">C</references>
+        <references refid="m2-mem_8h_a6ca24b55fd05d728fa63a538c8f0ec57_1a6ca24b55fd05d728fa63a538c8f0ec57" compoundref="m2-mem_8h" startline="141">getmemstructtype</references>
+        <references refid="gmp-util_8h_a8eb5bf01e101b45627045ebad26a4b1c_1a8eb5bf01e101b45627045ebad26a4b1c" compoundref="gmp-util_8h" startline="143" endline="147">moveTo_gmpRR</references>
+        <references refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" compoundref="_n_a_g_8hpp" startline="734">n_sols</references>
+        <references refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" compoundref="_n_a_g_8hpp" startline="735">raw_solutions</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_n_a_g_8h_ae41b1ad932aaa1c67f6ba4df7121162a_1ae41b1ad932aaa1c67f6ba4df7121162a" compoundref="_n_a_g_8cpp" startline="1627" endline="1630">rawGetSolutionRcondPT</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int PathTracker::track</definition>
+        <argsstring>(const Matrix *)</argsstring>
+        <name>track</name>
+        <qualifiedname>PathTracker::track</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <defname>start_sols</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="771" column="7" bodyfile="Macaulay2/e/NAG.cpp" bodystart="1640" bodyend="1976"/>
+        <references refid="_n_a_g_8hpp_a6f093b5073b29f5eef4bc1189dafe6c4_1a6f093b5073b29f5eef4bc1189dafe6c4" compoundref="_n_a_g_8hpp" startline="402" endline="407">add_to_complex_array</references>
+        <references refid="class_path_tracker_ad2862e1f59acc25bb67400b5f0cc58b6_1ad2862e1f59acc25bb67400b5f0cc58b6" compoundref="_n_a_g_8hpp" startline="655">bigT</references>
+        <references refid="class_path_tracker_ac445d627234faab01fe0c1962e75f00b_1ac445d627234faab01fe0c1962e75f00b" compoundref="_n_a_g_8hpp" startline="730">C</references>
+        <references refid="_n_a_g_8hpp_af953ec5a0bccb24a5977c42b06372f51_1af953ec5a0bccb24a5977c42b06372f51" compoundref="_n_a_g_8hpp" startline="190" endline="193">cast_to_CCC</references>
+        <references refid="struct_solution_a3243619d75e6fe4875a0168603a4cddf_1a3243619d75e6fe4875a0168603a4cddf" compoundref="_n_a_g_8hpp" startline="613">Solution::cond</references>
+        <references refid="_n_a_g_8cpp_a1348d1b851a267ea7414e27ff44fb3b9_1a1348d1b851a267ea7414e27ff44fb3b9" compoundref="_n_a_g_8cpp" startline="1269" endline="1335">cond_number_via_svd</references>
+        <references refid="_n_a_g_8hpp_ae5e46f4856d6078203822e64c18ff68a_1ae5e46f4856d6078203822e64c18ff68a" compoundref="_n_a_g_8hpp" startline="375" endline="380">copy_complex_array</references>
+        <references refid="class_path_tracker_ad1d2039d5bf83de7a87eb993e97294e0_1ad1d2039d5bf83de7a87eb993e97294e0" compoundref="_n_a_g_8hpp" startline="656">DMforPN</references>
+        <references refid="class_path_tracker_a87a7c5a2b8f68e0a1a749b4cfcd34d4a_1a87a7c5a2b8f68e0a1a749b4cfcd34d4a" compoundref="_n_a_g_8hpp" startline="741">dt_decrease_factor</references>
+        <references refid="class_path_tracker_adeb837651e78dfe4cf85dfdf46581eb2_1adeb837651e78dfe4cf85dfdf46581eb2" compoundref="_n_a_g_8hpp" startline="741">dt_increase_factor</references>
+        <references refid="class_matrix_a0dd3516d8526ad736fe69848aacd1406_1a0dd3516d8526ad736fe69848aacd1406" compoundref="matrix_8cpp" startline="307" endline="310">Matrix::elem</references>
+        <references refid="class_path_tracker_a16b565e37a8a54cc06c054ade257e386_1a16b565e37a8a54cc06c054ade257e386" compoundref="_n_a_g_8hpp" startline="745">end_zone_factor</references>
+        <references refid="class_path_tracker_a980804c674164fe19aa82c8adcbadec9_1a980804c674164fe19aa82c8adcbadec9" compoundref="_n_a_g_8hpp" startline="743">epsilon</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="_n_a_g_8hpp_a7f4ee7567f891560bb62dfbda5f93088_1a7f4ee7567f891560bb62dfbda5f93088" compoundref="_n_a_g_8hpp" startline="442">EULER</references>
+        <references refid="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" compoundref="_n_a_g_8hpp" startline="703" endline="728">evaluate_slpHxH</references>
+        <references refid="class_path_tracker_a2df549b7cfbb44105963c46e9490440b_1a2df549b7cfbb44105963c46e9490440b" compoundref="_n_a_g_8hpp" startline="659" endline="695">evaluate_slpHxt</references>
+        <references refid="class_path_tracker_a96da5ddedb2b145d13af717150e3e7e6_1a96da5ddedb2b145d13af717150e3e7e6" compoundref="_n_a_g_8hpp" startline="696" endline="702">evaluate_slpHxtH</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="class_matrix_a0bceb9b9d23e40a81ac64f6c112ef441_1a0bceb9b9d23e40a81ac64f6c112ef441" compoundref="matrix_8hpp" startline="130" endline="130">Matrix::get_ring</references>
+        <references refid="classcomplex_a1537cecd6776605bcaadcf2076ab1e90_1a1537cecd6776605bcaadcf2076ab1e90" compoundref="_n_a_g_8hpp" startline="352" endline="352">complex::getreal</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3ba6aef281d04152700e72226d365f7f21c" compoundref="_s_l_p-imp_8hpp" startline="356">INFINITY_FAILED</references>
+        <references refid="class_path_tracker_ada19913cba2c24bbc2139c1f8329a7f3_1ada19913cba2c24bbc2139c1f8329a7f3" compoundref="_n_a_g_8hpp" startline="746">infinity_threshold</references>
+        <references refid="class_path_tracker_a39a4c23554e81e8fdf1fd5636af62ec6_1a39a4c23554e81e8fdf1fd5636af62ec6" compoundref="_n_a_g_8hpp" startline="740">init_dt</references>
+        <references refid="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" compoundref="_n_a_g_8hpp" startline="739">is_projective</references>
+        <references refid="m2-types_8cpp_a099fb8bd772a630aba17fdb2c8af6869_1a099fb8bd772a630aba17fdb2c8af6869" compoundref="m2-types_8cpp" startline="53">M2_numericalAlgebraicGeometryTrace</references>
+        <references refid="struct_solution_aacdf986f1a02787c7e48f82faf3d9532_1aacdf986f1a02787c7e48f82faf3d9532" compoundref="_n_a_g_8cpp" startline="2188" endline="2194">Solution::make</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_path_tracker_a258650f2f881fe2cbe45e3cb92db7f6e_1a258650f2f881fe2cbe45e3cb92db7f6e" compoundref="_n_a_g_8hpp" startline="744">max_corr_steps</references>
+        <references refid="class_path_tracker_a31866e236e9265a49027eeec4461b638_1a31866e236e9265a49027eeec4461b638" compoundref="_n_a_g_8hpp" startline="657">maxDegreeTo3halves</references>
+        <references refid="class_path_tracker_ac9c308b3e9289b76143083131b8367f1_1ac9c308b3e9289b76143083131b8367f1" compoundref="_n_a_g_8hpp" startline="740">min_dt</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3badb94e0fd59b502e454978d8c134b427c" compoundref="_s_l_p-imp_8hpp" startline="357">MIN_STEP_FAILED</references>
+        <references refid="_n_a_g_8hpp_a7dc1baeea46d8fe30d3ce3f206f52df9_1a7dc1baeea46d8fe30d3ce3f206f52df9" compoundref="_n_a_g_8hpp" startline="394" endline="399">multiply_complex_array_scalar</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+        <references refid="class_path_tracker_a3ab9680165cf93e43d78b1d2c0084628_1a3ab9680165cf93e43d78b1d2c0084628" compoundref="_n_a_g_8hpp" startline="733">n_coords</references>
+        <references refid="class_matrix_a7d4293b74029beb92af3d47fdcb7c18c_1a7d4293b74029beb92af3d47fdcb7c18c" compoundref="matrix_8hpp" startline="142" endline="142">Matrix::n_rows</references>
+        <references refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" compoundref="_n_a_g_8hpp" startline="734">n_sols</references>
+        <references refid="_n_a_g_8hpp_aad35f56160399b78ecb4ae5c1b050edc_1aad35f56160399b78ecb4ae5c1b050edc" compoundref="_n_a_g_8hpp" startline="410" endline="413">negate_complex_array</references>
+        <references refid="newdelete_8hpp_a8e45ca33f2628740d647f3bdf832b96d_1a8e45ca33f2628740d647f3bdf832b96d" compoundref="newdelete_8hpp" startline="80">newarray</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="_n_a_g_8hpp_ad7f2568354e0a826096f3c886069d5dc_1ad7f2568354e0a826096f3c886069d5dc" compoundref="_n_a_g_8hpp" startline="416" endline="423">norm2_complex_array</references>
+        <references refid="_n_a_g_8cpp_a1cf4a4cad658ea4953713a2a99604f81_1a1cf4a4cad658ea4953713a2a99604f81" compoundref="_n_a_g_8cpp" startline="1339" endline="1408">norm_of_inverse_via_svd</references>
+        <references refid="struct_solution_acaf05ee7ce02ac3fc56d3faf8f5ccbdd_1acaf05ee7ce02ac3fc56d3faf8f5ccbdd" compoundref="_n_a_g_8hpp" startline="615">Solution::num_steps</references>
+        <references refid="class_path_tracker_aaaec1c8c0087925fc1e2996bd44f533c_1aaaec1c8c0087925fc1e2996bd44f533c" compoundref="_n_a_g_8hpp" startline="742">num_successes_before_increase</references>
+        <references refid="class_path_tracker_a77502e04122173a9850cff8e3e579f59_1a77502e04122173a9850cff8e3e579f59" compoundref="_n_a_g_8hpp" startline="747">pred_type</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3ba5ca0e553fcdd1c2b214d73f36b486087" compoundref="_s_l_p-imp_8hpp" startline="353">PROCESSING</references>
+        <references refid="_n_a_g_8hpp_ab478939938c2b01851337214e197627c_1ab478939938c2b01851337214e197627c" compoundref="_n_a_g_8hpp" startline="443">PROJECTIVE_NEWTON</references>
+        <references refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" compoundref="_n_a_g_8hpp" startline="735">raw_solutions</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3bafc488491175a6dac9e5881e363ad4c41" compoundref="_s_l_p-imp_8hpp" startline="354">REGULAR</references>
+        <references refid="_n_a_g_8hpp_a3f2ab1074fc030f50fee8dcd87b62168_1a3f2ab1074fc030f50fee8dcd87b62168" compoundref="_n_a_g_8hpp" startline="440">RUNGE_KUTTA</references>
+        <references refid="_s_l_p-imp_8hpp_a801be40a606301461ff812058569ee3b_1a801be40a606301461ff812058569ee3baf920417d178960fce2227218e7857e83" compoundref="_s_l_p-imp_8hpp" startline="355">SINGULAR</references>
+        <references refid="_n_a_g_8cpp_abd7f9525036738b3fb62270e9e9d6b46_1abd7f9525036738b3fb62270e9e9d6b46" compoundref="_n_a_g_8cpp" startline="1218" endline="1265">solve_via_lapack_without_transposition</references>
+        <references refid="struct_solution_a739d2460ca1488eaab2bde8206a3fea5_1a739d2460ca1488eaab2bde8206a3fea5" compoundref="_n_a_g_8hpp" startline="614">Solution::status</references>
+        <references refid="struct_solution_a8d3e7e60d4a037f0d015f82e4842173b_1a8d3e7e60d4a037f0d015f82e4842173b" compoundref="_n_a_g_8hpp" startline="611">Solution::t</references>
+        <references refid="_n_a_g_8hpp_aa8218a8d8957b98fbaeb2fc310acaa3d_1aa8218a8d8957b98fbaeb2fc310acaa3d" compoundref="_n_a_g_8hpp" startline="441">TANGENT</references>
+        <references refid="_n_a_g_8hpp_a68c6d3a547755888e5afebedafc0bc72_1a68c6d3a547755888e5afebedafc0bc72" compoundref="_n_a_g_8hpp" startline="204" endline="210">toBigComplex</references>
+        <references refid="struct_solution_a23228fdad679de7acac81e9c78218b62_1a23228fdad679de7acac81e9c78218b62" compoundref="_n_a_g_8hpp" startline="610">Solution::x</references>
+        <references refid="_n_a_g_8hpp_a564fbcc0ef93000ec4b0dd118ddb73d2_1a564fbcc0ef93000ec4b0dd118ddb73d2" compoundref="_n_a_g_8hpp" startline="369" endline="372">zero_complex_array</references>
+        <referencedby refid="_n_a_g_8h_acc5a2b49e3cb627a8747a27adac53970_1acc5a2b49e3cb627a8747a27adac53970" compoundref="_n_a_g_8cpp" startline="1597" endline="1600">rawLaunchPT</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_path_tracker_acde233c44f3f5138d3c289cf684ca08b_1acde233c44f3f5138d3c289cf684ca08b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>Matrix * PathTracker::refine</definition>
+        <argsstring>(const Matrix *sols, gmp_RR tolerance, int max_corr_steps_refine=100)</argsstring>
+        <name>refine</name>
+        <qualifiedname>PathTracker::refine</qualifiedname>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>sols</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>tolerance</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>max_corr_steps_refine</declname>
+          <defval>100</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="772" column="11" bodyfile="Macaulay2/e/NAG.cpp" bodystart="1978" bodyend="2072"/>
+        <references refid="_n_a_g_8hpp_a6f093b5073b29f5eef4bc1189dafe6c4_1a6f093b5073b29f5eef4bc1189dafe6c4" compoundref="_n_a_g_8hpp" startline="402" endline="407">add_to_complex_array</references>
+        <references refid="class_path_tracker_ac445d627234faab01fe0c1962e75f00b_1ac445d627234faab01fe0c1962e75f00b" compoundref="_n_a_g_8hpp" startline="730">C</references>
+        <references refid="_n_a_g_8hpp_af953ec5a0bccb24a5977c42b06372f51_1af953ec5a0bccb24a5977c42b06372f51" compoundref="_n_a_g_8hpp" startline="190" endline="193">cast_to_CCC</references>
+        <references refid="_n_a_g_8hpp_ae5e46f4856d6078203822e64c18ff68a_1ae5e46f4856d6078203822e64c18ff68a" compoundref="_n_a_g_8hpp" startline="375" endline="380">copy_complex_array</references>
+        <references refid="class_matrix_a0dd3516d8526ad736fe69848aacd1406_1a0dd3516d8526ad736fe69848aacd1406" compoundref="matrix_8cpp" startline="307" endline="310">Matrix::elem</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" compoundref="_n_a_g_8hpp" startline="703" endline="728">evaluate_slpHxH</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="_n_a_g_8hpp_aa53d6b109fa38828101e25838f74c4b3_1aa53d6b109fa38828101e25838f74c4b3" compoundref="_n_a_g_8hpp" startline="195" endline="202">from_doubles</references>
+        <references refid="class_matrix_a0bceb9b9d23e40a81ac64f6c112ef441_1a0bceb9b9d23e40a81ac64f6c112ef441" compoundref="matrix_8hpp" startline="130" endline="130">Matrix::get_ring</references>
+        <references refid="classcomplex_a788e4c6d25000ceb96667892619cc5b0_1a788e4c6d25000ceb96667892619cc5b0" compoundref="_n_a_g_8hpp" startline="353" endline="353">complex::getimaginary</references>
+        <references refid="classcomplex_a1537cecd6776605bcaadcf2076ab1e90_1a1537cecd6776605bcaadcf2076ab1e90" compoundref="_n_a_g_8hpp" startline="352" endline="352">complex::getreal</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_matrix_a6cb4735dadc364c543bb667468b0fac8_1a6cb4735dadc364c543bb667468b0fac8" compoundref="matrix_8hpp" startline="143" endline="143">Matrix::n_cols</references>
+        <references refid="class_path_tracker_a3ab9680165cf93e43d78b1d2c0084628_1a3ab9680165cf93e43d78b1d2c0084628" compoundref="_n_a_g_8hpp" startline="733">n_coords</references>
+        <references refid="class_matrix_a7d4293b74029beb92af3d47fdcb7c18c_1a7d4293b74029beb92af3d47fdcb7c18c" compoundref="matrix_8hpp" startline="142" endline="142">Matrix::n_rows</references>
+        <references refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" compoundref="_n_a_g_8hpp" startline="734">n_sols</references>
+        <references refid="_n_a_g_8hpp_aad35f56160399b78ecb4ae5c1b050edc_1aad35f56160399b78ecb4ae5c1b050edc" compoundref="_n_a_g_8hpp" startline="410" endline="413">negate_complex_array</references>
+        <references refid="newdelete_8hpp_aaf4886e5c6f155b7532a0dff02d13591_1aaf4886e5c6f155b7532a0dff02d13591" compoundref="newdelete_8hpp" startline="89" endline="90">newarray_atomic</references>
+        <references refid="_n_a_g_8hpp_ad7f2568354e0a826096f3c886069d5dc_1ad7f2568354e0a826096f3c886069d5dc" compoundref="_n_a_g_8hpp" startline="416" endline="423">norm2_complex_array</references>
+        <references refid="class_matrix_constructor_a719118a871e65c356db8ea6ce844d6ce_1a719118a871e65c356db8ea6ce844d6ce" compoundref="matrix-con_8cpp" startline="54" endline="57">MatrixConstructor::set_entry</references>
+        <references refid="_n_a_g_8cpp_abd7f9525036738b3fb62270e9e9d6b46_1abd7f9525036738b3fb62270e9e9d6b46" compoundref="_n_a_g_8cpp" startline="1218" endline="1265">solve_via_lapack_without_transposition</references>
+        <references refid="class_matrix_constructor_a2ff836da11f7fe8a125a7aa73ee95651_1a2ff836da11f7fe8a125a7aa73ee95651" compoundref="matrix-con_8cpp" startline="94" endline="99">MatrixConstructor::to_matrix</references>
+        <references refid="_n_a_g_8hpp_a68c6d3a547755888e5afebedafc0bc72_1a68c6d3a547755888e5afebedafc0bc72" compoundref="_n_a_g_8hpp" startline="204" endline="210">toBigComplex</references>
+        <referencedby refid="_n_a_g_8h_ab1aedd27e25d476c92acab8f45a90595_1ab1aedd27e25d476c92acab8f45a90595" compoundref="_n_a_g_8cpp" startline="1632" endline="1638">rawRefinePT</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void rawSetParametersPT</definition>
+        <argsstring>(PathTracker *PT, M2_bool is_projective, gmp_RR init_dt, gmp_RR min_dt, gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase, gmp_RR epsilon, int max_corr_steps, gmp_RR end_zone_factor, gmp_RR infinity_threshold, int pred_type)</argsstring>
+        <name>rawSetParametersPT</name>
+        <qualifiedname>PathTracker::rawSetParametersPT</qualifiedname>
+        <param>
+          <type><ref refid="class_path_tracker" kindref="compound">PathTracker</ref> *</type>
+          <declname>PT</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+          <declname>is_projective</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>init_dt</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>min_dt</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>dt_increase_factor</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>dt_decrease_factor</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>num_successes_before_increase</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>epsilon</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>max_corr_steps</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>end_zone_factor</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>infinity_threshold</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>pred_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="779" column="15" bodyfile="Macaulay2/e/NAG.cpp" bodystart="1571" bodyend="1595"/>
+        <references refid="class_path_tracker_a87a7c5a2b8f68e0a1a749b4cfcd34d4a_1a87a7c5a2b8f68e0a1a749b4cfcd34d4a" compoundref="_n_a_g_8hpp" startline="741">dt_decrease_factor</references>
+        <references refid="class_path_tracker_adeb837651e78dfe4cf85dfdf46581eb2_1adeb837651e78dfe4cf85dfdf46581eb2" compoundref="_n_a_g_8hpp" startline="741">dt_increase_factor</references>
+        <references refid="class_path_tracker_a16b565e37a8a54cc06c054ade257e386_1a16b565e37a8a54cc06c054ade257e386" compoundref="_n_a_g_8hpp" startline="745">end_zone_factor</references>
+        <references refid="class_path_tracker_a980804c674164fe19aa82c8adcbadec9_1a980804c674164fe19aa82c8adcbadec9" compoundref="_n_a_g_8hpp" startline="743">epsilon</references>
+        <references refid="class_path_tracker_ada19913cba2c24bbc2139c1f8329a7f3_1ada19913cba2c24bbc2139c1f8329a7f3" compoundref="_n_a_g_8hpp" startline="746">infinity_threshold</references>
+        <references refid="class_path_tracker_a39a4c23554e81e8fdf1fd5636af62ec6_1a39a4c23554e81e8fdf1fd5636af62ec6" compoundref="_n_a_g_8hpp" startline="740">init_dt</references>
+        <references refid="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" compoundref="_n_a_g_8hpp" startline="739">is_projective</references>
+        <references refid="class_path_tracker_a258650f2f881fe2cbe45e3cb92db7f6e_1a258650f2f881fe2cbe45e3cb92db7f6e" compoundref="_n_a_g_8hpp" startline="744">max_corr_steps</references>
+        <references refid="class_path_tracker_ac9c308b3e9289b76143083131b8367f1_1ac9c308b3e9289b76143083131b8367f1" compoundref="_n_a_g_8hpp" startline="740">min_dt</references>
+        <references refid="class_path_tracker_aaaec1c8c0087925fc1e2996bd44f533c_1aaaec1c8c0087925fc1e2996bd44f533c" compoundref="_n_a_g_8hpp" startline="742">num_successes_before_increase</references>
+        <references refid="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" compoundref="_n_a_g_8cpp" startline="1418" endline="1423">PathTracker</references>
+        <references refid="class_path_tracker_a77502e04122173a9850cff8e3e579f59_1a77502e04122173a9850cff8e3e579f59" compoundref="_n_a_g_8hpp" startline="747">pred_type</references>
+      </memberdef>
+      <memberdef kind="friend" id="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+        <definition>const Matrix * rawTrackPaths</definition>
+        <argsstring>(StraightLineProgram *slp_pred, StraightLineProgram *slp_corr, const Matrix *start_sols, M2_bool is_projective, gmp_RR init_dt, gmp_RR min_dt, gmp_RR max_dt, gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase, gmp_RR epsilon, int max_corr_steps, int pred_type)</argsstring>
+        <name>rawTrackPaths</name>
+        <qualifiedname>PathTracker::rawTrackPaths</qualifiedname>
+        <param>
+          <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+          <declname>slp_pred</declname>
+        </param>
+        <param>
+          <type><ref refid="class_straight_line_program" kindref="compound">StraightLineProgram</ref> *</type>
+          <declname>slp_corr</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_matrix" kindref="compound">Matrix</ref> *</type>
+          <declname>start_sols</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+          <declname>is_projective</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>init_dt</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>min_dt</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>max_dt</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>dt_increase_factor</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>dt_decrease_factor</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>num_successes_before_increase</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a06f1f4d2dc6e969bdad2001e9fecfc41_1a06f1f4d2dc6e969bdad2001e9fecfc41" kindref="member">gmp_RR</ref></type>
+          <declname>epsilon</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>max_corr_steps</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>pred_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/NAG.hpp" line="791" column="24"/>
+        <references refid="class_path_tracker_a87a7c5a2b8f68e0a1a749b4cfcd34d4a_1a87a7c5a2b8f68e0a1a749b4cfcd34d4a" compoundref="_n_a_g_8hpp" startline="741">dt_decrease_factor</references>
+        <references refid="class_path_tracker_adeb837651e78dfe4cf85dfdf46581eb2_1adeb837651e78dfe4cf85dfdf46581eb2" compoundref="_n_a_g_8hpp" startline="741">dt_increase_factor</references>
+        <references refid="class_path_tracker_a980804c674164fe19aa82c8adcbadec9_1a980804c674164fe19aa82c8adcbadec9" compoundref="_n_a_g_8hpp" startline="743">epsilon</references>
+        <references refid="class_path_tracker_a39a4c23554e81e8fdf1fd5636af62ec6_1a39a4c23554e81e8fdf1fd5636af62ec6" compoundref="_n_a_g_8hpp" startline="740">init_dt</references>
+        <references refid="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" compoundref="_n_a_g_8hpp" startline="739">is_projective</references>
+        <references refid="factory_8cpp_a9570374e3dbc873595100dae1e584459_1a9570374e3dbc873595100dae1e584459" compoundref="factory_8cpp" startline="14">Matrix</references>
+        <references refid="class_path_tracker_a258650f2f881fe2cbe45e3cb92db7f6e_1a258650f2f881fe2cbe45e3cb92db7f6e" compoundref="_n_a_g_8hpp" startline="744">max_corr_steps</references>
+        <references refid="class_path_tracker_ac9c308b3e9289b76143083131b8367f1_1ac9c308b3e9289b76143083131b8367f1" compoundref="_n_a_g_8hpp" startline="740">min_dt</references>
+        <references refid="class_path_tracker_aaaec1c8c0087925fc1e2996bd44f533c_1aaaec1c8c0087925fc1e2996bd44f533c" compoundref="_n_a_g_8hpp" startline="742">num_successes_before_increase</references>
+        <references refid="class_path_tracker_a77502e04122173a9850cff8e3e579f59_1a77502e04122173a9850cff8e3e579f59" compoundref="_n_a_g_8hpp" startline="747">pred_type</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Numerical homotopy-continuation path tracker for systems of polynomial equations. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds two homotopy systems (<computeroutput><ref refid="class_path_tracker_a133ba2b54a2a9b8d470595f57375991d_1a133ba2b54a2a9b8d470595f57375991d" kindref="member">H</ref></computeroutput> and the <computeroutput>(<ref refid="class_path_tracker_a400a8e34419176da883fcadfe7206c8d_1a400a8e34419176da883fcadfe7206c8d" kindref="member">S</ref>, <ref refid="struct_t" kindref="compound">T</ref>)</computeroutput> start/target pair) plus their precomputed straight-line evaluators (<computeroutput><ref refid="class_path_tracker_aa30633a219b7e49233b8bd76165f76bb_1aa30633a219b7e49233b8bd76165f76bb" kindref="member">slpH</ref></computeroutput>, <computeroutput><ref refid="class_path_tracker_a23533b89316b671f26f08be095cbfffb_1a23533b89316b671f26f08be095cbfffb" kindref="member">slpHxt</ref></computeroutput>, <computeroutput><ref refid="class_path_tracker_ae5189069c0ffad23911fd5630c130fa8_1ae5189069c0ffad23911fd5630c130fa8" kindref="member">slpHxtH</ref></computeroutput>, <computeroutput><ref refid="class_path_tracker_a2cd7d8f28d9cadc4926555a8ab3375a6_1a2cd7d8f28d9cadc4926555a8ab3375a6" kindref="member">slpHxH</ref></computeroutput>, <computeroutput><ref refid="class_path_tracker_aa9355527bc954cf13580a96ed934fd19_1aa9355527bc954cf13580a96ed934fd19" kindref="member">slpS</ref></computeroutput>, <computeroutput><ref refid="class_path_tracker_a48aa26199099a2ee8b66984688ab8857_1a48aa26199099a2ee8b66984688ab8857" kindref="member">slpSx</ref></computeroutput>, ...), and tracks each input solution from <computeroutput><ref refid="class_path_tracker_a400a8e34419176da883fcadfe7206c8d_1a400a8e34419176da883fcadfe7206c8d" kindref="member">S</ref></computeroutput> to <computeroutput><ref refid="struct_t" kindref="compound">T</ref></computeroutput> via a predictor-corrector loop. Supports projective tracking (<computeroutput><ref refid="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" kindref="member">is_projective</ref></computeroutput>) with Bombieri-Weyl arc length <computeroutput><ref refid="class_path_tracker_ad2862e1f59acc25bb67400b5f0cc58b6_1ad2862e1f59acc25bb67400b5f0cc58b6" kindref="member">bigT</ref></computeroutput> along the great circle and ProjectiveNewton scaling via <computeroutput><ref refid="class_path_tracker_ad1d2039d5bf83de7a87eb993e97294e0_1ad1d2039d5bf83de7a87eb993e97294e0" kindref="member">DMforPN</ref></computeroutput>. A static <computeroutput><ref refid="class_path_tracker_a161ddc433b0d36f23cae4fd25517b026_1a161ddc433b0d36f23cae4fd25517b026" kindref="member">catalog</ref>[<ref refid="_n_a_g_8hpp_afbc8e5a5490b031473e59212502d45b1_1afbc8e5a5490b031473e59212502d45b1" kindref="member">MAX_NUM_PATH_TRACKERS</ref>]</computeroutput> lets the interpreter refer to a tracker by integer ID rather than by raw pointer. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>PathTracker</label>
+        <link refid="class_path_tracker"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="19">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="58">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="59" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="60" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="60" relation="public-inheritance">
+        </childnode>
+        <childnode refid="61" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="83">
+        <label>M2_arrayint</label>
+        <link refid="class_m2__arrayint"/>
+      </node>
+      <node id="6">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="77" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="48" relation="private-inheritance">
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="50" relation="public-inheritance">
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="44" relation="private-inheritance">
+        </childnode>
+        <childnode refid="47" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="68">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="50">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="51" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>PathTracker</label>
+        <link refid="class_path_tracker"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>catalog</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>max_corr_steps</edgelabel>
+          <edgelabel>n_coords</edgelabel>
+          <edgelabel>n_sols</edgelabel>
+          <edgelabel>num_path_trackers</edgelabel>
+          <edgelabel>num_successes_before_increase</edgelabel>
+          <edgelabel>number</edgelabel>
+          <edgelabel>pred_type</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>H</edgelabel>
+          <edgelabel>S</edgelabel>
+          <edgelabel>T</edgelabel>
+          <edgelabel>solutions</edgelabel>
+          <edgelabel>target</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>slpH</edgelabel>
+          <edgelabel>slpHxH</edgelabel>
+          <edgelabel>slpHxt</edgelabel>
+          <edgelabel>slpHxtH</edgelabel>
+          <edgelabel>slpS</edgelabel>
+          <edgelabel>slpSx</edgelabel>
+          <edgelabel>slpSxS</edgelabel>
+          <edgelabel>slpT</edgelabel>
+          <edgelabel>slpTx</edgelabel>
+          <edgelabel>slpTxT</edgelabel>
+          <edgelabel>  ...</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>DMforPN</edgelabel>
+          <edgelabel>bigT</edgelabel>
+          <edgelabel>maxDegreeTo3halves</edgelabel>
+          <edgelabel>productST</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>C</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>homotopy_R</edgelabel>
+        </childnode>
+        <childnode refid="88" relation="usage">
+          <edgelabel>raw_solutions</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>is_projective</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>dt_decrease_factor</edgelabel>
+          <edgelabel>dt_increase_factor</edgelabel>
+          <edgelabel>end_zone_factor</edgelabel>
+          <edgelabel>epsilon</edgelabel>
+          <edgelabel>infinity_threshold</edgelabel>
+          <edgelabel>init_dt</edgelabel>
+          <edgelabel>min_dt</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="40" relation="public-inheritance">
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="41">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="42" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>CoefficientType</label>
+      </node>
+      <node id="87">
+        <label>SLP&lt; Field &gt;</label>
+        <link refid="class_s_l_p"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>F</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>C</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>catalog</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>cols_out</edgelabel>
+          <edgelabel>n_calls</edgelabel>
+          <edgelabel>num_consts</edgelabel>
+          <edgelabel>num_inputs</edgelabel>
+          <edgelabel>num_operations</edgelabel>
+          <edgelabel>num_slps</edgelabel>
+          <edgelabel>rows_out</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>is_relative_position</edgelabel>
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>program</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="usage">
+          <edgelabel>nodes</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>node_index</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>handle</edgelabel>
+        </childnode>
+        <childnode refid="85" relation="usage">
+          <edgelabel>compiled_fn</edgelabel>
+        </childnode>
+        <childnode refid="86" relation="usage">
+          <edgelabel>eval_time</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>SLP&lt; ComplexField &gt;</label>
+        <link refid="class_s_l_p"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>F</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>C</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>catalog</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>num_slps</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>is_relative_position</edgelabel>
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>program</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="usage">
+          <edgelabel>nodes</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>node_index</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>cols_out</edgelabel>
+          <edgelabel>n_calls</edgelabel>
+          <edgelabel>num_consts</edgelabel>
+          <edgelabel>num_inputs</edgelabel>
+          <edgelabel>num_operations</edgelabel>
+          <edgelabel>rows_out</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>handle</edgelabel>
+        </childnode>
+        <childnode refid="85" relation="usage">
+          <edgelabel>compiled_fn</edgelabel>
+        </childnode>
+        <childnode refid="86" relation="usage">
+          <edgelabel>eval_time</edgelabel>
+        </childnode>
+        <childnode refid="87" relation="template-instance">
+          <edgelabel>&lt; ComplexField &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="88">
+        <label>Solution</label>
+        <link refid="struct_solution"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>n</edgelabel>
+          <edgelabel>num_steps</edgelabel>
+        </childnode>
+        <childnode refid="89" relation="usage">
+          <edgelabel>start_x</edgelabel>
+          <edgelabel>x</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>cond</edgelabel>
+          <edgelabel>t</edgelabel>
+        </childnode>
+        <childnode refid="90" relation="usage">
+          <edgelabel>status</edgelabel>
+        </childnode>
+      </node>
+      <node id="90">
+        <label>SolutionStatus</label>
+      </node>
+      <node id="67">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="39" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>StraightLineProgram</label>
+        <link refid="class_straight_line_program"/>
+        <childnode refid="79" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>T</label>
+      </node>
+      <node id="66">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="39" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="31">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="35">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="29">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="24" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="33" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>char</label>
+      </node>
+      <node id="86">
+        <label>clock_t</label>
+        <link refid="classclock__t"/>
+      </node>
+      <node id="89">
+        <label>complex</label>
+        <link refid="classcomplex"/>
+        <childnode refid="24" relation="usage">
+          <edgelabel>imag</edgelabel>
+          <edgelabel>real</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>const ARing *</label>
+      </node>
+      <node id="80">
+        <label>const CCC *</label>
+      </node>
+      <node id="34">
+        <label>const void *</label>
+      </node>
+      <node id="24">
+        <label>double</label>
+      </node>
+      <node id="84">
+        <label>element_type *</label>
+      </node>
+      <node id="76">
+        <label>overflow_type *</label>
+      </node>
+      <node id="74">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="9">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="77">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="5">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="23">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>long</label>
+      </node>
+      <node id="52">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="45" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="53" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="55" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="55">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="56" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>mon_part</label>
+      </node>
+      <node id="28">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="27">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="25">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="26">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="3">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="20">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>size_t</label>
+      </node>
+      <node id="63">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>spinLock</label>
+      </node>
+      <node id="62">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>static SLP&lt; PrimeField&lt; coefficient &gt; &gt; *</label>
+      </node>
+      <node id="82">
+        <label>static int</label>
+        <link refid="classstatic_01int"/>
+      </node>
+      <node id="73">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="72">
+        <label>std::string</label>
+        <childnode refid="73" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="17" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="35" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="72" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>void *</label>
+      </node>
+      <node id="85">
+        <label>void(*)(element_type *, element_type *)</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/NAG.hpp" line="641" column="1" bodyfile="Macaulay2/e/NAG.hpp" bodystart="642" bodyend="805"/>
+    <listofallmembers>
+      <member refid="class_path_tracker_ad2862e1f59acc25bb67400b5f0cc58b6_1ad2862e1f59acc25bb67400b5f0cc58b6" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>bigT</name></member>
+      <member refid="class_path_tracker_ac445d627234faab01fe0c1962e75f00b_1ac445d627234faab01fe0c1962e75f00b" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>C</name></member>
+      <member refid="class_path_tracker_a161ddc433b0d36f23cae4fd25517b026_1a161ddc433b0d36f23cae4fd25517b026" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>catalog</name></member>
+      <member refid="class_path_tracker_ad1d2039d5bf83de7a87eb993e97294e0_1ad1d2039d5bf83de7a87eb993e97294e0" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>DMforPN</name></member>
+      <member refid="class_path_tracker_a87a7c5a2b8f68e0a1a749b4cfcd34d4a_1a87a7c5a2b8f68e0a1a749b4cfcd34d4a" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>dt_decrease_factor</name></member>
+      <member refid="class_path_tracker_adeb837651e78dfe4cf85dfdf46581eb2_1adeb837651e78dfe4cf85dfdf46581eb2" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>dt_increase_factor</name></member>
+      <member refid="class_path_tracker_a16b565e37a8a54cc06c054ade257e386_1a16b565e37a8a54cc06c054ade257e386" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>end_zone_factor</name></member>
+      <member refid="class_path_tracker_a980804c674164fe19aa82c8adcbadec9_1a980804c674164fe19aa82c8adcbadec9" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>epsilon</name></member>
+      <member refid="class_path_tracker_a5a3ae7ce108ee83e720546f509c8c130_1a5a3ae7ce108ee83e720546f509c8c130" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>evaluate_slpHxH</name></member>
+      <member refid="class_path_tracker_a2df549b7cfbb44105963c46e9490440b_1a2df549b7cfbb44105963c46e9490440b" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>evaluate_slpHxt</name></member>
+      <member refid="class_path_tracker_a96da5ddedb2b145d13af717150e3e7e6_1a96da5ddedb2b145d13af717150e3e7e6" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>evaluate_slpHxtH</name></member>
+      <member refid="class_path_tracker_ab9adb8a56c79cefde7fd8e690b9db78c_1ab9adb8a56c79cefde7fd8e690b9db78c" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>getAllSolutions</name></member>
+      <member refid="class_path_tracker_adb2bcbb75ca6962f177e0d322e12bad0_1adb2bcbb75ca6962f177e0d322e12bad0" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>getSolution</name></member>
+      <member refid="class_path_tracker_a0b092463cf91fcc4e02252ec4c6d3a4d_1a0b092463cf91fcc4e02252ec4c6d3a4d" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>getSolutionLastT</name></member>
+      <member refid="class_path_tracker_af50f313e11d0a83a32c0d31a8e980171_1af50f313e11d0a83a32c0d31a8e980171" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>getSolutionRcond</name></member>
+      <member refid="class_path_tracker_a7f23ef75fff95c7086d8e0cb302f68fd_1a7f23ef75fff95c7086d8e0cb302f68fd" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>getSolutionStatus</name></member>
+      <member refid="class_path_tracker_a2d89445e8a36120c048cdf6891dce4bd_1a2d89445e8a36120c048cdf6891dce4bd" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>getSolutionSteps</name></member>
+      <member refid="class_path_tracker_a133ba2b54a2a9b8d470595f57375991d_1a133ba2b54a2a9b8d470595f57375991d" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>H</name></member>
+      <member refid="class_mutable_engine_object_ac1b947c41e24e71d14a66a9c4db5cf83_1ac1b947c41e24e71d14a66a9c4db5cf83" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>hash</name></member>
+      <member refid="class_path_tracker_a2d094d3cdfd26bdde15a46fb47dae732_1a2d094d3cdfd26bdde15a46fb47dae732" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>homotopy_R</name></member>
+      <member refid="class_path_tracker_ada19913cba2c24bbc2139c1f8329a7f3_1ada19913cba2c24bbc2139c1f8329a7f3" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>infinity_threshold</name></member>
+      <member refid="class_path_tracker_a39a4c23554e81e8fdf1fd5636af62ec6_1a39a4c23554e81e8fdf1fd5636af62ec6" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>init_dt</name></member>
+      <member refid="class_path_tracker_a0346b99435628853d4a7c94e662b08ec_1a0346b99435628853d4a7c94e662b08ec" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>is_projective</name></member>
+      <member refid="class_path_tracker_a2f22a8e1a69d62d52999ab1ad74b6c0d_1a2f22a8e1a69d62d52999ab1ad74b6c0d" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>make</name></member>
+      <member refid="class_path_tracker_a33a2e7b1b39160a449004c2390394911_1a33a2e7b1b39160a449004c2390394911" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>make</name></member>
+      <member refid="class_path_tracker_ad51edd3cf7d7f6aa4c24279fa881162f_1ad51edd3cf7d7f6aa4c24279fa881162f" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>make</name></member>
+      <member refid="class_path_tracker_a64486cb51f7037719b881b422e3bbfc2_1a64486cb51f7037719b881b422e3bbfc2" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>make_slps</name></member>
+      <member refid="class_path_tracker_a258650f2f881fe2cbe45e3cb92db7f6e_1a258650f2f881fe2cbe45e3cb92db7f6e" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>max_corr_steps</name></member>
+      <member refid="class_path_tracker_a31866e236e9265a49027eeec4461b638_1a31866e236e9265a49027eeec4461b638" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>maxDegreeTo3halves</name></member>
+      <member refid="class_mutable_engine_object_a2fc208670b85e3c113d357a4af3c5590_1a2fc208670b85e3c113d357a4af3c5590" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>mHashValue</name></member>
+      <member refid="class_path_tracker_ac9c308b3e9289b76143083131b8367f1_1ac9c308b3e9289b76143083131b8367f1" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>min_dt</name></member>
+      <member refid="class_mutable_engine_object_ab065530f5d879cbf4c5aa8978a2ad369_1ab065530f5d879cbf4c5aa8978a2ad369" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>mNextMutableHashValue</name></member>
+      <member refid="class_mutable_engine_object_a718299a98e7c3b55d3dcce802b2a2487_1a718299a98e7c3b55d3dcce802b2a2487" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>MutableEngineObject</name></member>
+      <member refid="class_path_tracker_a3ab9680165cf93e43d78b1d2c0084628_1a3ab9680165cf93e43d78b1d2c0084628" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>n_coords</name></member>
+      <member refid="class_path_tracker_a72cf572ca01e7fd0a39064a4f191a0e9_1a72cf572ca01e7fd0a39064a4f191a0e9" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>n_sols</name></member>
+      <member refid="class_path_tracker_a7bad1f2c9ebd3f4dd761d6f7a7aab6a4_1a7bad1f2c9ebd3f4dd761d6f7a7aab6a4" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>num_path_trackers</name></member>
+      <member refid="class_path_tracker_aaaec1c8c0087925fc1e2996bd44f533c_1aaaec1c8c0087925fc1e2996bd44f533c" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>num_successes_before_increase</name></member>
+      <member refid="class_path_tracker_a405b8ccef552779c8ac650f229b4fcb9_1a405b8ccef552779c8ac650f229b4fcb9" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>number</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>operator new[]</name></member>
+      <member refid="classour__gc__cleanup_a06cce0c7e15ef83312d0b5240cd0d474_1a06cce0c7e15ef83312d0b5240cd0d474" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>our_gc_cleanup</name></member>
+      <member refid="class_path_tracker_a6aa8f8ec442be48e880e4f7ff8425690_1a6aa8f8ec442be48e880e4f7ff8425690" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>PathTracker</name></member>
+      <member refid="class_path_tracker_a77502e04122173a9850cff8e3e579f59_1a77502e04122173a9850cff8e3e579f59" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>pred_type</name></member>
+      <member refid="class_path_tracker_a9395bfa136d9afb2c5773d8d46de3cb0_1a9395bfa136d9afb2c5773d8d46de3cb0" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>productST</name></member>
+      <member refid="class_path_tracker_ac767a79b42c8a5a783f4b5123754847b_1ac767a79b42c8a5a783f4b5123754847b" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>raw_solutions</name></member>
+      <member refid="class_path_tracker_a144f6c640f53c40cce1148d368b79ba7_1a144f6c640f53c40cce1148d368b79ba7" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>rawSetParametersPT</name></member>
+      <member refid="class_path_tracker_a21ca13af9e95da22e798a3c38f6e467a_1a21ca13af9e95da22e798a3c38f6e467a" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>rawTrackPaths</name></member>
+      <member refid="class_path_tracker_acde233c44f3f5138d3c289cf684ca08b_1acde233c44f3f5138d3c289cf684ca08b" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>refine</name></member>
+      <member refid="class_path_tracker_a400a8e34419176da883fcadfe7206c8d_1a400a8e34419176da883fcadfe7206c8d" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>S</name></member>
+      <member refid="class_path_tracker_aa30633a219b7e49233b8bd76165f76bb_1aa30633a219b7e49233b8bd76165f76bb" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpH</name></member>
+      <member refid="class_path_tracker_a2cd7d8f28d9cadc4926555a8ab3375a6_1a2cd7d8f28d9cadc4926555a8ab3375a6" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpHxH</name></member>
+      <member refid="class_path_tracker_a23533b89316b671f26f08be095cbfffb_1a23533b89316b671f26f08be095cbfffb" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpHxt</name></member>
+      <member refid="class_path_tracker_ae5189069c0ffad23911fd5630c130fa8_1ae5189069c0ffad23911fd5630c130fa8" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpHxtH</name></member>
+      <member refid="class_path_tracker_aa9355527bc954cf13580a96ed934fd19_1aa9355527bc954cf13580a96ed934fd19" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpS</name></member>
+      <member refid="class_path_tracker_a48aa26199099a2ee8b66984688ab8857_1a48aa26199099a2ee8b66984688ab8857" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpSx</name></member>
+      <member refid="class_path_tracker_ac10bf538f56336475d6450bcc81725ab_1ac10bf538f56336475d6450bcc81725ab" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpSxS</name></member>
+      <member refid="class_path_tracker_a858a1e47311a5c3c28b67269b4f18d77_1a858a1e47311a5c3c28b67269b4f18d77" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpT</name></member>
+      <member refid="class_path_tracker_ac3590d1085ad5bc3a72183d3bba1073d_1ac3590d1085ad5bc3a72183d3bba1073d" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpTx</name></member>
+      <member refid="class_path_tracker_af9420a8391049441ce3865fa4abde64c_1af9420a8391049441ce3865fa4abde64c" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>slpTxT</name></member>
+      <member refid="class_path_tracker_a15d009040061b980d53af9a59682dcf4_1a15d009040061b980d53af9a59682dcf4" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>solutions</name></member>
+      <member refid="class_path_tracker_a33988cc421a375b22e2c16543309bcd9_1a33988cc421a375b22e2c16543309bcd9" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>T</name></member>
+      <member refid="class_path_tracker_abee8a01f58c4c2bd6b493cf66bc17a90_1abee8a01f58c4c2bd6b493cf66bc17a90" prot="private" virt="non-virtual"><scope>PathTracker</scope><name>target</name></member>
+      <member refid="class_path_tracker_afc040ae55e4ca3170715c6d5f5c72213_1afc040ae55e4ca3170715c6d5f5c72213" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>text_out</name></member>
+      <member refid="class_path_tracker_a14b53b75f64ba19a47d64c9c18ea6adb_1a14b53b75f64ba19a47d64c9c18ea6adb" prot="public" virt="non-virtual"><scope>PathTracker</scope><name>track</name></member>
+      <member refid="class_mutable_engine_object_a050267c53cfcb42b021cf69b69e3bff4_1a050267c53cfcb42b021cf69b69e3bff4" prot="public" virt="virtual"><scope>PathTracker</scope><name>~MutableEngineObject</name></member>
+      <member refid="classour__gc__cleanup_a0c022cf1e062422acd36ecc63f51f87b_1a0c022cf1e062422acd36ecc63f51f87b" prot="public" virt="virtual"><scope>PathTracker</scope><name>~our_gc_cleanup</name></member>
+      <member refid="class_path_tracker_a4782b126d8e062ba0bb1280f26ec4850_1a4782b126d8e062ba0bb1280f26ec4850" prot="public" virt="virtual"><scope>PathTracker</scope><name>~PathTracker</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

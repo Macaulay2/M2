@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmpfr_1_1conversion__overflow" kind="class" language="C++" prot="public">
+    <compoundname>mpfr::conversion_overflow</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::exception</basecompoundref>
+    <includes refid="mpreal_8h" local="no">mpreal.h</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmpfr_1_1conversion__overflow_a211e5d93a1d81c73a3cd57c080b60356_1a211e5d93a1d81c73a3cd57c080b60356" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mpfr::conversion_overflow::why</definition>
+        <argsstring>()</argsstring>
+        <name>why</name>
+        <qualifiedname>mpfr::conversion_overflow::why</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/mpreal.h" line="598" column="17" bodyfile="Macaulay2/e/mpreal.h" bodystart="598" bodyend="598"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>mpfr::conversion_overflow</label>
+        <link refid="classmpfr_1_1conversion__overflow"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::exception</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>mpfr::conversion_overflow</label>
+        <link refid="classmpfr_1_1conversion__overflow"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::exception</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/mpreal.h" line="596" column="1" bodyfile="Macaulay2/e/mpreal.h" bodystart="596" bodyend="599"/>
+    <listofallmembers>
+      <member refid="classmpfr_1_1conversion__overflow_a211e5d93a1d81c73a3cd57c080b60356_1a211e5d93a1d81c73a3cd57c080b60356" prot="public" virt="non-virtual"><scope>mpfr::conversion_overflow</scope><name>why</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

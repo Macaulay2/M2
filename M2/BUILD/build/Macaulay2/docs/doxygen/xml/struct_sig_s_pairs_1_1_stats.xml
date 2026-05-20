@@ -1,0 +1,273 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_sig_s_pairs_1_1_stats" kind="struct" language="C++" prot="public">
+    <compoundname>SigSPairs::Stats</compoundname>
+    <includes refid="_sig_s_pairs_8hpp" local="no">SigSPairs.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_aa86d277f1f88762ce40856f0cad71db6_1aa86d277f1f88762ce40856f0cad71db6" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::spairsConstructed</definition>
+        <argsstring></argsstring>
+        <name>spairsConstructed</name>
+        <qualifiedname>SigSPairs::Stats::spairsConstructed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="50" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="50" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_ad0e710d6ef81007c3acc070cef1cc4fc_1ad0e710d6ef81007c3acc070cef1cc4fc" compoundref="_signature_g_b_8cpp" startline="301" endline="440">SignatureGB::displayPaperStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_a9b91bd706aeeb48c56e38608e066ce40_1a9b91bd706aeeb48c56e38608e066ce40" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::spairsFinal</definition>
+        <argsstring></argsstring>
+        <name>spairsFinal</name>
+        <qualifiedname>SigSPairs::Stats::spairsFinal</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="51" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="51" bodyend="-1"/>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_a25d72750bb68d1136898c4dc608b9a4c_1a25d72750bb68d1136898c4dc608b9a4c" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::nonregularSPairs</definition>
+        <argsstring></argsstring>
+        <name>nonregularSPairs</name>
+        <qualifiedname>SigSPairs::Stats::nonregularSPairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="52" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="52" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_ad0e710d6ef81007c3acc070cef1cc4fc_1ad0e710d6ef81007c3acc070cef1cc4fc" compoundref="_signature_g_b_8cpp" startline="301" endline="440">SignatureGB::displayPaperStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_ac5ea92dce91a1ab60e816cbd468730bb_1ac5ea92dce91a1ab60e816cbd468730bb" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::highBaseDivisorHits</definition>
+        <argsstring></argsstring>
+        <name>highBaseDivisorHits</name>
+        <qualifiedname>SigSPairs::Stats::highBaseDivisorHits</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="53" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="53" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_ad0e710d6ef81007c3acc070cef1cc4fc_1ad0e710d6ef81007c3acc070cef1cc4fc" compoundref="_signature_g_b_8cpp" startline="301" endline="440">SignatureGB::displayPaperStats</referencedby>
+        <referencedby refid="class_signature_g_b_a3be9ccfb84b321f8ef54d8f43051fbfd_1a3be9ccfb84b321f8ef54d8f43051fbfd" compoundref="_signature_g_b_8cpp" startline="442" endline="635">SignatureGB::displaySomeStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_aad33e48d15edeb86fac85f63638da13b_1aad33e48d15edeb86fac85f63638da13b" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::lowBaseDivisorHits</definition>
+        <argsstring></argsstring>
+        <name>lowBaseDivisorHits</name>
+        <qualifiedname>SigSPairs::Stats::lowBaseDivisorHits</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="54" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="54" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_ad0e710d6ef81007c3acc070cef1cc4fc_1ad0e710d6ef81007c3acc070cef1cc4fc" compoundref="_signature_g_b_8cpp" startline="301" endline="440">SignatureGB::displayPaperStats</referencedby>
+        <referencedby refid="class_signature_g_b_a3be9ccfb84b321f8ef54d8f43051fbfd_1a3be9ccfb84b321f8ef54d8f43051fbfd" compoundref="_signature_g_b_8cpp" startline="442" endline="635">SignatureGB::displaySomeStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_a0fa88081467194e2d18f9604953583aa_1a0fa88081467194e2d18f9604953583aa" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::hasHighBaseDivisor</definition>
+        <argsstring></argsstring>
+        <name>hasHighBaseDivisor</name>
+        <qualifiedname>SigSPairs::Stats::hasHighBaseDivisor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="55" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="55" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_a3be9ccfb84b321f8ef54d8f43051fbfd_1a3be9ccfb84b321f8ef54d8f43051fbfd" compoundref="_signature_g_b_8cpp" startline="442" endline="635">SignatureGB::displaySomeStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_a99008770e2c9db618e354bbe3373f15b_1a99008770e2c9db618e354bbe3373f15b" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::hasLowBaseDivisor</definition>
+        <argsstring></argsstring>
+        <name>hasLowBaseDivisor</name>
+        <qualifiedname>SigSPairs::Stats::hasLowBaseDivisor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="56" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_a3be9ccfb84b321f8ef54d8f43051fbfd_1a3be9ccfb84b321f8ef54d8f43051fbfd" compoundref="_signature_g_b_8cpp" startline="442" endline="635">SignatureGB::displaySomeStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_a808380ccf9b14c5a74b978bedfe689a3_1a808380ccf9b14c5a74b978bedfe689a3" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::syzygyModuleHits</definition>
+        <argsstring></argsstring>
+        <name>syzygyModuleHits</name>
+        <qualifiedname>SigSPairs::Stats::syzygyModuleHits</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="57" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_ad0e710d6ef81007c3acc070cef1cc4fc_1ad0e710d6ef81007c3acc070cef1cc4fc" compoundref="_signature_g_b_8cpp" startline="301" endline="440">SignatureGB::displayPaperStats</referencedby>
+        <referencedby refid="class_signature_g_b_a3be9ccfb84b321f8ef54d8f43051fbfd_1a3be9ccfb84b321f8ef54d8f43051fbfd" compoundref="_signature_g_b_8cpp" startline="442" endline="635">SignatureGB::displaySomeStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_af824c56f81ea45d7bfb517403d837bff_1af824c56f81ea45d7bfb517403d837bff" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::earlyRelativelyPrimePairs</definition>
+        <argsstring></argsstring>
+        <name>earlyRelativelyPrimePairs</name>
+        <qualifiedname>SigSPairs::Stats::earlyRelativelyPrimePairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="58" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_ad0e710d6ef81007c3acc070cef1cc4fc_1ad0e710d6ef81007c3acc070cef1cc4fc" compoundref="_signature_g_b_8cpp" startline="301" endline="440">SignatureGB::displayPaperStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_a0970dab487d67d5834bf0e602475b3c8_1a0970dab487d67d5834bf0e602475b3c8" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::earlySingularCriterionPairs</definition>
+        <argsstring></argsstring>
+        <name>earlySingularCriterionPairs</name>
+        <qualifiedname>SigSPairs::Stats::earlySingularCriterionPairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="59" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_ad0e710d6ef81007c3acc070cef1cc4fc_1ad0e710d6ef81007c3acc070cef1cc4fc" compoundref="_signature_g_b_8cpp" startline="301" endline="440">SignatureGB::displayPaperStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_a0c20c92d2c38757450d6d3b0cfa42a3d_1a0c20c92d2c38757450d6d3b0cfa42a3d" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::queuedPairs</definition>
+        <argsstring></argsstring>
+        <name>queuedPairs</name>
+        <qualifiedname>SigSPairs::Stats::queuedPairs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="60" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_ad0e710d6ef81007c3acc070cef1cc4fc_1ad0e710d6ef81007c3acc070cef1cc4fc" compoundref="_signature_g_b_8cpp" startline="301" endline="440">SignatureGB::displayPaperStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="struct_sig_s_pairs_1_1_stats_ac54601843991a4ce3e7a698a50d8e5db_1ac54601843991a4ce3e7a698a50d8e5db" prot="public" static="no" mutable="no">
+        <type>unsigned long long</type>
+        <definition>unsigned long long SigSPairs::Stats::duplicateSignatures</definition>
+        <argsstring></argsstring>
+        <name>duplicateSignatures</name>
+        <qualifiedname>SigSPairs::Stats::duplicateSignatures</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="61" column="24" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="class_signature_g_b_ad0e710d6ef81007c3acc070cef1cc4fc_1ad0e710d6ef81007c3acc070cef1cc4fc" compoundref="_signature_g_b_8cpp" startline="301" endline="440">SignatureGB::displayPaperStats</referencedby>
+        <referencedby refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" compoundref="_sig_s_pairs_8hpp" startline="63" endline="75">Stats</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SigSPairs::Stats::Stats</definition>
+        <argsstring>()</argsstring>
+        <name>Stats</name>
+        <qualifiedname>SigSPairs::Stats::Stats</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="63" column="5" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="63" bodyend="75"/>
+        <references refid="struct_sig_s_pairs_1_1_stats_ac54601843991a4ce3e7a698a50d8e5db_1ac54601843991a4ce3e7a698a50d8e5db" compoundref="_sig_s_pairs_8hpp" startline="61">duplicateSignatures</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_af824c56f81ea45d7bfb517403d837bff_1af824c56f81ea45d7bfb517403d837bff" compoundref="_sig_s_pairs_8hpp" startline="58">earlyRelativelyPrimePairs</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_a0970dab487d67d5834bf0e602475b3c8_1a0970dab487d67d5834bf0e602475b3c8" compoundref="_sig_s_pairs_8hpp" startline="59">earlySingularCriterionPairs</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_a0fa88081467194e2d18f9604953583aa_1a0fa88081467194e2d18f9604953583aa" compoundref="_sig_s_pairs_8hpp" startline="55">hasHighBaseDivisor</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_a99008770e2c9db618e354bbe3373f15b_1a99008770e2c9db618e354bbe3373f15b" compoundref="_sig_s_pairs_8hpp" startline="56">hasLowBaseDivisor</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_ac5ea92dce91a1ab60e816cbd468730bb_1ac5ea92dce91a1ab60e816cbd468730bb" compoundref="_sig_s_pairs_8hpp" startline="53">highBaseDivisorHits</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_aad33e48d15edeb86fac85f63638da13b_1aad33e48d15edeb86fac85f63638da13b" compoundref="_sig_s_pairs_8hpp" startline="54">lowBaseDivisorHits</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_a25d72750bb68d1136898c4dc608b9a4c_1a25d72750bb68d1136898c4dc608b9a4c" compoundref="_sig_s_pairs_8hpp" startline="52">nonregularSPairs</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_a0c20c92d2c38757450d6d3b0cfa42a3d_1a0c20c92d2c38757450d6d3b0cfa42a3d" compoundref="_sig_s_pairs_8hpp" startline="60">queuedPairs</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_aa86d277f1f88762ce40856f0cad71db6_1aa86d277f1f88762ce40856f0cad71db6" compoundref="_sig_s_pairs_8hpp" startline="50">spairsConstructed</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_a9b91bd706aeeb48c56e38608e066ce40_1a9b91bd706aeeb48c56e38608e066ce40" compoundref="_sig_s_pairs_8hpp" startline="51">spairsFinal</references>
+        <references refid="struct_sig_s_pairs_1_1_stats_a808380ccf9b14c5a74b978bedfe689a3_1a808380ccf9b14c5a74b978bedfe689a3" compoundref="_sig_s_pairs_8hpp" startline="57">syzygyModuleHits</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>SigSPairs::Stats</label>
+        <link refid="struct_sig_s_pairs_1_1_stats"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>duplicateSignatures</edgelabel>
+          <edgelabel>earlyRelativelyPrimePairs</edgelabel>
+          <edgelabel>earlySingularCriterionPairs</edgelabel>
+          <edgelabel>hasHighBaseDivisor</edgelabel>
+          <edgelabel>hasLowBaseDivisor</edgelabel>
+          <edgelabel>highBaseDivisorHits</edgelabel>
+          <edgelabel>lowBaseDivisorHits</edgelabel>
+          <edgelabel>nonregularSPairs</edgelabel>
+          <edgelabel>queuedPairs</edgelabel>
+          <edgelabel>spairsConstructed</edgelabel>
+          <edgelabel>  ...</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>long</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" line="49" column="3" bodyfile="submodules/mathicgb/src/mathicgb/SigSPairs.hpp" bodystart="49" bodyend="76"/>
+    <listofallmembers>
+      <member refid="struct_sig_s_pairs_1_1_stats_ac54601843991a4ce3e7a698a50d8e5db_1ac54601843991a4ce3e7a698a50d8e5db" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>duplicateSignatures</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_af824c56f81ea45d7bfb517403d837bff_1af824c56f81ea45d7bfb517403d837bff" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>earlyRelativelyPrimePairs</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_a0970dab487d67d5834bf0e602475b3c8_1a0970dab487d67d5834bf0e602475b3c8" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>earlySingularCriterionPairs</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_a0fa88081467194e2d18f9604953583aa_1a0fa88081467194e2d18f9604953583aa" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>hasHighBaseDivisor</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_a99008770e2c9db618e354bbe3373f15b_1a99008770e2c9db618e354bbe3373f15b" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>hasLowBaseDivisor</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_ac5ea92dce91a1ab60e816cbd468730bb_1ac5ea92dce91a1ab60e816cbd468730bb" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>highBaseDivisorHits</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_aad33e48d15edeb86fac85f63638da13b_1aad33e48d15edeb86fac85f63638da13b" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>lowBaseDivisorHits</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_a25d72750bb68d1136898c4dc608b9a4c_1a25d72750bb68d1136898c4dc608b9a4c" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>nonregularSPairs</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_a0c20c92d2c38757450d6d3b0cfa42a3d_1a0c20c92d2c38757450d6d3b0cfa42a3d" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>queuedPairs</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_aa86d277f1f88762ce40856f0cad71db6_1aa86d277f1f88762ce40856f0cad71db6" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>spairsConstructed</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_a9b91bd706aeeb48c56e38608e066ce40_1a9b91bd706aeeb48c56e38608e066ce40" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>spairsFinal</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_a8cc719a26c6de2ac337edec5e93f9093_1a8cc719a26c6de2ac337edec5e93f9093" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>Stats</name></member>
+      <member refid="struct_sig_s_pairs_1_1_stats_a808380ccf9b14c5a74b978bedfe689a3_1a808380ccf9b14c5a74b978bedfe689a3" prot="public" virt="non-virtual"><scope>SigSPairs::Stats</scope><name>syzygyModuleHits</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

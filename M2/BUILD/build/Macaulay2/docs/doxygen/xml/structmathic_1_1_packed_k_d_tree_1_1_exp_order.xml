@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structmathic_1_1_packed_k_d_tree_1_1_exp_order" kind="struct" language="C++" prot="public">
+    <compoundname>mathic::PackedKDTree::ExpOrder</compoundname>
+    <includes refid="_packed_k_d_tree_8h" local="no">PackedKDTree.h</includes>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a97670b871301101f304795c6fe94c53c_1a97670b871301101f304795c6fe94c53c" prot="private" static="no" mutable="no">
+        <type>const <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>const size_t mathic::PackedKDTree&lt; C &gt;::ExpOrder::_var</definition>
+        <argsstring></argsstring>
+        <name>_var</name>
+        <qualifiedname>mathic::PackedKDTree::ExpOrder::_var</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/PackedKDTree.h" line="27" column="20" bodyfile="submodules/mathic/src/mathic/PackedKDTree.h" bodystart="27" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a04361c810f5f71b389a4459dabb2aa3e_1a04361c810f5f71b389a4459dabb2aa3e" compoundref="_packed_k_d_tree_8h" startline="22" endline="22">mathic::PackedKDTree&lt; C &gt;::ExpOrder::ExpOrder</referencedby>
+        <referencedby refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a51f6e4613ce8ced0c77e360b060b910d_1a51f6e4613ce8ced0c77e360b060b910d" compoundref="_packed_k_d_tree_8h" startline="23" endline="25">mathic::PackedKDTree&lt; C &gt;::ExpOrder::operator()</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmathic_1_1_packed_k_d_tree_1_1_exp_order_ab45c76fe04e0f854071b4712012cf1b2_1ab45c76fe04e0f854071b4712012cf1b2" prot="private" static="no" mutable="no">
+        <type>const C &amp;</type>
+        <definition>const C&amp; mathic::PackedKDTree&lt; C &gt;::ExpOrder::_conf</definition>
+        <argsstring></argsstring>
+        <name>_conf</name>
+        <qualifiedname>mathic::PackedKDTree::ExpOrder::_conf</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/PackedKDTree.h" line="28" column="15" bodyfile="submodules/mathic/src/mathic/PackedKDTree.h" bodystart="28" bodyend="-1"/>
+        <referencedby refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a04361c810f5f71b389a4459dabb2aa3e_1a04361c810f5f71b389a4459dabb2aa3e" compoundref="_packed_k_d_tree_8h" startline="22" endline="22">mathic::PackedKDTree&lt; C &gt;::ExpOrder::ExpOrder</referencedby>
+        <referencedby refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a51f6e4613ce8ced0c77e360b060b910d_1a51f6e4613ce8ced0c77e360b060b910d" compoundref="_packed_k_d_tree_8h" startline="23" endline="25">mathic::PackedKDTree&lt; C &gt;::ExpOrder::operator()</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a04361c810f5f71b389a4459dabb2aa3e_1a04361c810f5f71b389a4459dabb2aa3e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::PackedKDTree&lt; C &gt;::ExpOrder::ExpOrder</definition>
+        <argsstring>(size_t var, const C &amp;conf)</argsstring>
+        <name>ExpOrder</name>
+        <qualifiedname>mathic::PackedKDTree::ExpOrder::ExpOrder</qualifiedname>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>var</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/PackedKDTree.h" line="22" column="5" bodyfile="submodules/mathic/src/mathic/PackedKDTree.h" bodystart="22" bodyend="22"/>
+        <references refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_ab45c76fe04e0f854071b4712012cf1b2_1ab45c76fe04e0f854071b4712012cf1b2" compoundref="_packed_k_d_tree_8h" startline="28">mathic::PackedKDTree&lt; C &gt;::ExpOrder::_conf</references>
+        <references refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a97670b871301101f304795c6fe94c53c_1a97670b871301101f304795c6fe94c53c" compoundref="_packed_k_d_tree_8h" startline="27">mathic::PackedKDTree&lt; C &gt;::ExpOrder::_var</references>
+      </memberdef>
+      <memberdef kind="function" id="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a51f6e4613ce8ced0c77e360b060b910d_1a51f6e4613ce8ced0c77e360b060b910d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool mathic::PackedKDTree&lt; C &gt;::ExpOrder::operator()</definition>
+        <argsstring>(const ExtEntry &amp;a, const ExtEntry &amp;b) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>mathic::PackedKDTree::ExpOrder::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="classmathic_1_1_packed_k_d_tree_a51d56d1c9a0e84cc03e5c95761b4c740_1a51d56d1c9a0e84cc03e5c95761b4c740" kindref="member">ExtEntry</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmathic_1_1_packed_k_d_tree_a51d56d1c9a0e84cc03e5c95761b4c740_1a51d56d1c9a0e84cc03e5c95761b4c740" kindref="member">ExtEntry</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/PackedKDTree.h" line="23" column="12" bodyfile="submodules/mathic/src/mathic/PackedKDTree.h" bodystart="23" bodyend="25"/>
+        <references refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_ab45c76fe04e0f854071b4712012cf1b2_1ab45c76fe04e0f854071b4712012cf1b2" compoundref="_packed_k_d_tree_8h" startline="28">mathic::PackedKDTree&lt; C &gt;::ExpOrder::_conf</references>
+        <references refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a97670b871301101f304795c6fe94c53c_1a97670b871301101f304795c6fe94c53c" compoundref="_packed_k_d_tree_8h" startline="27">mathic::PackedKDTree&lt; C &gt;::ExpOrder::_var</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>C</label>
+      </node>
+      <node id="1">
+        <label>mathic::PackedKDTree&lt; C &gt;::ExpOrder</label>
+        <link refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_var</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_conf</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>size_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/PackedKDTree.h" line="21" column="5" bodyfile="submodules/mathic/src/mathic/PackedKDTree.h" bodystart="21" bodyend="29"/>
+    <listofallmembers>
+      <member refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_ab45c76fe04e0f854071b4712012cf1b2_1ab45c76fe04e0f854071b4712012cf1b2" prot="private" virt="non-virtual"><scope>mathic::PackedKDTree::ExpOrder</scope><name>_conf</name></member>
+      <member refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a97670b871301101f304795c6fe94c53c_1a97670b871301101f304795c6fe94c53c" prot="private" virt="non-virtual"><scope>mathic::PackedKDTree::ExpOrder</scope><name>_var</name></member>
+      <member refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a04361c810f5f71b389a4459dabb2aa3e_1a04361c810f5f71b389a4459dabb2aa3e" prot="public" virt="non-virtual"><scope>mathic::PackedKDTree::ExpOrder</scope><name>ExpOrder</name></member>
+      <member refid="structmathic_1_1_packed_k_d_tree_1_1_exp_order_a51f6e4613ce8ced0c77e360b060b910d_1a51f6e4613ce8ced0c77e360b060b910d" prot="public" virt="non-virtual"><scope>mathic::PackedKDTree::ExpOrder</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

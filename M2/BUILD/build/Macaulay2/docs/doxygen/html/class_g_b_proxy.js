@@ -1,0 +1,25 @@
+var class_g_b_proxy =
+[
+    [ "GBProxy", "class_g_b_proxy_abd07551589f09e366777c9f02323f173.html#abd07551589f09e366777c9f02323f173", null ],
+    [ "~GBProxy", "class_g_b_proxy_ab25790e77fd2e2a85ce544f53b1dd69e.html#ab25790e77fd2e2a85ce544f53b1dd69e", null ],
+    [ "cast_to_GBComputation", "class_g_b_proxy_a04b69e6d98423a39b58f2d3d77a34e5b.html#a04b69e6d98423a39b58f2d3d77a34e5b", null ],
+    [ "complete_thru_degree", "class_g_b_proxy_a9f3c775a0dc29702467a250aba5b03ee.html#a9f3c775a0dc29702467a250aba5b03ee", null ],
+    [ "contains", "class_g_b_proxy_ab53ac26c462d3ecf6b543de7fb8e9fcf.html#ab53ac26c462d3ecf6b543de7fb8e9fcf", null ],
+    [ "get_change", "class_g_b_proxy_a3c1aaa81063bd92dc022f2fb61b5d23a.html#a3c1aaa81063bd92dc022f2fb61b5d23a", null ],
+    [ "get_gb", "class_g_b_proxy_a7eb4de00804a963bc47dc860acd50a14.html#a7eb4de00804a963bc47dc860acd50a14", null ],
+    [ "get_initial", "class_g_b_proxy_abfcc835e5da3df1e31d0377db9f26a6f.html#abfcc835e5da3df1e31d0377db9f26a6f", null ],
+    [ "get_mingens", "class_g_b_proxy_a486db7b3efd61415453012d34bcf46f4.html#a486db7b3efd61415453012d34bcf46f4", null ],
+    [ "get_parallel_lead_terms", "class_g_b_proxy_ac6cd4090b7a279f3446633accc6b1a22.html#ac6cd4090b7a279f3446633accc6b1a22", null ],
+    [ "get_ring", "class_g_b_proxy_a32e180993eabdc5c694f8681e281c25f.html#a32e180993eabdc5c694f8681e281c25f", null ],
+    [ "get_syzygies", "class_g_b_proxy_ac561f697a35a05854ea234336e24a98e.html#ac561f697a35a05854ea234336e24a98e", null ],
+    [ "matrix_lift", "class_g_b_proxy_a0f2558a722c710976d3e8dac841b600c.html#a0f2558a722c710976d3e8dac841b600c", null ],
+    [ "matrix_remainder", "class_g_b_proxy_ac242288a3a1a45ad7ae9090fa6986c63.html#ac242288a3a1a45ad7ae9090fa6986c63", null ],
+    [ "remove_gb", "class_g_b_proxy_aa59c3913aec1f854cf92f641a581f6fd.html#aa59c3913aec1f854cf92f641a581f6fd", null ],
+    [ "replace_GB", "class_g_b_proxy_aee810e9920395f2acd49129324378e24.html#aee810e9920395f2acd49129324378e24", null ],
+    [ "set_hilbert_function", "class_g_b_proxy_ad57601346bb0fade5c4bb7afcf1e8826.html#ad57601346bb0fade5c4bb7afcf1e8826", null ],
+    [ "show", "class_g_b_proxy_a472d3e9d267989cf59878de26928c689.html#a472d3e9d267989cf59878de26928c689", null ],
+    [ "start_computation", "class_g_b_proxy_a5a4c2a7b9e9b1e929160aa0a8afcc9a6.html#a5a4c2a7b9e9b1e929160aa0a8afcc9a6", null ],
+    [ "stop_conditions_ok", "class_g_b_proxy_a3d4de2ab9bd05ad90a1882b619759f8d.html#a3d4de2ab9bd05ad90a1882b619759f8d", null ],
+    [ "text_out", "class_g_b_proxy_ab3249ffb45a6676950137d084bd7cfe0.html#ab3249ffb45a6676950137d084bd7cfe0", null ],
+    [ "G", "class_g_b_proxy_a7f972c2d275353ebc05aa7698d844fd9.html#a7f972c2d275353ebc05aa7698d844fd9", null ]
+];

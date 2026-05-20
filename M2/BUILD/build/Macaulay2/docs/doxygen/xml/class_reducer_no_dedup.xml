@@ -1,0 +1,1228 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_reducer_no_dedup" kind="class" language="C++" prot="public">
+    <compoundname>ReducerNoDedup</compoundname>
+    <basecompoundref refid="class_typical_reducer" prot="public" virt="non-virtual">TypicalReducer</basecompoundref>
+    <innerclass refid="class_reducer_no_dedup_1_1_configuration" prot="private">ReducerNoDedup::Configuration</innerclass>
+    <templateparamlist>
+      <param>
+        <type>template&lt; typename &gt; class</type>
+        <declname>Queue</declname>
+        <defname>Queue</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_reducer_no_dedup_a59a93744683ab4a5499b479adc3e823d_1a59a93744683ab4a5499b479adc3e823d" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+        <definition>const PolyRing&amp; ReducerNoDedup&lt; Queue &gt;::mRing</definition>
+        <argsstring></argsstring>
+        <name>mRing</name>
+        <qualifiedname>ReducerNoDedup::mRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="52" column="18" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="52" bodyend="-1"/>
+        <referencedby refid="class_reducer_no_dedup_a31652c56c45e6505af07dfbc5e3c556b_1a31652c56c45e6505af07dfbc5e3c556b" compoundref="_reducer_no_dedup_8cpp" startline="91" endline="102">ReducerNoDedup&lt; Queue &gt;::insert</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a0cadee6b69935771144f2da77919bc07_1a0cadee6b69935771144f2da77919bc07" compoundref="_reducer_no_dedup_8cpp" startline="74" endline="88">ReducerNoDedup&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="class_reducer_no_dedup_aef21db9a77dbb0b7a040a0732a968bb9_1aef21db9a77dbb0b7a040a0732a968bb9" compoundref="_reducer_no_dedup_8cpp" startline="105" endline="130">ReducerNoDedup&lt; Queue &gt;::leadTerm</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a906ab6d612954827094043ddd71cc4c5_1a906ab6d612954827094043ddd71cc4c5" compoundref="_reducer_no_dedup_8cpp" startline="59" endline="65">ReducerNoDedup&lt; Queue &gt;::ReducerNoDedup</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a8c94483e1dc1e5ad90079e335589c14d_1a8c94483e1dc1e5ad90079e335589c14d" compoundref="_reducer_no_dedup_8cpp" startline="142" endline="159">ReducerNoDedup&lt; Queue &gt;::resetReducer</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a6082c0d27aade8239a209c9572379889_1a6082c0d27aade8239a209c9572379889" compoundref="_reducer_no_dedup_8cpp" startline="68" endline="71">ReducerNoDedup&lt; Queue &gt;::~ReducerNoDedup</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_reducer_no_dedup_aa86cb53762171ab37423758037f4d2a4_1aa86cb53762171ab37423758037f4d2a4" prot="private" static="no" mutable="no">
+        <type><ref refid="struct_new_term" kindref="compound">NewTerm</ref></type>
+        <definition>NewTerm ReducerNoDedup&lt; Queue &gt;::mLeadTerm</definition>
+        <argsstring></argsstring>
+        <name>mLeadTerm</name>
+        <qualifiedname>ReducerNoDedup::mLeadTerm</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="53" column="11" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="53" bodyend="-1"/>
+        <referencedby refid="class_reducer_no_dedup_aef21db9a77dbb0b7a040a0732a968bb9_1aef21db9a77dbb0b7a040a0732a968bb9" compoundref="_reducer_no_dedup_8cpp" startline="105" endline="130">ReducerNoDedup&lt; Queue &gt;::leadTerm</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a906ab6d612954827094043ddd71cc4c5_1a906ab6d612954827094043ddd71cc4c5" compoundref="_reducer_no_dedup_8cpp" startline="59" endline="65">ReducerNoDedup&lt; Queue &gt;::ReducerNoDedup</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a6082c0d27aade8239a209c9572379889_1a6082c0d27aade8239a209c9572379889" compoundref="_reducer_no_dedup_8cpp" startline="68" endline="71">ReducerNoDedup&lt; Queue &gt;::~ReducerNoDedup</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_reducer_no_dedup_a5dd8c32e98126135a75ed14674ed4af1_1a5dd8c32e98126135a75ed14674ed4af1" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ReducerNoDedup&lt; Queue &gt;::mLeadTermKnown</definition>
+        <argsstring></argsstring>
+        <name>mLeadTermKnown</name>
+        <qualifiedname>ReducerNoDedup::mLeadTermKnown</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="54" column="8" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="54" bodyend="-1"/>
+        <referencedby refid="class_reducer_no_dedup_a31652c56c45e6505af07dfbc5e3c556b_1a31652c56c45e6505af07dfbc5e3c556b" compoundref="_reducer_no_dedup_8cpp" startline="91" endline="102">ReducerNoDedup&lt; Queue &gt;::insert</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a0cadee6b69935771144f2da77919bc07_1a0cadee6b69935771144f2da77919bc07" compoundref="_reducer_no_dedup_8cpp" startline="74" endline="88">ReducerNoDedup&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="class_reducer_no_dedup_aef21db9a77dbb0b7a040a0732a968bb9_1aef21db9a77dbb0b7a040a0732a968bb9" compoundref="_reducer_no_dedup_8cpp" startline="105" endline="130">ReducerNoDedup&lt; Queue &gt;::leadTerm</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a906ab6d612954827094043ddd71cc4c5_1a906ab6d612954827094043ddd71cc4c5" compoundref="_reducer_no_dedup_8cpp" startline="59" endline="65">ReducerNoDedup&lt; Queue &gt;::ReducerNoDedup</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a329cdeb53acf0378ec89b4a6371f8523_1a329cdeb53acf0378ec89b4a6371f8523" compoundref="_reducer_no_dedup_8cpp" startline="133" endline="139">ReducerNoDedup&lt; Queue &gt;::removeLeadTerm</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_reducer_no_dedup_a9f76afa91f46fbc114103327359e155a_1a9f76afa91f46fbc114103327359e155a" prot="private" static="no" mutable="no">
+        <type>Queue&lt; <ref refid="class_reducer_no_dedup_1_1_configuration" kindref="compound">Configuration</ref> &gt;</type>
+        <definition>Queue&lt;Configuration&gt; ReducerNoDedup&lt; Queue &gt;::mQueue</definition>
+        <argsstring></argsstring>
+        <name>mQueue</name>
+        <qualifiedname>ReducerNoDedup::mQueue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="55" column="9" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="55" bodyend="-1"/>
+        <referencedby refid="class_reducer_no_dedup_aa34ffb4f8e85e4719727649ccee5ce68_1aa34ffb4f8e85e4719727649ccee5ce68" compoundref="_reducer_no_dedup_8cpp" startline="26" endline="28">ReducerNoDedup&lt; Queue &gt;::description</referencedby>
+        <referencedby refid="class_reducer_no_dedup_afae66ef3921bf5ad02b29a1a712b4862_1afae66ef3921bf5ad02b29a1a712b4862" compoundref="_reducer_no_dedup_8cpp" startline="162" endline="164">ReducerNoDedup&lt; Queue &gt;::getMemoryUse</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a31652c56c45e6505af07dfbc5e3c556b_1a31652c56c45e6505af07dfbc5e3c556b" compoundref="_reducer_no_dedup_8cpp" startline="91" endline="102">ReducerNoDedup&lt; Queue &gt;::insert</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a0cadee6b69935771144f2da77919bc07_1a0cadee6b69935771144f2da77919bc07" compoundref="_reducer_no_dedup_8cpp" startline="74" endline="88">ReducerNoDedup&lt; Queue &gt;::insertTail</referencedby>
+        <referencedby refid="class_reducer_no_dedup_aef21db9a77dbb0b7a040a0732a968bb9_1aef21db9a77dbb0b7a040a0732a968bb9" compoundref="_reducer_no_dedup_8cpp" startline="105" endline="130">ReducerNoDedup&lt; Queue &gt;::leadTerm</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a906ab6d612954827094043ddd71cc4c5_1a906ab6d612954827094043ddd71cc4c5" compoundref="_reducer_no_dedup_8cpp" startline="59" endline="65">ReducerNoDedup&lt; Queue &gt;::ReducerNoDedup</referencedby>
+        <referencedby refid="class_reducer_no_dedup_a8c94483e1dc1e5ad90079e335589c14d_1a8c94483e1dc1e5ad90079e335589c14d" compoundref="_reducer_no_dedup_8cpp" startline="142" endline="159">ReducerNoDedup&lt; Queue &gt;::resetReducer</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_reducer_no_dedup_a906ab6d612954827094043ddd71cc4c5_1a906ab6d612954827094043ddd71cc4c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ReducerNoDedup&lt; Q &gt;::ReducerNoDedup</definition>
+        <argsstring>(const PolyRing &amp;R)</argsstring>
+        <name>ReducerNoDedup</name>
+        <qualifiedname>ReducerNoDedup::ReducerNoDedup</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+          <declname>R</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="23" column="3" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="59" bodyend="65"/>
+        <references refid="class_reducer_no_dedup_aa86cb53762171ab37423758037f4d2a4_1aa86cb53762171ab37423758037f4d2a4" compoundref="_reducer_no_dedup_8cpp" startline="53">ReducerNoDedup&lt; Queue &gt;::mLeadTerm</references>
+        <references refid="class_reducer_no_dedup_a5dd8c32e98126135a75ed14674ed4af1_1a5dd8c32e98126135a75ed14674ed4af1" compoundref="_reducer_no_dedup_8cpp" startline="54">ReducerNoDedup&lt; Queue &gt;::mLeadTermKnown</references>
+        <references refid="class_reducer_no_dedup_a9f76afa91f46fbc114103327359e155a_1a9f76afa91f46fbc114103327359e155a" compoundref="_reducer_no_dedup_8cpp" startline="55">ReducerNoDedup&lt; Queue &gt;::mQueue</references>
+        <references refid="class_reducer_no_dedup_a59a93744683ab4a5499b479adc3e823d_1a59a93744683ab4a5499b479adc3e823d" compoundref="_reducer_no_dedup_8cpp" startline="52">ReducerNoDedup&lt; Queue &gt;::mRing</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_no_dedup_a6082c0d27aade8239a209c9572379889_1a6082c0d27aade8239a209c9572379889" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>ReducerNoDedup&lt; Q &gt;::~ReducerNoDedup</definition>
+        <argsstring>()</argsstring>
+        <name>~ReducerNoDedup</name>
+        <qualifiedname>ReducerNoDedup::~ReducerNoDedup</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="24" column="11" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="68" bodyend="71"/>
+        <references refid="class_reducer_no_dedup_aa86cb53762171ab37423758037f4d2a4_1aa86cb53762171ab37423758037f4d2a4" compoundref="_reducer_no_dedup_8cpp" startline="53">ReducerNoDedup&lt; Queue &gt;::mLeadTerm</references>
+        <references refid="class_reducer_no_dedup_a59a93744683ab4a5499b479adc3e823d_1a59a93744683ab4a5499b479adc3e823d" compoundref="_reducer_no_dedup_8cpp" startline="52">ReducerNoDedup&lt; Queue &gt;::mRing</references>
+        <references refid="class_reducer_no_dedup_a8c94483e1dc1e5ad90079e335589c14d_1a8c94483e1dc1e5ad90079e335589c14d" compoundref="_reducer_no_dedup_8cpp" startline="142" endline="159">ReducerNoDedup&lt; Queue &gt;::resetReducer</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_no_dedup_aa34ffb4f8e85e4719727649ccee5ce68_1aa34ffb4f8e85e4719727649ccee5ce68" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::string</type>
+        <definition>virtual std::string ReducerNoDedup&lt; Queue &gt;::description</definition>
+        <argsstring>() const</argsstring>
+        <name>description</name>
+        <qualifiedname>ReducerNoDedup::description</qualifiedname>
+        <reimplements refid="class_reducer_a4b2a61380e2d2a5a8644cc25aea3389b_1a4b2a61380e2d2a5a8644cc25aea3389b">description</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="26" column="23" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="26" bodyend="28"/>
+        <references refid="class_reducer_no_dedup_a9f76afa91f46fbc114103327359e155a_1a9f76afa91f46fbc114103327359e155a" compoundref="_reducer_no_dedup_8cpp" startline="55">ReducerNoDedup&lt; Queue &gt;::mQueue</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_no_dedup_a0cadee6b69935771144f2da77919bc07_1a0cadee6b69935771144f2da77919bc07" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ReducerNoDedup&lt; Q &gt;::insertTail</definition>
+        <argsstring>(NewConstTerm multiplier, const Poly &amp;f)</argsstring>
+        <name>insertTail</name>
+        <qualifiedname>ReducerNoDedup::insertTail</qualifiedname>
+        <reimplements refid="class_typical_reducer_a1e251a6e8d4ef82c70752a80517c317d_1a1e251a6e8d4ef82c70752a80517c317d">insertTail</reimplements>
+        <param>
+          <type><ref refid="struct_new_const_term" kindref="compound">NewConstTerm</ref></type>
+          <declname>multiplier</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="30" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="74" bodyend="88"/>
+        <references refid="class_poly_a68059d976d906aefc4b27ffb3f161413_1a68059d976d906aefc4b27ffb3f161413" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="254" endline="254">Poly::begin</references>
+        <references refid="struct_new_const_term_a173ef7c67063cd00e068404a823b8735_1a173ef7c67063cd00e068404a823b8735" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="201">NewConstTerm::coef</references>
+        <references refid="struct_new_term_ad437e1d01b3db9dde76445a6a9ee64d9_1ad437e1d01b3db9dde76445a6a9ee64d9" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="206">NewTerm::coef</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_poly_a3bb1f2f4573f50b3a66dca85a91ea995_1a3bb1f2f4573f50b3a66dca85a91ea995" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="255" endline="255">Poly::end</references>
+        <references refid="class_reducer_no_dedup_a5dd8c32e98126135a75ed14674ed4af1_1a5dd8c32e98126135a75ed14674ed4af1" compoundref="_reducer_no_dedup_8cpp" startline="54">ReducerNoDedup&lt; Queue &gt;::mLeadTermKnown</references>
+        <references refid="struct_new_const_term_a850c71117d86955876d9d151e9f26840_1a850c71117d86955876d9d151e9f26840" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="202">NewConstTerm::mono</references>
+        <references refid="struct_new_term_aa338d1a9020c5fd68754052505462a6d_1aa338d1a9020c5fd68754052505462a6d" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="207">NewTerm::mono</references>
+        <references refid="class_reducer_no_dedup_a9f76afa91f46fbc114103327359e155a_1a9f76afa91f46fbc114103327359e155a" compoundref="_reducer_no_dedup_8cpp" startline="55">ReducerNoDedup&lt; Queue &gt;::mQueue</references>
+        <references refid="class_reducer_no_dedup_a59a93744683ab4a5499b479adc3e823d_1a59a93744683ab4a5499b479adc3e823d" compoundref="_reducer_no_dedup_8cpp" startline="52">ReducerNoDedup&lt; Queue &gt;::mRing</references>
+        <references refid="class_poly_ad9dbce336e782d53bee5cfb4ebb34c41_1ad9dbce336e782d53bee5cfb4ebb34c41" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="48" endline="48">Poly::termCount</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_no_dedup_a31652c56c45e6505af07dfbc5e3c556b_1a31652c56c45e6505af07dfbc5e3c556b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ReducerNoDedup&lt; Q &gt;::insert</definition>
+        <argsstring>(ConstMonoRef multiplier, const Poly &amp;f)</argsstring>
+        <name>insert</name>
+        <qualifiedname>ReducerNoDedup::insert</qualifiedname>
+        <reimplements refid="class_typical_reducer_acbd816beb3fa34c412479c1adfd19b2e_1acbd816beb3fa34c412479c1adfd19b2e">insert</reimplements>
+        <param>
+          <type><ref refid="class_reducer_aa8add736f4d0f0608407ad65e11ea845_1aa8add736f4d0f0608407ad65e11ea845" kindref="member">ConstMonoRef</ref></type>
+          <declname>multiplier</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="31" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="91" bodyend="102"/>
+        <references refid="class_poly_a68059d976d906aefc4b27ffb3f161413_1a68059d976d906aefc4b27ffb3f161413" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="254" endline="254">Poly::begin</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_poly_a3bb1f2f4573f50b3a66dca85a91ea995_1a3bb1f2f4573f50b3a66dca85a91ea995" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="255" endline="255">Poly::end</references>
+        <references refid="class_poly_a03c1b4cfe055d871ea5c1822c14b6257_1a03c1b4cfe055d871ea5c1822c14b6257" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="47" endline="47">Poly::isZero</references>
+        <references refid="class_reducer_no_dedup_a5dd8c32e98126135a75ed14674ed4af1_1a5dd8c32e98126135a75ed14674ed4af1" compoundref="_reducer_no_dedup_8cpp" startline="54">ReducerNoDedup&lt; Queue &gt;::mLeadTermKnown</references>
+        <references refid="struct_new_term_aa338d1a9020c5fd68754052505462a6d_1aa338d1a9020c5fd68754052505462a6d" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="207">NewTerm::mono</references>
+        <references refid="class_reducer_no_dedup_a9f76afa91f46fbc114103327359e155a_1a9f76afa91f46fbc114103327359e155a" compoundref="_reducer_no_dedup_8cpp" startline="55">ReducerNoDedup&lt; Queue &gt;::mQueue</references>
+        <references refid="class_reducer_no_dedup_a59a93744683ab4a5499b479adc3e823d_1a59a93744683ab4a5499b479adc3e823d" compoundref="_reducer_no_dedup_8cpp" startline="52">ReducerNoDedup&lt; Queue &gt;::mRing</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_no_dedup_aef21db9a77dbb0b7a040a0732a968bb9_1aef21db9a77dbb0b7a040a0732a968bb9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ReducerNoDedup&lt; Q &gt;::leadTerm</definition>
+        <argsstring>(NewConstTerm &amp;result)</argsstring>
+        <name>leadTerm</name>
+        <qualifiedname>ReducerNoDedup::leadTerm</qualifiedname>
+        <reimplements refid="class_typical_reducer_a6542c817cb7800fdc7f7d2c0f6b3be52_1a6542c817cb7800fdc7f7d2c0f6b3be52">leadTerm</reimplements>
+        <param>
+          <type><ref refid="struct_new_const_term" kindref="compound">NewConstTerm</ref> &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="33" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="105" bodyend="130"/>
+        <references refid="class_reducer_no_dedup_aa86cb53762171ab37423758037f4d2a4_1aa86cb53762171ab37423758037f4d2a4" compoundref="_reducer_no_dedup_8cpp" startline="53">ReducerNoDedup&lt; Queue &gt;::mLeadTerm</references>
+        <references refid="class_reducer_no_dedup_a5dd8c32e98126135a75ed14674ed4af1_1a5dd8c32e98126135a75ed14674ed4af1" compoundref="_reducer_no_dedup_8cpp" startline="54">ReducerNoDedup&lt; Queue &gt;::mLeadTermKnown</references>
+        <references refid="class_reducer_no_dedup_a9f76afa91f46fbc114103327359e155a_1a9f76afa91f46fbc114103327359e155a" compoundref="_reducer_no_dedup_8cpp" startline="55">ReducerNoDedup&lt; Queue &gt;::mQueue</references>
+        <references refid="class_reducer_no_dedup_a59a93744683ab4a5499b479adc3e823d_1a59a93744683ab4a5499b479adc3e823d" compoundref="_reducer_no_dedup_8cpp" startline="52">ReducerNoDedup&lt; Queue &gt;::mRing</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_reducer_no_dedup_a329cdeb53acf0378ec89b4a6371f8523_1a329cdeb53acf0378ec89b4a6371f8523" compoundref="_reducer_no_dedup_8cpp" startline="133" endline="139">ReducerNoDedup&lt; Queue &gt;::removeLeadTerm</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_no_dedup_a329cdeb53acf0378ec89b4a6371f8523_1a329cdeb53acf0378ec89b4a6371f8523" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ReducerNoDedup&lt; Q &gt;::removeLeadTerm</definition>
+        <argsstring>()</argsstring>
+        <name>removeLeadTerm</name>
+        <qualifiedname>ReducerNoDedup::removeLeadTerm</qualifiedname>
+        <reimplements refid="class_typical_reducer_ab26ede91afdf970d01420f5a7fdb55e7_1ab26ede91afdf970d01420f5a7fdb55e7">removeLeadTerm</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="34" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="133" bodyend="139"/>
+        <references refid="class_reducer_no_dedup_aef21db9a77dbb0b7a040a0732a968bb9_1aef21db9a77dbb0b7a040a0732a968bb9" compoundref="_reducer_no_dedup_8cpp" startline="105" endline="130">ReducerNoDedup&lt; Queue &gt;::leadTerm</references>
+        <references refid="class_reducer_no_dedup_a5dd8c32e98126135a75ed14674ed4af1_1a5dd8c32e98126135a75ed14674ed4af1" compoundref="_reducer_no_dedup_8cpp" startline="54">ReducerNoDedup&lt; Queue &gt;::mLeadTermKnown</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_no_dedup_afae66ef3921bf5ad02b29a1a712b4862_1afae66ef3921bf5ad02b29a1a712b4862" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t ReducerNoDedup&lt; Q &gt;::getMemoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>getMemoryUse</name>
+        <qualifiedname>ReducerNoDedup::getMemoryUse</qualifiedname>
+        <reimplements refid="class_typical_reducer_a397ee474c850e09ed2343a00880af9b8_1a397ee474c850e09ed2343a00880af9b8">getMemoryUse</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="36" column="18" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="162" bodyend="164"/>
+        <references refid="class_typical_reducer_a397ee474c850e09ed2343a00880af9b8_1a397ee474c850e09ed2343a00880af9b8" compoundref="_typical_reducer_8cpp" startline="23" endline="25">TypicalReducer::getMemoryUse</references>
+        <references refid="class_reducer_no_dedup_a9f76afa91f46fbc114103327359e155a_1a9f76afa91f46fbc114103327359e155a" compoundref="_reducer_no_dedup_8cpp" startline="55">ReducerNoDedup&lt; Queue &gt;::mQueue</references>
+      </memberdef>
+      <memberdef kind="function" id="class_reducer_no_dedup_a8c94483e1dc1e5ad90079e335589c14d_1a8c94483e1dc1e5ad90079e335589c14d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ReducerNoDedup&lt; Q &gt;::resetReducer</definition>
+        <argsstring>()</argsstring>
+        <name>resetReducer</name>
+        <qualifiedname>ReducerNoDedup::resetReducer</qualifiedname>
+        <reimplements refid="class_typical_reducer_abf6028300710b2d24f1b171777ae6810_1abf6028300710b2d24f1b171777ae6810">resetReducer</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="38" column="16" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="142" bodyend="159"/>
+        <references refid="struct_new_term_aa338d1a9020c5fd68754052505462a6d_1aa338d1a9020c5fd68754052505462a6d" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="207">NewTerm::mono</references>
+        <references refid="class_reducer_no_dedup_a9f76afa91f46fbc114103327359e155a_1a9f76afa91f46fbc114103327359e155a" compoundref="_reducer_no_dedup_8cpp" startline="55">ReducerNoDedup&lt; Queue &gt;::mQueue</references>
+        <references refid="class_reducer_no_dedup_a59a93744683ab4a5499b479adc3e823d_1a59a93744683ab4a5499b479adc3e823d" compoundref="_reducer_no_dedup_8cpp" startline="52">ReducerNoDedup&lt; Queue &gt;::mRing</references>
+        <referencedby refid="class_reducer_no_dedup_a6082c0d27aade8239a209c9572379889_1a6082c0d27aade8239a209c9572379889" compoundref="_reducer_no_dedup_8cpp" startline="68" endline="71">ReducerNoDedup&lt; Queue &gt;::~ReducerNoDedup</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>The most straight forward of the reducers. Simply keep a priority queue with all the pending terms. If two like monomials are compared in the queue, they are not combined - both stay in the queue. The sum of like terms is only taken at the end, when the leading term and its coefficient is determined. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>Reducer</label>
+        <link refid="class_reducer"/>
+      </node>
+      <node id="1">
+        <label>ReducerNoDedup&lt; Queue &gt;</label>
+        <link refid="class_reducer_no_dedup"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>TypicalReducer</label>
+        <link refid="class_typical_reducer"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="21">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="55" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="66">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="53">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="56" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="56" relation="public-inheritance">
+        </childnode>
+        <childnode refid="57" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="64">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="74">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="75" relation="private-inheritance">
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="77" relation="public-inheritance">
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="72" relation="private-inheritance">
+        </childnode>
+        <childnode refid="74" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="37" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="43">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="13" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>NewTerm</label>
+        <link refid="struct_new_term"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>coef</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>mono</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="77">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="78" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="23" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="70" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="82">
+        <label>Queue&lt; ReducerNoDedup::Configuration &gt;</label>
+      </node>
+      <node id="3">
+        <label>Reducer</label>
+        <link refid="class_reducer"/>
+      </node>
+      <node id="1">
+        <label>ReducerNoDedup&lt; Queue &gt;</label>
+        <link refid="class_reducer_no_dedup"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>mLeadTerm</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mLeadTermKnown</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mQueue</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="39">
+        <label>CoefficientType</label>
+      </node>
+      <node id="67">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>TypicalReducer</label>
+        <link refid="class_typical_reducer"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="35">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="33">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="37">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="31">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="26" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="33" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>char</label>
+      </node>
+      <node id="20">
+        <label>const ARing *</label>
+      </node>
+      <node id="36">
+        <label>const void *</label>
+      </node>
+      <node id="26">
+        <label>double</label>
+      </node>
+      <node id="52">
+        <label>overflow_type *</label>
+      </node>
+      <node id="49">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="51">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="68">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="15">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="25">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="22" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>long</label>
+      </node>
+      <node id="4">
+        <label>memt::Arena</label>
+        <link refid="classmemt_1_1_arena"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_scratchArena</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="41" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="80" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>mon_part</label>
+      </node>
+      <node id="30">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="29">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="27">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="28">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="13">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="22">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="23" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>size_t</label>
+      </node>
+      <node id="59">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="61">
+        <label>spinLock</label>
+      </node>
+      <node id="58">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="14" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="47">
+        <label>std::string</label>
+        <childnode refid="48" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="19" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="37" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="47" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" line="21" column="1" bodyfile="submodules/mathicgb/src/mathicgb/ReducerNoDedup.cpp" bodystart="21" bodyend="56"/>
+    <listofallmembers>
+      <member refid="class_typical_reducer_a74d0118561358a107182c564c613e753_1a74d0118561358a107182c564c613e753" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>classicReduce</name></member>
+      <member refid="class_typical_reducer_a1b31fd47882704746fc6b6516208c79f_1a1b31fd47882704746fc6b6516208c79f" prot="private" virt="non-virtual"><scope>ReducerNoDedup</scope><name>classicReduce</name></member>
+      <member refid="class_typical_reducer_a89a91001e233cf29d24d3c585a8f5370_1a89a91001e233cf29d24d3c585a8f5370" prot="private" virt="non-virtual"><scope>ReducerNoDedup</scope><name>classicReduce</name></member>
+      <member refid="class_typical_reducer_a966c14d00391aaae03aa024f17f2f298_1a966c14d00391aaae03aa024f17f2f298" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>classicReducePolySet</name></member>
+      <member refid="class_typical_reducer_af51049f1cb2fe0f24bc726b67f24f325_1af51049f1cb2fe0f24bc726b67f24f325" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>classicReduceSPoly</name></member>
+      <member refid="class_typical_reducer_a04a285a3f2b93d2aa7548dcb8bab1925_1a04a285a3f2b93d2aa7548dcb8bab1925" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>classicReduceSPolySet</name></member>
+      <member refid="class_typical_reducer_ad687cf45ba52dc3ba51ec6cf03eb4b49_1ad687cf45ba52dc3ba51ec6cf03eb4b49" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>classicTailReduce</name></member>
+      <member refid="class_reducer_ac7f53434acae4ea9766d325798f1c6fa_1ac7f53434acae4ea9766d325798f1c6fa" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Coefficient</name></member>
+      <member refid="class_reducer_ada28b95ebc01cf9a6f36b16d71accb55_1ada28b95ebc01cf9a6f36b16d71accb55" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_reducer_aa8add736f4d0f0608407ad65e11ea845_1aa8add736f4d0f0608407ad65e11ea845" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>ConstMonoRef</name></member>
+      <member refid="class_reducer_no_dedup_aa34ffb4f8e85e4719727649ccee5ce68_1aa34ffb4f8e85e4719727649ccee5ce68" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>description</name></member>
+      <member refid="class_reducer_a90b7b1542ab900eea1972381fca6114d_1a90b7b1542ab900eea1972381fca6114d" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>displayReducerTypes</name></member>
+      <member refid="class_reducer_no_dedup_afae66ef3921bf5ad02b29a1a712b4862_1afae66ef3921bf5ad02b29a1a712b4862" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>getMemoryUse</name></member>
+      <member refid="class_reducer_no_dedup_a31652c56c45e6505af07dfbc5e3c556b_1a31652c56c45e6505af07dfbc5e3c556b" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>insert</name></member>
+      <member refid="class_typical_reducer_a2470f61054e3f4adb9102736507b0e24_1a2470f61054e3f4adb9102736507b0e24" prot="protected" virt="virtual" ambiguityscope="TypicalReducer::"><scope>ReducerNoDedup</scope><name>insert</name></member>
+      <member refid="class_reducer_no_dedup_a0cadee6b69935771144f2da77919bc07_1a0cadee6b69935771144f2da77919bc07" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>insertTail</name></member>
+      <member refid="class_typical_reducer_aec37812a47206a59a60c003329ab12d5_1aec37812a47206a59a60c003329ab12d5" prot="protected" virt="virtual" ambiguityscope="TypicalReducer::"><scope>ReducerNoDedup</scope><name>insertTail</name></member>
+      <member refid="class_reducer_no_dedup_aef21db9a77dbb0b7a040a0732a968bb9_1aef21db9a77dbb0b7a040a0732a968bb9" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>leadTerm</name></member>
+      <member refid="class_typical_reducer_a8d635fe72e84a574ae0e19d041287863_1a8d635fe72e84a574ae0e19d041287863" prot="protected" virt="virtual" ambiguityscope="TypicalReducer::"><scope>ReducerNoDedup</scope><name>leadTerm</name></member>
+      <member refid="class_reducer_a61bec00e6d6deb21a1a1290426a6dc07_1a61bec00e6d6deb21a1a1290426a6dc07" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>makeReducer</name></member>
+      <member refid="class_reducer_ab7b3f01e9ba470ae02b51fda06eb22fd_1ab7b3f01e9ba470ae02b51fda06eb22fd" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>makeReducerNullOnUnknown</name></member>
+      <member refid="class_typical_reducer_a1174a1559ba0f834552d06c8139d6638_1a1174a1559ba0f834552d06c8139d6638" prot="protected" virt="non-virtual"><scope>ReducerNoDedup</scope><name>mArena</name></member>
+      <member refid="class_reducer_no_dedup_aa86cb53762171ab37423758037f4d2a4_1aa86cb53762171ab37423758037f4d2a4" prot="private" virt="non-virtual"><scope>ReducerNoDedup</scope><name>mLeadTerm</name></member>
+      <member refid="class_reducer_no_dedup_a5dd8c32e98126135a75ed14674ed4af1_1a5dd8c32e98126135a75ed14674ed4af1" prot="private" virt="non-virtual"><scope>ReducerNoDedup</scope><name>mLeadTermKnown</name></member>
+      <member refid="class_reducer_a7fb1423f261e33daf498b13824f81bf2_1a7fb1423f261e33daf498b13824f81bf2" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Mono</name></member>
+      <member refid="class_reducer_a5c10b7a1270ec7664a074d0cd600da96_1a5c10b7a1270ec7664a074d0cd600da96" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Monoid</name></member>
+      <member refid="class_reducer_a8a65536926c08addcacb1a319653862c_1a8a65536926c08addcacb1a319653862c" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>MonoPtr</name></member>
+      <member refid="class_reducer_a2c65f1fee05e82e3ee723b357316f986_1a2c65f1fee05e82e3ee723b357316f986" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>MonoRef</name></member>
+      <member refid="class_reducer_no_dedup_a9f76afa91f46fbc114103327359e155a_1a9f76afa91f46fbc114103327359e155a" prot="private" virt="non-virtual"><scope>ReducerNoDedup</scope><name>mQueue</name></member>
+      <member refid="class_reducer_no_dedup_a59a93744683ab4a5499b479adc3e823d_1a59a93744683ab4a5499b479adc3e823d" prot="private" virt="non-virtual"><scope>ReducerNoDedup</scope><name>mRing</name></member>
+      <member refid="class_typical_reducer_a64ff52a95475d4857a01cfec31ded5eb_1a64ff52a95475d4857a01cfec31ded5eb" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>preferredSetSize</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869af4f9131361385ef38bc1f4d0df01773b" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_F4_New</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869adc9a908ee0902d5312f3b29100e85a32" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_F4_Old</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ae7742c595a5233713f40e1db5bb435a4" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Geobucket_Dedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a357885fdb3976fa95bca83763e1ae2ab" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Geobucket_Dedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a77884f1d22e55001ad5ed0be4664c9d7" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Geobucket_Hashed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ae670ea7bd9c34577e78543f71f07a147" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Geobucket_Hashed_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a30db2b0421b6c8a5730f46405ca17065" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Geobucket_NoDedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a06e8ec34bef32dd4428c3cac9906f0a9" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Geobucket_NoDedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a45243ca4aea7b920b49998469738a52d" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Heap_Dedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869ab0b5673bdd7efb906471f7552fc3f639" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Heap_Dedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a49998176f836a97f9718db93fa587751" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Heap_Hashed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a93f5a3c96ef12bff305588fcd0b780a1" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Heap_Hashed_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a960bccba65ae8dc23140e73f139577fb" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Heap_NoDedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a7328c9fd981901f14f3bcb4846987cdd" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_Heap_NoDedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a784d89c36bc516b144358ee816ba95a4" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_TourTree_Dedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a11d9db57bda4ef7c6563f76b95e55054" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_TourTree_Dedup_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869afcb3cd9aa6e5a467af997a217f63fe3d" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_TourTree_Hashed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869aa530db3a6eb8531f17843e6f7c2b212a" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_TourTree_Hashed_Packed</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a072001e43763a9512bca5f5c8621fccb" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_TourTree_NoDedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869a61d6c0c75c18aa826d2eef850661ad6d" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>Reducer_TourTree_NoDedup_Packed</name></member>
+      <member refid="class_reducer_no_dedup_a906ab6d612954827094043ddd71cc4c5_1a906ab6d612954827094043ddd71cc4c5" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>ReducerNoDedup</name></member>
+      <member refid="class_reducer_a2a16b10129fb28137f84a939a15ea869_1a2a16b10129fb28137f84a939a15ea869" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>ReducerType</name></member>
+      <member refid="class_reducer_a632489ed23eab4664bc8f3484bfba9b3_1a632489ed23eab4664bc8f3484bfba9b3" prot="public" virt="non-virtual"><scope>ReducerNoDedup</scope><name>reducerType</name></member>
+      <member refid="class_typical_reducer_a680c08e3ed43f222625c0b8dd668e4a4_1a680c08e3ed43f222625c0b8dd668e4a4" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>regularReduce</name></member>
+      <member refid="class_reducer_no_dedup_a329cdeb53acf0378ec89b4a6371f8523_1a329cdeb53acf0378ec89b4a6371f8523" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>removeLeadTerm</name></member>
+      <member refid="class_typical_reducer_a4f6448d1d6a0ca0c2c56b0f02fc2691b_1a4f6448d1d6a0ca0c2c56b0f02fc2691b" prot="private" virt="non-virtual"><scope>ReducerNoDedup</scope><name>reset</name></member>
+      <member refid="class_reducer_no_dedup_a8c94483e1dc1e5ad90079e335589c14d_1a8c94483e1dc1e5ad90079e335589c14d" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>resetReducer</name></member>
+      <member refid="class_typical_reducer_a0fa3fe2ae0c44aa9bb7b9faf2a3db220_1a0fa3fe2ae0c44aa9bb7b9faf2a3db220" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>setMemoryQuantum</name></member>
+      <member refid="class_reducer_a43c7b4366592b0993b6c39f11dd3cda7_1a43c7b4366592b0993b6c39f11dd3cda7" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>~Reducer</name></member>
+      <member refid="class_reducer_no_dedup_a6082c0d27aade8239a209c9572379889_1a6082c0d27aade8239a209c9572379889" prot="public" virt="virtual"><scope>ReducerNoDedup</scope><name>~ReducerNoDedup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

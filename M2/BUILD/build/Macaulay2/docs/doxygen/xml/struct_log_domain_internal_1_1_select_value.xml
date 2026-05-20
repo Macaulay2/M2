@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_log_domain_internal_1_1_select_value" kind="struct" language="C++" prot="public">
+    <compoundname>LogDomainInternal::SelectValue</compoundname>
+    <includes refid="_log_domain_8hpp" local="no">LogDomain.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class Tag</type>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>Default</declname>
+        <defname>Default</defname>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="struct_log_domain_internal_1_1_select_value_ae06e611727a1b9c5463a1a18063a656d_1ae06e611727a1b9c5463a1a18063a656d" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>const bool LogDomainInternal::SelectValue&lt; Tag, Default &gt;::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <qualifiedname>LogDomainInternal::SelectValue::value</qualifiedname>
+        <initializer>= Default</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="188" column="38" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="188" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>LogDomainInternal::SelectValue&lt; Tag, Default &gt;</label>
+        <link refid="struct_log_domain_internal_1_1_select_value"/>
+      </node>
+      <node id="2">
+        <label>LogDomainInternal::SelectValue&lt; Tag_0&lt; int &gt;, Default &gt;</label>
+        <link refid="struct_log_domain_internal_1_1_select_value_3_01_tag__0_3_01int_01_4_00_01_default_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; Tag_0&lt; int &gt;, Default &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>LogDomainInternal::SelectValue&lt; Tag_1&lt; int &gt;, Default &gt;</label>
+        <link refid="struct_log_domain_internal_1_1_select_value_3_01_tag__1_3_01int_01_4_00_01_default_01_4"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; Tag_1&lt; int &gt;, Default &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>LogDomainInternal::SelectValue&lt; Tag, Default &gt;</label>
+        <link refid="struct_log_domain_internal_1_1_select_value"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>value</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="188" column="3" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="188" bodyend="188"/>
+    <listofallmembers>
+      <member refid="struct_log_domain_internal_1_1_select_value_ae06e611727a1b9c5463a1a18063a656d_1ae06e611727a1b9c5463a1a18063a656d" prot="public" virt="non-virtual"><scope>LogDomainInternal::SelectValue</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

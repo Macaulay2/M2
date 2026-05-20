@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structmgb_1_1_groebner_configuration_1_1_monomial_order_data" kind="struct" language="C++" prot="private">
+    <compoundname>mgb::GroebnerConfiguration::MonomialOrderData</compoundname>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmgb_1_1_groebner_configuration_1_1_monomial_order_data_a293961472ab4f06cc75cee53e1c54842_1a293961472ab4f06cc75cee53e1c54842" prot="public" static="no" mutable="no">
+        <type><ref refid="classmgb_1_1_groebner_configuration_a461d513eb58796df3783befe00a04b22_1a461d513eb58796df3783befe00a04b22" kindref="member">BaseOrder</ref></type>
+        <definition>BaseOrder mgb::GroebnerConfiguration::MonomialOrderData::baseOrder</definition>
+        <argsstring></argsstring>
+        <name>baseOrder</name>
+        <qualifiedname>mgb::GroebnerConfiguration::MonomialOrderData::baseOrder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="288" column="17" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="288" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_groebner_configuration_a65d93533b2e21c30e264204fe2707229_1a65d93533b2e21c30e264204fe2707229" compoundref="mathicgb_8h" startline="616" endline="622">mgb::GroebnerConfiguration::monomialOrder</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmgb_1_1_groebner_configuration_1_1_monomial_order_data_aacc18af2ee6631110cba6379e39b2dba_1aacc18af2ee6631110cba6379e39b2dba" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classmgb_1_1_groebner_configuration_a689abdbe85ca79cdeee87350036d4c10_1a689abdbe85ca79cdeee87350036d4c10" kindref="member">Exponent</ref> *</type>
+        <definition>const Exponent* mgb::GroebnerConfiguration::MonomialOrderData::gradings</definition>
+        <argsstring></argsstring>
+        <name>gradings</name>
+        <qualifiedname>mgb::GroebnerConfiguration::MonomialOrderData::gradings</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="289" column="22" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="289" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_groebner_configuration_a65d93533b2e21c30e264204fe2707229_1a65d93533b2e21c30e264204fe2707229" compoundref="mathicgb_8h" startline="616" endline="622">mgb::GroebnerConfiguration::monomialOrder</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmgb_1_1_groebner_configuration_1_1_monomial_order_data_a549b7152e035a3d54e4b92e946779c08_1a549b7152e035a3d54e4b92e946779c08" prot="public" static="no" mutable="no">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t mgb::GroebnerConfiguration::MonomialOrderData::gradingsSize</definition>
+        <argsstring></argsstring>
+        <name>gradingsSize</name>
+        <qualifiedname>mgb::GroebnerConfiguration::MonomialOrderData::gradingsSize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb.h" line="290" column="14" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="290" bodyend="-1"/>
+        <referencedby refid="classmgb_1_1_groebner_configuration_a65d93533b2e21c30e264204fe2707229_1a65d93533b2e21c30e264204fe2707229" compoundref="mathicgb_8h" startline="616" endline="622">mgb::GroebnerConfiguration::monomialOrder</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>BaseOrder</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="1">
+        <label>mgb::GroebnerConfiguration::MonomialOrderData</label>
+        <link refid="structmgb_1_1_groebner_configuration_1_1_monomial_order_data"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>baseOrder</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>gradings</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>gradingsSize</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>size_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb.h" line="287" column="5" bodyfile="submodules/mathicgb/src/mathicgb.h" bodystart="287" bodyend="291"/>
+    <listofallmembers>
+      <member refid="structmgb_1_1_groebner_configuration_1_1_monomial_order_data_a293961472ab4f06cc75cee53e1c54842_1a293961472ab4f06cc75cee53e1c54842" prot="public" virt="non-virtual"><scope>mgb::GroebnerConfiguration::MonomialOrderData</scope><name>baseOrder</name></member>
+      <member refid="structmgb_1_1_groebner_configuration_1_1_monomial_order_data_aacc18af2ee6631110cba6379e39b2dba_1aacc18af2ee6631110cba6379e39b2dba" prot="public" virt="non-virtual"><scope>mgb::GroebnerConfiguration::MonomialOrderData</scope><name>gradings</name></member>
+      <member refid="structmgb_1_1_groebner_configuration_1_1_monomial_order_data_a549b7152e035a3d54e4b92e946779c08_1a549b7152e035a3d54e4b92e946779c08" prot="public" virt="non-virtual"><scope>mgb::GroebnerConfiguration::MonomialOrderData</scope><name>gradingsSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

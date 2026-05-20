@@ -1,0 +1,282 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structvecterm" kind="struct" language="C++" prot="public">
+    <compoundname>vecterm</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="ringelem_8hpp" local="no">ringelem.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structvecterm_a0097010847a0593f115ad08738a72b3a_1a0097010847a0593f115ad08738a72b3a" prot="public" static="no" mutable="no">
+        <type>vec</type>
+        <definition>vec vec::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>vecterm::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="164" column="7" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="164" bodyend="-1"/>
+        <referencedby refid="class_ring_ac3bf5e7ce2fc181cc6944e8614ca86c1_1ac3bf5e7ce2fc181cc6944e8614ca86c1" compoundref="ring-vecs_8cpp" startline="546" endline="614">Ring::add_vec_to</referencedby>
+        <referencedby refid="class_ring_a03119f391a83b5d4aa09b61c2153c6ab_1a03119f391a83b5d4aa09b61c2153c6ab" compoundref="ring-vecs_8cpp" startline="284" endline="298">Ring::component_shift</referencedby>
+        <referencedby refid="class_ring_aef0dd726d2923b97198ae701dc3406a6_1aef0dd726d2923b97198ae701dc3406a6" compoundref="ring-vecs_8cpp" startline="87" endline="101">Ring::copy_vec</referencedby>
+        <referencedby refid="class_chinese_remainder_a9a080bb7b173fd5f9e3ea981856dcbb8_1a9a080bb7b173fd5f9e3ea981856dcbb8" compoundref="cra_8cpp" startline="181" endline="250">ChineseRemainder::CRA</referencedby>
+        <referencedby refid="class_ring_a52f9b58452ad1b821cb2d0bb0a5761c5_1a52f9b58452ad1b821cb2d0bb0a5761c5" compoundref="ring-vecs_8cpp" startline="508" endline="528">Ring::divide_row</referencedby>
+        <referencedby refid="class_ring_a7a57a30263273b99105c15817749aa02_1a7a57a30263273b99105c15817749aa02" compoundref="ring-vecs_8cpp" startline="480" endline="506">Ring::divide_vec_to</referencedby>
+        <referencedby refid="class_ring_ae46d51a29fe69f2e0931a2a34c31a8ed_1ae46d51a29fe69f2e0931a2a34c31a8ed" compoundref="ring-vecs_8cpp" startline="616" endline="635">Ring::dot_product</referencedby>
+        <referencedby refid="class_hermite_computation_a905c2256c83102682eba846df0842718_1a905c2256c83102682eba846df0842718" compoundref="hermite_8cpp" startline="387" endline="421">HermiteComputation::gb_reduce</referencedby>
+        <referencedby refid="class_hermite_computation_ab9165fb3d442836b0e5354b677247ee4_1ab9165fb3d442836b0e5354b677247ee4" compoundref="hermite_8cpp" startline="423" endline="459">HermiteComputation::gb_reduce</referencedby>
+        <referencedby refid="classvec_heap_a3fa886c235dc0ba9d9e173b7754df6c8_1a3fa886c235dc0ba9d9e173b7754df6c8" compoundref="geovec_8hpp" startline="118" endline="158">vecHeap::get_lead_term</referencedby>
+        <referencedby refid="class_ring_a097aacc5f17010b3a43ac07234285bb8_1a097aacc5f17010b3a43ac07234285bb8" compoundref="ring-vecs_8cpp" startline="117" endline="130">Ring::is_equal</referencedby>
+        <referencedby refid="class_ring_ad1ec0e0f648e9f070aef7afd6dc271db_1ad1ec0e0f648e9f070aef7afd6dc271db" compoundref="ring-vecs_8cpp" startline="436" endline="460">Ring::mult_row</referencedby>
+        <referencedby refid="class_ring_a0fdac951bc6883230d2a1f87fd9c7ef8_1a0fdac951bc6883230d2a1f87fd9c7ef8" compoundref="ring-vecs_8cpp" startline="218" endline="235">Ring::mult_vec</referencedby>
+        <referencedby refid="class_ring_a7e69dd9e350769debce345a1467001fe_1a7e69dd9e350769debce345a1467001fe" compoundref="ring-vecs_8cpp" startline="404" endline="434">Ring::mult_vec_to</referencedby>
+        <referencedby refid="class_ring_a40a55300b502aa41989314e7a5c9c705_1a40a55300b502aa41989314e7a5c9c705" compoundref="ring-vecs_8cpp" startline="175" endline="180">Ring::n_nonzero_terms</referencedby>
+        <referencedby refid="class_ring_a68ff3df4e232e272c2629cb3e88181c3_1a68ff3df4e232e272c2629cb3e88181c3" compoundref="ring-vecs_8cpp" startline="182" endline="193">Ring::negate_vec</referencedby>
+        <referencedby refid="class_chinese_remainder_a5a2b28be700be4e6669cd4d46b23c2c0_1a5a2b28be700be4e6669cd4d46b23c2c0" compoundref="cra_8cpp" startline="390" endline="405">ChineseRemainder::ratConversion</referencedby>
+        <referencedby refid="class_gauss_elim_computation_a501536335dd2168cab82cd61afa0b6ee_1a501536335dd2168cab82cd61afa0b6ee" compoundref="gauss_8cpp" startline="152" endline="178">GaussElimComputation::reduce</referencedby>
+        <referencedby refid="class_gauss_elim_computation_a9b49e1bebb35e18392ba4dfd661baea2_1a9b49e1bebb35e18392ba4dfd661baea2" compoundref="gauss_8cpp" startline="179" endline="215">GaussElimComputation::reduce</referencedby>
+        <referencedby refid="class_ring_a805c7ac6e925771891752bc32b9eeb1d_1a805c7ac6e925771891752bc32b9eeb1d" compoundref="ring-vecs_8cpp" startline="237" endline="254">Ring::rightmult_vec</referencedby>
+        <referencedby refid="class_ring_a58afa47f15c732860a8cec8e9fffe089_1a58afa47f15c732860a8cec8e9fffe089" compoundref="ring-vecs_8cpp" startline="637" endline="668">Ring::set_entry</referencedby>
+        <referencedby refid="class_ring_a22f25be687e5c5476b1977f617d56ab8_1a22f25be687e5c5476b1977f617d56ab8" compoundref="ring-vecs_8cpp" startline="256" endline="282">Ring::sub_vector</referencedby>
+        <referencedby refid="class_ring_a554cc18fe3706c83c142fab92f7039d2_1a554cc18fe3706c83c142fab92f7039d2" compoundref="ring-vecs_8cpp" startline="300" endline="315">Ring::tensor_shift</referencedby>
+        <referencedby refid="class_poly_ring_ac93bd78f4132a8bebbf4065d45223cd6_1ac93bd78f4132a8bebbf4065d45223cd6" compoundref="poly_8cpp" startline="2345" endline="2372">PolyRing::vec_coefficient_of_var</referencedby>
+        <referencedby refid="class_ring_ab87f80ce23664fb2f9ceff5e0cf2b413_1ab87f80ce23664fb2f9ceff5e0cf2b413" compoundref="ring-vecs_8cpp" startline="854" endline="878">Ring::vec_degree_weights</referencedby>
+        <referencedby refid="class_ring_ace4e99008221eece447482a913b91d6e_1ace4e99008221eece447482a913b91d6e" compoundref="ring-vecs_8cpp" startline="710" endline="731">Ring::vec_diff</referencedby>
+        <referencedby refid="class_ring_ae2e64ec33c0311633bda2ef736a9283c_1ae2e64ec33c0311633bda2ef736a9283c" compoundref="ring-vecs_8cpp" startline="778" endline="794">Ring::vec_divide_by_expvector</referencedby>
+        <referencedby refid="class_ring_a90262b2802488987e553fb60b262ef73_1a90262b2802488987e553fb60b262ef73" compoundref="ring-vecs_8cpp" startline="1006" endline="1021">Ring::vec_divide_by_given_content</referencedby>
+        <referencedby refid="class_ring_a99764aad7596e897826901072a5819d2_1a99764aad7596e897826901072a5819d2" compoundref="ring-vecs_8cpp" startline="760" endline="776">Ring::vec_divide_by_var</referencedby>
+        <referencedby refid="class_ring_a9c70b217dab9985bc1f222cc05b7fbef_1a9c70b217dab9985bc1f222cc05b7fbef" compoundref="ring-vecs_8cpp" startline="350" endline="370">Ring::vec_eval</referencedby>
+        <referencedby refid="class_ring_a1d2957844a21a06dde77176572ff5eac_1a1d2957844a21a06dde77176572ff5eac" compoundref="ring-vecs_8cpp" startline="880" endline="904">Ring::vec_homogenize</referencedby>
+        <referencedby refid="class_ring_a5c7f6a3a5258e114dae1e8010598739e_1a5c7f6a3a5258e114dae1e8010598739e" compoundref="ring-vecs_8cpp" startline="670" endline="699">Ring::vec_sort</referencedby>
+        <referencedby refid="class_ring_a4174e8d94768d8afe82820b6e43269bb_1a4174e8d94768d8afe82820b6e43269bb" compoundref="ring-vecs_8cpp" startline="329" endline="348">Ring::vec_text_out</referencedby>
+        <referencedby refid="class_ring_a4ee9e3796bd24d3ccb662cd45a8d0a16_1a4ee9e3796bd24d3ccb662cd45a8d0a16" compoundref="ring-vecs_8cpp" startline="372" endline="390">Ring::vec_zeroize_tiny</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structvecterm_a70a333957a4a067dc8efb4cb09f72122_1a70a333957a4a067dc8efb4cb09f72122" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int vec::comp</definition>
+        <argsstring></argsstring>
+        <name>comp</name>
+        <qualifiedname>vecterm::comp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="165" column="7" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="165" bodyend="-1"/>
+        <referencedby refid="geovec_8hpp_a93a6254b3accee4629ec45fc0e4a64cd_1a93a6254b3accee4629ec45fc0e4a64cd" compoundref="geovec_8hpp" startline="110" endline="116">compare</referencedby>
+        <referencedby refid="class_ring_ae46d51a29fe69f2e0931a2a34c31a8ed_1ae46d51a29fe69f2e0931a2a34c31a8ed" compoundref="ring-vecs_8cpp" startline="616" endline="635">Ring::dot_product</referencedby>
+        <referencedby refid="class_ring_a097aacc5f17010b3a43ac07234285bb8_1a097aacc5f17010b3a43ac07234285bb8" compoundref="ring-vecs_8cpp" startline="117" endline="130">Ring::is_equal</referencedby>
+        <referencedby refid="class_matrix_a8d9dc9f3b692dbf2905a26259e88960a_1a8d9dc9f3b692dbf2905a26259e88960a" compoundref="matrix_8cpp" startline="1925" endline="1976">Matrix::make_monideal</referencedby>
+        <referencedby refid="class_ring_a22f25be687e5c5476b1977f617d56ab8_1a22f25be687e5c5476b1977f617d56ab8" compoundref="ring-vecs_8cpp" startline="256" endline="282">Ring::sub_vector</referencedby>
+        <referencedby refid="class_ring_ab87f80ce23664fb2f9ceff5e0cf2b413_1ab87f80ce23664fb2f9ceff5e0cf2b413" compoundref="ring-vecs_8cpp" startline="854" endline="878">Ring::vec_degree_weights</referencedby>
+        <referencedby refid="class_ring_ace4e99008221eece447482a913b91d6e_1ace4e99008221eece447482a913b91d6e" compoundref="ring-vecs_8cpp" startline="710" endline="731">Ring::vec_diff</referencedby>
+        <referencedby refid="class_poly_ring_a090d6a04e7311162763d9ed84547df22_1a090d6a04e7311162763d9ed84547df22" compoundref="poly_8cpp" startline="2331" endline="2343">PolyRing::vec_lead_term</referencedby>
+        <referencedby refid="class_poly_ring_a9b5fbd8da276738829a40ff27218f316_1a9b5fbd8da276738829a40ff27218f316" compoundref="poly_8cpp" startline="2295" endline="2329">PolyRing::vec_locate_lead_term</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structvecterm_af3abb9332a7c7aaf676c6346931ca3dd_1af3abb9332a7c7aaf676c6346931ca3dd" prot="public" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem vec::coeff</definition>
+        <argsstring></argsstring>
+        <name>coeff</name>
+        <qualifiedname>vecterm::coeff</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="166" column="13" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="166" bodyend="-1"/>
+        <referencedby refid="class_ring_ae46d51a29fe69f2e0931a2a34c31a8ed_1ae46d51a29fe69f2e0931a2a34c31a8ed" compoundref="ring-vecs_8cpp" startline="616" endline="635">Ring::dot_product</referencedby>
+        <referencedby refid="class_ring_a097aacc5f17010b3a43ac07234285bb8_1a097aacc5f17010b3a43ac07234285bb8" compoundref="ring-vecs_8cpp" startline="117" endline="130">Ring::is_equal</referencedby>
+        <referencedby refid="class_matrix_a8d9dc9f3b692dbf2905a26259e88960a_1a8d9dc9f3b692dbf2905a26259e88960a" compoundref="matrix_8cpp" startline="1925" endline="1976">Matrix::make_monideal</referencedby>
+        <referencedby refid="class_ring_a22f25be687e5c5476b1977f617d56ab8_1a22f25be687e5c5476b1977f617d56ab8" compoundref="ring-vecs_8cpp" startline="256" endline="282">Ring::sub_vector</referencedby>
+        <referencedby refid="class_ring_ab87f80ce23664fb2f9ceff5e0cf2b413_1ab87f80ce23664fb2f9ceff5e0cf2b413" compoundref="ring-vecs_8cpp" startline="854" endline="878">Ring::vec_degree_weights</referencedby>
+        <referencedby refid="class_ring_ace4e99008221eece447482a913b91d6e_1ace4e99008221eece447482a913b91d6e" compoundref="ring-vecs_8cpp" startline="710" endline="731">Ring::vec_diff</referencedby>
+        <referencedby refid="class_poly_ring_a090d6a04e7311162763d9ed84547df22_1a090d6a04e7311162763d9ed84547df22" compoundref="poly_8cpp" startline="2331" endline="2343">PolyRing::vec_lead_term</referencedby>
+        <referencedby refid="class_poly_ring_a9b5fbd8da276738829a40ff27218f316_1a9b5fbd8da276738829a40ff27218f316" compoundref="poly_8cpp" startline="2295" endline="2329">PolyRing::vec_locate_lead_term</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="1">
+        <label>vec</label>
+        <link refid="structvecterm"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="5">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="16">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="14">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>const void *</label>
+      </node>
+      <node id="9">
+        <label>double</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="7">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>long</label>
+      </node>
+      <node id="13">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="12">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="10">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="11">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="4">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>vec</label>
+        <link refid="structvecterm"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>comp</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/ringelem.hpp" line="162" column="1" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="163" bodyend="167"/>
+    <listofallmembers>
+      <member refid="structvecterm_af3abb9332a7c7aaf676c6346931ca3dd_1af3abb9332a7c7aaf676c6346931ca3dd" prot="public" virt="non-virtual"><scope>vecterm</scope><name>coeff</name></member>
+      <member refid="structvecterm_a70a333957a4a067dc8efb4cb09f72122_1a70a333957a4a067dc8efb4cb09f72122" prot="public" virt="non-virtual"><scope>vecterm</scope><name>comp</name></member>
+      <member refid="structvecterm_a0097010847a0593f115ad08738a72b3a_1a0097010847a0593f115ad08738a72b3a" prot="public" virt="non-virtual"><scope>vecterm</scope><name>next</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>vecterm</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>vecterm</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>vecterm</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>vecterm</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>vecterm</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>vecterm</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>vecterm</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>vecterm</scope><name>operator new[]</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

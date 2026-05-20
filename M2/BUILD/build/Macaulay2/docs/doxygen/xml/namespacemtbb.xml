@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespacemtbb" kind="namespace" language="C++">
+    <compoundname>mtbb</compoundname>
+    <innerclass refid="classmtbb_1_1mutex" prot="public">mtbb::mutex</innerclass>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacemtbb_ac82f0ac41602614c2b63fae053be52bf_1ac82f0ac41602614c2b63fae053be52bf" prot="public" static="no">
+        <type>::std::lock_guard&lt; std::mutex &gt;</type>
+        <definition>using mtbb::lock_guard =  ::std::lock_guard&lt;std::mutex&gt;</definition>
+        <argsstring></argsstring>
+        <name>lock_guard</name>
+        <qualifiedname>mtbb::lock_guard</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/mtbb.hpp" line="36" column="3" bodyfile="submodules/mathicgb/src/mathicgb/mtbb.hpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemtbb_a9173b26a52ea7d04460b29a56e25e289_1a9173b26a52ea7d04460b29a56e25e289" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>class Key</type>
+          </param>
+          <param>
+            <type>class <ref refid="struct_t" kindref="compound">T</ref></type>
+          </param>
+          <param>
+            <type>class Hash</type>
+          </param>
+          <param>
+            <type>class KeyEqual</type>
+          </param>
+        </templateparamlist>
+        <type>::tbb::concurrent_unordered_map&lt; Key, <ref refid="struct_t" kindref="compound">T</ref>, Hash, KeyEqual &gt;</type>
+        <definition>using mtbb::unordered_map =  ::tbb::concurrent_unordered_map&lt;Key, T, Hash, KeyEqual&gt;</definition>
+        <argsstring></argsstring>
+        <name>unordered_map</name>
+        <qualifiedname>mtbb::unordered_map</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/mtbb.hpp" line="39" column="3" bodyfile="submodules/mathicgb/src/mathicgb/mtbb.hpp" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemtbb_a5d2af47c566c2fee3c2767932ab4a108_1a5d2af47c566c2fee3c2767932ab4a108" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="struct_t" kindref="compound">T</ref></type>
+          </param>
+        </templateparamlist>
+        <type>::tbb::parallel_do_feeder&lt; <ref refid="struct_t" kindref="compound">T</ref> &gt;</type>
+        <definition>using mtbb::feeder =  ::tbb::parallel_do_feeder&lt;T&gt;</definition>
+        <argsstring></argsstring>
+        <name>feeder</name>
+        <qualifiedname>mtbb::feeder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/mtbb.hpp" line="45" column="3" bodyfile="submodules/mathicgb/src/mathicgb/mtbb.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemtbb_a740b5e28b1e7b7d6bb85b82e350bdd9d_1a740b5e28b1e7b7d6bb85b82e350bdd9d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T1</type>
+          </param>
+          <param>
+            <type>typename T2</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void mtbb::parallel_for_each</definition>
+        <argsstring>(T1 a, T1 b, T2 c)</argsstring>
+        <name>parallel_for_each</name>
+        <qualifiedname>mtbb::parallel_for_each</qualifiedname>
+        <param>
+          <type>T1</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>T1</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type>T2</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/mtbb.hpp" line="49" column="22" bodyfile="submodules/mathicgb/src/mathicgb/mtbb.hpp" bodystart="49" bodyend="56"/>
+        <referencedby refid="class_f4_matrix_builder2_1_1_builder_afb07cbff51bb53e2b6195cb873fe924c_1afb07cbff51bb53e2b6195cb873fe924c" compoundref="_f4_matrix_builder2_8cpp" startline="138" endline="266">F4MatrixBuilder2::Builder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">F4MatrixBuilder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_n_c_f4_a2aa4f82ac8743bdb13de7b8d9fbf391a_1a2aa4f82ac8743bdb13de7b8d9fbf391a" compoundref="_n_c_f4_8cpp" startline="510" endline="581">NCF4::parallelBuildF4Matrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemtbb_a4f802284f849be9fc9dc68ff506d0c3e_1a4f802284f849be9fc9dc68ff506d0c3e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int mtbb::numThreads</definition>
+        <argsstring>(int nthreads)</argsstring>
+        <name>numThreads</name>
+        <qualifiedname>mtbb::numThreads</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nthreads</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/mtbb.hpp" line="58" column="14" bodyfile="submodules/mathicgb/src/mathicgb/mtbb.hpp" bodystart="58" bodyend="67"/>
+        <referencedby refid="class_common_params_a7d36121ccaadc71655bf7621c3957b55_1a7d36121ccaadc71655bf7621c3957b55" compoundref="_common_params_8cpp" startline="57" endline="65">CommonParams::perform</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb/mtbb.hpp" line="25" column="1"/>
+  </compounddef>
+</doxygen>

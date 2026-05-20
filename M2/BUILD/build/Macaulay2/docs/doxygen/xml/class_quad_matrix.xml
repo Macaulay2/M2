@@ -1,0 +1,1807 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_quad_matrix" kind="class" language="C++" prot="public">
+    <compoundname>QuadMatrix</compoundname>
+    <includes refid="_quad_matrix_8hpp" local="no">QuadMatrix.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_quad_matrix_ad442bcaf6b519ba4f45ea8128ac9b345_1ad442bcaf6b519ba4f45ea8128ac9b345" prot="public" static="no">
+        <type><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref></type>
+        <definition>typedef PolyRing::Monoid QuadMatrix::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>QuadMatrix::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="20" column="28" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_quad_matrix_a50c5f31cfebc05e561042c1281a3d275_1a50c5f31cfebc05e561042c1281a3d275" prot="public" static="no">
+        <type>Monoid::Mono</type>
+        <definition>typedef Monoid::Mono QuadMatrix::Mono</definition>
+        <argsstring></argsstring>
+        <name>Mono</name>
+        <qualifiedname>QuadMatrix::Mono</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="21" column="24" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_quad_matrix_a7a2c41956cbc6af76707fd38da285f72_1a7a2c41956cbc6af76707fd38da285f72" prot="public" static="no">
+        <type>Monoid::MonoRef</type>
+        <definition>typedef Monoid::MonoRef QuadMatrix::MonoRef</definition>
+        <argsstring></argsstring>
+        <name>MonoRef</name>
+        <qualifiedname>QuadMatrix::MonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="22" column="27" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_quad_matrix_a42aeeb6f22e6c71a6c7516f6f3038214_1a42aeeb6f22e6c71a6c7516f6f3038214" prot="public" static="no">
+        <type>Monoid::ConstMonoRef</type>
+        <definition>typedef Monoid::ConstMonoRef QuadMatrix::ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>QuadMatrix::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="23" column="32" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_quad_matrix_ad347527959f669e314ffb55f588af291_1ad347527959f669e314ffb55f588af291" prot="public" static="no">
+        <type>Monoid::MonoPtr</type>
+        <definition>typedef Monoid::MonoPtr QuadMatrix::MonoPtr</definition>
+        <argsstring></argsstring>
+        <name>MonoPtr</name>
+        <qualifiedname>QuadMatrix::MonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="24" column="27" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_quad_matrix_a1c2aaeef9d5664ba2e9330d43c2615c0_1a1c2aaeef9d5664ba2e9330d43c2615c0" prot="public" static="no">
+        <type>Monoid::ConstMonoPtr</type>
+        <definition>typedef Monoid::ConstMonoPtr QuadMatrix::ConstMonoPtr</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoPtr</name>
+        <qualifiedname>QuadMatrix::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="25" column="32" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_quad_matrix_a0ffbcad96554c274e1cc8552037f734b_1a0ffbcad96554c274e1cc8552037f734b" prot="public" static="no">
+        <type>std::vector&lt; <ref refid="class_quad_matrix_a1c2aaeef9d5664ba2e9330d43c2615c0_1a1c2aaeef9d5664ba2e9330d43c2615c0" kindref="member">ConstMonoPtr</ref> &gt;</type>
+        <definition>typedef std::vector&lt;ConstMonoPtr&gt; QuadMatrix::Monomials</definition>
+        <argsstring></argsstring>
+        <name>Monomials</name>
+        <qualifiedname>QuadMatrix::Monomials</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="51" column="23" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" prot="public" static="no" mutable="no">
+        <type><ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref></type>
+        <definition>SparseMatrix QuadMatrix::topLeft</definition>
+        <argsstring></argsstring>
+        <name>topLeft</name>
+        <qualifiedname>QuadMatrix::topLeft</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="53" column="16" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="53" bodyend="-1"/>
+        <referencedby refid="class_quad_matrix_builder_a43c74feccfe74e378102bf625d3f8446_1a43c74feccfe74e378102bf625d3f8446" compoundref="mathicgb_2_quad_matrix_builder_8cpp" startline="123" endline="138">QuadMatrixBuilder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+        <referencedby refid="class_quad_matrix_aee46a18f20599872567f793e776d93b3_1aee46a18f20599872567f793e776d93b3" compoundref="_quad_matrix_8cpp" startline="75" endline="84">computeLeftColCount</referencedby>
+        <referencedby refid="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" compoundref="_quad_matrix_8cpp" startline="14" endline="35">debugAssertValid</referencedby>
+        <referencedby refid="class_quad_matrix_aed086e37e01dd73af8633d704896c4ee_1aed086e37e01dd73af8633d704896c4ee" compoundref="_quad_matrix_8cpp" startline="97" endline="101">entryCount</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">F4MatrixProjection::makeAndClearTwoStep</referencedby>
+        <referencedby refid="class_quad_matrix_a2e1b38ab713c1f6004f18f55f3bdfc1f_1a2e1b38ab713c1f6004f18f55f3bdfc1f" compoundref="_quad_matrix_8cpp" startline="109" endline="112">memoryUse</referencedby>
+        <referencedby refid="class_quad_matrix_af10df219c9f0c367f12660be496c038c_1af10df219c9f0c367f12660be496c038c" compoundref="_quad_matrix_8cpp" startline="114" endline="117">memoryUseTrimmed</referencedby>
+        <referencedby refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" compoundref="_quad_matrix_8cpp" startline="37" endline="69">print</referencedby>
+        <referencedby refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" compoundref="_quad_matrix_8cpp" startline="119" endline="176">printStatistics</referencedby>
+        <referencedby refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" compoundref="_quad_matrix_8hpp" startline="30" endline="38">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" compoundref="_quad_matrix_8cpp" startline="352" endline="372">read</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+        <referencedby refid="class_quad_matrix_a72f2e88eb241a3e595f2d80c46a7dea0_1a72f2e88eb241a3e595f2d80c46a7dea0" compoundref="_quad_matrix_8cpp" startline="71" endline="73">rowCount</referencedby>
+        <referencedby refid="class_quad_matrix_a0871e5ac9c1765271ab3831276da629c_1a0871e5ac9c1765271ab3831276da629c" compoundref="_quad_matrix_8cpp" startline="313" endline="339">sortColumnsLeftRightParallel</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a6cffc739e96d4efeab6667aca529be4a_1a6cffc739e96d4efeab6667aca529be4a" compoundref="test_2_f4_matrix_builder_8cpp" startline="61" endline="78">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_reducer_8cpp_a8100829527f16c897c93d726fd019fd1_1a8100829527f16c897c93d726fd019fd1" compoundref="test_2_f4_matrix_reducer_8cpp" startline="16" endline="128">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_ada5d547a8940fe7d9e60a5787f32957d_1ada5d547a8940fe7d9e60a5787f32957d" compoundref="test_2_quad_matrix_builder_8cpp" startline="231" endline="262">TEST</referencedby>
+        <referencedby refid="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" compoundref="_quad_matrix_8cpp" startline="178" endline="247">toCanonical</referencedby>
+        <referencedby refid="class_quad_matrix_a5fc8e7b2999b72bce641a571d479c4bd_1a5fc8e7b2999b72bce641a571d479c4bd" compoundref="_quad_matrix_8cpp" startline="341" endline="350">write</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" prot="public" static="no" mutable="no">
+        <type><ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref></type>
+        <definition>SparseMatrix QuadMatrix::topRight</definition>
+        <argsstring></argsstring>
+        <name>topRight</name>
+        <qualifiedname>QuadMatrix::topRight</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="54" column="16" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="54" bodyend="-1"/>
+        <referencedby refid="class_quad_matrix_builder_a43c74feccfe74e378102bf625d3f8446_1a43c74feccfe74e378102bf625d3f8446" compoundref="mathicgb_2_quad_matrix_builder_8cpp" startline="123" endline="138">QuadMatrixBuilder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_quad_matrix_a5b4818fdff23da227846a08d7e90d8ea_1a5b4818fdff23da227846a08d7e90d8ea" compoundref="_quad_matrix_8cpp" startline="86" endline="95">computeRightColCount</referencedby>
+        <referencedby refid="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" compoundref="_quad_matrix_8cpp" startline="14" endline="35">debugAssertValid</referencedby>
+        <referencedby refid="class_quad_matrix_aed086e37e01dd73af8633d704896c4ee_1aed086e37e01dd73af8633d704896c4ee" compoundref="_quad_matrix_8cpp" startline="97" endline="101">entryCount</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">F4MatrixProjection::makeAndClearTwoStep</referencedby>
+        <referencedby refid="class_quad_matrix_a2e1b38ab713c1f6004f18f55f3bdfc1f_1a2e1b38ab713c1f6004f18f55f3bdfc1f" compoundref="_quad_matrix_8cpp" startline="109" endline="112">memoryUse</referencedby>
+        <referencedby refid="class_quad_matrix_af10df219c9f0c367f12660be496c038c_1af10df219c9f0c367f12660be496c038c" compoundref="_quad_matrix_8cpp" startline="114" endline="117">memoryUseTrimmed</referencedby>
+        <referencedby refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" compoundref="_quad_matrix_8cpp" startline="37" endline="69">print</referencedby>
+        <referencedby refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" compoundref="_quad_matrix_8cpp" startline="119" endline="176">printStatistics</referencedby>
+        <referencedby refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" compoundref="_quad_matrix_8hpp" startline="30" endline="38">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" compoundref="_quad_matrix_8cpp" startline="352" endline="372">read</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+        <referencedby refid="class_quad_matrix_a0871e5ac9c1765271ab3831276da629c_1a0871e5ac9c1765271ab3831276da629c" compoundref="_quad_matrix_8cpp" startline="313" endline="339">sortColumnsLeftRightParallel</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a6cffc739e96d4efeab6667aca529be4a_1a6cffc739e96d4efeab6667aca529be4a" compoundref="test_2_f4_matrix_builder_8cpp" startline="61" endline="78">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_reducer_8cpp_a8100829527f16c897c93d726fd019fd1_1a8100829527f16c897c93d726fd019fd1" compoundref="test_2_f4_matrix_reducer_8cpp" startline="16" endline="128">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_ada5d547a8940fe7d9e60a5787f32957d_1ada5d547a8940fe7d9e60a5787f32957d" compoundref="test_2_quad_matrix_builder_8cpp" startline="231" endline="262">TEST</referencedby>
+        <referencedby refid="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" compoundref="_quad_matrix_8cpp" startline="178" endline="247">toCanonical</referencedby>
+        <referencedby refid="class_quad_matrix_a5fc8e7b2999b72bce641a571d479c4bd_1a5fc8e7b2999b72bce641a571d479c4bd" compoundref="_quad_matrix_8cpp" startline="341" endline="350">write</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" prot="public" static="no" mutable="no">
+        <type><ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref></type>
+        <definition>SparseMatrix QuadMatrix::bottomLeft</definition>
+        <argsstring></argsstring>
+        <name>bottomLeft</name>
+        <qualifiedname>QuadMatrix::bottomLeft</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="55" column="16" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="55" bodyend="-1"/>
+        <referencedby refid="class_quad_matrix_builder_a43c74feccfe74e378102bf625d3f8446_1a43c74feccfe74e378102bf625d3f8446" compoundref="mathicgb_2_quad_matrix_builder_8cpp" startline="123" endline="138">QuadMatrixBuilder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+        <referencedby refid="class_quad_matrix_aee46a18f20599872567f793e776d93b3_1aee46a18f20599872567f793e776d93b3" compoundref="_quad_matrix_8cpp" startline="75" endline="84">computeLeftColCount</referencedby>
+        <referencedby refid="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" compoundref="_quad_matrix_8cpp" startline="14" endline="35">debugAssertValid</referencedby>
+        <referencedby refid="class_quad_matrix_aed086e37e01dd73af8633d704896c4ee_1aed086e37e01dd73af8633d704896c4ee" compoundref="_quad_matrix_8cpp" startline="97" endline="101">entryCount</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">F4MatrixProjection::makeAndClearTwoStep</referencedby>
+        <referencedby refid="class_quad_matrix_a2e1b38ab713c1f6004f18f55f3bdfc1f_1a2e1b38ab713c1f6004f18f55f3bdfc1f" compoundref="_quad_matrix_8cpp" startline="109" endline="112">memoryUse</referencedby>
+        <referencedby refid="class_quad_matrix_af10df219c9f0c367f12660be496c038c_1af10df219c9f0c367f12660be496c038c" compoundref="_quad_matrix_8cpp" startline="114" endline="117">memoryUseTrimmed</referencedby>
+        <referencedby refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" compoundref="_quad_matrix_8cpp" startline="37" endline="69">print</referencedby>
+        <referencedby refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" compoundref="_quad_matrix_8cpp" startline="119" endline="176">printStatistics</referencedby>
+        <referencedby refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" compoundref="_quad_matrix_8hpp" startline="30" endline="38">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" compoundref="_quad_matrix_8cpp" startline="352" endline="372">read</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+        <referencedby refid="class_quad_matrix_a72f2e88eb241a3e595f2d80c46a7dea0_1a72f2e88eb241a3e595f2d80c46a7dea0" compoundref="_quad_matrix_8cpp" startline="71" endline="73">rowCount</referencedby>
+        <referencedby refid="class_quad_matrix_a0871e5ac9c1765271ab3831276da629c_1a0871e5ac9c1765271ab3831276da629c" compoundref="_quad_matrix_8cpp" startline="313" endline="339">sortColumnsLeftRightParallel</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a6cffc739e96d4efeab6667aca529be4a_1a6cffc739e96d4efeab6667aca529be4a" compoundref="test_2_f4_matrix_builder_8cpp" startline="61" endline="78">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_reducer_8cpp_a8100829527f16c897c93d726fd019fd1_1a8100829527f16c897c93d726fd019fd1" compoundref="test_2_f4_matrix_reducer_8cpp" startline="16" endline="128">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_ada5d547a8940fe7d9e60a5787f32957d_1ada5d547a8940fe7d9e60a5787f32957d" compoundref="test_2_quad_matrix_builder_8cpp" startline="231" endline="262">TEST</referencedby>
+        <referencedby refid="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" compoundref="_quad_matrix_8cpp" startline="178" endline="247">toCanonical</referencedby>
+        <referencedby refid="class_quad_matrix_a5fc8e7b2999b72bce641a571d479c4bd_1a5fc8e7b2999b72bce641a571d479c4bd" compoundref="_quad_matrix_8cpp" startline="341" endline="350">write</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" prot="public" static="no" mutable="no">
+        <type><ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref></type>
+        <definition>SparseMatrix QuadMatrix::bottomRight</definition>
+        <argsstring></argsstring>
+        <name>bottomRight</name>
+        <qualifiedname>QuadMatrix::bottomRight</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="56" column="16" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="class_quad_matrix_builder_a43c74feccfe74e378102bf625d3f8446_1a43c74feccfe74e378102bf625d3f8446" compoundref="mathicgb_2_quad_matrix_builder_8cpp" startline="123" endline="138">QuadMatrixBuilder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_quad_matrix_a5b4818fdff23da227846a08d7e90d8ea_1a5b4818fdff23da227846a08d7e90d8ea" compoundref="_quad_matrix_8cpp" startline="86" endline="95">computeRightColCount</referencedby>
+        <referencedby refid="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" compoundref="_quad_matrix_8cpp" startline="14" endline="35">debugAssertValid</referencedby>
+        <referencedby refid="class_quad_matrix_aed086e37e01dd73af8633d704896c4ee_1aed086e37e01dd73af8633d704896c4ee" compoundref="_quad_matrix_8cpp" startline="97" endline="101">entryCount</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">F4MatrixProjection::makeAndClearTwoStep</referencedby>
+        <referencedby refid="class_quad_matrix_a2e1b38ab713c1f6004f18f55f3bdfc1f_1a2e1b38ab713c1f6004f18f55f3bdfc1f" compoundref="_quad_matrix_8cpp" startline="109" endline="112">memoryUse</referencedby>
+        <referencedby refid="class_quad_matrix_af10df219c9f0c367f12660be496c038c_1af10df219c9f0c367f12660be496c038c" compoundref="_quad_matrix_8cpp" startline="114" endline="117">memoryUseTrimmed</referencedby>
+        <referencedby refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" compoundref="_quad_matrix_8cpp" startline="37" endline="69">print</referencedby>
+        <referencedby refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" compoundref="_quad_matrix_8cpp" startline="119" endline="176">printStatistics</referencedby>
+        <referencedby refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" compoundref="_quad_matrix_8hpp" startline="30" endline="38">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" compoundref="_quad_matrix_8cpp" startline="352" endline="372">read</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+        <referencedby refid="class_quad_matrix_a0871e5ac9c1765271ab3831276da629c_1a0871e5ac9c1765271ab3831276da629c" compoundref="_quad_matrix_8cpp" startline="313" endline="339">sortColumnsLeftRightParallel</referencedby>
+        <referencedby refid="test_2_f4_matrix_reducer_8cpp_a8100829527f16c897c93d726fd019fd1_1a8100829527f16c897c93d726fd019fd1" compoundref="test_2_f4_matrix_reducer_8cpp" startline="16" endline="128">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_ada5d547a8940fe7d9e60a5787f32957d_1ada5d547a8940fe7d9e60a5787f32957d" compoundref="test_2_quad_matrix_builder_8cpp" startline="231" endline="262">TEST</referencedby>
+        <referencedby refid="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" compoundref="_quad_matrix_8cpp" startline="178" endline="247">toCanonical</referencedby>
+        <referencedby refid="class_quad_matrix_a5fc8e7b2999b72bce641a571d479c4bd_1a5fc8e7b2999b72bce641a571d479c4bd" compoundref="_quad_matrix_8cpp" startline="341" endline="350">write</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" prot="public" static="no" mutable="no">
+        <type><ref refid="class_quad_matrix_a0ffbcad96554c274e1cc8552037f734b_1a0ffbcad96554c274e1cc8552037f734b" kindref="member">Monomials</ref></type>
+        <definition>Monomials QuadMatrix::leftColumnMonomials</definition>
+        <argsstring></argsstring>
+        <name>leftColumnMonomials</name>
+        <qualifiedname>QuadMatrix::leftColumnMonomials</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="57" column="13" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+        <referencedby refid="class_quad_matrix_aee46a18f20599872567f793e776d93b3_1aee46a18f20599872567f793e776d93b3" compoundref="_quad_matrix_8cpp" startline="75" endline="84">computeLeftColCount</referencedby>
+        <referencedby refid="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" compoundref="_quad_matrix_8cpp" startline="14" endline="35">debugAssertValid</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">F4MatrixProjection::makeAndClearTwoStep</referencedby>
+        <referencedby refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" compoundref="_quad_matrix_8cpp" startline="37" endline="69">print</referencedby>
+        <referencedby refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" compoundref="_quad_matrix_8hpp" startline="30" endline="38">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" compoundref="_quad_matrix_8cpp" startline="352" endline="372">read</referencedby>
+        <referencedby refid="class_quad_matrix_a0871e5ac9c1765271ab3831276da629c_1a0871e5ac9c1765271ab3831276da629c" compoundref="_quad_matrix_8cpp" startline="313" endline="339">sortColumnsLeftRightParallel</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a6cffc739e96d4efeab6667aca529be4a_1a6cffc739e96d4efeab6667aca529be4a" compoundref="test_2_f4_matrix_builder_8cpp" startline="61" endline="78">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_reducer_8cpp_a8100829527f16c897c93d726fd019fd1_1a8100829527f16c897c93d726fd019fd1" compoundref="test_2_f4_matrix_reducer_8cpp" startline="16" endline="128">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_ada5d547a8940fe7d9e60a5787f32957d_1ada5d547a8940fe7d9e60a5787f32957d" compoundref="test_2_quad_matrix_builder_8cpp" startline="231" endline="262">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_a63d28a0d75391ae1f78f0f7b93be7c15_1a63d28a0d75391ae1f78f0f7b93be7c15" compoundref="test_2_quad_matrix_builder_8cpp" startline="90" endline="131">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_a65341783573e6175d68a106efca91367_1a65341783573e6175d68a106efca91367" compoundref="test_2_quad_matrix_builder_8cpp" startline="71" endline="88">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_a98e18ee7f0fd271a48ea20ff8e224dfe_1a98e18ee7f0fd271a48ea20ff8e224dfe" compoundref="test_2_quad_matrix_builder_8cpp" startline="163" endline="229">TEST</referencedby>
+        <referencedby refid="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" compoundref="_quad_matrix_8cpp" startline="178" endline="247">toCanonical</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" prot="public" static="no" mutable="no">
+        <type><ref refid="class_quad_matrix_a0ffbcad96554c274e1cc8552037f734b_1a0ffbcad96554c274e1cc8552037f734b" kindref="member">Monomials</ref></type>
+        <definition>Monomials QuadMatrix::rightColumnMonomials</definition>
+        <argsstring></argsstring>
+        <name>rightColumnMonomials</name>
+        <qualifiedname>QuadMatrix::rightColumnMonomials</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="58" column="13" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+        <referencedby refid="class_quad_matrix_a5b4818fdff23da227846a08d7e90d8ea_1a5b4818fdff23da227846a08d7e90d8ea" compoundref="_quad_matrix_8cpp" startline="86" endline="95">computeRightColCount</referencedby>
+        <referencedby refid="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" compoundref="_quad_matrix_8cpp" startline="14" endline="35">debugAssertValid</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a1efe3a284a730237cf79e39509468f36_1a1efe3a284a730237cf79e39509468f36" compoundref="_f4_matrix_projection_8cpp" startline="229" endline="279">F4MatrixProjection::makeAndClearOneStep</referencedby>
+        <referencedby refid="class_f4_matrix_projection_a16861c741be244baedcc13b1a620685a_1a16861c741be244baedcc13b1a620685a" compoundref="_f4_matrix_projection_8cpp" startline="316" endline="356">F4MatrixProjection::makeAndClearTwoStep</referencedby>
+        <referencedby refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" compoundref="_quad_matrix_8cpp" startline="37" endline="69">print</referencedby>
+        <referencedby refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" compoundref="_quad_matrix_8hpp" startline="30" endline="38">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" compoundref="_quad_matrix_8cpp" startline="352" endline="372">read</referencedby>
+        <referencedby refid="class_quad_matrix_a0871e5ac9c1765271ab3831276da629c_1a0871e5ac9c1765271ab3831276da629c" compoundref="_quad_matrix_8cpp" startline="313" endline="339">sortColumnsLeftRightParallel</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a6cffc739e96d4efeab6667aca529be4a_1a6cffc739e96d4efeab6667aca529be4a" compoundref="test_2_f4_matrix_builder_8cpp" startline="61" endline="78">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_reducer_8cpp_a8100829527f16c897c93d726fd019fd1_1a8100829527f16c897c93d726fd019fd1" compoundref="test_2_f4_matrix_reducer_8cpp" startline="16" endline="128">TEST</referencedby>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_ada5d547a8940fe7d9e60a5787f32957d_1ada5d547a8940fe7d9e60a5787f32957d" compoundref="test_2_quad_matrix_builder_8cpp" startline="231" endline="262">TEST</referencedby>
+        <referencedby refid="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" compoundref="_quad_matrix_8cpp" startline="178" endline="247">toCanonical</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_quad_matrix_aa5065023ee060d247682fd8465aa3e62_1aa5065023ee060d247682fd8465aa3e62" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> *const</type>
+        <definition>const PolyRing* const QuadMatrix::mRing</definition>
+        <argsstring></argsstring>
+        <name>mRing</name>
+        <qualifiedname>QuadMatrix::mRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="108" column="24" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="108" bodyend="-1"/>
+        <referencedby refid="class_quad_matrix_ae4257734712437bfe5f8940cdf8a2a55_1ae4257734712437bfe5f8940cdf8a2a55" compoundref="_quad_matrix_8hpp" startline="40" endline="45">operator=</referencedby>
+        <referencedby refid="class_quad_matrix_aa08342f245c1fd5564a67d9c200a58f5_1aa08342f245c1fd5564a67d9c200a58f5" compoundref="_quad_matrix_8hpp" startline="27" endline="27">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_a467f0189a89085672ca0e39b0c7b1c07_1a467f0189a89085672ca0e39b0c7b1c07" compoundref="_quad_matrix_8hpp" startline="28" endline="28">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" compoundref="_quad_matrix_8hpp" startline="30" endline="38">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_acc3fab7f84c1b78fb8a451e487c21653_1acc3fab7f84c1b78fb8a451e487c21653" compoundref="_quad_matrix_8hpp" startline="101" endline="101">ring</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_quad_matrix_aa08342f245c1fd5564a67d9c200a58f5_1aa08342f245c1fd5564a67d9c200a58f5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>QuadMatrix::QuadMatrix</definition>
+        <argsstring>()</argsstring>
+        <name>QuadMatrix</name>
+        <qualifiedname>QuadMatrix::QuadMatrix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="27" column="3" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="27" bodyend="27"/>
+        <references refid="class_quad_matrix_aa5065023ee060d247682fd8465aa3e62_1aa5065023ee060d247682fd8465aa3e62" compoundref="_quad_matrix_8hpp" startline="108">mRing</references>
+        <referencedby refid="class_quad_matrix_ac137c5ac112e80a6ff37a2d74ff44ad3_1ac137c5ac112e80a6ff37a2d74ff44ad3" compoundref="_quad_matrix_8hpp" startline="47" endline="49">clear</referencedby>
+        <referencedby refid="class_quad_matrix_a5922042c4984607efdb729a3845a5968_1a5922042c4984607efdb729a3845a5968">operator=</referencedby>
+        <referencedby refid="class_quad_matrix_ae4257734712437bfe5f8940cdf8a2a55_1ae4257734712437bfe5f8940cdf8a2a55" compoundref="_quad_matrix_8hpp" startline="40" endline="45">operator=</referencedby>
+        <referencedby refid="class_quad_matrix_a2ed54e028609a969c0493f0f77eb09ef_1a2ed54e028609a969c0493f0f77eb09ef">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" compoundref="_quad_matrix_8hpp" startline="30" endline="38">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" compoundref="_quad_matrix_8cpp" startline="178" endline="247">toCanonical</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a467f0189a89085672ca0e39b0c7b1c07_1a467f0189a89085672ca0e39b0c7b1c07" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>QuadMatrix::QuadMatrix</definition>
+        <argsstring>(const PolyRing &amp;ring)</argsstring>
+        <name>QuadMatrix</name>
+        <qualifiedname>QuadMatrix::QuadMatrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+          <declname>ring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="28" column="3" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="28" bodyend="28"/>
+        <references refid="class_quad_matrix_aa5065023ee060d247682fd8465aa3e62_1aa5065023ee060d247682fd8465aa3e62" compoundref="_quad_matrix_8hpp" startline="108">mRing</references>
+        <references refid="class_quad_matrix_acc3fab7f84c1b78fb8a451e487c21653_1acc3fab7f84c1b78fb8a451e487c21653" compoundref="_quad_matrix_8hpp" startline="101" endline="101">ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>QuadMatrix::QuadMatrix</definition>
+        <argsstring>(QuadMatrix &amp;&amp;matrix)</argsstring>
+        <name>QuadMatrix</name>
+        <qualifiedname>QuadMatrix::QuadMatrix</qualifiedname>
+        <param>
+          <type><ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref> &amp;&amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="30" column="3" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="30" bodyend="38"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" compoundref="_quad_matrix_8hpp" startline="57">leftColumnMonomials</references>
+        <references refid="class_quad_matrix_aa5065023ee060d247682fd8465aa3e62_1aa5065023ee060d247682fd8465aa3e62" compoundref="_quad_matrix_8hpp" startline="108">mRing</references>
+        <references refid="class_quad_matrix_aa08342f245c1fd5564a67d9c200a58f5_1aa08342f245c1fd5564a67d9c200a58f5" compoundref="_quad_matrix_8hpp" startline="27" endline="27">QuadMatrix</references>
+        <references refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" compoundref="_quad_matrix_8hpp" startline="58">rightColumnMonomials</references>
+        <references refid="class_quad_matrix_acc3fab7f84c1b78fb8a451e487c21653_1acc3fab7f84c1b78fb8a451e487c21653" compoundref="_quad_matrix_8hpp" startline="101" endline="101">ring</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_ae4257734712437bfe5f8940cdf8a2a55_1ae4257734712437bfe5f8940cdf8a2a55" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref> &amp;</type>
+        <definition>QuadMatrix &amp; QuadMatrix::operator=</definition>
+        <argsstring>(QuadMatrix &amp;&amp;matrix)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>QuadMatrix::operator=</qualifiedname>
+        <param>
+          <type><ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref> &amp;&amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="40" column="14" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="40" bodyend="45"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_aa5065023ee060d247682fd8465aa3e62_1aa5065023ee060d247682fd8465aa3e62" compoundref="_quad_matrix_8hpp" startline="108">mRing</references>
+        <references refid="class_quad_matrix_aa08342f245c1fd5564a67d9c200a58f5_1aa08342f245c1fd5564a67d9c200a58f5" compoundref="_quad_matrix_8hpp" startline="27" endline="27">QuadMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_ac137c5ac112e80a6ff37a2d74ff44ad3_1ac137c5ac112e80a6ff37a2d74ff44ad3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void QuadMatrix::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>QuadMatrix::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="47" column="8" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="47" bodyend="49"/>
+        <references refid="class_quad_matrix_aa08342f245c1fd5564a67d9c200a58f5_1aa08342f245c1fd5564a67d9c200a58f5" compoundref="_quad_matrix_8hpp" startline="27" endline="27">QuadMatrix</references>
+        <references refid="class_quad_matrix_acc3fab7f84c1b78fb8a451e487c21653_1acc3fab7f84c1b78fb8a451e487c21653" compoundref="_quad_matrix_8hpp" startline="101" endline="101">ring</references>
+        <referencedby refid="class_f4_matrix_builder2_1_1_builder_afb07cbff51bb53e2b6195cb873fe924c_1afb07cbff51bb53e2b6195cb873fe924c" compoundref="_f4_matrix_builder2_8cpp" startline="138" endline="266">F4MatrixBuilder2::Builder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">F4MatrixBuilder::buildMatrixAndClear</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QuadMatrix::print</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>print</name>
+        <qualifiedname>QuadMatrix::print</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prints whole matrix to out in human-readable format. Useful for debugging. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="62" column="8" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="37" bodyend="69"/>
+        <references refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" compoundref="_column_printer_8cpp" startline="32" endline="43">mathic::ColumnPrinter::addColumn</references>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" compoundref="_quad_matrix_8cpp" startline="14" endline="35">debugAssertValid</references>
+        <references refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" compoundref="_quad_matrix_8hpp" startline="57">leftColumnMonomials</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_a6df755c7d6aaa0b031cd0ba504152459_1a6df755c7d6aaa0b031cd0ba504152459" compoundref="_quad_matrix_8hpp" startline="102" endline="102">monoid</references>
+        <references refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" compoundref="_quad_matrix_8hpp" startline="58">rightColumnMonomials</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <references refid="class_mathic_i_o_a5b5c3c193fcbe871357b5e67467f46de_1a5b5c3c193fcbe871357b5e67467f46de" compoundref="_mathic_i_o_8hpp" startline="579" endline="610">MathicIO&lt; M, BF &gt;::writeMonomial</references>
+        <referencedby refid="_quad_matrix_8cpp_aa5e8883a13e4d336ca521698364d9e1e_1aa5e8883a13e4d336ca521698364d9e1e" compoundref="_quad_matrix_8cpp" startline="249" endline="252">operator&lt;&lt;</referencedby>
+        <referencedby refid="class_quad_matrix_a185fa3b253bd1ce800723e64b66502f1_1a185fa3b253bd1ce800723e64b66502f1" compoundref="_quad_matrix_8cpp" startline="103" endline="107">toString</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QuadMatrix::printStatistics</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>printStatistics</name>
+        <qualifiedname>QuadMatrix::printStatistics</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="64" column="8" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="119" bodyend="176"/>
+        <references refid="classmathic_1_1_column_printer_a0d19efc1a10166ef2cdf24c812b26388_1a0d19efc1a10166ef2cdf24c812b26388" compoundref="_column_printer_8cpp" startline="32" endline="43">mathic::ColumnPrinter::addColumn</references>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_quad_matrix_aee46a18f20599872567f793e776d93b3_1aee46a18f20599872567f793e776d93b3" compoundref="_quad_matrix_8cpp" startline="75" endline="84">computeLeftColCount</references>
+        <references refid="class_quad_matrix_a5b4818fdff23da227846a08d7e90d8ea_1a5b4818fdff23da227846a08d7e90d8ea" compoundref="_quad_matrix_8cpp" startline="86" endline="95">computeRightColCount</references>
+        <references refid="class_quad_matrix_aed086e37e01dd73af8633d704896c4ee_1aed086e37e01dd73af8633d704896c4ee" compoundref="_quad_matrix_8cpp" startline="97" endline="101">entryCount</references>
+        <references refid="class_quad_matrix_a2e1b38ab713c1f6004f18f55f3bdfc1f_1a2e1b38ab713c1f6004f18f55f3bdfc1f" compoundref="_quad_matrix_8cpp" startline="109" endline="112">memoryUse</references>
+        <references refid="class_quad_matrix_af10df219c9f0c367f12660be496c038c_1af10df219c9f0c367f12660be496c038c" compoundref="_quad_matrix_8cpp" startline="114" endline="117">memoryUseTrimmed</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="class_f4_matrix_reducer_a3c79388bcb07ddec26db9b489188d4c5_1a3c79388bcb07ddec26db9b489188d4c5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="735" endline="744">F4MatrixReducer::reduceToBottomRight</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a2e1b38ab713c1f6004f18f55f3bdfc1f_1a2e1b38ab713c1f6004f18f55f3bdfc1f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t QuadMatrix::memoryUse</definition>
+        <argsstring>() const</argsstring>
+        <name>memoryUse</name>
+        <qualifiedname>QuadMatrix::memoryUse</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="66" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="109" bodyend="112"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" compoundref="_quad_matrix_8cpp" startline="119" endline="176">printStatistics</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_af10df219c9f0c367f12660be496c038c_1af10df219c9f0c367f12660be496c038c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t QuadMatrix::memoryUseTrimmed</definition>
+        <argsstring>() const</argsstring>
+        <name>memoryUseTrimmed</name>
+        <qualifiedname>QuadMatrix::memoryUseTrimmed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="67" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="114" bodyend="117"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" compoundref="_quad_matrix_8cpp" startline="119" endline="176">printStatistics</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a185fa3b253bd1ce800723e64b66502f1_1a185fa3b253bd1ce800723e64b66502f1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string QuadMatrix::toString</definition>
+        <argsstring>() const</argsstring>
+        <name>toString</name>
+        <qualifiedname>QuadMatrix::toString</qualifiedname>
+        <briefdescription>
+<para>Shows whole matrix in a string. Useful for debugging. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="70" column="15" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="103" bodyend="107"/>
+        <references refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" compoundref="_quad_matrix_8cpp" startline="37" endline="69">print</references>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a836020b215a19e76dc2bb19ea1013d64_1a836020b215a19e76dc2bb19ea1013d64" compoundref="test_2_f4_matrix_builder_8cpp" startline="133" endline="173">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a149c54f5152dc1c80f475a42dc040c30_1a149c54f5152dc1c80f475a42dc040c30" compoundref="test_2_f4_matrix_builder_8cpp" startline="175" endline="196">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_ac95834d044aab7993513e2bea6832b20_1ac95834d044aab7993513e2bea6832b20" compoundref="test_2_f4_matrix_builder_8cpp" startline="112" endline="131">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_af3893dac4fb13f523a52a00549b2ce19_1af3893dac4fb13f523a52a00549b2ce19" compoundref="test_2_f4_matrix_builder_8cpp" startline="80" endline="110">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_reducer_8cpp_a8100829527f16c897c93d726fd019fd1_1a8100829527f16c897c93d726fd019fd1" compoundref="test_2_f4_matrix_reducer_8cpp" startline="16" endline="128">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_aed086e37e01dd73af8633d704896c4ee_1aed086e37e01dd73af8633d704896c4ee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t QuadMatrix::entryCount</definition>
+        <argsstring>() const</argsstring>
+        <name>entryCount</name>
+        <qualifiedname>QuadMatrix::entryCount</qualifiedname>
+        <briefdescription>
+<para>Return the combined number of non-zero entries. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="73" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="97" bodyend="101"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+        <referencedby refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" compoundref="_quad_matrix_8cpp" startline="119" endline="176">printStatistics</referencedby>
+        <referencedby refid="class_f4_reducer_abbfcaa4c6e3d95fd670ff14d81f2671d_1abbfcaa4c6e3d95fd670ff14d81f2671d" compoundref="_f4_reducer_8cpp" startline="315" endline="330">F4Reducer::saveMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a72f2e88eb241a3e595f2d80c46a7dea0_1a72f2e88eb241a3e595f2d80c46a7dea0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t QuadMatrix::rowCount</definition>
+        <argsstring>() const</argsstring>
+        <name>rowCount</name>
+        <qualifiedname>QuadMatrix::rowCount</qualifiedname>
+        <briefdescription>
+<para>Return the combined number of left and right columns. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="76" column="10" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="71" bodyend="73"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_aee46a18f20599872567f793e776d93b3_1aee46a18f20599872567f793e776d93b3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix_a7c42586fe17c8e6c9231765abaf2e1da_1a7c42586fe17c8e6c9231765abaf2e1da" kindref="member">SparseMatrix::ColIndex</ref></type>
+        <definition>SparseMatrix::ColIndex QuadMatrix::computeLeftColCount</definition>
+        <argsstring>() const</argsstring>
+        <name>computeLeftColCount</name>
+        <qualifiedname>QuadMatrix::computeLeftColCount</qualifiedname>
+        <briefdescription>
+<para>Return the number of left columns. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="79" column="26" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="75" bodyend="84"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" compoundref="_quad_matrix_8hpp" startline="57">leftColumnMonomials</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <referencedby refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" compoundref="_quad_matrix_8cpp" startline="119" endline="176">printStatistics</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a5b4818fdff23da227846a08d7e90d8ea_1a5b4818fdff23da227846a08d7e90d8ea" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix_a7c42586fe17c8e6c9231765abaf2e1da_1a7c42586fe17c8e6c9231765abaf2e1da" kindref="member">SparseMatrix::ColIndex</ref></type>
+        <definition>SparseMatrix::ColIndex QuadMatrix::computeRightColCount</definition>
+        <argsstring>() const</argsstring>
+        <name>computeRightColCount</name>
+        <qualifiedname>QuadMatrix::computeRightColCount</qualifiedname>
+        <briefdescription>
+<para>Return the number of right columns. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="82" column="26" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="86" bodyend="95"/>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" compoundref="_quad_matrix_8hpp" startline="58">rightColumnMonomials</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" compoundref="_quad_matrix_8cpp" startline="119" endline="176">printStatistics</referencedby>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="194" endline="322">MATHICGB_NAMESPACE_BEGIN::reduce</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a5fc8e7b2999b72bce641a571d479c4bd_1a5fc8e7b2999b72bce641a571d479c4bd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QuadMatrix::write</definition>
+        <argsstring>(SparseMatrix::Scalar modulus, FILE *file) const</argsstring>
+        <name>write</name>
+        <qualifiedname>QuadMatrix::write</qualifiedname>
+        <param>
+          <type><ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <param>
+          <type>FILE *</type>
+          <declname>file</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="84" column="8" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="341" bodyend="350"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="class_f4_reducer_abbfcaa4c6e3d95fd670ff14d81f2671d_1abbfcaa4c6e3d95fd670ff14d81f2671d" compoundref="_f4_reducer_8cpp" startline="315" endline="330">F4Reducer::saveMatrix</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+        <definition>SparseMatrix::Scalar QuadMatrix::read</definition>
+        <argsstring>(FILE *file)</argsstring>
+        <name>read</name>
+        <qualifiedname>QuadMatrix::read</qualifiedname>
+        <param>
+          <type>FILE *</type>
+          <declname>file</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read a matrix from file into *this. Return the modulus from file. This method clears the column monomials and the ring pointer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="88" column="24" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="352" bodyend="372"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" compoundref="_quad_matrix_8cpp" startline="14" endline="35">debugAssertValid</references>
+        <references refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" compoundref="_quad_matrix_8hpp" startline="57">leftColumnMonomials</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" compoundref="_quad_matrix_8hpp" startline="58">rightColumnMonomials</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="class_matrix_action_a4fb6a72dcadf0971eddb2df7bb7e5b11_1a4fb6a72dcadf0971eddb2df7bb7e5b11" compoundref="_matrix_action_8cpp" startline="51" endline="123">MatrixAction::performAction</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a0871e5ac9c1765271ab3831276da629c_1a0871e5ac9c1765271ab3831276da629c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QuadMatrix::sortColumnsLeftRightParallel</definition>
+        <argsstring>()</argsstring>
+        <name>sortColumnsLeftRightParallel</name>
+        <qualifiedname>QuadMatrix::sortColumnsLeftRightParallel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sort the left columns to be in decreasing order according to the monomial order from the ring. The operation is done in parallel. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="92" column="8" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="313" bodyend="339"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" compoundref="_quad_matrix_8hpp" startline="57">leftColumnMonomials</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_a6df755c7d6aaa0b031cd0ba504152459_1a6df755c7d6aaa0b031cd0ba504152459" compoundref="_quad_matrix_8hpp" startline="102" endline="102">monoid</references>
+        <references refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" compoundref="_quad_matrix_8hpp" startline="58">rightColumnMonomials</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="test_2_quad_matrix_builder_8cpp_a98e18ee7f0fd271a48ea20ff8e224dfe_1a98e18ee7f0fd271a48ea20ff8e224dfe" compoundref="test_2_quad_matrix_builder_8cpp" startline="163" endline="229">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref></type>
+        <definition>QuadMatrix QuadMatrix::toCanonical</definition>
+        <argsstring>() const</argsstring>
+        <name>toCanonical</name>
+        <qualifiedname>QuadMatrix::toCanonical</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Makes a copy of this matrix whose rows are sorted in some canonical way. TODO: Actually only coarsely sorts the top rows right now. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="96" column="14" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="178" bodyend="247"/>
+        <references refid="class_sparse_matrix_a208a0c7bd2235f1f2217530b84433bbc_1a208a0c7bd2235f1f2217530b84433bbc" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="177" endline="190">SparseMatrix::appendRow</references>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_sparse_matrix_a8624e99c23cc0d0d9f517909b85883f5_1a8624e99c23cc0d0d9f517909b85883f5" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="239" endline="252">SparseMatrix::clear</references>
+        <references refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" compoundref="_quad_matrix_8hpp" startline="57">leftColumnMonomials</references>
+        <references refid="class_quad_matrix_aa08342f245c1fd5564a67d9c200a58f5_1aa08342f245c1fd5564a67d9c200a58f5" compoundref="_quad_matrix_8hpp" startline="27" endline="27">QuadMatrix</references>
+        <references refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" compoundref="_quad_matrix_8hpp" startline="58">rightColumnMonomials</references>
+        <references refid="class_quad_matrix_acc3fab7f84c1b78fb8a451e487c21653_1acc3fab7f84c1b78fb8a451e487c21653" compoundref="_quad_matrix_8hpp" startline="101" endline="101">ring</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a836020b215a19e76dc2bb19ea1013d64_1a836020b215a19e76dc2bb19ea1013d64" compoundref="test_2_f4_matrix_builder_8cpp" startline="133" endline="173">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a149c54f5152dc1c80f475a42dc040c30_1a149c54f5152dc1c80f475a42dc040c30" compoundref="test_2_f4_matrix_builder_8cpp" startline="175" endline="196">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>MATHICGB_NAMESPACE_BEGIN bool QuadMatrix::debugAssertValid</definition>
+        <argsstring>() const</argsstring>
+        <name>debugAssertValid</name>
+        <qualifiedname>QuadMatrix::debugAssertValid</qualifiedname>
+        <briefdescription>
+<para>Asserts internal invariants if asserts are turned on. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="99" column="8" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.cpp" bodystart="14" bodyend="35"/>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">bottomRight</references>
+        <references refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" compoundref="_quad_matrix_8hpp" startline="57">leftColumnMonomials</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" compoundref="_quad_matrix_8hpp" startline="58">rightColumnMonomials</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">topRight</references>
+        <referencedby refid="class_quad_matrix_builder_a43c74feccfe74e378102bf625d3f8446_1a43c74feccfe74e378102bf625d3f8446" compoundref="mathicgb_2_quad_matrix_builder_8cpp" startline="123" endline="138">QuadMatrixBuilder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" compoundref="_quad_matrix_8cpp" startline="37" endline="69">print</referencedby>
+        <referencedby refid="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" compoundref="_quad_matrix_8cpp" startline="352" endline="372">read</referencedby>
+        <referencedby refid="class_f4_matrix_reducer_a3c79388bcb07ddec26db9b489188d4c5_1a3c79388bcb07ddec26db9b489188d4c5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="735" endline="744">F4MatrixReducer::reduceToBottomRight</referencedby>
+        <referencedby refid="test_2_f4_matrix_reducer_8cpp_a8100829527f16c897c93d726fd019fd1_1a8100829527f16c897c93d726fd019fd1" compoundref="test_2_f4_matrix_reducer_8cpp" startline="16" endline="128">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_acc3fab7f84c1b78fb8a451e487c21653_1acc3fab7f84c1b78fb8a451e487c21653" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+        <definition>const PolyRing &amp; QuadMatrix::ring</definition>
+        <argsstring>() const</argsstring>
+        <name>ring</name>
+        <qualifiedname>QuadMatrix::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="101" column="18" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="101" bodyend="101"/>
+        <references refid="class_quad_matrix_aa5065023ee060d247682fd8465aa3e62_1aa5065023ee060d247682fd8465aa3e62" compoundref="_quad_matrix_8hpp" startline="108">mRing</references>
+        <referencedby refid="class_f4_matrix_builder2_1_1_builder_afb07cbff51bb53e2b6195cb873fe924c_1afb07cbff51bb53e2b6195cb873fe924c" compoundref="_f4_matrix_builder2_8cpp" startline="138" endline="266">F4MatrixBuilder2::Builder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">F4MatrixBuilder::buildMatrixAndClear</referencedby>
+        <referencedby refid="class_quad_matrix_ac137c5ac112e80a6ff37a2d74ff44ad3_1ac137c5ac112e80a6ff37a2d74ff44ad3" compoundref="_quad_matrix_8hpp" startline="47" endline="49">clear</referencedby>
+        <referencedby refid="class_quad_matrix_a6df755c7d6aaa0b031cd0ba504152459_1a6df755c7d6aaa0b031cd0ba504152459" compoundref="_quad_matrix_8hpp" startline="102" endline="102">monoid</referencedby>
+        <referencedby refid="class_quad_matrix_a467f0189a89085672ca0e39b0c7b1c07_1a467f0189a89085672ca0e39b0c7b1c07" compoundref="_quad_matrix_8hpp" startline="28" endline="28">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" compoundref="_quad_matrix_8hpp" startline="30" endline="38">QuadMatrix</referencedby>
+        <referencedby refid="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" compoundref="_quad_matrix_8cpp" startline="178" endline="247">toCanonical</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a6df755c7d6aaa0b031cd0ba504152459_1a6df755c7d6aaa0b031cd0ba504152459" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_quad_matrix_ad442bcaf6b519ba4f45ea8128ac9b345_1ad442bcaf6b519ba4f45ea8128ac9b345" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+        <definition>const Monoid &amp; QuadMatrix::monoid</definition>
+        <argsstring>() const</argsstring>
+        <name>monoid</name>
+        <qualifiedname>QuadMatrix::monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="102" column="16" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="102" bodyend="102"/>
+        <references refid="class_poly_ring_af2410633daff4cfc0687d62433fcaf3e_1af2410633daff4cfc0687d62433fcaf3e" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="505" endline="505">PolyRing::monoid</references>
+        <references refid="class_quad_matrix_acc3fab7f84c1b78fb8a451e487c21653_1acc3fab7f84c1b78fb8a451e487c21653" compoundref="_quad_matrix_8hpp" startline="101" endline="101">ring</references>
+        <referencedby refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" compoundref="_quad_matrix_8cpp" startline="37" endline="69">print</referencedby>
+        <referencedby refid="class_quad_matrix_a0871e5ac9c1765271ab3831276da629c_1a0871e5ac9c1765271ab3831276da629c" compoundref="_quad_matrix_8cpp" startline="313" endline="339">sortColumnsLeftRightParallel</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_quad_matrix_a2ed54e028609a969c0493f0f77eb09ef_1a2ed54e028609a969c0493f0f77eb09ef" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>QuadMatrix::QuadMatrix</definition>
+        <argsstring>(const QuadMatrix &amp;)</argsstring>
+        <name>QuadMatrix</name>
+        <qualifiedname>QuadMatrix::QuadMatrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="105" column="3"/>
+        <references refid="class_quad_matrix_aa08342f245c1fd5564a67d9c200a58f5_1aa08342f245c1fd5564a67d9c200a58f5" compoundref="_quad_matrix_8hpp" startline="27" endline="27">QuadMatrix</references>
+      </memberdef>
+      <memberdef kind="function" id="class_quad_matrix_a5922042c4984607efdb729a3845a5968_1a5922042c4984607efdb729a3845a5968" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QuadMatrix::operator=</definition>
+        <argsstring>(const QuadMatrix &amp;)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>QuadMatrix::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="106" column="8"/>
+        <references refid="class_quad_matrix_aa08342f245c1fd5564a67d9c200a58f5_1aa08342f245c1fd5564a67d9c200a58f5" compoundref="_quad_matrix_8hpp" startline="27" endline="27">QuadMatrix</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Represents a matrix composed of 4 sub-matrices that fit together into one matrix divided into top left, top right, bottom left and bottom right. This is a convenient representation of the matrices encountered in the F4 polynomial reduction algorithm. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="29">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="61" relation="public-inheritance">
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>ColIndex *</label>
+      </node>
+      <node id="72">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="73">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="72" relation="public-inheritance">
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="74" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="62" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="62" relation="public-inheritance">
+        </childnode>
+        <childnode refid="63" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="72" relation="public-inheritance">
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="82" relation="private-inheritance">
+        </childnode>
+        <childnode refid="83" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="83">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="84" relation="public-inheritance">
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="86" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="78">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="79" relation="private-inheritance">
+        </childnode>
+        <childnode refid="81" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="82">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="22" relation="public-inheritance">
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="49">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="23" relation="public-inheritance">
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="85">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="84">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="85" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="31">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="19" relation="public-inheritance">
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="76" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="21" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="77">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="76">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="77" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="47">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>QuadMatrix</label>
+        <link refid="class_quad_matrix"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>bottomLeft</edgelabel>
+          <edgelabel>bottomRight</edgelabel>
+          <edgelabel>topLeft</edgelabel>
+          <edgelabel>topRight</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>leftColumnMonomials</edgelabel>
+          <edgelabel>rightColumnMonomials</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>ColIndex</label>
+      </node>
+      <node id="12">
+        <label>RawVector&lt; T &gt;</label>
+        <link refid="class_raw_vector"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mCapacityEnd</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>RawVector&lt; ColIndex &gt;</label>
+        <link refid="class_raw_vector"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mCapacityEnd</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; ColIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>RawVector&lt; Scalar &gt;</label>
+        <link refid="class_raw_vector"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mCapacityEnd</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="template-instance">
+          <edgelabel>&lt; Scalar &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="22" relation="public-inheritance">
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>CoefficientType</label>
+      </node>
+      <node id="5">
+        <label>Scalar *</label>
+      </node>
+      <node id="74">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="45">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SparseMatrix</label>
+        <link refid="class_sparse_matrix"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mRows</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mBlock</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>mMemoryQuantum</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>SparseMatrix::Block</label>
+        <link refid="struct_sparse_matrix_1_1_block"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mColIndices</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mScalars</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mPreviousBlock</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mHasNoRows</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>SparseMatrix::Row</label>
+        <link refid="struct_sparse_matrix_1_1_row"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mScalarsBegin</edgelabel>
+          <edgelabel>mScalarsEnd</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mIndicesBegin</edgelabel>
+          <edgelabel>mIndicesEnd</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>T</label>
+      </node>
+      <node id="69">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="41">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="15">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="39">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="34" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="41" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="43" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>char</label>
+      </node>
+      <node id="28">
+        <label>const ARing *</label>
+      </node>
+      <node id="14">
+        <label>Scalar</label>
+      </node>
+      <node id="44">
+        <label>const void *</label>
+      </node>
+      <node id="34">
+        <label>double</label>
+      </node>
+      <node id="58">
+        <label>overflow_type *</label>
+      </node>
+      <node id="55">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="57">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="75">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="25">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="33">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="30" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="26">
+        <label>long</label>
+      </node>
+      <node id="86">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="87" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="88" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="87">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="87" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="88">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="89" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="89">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="65" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="89" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="50">
+        <label>mon_part</label>
+      </node>
+      <node id="38">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="37">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="35">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="36">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="23">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="30">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>size_t</label>
+      </node>
+      <node id="66">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="68">
+        <label>spinLock</label>
+      </node>
+      <node id="64">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="53">
+        <label>std::string</label>
+        <childnode refid="54" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>std::vector&lt; ConstMonoPtr &gt;</label>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; ConstMonoPtr &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::vector&lt; SparseMatrix::Row &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; SparseMatrix::Row &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="56">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="15" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="27">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="53" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="67">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" line="18" column="1" bodyfile="submodules/mathicgb/src/mathicgb/QuadMatrix.hpp" bodystart="18" bodyend="109"/>
+    <listofallmembers>
+      <member refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>bottomLeft</name></member>
+      <member refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>bottomRight</name></member>
+      <member refid="class_quad_matrix_ac137c5ac112e80a6ff37a2d74ff44ad3_1ac137c5ac112e80a6ff37a2d74ff44ad3" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>clear</name></member>
+      <member refid="class_quad_matrix_aee46a18f20599872567f793e776d93b3_1aee46a18f20599872567f793e776d93b3" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>computeLeftColCount</name></member>
+      <member refid="class_quad_matrix_a5b4818fdff23da227846a08d7e90d8ea_1a5b4818fdff23da227846a08d7e90d8ea" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>computeRightColCount</name></member>
+      <member refid="class_quad_matrix_a1c2aaeef9d5664ba2e9330d43c2615c0_1a1c2aaeef9d5664ba2e9330d43c2615c0" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_quad_matrix_a42aeeb6f22e6c71a6c7516f6f3038214_1a42aeeb6f22e6c71a6c7516f6f3038214" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>ConstMonoRef</name></member>
+      <member refid="class_quad_matrix_ad19dfe221f6eb171a209bb7990718419_1ad19dfe221f6eb171a209bb7990718419" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>debugAssertValid</name></member>
+      <member refid="class_quad_matrix_aed086e37e01dd73af8633d704896c4ee_1aed086e37e01dd73af8633d704896c4ee" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>entryCount</name></member>
+      <member refid="class_quad_matrix_a64472e3678c827b3f671d824ebe785ca_1a64472e3678c827b3f671d824ebe785ca" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>leftColumnMonomials</name></member>
+      <member refid="class_quad_matrix_a2e1b38ab713c1f6004f18f55f3bdfc1f_1a2e1b38ab713c1f6004f18f55f3bdfc1f" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>memoryUse</name></member>
+      <member refid="class_quad_matrix_af10df219c9f0c367f12660be496c038c_1af10df219c9f0c367f12660be496c038c" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>memoryUseTrimmed</name></member>
+      <member refid="class_quad_matrix_a50c5f31cfebc05e561042c1281a3d275_1a50c5f31cfebc05e561042c1281a3d275" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>Mono</name></member>
+      <member refid="class_quad_matrix_ad442bcaf6b519ba4f45ea8128ac9b345_1ad442bcaf6b519ba4f45ea8128ac9b345" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>Monoid</name></member>
+      <member refid="class_quad_matrix_a6df755c7d6aaa0b031cd0ba504152459_1a6df755c7d6aaa0b031cd0ba504152459" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>monoid</name></member>
+      <member refid="class_quad_matrix_a0ffbcad96554c274e1cc8552037f734b_1a0ffbcad96554c274e1cc8552037f734b" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>Monomials</name></member>
+      <member refid="class_quad_matrix_ad347527959f669e314ffb55f588af291_1ad347527959f669e314ffb55f588af291" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>MonoPtr</name></member>
+      <member refid="class_quad_matrix_a7a2c41956cbc6af76707fd38da285f72_1a7a2c41956cbc6af76707fd38da285f72" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>MonoRef</name></member>
+      <member refid="class_quad_matrix_aa5065023ee060d247682fd8465aa3e62_1aa5065023ee060d247682fd8465aa3e62" prot="private" virt="non-virtual"><scope>QuadMatrix</scope><name>mRing</name></member>
+      <member refid="class_quad_matrix_ae4257734712437bfe5f8940cdf8a2a55_1ae4257734712437bfe5f8940cdf8a2a55" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>operator=</name></member>
+      <member refid="class_quad_matrix_a5922042c4984607efdb729a3845a5968_1a5922042c4984607efdb729a3845a5968" prot="private" virt="non-virtual"><scope>QuadMatrix</scope><name>operator=</name></member>
+      <member refid="class_quad_matrix_a619643064fc9b7186ec11e28c065c18c_1a619643064fc9b7186ec11e28c065c18c" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>print</name></member>
+      <member refid="class_quad_matrix_a8e3941f363e74c7ac5a11ec44e24c70f_1a8e3941f363e74c7ac5a11ec44e24c70f" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>printStatistics</name></member>
+      <member refid="class_quad_matrix_aa08342f245c1fd5564a67d9c200a58f5_1aa08342f245c1fd5564a67d9c200a58f5" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>QuadMatrix</name></member>
+      <member refid="class_quad_matrix_a467f0189a89085672ca0e39b0c7b1c07_1a467f0189a89085672ca0e39b0c7b1c07" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>QuadMatrix</name></member>
+      <member refid="class_quad_matrix_ada4215bbd30f6e0a8ac9b65066d8164c_1ada4215bbd30f6e0a8ac9b65066d8164c" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>QuadMatrix</name></member>
+      <member refid="class_quad_matrix_a2ed54e028609a969c0493f0f77eb09ef_1a2ed54e028609a969c0493f0f77eb09ef" prot="private" virt="non-virtual"><scope>QuadMatrix</scope><name>QuadMatrix</name></member>
+      <member refid="class_quad_matrix_a449f19920fd4f7f60ceaef4c0032f708_1a449f19920fd4f7f60ceaef4c0032f708" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>read</name></member>
+      <member refid="class_quad_matrix_a0f7996e181a1d18648a6dc6ae20fe8e7_1a0f7996e181a1d18648a6dc6ae20fe8e7" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>rightColumnMonomials</name></member>
+      <member refid="class_quad_matrix_acc3fab7f84c1b78fb8a451e487c21653_1acc3fab7f84c1b78fb8a451e487c21653" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>ring</name></member>
+      <member refid="class_quad_matrix_a72f2e88eb241a3e595f2d80c46a7dea0_1a72f2e88eb241a3e595f2d80c46a7dea0" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>rowCount</name></member>
+      <member refid="class_quad_matrix_a0871e5ac9c1765271ab3831276da629c_1a0871e5ac9c1765271ab3831276da629c" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>sortColumnsLeftRightParallel</name></member>
+      <member refid="class_quad_matrix_a8fb8ab9af09fa78e6f0c984ea7387dec_1a8fb8ab9af09fa78e6f0c984ea7387dec" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>toCanonical</name></member>
+      <member refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>topLeft</name></member>
+      <member refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>topRight</name></member>
+      <member refid="class_quad_matrix_a185fa3b253bd1ce800723e64b66502f1_1a185fa3b253bd1ce800723e64b66502f1" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>toString</name></member>
+      <member refid="class_quad_matrix_a5fc8e7b2999b72bce641a571d479c4bd_1a5fc8e7b2999b72bce641a571d479c4bd" prot="public" virt="non-virtual"><scope>QuadMatrix</scope><name>write</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_unchar_internal_1_1_extended_char_3_01false_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>UncharInternal::ExtendedChar&lt; false &gt;</compoundname>
+    <includes refid="_unchar_8hpp" local="no">Unchar.hpp</includes>
+    <templateparamlist>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="struct_unchar_internal_1_1_extended_char_3_01false_01_4_ae73809d952605d285474346bff1da4ba_1ae73809d952605d285474346bff1da4ba" prot="public" static="no">
+        <type>unsigned short</type>
+        <definition>typedef unsigned short UncharInternal::ExtendedChar&lt; false &gt;::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <qualifiedname>UncharInternal::ExtendedChar&lt; false &gt;::type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Unchar.hpp" line="27" column="45" bodyfile="submodules/mathicgb/src/mathicgb/Unchar.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>UncharInternal::ExtendedChar&lt; Signed &gt;</label>
+        <link refid="struct_unchar_internal_1_1_extended_char"/>
+      </node>
+      <node id="1">
+        <label>UncharInternal::ExtendedChar&lt; false &gt;</label>
+        <link refid="struct_unchar_internal_1_1_extended_char_3_01false_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; false &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>UncharInternal::ExtendedChar&lt; Signed &gt;</label>
+        <link refid="struct_unchar_internal_1_1_extended_char"/>
+      </node>
+      <node id="1">
+        <label>UncharInternal::ExtendedChar&lt; false &gt;</label>
+        <link refid="struct_unchar_internal_1_1_extended_char_3_01false_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; false &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/Unchar.hpp" line="27" column="3" bodyfile="submodules/mathicgb/src/mathicgb/Unchar.hpp" bodystart="27" bodyend="27"/>
+    <listofallmembers>
+      <member refid="struct_unchar_internal_1_1_extended_char_3_01false_01_4_ae73809d952605d285474346bff1da4ba_1ae73809d952605d285474346bff1da4ba" prot="public" virt="non-virtual"><scope>UncharInternal::ExtendedChar&lt; false &gt;</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

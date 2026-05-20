@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_monomials_with_component" kind="class" language="C++" prot="public">
+    <compoundname>MonomialsWithComponent</compoundname>
+    <includes refid="monhashtable_8hpp" local="no">monhashtable.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_monomials_with_component_a2ab79a8b042ed99560764edbd7b72e23_1a2ab79a8b042ed99560764edbd7b72e23" prot="public" static="no">
+        <type><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></type>
+        <definition>typedef packed_monomial MonomialsWithComponent::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <qualifiedname>MonomialsWithComponent::value</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="59" column="27" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="59" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_monomials_with_component_afd89061824421684fc035fe69b42d5a3_1afd89061824421684fc035fe69b42d5a3" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref> &amp;</type>
+        <definition>const MonomialInfo&amp; MonomialsWithComponent::mMonoid</definition>
+        <argsstring></argsstring>
+        <name>mMonoid</name>
+        <qualifiedname>MonomialsWithComponent::mMonoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="65" column="22" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="65" bodyend="-1"/>
+        <referencedby refid="class_monomials_with_component_a89ce53eb88f748d59c3522f72b3ba607_1a89ce53eb88f748d59c3522f72b3ba607" compoundref="monhashtable_8hpp" startline="61" endline="61">is_equal</referencedby>
+        <referencedby refid="class_monomials_with_component_a875396f713967db5248f2f9ffe651c68_1a875396f713967db5248f2f9ffe651c68" compoundref="monhashtable_8hpp" startline="63" endline="63">MonomialsWithComponent</referencedby>
+        <referencedby refid="class_monomials_with_component_a850e9f590db330c13118fe6ce9f51b8c_1a850e9f590db330c13118fe6ce9f51b8c" compoundref="monhashtable_8hpp" startline="62" endline="62">show</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_monomials_with_component_a421649283968ffc043e3bcbee7a34d20_1a421649283968ffc043e3bcbee7a34d20" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long MonomialsWithComponent::hash_value</definition>
+        <argsstring>(value m) const</argsstring>
+        <name>hash_value</name>
+        <qualifiedname>MonomialsWithComponent::hash_value</qualifiedname>
+        <param>
+          <type><ref refid="class_monomials_with_component_a2ab79a8b042ed99560764edbd7b72e23_1a2ab79a8b042ed99560764edbd7b72e23" kindref="member">value</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="60" column="8" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="60" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="class_monomials_with_component_a89ce53eb88f748d59c3522f72b3ba607_1a89ce53eb88f748d59c3522f72b3ba607" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonomialsWithComponent::is_equal</definition>
+        <argsstring>(value m, value n) const</argsstring>
+        <name>is_equal</name>
+        <qualifiedname>MonomialsWithComponent::is_equal</qualifiedname>
+        <param>
+          <type><ref refid="class_monomials_with_component_a2ab79a8b042ed99560764edbd7b72e23_1a2ab79a8b042ed99560764edbd7b72e23" kindref="member">value</ref></type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="class_monomials_with_component_a2ab79a8b042ed99560764edbd7b72e23_1a2ab79a8b042ed99560764edbd7b72e23" kindref="member">value</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="61" column="8" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="61" bodyend="61"/>
+        <references refid="class_monomials_with_component_afd89061824421684fc035fe69b42d5a3_1afd89061824421684fc035fe69b42d5a3" compoundref="monhashtable_8hpp" startline="65">mMonoid</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomials_with_component_a850e9f590db330c13118fe6ce9f51b8c_1a850e9f590db330c13118fe6ce9f51b8c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonomialsWithComponent::show</definition>
+        <argsstring>(value m) const</argsstring>
+        <name>show</name>
+        <qualifiedname>MonomialsWithComponent::show</qualifiedname>
+        <param>
+          <type><ref refid="class_monomials_with_component_a2ab79a8b042ed99560764edbd7b72e23_1a2ab79a8b042ed99560764edbd7b72e23" kindref="member">value</ref></type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="62" column="8" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="62" bodyend="62"/>
+        <references refid="class_monomials_with_component_afd89061824421684fc035fe69b42d5a3_1afd89061824421684fc035fe69b42d5a3" compoundref="monhashtable_8hpp" startline="65">mMonoid</references>
+      </memberdef>
+      <memberdef kind="function" id="class_monomials_with_component_a875396f713967db5248f2f9ffe651c68_1a875396f713967db5248f2f9ffe651c68" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonomialsWithComponent::MonomialsWithComponent</definition>
+        <argsstring>(const MonomialInfo &amp;MI)</argsstring>
+        <name>MonomialsWithComponent</name>
+        <qualifiedname>MonomialsWithComponent::MonomialsWithComponent</qualifiedname>
+        <param>
+          <type>const <ref refid="class_monomial_info" kindref="compound">MonomialInfo</ref> &amp;</type>
+          <declname>MI</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/f4/monhashtable.hpp" line="63" column="3" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="63" bodyend="63"/>
+        <references refid="class_monomials_with_component_afd89061824421684fc035fe69b42d5a3_1afd89061824421684fc035fe69b42d5a3" compoundref="monhashtable_8hpp" startline="65">mMonoid</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput>MonHashTable</computeroutput> trait for <computeroutput><ref refid="moninfo_8hpp_a75641a782b0ba6d753ef03651b07b5c2_1a75641a782b0ba6d753ef03651b07b5c2" kindref="member">packed_monomial</ref></computeroutput>s that include the component coordinate in equality. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><computeroutput><ref refid="class_monomials_with_component_a421649283968ffc043e3bcbee7a34d20_1a421649283968ffc043e3bcbee7a34d20" kindref="member">hash_value</ref></computeroutput> mixes the leading two ints of the packed monomial (the precomputed hash plus the component) so two monomials with the same exponent vector but different components hash to different buckets. <computeroutput><ref refid="class_monomials_with_component_a89ce53eb88f748d59c3522f72b3ba607_1a89ce53eb88f748d59c3522f72b3ba607" kindref="member">is_equal</ref></computeroutput> defers to <computeroutput><ref refid="class_monomial_info_a0034bc992ad667ca5a41a3dcc9e71389_1a0034bc992ad667ca5a41a3dcc9e71389" kindref="member">MonomialInfo::is_equal</ref></computeroutput>, which compares both the monomial body and its component. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>MonomialInfo</label>
+        <link refid="class_monomial_info"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>firstvar</edgelabel>
+          <edgelabel>mComponentLoc</edgelabel>
+          <edgelabel>mNumWeights</edgelabel>
+          <edgelabel>mPositionUp</edgelabel>
+          <edgelabel>nslots</edgelabel>
+          <edgelabel>nvars</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>hashfcn</edgelabel>
+          <edgelabel>mask</edgelabel>
+          <edgelabel>ncalls_compare</edgelabel>
+          <edgelabel>ncalls_divide</edgelabel>
+          <edgelabel>ncalls_from_expvector</edgelabel>
+          <edgelabel>ncalls_from_varpower</edgelabel>
+          <edgelabel>ncalls_get_component</edgelabel>
+          <edgelabel>ncalls_is_equal</edgelabel>
+          <edgelabel>ncalls_is_equal_true</edgelabel>
+          <edgelabel>ncalls_mult</edgelabel>
+          <edgelabel>  ...</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mModuleHeftDegrees</edgelabel>
+          <edgelabel>mWeightVectors</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>mTieBreakerIsRevLex</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>MonomialsWithComponent</label>
+        <link refid="class_monomials_with_component"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>T</label>
+      </node>
+      <node id="9">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="5">
+        <label>long</label>
+      </node>
+      <node id="3">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="7">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="8" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/f4/monhashtable.hpp" line="56" column="1" bodyfile="Macaulay2/e/f4/monhashtable.hpp" bodystart="57" bodyend="66"/>
+    <listofallmembers>
+      <member refid="class_monomials_with_component_a421649283968ffc043e3bcbee7a34d20_1a421649283968ffc043e3bcbee7a34d20" prot="public" virt="non-virtual"><scope>MonomialsWithComponent</scope><name>hash_value</name></member>
+      <member refid="class_monomials_with_component_a89ce53eb88f748d59c3522f72b3ba607_1a89ce53eb88f748d59c3522f72b3ba607" prot="public" virt="non-virtual"><scope>MonomialsWithComponent</scope><name>is_equal</name></member>
+      <member refid="class_monomials_with_component_afd89061824421684fc035fe69b42d5a3_1afd89061824421684fc035fe69b42d5a3" prot="private" virt="non-virtual"><scope>MonomialsWithComponent</scope><name>mMonoid</name></member>
+      <member refid="class_monomials_with_component_a875396f713967db5248f2f9ffe651c68_1a875396f713967db5248f2f9ffe651c68" prot="public" virt="non-virtual"><scope>MonomialsWithComponent</scope><name>MonomialsWithComponent</name></member>
+      <member refid="class_monomials_with_component_a850e9f590db330c13118fe6ce9f51b8c_1a850e9f590db330c13118fe6ce9f51b8c" prot="public" virt="non-virtual"><scope>MonomialsWithComponent</scope><name>show</name></member>
+      <member refid="class_monomials_with_component_a2ab79a8b042ed99560764edbd7b72e23_1a2ab79a8b042ed99560764edbd7b72e23" prot="public" virt="non-virtual"><scope>MonomialsWithComponent</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

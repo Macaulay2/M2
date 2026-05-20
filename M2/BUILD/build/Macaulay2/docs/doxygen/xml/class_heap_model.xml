@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_heap_model" kind="class" language="C++" prot="public">
+    <compoundname>HeapModel</compoundname>
+    <basecompoundref refid="class_model" prot="public" virt="non-virtual">Model&lt; OnSpans, Deduplicate, true, mathic::Heap, HeapModelBase&lt; FastIndex &gt; &gt;</basecompoundref>
+    <includes refid="_heap_model_8h" local="no">HeapModel.h</includes>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>OnSpans</declname>
+        <defname>OnSpans</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>Deduplicate</declname>
+        <defname>Deduplicate</defname>
+      </param>
+      <param>
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <declname>FastIndex</declname>
+        <defname>FastIndex</defname>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>HeapModel&lt; OnSpans, Deduplicate, FastIndex &gt;</label>
+        <link refid="class_heap_model"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;</label>
+        <link refid="class_model"/>
+      </node>
+      <node id="2">
+        <label>Model&lt; OnSpans, Deduplicate, true, mathic::Heap, HeapModelBase&lt; FastIndex &gt; &gt;</label>
+        <link refid="class_model"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; OnSpans, Deduplicate, true, mathic::Heap, HeapModelBase&lt; FastIndex &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="17">
+        <label>C</label>
+      </node>
+      <node id="10">
+        <label>ConfigurationBase</label>
+        <link refid="class_configuration_base"/>
+      </node>
+      <node id="19">
+        <label>DataStructure&lt; Model::Configuration &gt;</label>
+      </node>
+      <node id="1">
+        <label>HeapModel&lt; OnSpans, Deduplicate, FastIndex &gt;</label>
+        <link refid="class_heap_model"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ItemOrValue&lt; bool &gt;</label>
+        <link refid="struct_item_or_value"/>
+      </node>
+      <node id="6">
+        <label>Entry&lt; OnSpans &gt;</label>
+        <link refid="struct_item_or_value"/>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; OnSpans &gt;::Entry</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;</label>
+        <link refid="class_model"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_ds</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Model&lt; OnSpans, Deduplicate, UseDecreaseTop, DataStructure, ConfigurationBase &gt;::Configuration</label>
+        <link refid="class_model_1_1_configuration"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>supportDeduplication</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_comparisons</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_pending</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Model&lt; OnSpans, Deduplicate, true, mathic::Heap, HeapModelBase&lt; FastIndex &gt; &gt;</label>
+        <link refid="class_model"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_ds</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; OnSpans, Deduplicate, true, mathic::Heap, HeapModelBase&lt; FastIndex &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>T</label>
+      </node>
+      <node id="11">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="5">
+        <label>mathic::ComTree&lt; Entry, FastIndex &gt;</label>
+        <link refid="classmathic_1_1_com_tree"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_array</edgelabel>
+          <edgelabel>_arrayKeepAlive</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_capacityEnd</edgelabel>
+          <edgelabel>_lastLeaf</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mathic::ComTree&lt; Entry, Configuration::fastIndex &gt;</label>
+        <link refid="classmathic_1_1_com_tree"/>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; Entry, Configuration::fastIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>mathic::Heap&lt; C &gt;</label>
+        <link refid="classmathic_1_1_heap"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_tree</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_conf</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mathic::Heap&lt; Model::Configuration &gt;</label>
+        <link refid="classmathic_1_1_heap"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_tree</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_conf</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; Model::Configuration &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>size_t</label>
+      </node>
+      <node id="14">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="15" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>std::vector&lt; Entry &gt;</label>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; Entry &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>continue_node&lt; tbb::flow::continue_msg &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/pqsim/HeapModel.h" line="13" column="1" bodyfile="submodules/mathic/src/pqsim/HeapModel.h" bodystart="14" bodyend="14"/>
+    <listofallmembers>
+      <member refid="class_model_a0af2bc9bdc2222c7c3354a85b271dddb_1a0af2bc9bdc2222c7c3354a85b271dddb" prot="private" virt="non-virtual"><scope>HeapModel</scope><name>_ds</name></member>
+      <member refid="class_model_a345c032d0f403c78b7c522880ba9d75b_1a345c032d0f403c78b7c522880ba9d75b" prot="public" virt="non-virtual"><scope>HeapModel</scope><name>empty</name></member>
+      <member refid="class_model_aee4b75b2dc8bcb8abfeef4a4eab81a7e_1aee4b75b2dc8bcb8abfeef4a4eab81a7e" prot="public" virt="non-virtual"><scope>HeapModel</scope><name>getComparisons</name></member>
+      <member refid="class_model_ab239c68d29a5bb434057ee10b88ed5ff_1ab239c68d29a5bb434057ee10b88ed5ff" prot="public" virt="non-virtual"><scope>HeapModel</scope><name>getMemoryUse</name></member>
+      <member refid="class_model_acfd121c3e84288efda3f89d8717649b5_1acfd121c3e84288efda3f89d8717649b5" prot="public" virt="non-virtual"><scope>HeapModel</scope><name>getName</name></member>
+      <member refid="class_model_a697344cf9875b241b32b97ab67fdc58a_1a697344cf9875b241b32b97ab67fdc58a" prot="public" virt="non-virtual"><scope>HeapModel</scope><name>Model</name></member>
+      <member refid="class_model_a7384b2cd71eb2823eb18e2b884c50e22_1a7384b2cd71eb2823eb18e2b884c50e22" prot="public" virt="non-virtual"><scope>HeapModel</scope><name>pop</name></member>
+      <member refid="class_model_a262ee084561d9d63220286b730ce2609_1a262ee084561d9d63220286b730ce2609" prot="public" virt="non-virtual"><scope>HeapModel</scope><name>print</name></member>
+      <member refid="class_model_adffc7a83fbda6d0ecc662ab1d8aae529_1adffc7a83fbda6d0ecc662ab1d8aae529" prot="public" virt="non-virtual"><scope>HeapModel</scope><name>push</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

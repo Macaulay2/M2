@@ -1,0 +1,723 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_b_i_basis_1_1_monom_lex" kind="class" language="C++" prot="public">
+    <compoundname>BIBasis::MonomLex</compoundname>
+    <basecompoundref refid="class_b_i_basis_1_1_monom" prot="public" virt="non-virtual">BIBasis::Monom</basecompoundref>
+    <includes refid="monom_lex_8hpp" local="no">monomLex.hpp</includes>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="class_b_i_basis_1_1_monom_lex_a57319d76ab91d039bca8fec6da8fa989_1a57319d76ab91d039bca8fec6da8fa989" prot="private" static="yes" mutable="no">
+        <type><ref refid="class_b_i_basis_1_1_fast_allocator" kindref="compound">FastAllocator</ref></type>
+        <definition>FastAllocator BIBasis::MonomLex::Allocator</definition>
+        <argsstring></argsstring>
+        <name>Allocator</name>
+        <qualifiedname>BIBasis::MonomLex::Allocator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="61" column="30" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_aeca928312ca5e4b61a65bf1da8e862d1_1aeca928312ca5e4b61a65bf1da8e862d1" compoundref="monom_lex_8hpp" startline="142" endline="145">operator delete</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_abed8d211881dbd10d3b2076b2528459d_1abed8d211881dbd10d3b2076b2528459d" compoundref="monom_lex_8hpp" startline="137" endline="140">operator new</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_b_i_basis_1_1_monom_lex_aaacb1e7733c4556a58366c0e5e34f4a8_1aaacb1e7733c4556a58366c0e5e34f4a8" prot="public" static="no" mutable="no">
+        <type><ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> *</type>
+        <definition>MonomLex* BIBasis::MonomLex::Next</definition>
+        <argsstring></argsstring>
+        <name>Next</name>
+        <qualifiedname>BIBasis::MonomLex::Next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="64" column="18" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="64" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a67d88834ed3b6df9becac96d771971ad_1a67d88834ed3b6df9becac96d771971ad" compoundref="monom_lex_8hpp" startline="108" endline="130">MonomLex</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::MonomLex::MonomLex</definition>
+        <argsstring>()</argsstring>
+        <name>MonomLex</name>
+        <qualifiedname>BIBasis::MonomLex::MonomLex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="67" column="9" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="102" bodyend="106"/>
+        <references refid="class_b_i_basis_1_1_monom_ae4db8accaeb4423c9f821182ab068b56_1ae4db8accaeb4423c9f821182ab068b56" compoundref="monom_8hpp" startline="143" endline="147">BIBasis::Monom::Monom</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_aaacb1e7733c4556a58366c0e5e34f4a8_1aaacb1e7733c4556a58366c0e5e34f4a8" compoundref="monom_lex_8hpp" startline="64">Next</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a543d0b417015e760759b8862d0a9f02f_1a543d0b417015e760759b8862d0a9f02f" compoundref="monom_lex_8cpp" startline="18" endline="48">Compare</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a34b4ae06403088f8170792eb8680f4dd_1a34b4ae06403088f8170792eb8680f4dd" compoundref="monom_lex_8hpp" startline="468" endline="490">IsDivisibleBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_aae4d67a9fb223277237e61fb846b64aa_1aae4d67a9fb223277237e61fb846b64aa" compoundref="monom_lex_8hpp" startline="521" endline="545">IsPommaretDivisibleBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a7d9b635f5c106076e6c23cc870d9afe4_1a7d9b635f5c106076e6c23cc870d9afe4" compoundref="monom_lex_8hpp" startline="492" endline="519">IsTrueDivisibleBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a67d88834ed3b6df9becac96d771971ad_1a67d88834ed3b6df9becac96d771971ad" compoundref="monom_lex_8hpp" startline="108" endline="130">MonomLex</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a5d7146e9713f80ed02e5fa9b74cac7f7_1a5d7146e9713f80ed02e5fa9b74cac7f7" compoundref="monom_lex_8hpp" startline="405" endline="426">operator!=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a0237f7dbcb6448508975ecad8802c72e_1a0237f7dbcb6448508975ecad8802c72e" compoundref="monom_lex_8hpp" startline="269" endline="319">operator*=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_ad9328466ca9df163d36e19e58f62da28_1ad9328466ca9df163d36e19e58f62da28" compoundref="monom_lex_8hpp" startline="263" endline="267">operator*=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a17e1118376b1213c2f78e3aeddad0978_1a17e1118376b1213c2f78e3aeddad0978" compoundref="monom_lex_8hpp" startline="321" endline="343">operator/=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_af571d2b9dc3fc405781d77313d2b0605_1af571d2b9dc3fc405781d77313d2b0605" compoundref="monom_lex_8hpp" startline="428" endline="446">operator&lt;</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a98b09d429e87d20a32cf1b407c955c16_1a98b09d429e87d20a32cf1b407c955c16" compoundref="monom_lex_8hpp" startline="183" endline="228">operator=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_ad94c2b550fcef13d75fdd9ddaa3978ad_1ad94c2b550fcef13d75fdd9ddaa3978ad" compoundref="monom_lex_8hpp" startline="382" endline="403">operator==</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a26d5c4f2053aa9c525a5b6be3e6af0f6_1a26d5c4f2053aa9c525a5b6be3e6af0f6" compoundref="monom_lex_8hpp" startline="448" endline="466">operator&gt;</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a71a1fdf90d1a3beb074ed507e729e401_1a71a1fdf90d1a3beb074ed507e729e401" compoundref="monom_lex_8hpp" startline="345" endline="380">SetQuotientOf</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a67d88834ed3b6df9becac96d771971ad_1a67d88834ed3b6df9becac96d771971ad" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::MonomLex::MonomLex</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom)</argsstring>
+        <name>MonomLex</name>
+        <qualifiedname>BIBasis::MonomLex::MonomLex</qualifiedname>
+        <param>
+          <type>const MonomLex &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="68" column="9" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="108" bodyend="130"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_ae4db8accaeb4423c9f821182ab068b56_1ae4db8accaeb4423c9f821182ab068b56" compoundref="monom_8hpp" startline="143" endline="147">BIBasis::Monom::Monom</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_aaacb1e7733c4556a58366c0e5e34f4a8_1aaacb1e7733c4556a58366c0e5e34f4a8" compoundref="monom_lex_8hpp" startline="64">Next</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a8186de9be0c4ac81367fd211759a338f_1a8186de9be0c4ac81367fd211759a338f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::MonomLex::~MonomLex</definition>
+        <argsstring>()</argsstring>
+        <name>~MonomLex</name>
+        <qualifiedname>BIBasis::MonomLex::~MonomLex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="69" column="9" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="132" bodyend="135"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a461fc68f7add6896b44172891fcc2972_1a461fc68f7add6896b44172891fcc2972" compoundref="monom_lex_8hpp" startline="162" endline="175">SetOne</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a8186de9be0c4ac81367fd211759a338f_1a8186de9be0c4ac81367fd211759a338f" compoundref="monom_lex_8hpp" startline="132" endline="135">~MonomLex</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a8186de9be0c4ac81367fd211759a338f_1a8186de9be0c4ac81367fd211759a338f" compoundref="monom_lex_8hpp" startline="132" endline="135">~MonomLex</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_abed8d211881dbd10d3b2076b2528459d_1abed8d211881dbd10d3b2076b2528459d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * BIBasis::MonomLex::operator new</definition>
+        <argsstring>(std::size_t)</argsstring>
+        <name>operator new</name>
+        <qualifiedname>BIBasis::MonomLex::operator new</qualifiedname>
+        <param>
+          <type>std::size_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="71" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="137" bodyend="140"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a57319d76ab91d039bca8fec6da8fa989_1a57319d76ab91d039bca8fec6da8fa989" compoundref="monom_lex_8hpp" startline="61">Allocator</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_aeca928312ca5e4b61a65bf1da8e862d1_1aeca928312ca5e4b61a65bf1da8e862d1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::MonomLex::operator delete</definition>
+        <argsstring>(void *ptr)</argsstring>
+        <name>operator delete</name>
+        <qualifiedname>BIBasis::MonomLex::operator delete</qualifiedname>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="72" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="142" bodyend="145"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a57319d76ab91d039bca8fec6da8fa989_1a57319d76ab91d039bca8fec6da8fa989" compoundref="monom_lex_8hpp" startline="61">Allocator</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a461fc68f7add6896b44172891fcc2972_1a461fc68f7add6896b44172891fcc2972" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void BIBasis::MonomLex::SetOne</definition>
+        <argsstring>()</argsstring>
+        <name>SetOne</name>
+        <qualifiedname>BIBasis::MonomLex::SetOne</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_adcdcb9d656c139149a3ef585d95dddc5_1adcdcb9d656c139149a3ef585d95dddc5">SetOne</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="74" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="162" bodyend="175"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a461fc68f7add6896b44172891fcc2972_1a461fc68f7add6896b44172891fcc2972" compoundref="monom_lex_8hpp" startline="162" endline="175">SetOne</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a98b09d429e87d20a32cf1b407c955c16_1a98b09d429e87d20a32cf1b407c955c16" compoundref="monom_lex_8hpp" startline="183" endline="228">operator=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a461fc68f7add6896b44172891fcc2972_1a461fc68f7add6896b44172891fcc2972" compoundref="monom_lex_8hpp" startline="162" endline="175">SetOne</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a71a1fdf90d1a3beb074ed507e729e401_1a71a1fdf90d1a3beb074ed507e729e401" compoundref="monom_lex_8hpp" startline="345" endline="380">SetQuotientOf</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a8186de9be0c4ac81367fd211759a338f_1a8186de9be0c4ac81367fd211759a338f" compoundref="monom_lex_8hpp" startline="132" endline="135">~MonomLex</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a0ba0e45aeee2fafd5c935c0777396094_1a0ba0e45aeee2fafd5c935c0777396094" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+        <definition>MonomLex::Integer BIBasis::MonomLex::operator[]</definition>
+        <argsstring>(Integer var) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>BIBasis::MonomLex::operator[]</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a0333e97c9f153f66dda24ecc461cbe63_1a0333e97c9f153f66dda24ecc461cbe63">operator[]</reimplements>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+          <declname>var</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="75" column="17" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="177" bodyend="181"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a17c42c68d47700fd30c951e6f86ed467_1a17c42c68d47700fd30c951e6f86ed467" compoundref="monom_lex_8hpp" startline="147" endline="160">Find</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a0ba0e45aeee2fafd5c935c0777396094_1a0ba0e45aeee2fafd5c935c0777396094" compoundref="monom_lex_8hpp" startline="177" endline="181">operator[]</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a0ba0e45aeee2fafd5c935c0777396094_1a0ba0e45aeee2fafd5c935c0777396094" compoundref="monom_lex_8hpp" startline="177" endline="181">operator[]</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a98b09d429e87d20a32cf1b407c955c16_1a98b09d429e87d20a32cf1b407c955c16" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+        <definition>const MonomLex &amp; BIBasis::MonomLex::operator=</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>BIBasis::MonomLex::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="77" column="24" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="183" bodyend="228"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a98b09d429e87d20a32cf1b407c955c16_1a98b09d429e87d20a32cf1b407c955c16" compoundref="monom_lex_8hpp" startline="183" endline="228">operator=</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a461fc68f7add6896b44172891fcc2972_1a461fc68f7add6896b44172891fcc2972" compoundref="monom_lex_8hpp" startline="162" endline="175">SetOne</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a98b09d429e87d20a32cf1b407c955c16_1a98b09d429e87d20a32cf1b407c955c16" compoundref="monom_lex_8hpp" startline="183" endline="228">operator=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_ad9328466ca9df163d36e19e58f62da28_1ad9328466ca9df163d36e19e58f62da28" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+        <definition>const MonomLex &amp; BIBasis::MonomLex::operator*=</definition>
+        <argsstring>(Integer var)</argsstring>
+        <name>operator*=</name>
+        <qualifiedname>BIBasis::MonomLex::operator*=</qualifiedname>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+          <declname>var</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="78" column="24" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="263" bodyend="267"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a173f25a73b18777a3544400944e4fa01_1a173f25a73b18777a3544400944e4fa01" compoundref="monom_lex_8hpp" startline="230" endline="261">MultiplyBy</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ad9328466ca9df163d36e19e58f62da28_1ad9328466ca9df163d36e19e58f62da28" compoundref="monom_lex_8hpp" startline="263" endline="267">operator*=</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a0237f7dbcb6448508975ecad8802c72e_1a0237f7dbcb6448508975ecad8802c72e" compoundref="monom_lex_8hpp" startline="269" endline="319">operator*=</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_ad9328466ca9df163d36e19e58f62da28_1ad9328466ca9df163d36e19e58f62da28" compoundref="monom_lex_8hpp" startline="263" endline="267">operator*=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a0237f7dbcb6448508975ecad8802c72e_1a0237f7dbcb6448508975ecad8802c72e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+        <definition>const MonomLex &amp; BIBasis::MonomLex::operator*=</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom)</argsstring>
+        <name>operator*=</name>
+        <qualifiedname>BIBasis::MonomLex::operator*=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="79" column="24" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="269" bodyend="319"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ad9328466ca9df163d36e19e58f62da28_1ad9328466ca9df163d36e19e58f62da28" compoundref="monom_lex_8hpp" startline="263" endline="267">operator*=</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a17e1118376b1213c2f78e3aeddad0978_1a17e1118376b1213c2f78e3aeddad0978" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+        <definition>const MonomLex &amp; BIBasis::MonomLex::operator/=</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom)</argsstring>
+        <name>operator/=</name>
+        <qualifiedname>BIBasis::MonomLex::operator/=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="80" column="24" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="321" bodyend="343"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a17e1118376b1213c2f78e3aeddad0978_1a17e1118376b1213c2f78e3aeddad0978" compoundref="monom_lex_8hpp" startline="321" endline="343">operator/=</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a17e1118376b1213c2f78e3aeddad0978_1a17e1118376b1213c2f78e3aeddad0978" compoundref="monom_lex_8hpp" startline="321" endline="343">operator/=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a71a1fdf90d1a3beb074ed507e729e401_1a71a1fdf90d1a3beb074ed507e729e401" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::MonomLex::SetQuotientOf</definition>
+        <argsstring>(const MonomLex &amp;monomA, const MonomLex &amp;monomB)</argsstring>
+        <name>SetQuotientOf</name>
+        <qualifiedname>BIBasis::MonomLex::SetQuotientOf</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>monomA</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>monomB</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="81" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="345" bodyend="380"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a461fc68f7add6896b44172891fcc2972_1a461fc68f7add6896b44172891fcc2972" compoundref="monom_lex_8hpp" startline="162" endline="175">SetOne</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a71a1fdf90d1a3beb074ed507e729e401_1a71a1fdf90d1a3beb074ed507e729e401" compoundref="monom_lex_8hpp" startline="345" endline="380">SetQuotientOf</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a71a1fdf90d1a3beb074ed507e729e401_1a71a1fdf90d1a3beb074ed507e729e401" compoundref="monom_lex_8hpp" startline="345" endline="380">SetQuotientOf</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_ad94c2b550fcef13d75fdd9ddaa3978ad_1ad94c2b550fcef13d75fdd9ddaa3978ad" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomLex::operator==</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>BIBasis::MonomLex::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="83" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="382" bodyend="403"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ad94c2b550fcef13d75fdd9ddaa3978ad_1ad94c2b550fcef13d75fdd9ddaa3978ad" compoundref="monom_lex_8hpp" startline="382" endline="403">operator==</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_ad94c2b550fcef13d75fdd9ddaa3978ad_1ad94c2b550fcef13d75fdd9ddaa3978ad" compoundref="monom_lex_8hpp" startline="382" endline="403">operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a5d7146e9713f80ed02e5fa9b74cac7f7_1a5d7146e9713f80ed02e5fa9b74cac7f7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomLex::operator!=</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom) const</argsstring>
+        <name>operator!=</name>
+        <qualifiedname>BIBasis::MonomLex::operator!=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="84" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="405" bodyend="426"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a5d7146e9713f80ed02e5fa9b74cac7f7_1a5d7146e9713f80ed02e5fa9b74cac7f7" compoundref="monom_lex_8hpp" startline="405" endline="426">operator!=</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a5d7146e9713f80ed02e5fa9b74cac7f7_1a5d7146e9713f80ed02e5fa9b74cac7f7" compoundref="monom_lex_8hpp" startline="405" endline="426">operator!=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_af571d2b9dc3fc405781d77313d2b0605_1af571d2b9dc3fc405781d77313d2b0605" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomLex::operator&lt;</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom) const</argsstring>
+        <name>operator&lt;</name>
+        <qualifiedname>BIBasis::MonomLex::operator&lt;</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="86" column="9" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="428" bodyend="446"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_af571d2b9dc3fc405781d77313d2b0605_1af571d2b9dc3fc405781d77313d2b0605" compoundref="monom_lex_8hpp" startline="428" endline="446">operator&lt;</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_af571d2b9dc3fc405781d77313d2b0605_1af571d2b9dc3fc405781d77313d2b0605" compoundref="monom_lex_8hpp" startline="428" endline="446">operator&lt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a26d5c4f2053aa9c525a5b6be3e6af0f6_1a26d5c4f2053aa9c525a5b6be3e6af0f6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomLex::operator&gt;</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom) const</argsstring>
+        <name>operator&gt;</name>
+        <qualifiedname>BIBasis::MonomLex::operator&gt;</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="87" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="448" bodyend="466"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a26d5c4f2053aa9c525a5b6be3e6af0f6_1a26d5c4f2053aa9c525a5b6be3e6af0f6" compoundref="monom_lex_8hpp" startline="448" endline="466">operator&gt;</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a26d5c4f2053aa9c525a5b6be3e6af0f6_1a26d5c4f2053aa9c525a5b6be3e6af0f6" compoundref="monom_lex_8hpp" startline="448" endline="466">operator&gt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a543d0b417015e760759b8862d0a9f02f_1a543d0b417015e760759b8862d0a9f02f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int BIBasis::MonomLex::Compare</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom)</argsstring>
+        <name>Compare</name>
+        <qualifiedname>BIBasis::MonomLex::Compare</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="88" column="13" bodyfile="Macaulay2/e/bibasis/monomLex.cpp" bodystart="18" bodyend="48"/>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a34b4ae06403088f8170792eb8680f4dd_1a34b4ae06403088f8170792eb8680f4dd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomLex::IsDivisibleBy</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom) const</argsstring>
+        <name>IsDivisibleBy</name>
+        <qualifiedname>BIBasis::MonomLex::IsDivisibleBy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="90" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="468" bodyend="490"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a34b4ae06403088f8170792eb8680f4dd_1a34b4ae06403088f8170792eb8680f4dd" compoundref="monom_lex_8hpp" startline="468" endline="490">IsDivisibleBy</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a34b4ae06403088f8170792eb8680f4dd_1a34b4ae06403088f8170792eb8680f4dd" compoundref="monom_lex_8hpp" startline="468" endline="490">IsDivisibleBy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a7d9b635f5c106076e6c23cc870d9afe4_1a7d9b635f5c106076e6c23cc870d9afe4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomLex::IsTrueDivisibleBy</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom) const</argsstring>
+        <name>IsTrueDivisibleBy</name>
+        <qualifiedname>BIBasis::MonomLex::IsTrueDivisibleBy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="91" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="492" bodyend="519"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a7d9b635f5c106076e6c23cc870d9afe4_1a7d9b635f5c106076e6c23cc870d9afe4" compoundref="monom_lex_8hpp" startline="492" endline="519">IsTrueDivisibleBy</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a7d9b635f5c106076e6c23cc870d9afe4_1a7d9b635f5c106076e6c23cc870d9afe4" compoundref="monom_lex_8hpp" startline="492" endline="519">IsTrueDivisibleBy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_aae4d67a9fb223277237e61fb846b64aa_1aae4d67a9fb223277237e61fb846b64aa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool BIBasis::MonomLex::IsPommaretDivisibleBy</definition>
+        <argsstring>(const MonomLex &amp;anotherMonom) const</argsstring>
+        <name>IsPommaretDivisibleBy</name>
+        <qualifiedname>BIBasis::MonomLex::IsPommaretDivisibleBy</qualifiedname>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" kindref="member">MonomLex</ref> &amp;</type>
+          <declname>anotherMonom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="92" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="521" bodyend="545"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_aae4d67a9fb223277237e61fb846b64aa_1aae4d67a9fb223277237e61fb846b64aa" compoundref="monom_lex_8hpp" startline="521" endline="545">IsPommaretDivisibleBy</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" compoundref="monom_lex_8hpp" startline="102" endline="106">MonomLex</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_aae4d67a9fb223277237e61fb846b64aa_1aae4d67a9fb223277237e61fb846b64aa" compoundref="monom_lex_8hpp" startline="521" endline="545">IsPommaretDivisibleBy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a5a3d7fe45aa5e66b81f6e7b32c211f16_1a5a3d7fe45aa5e66b81f6e7b32c211f16" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+        <definition>MonomLex::Integer BIBasis::MonomLex::FirstMultiVar</definition>
+        <argsstring>() const</argsstring>
+        <name>FirstMultiVar</name>
+        <qualifiedname>BIBasis::MonomLex::FirstMultiVar</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a5624067db84a8869418fa673b1481b1f_1a5624067db84a8869418fa673b1481b1f">FirstMultiVar</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="94" column="17" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="547" bodyend="560"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a5a3d7fe45aa5e66b81f6e7b32c211f16_1a5a3d7fe45aa5e66b81f6e7b32c211f16" compoundref="monom_lex_8hpp" startline="547" endline="560">FirstMultiVar</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a5a3d7fe45aa5e66b81f6e7b32c211f16_1a5a3d7fe45aa5e66b81f6e7b32c211f16" compoundref="monom_lex_8hpp" startline="547" endline="560">FirstMultiVar</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a6b70c16fcb13194d230182f9e03ae820_1a6b70c16fcb13194d230182f9e03ae820" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::set&lt; <ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref> &gt;</type>
+        <definition>std::set&lt; MonomLex::Integer &gt; BIBasis::MonomLex::GetVariablesSet</definition>
+        <argsstring>() const</argsstring>
+        <name>GetVariablesSet</name>
+        <qualifiedname>BIBasis::MonomLex::GetVariablesSet</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a3ad7dd1f884869f6b6c9b39fa83182dc_1a3ad7dd1f884869f6b6c9b39fa83182dc">GetVariablesSet</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="95" column="18" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="562" bodyend="572"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a6b70c16fcb13194d230182f9e03ae820_1a6b70c16fcb13194d230182f9e03ae820" compoundref="monom_lex_8hpp" startline="562" endline="572">GetVariablesSet</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a6b70c16fcb13194d230182f9e03ae820_1a6b70c16fcb13194d230182f9e03ae820" compoundref="monom_lex_8hpp" startline="562" endline="572">GetVariablesSet</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a173f25a73b18777a3544400944e4fa01_1a173f25a73b18777a3544400944e4fa01" prot="private" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void BIBasis::MonomLex::MultiplyBy</definition>
+        <argsstring>(Integer var)</argsstring>
+        <name>MultiplyBy</name>
+        <qualifiedname>BIBasis::MonomLex::MultiplyBy</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a1ffd80b92a44ecfcc14202685397ee08_1a1ffd80b92a44ecfcc14202685397ee08">MultiplyBy</reimplements>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+          <declname>var</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="98" column="14" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="230" bodyend="261"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a17c42c68d47700fd30c951e6f86ed467_1a17c42c68d47700fd30c951e6f86ed467" compoundref="monom_lex_8hpp" startline="147" endline="160">Find</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="class_b_i_basis_1_1_monom_lex_a173f25a73b18777a3544400944e4fa01_1a173f25a73b18777a3544400944e4fa01" compoundref="monom_lex_8hpp" startline="230" endline="261">MultiplyBy</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" compoundref="monom_8hpp" startline="100">BIBasis::Monom::TotalDegree</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a173f25a73b18777a3544400944e4fa01_1a173f25a73b18777a3544400944e4fa01" compoundref="monom_lex_8hpp" startline="230" endline="261">MultiplyBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_ad9328466ca9df163d36e19e58f62da28_1ad9328466ca9df163d36e19e58f62da28" compoundref="monom_lex_8hpp" startline="263" endline="267">operator*=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_monom_lex_a17c42c68d47700fd30c951e6f86ed467_1a17c42c68d47700fd30c951e6f86ed467" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node" kindref="compound">VarsListNode</ref> *</type>
+        <definition>MonomLex::VarsListNode * BIBasis::MonomLex::Find</definition>
+        <argsstring>(const Integer var) const</argsstring>
+        <name>Find</name>
+        <qualifiedname>BIBasis::MonomLex::Find</qualifiedname>
+        <reimplements refid="class_b_i_basis_1_1_monom_a039844b31928cbee6dc33e4681f394b9_1a039844b31928cbee6dc33e4681f394b9">Find</reimplements>
+        <param>
+          <type>const <ref refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" kindref="member">Integer</ref></type>
+          <declname>var</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/monomLex.hpp" line="99" column="22" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="147" bodyend="160"/>
+        <references refid="class_b_i_basis_1_1_monom_lex_a17c42c68d47700fd30c951e6f86ed467_1a17c42c68d47700fd30c951e6f86ed467" compoundref="monom_lex_8hpp" startline="147" endline="160">Find</references>
+        <references refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" compoundref="monom_8hpp" startline="99">BIBasis::Monom::ListHead</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_ad94cd89a5774ddecb9cd01102e148e02_1ad94cd89a5774ddecb9cd01102e148e02" compoundref="monom_8hpp" startline="90">BIBasis::Monom::VarsListNode::Next</references>
+        <references refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node_a27e6ebbc6d73553e4cc3ab65c46c45af_1a27e6ebbc6d73553e4cc3ab65c46c45af" compoundref="monom_8hpp" startline="89">BIBasis::Monom::VarsListNode::Value</references>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a17c42c68d47700fd30c951e6f86ed467_1a17c42c68d47700fd30c951e6f86ed467" compoundref="monom_lex_8hpp" startline="147" endline="160">Find</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a173f25a73b18777a3544400944e4fa01_1a173f25a73b18777a3544400944e4fa01" compoundref="monom_lex_8hpp" startline="230" endline="261">MultiplyBy</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_monom_lex_a0ba0e45aeee2fafd5c935c0777396094_1a0ba0e45aeee2fafd5c935c0777396094" compoundref="monom_lex_8hpp" startline="177" endline="181">operator[]</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para><computeroutput><ref refid="class_b_i_basis_1_1_monom" kindref="compound">Monom</ref></computeroutput> specialisation that orders monomials by pure lex on their sorted variable lists. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Same layout as <computeroutput><ref refid="class_b_i_basis_1_1_monom_d_l" kindref="compound">MonomDL</ref></computeroutput> / <computeroutput><ref refid="class_b_i_basis_1_1_monom_d_r_l" kindref="compound">MonomDRL</ref></computeroutput> <mdash/> a <computeroutput><ref refid="class_b_i_basis_1_1_monom" kindref="compound">Monom</ref></computeroutput> plus a per-class <computeroutput><ref refid="class_b_i_basis_1_1_fast_allocator" kindref="compound">FastAllocator</ref></computeroutput> and a <computeroutput><ref refid="class_b_i_basis_1_1_monom_lex_aaacb1e7733c4556a58366c0e5e34f4a8_1aaacb1e7733c4556a58366c0e5e34f4a8" kindref="member">Next</ref></computeroutput> chaining pointer <mdash/> but with lex comparison so the first differing variable decides the order. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>BIBasis::Monom</label>
+        <link refid="class_b_i_basis_1_1_monom"/>
+      </node>
+      <node id="1">
+        <label>BIBasis::MonomLex</label>
+        <link refid="class_b_i_basis_1_1_monom_lex"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="5">
+        <label>BIBasis::FastAllocator</label>
+        <link refid="class_b_i_basis_1_1_fast_allocator"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>MemoryPageSize</edgelabel>
+          <edgelabel>PageSize</edgelabel>
+          <edgelabel>TSize</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>FreeBlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>BIBasis::Monom</label>
+        <link refid="class_b_i_basis_1_1_monom"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>ListHead</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>TotalDegree</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>DimIndepend</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>BIBasis::Monom::VarsListNode</label>
+        <link refid="struct_b_i_basis_1_1_monom_1_1_vars_list_node"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>Value</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Next</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>Allocator</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>BIBasis::MonomLex</label>
+        <link refid="class_b_i_basis_1_1_monom_lex"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>Allocator</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>Next</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="6">
+        <label>size_t</label>
+      </node>
+      <node id="8">
+        <label>static Integer</label>
+      </node>
+      <node id="7">
+        <label>void **</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/bibasis/monomLex.hpp" line="58" column="5" bodyfile="Macaulay2/e/bibasis/monomLex.hpp" bodystart="59" bodyend="100"/>
+    <listofallmembers>
+      <member refid="class_b_i_basis_1_1_monom_lex_a57319d76ab91d039bca8fec6da8fa989_1a57319d76ab91d039bca8fec6da8fa989" prot="private" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>Allocator</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a543d0b417015e760759b8862d0a9f02f_1a543d0b417015e760759b8862d0a9f02f" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>Compare</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50bccef8e8655afbc0508ce7efbf4064_1a50bccef8e8655afbc0508ce7efbf4064ac965ad2249630fb85984a6caba9f0086" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>DegLex</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50dc54b38edf474f91ac492635ac4a51_1a50dc54b38edf474f91ac492635ac4a51" prot="public" virt="virtual"><scope>BIBasis::MonomLex</scope><name>Degree</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50bccef8e8655afbc0508ce7efbf4064_1a50bccef8e8655afbc0508ce7efbf4064a24553d6076cdcb4053884ab1c355588d" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>DegRevLex</name></member>
+      <member refid="class_b_i_basis_1_1_monom_acff85e49a80fdf847a56b998c04e99b7_1acff85e49a80fdf847a56b998c04e99b7" prot="protected" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>DimIndepend</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a17c42c68d47700fd30c951e6f86ed467_1a17c42c68d47700fd30c951e6f86ed467" prot="private" virt="virtual"><scope>BIBasis::MonomLex</scope><name>Find</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a5a3d7fe45aa5e66b81f6e7b32c211f16_1a5a3d7fe45aa5e66b81f6e7b32c211f16" prot="public" virt="virtual"><scope>BIBasis::MonomLex</scope><name>FirstMultiVar</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a294b5e2f6b15acb33cdbd788f3307100_1a294b5e2f6b15acb33cdbd788f3307100" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>GetDimIndepend</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a6b70c16fcb13194d230182f9e03ae820_1a6b70c16fcb13194d230182f9e03ae820" prot="public" virt="virtual"><scope>BIBasis::MonomLex</scope><name>GetVariablesSet</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a58ad9c3f9581a148624bb3c304add06d_1a58ad9c3f9581a148624bb3c304add06d" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>Integer</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a34b4ae06403088f8170792eb8680f4dd_1a34b4ae06403088f8170792eb8680f4dd" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>IsDivisibleBy</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_aae4d67a9fb223277237e61fb846b64aa_1aae4d67a9fb223277237e61fb846b64aa" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>IsPommaretDivisibleBy</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a7d9b635f5c106076e6c23cc870d9afe4_1a7d9b635f5c106076e6c23cc870d9afe4" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>IsTrueDivisibleBy</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50bccef8e8655afbc0508ce7efbf4064_1a50bccef8e8655afbc0508ce7efbf4064adbd8be8c18a7c037d140c2d372652898" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>Lex</name></member>
+      <member refid="class_b_i_basis_1_1_monom_ace5c7e7f9d408c26588328d3d9b772e4_1ace5c7e7f9d408c26588328d3d9b772e4" prot="protected" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>ListHead</name></member>
+      <member refid="class_b_i_basis_1_1_monom_ae4db8accaeb4423c9f821182ab068b56_1ae4db8accaeb4423c9f821182ab068b56" prot="protected" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>Monom</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_ae6a7b4dcac573426fb3241991225f3e8_1ae6a7b4dcac573426fb3241991225f3e8" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>MonomLex</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a67d88834ed3b6df9becac96d771971ad_1a67d88834ed3b6df9becac96d771971ad" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>MonomLex</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a173f25a73b18777a3544400944e4fa01_1a173f25a73b18777a3544400944e4fa01" prot="private" virt="virtual"><scope>BIBasis::MonomLex</scope><name>MultiplyBy</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_aaacb1e7733c4556a58366c0e5e34f4a8_1aaacb1e7733c4556a58366c0e5e34f4a8" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>Next</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_aeca928312ca5e4b61a65bf1da8e862d1_1aeca928312ca5e4b61a65bf1da8e862d1" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator delete</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_abed8d211881dbd10d3b2076b2528459d_1abed8d211881dbd10d3b2076b2528459d" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator new</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a5d7146e9713f80ed02e5fa9b74cac7f7_1a5d7146e9713f80ed02e5fa9b74cac7f7" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator!=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_ad9328466ca9df163d36e19e58f62da28_1ad9328466ca9df163d36e19e58f62da28" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator*=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a0237f7dbcb6448508975ecad8802c72e_1a0237f7dbcb6448508975ecad8802c72e" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator*=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a17e1118376b1213c2f78e3aeddad0978_1a17e1118376b1213c2f78e3aeddad0978" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator/=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_af571d2b9dc3fc405781d77313d2b0605_1af571d2b9dc3fc405781d77313d2b0605" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator&lt;</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a98b09d429e87d20a32cf1b407c955c16_1a98b09d429e87d20a32cf1b407c955c16" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator=</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_ad94c2b550fcef13d75fdd9ddaa3978ad_1ad94c2b550fcef13d75fdd9ddaa3978ad" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator==</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a26d5c4f2053aa9c525a5b6be3e6af0f6_1a26d5c4f2053aa9c525a5b6be3e6af0f6" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>operator&gt;</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a0ba0e45aeee2fafd5c935c0777396094_1a0ba0e45aeee2fafd5c935c0777396094" prot="public" virt="virtual"><scope>BIBasis::MonomLex</scope><name>operator[]</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a50bccef8e8655afbc0508ce7efbf4064_1a50bccef8e8655afbc0508ce7efbf4064" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>Order</name></member>
+      <member refid="class_b_i_basis_1_1_monom_a425d5018b5a6ce90f0941744d158f046_1a425d5018b5a6ce90f0941744d158f046" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>SetDimIndepend</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a461fc68f7add6896b44172891fcc2972_1a461fc68f7add6896b44172891fcc2972" prot="public" virt="virtual"><scope>BIBasis::MonomLex</scope><name>SetOne</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a71a1fdf90d1a3beb074ed507e729e401_1a71a1fdf90d1a3beb074ed507e729e401" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>SetQuotientOf</name></member>
+      <member refid="class_b_i_basis_1_1_monom_aa0046595752d9d293c84b9146bc701e0_1aa0046595752d9d293c84b9146bc701e0" prot="protected" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>TotalDegree</name></member>
+      <member refid="class_b_i_basis_1_1_monom_ade13f8a64ba1849999636556a5090630_1ade13f8a64ba1849999636556a5090630" prot="public" virt="virtual"><scope>BIBasis::MonomLex</scope><name>~Monom</name></member>
+      <member refid="class_b_i_basis_1_1_monom_lex_a8186de9be0c4ac81367fd211759a338f_1a8186de9be0c4ac81367fd211759a338f" prot="public" virt="non-virtual"><scope>BIBasis::MonomLex</scope><name>~MonomLex</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

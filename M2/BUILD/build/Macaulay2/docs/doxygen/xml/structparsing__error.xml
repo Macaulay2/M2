@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structparsing__error" kind="struct" language="C++" prot="public">
+    <compoundname>parsing_error</compoundname>
+    <basecompoundref refid="structexc_1_1engine__error" prot="public" virt="non-virtual">exc::engine_error</basecompoundref>
+    <includes refid="_basic_poly_8hpp" local="no">BasicPoly.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structparsing__error_ab27c4399273e3b93e42bf7adb113e902_1ab27c4399273e3b93e42bf7adb113e902" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>parsing_error::parsing_error</definition>
+        <argsstring>(const std::string &amp;msg)</argsstring>
+        <name>parsing_error</name>
+        <qualifiedname>parsing_error::parsing_error</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/BasicPoly.hpp" line="102" column="12" bodyfile="Macaulay2/e/BasicPoly.hpp" bodystart="102" bodyend="102"/>
+        <references refid="structexc_1_1engine__error_abf3a42a7116cfa0f704641acbe69161b_1abf3a42a7116cfa0f704641acbe69161b" compoundref="exceptions_8hpp" startline="41" endline="41">exc::engine_error::engine_error</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>exc::engine_error</label>
+        <link refid="structexc_1_1engine__error"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>parsing_error</label>
+        <link refid="structparsing__error"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::exception</label>
+      </node>
+      <node id="3">
+        <label>std::runtime_error</label>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>exc::engine_error</label>
+        <link refid="structexc_1_1engine__error"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>parsing_error</label>
+        <link refid="structparsing__error"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::exception</label>
+      </node>
+      <node id="3">
+        <label>std::runtime_error</label>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/BasicPoly.hpp" line="100" column="1" bodyfile="Macaulay2/e/BasicPoly.hpp" bodystart="101" bodyend="103"/>
+    <listofallmembers>
+      <member refid="structexc_1_1engine__error_abf3a42a7116cfa0f704641acbe69161b_1abf3a42a7116cfa0f704641acbe69161b" prot="public" virt="non-virtual"><scope>parsing_error</scope><name>engine_error</name></member>
+      <member refid="structparsing__error_ab27c4399273e3b93e42bf7adb113e902_1ab27c4399273e3b93e42bf7adb113e902" prot="public" virt="non-virtual"><scope>parsing_error</scope><name>parsing_error</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

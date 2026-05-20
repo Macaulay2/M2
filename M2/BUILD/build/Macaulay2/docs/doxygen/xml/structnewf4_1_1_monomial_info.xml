@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structnewf4_1_1_monomial_info" kind="struct" language="C++" prot="public">
+    <compoundname>newf4::MonomialInfo</compoundname>
+    <includes refid="_monomial_lookup_table_8hpp" local="no">MonomialLookupTable.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnewf4_1_1_monomial_info_a3b3fdd6b6c51372c84058bb9e203c245_1a3b3fdd6b6c51372c84058bb9e203c245" prot="public" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool newf4::MonomialInfo::mIsUsed</definition>
+        <argsstring></argsstring>
+        <name>mIsUsed</name>
+        <qualifiedname>newf4::MonomialInfo::mIsUsed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" line="56" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_a08bc04266cceedf64f97928fff2d3cba_1a08bc04266cceedf64f97928fff2d3cba" compoundref="_monomial_lookup_table_8cpp" startline="10" endline="20">newf4::MonomialLookupTable::insertMonomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnewf4_1_1_monomial_info_a8ff2d85e16edeced8cb4b4fa78dbeef2_1a8ff2d85e16edeced8cb4b4fa78dbeef2" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int newf4::MonomialInfo::mSimpleDegree</definition>
+        <argsstring></argsstring>
+        <name>mSimpleDegree</name>
+        <qualifiedname>newf4::MonomialInfo::mSimpleDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" line="57" column="7" bodyfile="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" bodystart="57" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_a08bc04266cceedf64f97928fff2d3cba_1a08bc04266cceedf64f97928fff2d3cba" compoundref="_monomial_lookup_table_8cpp" startline="10" endline="20">newf4::MonomialLookupTable::insertMonomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnewf4_1_1_monomial_info_a50d229ff30de26f53dbf0b9571a58261_1a50d229ff30de26f53dbf0b9571a58261" prot="public" static="no" mutable="no">
+        <type><ref refid="namespacenewf4_afd3339ebe18e9dc2d4e025b6ca053ec6_1afd3339ebe18e9dc2d4e025b6ca053ec6" kindref="member">MonomialMask</ref></type>
+        <definition>MonomialMask newf4::MonomialInfo::mMask</definition>
+        <argsstring></argsstring>
+        <name>mMask</name>
+        <qualifiedname>newf4::MonomialInfo::mMask</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" line="58" column="16" bodyfile="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_a08bc04266cceedf64f97928fff2d3cba_1a08bc04266cceedf64f97928fff2d3cba" compoundref="_monomial_lookup_table_8cpp" startline="10" endline="20">newf4::MonomialLookupTable::insertMonomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnewf4_1_1_monomial_info_a53a75fd33bc8b4fb948f44441fba9599_1a53a75fd33bc8b4fb948f44441fba9599" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int newf4::MonomialInfo::mOffset</definition>
+        <argsstring></argsstring>
+        <name>mOffset</name>
+        <qualifiedname>newf4::MonomialInfo::mOffset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" line="59" column="7" bodyfile="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" bodystart="59" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_a08bc04266cceedf64f97928fff2d3cba_1a08bc04266cceedf64f97928fff2d3cba" compoundref="_monomial_lookup_table_8cpp" startline="10" endline="20">newf4::MonomialLookupTable::insertMonomial</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnewf4_1_1_monomial_info_a1c7d3e3e385c24e6ee08bef45ff1a5dc_1a1c7d3e3e385c24e6ee08bef45ff1a5dc" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int newf4::MonomialInfo::mValue</definition>
+        <argsstring></argsstring>
+        <name>mValue</name>
+        <qualifiedname>newf4::MonomialInfo::mValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" line="60" column="7" bodyfile="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_a08bc04266cceedf64f97928fff2d3cba_1a08bc04266cceedf64f97928fff2d3cba" compoundref="_monomial_lookup_table_8cpp" startline="10" endline="20">newf4::MonomialLookupTable::insertMonomial</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="1">
+        <label>newf4::MonomialInfo</label>
+        <link refid="structnewf4_1_1_monomial_info"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mIsUsed</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mOffset</edgelabel>
+          <edgelabel>mSimpleDegree</edgelabel>
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mMask</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>uint64_t</label>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" line="55" column="1" bodyfile="Macaulay2/e/gb-f4/MonomialLookupTable.hpp" bodystart="55" bodyend="61"/>
+    <listofallmembers>
+      <member refid="structnewf4_1_1_monomial_info_a3b3fdd6b6c51372c84058bb9e203c245_1a3b3fdd6b6c51372c84058bb9e203c245" prot="public" virt="non-virtual"><scope>newf4::MonomialInfo</scope><name>mIsUsed</name></member>
+      <member refid="structnewf4_1_1_monomial_info_a50d229ff30de26f53dbf0b9571a58261_1a50d229ff30de26f53dbf0b9571a58261" prot="public" virt="non-virtual"><scope>newf4::MonomialInfo</scope><name>mMask</name></member>
+      <member refid="structnewf4_1_1_monomial_info_a53a75fd33bc8b4fb948f44441fba9599_1a53a75fd33bc8b4fb948f44441fba9599" prot="public" virt="non-virtual"><scope>newf4::MonomialInfo</scope><name>mOffset</name></member>
+      <member refid="structnewf4_1_1_monomial_info_a8ff2d85e16edeced8cb4b4fa78dbeef2_1a8ff2d85e16edeced8cb4b4fa78dbeef2" prot="public" virt="non-virtual"><scope>newf4::MonomialInfo</scope><name>mSimpleDegree</name></member>
+      <member refid="structnewf4_1_1_monomial_info_a1c7d3e3e385c24e6ee08bef45ff1a5dc_1a1c7d3e3e385c24e6ee08bef45ff1a5dc" prot="public" virt="non-virtual"><scope>newf4::MonomialInfo</scope><name>mValue</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

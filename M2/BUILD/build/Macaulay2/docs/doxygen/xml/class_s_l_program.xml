@@ -1,0 +1,464 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_s_l_program" kind="class" language="C++" prot="public">
+    <compoundname>SLProgram</compoundname>
+    <includes refid="_s_l_p-defs_8hpp" local="no">SLP-defs.hpp</includes>
+    <sectiondef kind="public-type">
+      <memberdef kind="enum" id="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8" prot="public" static="no" strong="no">
+        <type></type>
+        <name>GATE_TYPE</name>
+        <qualifiedname>SLProgram::GATE_TYPE</qualifiedname>
+        <enumvalue id="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8acf3a424cdaeb5fb55f728785cec91129" prot="public">
+          <name>Copy</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a7b9349f0bf43a064575aa3d8d84cae45" prot="public">
+          <name>MCopy</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a8be484e467b9b6af30e2fbf3301713d3" prot="public">
+          <name>Sum</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a1b1de9ecd5596c0ff079d48cad14a012" prot="public">
+          <name>Product</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a619783621d7ebb55c46f3b46b3bf1a09" prot="public">
+          <name>MSum</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8aa0162540f713973e1be19d2e104694b3" prot="public">
+          <name>MProduct</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a0d7341b76b5220274772eb205007cad8" prot="public">
+          <name>Det</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a23ec87349f2295689ec33936c91668a4" prot="public">
+          <name>Divide</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="85" column="3" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="85" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_s_l_program_af3a62f435c917117d84eb2a3e83eef0b_1af3a62f435c917117d84eb2a3e83eef0b" prot="public" static="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>typedef int SLProgram::GATE_SIZE</definition>
+        <argsstring></argsstring>
+        <name>GATE_SIZE</name>
+        <qualifiedname>SLProgram::GATE_SIZE</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="86" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" prot="public" static="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>typedef int SLProgram::GATE_POSITION</definition>
+        <argsstring></argsstring>
+        <name>GATE_POSITION</name>
+        <qualifiedname>SLProgram::GATE_POSITION</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="87" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8" kindref="member">GATE_TYPE</ref> &gt;</type>
+        <definition>std::vector&lt;GATE_TYPE&gt; SLProgram::mNodes</definition>
+        <argsstring></argsstring>
+        <name>mNodes</name>
+        <qualifiedname>SLProgram::mNodes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="89" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="89" bodyend="-1"/>
+        <referencedby refid="class_s_l_program_a3b509375be682f118c08b64e5e19ef3c_1a3b509375be682f118c08b64e5e19ef3c" compoundref="_s_l_p_8cpp" startline="35" endline="43">addDet</referencedby>
+        <referencedby refid="class_s_l_program_ab2853d33c3c1f773799a5e4c9272dd8f_1ab2853d33c3c1f773799a5e4c9272dd8f" compoundref="_s_l_p_8cpp" startline="44" endline="52">addDivide</referencedby>
+        <referencedby refid="class_s_l_program_a335a24426fd5be5698d30ea40c75fc67_1a335a24426fd5be5698d30ea40c75fc67" compoundref="_s_l_p_8cpp" startline="26" endline="34">addMProduct</referencedby>
+        <referencedby refid="class_s_l_program_ae8930998b82043f6ff1228a545978da7_1ae8930998b82043f6ff1228a545978da7" compoundref="_s_l_p_8cpp" startline="17" endline="25">addMSum</referencedby>
+        <referencedby refid="class_s_l_program_ac06889bd3d651063ae33ea10bb5a0425_1ac06889bd3d651063ae33ea10bb5a0425" compoundref="_s_l_p_8cpp" startline="53" endline="65">setOutputPositions</referencedby>
+        <referencedby refid="class_s_l_program_a903b5f8446a48c42111867f5d0f2ed08_1a903b5f8446a48c42111867f5d0f2ed08" compoundref="_s_l_p_8cpp" startline="67" endline="74">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_program_ae4685a9545d2fca339c5a7c5e5ab536e_1ae4685a9545d2fca339c5a7c5e5ab536e" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_program_af3a62f435c917117d84eb2a3e83eef0b_1af3a62f435c917117d84eb2a3e83eef0b" kindref="member">GATE_SIZE</ref> &gt;</type>
+        <definition>std::vector&lt;GATE_SIZE&gt; SLProgram::mNumInputs</definition>
+        <argsstring></argsstring>
+        <name>mNumInputs</name>
+        <qualifiedname>SLProgram::mNumInputs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="90" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="90" bodyend="-1"/>
+        <referencedby refid="class_s_l_program_a3b509375be682f118c08b64e5e19ef3c_1a3b509375be682f118c08b64e5e19ef3c" compoundref="_s_l_p_8cpp" startline="35" endline="43">addDet</referencedby>
+        <referencedby refid="class_s_l_program_a335a24426fd5be5698d30ea40c75fc67_1a335a24426fd5be5698d30ea40c75fc67" compoundref="_s_l_p_8cpp" startline="26" endline="34">addMProduct</referencedby>
+        <referencedby refid="class_s_l_program_ae8930998b82043f6ff1228a545978da7_1ae8930998b82043f6ff1228a545978da7" compoundref="_s_l_p_8cpp" startline="17" endline="25">addMSum</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_program_a0fca39db66fa32b30797cf8b1d8c7003_1a0fca39db66fa32b30797cf8b1d8c7003" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" kindref="member">GATE_POSITION</ref> &gt;</type>
+        <definition>std::vector&lt;GATE_POSITION&gt; SLProgram::mInputPositions</definition>
+        <argsstring></argsstring>
+        <name>mInputPositions</name>
+        <qualifiedname>SLProgram::mInputPositions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="92" column="3" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="92" bodyend="-1"/>
+        <referencedby refid="class_s_l_program_a3b509375be682f118c08b64e5e19ef3c_1a3b509375be682f118c08b64e5e19ef3c" compoundref="_s_l_p_8cpp" startline="35" endline="43">addDet</referencedby>
+        <referencedby refid="class_s_l_program_ab2853d33c3c1f773799a5e4c9272dd8f_1ab2853d33c3c1f773799a5e4c9272dd8f" compoundref="_s_l_p_8cpp" startline="44" endline="52">addDivide</referencedby>
+        <referencedby refid="class_s_l_program_a335a24426fd5be5698d30ea40c75fc67_1a335a24426fd5be5698d30ea40c75fc67" compoundref="_s_l_p_8cpp" startline="26" endline="34">addMProduct</referencedby>
+        <referencedby refid="class_s_l_program_ae8930998b82043f6ff1228a545978da7_1ae8930998b82043f6ff1228a545978da7" compoundref="_s_l_p_8cpp" startline="17" endline="25">addMSum</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_program_af2b1014c32d401582c8a5faa9ce32b52_1af2b1014c32d401582c8a5faa9ce32b52" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" kindref="member">GATE_POSITION</ref> &gt;</type>
+        <definition>std::vector&lt;GATE_POSITION&gt; SLProgram::mOutputPositions</definition>
+        <argsstring></argsstring>
+        <name>mOutputPositions</name>
+        <qualifiedname>SLProgram::mOutputPositions</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="97" column="15" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="97" bodyend="-1"/>
+        <referencedby refid="class_s_l_program_ac06889bd3d651063ae33ea10bb5a0425_1ac06889bd3d651063ae33ea10bb5a0425" compoundref="_s_l_p_8cpp" startline="53" endline="65">setOutputPositions</referencedby>
+        <referencedby refid="class_s_l_program_a903b5f8446a48c42111867f5d0f2ed08_1a903b5f8446a48c42111867f5d0f2ed08" compoundref="_s_l_p_8cpp" startline="67" endline="74">text_out</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_s_l_program_a7a39db2782d04e4a3268f960af8423ae_1a7a39db2782d04e4a3268f960af8423ae" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int SLProgram::inputCounter</definition>
+        <argsstring></argsstring>
+        <name>inputCounter</name>
+        <qualifiedname>SLProgram::inputCounter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="101" column="7" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="101" bodyend="-1"/>
+        <referencedby refid="class_s_l_program_ac14ed3eb8ae46a091e834ab6a75b1e69_1ac14ed3eb8ae46a091e834ab6a75b1e69" compoundref="_s_l_p-defs_8hpp" startline="111" endline="111">addInput</referencedby>
+        <referencedby refid="class_s_l_program_ac06889bd3d651063ae33ea10bb5a0425_1ac06889bd3d651063ae33ea10bb5a0425" compoundref="_s_l_p_8cpp" startline="53" endline="65">setOutputPositions</referencedby>
+        <referencedby refid="class_s_l_program_a9c5c9074127da268c24f589651a52fa2_1a9c5c9074127da268c24f589651a52fa2" compoundref="_s_l_p_8cpp" startline="6" endline="10">SLProgram</referencedby>
+        <referencedby refid="class_s_l_program_a903b5f8446a48c42111867f5d0f2ed08_1a903b5f8446a48c42111867f5d0f2ed08" compoundref="_s_l_p_8cpp" startline="67" endline="74">text_out</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_s_l_program_a9c5c9074127da268c24f589651a52fa2_1a9c5c9074127da268c24f589651a52fa2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SLProgram::SLProgram</definition>
+        <argsstring>()</argsstring>
+        <name>SLProgram</name>
+        <qualifiedname>SLProgram::SLProgram</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="103" column="3" bodyfile="Macaulay2/e/SLP.cpp" bodystart="6" bodyend="10"/>
+        <references refid="class_s_l_program_a7a39db2782d04e4a3268f960af8423ae_1a7a39db2782d04e4a3268f960af8423ae" compoundref="_s_l_p-defs_8hpp" startline="101">inputCounter</references>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_program_ad93368b23c95df6e9ea0839c3690b9a2_1ad93368b23c95df6e9ea0839c3690b9a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>SLProgram::~SLProgram</definition>
+        <argsstring>()</argsstring>
+        <name>~SLProgram</name>
+        <qualifiedname>SLProgram::~SLProgram</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="104" column="11" bodyfile="Macaulay2/e/SLP.cpp" bodystart="12" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_program_ac14ed3eb8ae46a091e834ab6a75b1e69_1ac14ed3eb8ae46a091e834ab6a75b1e69" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" kindref="member">GATE_POSITION</ref></type>
+        <definition>GATE_POSITION SLProgram::addInput</definition>
+        <argsstring>()</argsstring>
+        <name>addInput</name>
+        <qualifiedname>SLProgram::addInput</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="111" column="17" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="111" bodyend="111"/>
+        <references refid="class_s_l_program_a7a39db2782d04e4a3268f960af8423ae_1a7a39db2782d04e4a3268f960af8423ae" compoundref="_s_l_p-defs_8hpp" startline="101">inputCounter</references>
+        <referencedby refid="interface_2matrix_8cpp_acc261ca93baf94c21fbf9c57069867ff_1acc261ca93baf94c21fbf9c57069867ff" compoundref="interface_2matrix_8cpp" startline="937" endline="937">rawSLPInputGate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_program_ae8930998b82043f6ff1228a545978da7_1ae8930998b82043f6ff1228a545978da7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" kindref="member">GATE_POSITION</ref></type>
+        <definition>SLProgram::GATE_POSITION SLProgram::addMSum</definition>
+        <argsstring>(const M2_arrayint)</argsstring>
+        <name>addMSum</name>
+        <qualifiedname>SLProgram::addMSum</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="112" column="17" bodyfile="Macaulay2/e/SLP.cpp" bodystart="17" bodyend="25"/>
+        <references refid="class_s_l_program_a0fca39db66fa32b30797cf8b1d8c7003_1a0fca39db66fa32b30797cf8b1d8c7003" compoundref="_s_l_p-defs_8hpp" startline="92">mInputPositions</references>
+        <references refid="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" compoundref="_s_l_p-defs_8hpp" startline="89">mNodes</references>
+        <references refid="class_s_l_program_ae4685a9545d2fca339c5a7c5e5ab536e_1ae4685a9545d2fca339c5a7c5e5ab536e" compoundref="_s_l_p-defs_8hpp" startline="90">mNumInputs</references>
+        <references refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a619783621d7ebb55c46f3b46b3bf1a09" compoundref="_s_l_p-defs_8hpp" startline="85">MSum</references>
+        <referencedby refid="interface_2matrix_8cpp_a89f736989e906499dbe7cb16286be919_1a89f736989e906499dbe7cb16286be919" compoundref="interface_2matrix_8cpp" startline="938" endline="941">rawSLPSumGate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_program_a335a24426fd5be5698d30ea40c75fc67_1a335a24426fd5be5698d30ea40c75fc67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" kindref="member">GATE_POSITION</ref></type>
+        <definition>SLProgram::GATE_POSITION SLProgram::addMProduct</definition>
+        <argsstring>(const M2_arrayint)</argsstring>
+        <name>addMProduct</name>
+        <qualifiedname>SLProgram::addMProduct</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="113" column="17" bodyfile="Macaulay2/e/SLP.cpp" bodystart="26" bodyend="34"/>
+        <references refid="class_s_l_program_a0fca39db66fa32b30797cf8b1d8c7003_1a0fca39db66fa32b30797cf8b1d8c7003" compoundref="_s_l_p-defs_8hpp" startline="92">mInputPositions</references>
+        <references refid="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" compoundref="_s_l_p-defs_8hpp" startline="89">mNodes</references>
+        <references refid="class_s_l_program_ae4685a9545d2fca339c5a7c5e5ab536e_1ae4685a9545d2fca339c5a7c5e5ab536e" compoundref="_s_l_p-defs_8hpp" startline="90">mNumInputs</references>
+        <references refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8aa0162540f713973e1be19d2e104694b3" compoundref="_s_l_p-defs_8hpp" startline="85">MProduct</references>
+        <referencedby refid="interface_2matrix_8cpp_a3d7d18c91298fc4d8a27397c38a4d7b9_1a3d7d18c91298fc4d8a27397c38a4d7b9" compoundref="interface_2matrix_8cpp" startline="942" endline="945">rawSLPProductGate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_program_a3b509375be682f118c08b64e5e19ef3c_1a3b509375be682f118c08b64e5e19ef3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" kindref="member">GATE_POSITION</ref></type>
+        <definition>SLProgram::GATE_POSITION SLProgram::addDet</definition>
+        <argsstring>(const M2_arrayint)</argsstring>
+        <name>addDet</name>
+        <qualifiedname>SLProgram::addDet</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="114" column="17" bodyfile="Macaulay2/e/SLP.cpp" bodystart="35" bodyend="43"/>
+        <references refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a0d7341b76b5220274772eb205007cad8" compoundref="_s_l_p-defs_8hpp" startline="85">Det</references>
+        <references refid="class_s_l_program_a0fca39db66fa32b30797cf8b1d8c7003_1a0fca39db66fa32b30797cf8b1d8c7003" compoundref="_s_l_p-defs_8hpp" startline="92">mInputPositions</references>
+        <references refid="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" compoundref="_s_l_p-defs_8hpp" startline="89">mNodes</references>
+        <references refid="class_s_l_program_ae4685a9545d2fca339c5a7c5e5ab536e_1ae4685a9545d2fca339c5a7c5e5ab536e" compoundref="_s_l_p-defs_8hpp" startline="90">mNumInputs</references>
+        <referencedby refid="interface_2matrix_8cpp_a03c7599d1702a53f860a1edb753e91e9_1a03c7599d1702a53f860a1edb753e91e9" compoundref="interface_2matrix_8cpp" startline="946" endline="949">rawSLPDetGate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_program_ab2853d33c3c1f773799a5e4c9272dd8f_1ab2853d33c3c1f773799a5e4c9272dd8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" kindref="member">GATE_POSITION</ref></type>
+        <definition>SLProgram::GATE_POSITION SLProgram::addDivide</definition>
+        <argsstring>(const M2_arrayint)</argsstring>
+        <name>addDivide</name>
+        <qualifiedname>SLProgram::addDivide</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="115" column="17" bodyfile="Macaulay2/e/SLP.cpp" bodystart="44" bodyend="52"/>
+        <references refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a23ec87349f2295689ec33936c91668a4" compoundref="_s_l_p-defs_8hpp" startline="85">Divide</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_s_l_program_a0fca39db66fa32b30797cf8b1d8c7003_1a0fca39db66fa32b30797cf8b1d8c7003" compoundref="_s_l_p-defs_8hpp" startline="92">mInputPositions</references>
+        <references refid="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" compoundref="_s_l_p-defs_8hpp" startline="89">mNodes</references>
+        <referencedby refid="interface_2matrix_8cpp_a2119ebe895ebb86b0fe3824e5f81ab86_1a2119ebe895ebb86b0fe3824e5f81ab86" compoundref="interface_2matrix_8cpp" startline="955" endline="958">rawSLPDivideGate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_program_ac06889bd3d651063ae33ea10bb5a0425_1ac06889bd3d651063ae33ea10bb5a0425" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLProgram::setOutputPositions</definition>
+        <argsstring>(const M2_arrayint)</argsstring>
+        <name>setOutputPositions</name>
+        <qualifiedname>SLProgram::setOutputPositions</qualifiedname>
+        <param>
+          <type>const <ref refid="class_m2__arrayint" kindref="compound">M2_arrayint</ref></type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="116" column="8" bodyfile="Macaulay2/e/SLP.cpp" bodystart="53" bodyend="65"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_s_l_program_a7a39db2782d04e4a3268f960af8423ae_1a7a39db2782d04e4a3268f960af8423ae" compoundref="_s_l_p-defs_8hpp" startline="101">inputCounter</references>
+        <references refid="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" compoundref="_s_l_p-defs_8hpp" startline="89">mNodes</references>
+        <references refid="class_s_l_program_af2b1014c32d401582c8a5faa9ce32b52_1af2b1014c32d401582c8a5faa9ce32b52" compoundref="_s_l_p-defs_8hpp" startline="97">mOutputPositions</references>
+        <references refid="godbolt_test_8cpp_a533391314665d6bf1b5575e9a9cd8552_1a533391314665d6bf1b5575e9a9cd8552" compoundref="godbolt_test_8cpp" startline="34">p</references>
+        <referencedby refid="interface_2matrix_8cpp_a48098827fe55ab0f7eb0d8d9836a1d43_1a48098827fe55ab0f7eb0d8d9836a1d43" compoundref="interface_2matrix_8cpp" startline="950" endline="954">rawSLPsetOutputPositions</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_s_l_program_a903b5f8446a48c42111867f5d0f2ed08_1a903b5f8446a48c42111867f5d0f2ed08" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLProgram::text_out</definition>
+        <argsstring>(buffer &amp;) const</argsstring>
+        <name>text_out</name>
+        <qualifiedname>SLProgram::text_out</qualifiedname>
+        <param>
+          <type><ref refid="classbuffer" kindref="compound">buffer</ref> &amp;</type>
+          <defname>o</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/SLP-defs.hpp" line="117" column="8" bodyfile="Macaulay2/e/SLP.cpp" bodystart="67" bodyend="74"/>
+        <references refid="class_s_l_program_a7a39db2782d04e4a3268f960af8423ae_1a7a39db2782d04e4a3268f960af8423ae" compoundref="_s_l_p-defs_8hpp" startline="101">inputCounter</references>
+        <references refid="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" compoundref="_s_l_p-defs_8hpp" startline="89">mNodes</references>
+        <references refid="class_s_l_program_af2b1014c32d401582c8a5faa9ce32b52_1af2b1014c32d401582c8a5faa9ce32b52" compoundref="_s_l_p-defs_8hpp" startline="97">mOutputPositions</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <referencedby refid="interface_2matrix_8cpp_a528bb28b4bcd6be33f81b1c13287ed09_1a528bb28b4bcd6be33f81b1c13287ed09" compoundref="interface_2matrix_8cpp" startline="930" endline="935">rawSLProgramToString</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>A straight-line program: a directed acyclic graph of arithmetic gates over a fixed list of inputs and constants. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The DAG topology is stored in four parallel vectors (<computeroutput><ref refid="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" kindref="member">mNodes</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_ae4685a9545d2fca339c5a7c5e5ab536e_1ae4685a9545d2fca339c5a7c5e5ab536e" kindref="member">mNumInputs</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_a0fca39db66fa32b30797cf8b1d8c7003_1a0fca39db66fa32b30797cf8b1d8c7003" kindref="member">mInputPositions</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_af2b1014c32d401582c8a5faa9ce32b52_1af2b1014c32d401582c8a5faa9ce32b52" kindref="member">mOutputPositions</ref></computeroutput>) that wire each gate to its operand positions. Gate kinds are listed in <computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8" kindref="member">GATE_TYPE</ref></computeroutput> (<computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8acf3a424cdaeb5fb55f728785cec91129" kindref="member">Copy</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a7b9349f0bf43a064575aa3d8d84cae45" kindref="member">MCopy</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a8be484e467b9b6af30e2fbf3301713d3" kindref="member">Sum</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a1b1de9ecd5596c0ff079d48cad14a012" kindref="member">Product</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a619783621d7ebb55c46f3b46b3bf1a09" kindref="member">MSum</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8aa0162540f713973e1be19d2e104694b3" kindref="member">MProduct</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a0d7341b76b5220274772eb205007cad8" kindref="member">Det</ref></computeroutput>, <computeroutput><ref refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a23ec87349f2295689ec33936c91668a4" kindref="member">Divide</ref></computeroutput>). Positions are relative non-negative indices into <computeroutput><ref refid="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" kindref="member">mNodes</ref></computeroutput> for gate references and negative indices for variables and constants, except in <computeroutput><ref refid="class_s_l_program_af2b1014c32d401582c8a5faa9ce32b52_1af2b1014c32d401582c8a5faa9ce32b52" kindref="member">mOutputPositions</ref></computeroutput> which uses absolute indices. Evaluation against a concrete coefficient ring lives in <computeroutput><ref refid="class_s_l_evaluator_concrete" kindref="compound">SLEvaluatorConcrete</ref>&lt;RT&gt;</computeroutput>. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>SLProgram</label>
+        <link refid="class_s_l_program"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mNodes</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mInputPositions</edgelabel>
+          <edgelabel>mNumInputs</edgelabel>
+          <edgelabel>mOutputPositions</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>inputCounter</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>GATE_TYPE</label>
+      </node>
+      <node id="5">
+        <label>T</label>
+      </node>
+      <node id="7">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="4">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; GATE_TYPE &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; GATE_TYPE &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/SLP-defs.hpp" line="82" column="1" bodyfile="Macaulay2/e/SLP-defs.hpp" bodystart="83" bodyend="118"/>
+    <listofallmembers>
+      <member refid="class_s_l_program_a3b509375be682f118c08b64e5e19ef3c_1a3b509375be682f118c08b64e5e19ef3c" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>addDet</name></member>
+      <member refid="class_s_l_program_ab2853d33c3c1f773799a5e4c9272dd8f_1ab2853d33c3c1f773799a5e4c9272dd8f" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>addDivide</name></member>
+      <member refid="class_s_l_program_ac14ed3eb8ae46a091e834ab6a75b1e69_1ac14ed3eb8ae46a091e834ab6a75b1e69" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>addInput</name></member>
+      <member refid="class_s_l_program_a335a24426fd5be5698d30ea40c75fc67_1a335a24426fd5be5698d30ea40c75fc67" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>addMProduct</name></member>
+      <member refid="class_s_l_program_ae8930998b82043f6ff1228a545978da7_1ae8930998b82043f6ff1228a545978da7" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>addMSum</name></member>
+      <member refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8acf3a424cdaeb5fb55f728785cec91129" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>Copy</name></member>
+      <member refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a0d7341b76b5220274772eb205007cad8" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>Det</name></member>
+      <member refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a23ec87349f2295689ec33936c91668a4" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>Divide</name></member>
+      <member refid="class_s_l_program_a3854b591082715479b9690e3b24a4b78_1a3854b591082715479b9690e3b24a4b78" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>GATE_POSITION</name></member>
+      <member refid="class_s_l_program_af3a62f435c917117d84eb2a3e83eef0b_1af3a62f435c917117d84eb2a3e83eef0b" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>GATE_SIZE</name></member>
+      <member refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>GATE_TYPE</name></member>
+      <member refid="class_s_l_program_a7a39db2782d04e4a3268f960af8423ae_1a7a39db2782d04e4a3268f960af8423ae" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>inputCounter</name></member>
+      <member refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a7b9349f0bf43a064575aa3d8d84cae45" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>MCopy</name></member>
+      <member refid="class_s_l_program_a0fca39db66fa32b30797cf8b1d8c7003_1a0fca39db66fa32b30797cf8b1d8c7003" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>mInputPositions</name></member>
+      <member refid="class_s_l_program_af0c0ea3ada50aa8463dbdeb63cf78451_1af0c0ea3ada50aa8463dbdeb63cf78451" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>mNodes</name></member>
+      <member refid="class_s_l_program_ae4685a9545d2fca339c5a7c5e5ab536e_1ae4685a9545d2fca339c5a7c5e5ab536e" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>mNumInputs</name></member>
+      <member refid="class_s_l_program_af2b1014c32d401582c8a5faa9ce32b52_1af2b1014c32d401582c8a5faa9ce32b52" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>mOutputPositions</name></member>
+      <member refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8aa0162540f713973e1be19d2e104694b3" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>MProduct</name></member>
+      <member refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a619783621d7ebb55c46f3b46b3bf1a09" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>MSum</name></member>
+      <member refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a1b1de9ecd5596c0ff079d48cad14a012" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>Product</name></member>
+      <member refid="class_s_l_program_ac06889bd3d651063ae33ea10bb5a0425_1ac06889bd3d651063ae33ea10bb5a0425" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>setOutputPositions</name></member>
+      <member refid="class_s_l_program_a9c5c9074127da268c24f589651a52fa2_1a9c5c9074127da268c24f589651a52fa2" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>SLProgram</name></member>
+      <member refid="class_s_l_program_a5dcea512aaff0e8dff7653964b1a12e8_1a5dcea512aaff0e8dff7653964b1a12e8a8be484e467b9b6af30e2fbf3301713d3" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>Sum</name></member>
+      <member refid="class_s_l_program_a903b5f8446a48c42111867f5d0f2ed08_1a903b5f8446a48c42111867f5d0f2ed08" prot="public" virt="non-virtual"><scope>SLProgram</scope><name>text_out</name></member>
+      <member refid="class_s_l_program_ad93368b23c95df6e9ea0839c3690b9a2_1ad93368b23c95df6e9ea0839c3690b9a2" prot="public" virt="virtual"><scope>SLProgram</scope><name>~SLProgram</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

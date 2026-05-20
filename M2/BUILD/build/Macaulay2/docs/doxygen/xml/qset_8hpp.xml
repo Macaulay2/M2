@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="qset_8hpp" kind="file" language="C++">
+    <compoundname>qset.hpp</compoundname>
+    <includes local="no">list</includes>
+    <includes local="no">algorithm</includes>
+    <includes refid="triple_8hpp" local="yes">triple.hpp</includes>
+    <includedby refid="involutive_8hpp" local="yes">Macaulay2/e/bibasis/involutive.hpp</includedby>
+    <incdepgraph>
+      <node id="7">
+        <label>allocator.hpp</label>
+        <link refid="allocator_8hpp"/>
+      </node>
+      <node id="8">
+        <label>polynom.hpp</label>
+        <link refid="polynom_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/bibasis/qset.hpp</label>
+        <link refid="qset_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>triple.hpp</label>
+        <link refid="triple_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>algorithm</label>
+      </node>
+      <node id="10">
+        <label>error.h</label>
+      </node>
+      <node id="9">
+        <label>iostream</label>
+      </node>
+      <node id="2">
+        <label>list</label>
+      </node>
+      <node id="5">
+        <label>set</label>
+      </node>
+      <node id="6">
+        <label>string</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="5">
+        <label>Macaulay2/e/bibasis/bibasis.cpp</label>
+        <link refid="bibasis_8cpp"/>
+      </node>
+      <node id="2">
+        <label>Macaulay2/e/bibasis/involutive.hpp</label>
+        <link refid="involutive_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Macaulay2/e/bibasis/launcher.cpp</label>
+        <link refid="launcher_8cpp"/>
+      </node>
+      <node id="4">
+        <label>Macaulay2/e/bibasis/launcher.hpp</label>
+        <link refid="launcher_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/bibasis/qset.hpp</label>
+        <link refid="qset_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_b_i_basis_1_1_q_set" prot="public">BIBasis::QSet</innerclass>
+    <innernamespace refid="namespace_b_i_basis">BIBasis</innernamespace>
+    <briefdescription>
+<para><computeroutput><ref refid="class_b_i_basis_1_1_q_set" kindref="compound">BIBasis::QSet</ref>&lt;MonomType&gt;</computeroutput> <mdash/> prolongation work-queue sorted by leading monomial. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares and defines the pending-work container that drives the involutive engine&apos;s outer loop. Holds an owned <computeroutput>std::list&lt;Triple*&gt;</computeroutput> kept sorted under <computeroutput>Triple::Compare</computeroutput> (which returns <computeroutput>*a-&gt;Lm &gt; *b-&gt;Lm</computeroutput>, so STL sort lays the list out in descending leading-monomial order); <computeroutput>Get()</computeroutput> pops <computeroutput>back()</computeroutput>, returning the triple with the smallest leading monomial <mdash/> the standard normal-strategy choice that keeps the working basis small. Two <computeroutput>Insert</computeroutput> overloads cover the two flavours of incoming work: one takes a polynomial list, wraps each entry in a fresh <computeroutput>Triple</computeroutput>, and re-sorts the whole queue (<computeroutput>std::list::sort</computeroutput>); the other takes a pre-built triple list, sorts it, and <computeroutput>std::list::merge</computeroutput>s it into the queue. <computeroutput>DeleteDescendants(ancestor)</computeroutput> walks the queue and discards every triple whose recorded <computeroutput>Ancestor</computeroutput> <bold>or</bold> <computeroutput>WeakAncestor</computeroutput> matches; the driver calls this whenever a new basis element makes a chunk of scheduled work obsolete.</para>
+<para><computeroutput>Empty()</computeroutput> is the algorithm&apos;s termination test: when no prolongations remain, the intermediate basis stored in <computeroutput>TSet</computeroutput> is involutive.</para>
+<para><simplesect kind="see"><para><ref refid="triple_8hpp" kindref="compound">triple.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="tset_8hpp" kindref="compound">tset.hpp</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="involutive_8hpp" kindref="compound">involutive.hpp</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*****************************************************************************</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/><sp/>Copyright<sp/>(C)<sp/>2006-2011<sp/>by<sp/>Mikhail<sp/>V.<sp/>Zinin<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*<sp/><sp/><sp/>mzinin@gmail.com<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*<sp/><sp/><sp/>You<sp/>may<sp/>redistribute<sp/>this<sp/>file<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/><sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*<sp/><sp/><sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or<sp/>any<sp/>later<sp/>version.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*****************************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>BIBASIS_QSET_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BIBASIS_QSET_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;list&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;algorithm&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="triple_8hpp" kindref="compound">triple.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_b_i_basis" kindref="compound">BIBasis</ref></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="51" refid="class_b_i_basis_1_1_q_set" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_b_i_basis_1_1_q_set_ad98193b119f2ced0754f4da827d65b2c_1ad98193b119f2ced0754f4da827d65b2c" kindref="member">QSet</ref></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="54" refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;Triple&lt;MonomType&gt;*&gt;<sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ad98193b119f2ced0754f4da827d65b2c_1ad98193b119f2ced0754f4da827d65b2c" kindref="member">QSet</ref>();</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ad98193b119f2ced0754f4da827d65b2c_1ad98193b119f2ced0754f4da827d65b2c" kindref="member">QSet</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::list&lt;<ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom&lt;MonomType&gt;</ref>*&gt;&amp;<sp/>basis);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_aa2ac7ddc3d22c847bc31976edce10650_1aa2ac7ddc3d22c847bc31976edce10650" kindref="member">~QSet</ref>();</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_aeb4fe4e995fd53558a777b451eecffe5_1aeb4fe4e995fd53558a777b451eecffe5" kindref="member">Insert</ref>(std::list&lt;<ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom&lt;MonomType&gt;</ref>*&gt;&amp;<sp/>addList);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_aeb4fe4e995fd53558a777b451eecffe5_1aeb4fe4e995fd53558a777b451eecffe5" kindref="member">Insert</ref>(std::list&lt;<ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple&lt;MonomType&gt;</ref>*&gt;&amp;<sp/>addList);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple&lt;MonomType&gt;</ref>*<sp/><ref refid="class_b_i_basis_1_1_q_set_ab5c9973639083e8f6b72831cf60d1815_1ab5c9973639083e8f6b72831cf60d1815" kindref="member">Get</ref>();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_a35fb7d6717a1db24a1e3f5b4b0727407_1a35fb7d6717a1db24a1e3f5b4b0727407" kindref="member">Clear</ref>();</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_a4d60cdedd52a60371ea01b17ae00129e_1a4d60cdedd52a60371ea01b17ae00129e" kindref="member">Empty</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::size_t<sp/><ref refid="class_b_i_basis_1_1_q_set_a1b45ab6289868ead20d8000268d96dc0_1a1b45ab6289868ead20d8000268d96dc0" kindref="member">Size</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_aa272d2a08884dbdb07a66ab5d8f9f077_1aa272d2a08884dbdb07a66ab5d8f9f077" kindref="member">DeleteDescendants</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple&lt;MonomType&gt;</ref>*<sp/>ancestor);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="73" refid="class_b_i_basis_1_1_q_set_ad98193b119f2ced0754f4da827d65b2c_1ad98193b119f2ced0754f4da827d65b2c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ad98193b119f2ced0754f4da827d65b2c_1ad98193b119f2ced0754f4da827d65b2c" kindref="member">QSet&lt;MonomType&gt;::QSet</ref>()</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>()</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="79" refid="class_b_i_basis_1_1_q_set_af6d0ddb41d23ed82a6829c882150e858_1af6d0ddb41d23ed82a6829c882150e858" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ad98193b119f2ced0754f4da827d65b2c_1ad98193b119f2ced0754f4da827d65b2c" kindref="member">QSet&lt;MonomType&gt;::QSet</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::list&lt;<ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom&lt;MonomType&gt;</ref>*&gt;&amp;<sp/>basis)</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>()</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::list&lt;Polynom&lt;MonomType&gt;*&gt;<ref refid="class_fixed_size_monomial_map" kindref="compound">::const_iterator</ref><sp/>itBasis(basis.begin());</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(itBasis<sp/>!=<sp/>basis.end())</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(*itBasis)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.push_back(</highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple&lt;MonomType&gt;</ref>(*itBasis));</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++itBasis;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.sort(<ref refid="class_b_i_basis_1_1_triple_ae50a0e582021ec022e9b8a7ee0bbb67b_1ae50a0e582021ec022e9b8a7ee0bbb67b" kindref="member">Triple&lt;MonomType&gt;::Compare</ref>);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="95" refid="class_b_i_basis_1_1_q_set_aa2ac7ddc3d22c847bc31976edce10650_1aa2ac7ddc3d22c847bc31976edce10650" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_aa2ac7ddc3d22c847bc31976edce10650_1aa2ac7ddc3d22c847bc31976edce10650" kindref="member">QSet&lt;MonomType&gt;::~QSet</ref>()</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_a35fb7d6717a1db24a1e3f5b4b0727407_1a35fb7d6717a1db24a1e3f5b4b0727407" kindref="member">Clear</ref>();</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="101" refid="class_b_i_basis_1_1_q_set_aeb4fe4e995fd53558a777b451eecffe5_1aeb4fe4e995fd53558a777b451eecffe5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_aeb4fe4e995fd53558a777b451eecffe5_1aeb4fe4e995fd53558a777b451eecffe5" kindref="member">QSet&lt;MonomType&gt;::Insert</ref>(std::list&lt;<ref refid="class_b_i_basis_1_1_polynom" kindref="compound">Polynom&lt;MonomType&gt;</ref>*&gt;&amp;<sp/>addList)</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::list&lt;Polynom&lt;MonomType&gt;*&gt;<ref refid="class_fixed_size_monomial_map" kindref="compound">::const_iterator</ref><sp/>itBasis(addList.begin());</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<sp/>itBasis<sp/>!=<sp/>addList.end()<sp/>)</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(*itBasis)</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.push_back(</highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple&lt;MonomType&gt;</ref>(*itBasis));</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++itBasis;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.sort(<ref refid="class_b_i_basis_1_1_triple_ae50a0e582021ec022e9b8a7ee0bbb67b_1ae50a0e582021ec022e9b8a7ee0bbb67b" kindref="member">Triple&lt;MonomType&gt;::Compare</ref>);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="116" refid="class_b_i_basis_1_1_q_set_aa9a96c0b2ae210d826bddbfebefe9005_1aa9a96c0b2ae210d826bddbfebefe9005" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_aeb4fe4e995fd53558a777b451eecffe5_1aeb4fe4e995fd53558a777b451eecffe5" kindref="member">QSet&lt;MonomType&gt;::Insert</ref>(std::list&lt;<ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple&lt;MonomType&gt;</ref>*&gt;&amp;<sp/>addList)</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>addList.sort(<ref refid="class_b_i_basis_1_1_triple_ae50a0e582021ec022e9b8a7ee0bbb67b_1ae50a0e582021ec022e9b8a7ee0bbb67b" kindref="member">Triple&lt;MonomType&gt;::Compare</ref>);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.merge(addList,<sp/><ref refid="class_b_i_basis_1_1_triple_ae50a0e582021ec022e9b8a7ee0bbb67b_1ae50a0e582021ec022e9b8a7ee0bbb67b" kindref="member">Triple&lt;MonomType&gt;::Compare</ref>);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="123" refid="class_b_i_basis_1_1_q_set_ab5c9973639083e8f6b72831cf60d1815_1ab5c9973639083e8f6b72831cf60d1815" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple&lt;MonomType&gt;</ref>*<sp/><ref refid="class_b_i_basis_1_1_q_set_ab5c9973639083e8f6b72831cf60d1815_1ab5c9973639083e8f6b72831cf60d1815" kindref="member">QSet&lt;MonomType&gt;::Get</ref>()</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple&lt;MonomType&gt;</ref>*<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.back();</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.pop_back();</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="131" refid="class_b_i_basis_1_1_q_set_a35fb7d6717a1db24a1e3f5b4b0727407_1a35fb7d6717a1db24a1e3f5b4b0727407" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_a35fb7d6717a1db24a1e3f5b4b0727407_1a35fb7d6717a1db24a1e3f5b4b0727407" kindref="member">QSet&lt;MonomType&gt;::Clear</ref>()</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::list&lt;Triple&lt;MonomType&gt;*&gt;::iterator<sp/>it(<ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.begin());</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(it<sp/>!=<sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.end())</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/>*it;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++it;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.clear();</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="143" refid="class_b_i_basis_1_1_q_set_a4d60cdedd52a60371ea01b17ae00129e_1a4d60cdedd52a60371ea01b17ae00129e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_a4d60cdedd52a60371ea01b17ae00129e_1a4d60cdedd52a60371ea01b17ae00129e" kindref="member">QSet&lt;MonomType&gt;::Empty</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="144"><highlight class="keyword"><sp/><sp/><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.empty();</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="149" refid="class_b_i_basis_1_1_q_set_a1b45ab6289868ead20d8000268d96dc0_1a1b45ab6289868ead20d8000268d96dc0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::size_t<sp/><ref refid="class_b_i_basis_1_1_q_set_a1b45ab6289868ead20d8000268d96dc0_1a1b45ab6289868ead20d8000268d96dc0" kindref="member">QSet&lt;MonomType&gt;::Size</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="150"><highlight class="keyword"><sp/><sp/><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.size();</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MonomType&gt;</highlight></codeline>
+<codeline lineno="155" refid="class_b_i_basis_1_1_q_set_aa272d2a08884dbdb07a66ab5d8f9f077_1aa272d2a08884dbdb07a66ab5d8f9f077" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_q_set_aa272d2a08884dbdb07a66ab5d8f9f077_1aa272d2a08884dbdb07a66ab5d8f9f077" kindref="member">QSet&lt;MonomType&gt;::DeleteDescendants</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple&lt;MonomType&gt;</ref>*<sp/>ancestor)</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!ancestor)</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::list&lt;Triple&lt;MonomType&gt;*&gt;::iterator<sp/>it(<ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.begin());</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<sp/>it<sp/>!=<sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.end()<sp/>)</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((**it).GetAncestor()<sp/>==<sp/>ancestor<sp/>||<sp/>(**it).<ref refid="class_b_i_basis_1_1_triple_a13b57ddc86c7a10457440058fffb5679_1a13b57ddc86c7a10457440058fffb5679" kindref="member">GetWeakAncestor</ref>()<sp/>==<sp/>ancestor)</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/>*it;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>it<sp/>=<sp/><ref refid="class_b_i_basis_1_1_q_set_ac4106516a245082520f9a48964ae1636_1ac4106516a245082520f9a48964ae1636" kindref="member">TripleList</ref>.erase(it);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>++it;</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="176"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>BIBASIS_QSET_HPP</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/bibasis/qset.hpp"/>
+  </compounddef>
+</doxygen>

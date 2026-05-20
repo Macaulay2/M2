@@ -1,0 +1,26 @@
+var class_d_mat =
+[
+    [ "CoeffRing", "class_d_mat_a1456b3e65636b78e2b2e418c1a6c7bd7.html#a1456b3e65636b78e2b2e418c1a6c7bd7", null ],
+    [ "Element", "class_d_mat_ab01d6e06ca7c9ba9ba767ab3947e2de0.html#ab01d6e06ca7c9ba9ba767ab3947e2de0", null ],
+    [ "ElementType", "class_d_mat_a97fa208b286ada86b61d08c7a1121801.html#a97fa208b286ada86b61d08c7a1121801", null ],
+    [ "DMat", "class_d_mat_ae96570ac0d611add9bbe53140cb90f2c.html#ae96570ac0d611add9bbe53140cb90f2c", null ],
+    [ "DMat", "class_d_mat_aa28b1b37aa4b3007d77fd436652c3967.html#aa28b1b37aa4b3007d77fd436652c3967", null ],
+    [ "DMat", "class_d_mat_a186ae90f1a921410b3ac424bd1dacf63.html#a186ae90f1a921410b3ac424bd1dacf63", null ],
+    [ "~DMat", "class_d_mat_aa16d3c198ca8eb8a18cdfb27c1019d04.html#aa16d3c198ca8eb8a18cdfb27c1019d04", null ],
+    [ "entry", "class_d_mat_a430faaf604ffe11bf81a35456acc2e97.html#a430faaf604ffe11bf81a35456acc2e97", null ],
+    [ "entry", "class_d_mat_acf01e822f8dffcdbc6b48ebcb3090ac3.html#acf01e822f8dffcdbc6b48ebcb3090ac3", null ],
+    [ "numColumns", "class_d_mat_aff91923e882c194ecf16030897933e45.html#aff91923e882c194ecf16030897933e45", null ],
+    [ "numRows", "class_d_mat_a29d6106319cc01e580c0ddee6f3ddb29.html#a29d6106319cc01e580c0ddee6f3ddb29", null ],
+    [ "resize", "class_d_mat_a88d2a242efc934b17d6cc94851000627.html#a88d2a242efc934b17d6cc94851000627", null ],
+    [ "ring", "class_d_mat_a8bfde729efa8a5ba300bd3024dc9a440.html#a8bfde729efa8a5ba300bd3024dc9a440", null ],
+    [ "rowMajorArray", "class_d_mat_adf7d78c3e96d6c4c85fd13b635655b3d.html#adf7d78c3e96d6c4c85fd13b635655b3d", null ],
+    [ "rowMajorArray", "class_d_mat_aea59563009327a673da4d7321f520e35.html#aea59563009327a673da4d7321f520e35", null ],
+    [ "swap", "class_d_mat_a94a2f2bd553d920413b59ba22543d9d4.html#a94a2f2bd553d920413b59ba22543d9d4", null ],
+    [ "unsafeArray", "class_d_mat_a29d657185ad7d72d23fcb260bf4c5460.html#a29d657185ad7d72d23fcb260bf4c5460", null ],
+    [ "unsafeArray", "class_d_mat_ad0bf74d59141f090291e13948c00a3f0.html#ad0bf74d59141f090291e13948c00a3f0", null ],
+    [ "mArray", "class_d_mat_a3b3db187e0e6a13c33246e8844db0f83.html#a3b3db187e0e6a13c33246e8844db0f83", null ],
+    [ "mNumColumns", "class_d_mat_a2a075af3a9dd6d0509df6b7a46318746.html#a2a075af3a9dd6d0509df6b7a46318746", null ],
+    [ "mNumRows", "class_d_mat_a6d1ff369db27b5aa3b2a8c98e50ce907.html#a6d1ff369db27b5aa3b2a8c98e50ce907", null ],
+    [ "mRing", "class_d_mat_a2f4e6ba88417aa58d1263afe7f00504a.html#a2f4e6ba88417aa58d1263afe7f00504a", null ],
+    [ "mRowPointers", "class_d_mat_a38f628377c19730bf5388a467ee7561a.html#a38f628377c19730bf5388a467ee7561a", null ]
+];

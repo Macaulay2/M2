@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="jakob" kind="page">
+    <compoundname>jakob</compoundname>
+    <title>Jakob todo list</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><variablelist>
+<varlistentry><term>Member <ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_aab3a5f6b3aa2abc665685e7d069a72ca_1aab3a5f6b3aa2abc665685e7d069a72ca" kindref="member">M2::ARingZZpFFPACK::computeHashValue</ref>  (const elem &amp;a) const</term></varlistentry>
+<listitem><para><anchor id="jakob_1_jakob000003"/> what are the implications of using /// instead of /<zwj/>**.  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_a6fbe69d29fb0519e679d1f8023047bc7_1a6fbe69d29fb0519e679d1f8023047bc7" kindref="member">M2::ARingZZpFFPACK::random</ref>  (<ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_accaf1bd40bf4c6970206a8c1a4a71047_1accaf1bd40bf4c6970206a8c1a4a71047" kindref="member">ElementType</ref> &amp;result) const</term></varlistentry>
+<listitem><para><anchor id="jakob_1_jakob000001"/> document possible overflow and other nasty things  </para>
+</listitem>
+<varlistentry><term>Member <ref refid="class_m2_1_1_a_ring_z_zp_f_f_p_a_c_k_a8dd2d78e2a437571e9228556d5ae38fd_1a8dd2d78e2a437571e9228556d5ae38fd" kindref="member">M2::ARingZZpFFPACK::ringID</ref>  </term></varlistentry>
+<listitem><para><anchor id="jakob_1_jakob000002"/> extract Signed_Trait from givaro. Or use c++11. </para>
+</listitem>
+</variablelist>
+</para>
+    </detaileddescription>
+    <location file="jakob"/>
+  </compounddef>
+</doxygen>

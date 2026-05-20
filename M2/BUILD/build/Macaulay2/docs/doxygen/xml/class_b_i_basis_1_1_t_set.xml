@@ -1,0 +1,371 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_b_i_basis_1_1_t_set" kind="class" language="C++" prot="public">
+    <compoundname>BIBasis::TSet</compoundname>
+    <includes refid="tset_8hpp" local="no">tset.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MonomType</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_b_i_basis_1_1_t_set_ac5025e2236808a62edea1e7d99f00546_1ac5025e2236808a62edea1e7d99f00546" prot="public" static="no">
+        <type>std::list&lt; <ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; * &gt;::iterator</type>
+        <definition>typedef std::list&lt;Triple&lt;MonomType&gt;*&gt;::iterator BIBasis::TSet&lt; MonomType &gt;::Iterator</definition>
+        <argsstring></argsstring>
+        <name>Iterator</name>
+        <qualifiedname>BIBasis::TSet::Iterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="53" column="47" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_b_i_basis_1_1_t_set_a3dd76edc7b1a3e76d70a682da66de8ca_1a3dd76edc7b1a3e76d70a682da66de8ca" prot="public" static="no">
+        <type>std::list&lt; <ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; * &gt;<ref refid="class_fixed_size_monomial_map" kindref="compound">::const_iterator</ref></type>
+        <definition>typedef std::list&lt;Triple&lt;MonomType&gt;*&gt;::const_iterator BIBasis::TSet&lt; MonomType &gt;::ConstIterator</definition>
+        <argsstring></argsstring>
+        <name>ConstIterator</name>
+        <qualifiedname>BIBasis::TSet::ConstIterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="54" column="53" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" prot="private" static="no" mutable="no">
+        <type>std::list&lt; <ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; * &gt;</type>
+        <definition>std::list&lt;Triple&lt;MonomType&gt;*&gt; BIBasis::TSet&lt; MonomType &gt;::TripleList</definition>
+        <argsstring></argsstring>
+        <name>TripleList</name>
+        <qualifiedname>BIBasis::TSet::TripleList</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="49" column="19" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="49" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a478732ab1b3f8b59a78dcd8ae4ecafdf_1a478732ab1b3f8b59a78dcd8ae4ecafdf" compoundref="tset_8hpp" startline="153" endline="156">BIBasis::TSet&lt; MonomType &gt;::Back</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a1d67c2c6ac09b55255e6a2a2ccd9df63_1a1d67c2c6ac09b55255e6a2a2ccd9df63" compoundref="tset_8hpp" startline="89" endline="92">BIBasis::TSet&lt; MonomType &gt;::Begin</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a1e8160c2772ee8c51a076d9c9592b0c1_1a1e8160c2772ee8c51a076d9c9592b0c1" compoundref="tset_8hpp" startline="95" endline="98">BIBasis::TSet&lt; MonomType &gt;::Begin</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a76b5c9adca990bd603770dce8cdc558c_1a76b5c9adca990bd603770dce8cdc558c" compoundref="tset_8hpp" startline="113" endline="124">BIBasis::TSet&lt; MonomType &gt;::Clear</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a85f963c52cce071ad4c33f477b3e2f19_1a85f963c52cce071ad4c33f477b3e2f19" compoundref="tset_8hpp" startline="159" endline="188">BIBasis::TSet&lt; MonomType &gt;::CollectNonMultiProlongations</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_acb23e143bae20d804027600d25ce6139_1acb23e143bae20d804027600d25ce6139" compoundref="tset_8hpp" startline="101" endline="104">BIBasis::TSet&lt; MonomType &gt;::End</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_ab7156eae5cb8d6c3252972e4b35555b9_1ab7156eae5cb8d6c3252972e4b35555b9" compoundref="tset_8hpp" startline="107" endline="110">BIBasis::TSet&lt; MonomType &gt;::End</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_ae902db548250d4cbb6a585330bb75890_1ae902db548250d4cbb6a585330bb75890" compoundref="tset_8hpp" startline="127" endline="131">BIBasis::TSet&lt; MonomType &gt;::Erase</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_ad3bca31c4a99fddad34ba98794f508bd_1ad3bca31c4a99fddad34ba98794f508bd" compoundref="tset_8hpp" startline="134" endline="138">BIBasis::TSet&lt; MonomType &gt;::PushBack</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a1984010da5e28044586bcb88f73c5c4d_1a1984010da5e28044586bcb88f73c5c4d" compoundref="tset_8hpp" startline="141" endline="144">BIBasis::TSet&lt; MonomType &gt;::Size</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a11d0b5560e7be5931fe85f44c9545b5b_1a11d0b5560e7be5931fe85f44c9545b5b" compoundref="tset_8hpp" startline="76" endline="80">BIBasis::TSet&lt; MonomType &gt;::TSet</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_b_i_basis_1_1_t_set_aade85072003a5ee97a27271b894afe51_1aade85072003a5ee97a27271b894afe51" prot="private" static="no" mutable="no">
+        <type><ref refid="class_b_i_basis_1_1_janet_tree" kindref="compound">JanetTree</ref>&lt; MonomType &gt;</type>
+        <definition>JanetTree&lt;MonomType&gt; BIBasis::TSet&lt; MonomType &gt;::JTree</definition>
+        <argsstring></argsstring>
+        <name>JTree</name>
+        <qualifiedname>BIBasis::TSet::JTree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="50" column="19" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="50" bodyend="-1"/>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a76b5c9adca990bd603770dce8cdc558c_1a76b5c9adca990bd603770dce8cdc558c" compoundref="tset_8hpp" startline="113" endline="124">BIBasis::TSet&lt; MonomType &gt;::Clear</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_ae902db548250d4cbb6a585330bb75890_1ae902db548250d4cbb6a585330bb75890" compoundref="tset_8hpp" startline="127" endline="131">BIBasis::TSet&lt; MonomType &gt;::Erase</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_adaf33fde56ab0c9d073743aab154e081_1adaf33fde56ab0c9d073743aab154e081" compoundref="tset_8hpp" startline="147" endline="150">BIBasis::TSet&lt; MonomType &gt;::Find</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_ad3bca31c4a99fddad34ba98794f508bd_1ad3bca31c4a99fddad34ba98794f508bd" compoundref="tset_8hpp" startline="134" endline="138">BIBasis::TSet&lt; MonomType &gt;::PushBack</referencedby>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a11d0b5560e7be5931fe85f44c9545b5b_1a11d0b5560e7be5931fe85f44c9545b5b" compoundref="tset_8hpp" startline="76" endline="80">BIBasis::TSet&lt; MonomType &gt;::TSet</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_a11d0b5560e7be5931fe85f44c9545b5b_1a11d0b5560e7be5931fe85f44c9545b5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::TSet&lt; MonomType &gt;::TSet</definition>
+        <argsstring>()</argsstring>
+        <name>TSet</name>
+        <qualifiedname>BIBasis::TSet::TSet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="56" column="9" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="76" bodyend="80"/>
+        <references refid="class_b_i_basis_1_1_t_set_aade85072003a5ee97a27271b894afe51_1aade85072003a5ee97a27271b894afe51" compoundref="tset_8hpp" startline="50">BIBasis::TSet&lt; MonomType &gt;::JTree</references>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_a622d4aede69e6e35caf0757da5381cec_1a622d4aede69e6e35caf0757da5381cec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BIBasis::TSet&lt; MonomType &gt;::~TSet</definition>
+        <argsstring>()</argsstring>
+        <name>~TSet</name>
+        <qualifiedname>BIBasis::TSet::~TSet</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="57" column="9" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="83" bodyend="86"/>
+        <references refid="class_b_i_basis_1_1_t_set_a76b5c9adca990bd603770dce8cdc558c_1a76b5c9adca990bd603770dce8cdc558c" compoundref="tset_8hpp" startline="113" endline="124">BIBasis::TSet&lt; MonomType &gt;::Clear</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_a1d67c2c6ac09b55255e6a2a2ccd9df63_1a1d67c2c6ac09b55255e6a2a2ccd9df63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_t_set_ac5025e2236808a62edea1e7d99f00546_1ac5025e2236808a62edea1e7d99f00546" kindref="member">Iterator</ref></type>
+        <definition>TSet&lt; MonomType &gt;::Iterator BIBasis::TSet&lt; MonomType &gt;::Begin</definition>
+        <argsstring>()</argsstring>
+        <name>Begin</name>
+        <qualifiedname>BIBasis::TSet::Begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="59" column="18" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="89" bodyend="92"/>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_a1e8160c2772ee8c51a076d9c9592b0c1_1a1e8160c2772ee8c51a076d9c9592b0c1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_t_set_a3dd76edc7b1a3e76d70a682da66de8ca_1a3dd76edc7b1a3e76d70a682da66de8ca" kindref="member">ConstIterator</ref></type>
+        <definition>TSet&lt; MonomType &gt;::ConstIterator BIBasis::TSet&lt; MonomType &gt;::Begin</definition>
+        <argsstring>() const</argsstring>
+        <name>Begin</name>
+        <qualifiedname>BIBasis::TSet::Begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="60" column="23" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="95" bodyend="98"/>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_acb23e143bae20d804027600d25ce6139_1acb23e143bae20d804027600d25ce6139" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_t_set_ac5025e2236808a62edea1e7d99f00546_1ac5025e2236808a62edea1e7d99f00546" kindref="member">Iterator</ref></type>
+        <definition>TSet&lt; MonomType &gt;::Iterator BIBasis::TSet&lt; MonomType &gt;::End</definition>
+        <argsstring>()</argsstring>
+        <name>End</name>
+        <qualifiedname>BIBasis::TSet::End</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="61" column="18" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="101" bodyend="104"/>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_ab7156eae5cb8d6c3252972e4b35555b9_1ab7156eae5cb8d6c3252972e4b35555b9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_t_set_a3dd76edc7b1a3e76d70a682da66de8ca_1a3dd76edc7b1a3e76d70a682da66de8ca" kindref="member">ConstIterator</ref></type>
+        <definition>TSet&lt; MonomType &gt;::ConstIterator BIBasis::TSet&lt; MonomType &gt;::End</definition>
+        <argsstring>() const</argsstring>
+        <name>End</name>
+        <qualifiedname>BIBasis::TSet::End</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="62" column="23" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="107" bodyend="110"/>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_a76b5c9adca990bd603770dce8cdc558c_1a76b5c9adca990bd603770dce8cdc558c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::TSet&lt; MonomType &gt;::Clear</definition>
+        <argsstring>()</argsstring>
+        <name>Clear</name>
+        <qualifiedname>BIBasis::TSet::Clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="64" column="14" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="113" bodyend="124"/>
+        <references refid="class_b_i_basis_1_1_t_set_aade85072003a5ee97a27271b894afe51_1aade85072003a5ee97a27271b894afe51" compoundref="tset_8hpp" startline="50">BIBasis::TSet&lt; MonomType &gt;::JTree</references>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+        <referencedby refid="class_b_i_basis_1_1_t_set_a622d4aede69e6e35caf0757da5381cec_1a622d4aede69e6e35caf0757da5381cec" compoundref="tset_8hpp" startline="83" endline="86">BIBasis::TSet&lt; MonomType &gt;::~TSet</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_ae902db548250d4cbb6a585330bb75890_1ae902db548250d4cbb6a585330bb75890" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_t_set_ac5025e2236808a62edea1e7d99f00546_1ac5025e2236808a62edea1e7d99f00546" kindref="member">Iterator</ref></type>
+        <definition>TSet&lt; MonomType &gt;::Iterator BIBasis::TSet&lt; MonomType &gt;::Erase</definition>
+        <argsstring>(Iterator it)</argsstring>
+        <name>Erase</name>
+        <qualifiedname>BIBasis::TSet::Erase</qualifiedname>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_t_set_ac5025e2236808a62edea1e7d99f00546_1ac5025e2236808a62edea1e7d99f00546" kindref="member">Iterator</ref></type>
+          <declname>it</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="65" column="18" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="127" bodyend="131"/>
+        <references refid="class_b_i_basis_1_1_t_set_aade85072003a5ee97a27271b894afe51_1aade85072003a5ee97a27271b894afe51" compoundref="tset_8hpp" startline="50">BIBasis::TSet&lt; MonomType &gt;::JTree</references>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_ad3bca31c4a99fddad34ba98794f508bd_1ad3bca31c4a99fddad34ba98794f508bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::TSet&lt; MonomType &gt;::PushBack</definition>
+        <argsstring>(Triple&lt; MonomType &gt; *newTriple)</argsstring>
+        <name>PushBack</name>
+        <qualifiedname>BIBasis::TSet::PushBack</qualifiedname>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; *</type>
+          <declname>newTriple</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="66" column="14" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="134" bodyend="138"/>
+        <references refid="class_b_i_basis_1_1_t_set_aade85072003a5ee97a27271b894afe51_1aade85072003a5ee97a27271b894afe51" compoundref="tset_8hpp" startline="50">BIBasis::TSet&lt; MonomType &gt;::JTree</references>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_a1984010da5e28044586bcb88f73c5c4d_1a1984010da5e28044586bcb88f73c5c4d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t BIBasis::TSet&lt; MonomType &gt;::Size</definition>
+        <argsstring>() const</argsstring>
+        <name>Size</name>
+        <qualifiedname>BIBasis::TSet::Size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="67" column="21" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="141" bodyend="144"/>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_adaf33fde56ab0c9d073743aab154e081_1adaf33fde56ab0c9d073743aab154e081" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; *</type>
+        <definition>const Triple&lt; MonomType &gt; * BIBasis::TSet&lt; MonomType &gt;::Find</definition>
+        <argsstring>(const MonomType &amp;monom) const</argsstring>
+        <name>Find</name>
+        <qualifiedname>BIBasis::TSet::Find</qualifiedname>
+        <param>
+          <type>const MonomType &amp;</type>
+          <declname>monom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="69" column="22" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="147" bodyend="150"/>
+        <references refid="class_b_i_basis_1_1_t_set_aade85072003a5ee97a27271b894afe51_1aade85072003a5ee97a27271b894afe51" compoundref="tset_8hpp" startline="50">BIBasis::TSet&lt; MonomType &gt;::JTree</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_a478732ab1b3f8b59a78dcd8ae4ecafdf_1a478732ab1b3f8b59a78dcd8ae4ecafdf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; *</type>
+        <definition>Triple&lt; MonomType &gt; * BIBasis::TSet&lt; MonomType &gt;::Back</definition>
+        <argsstring>() const</argsstring>
+        <name>Back</name>
+        <qualifiedname>BIBasis::TSet::Back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="70" column="16" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="153" bodyend="156"/>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+      <memberdef kind="function" id="class_b_i_basis_1_1_t_set_a85f963c52cce071ad4c33f477b3e2f19_1a85f963c52cce071ad4c33f477b3e2f19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BIBasis::TSet&lt; MonomType &gt;::CollectNonMultiProlongations</definition>
+        <argsstring>(Iterator &amp;iterator, std::list&lt; Triple&lt; MonomType &gt; * &gt; &amp;set)</argsstring>
+        <name>CollectNonMultiProlongations</name>
+        <qualifiedname>BIBasis::TSet::CollectNonMultiProlongations</qualifiedname>
+        <param>
+          <type><ref refid="class_b_i_basis_1_1_t_set_ac5025e2236808a62edea1e7d99f00546_1ac5025e2236808a62edea1e7d99f00546" kindref="member">Iterator</ref> &amp;</type>
+          <declname>iterator</declname>
+        </param>
+        <param>
+          <type>std::list&lt; <ref refid="class_b_i_basis_1_1_triple" kindref="compound">Triple</ref>&lt; MonomType &gt; * &gt; &amp;</type>
+          <declname>set</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/bibasis/tset.hpp" line="72" column="14" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="159" bodyend="188"/>
+        <references refid="class_b_i_basis_1_1_polynom_a851f427e4c35d4c0a1ca848132908523_1a851f427e4c35d4c0a1ca848132908523" compoundref="polynom_8hpp" startline="155" endline="158">BIBasis::Polynom&lt; MonomType &gt;::IsZero</references>
+        <references refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" compoundref="tset_8hpp" startline="49">BIBasis::TSet&lt; MonomType &gt;::TripleList</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>BIBasis::TSet&lt; MonomType &gt;</label>
+        <link refid="class_b_i_basis_1_1_t_set"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>TripleList</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>JTree</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Triple&lt; MonomType &gt; *</label>
+      </node>
+      <node id="6">
+        <label>JanetTree&lt; MonomType &gt;</label>
+      </node>
+      <node id="5">
+        <label>T</label>
+      </node>
+      <node id="4">
+        <label>std::list&lt; T &gt;</label>
+        <childnode refid="5" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::list&lt; BIBasis::Triple&lt; MonomType &gt; * &gt;</label>
+        <childnode refid="3" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; BIBasis::Triple&lt; MonomType &gt; * &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/bibasis/tset.hpp" line="46" column="5" bodyfile="Macaulay2/e/bibasis/tset.hpp" bodystart="47" bodyend="73"/>
+    <listofallmembers>
+      <member refid="class_b_i_basis_1_1_t_set_a478732ab1b3f8b59a78dcd8ae4ecafdf_1a478732ab1b3f8b59a78dcd8ae4ecafdf" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>Back</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_a1d67c2c6ac09b55255e6a2a2ccd9df63_1a1d67c2c6ac09b55255e6a2a2ccd9df63" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>Begin</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_a1e8160c2772ee8c51a076d9c9592b0c1_1a1e8160c2772ee8c51a076d9c9592b0c1" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>Begin</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_a76b5c9adca990bd603770dce8cdc558c_1a76b5c9adca990bd603770dce8cdc558c" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>Clear</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_a85f963c52cce071ad4c33f477b3e2f19_1a85f963c52cce071ad4c33f477b3e2f19" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>CollectNonMultiProlongations</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_a3dd76edc7b1a3e76d70a682da66de8ca_1a3dd76edc7b1a3e76d70a682da66de8ca" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>ConstIterator</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_acb23e143bae20d804027600d25ce6139_1acb23e143bae20d804027600d25ce6139" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>End</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_ab7156eae5cb8d6c3252972e4b35555b9_1ab7156eae5cb8d6c3252972e4b35555b9" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>End</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_ae902db548250d4cbb6a585330bb75890_1ae902db548250d4cbb6a585330bb75890" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>Erase</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_adaf33fde56ab0c9d073743aab154e081_1adaf33fde56ab0c9d073743aab154e081" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>Find</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_ac5025e2236808a62edea1e7d99f00546_1ac5025e2236808a62edea1e7d99f00546" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>Iterator</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_aade85072003a5ee97a27271b894afe51_1aade85072003a5ee97a27271b894afe51" prot="private" virt="non-virtual"><scope>BIBasis::TSet</scope><name>JTree</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_ad3bca31c4a99fddad34ba98794f508bd_1ad3bca31c4a99fddad34ba98794f508bd" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>PushBack</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_a1984010da5e28044586bcb88f73c5c4d_1a1984010da5e28044586bcb88f73c5c4d" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>Size</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_a74eb24b36b344c0fcea5634d45353c21_1a74eb24b36b344c0fcea5634d45353c21" prot="private" virt="non-virtual"><scope>BIBasis::TSet</scope><name>TripleList</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_a11d0b5560e7be5931fe85f44c9545b5b_1a11d0b5560e7be5931fe85f44c9545b5b" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>TSet</name></member>
+      <member refid="class_b_i_basis_1_1_t_set_a622d4aede69e6e35caf0757da5381cec_1a622d4aede69e6e35caf0757da5381cec" prot="public" virt="non-virtual"><scope>BIBasis::TSet</scope><name>~TSet</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

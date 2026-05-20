@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_a_ring_element_generator" kind="class" language="C++" prot="public">
+    <compoundname>ARingElementGenerator</compoundname>
+    <includes refid="_a_ring_test_8hpp" local="no">ARingTest.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename RingType</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_a_ring_element_generator_a2bb328dbbd90525a6c3abb700678b53a_1a2bb328dbbd90525a6c3abb700678b53a" prot="private" static="no" mutable="no">
+        <type>const RingType &amp;</type>
+        <definition>const RingType&amp; ARingElementGenerator&lt; RingType &gt;::mRing</definition>
+        <argsstring></argsstring>
+        <name>mRing</name>
+        <qualifiedname>ARingElementGenerator::mRing</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/ARingTest.hpp" line="60" column="18" bodyfile="Macaulay2/e/unit-tests/ARingTest.hpp" bodystart="60" bodyend="-1"/>
+        <referencedby refid="class_a_ring_element_generator_a880a0322fed8c2eea75d7d56d0c81a8d_1a880a0322fed8c2eea75d7d56d0c81a8d" compoundref="_a_ring_test_8hpp" startline="53" endline="53">ARingElementGenerator&lt; RingType &gt;::ARingElementGenerator</referencedby>
+        <referencedby refid="class_a_ring_element_generator_a0342bb481234f6134bc2e237f861bc31_1a0342bb481234f6134bc2e237f861bc31" compoundref="_a_ring_test_8hpp" startline="54" endline="57">ARingElementGenerator&lt; RingType &gt;::nextElement</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_a_ring_element_generator_a92e84dd17791be8b5041da7079507dca_1a92e84dd17791be8b5041da7079507dca" prot="private" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int ARingElementGenerator&lt; RingType &gt;::mNext</definition>
+        <argsstring></argsstring>
+        <name>mNext</name>
+        <qualifiedname>ARingElementGenerator::mNext</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/ARingTest.hpp" line="61" column="7" bodyfile="Macaulay2/e/unit-tests/ARingTest.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="class_a_ring_element_generator_a880a0322fed8c2eea75d7d56d0c81a8d_1a880a0322fed8c2eea75d7d56d0c81a8d" compoundref="_a_ring_test_8hpp" startline="53" endline="53">ARingElementGenerator&lt; RingType &gt;::ARingElementGenerator</referencedby>
+        <referencedby refid="class_a_ring_element_generator_a0342bb481234f6134bc2e237f861bc31_1a0342bb481234f6134bc2e237f861bc31" compoundref="_a_ring_test_8hpp" startline="54" endline="57">ARingElementGenerator&lt; RingType &gt;::nextElement</referencedby>
+        <referencedby refid="class_a_ring_element_generator_af3774a3c508648032500721cde9cf5e4_1af3774a3c508648032500721cde9cf5e4" compoundref="_a_ring_test_8hpp" startline="58" endline="58">ARingElementGenerator&lt; RingType &gt;::reset</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_a_ring_element_generator_a880a0322fed8c2eea75d7d56d0c81a8d_1a880a0322fed8c2eea75d7d56d0c81a8d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ARingElementGenerator&lt; RingType &gt;::ARingElementGenerator</definition>
+        <argsstring>(const RingType &amp;R)</argsstring>
+        <name>ARingElementGenerator</name>
+        <qualifiedname>ARingElementGenerator::ARingElementGenerator</qualifiedname>
+        <param>
+          <type>const RingType &amp;</type>
+          <declname>R</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/ARingTest.hpp" line="53" column="3" bodyfile="Macaulay2/e/unit-tests/ARingTest.hpp" bodystart="53" bodyend="53"/>
+        <references refid="class_a_ring_element_generator_a92e84dd17791be8b5041da7079507dca_1a92e84dd17791be8b5041da7079507dca" compoundref="_a_ring_test_8hpp" startline="61">ARingElementGenerator&lt; RingType &gt;::mNext</references>
+        <references refid="class_a_ring_element_generator_a2bb328dbbd90525a6c3abb700678b53a_1a2bb328dbbd90525a6c3abb700678b53a" compoundref="_a_ring_test_8hpp" startline="60">ARingElementGenerator&lt; RingType &gt;::mRing</references>
+      </memberdef>
+      <memberdef kind="function" id="class_a_ring_element_generator_a0342bb481234f6134bc2e237f861bc31_1a0342bb481234f6134bc2e237f861bc31" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARingElementGenerator&lt; RingType &gt;::nextElement</definition>
+        <argsstring>(typename RingType::ElementType &amp;result)</argsstring>
+        <name>nextElement</name>
+        <qualifiedname>ARingElementGenerator::nextElement</qualifiedname>
+        <param>
+          <type>typename RingType::ElementType &amp;</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/ARingTest.hpp" line="54" column="8" bodyfile="Macaulay2/e/unit-tests/ARingTest.hpp" bodystart="54" bodyend="57"/>
+        <references refid="_a_ring_test_8hpp_abfba126d094aba21386022c26fbc3b85_1abfba126d094aba21386022c26fbc3b85">getElement</references>
+        <references refid="class_a_ring_element_generator_a92e84dd17791be8b5041da7079507dca_1a92e84dd17791be8b5041da7079507dca" compoundref="_a_ring_test_8hpp" startline="61">ARingElementGenerator&lt; RingType &gt;::mNext</references>
+        <references refid="class_a_ring_element_generator_a2bb328dbbd90525a6c3abb700678b53a_1a2bb328dbbd90525a6c3abb700678b53a" compoundref="_a_ring_test_8hpp" startline="60">ARingElementGenerator&lt; RingType &gt;::mRing</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="_a_ring_c_c_test_8cpp_a113e0d365182e323901569c8a713b899_1a113e0d365182e323901569c8a713b899" compoundref="_a_ring_c_c_test_8cpp" startline="100" endline="126">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_test_8cpp_a13fc32ad8633d48064909d30282863c0_1a13fc32ad8633d48064909d30282863c0" compoundref="_a_ring_c_c_test_8cpp" startline="186" endline="240">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_test_8cpp_ada00a1b61e30d35cde7ea6b7556b67f5_1ada00a1b61e30d35cde7ea6b7556b67f5" compoundref="_a_ring_c_c_test_8cpp" startline="156" endline="184">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_test_8cpp_a08eb988d792d9fd0e5396152a163cc92_1a08eb988d792d9fd0e5396152a163cc92" compoundref="_a_ring_c_c_test_8cpp" startline="242" endline="283">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_test_8cpp_a6526815c9265a72553a73e89e1648c62_1a6526815c9265a72553a73e89e1648c62" compoundref="_a_ring_c_c_test_8cpp" startline="128" endline="154">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_c_test_8cpp_aff583e237b55bacf34012e1187cef2d8_1aff583e237b55bacf34012e1187cef2d8" compoundref="_a_ring_c_c_c_test_8cpp" startline="107" endline="132">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_c_test_8cpp_a640fe51a95a9fb95ce209b1bf1045efc_1a640fe51a95a9fb95ce209b1bf1045efc" compoundref="_a_ring_c_c_c_test_8cpp" startline="190" endline="244">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_c_test_8cpp_a4dff8411a8d071a5c648abf643a97d95_1a4dff8411a8d071a5c648abf643a97d95" compoundref="_a_ring_c_c_c_test_8cpp" startline="161" endline="188">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_c_test_8cpp_aaa980d81e84eb3c6f517cf405ccb65e7_1aaa980d81e84eb3c6f517cf405ccb65e7" compoundref="_a_ring_c_c_c_test_8cpp" startline="246" endline="285">TEST</referencedby>
+        <referencedby refid="_a_ring_c_c_c_test_8cpp_ac159c77e395a5fdd0243f43a40020504_1ac159c77e395a5fdd0243f43a40020504" compoundref="_a_ring_c_c_c_test_8cpp" startline="134" endline="159">TEST</referencedby>
+        <referencedby refid="_a_ring_q_q_flint_test_8cpp_a77c6d97232fe4632e6cb65882e4f5269_1a77c6d97232fe4632e6cb65882e4f5269" compoundref="_a_ring_q_q_flint_test_8cpp" startline="57" endline="72">TEST</referencedby>
+        <referencedby refid="_a_ring_q_q_flint_test_8cpp_a62be34ce4c8d07db53489d464d7b7c55_1a62be34ce4c8d07db53489d464d7b7c55" compoundref="_a_ring_q_q_flint_test_8cpp" startline="74" endline="95">TEST</referencedby>
+        <referencedby refid="_a_ring_q_q_gmp_test_8cpp_a13079d2eedb052e0cbcde0d09c27feb7_1a13079d2eedb052e0cbcde0d09c27feb7" compoundref="_a_ring_q_q_gmp_test_8cpp" startline="55" endline="70">TEST</referencedby>
+        <referencedby refid="_a_ring_q_q_gmp_test_8cpp_aee253a397521297ca3228946640fa8a3_1aee253a397521297ca3228946640fa8a3" compoundref="_a_ring_q_q_gmp_test_8cpp" startline="72" endline="94">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_aa6972267cabc98dd7eb781386d1fe060_1aa6972267cabc98dd7eb781386d1fe060" compoundref="_a_ring_r_r_test_8cpp" startline="110" endline="135">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a2aed381ca7c6f0fc98da2ee5ce2bfc8d_1a2aed381ca7c6f0fc98da2ee5ce2bfc8d" compoundref="_a_ring_r_r_test_8cpp" startline="201" endline="255">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_ad1fad277ea19889f7e361f1ce99c7e1e_1ad1fad277ea19889f7e361f1ce99c7e1e" compoundref="_a_ring_r_r_test_8cpp" startline="168" endline="199">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a54ff7f8d2578e5ece15c02966843ee9d_1a54ff7f8d2578e5ece15c02966843ee9d" compoundref="_a_ring_r_r_test_8cpp" startline="257" endline="295">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a185a9eaeceacc3357af113dd60851f91_1a185a9eaeceacc3357af113dd60851f91" compoundref="_a_ring_r_r_test_8cpp" startline="137" endline="166">TEST</referencedby>
+        <referencedby refid="_a_ring_r_ri_test_8cpp_a39b79e30587199d55ceb3f456f40adec_1a39b79e30587199d55ceb3f456f40adec" compoundref="_a_ring_r_ri_test_8cpp" startline="120" endline="145">TEST</referencedby>
+        <referencedby refid="_a_ring_r_ri_test_8cpp_af38f6cbec4080766ba757b5e702ea081_1af38f6cbec4080766ba757b5e702ea081" compoundref="_a_ring_r_ri_test_8cpp" startline="209" endline="267">TEST</referencedby>
+        <referencedby refid="_a_ring_r_ri_test_8cpp_ad7f2a25c7dfa0394dda69d126a71fcc1_1ad7f2a25c7dfa0394dda69d126a71fcc1" compoundref="_a_ring_r_ri_test_8cpp" startline="180" endline="207">TEST</referencedby>
+        <referencedby refid="_a_ring_r_ri_test_8cpp_a13be1a1c10297c72bd398cc0b9a06162_1a13be1a1c10297c72bd398cc0b9a06162" compoundref="_a_ring_r_ri_test_8cpp" startline="269" endline="307">TEST</referencedby>
+        <referencedby refid="_a_ring_r_ri_test_8cpp_a63701297673b6dc053cc69b010e3d022_1a63701297673b6dc053cc69b010e3d022" compoundref="_a_ring_r_ri_test_8cpp" startline="147" endline="178">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_r_test_8cpp_aabc3dc00a77d96283bf2e7a5d891b377_1aabc3dc00a77d96283bf2e7a5d891b377" compoundref="_a_ring_r_r_r_test_8cpp" startline="113" endline="138">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_r_test_8cpp_a94c69c0a1cdced90e531b137c9851966_1a94c69c0a1cdced90e531b137c9851966" compoundref="_a_ring_r_r_r_test_8cpp" startline="196" endline="249">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_r_test_8cpp_ad5058673e50079a47f3199a79cb752c5_1ad5058673e50079a47f3199a79cb752c5" compoundref="_a_ring_r_r_r_test_8cpp" startline="167" endline="194">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_r_test_8cpp_ab45d598ba21c2df4d86fb793fb6941f0_1ab45d598ba21c2df4d86fb793fb6941f0" compoundref="_a_ring_r_r_r_test_8cpp" startline="251" endline="288">TEST</referencedby>
+        <referencedby refid="_a_ring_r_r_r_test_8cpp_aa1fe4d6efa4a1fee3b2e800a33f6407e_1aa1fe4d6efa4a1fee3b2e800a33f6407e" compoundref="_a_ring_r_r_r_test_8cpp" startline="140" endline="165">TEST</referencedby>
+        <referencedby refid="_a_ring_z_z_test_8cpp_a189b30d0eb3a8237cd36cfe1441bd674_1a189b30d0eb3a8237cd36cfe1441bd674" compoundref="_a_ring_z_z_test_8cpp" startline="59" endline="74">TEST</referencedby>
+        <referencedby refid="_a_ring_z_zp_test_8cpp_a6edfd12a4227501063c61fde0cf5ca7b_1a6edfd12a4227501063c61fde0cf5ca7b" compoundref="_a_ring_z_zp_test_8cpp" startline="105" endline="125">TEST</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_a085ff187c48b4f56e0a9438998c0f6fa_1a085ff187c48b4f56e0a9438998c0f6fa" compoundref="_a_ring_test_8hpp" startline="242" endline="282">testAdd</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_a8f454f590f208b1147e7744c68a14b9f_1a8f454f590f208b1147e7744c68a14b9f" compoundref="_a_ring_test_8hpp" startline="184" endline="239">testAxioms</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_ab28cad15d19daaf7277bfd0095e90840_1ab28cad15d19daaf7277bfd0095e90840" compoundref="_a_ring_test_8hpp" startline="338" endline="366">testDivide</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_ada808f2424b0679c4701eb75ea9ec11a_1ada808f2424b0679c4701eb75ea9ec11a" compoundref="_a_ring_test_8hpp" startline="310" endline="335">testMultiply</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_a12c70bbaaafc089162fb99e00baaeee8_1a12c70bbaaafc089162fb99e00baaeee8" compoundref="_a_ring_test_8hpp" startline="103" endline="118">testNegate</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_a293c88da705b60f5aba31b2811119a53_1a293c88da705b60f5aba31b2811119a53" compoundref="_a_ring_test_8hpp" startline="395" endline="444">testPower</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_a28623555888970c8b86cf0e9ac014011_1a28623555888970c8b86cf0e9ac014011" compoundref="_a_ring_test_8hpp" startline="369" endline="392">testReciprocal</referencedby>
+        <referencedby refid="_a_ring_c_c_test_8cpp_a969f674988d165592856067d4889b825_1a969f674988d165592856067d4889b825" compoundref="_a_ring_c_c_test_8cpp" startline="74" endline="92">testRingNegateCCC</referencedby>
+        <referencedby refid="_a_ring_c_c_c_test_8cpp_a853544075f60111f70477bc3e8e055d7_1a853544075f60111f70477bc3e8e055d7" compoundref="_a_ring_c_c_c_test_8cpp" startline="81" endline="99">testRingNegateCCC</referencedby>
+        <referencedby refid="_a_ring_r_r_test_8cpp_a6733d61c2c84e47d3186c5f58783b20a_1a6733d61c2c84e47d3186c5f58783b20a" compoundref="_a_ring_r_r_test_8cpp" startline="84" endline="102">testRingNegateRR</referencedby>
+        <referencedby refid="_a_ring_r_ri_test_8cpp_affcc8cb12d22521062b2a33beff42fb3_1affcc8cb12d22521062b2a33beff42fb3" compoundref="_a_ring_r_ri_test_8cpp" startline="88" endline="111">testRingNegateRRi</referencedby>
+        <referencedby refid="_a_ring_r_r_r_test_8cpp_a5306c2e84ceaa3c62c80fe7cc6e4570a_1a5306c2e84ceaa3c62c80fe7cc6e4570a" compoundref="_a_ring_r_r_r_test_8cpp" startline="87" endline="105">testRingNegateRRR</referencedby>
+        <referencedby refid="_a_ring_test_8hpp_ac1c174224742821bdc091f3cfee3cb07_1ac1c174224742821bdc091f3cfee3cb07" compoundref="_a_ring_test_8hpp" startline="285" endline="307">testSubtract</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_a_ring_element_generator_af3774a3c508648032500721cde9cf5e4_1af3774a3c508648032500721cde9cf5e4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void ARingElementGenerator&lt; RingType &gt;::reset</definition>
+        <argsstring>()</argsstring>
+        <name>reset</name>
+        <qualifiedname>ARingElementGenerator::reset</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/unit-tests/ARingTest.hpp" line="58" column="8" bodyfile="Macaulay2/e/unit-tests/ARingTest.hpp" bodystart="58" bodyend="58"/>
+        <references refid="class_a_ring_element_generator_a92e84dd17791be8b5041da7079507dca_1a92e84dd17791be8b5041da7079507dca" compoundref="_a_ring_test_8hpp" startline="61">ARingElementGenerator&lt; RingType &gt;::mNext</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>ARingElementGenerator&lt; RingType &gt;</label>
+        <link refid="class_a_ring_element_generator"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mNext</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>const RingType &amp;</label>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/unit-tests/ARingTest.hpp" line="50" column="1" bodyfile="Macaulay2/e/unit-tests/ARingTest.hpp" bodystart="51" bodyend="62"/>
+    <listofallmembers>
+      <member refid="class_a_ring_element_generator_a880a0322fed8c2eea75d7d56d0c81a8d_1a880a0322fed8c2eea75d7d56d0c81a8d" prot="public" virt="non-virtual"><scope>ARingElementGenerator</scope><name>ARingElementGenerator</name></member>
+      <member refid="class_a_ring_element_generator_a92e84dd17791be8b5041da7079507dca_1a92e84dd17791be8b5041da7079507dca" prot="private" virt="non-virtual"><scope>ARingElementGenerator</scope><name>mNext</name></member>
+      <member refid="class_a_ring_element_generator_a2bb328dbbd90525a6c3abb700678b53a_1a2bb328dbbd90525a6c3abb700678b53a" prot="private" virt="non-virtual"><scope>ARingElementGenerator</scope><name>mRing</name></member>
+      <member refid="class_a_ring_element_generator_a0342bb481234f6134bc2e237f861bc31_1a0342bb481234f6134bc2e237f861bc31" prot="public" virt="non-virtual"><scope>ARingElementGenerator</scope><name>nextElement</name></member>
+      <member refid="class_a_ring_element_generator_af3774a3c508648032500721cde9cf5e4_1af3774a3c508648032500721cde9cf5e4" prot="public" virt="non-virtual"><scope>ARingElementGenerator</scope><name>reset</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

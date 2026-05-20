@@ -1,0 +1,2143 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_f4_matrix_builder" kind="class" language="C++" prot="public">
+    <compoundname>F4MatrixBuilder</compoundname>
+    <includes refid="_f4_matrix_builder_8hpp" local="no">F4MatrixBuilder.hpp</includes>
+    <innerclass refid="struct_f4_matrix_builder_1_1_row_task" prot="private">F4MatrixBuilder::RowTask</innerclass>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_f4_matrix_builder_a60a5a89296fd514177a51ee956dbb308_1a60a5a89296fd514177a51ee956dbb308" prot="private" static="no">
+        <type><ref refid="class_quad_matrix_builder_acd86bc5fd5d6371cc84c3c15473dc18d_1acd86bc5fd5d6371cc84c3c15473dc18d" kindref="member">QuadMatrixBuilder::ColIndex</ref></type>
+        <definition>typedef QuadMatrixBuilder::ColIndex F4MatrixBuilder::ColIndex</definition>
+        <argsstring></argsstring>
+        <name>ColIndex</name>
+        <qualifiedname>F4MatrixBuilder::ColIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="25" column="39" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_a1aec5db56ea8907bb1a4c05b946f5475_1a1aec5db56ea8907bb1a4c05b946f5475" prot="private" static="no">
+        <type><ref refid="class_quad_matrix_builder_1_1_left_right_col_index" kindref="compound">QuadMatrixBuilder::LeftRightColIndex</ref></type>
+        <definition>typedef QuadMatrixBuilder::LeftRightColIndex F4MatrixBuilder::LeftRightColIndex</definition>
+        <argsstring></argsstring>
+        <name>LeftRightColIndex</name>
+        <qualifiedname>F4MatrixBuilder::LeftRightColIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="26" column="48" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_a6d95bae45aeb36ab8436a881b243ba60_1a6d95bae45aeb36ab8436a881b243ba60" prot="private" static="no">
+        <type><ref refid="class_quad_matrix_builder_a7d5a21a6e961e226bcac2803bde10cb5_1a7d5a21a6e961e226bcac2803bde10cb5" kindref="member">QuadMatrixBuilder::Scalar</ref></type>
+        <definition>typedef QuadMatrixBuilder::Scalar F4MatrixBuilder::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <qualifiedname>F4MatrixBuilder::Scalar</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="27" column="37" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_ab7c19a73d9ade65777d26b9f1de49f3a_1ab7c19a73d9ade65777d26b9f1de49f3a" prot="private" static="no">
+        <type><ref refid="class_quad_matrix_builder_a51324620920f319d058e800f035a3ae5_1a51324620920f319d058e800f035a3ae5" kindref="member">QuadMatrixBuilder::Map</ref></type>
+        <definition>typedef QuadMatrixBuilder::Map F4MatrixBuilder::Map</definition>
+        <argsstring></argsstring>
+        <name>Map</name>
+        <qualifiedname>F4MatrixBuilder::Map</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="28" column="34" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_a76439f80096cb1d8a4a042108fca8224_1a76439f80096cb1d8a4a042108fca8224" prot="private" static="no">
+        <type><ref refid="class_quad_matrix_builder_aae5662459e8f10de9ef1b68c8f347e3f_1aae5662459e8f10de9ef1b68c8f347e3f" kindref="member">QuadMatrixBuilder::Monomials</ref></type>
+        <definition>typedef QuadMatrixBuilder::Monomials F4MatrixBuilder::Monomials</definition>
+        <argsstring></argsstring>
+        <name>Monomials</name>
+        <qualifiedname>F4MatrixBuilder::Monomials</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="29" column="40" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_adaedf586a76d8444746e8e42e46f7fcd_1adaedf586a76d8444746e8e42e46f7fcd" prot="private" static="no">
+        <type>const <ref refid="class_monomial_map" kindref="compound">MonomialMap</ref>&lt; <ref refid="class_f4_matrix_builder_a1aec5db56ea8907bb1a4c05b946f5475_1a1aec5db56ea8907bb1a4c05b946f5475" kindref="member">LeftRightColIndex</ref> &gt;::Reader</type>
+        <definition>typedef const MonomialMap&lt;LeftRightColIndex&gt;::Reader F4MatrixBuilder::ColReader</definition>
+        <argsstring></argsstring>
+        <name>ColReader</name>
+        <qualifiedname>F4MatrixBuilder::ColReader</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="87" column="38" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_a44f099cf940e7f2d428ee7c33b11a138_1a44f099cf940e7f2d428ee7c33b11a138" prot="private" static="no">
+        <type><ref refid="namespacemtbb_a5d2af47c566c2fee3c2767932ab4a108_1a5d2af47c566c2fee3c2767932ab4a108" kindref="member">mtbb::feeder</ref>&lt; <ref refid="struct_f4_matrix_builder_1_1_row_task" kindref="compound">RowTask</ref> &gt;</type>
+        <definition>using F4MatrixBuilder::TaskFeeder =  mtbb::feeder&lt;RowTask&gt;</definition>
+        <argsstring></argsstring>
+        <name>TaskFeeder</name>
+        <qualifiedname>F4MatrixBuilder::TaskFeeder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="102" column="3" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="102" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_f4_matrix_builder_a278a8d81e86f0a84245c4566c99cd0e8_1a278a8d81e86f0a84245c4566c99cd0e8" prot="public" static="no">
+        <type><ref refid="class_poly_ring_a80311c6f90e7cfd893932e41f5e20c07_1a80311c6f90e7cfd893932e41f5e20c07" kindref="member">PolyRing::Field</ref></type>
+        <definition>typedef PolyRing::Field F4MatrixBuilder::Field</definition>
+        <argsstring></argsstring>
+        <name>Field</name>
+        <qualifiedname>F4MatrixBuilder::Field</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="32" column="27" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_a2e840b449e003508ad9c7bb44adcb29c_1a2e840b449e003508ad9c7bb44adcb29c" prot="public" static="no">
+        <type><ref refid="class_poly_ring_a6cd4f58ca101a6b8054c7117a4f7c09a_1a6cd4f58ca101a6b8054c7117a4f7c09a" kindref="member">PolyRing::Monoid</ref></type>
+        <definition>typedef PolyRing::Monoid F4MatrixBuilder::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>F4MatrixBuilder::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="34" column="28" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_a2935e5677fdb98a9e0528995cb8cbbb7_1a2935e5677fdb98a9e0528995cb8cbbb7" prot="public" static="no">
+        <type>Monoid::Mono</type>
+        <definition>typedef Monoid::Mono F4MatrixBuilder::Mono</definition>
+        <argsstring></argsstring>
+        <name>Mono</name>
+        <qualifiedname>F4MatrixBuilder::Mono</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="35" column="24" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_a9f86aee62c90b605fb3dbb73963379fd_1a9f86aee62c90b605fb3dbb73963379fd" prot="public" static="no">
+        <type>Monoid::MonoRef</type>
+        <definition>typedef Monoid::MonoRef F4MatrixBuilder::MonoRef</definition>
+        <argsstring></argsstring>
+        <name>MonoRef</name>
+        <qualifiedname>F4MatrixBuilder::MonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="36" column="27" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" prot="public" static="no">
+        <type>Monoid::ConstMonoRef</type>
+        <definition>typedef Monoid::ConstMonoRef F4MatrixBuilder::ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>F4MatrixBuilder::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="37" column="32" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_af4ebed84318339c8121ce7d3dae20bbc_1af4ebed84318339c8121ce7d3dae20bbc" prot="public" static="no">
+        <type>Monoid::MonoPtr</type>
+        <definition>typedef Monoid::MonoPtr F4MatrixBuilder::MonoPtr</definition>
+        <argsstring></argsstring>
+        <name>MonoPtr</name>
+        <qualifiedname>F4MatrixBuilder::MonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="38" column="27" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_f4_matrix_builder_ac85cb6f3fd6f8adeede2d079e8652caf_1ac85cb6f3fd6f8adeede2d079e8652caf" prot="public" static="no">
+        <type>Monoid::ConstMonoPtr</type>
+        <definition>typedef Monoid::ConstMonoPtr F4MatrixBuilder::ConstMonoPtr</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoPtr</name>
+        <qualifiedname>F4MatrixBuilder::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="39" column="32" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="39" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_f4_matrix_builder_a10fb7bd6ddecd97953657677607de518_1a10fb7bd6ddecd97953657677607de518" prot="private" static="no" mutable="no">
+        <type><ref refid="classmtbb_1_1mutex" kindref="compound">mtbb::mutex</ref></type>
+        <definition>mtbb::mutex F4MatrixBuilder::mCreateColumnLock</definition>
+        <argsstring></argsstring>
+        <name>mCreateColumnLock</name>
+        <qualifiedname>F4MatrixBuilder::mCreateColumnLock</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="165" column="15" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="165" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="230" endline="272">createColumn</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_builder_ab175c8ccb49fb1c9da6dff278340aa39_1ab175c8ccb49fb1c9da6dff278340aa39" prot="private" static="no" mutable="no">
+        <type><ref refid="class_f4_matrix_builder_a60a5a89296fd514177a51ee956dbb308_1a60a5a89296fd514177a51ee956dbb308" kindref="member">ColIndex</ref></type>
+        <definition>ColIndex F4MatrixBuilder::mLeftColCount</definition>
+        <argsstring></argsstring>
+        <name>mLeftColCount</name>
+        <qualifiedname>F4MatrixBuilder::mLeftColCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="166" column="12" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="166" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="230" endline="272">createColumn</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_builder_a6db0aa6a5f622a5b37dcfeef9cadaebf_1a6db0aa6a5f622a5b37dcfeef9cadaebf" prot="private" static="no" mutable="no">
+        <type><ref refid="class_f4_matrix_builder_a60a5a89296fd514177a51ee956dbb308_1a60a5a89296fd514177a51ee956dbb308" kindref="member">ColIndex</ref></type>
+        <definition>ColIndex F4MatrixBuilder::mRightColCount</definition>
+        <argsstring></argsstring>
+        <name>mRightColCount</name>
+        <qualifiedname>F4MatrixBuilder::mRightColCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="167" column="12" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="167" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="230" endline="272">createColumn</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_builder_a58701cf6f34198c982bf5c1ab8cb54d0_1a58701cf6f34198c982bf5c1ab8cb54d0" prot="private" static="no" mutable="no">
+        <type><ref refid="class_f4_matrix_builder_a2935e5677fdb98a9e0528995cb8cbbb7_1a2935e5677fdb98a9e0528995cb8cbbb7" kindref="member">Mono</ref></type>
+        <definition>Mono F4MatrixBuilder::mTmp</definition>
+        <argsstring></argsstring>
+        <name>mTmp</name>
+        <qualifiedname>F4MatrixBuilder::mTmp</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="168" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="168" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="230" endline="272">createColumn</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_builder_a3b0655ddef0ad284f4e9170be02106ab_1a3b0655ddef0ad284f4e9170be02106ab" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_poly_basis" kindref="compound">PolyBasis</ref> &amp;</type>
+        <definition>const PolyBasis&amp; F4MatrixBuilder::mBasis</definition>
+        <argsstring></argsstring>
+        <name>mBasis</name>
+        <qualifiedname>F4MatrixBuilder::mBasis</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="169" column="19" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="169" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="230" endline="272">createColumn</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_builder_a1a30c4925e52ede4eda16e8e6123a4f1_1a1a30c4925e52ede4eda16e8e6123a4f1" prot="private" static="no" mutable="no">
+        <type><ref refid="class_f4_matrix_builder_a76439f80096cb1d8a4a042108fca8224_1a76439f80096cb1d8a4a042108fca8224" kindref="member">Monomials</ref></type>
+        <definition>Monomials F4MatrixBuilder::mMonomialsLeft</definition>
+        <argsstring></argsstring>
+        <name>mMonomialsLeft</name>
+        <qualifiedname>F4MatrixBuilder::mMonomialsLeft</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="170" column="13" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="170" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_builder_a960602e76fb3b2374a479cdc5c384245_1a960602e76fb3b2374a479cdc5c384245" prot="private" static="no" mutable="no">
+        <type><ref refid="class_f4_matrix_builder_a76439f80096cb1d8a4a042108fca8224_1a76439f80096cb1d8a4a042108fca8224" kindref="member">Monomials</ref></type>
+        <definition>Monomials F4MatrixBuilder::mMonomialsRight</definition>
+        <argsstring></argsstring>
+        <name>mMonomialsRight</name>
+        <qualifiedname>F4MatrixBuilder::mMonomialsRight</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="171" column="13" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="171" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_builder_a99194b1f21417f2495a85c1fffc0e4f9_1a99194b1f21417f2495a85c1fffc0e4f9" prot="private" static="no" mutable="no">
+        <type><ref refid="class_quad_matrix_builder" kindref="compound">QuadMatrixBuilder</ref></type>
+        <definition>QuadMatrixBuilder F4MatrixBuilder::mBuilder</definition>
+        <argsstring></argsstring>
+        <name>mBuilder</name>
+        <qualifiedname>F4MatrixBuilder::mBuilder</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="172" column="21" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="172" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a43fc227fd5de46bf8ccaa65d837ec34a_1a43fc227fd5de46bf8ccaa65d837ec34a" compoundref="_f4_matrix_builder_8hpp" startline="82" endline="82">ring</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_builder_abe2a0e17d1ac82a0a00170222cffdb05_1abe2a0e17d1ac82a0a00170222cffdb05" prot="private" static="no" mutable="no">
+        <type><ref refid="class_f4_matrix_builder_ab7c19a73d9ade65777d26b9f1de49f3a_1ab7c19a73d9ade65777d26b9f1de49f3a" kindref="member">Map</ref></type>
+        <definition>Map F4MatrixBuilder::mMap</definition>
+        <argsstring></argsstring>
+        <name>mMap</name>
+        <qualifiedname>F4MatrixBuilder::mMap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="173" column="7" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="173" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="353" endline="412">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a65a9e17af17e29aec4cf79cefc97c4c1_1a65a9e17af17e29aec4cf79cefc97c4c1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="274" endline="305">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_acc4c82697e6b57c22a45b8a17d039bd1_1acc4c82697e6b57c22a45b8a17d039bd1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="307" endline="351">appendRowTop</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="230" endline="272">createColumn</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_f4_matrix_builder_a9edcf75c4132a871cb16cb6fd2e83bed_1a9edcf75c4132a871cb16cb6fd2e83bed" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="struct_f4_matrix_builder_1_1_row_task" kindref="compound">RowTask</ref> &gt;</type>
+        <definition>std::vector&lt;RowTask&gt; F4MatrixBuilder::mTodo</definition>
+        <argsstring></argsstring>
+        <name>mTodo</name>
+        <qualifiedname>F4MatrixBuilder::mTodo</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="174" column="15" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="174" bodyend="-1"/>
+        <referencedby refid="class_f4_matrix_builder_a670935f387941eb1acc5d942d05f8f21_1a670935f387941eb1acc5d942d05f8f21" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="88" endline="96">addPolynomialToMatrix</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a9b63b330046c57965fe9d0873efe3238_1a9b63b330046c57965fe9d0873efe3238" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="99" endline="113">addPolynomialToMatrix</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a4cbda64c9505a352df8336509e0c370c_1a4cbda64c9505a352df8336509e0c370c" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="72" endline="86">addSPolynomialToMatrix</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>F4MatrixBuilder::F4MatrixBuilder</definition>
+        <argsstring>(const PolyBasis &amp;basis, size_t memoryQuantum=0)</argsstring>
+        <name>F4MatrixBuilder</name>
+        <qualifiedname>F4MatrixBuilder::F4MatrixBuilder</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly_basis" kindref="compound">PolyBasis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+          <declname>memoryQuantum</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>memoryQuantum is how much to increase the memory size by each time the current amount of memory is exhausted. A value of 0 indicates to start small and double the quantum at each exhaustion. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="45" column="3" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="51" bodyend="70"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_ab997945ff432036eb91557c87ce111cc_1ab997945ff432036eb91557c87ce111cc" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="140">MATHICGB_ASSERT_NO_ASSUME</references>
+        <references refid="class_f4_matrix_builder_a3b0655ddef0ad284f4e9170be02106ab_1a3b0655ddef0ad284f4e9170be02106ab" compoundref="_f4_matrix_builder_8hpp" startline="169">mBasis</references>
+        <references refid="class_f4_matrix_builder_a99194b1f21417f2495a85c1fffc0e4f9_1a99194b1f21417f2495a85c1fffc0e4f9" compoundref="_f4_matrix_builder_8hpp" startline="172">mBuilder</references>
+        <references refid="class_f4_matrix_builder_ab175c8ccb49fb1c9da6dff278340aa39_1ab175c8ccb49fb1c9da6dff278340aa39" compoundref="_f4_matrix_builder_8hpp" startline="166">mLeftColCount</references>
+        <references refid="class_f4_matrix_builder_abe2a0e17d1ac82a0a00170222cffdb05_1abe2a0e17d1ac82a0a00170222cffdb05" compoundref="_f4_matrix_builder_8hpp" startline="173">mMap</references>
+        <references refid="class_f4_matrix_builder_a1a30c4925e52ede4eda16e8e6123a4f1_1a1a30c4925e52ede4eda16e8e6123a4f1" compoundref="_f4_matrix_builder_8hpp" startline="170">mMonomialsLeft</references>
+        <references refid="class_f4_matrix_builder_a960602e76fb3b2374a479cdc5c384245_1a960602e76fb3b2374a479cdc5c384245" compoundref="_f4_matrix_builder_8hpp" startline="171">mMonomialsRight</references>
+        <references refid="class_f4_matrix_builder_afdd2a6cafa7f9e955a5d66cfb1dc9b33_1afdd2a6cafa7f9e955a5d66cfb1dc9b33" compoundref="_f4_matrix_builder_8hpp" startline="83" endline="83">monoid</references>
+        <references refid="class_f4_matrix_builder_a6db0aa6a5f622a5b37dcfeef9cadaebf_1a6db0aa6a5f622a5b37dcfeef9cadaebf" compoundref="_f4_matrix_builder_8hpp" startline="167">mRightColCount</references>
+        <references refid="class_f4_matrix_builder_a58701cf6f34198c982bf5c1ab8cb54d0_1a58701cf6f34198c982bf5c1ab8cb54d0" compoundref="_f4_matrix_builder_8hpp" startline="168">mTmp</references>
+        <references refid="namespacemathic_a6870238a4090a0cc546241d8c6b3b283_1a6870238a4090a0cc546241d8c6b3b283" compoundref="error_8cpp" startline="9" endline="11">mathic::reportInternalError</references>
+        <references refid="class_f4_matrix_builder_a43fc227fd5de46bf8ccaa65d837ec34a_1a43fc227fd5de46bf8ccaa65d837ec34a" compoundref="_f4_matrix_builder_8hpp" startline="82" endline="82">ring</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a4cbda64c9505a352df8336509e0c370c_1a4cbda64c9505a352df8336509e0c370c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixBuilder::addSPolynomialToMatrix</definition>
+        <argsstring>(const Poly &amp;polyA, const Poly &amp;polyB)</argsstring>
+        <name>addSPolynomialToMatrix</name>
+        <qualifiedname>F4MatrixBuilder::addSPolynomialToMatrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>polyA</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>polyB</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Schedules a row representing the S-polynomial between polyA and polyB to be added to the matrix. No ownership is taken, but polyA and polyB must remain valid until the matrix is constructed.</para>
+<para>Currently, the two monomials must be monic, though this is just because they always happen to be monic so there was no reason to support the non-monic case. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="54" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="72" bodyend="86"/>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a08ce667fd3225fcfd77a0a17962c7ae1_1a08ce667fd3225fcfd77a0a17962c7ae1" compoundref="_f4_matrix_builder_8hpp" startline="94">F4MatrixBuilder::RowTask::addToTop</references>
+        <references refid="class_poly_a239be87070cfb3d18e8a4dffdf26a45f_1a239be87070cfb3d18e8a4dffdf26a45f" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="164" endline="167">Poly::isMonic</references>
+        <references refid="class_poly_a03c1b4cfe055d871ea5c1822c14b6257_1a03c1b4cfe055d871ea5c1822c14b6257" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="47" endline="47">Poly::isZero</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_builder_a9edcf75c4132a871cb16cb6fd2e83bed_1a9edcf75c4132a871cb16cb6fd2e83bed" compoundref="_f4_matrix_builder_8hpp" startline="174">mTodo</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a297e17733c94a5e419f384a46b4d1ee9_1a297e17733c94a5e419f384a46b4d1ee9" compoundref="_f4_matrix_builder_8hpp" startline="96">F4MatrixBuilder::RowTask::poly</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a9158d52c4b553a5edad7ca0ae30e651b_1a9158d52c4b553a5edad7ca0ae30e651b" compoundref="_f4_matrix_builder_8hpp" startline="97">F4MatrixBuilder::RowTask::sPairPoly</references>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_af3893dac4fb13f523a52a00549b2ce19_1af3893dac4fb13f523a52a00549b2ce19" compoundref="test_2_f4_matrix_builder_8cpp" startline="80" endline="110">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a9b63b330046c57965fe9d0873efe3238_1a9b63b330046c57965fe9d0873efe3238" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixBuilder::addPolynomialToMatrix</definition>
+        <argsstring>(ConstMonoRef multiple, const Poly &amp;poly)</argsstring>
+        <name>addPolynomialToMatrix</name>
+        <qualifiedname>F4MatrixBuilder::addPolynomialToMatrix</qualifiedname>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>multiple</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Schedules a row representing multiple*poly to be added to the matrix. No ownership is taken, but poly must remain valid until the matrix is constructed. multiple is copied so it need not remain valid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="60" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="99" bodyend="113"/>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a08ce667fd3225fcfd77a0a17962c7ae1_1a08ce667fd3225fcfd77a0a17962c7ae1" compoundref="_f4_matrix_builder_8hpp" startline="94">F4MatrixBuilder::RowTask::addToTop</references>
+        <references refid="class_mono_monoid_a0205d61b4decd0d0ab6e61fa809c65db_1a0205d61b4decd0d0ab6e61fa809c65db" compoundref="_mono_monoid_8hpp" startline="1206" endline="1206">MonoMonoid&lt; E, HC, SH, SO &gt;::alloc</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a7bbabc9cd3e7bc886b244557633b76c0_1a7bbabc9cd3e7bc886b244557633b76c0" compoundref="_f4_matrix_builder_8hpp" startline="95">F4MatrixBuilder::RowTask::desiredLead</references>
+        <references refid="class_poly_a03c1b4cfe055d871ea5c1822c14b6257_1a03c1b4cfe055d871ea5c1822c14b6257" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="47" endline="47">Poly::isZero</references>
+        <references refid="class_poly_ac82ec95e47e3a708479b7349b08923f6_1ac82ec95e47e3a708479b7349b08923f6" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="183" endline="186">Poly::leadMono</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_builder_afdd2a6cafa7f9e955a5d66cfb1dc9b33_1afdd2a6cafa7f9e955a5d66cfb1dc9b33" compoundref="_f4_matrix_builder_8hpp" startline="83" endline="83">monoid</references>
+        <references refid="class_f4_matrix_builder_a9edcf75c4132a871cb16cb6fd2e83bed_1a9edcf75c4132a871cb16cb6fd2e83bed" compoundref="_f4_matrix_builder_8hpp" startline="174">mTodo</references>
+        <references refid="class_mono_monoid_a077e4ed825cf3a56f8358e4568e99957_1a077e4ed825cf3a56f8358e4568e99957" compoundref="_mono_monoid_8hpp" startline="1035" endline="1043">MonoMonoid&lt; E, HC, SH, SO &gt;::multiply</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a297e17733c94a5e419f384a46b4d1ee9_1a297e17733c94a5e419f384a46b4d1ee9" compoundref="_f4_matrix_builder_8hpp" startline="96">F4MatrixBuilder::RowTask::poly</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a9158d52c4b553a5edad7ca0ae30e651b_1a9158d52c4b553a5edad7ca0ae30e651b" compoundref="_f4_matrix_builder_8hpp" startline="97">F4MatrixBuilder::RowTask::sPairPoly</references>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a836020b215a19e76dc2bb19ea1013d64_1a836020b215a19e76dc2bb19ea1013d64" compoundref="test_2_f4_matrix_builder_8cpp" startline="133" endline="173">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a149c54f5152dc1c80f475a42dc040c30_1a149c54f5152dc1c80f475a42dc040c30" compoundref="test_2_f4_matrix_builder_8cpp" startline="175" endline="196">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_ac95834d044aab7993513e2bea6832b20_1ac95834d044aab7993513e2bea6832b20" compoundref="test_2_f4_matrix_builder_8cpp" startline="112" endline="131">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a670935f387941eb1acc5d942d05f8f21_1a670935f387941eb1acc5d942d05f8f21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixBuilder::addPolynomialToMatrix</definition>
+        <argsstring>(const Poly &amp;poly)</argsstring>
+        <name>addPolynomialToMatrix</name>
+        <qualifiedname>F4MatrixBuilder::addPolynomialToMatrix</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>as the overload with a multiple, just letting multiple be the identity. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="64" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="88" bodyend="96"/>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a08ce667fd3225fcfd77a0a17962c7ae1_1a08ce667fd3225fcfd77a0a17962c7ae1" compoundref="_f4_matrix_builder_8hpp" startline="94">F4MatrixBuilder::RowTask::addToTop</references>
+        <references refid="class_poly_a03c1b4cfe055d871ea5c1822c14b6257_1a03c1b4cfe055d871ea5c1822c14b6257" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="47" endline="47">Poly::isZero</references>
+        <references refid="class_f4_matrix_builder_a9edcf75c4132a871cb16cb6fd2e83bed_1a9edcf75c4132a871cb16cb6fd2e83bed" compoundref="_f4_matrix_builder_8hpp" startline="174">mTodo</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a297e17733c94a5e419f384a46b4d1ee9_1a297e17733c94a5e419f384a46b4d1ee9" compoundref="_f4_matrix_builder_8hpp" startline="96">F4MatrixBuilder::RowTask::poly</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixBuilder::buildMatrixAndClear</definition>
+        <argsstring>(QuadMatrix &amp;matrix)</argsstring>
+        <name>buildMatrixAndClear</name>
+        <qualifiedname>F4MatrixBuilder::buildMatrixAndClear</qualifiedname>
+        <param>
+          <type><ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref> &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds an F4 matrix to the specifications given. Also clears the information in this object.</para>
+<para>The right columns are ordered by decreasing monomial of each column according to the order from the basis. The left columns are ordered in some way so that the first entry in each top row (the pivot) has a lower index than any other entries in that row.</para>
+<para>The matrix contains a reducer/pivot for every monomial that can be reduced by the basis and that is present in the matrix. There is no guarantee that the bottom part of the matrix contains rows that exactly correspond to the polynomials that have been scheduled to be added to the matrix. It is only guaranteed that the whole matrix has the same row-space as though that had been the case. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="80" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="115" bodyend="228"/>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a08ce667fd3225fcfd77a0a17962c7ae1_1a08ce667fd3225fcfd77a0a17962c7ae1" compoundref="_f4_matrix_builder_8hpp" startline="94">F4MatrixBuilder::RowTask::addToTop</references>
+        <references refid="class_mono_monoid_a0205d61b4decd0d0ab6e61fa809c65db_1a0205d61b4decd0d0ab6e61fa809c65db" compoundref="_mono_monoid_8hpp" startline="1206" endline="1206">MonoMonoid&lt; E, HC, SH, SO &gt;::alloc</references>
+        <references refid="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="353" endline="412">appendRowBottom</references>
+        <references refid="class_f4_matrix_builder_acc4c82697e6b57c22a45b8a17d039bd1_1acc4c82697e6b57c22a45b8a17d039bd1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="307" endline="351">appendRowTop</references>
+        <references refid="class_quad_matrix_ac137c5ac112e80a6ff37a2d74ff44ad3_1ac137c5ac112e80a6ff37a2d74ff44ad3" compoundref="_quad_matrix_8hpp" startline="47" endline="49">QuadMatrix::clear</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a7bbabc9cd3e7bc886b244557633b76c0_1a7bbabc9cd3e7bc886b244557633b76c0" compoundref="_f4_matrix_builder_8hpp" startline="95">F4MatrixBuilder::RowTask::desiredLead</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="_log_domain_8hpp_a4973e123e63273dd59529127a388ede6_1a4973e123e63273dd59529127a388ede6" compoundref="_log_domain_8hpp" startline="316" endline="320">MATHICGB_LOG_TIME</references>
+        <references refid="class_f4_matrix_builder_a99194b1f21417f2495a85c1fffc0e4f9_1a99194b1f21417f2495a85c1fffc0e4f9" compoundref="_f4_matrix_builder_8hpp" startline="172">mBuilder</references>
+        <references refid="class_f4_matrix_builder_a10fb7bd6ddecd97953657677607de518_1a10fb7bd6ddecd97953657677607de518" compoundref="_f4_matrix_builder_8hpp" startline="165">mCreateColumnLock</references>
+        <references refid="class_f4_matrix_builder_abe2a0e17d1ac82a0a00170222cffdb05_1abe2a0e17d1ac82a0a00170222cffdb05" compoundref="_f4_matrix_builder_8hpp" startline="173">mMap</references>
+        <references refid="class_f4_matrix_builder_a1a30c4925e52ede4eda16e8e6123a4f1_1a1a30c4925e52ede4eda16e8e6123a4f1" compoundref="_f4_matrix_builder_8hpp" startline="170">mMonomialsLeft</references>
+        <references refid="class_f4_matrix_builder_a960602e76fb3b2374a479cdc5c384245_1a960602e76fb3b2374a479cdc5c384245" compoundref="_f4_matrix_builder_8hpp" startline="171">mMonomialsRight</references>
+        <references refid="class_f4_matrix_builder_afdd2a6cafa7f9e955a5d66cfb1dc9b33_1afdd2a6cafa7f9e955a5d66cfb1dc9b33" compoundref="_f4_matrix_builder_8hpp" startline="83" endline="83">monoid</references>
+        <references refid="class_f4_matrix_builder_a9edcf75c4132a871cb16cb6fd2e83bed_1a9edcf75c4132a871cb16cb6fd2e83bed" compoundref="_f4_matrix_builder_8hpp" startline="174">mTodo</references>
+        <references refid="namespacemtbb_a740b5e28b1e7b7d6bb85b82e350bdd9d_1a740b5e28b1e7b7d6bb85b82e350bdd9d" compoundref="mtbb_8hpp" startline="49" endline="56">mtbb::parallel_for_each</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a297e17733c94a5e419f384a46b4d1ee9_1a297e17733c94a5e419f384a46b4d1ee9" compoundref="_f4_matrix_builder_8hpp" startline="96">F4MatrixBuilder::RowTask::poly</references>
+        <references refid="class_f4_matrix_builder_a43fc227fd5de46bf8ccaa65d837ec34a_1a43fc227fd5de46bf8ccaa65d837ec34a" compoundref="_f4_matrix_builder_8hpp" startline="82" endline="82">ring</references>
+        <references refid="class_quad_matrix_acc3fab7f84c1b78fb8a451e487c21653_1acc3fab7f84c1b78fb8a451e487c21653" compoundref="_quad_matrix_8hpp" startline="101" endline="101">QuadMatrix::ring</references>
+        <referencedby refid="class_f4_reducer_abbcd30e0508c79b54f4d46941b9ff979_1abbcd30e0508c79b54f4d46941b9ff979" compoundref="_f4_reducer_8cpp" startline="229" endline="288">F4Reducer::classicReducePolySet</referencedby>
+        <referencedby refid="class_f4_reducer_a0bcefafb5b7c50b15349e01563a6760f_1a0bcefafb5b7c50b15349e01563a6760f" compoundref="_f4_reducer_8cpp" startline="171" endline="227">F4Reducer::classicReduceSPolySet</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a836020b215a19e76dc2bb19ea1013d64_1a836020b215a19e76dc2bb19ea1013d64" compoundref="test_2_f4_matrix_builder_8cpp" startline="133" endline="173">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a6cffc739e96d4efeab6667aca529be4a_1a6cffc739e96d4efeab6667aca529be4a" compoundref="test_2_f4_matrix_builder_8cpp" startline="61" endline="78">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a149c54f5152dc1c80f475a42dc040c30_1a149c54f5152dc1c80f475a42dc040c30" compoundref="test_2_f4_matrix_builder_8cpp" startline="175" endline="196">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_ac95834d044aab7993513e2bea6832b20_1ac95834d044aab7993513e2bea6832b20" compoundref="test_2_f4_matrix_builder_8cpp" startline="112" endline="131">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_af3893dac4fb13f523a52a00549b2ce19_1af3893dac4fb13f523a52a00549b2ce19" compoundref="test_2_f4_matrix_builder_8cpp" startline="80" endline="110">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a43fc227fd5de46bf8ccaa65d837ec34a_1a43fc227fd5de46bf8ccaa65d837ec34a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_poly_ring" kindref="compound">PolyRing</ref> &amp;</type>
+        <definition>const PolyRing &amp; F4MatrixBuilder::ring</definition>
+        <argsstring>() const</argsstring>
+        <name>ring</name>
+        <qualifiedname>F4MatrixBuilder::ring</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="82" column="18" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="82" bodyend="82"/>
+        <references refid="class_f4_matrix_builder_a99194b1f21417f2495a85c1fffc0e4f9_1a99194b1f21417f2495a85c1fffc0e4f9" compoundref="_f4_matrix_builder_8hpp" startline="172">mBuilder</references>
+        <referencedby refid="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="353" endline="412">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a65a9e17af17e29aec4cf79cefc97c4c1_1a65a9e17af17e29aec4cf79cefc97c4c1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="274" endline="305">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ab5c9502af3ba2e105f086cb44e9d046e_1ab5c9502af3ba2e105f086cb44e9d046e" compoundref="_f4_matrix_builder_8hpp" startline="84" endline="84">field</referencedby>
+        <referencedby refid="class_f4_matrix_builder_afdd2a6cafa7f9e955a5d66cfb1dc9b33_1afdd2a6cafa7f9e955a5d66cfb1dc9b33" compoundref="_f4_matrix_builder_8hpp" startline="83" endline="83">monoid</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a836020b215a19e76dc2bb19ea1013d64_1a836020b215a19e76dc2bb19ea1013d64" compoundref="test_2_f4_matrix_builder_8cpp" startline="133" endline="173">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_a149c54f5152dc1c80f475a42dc040c30_1a149c54f5152dc1c80f475a42dc040c30" compoundref="test_2_f4_matrix_builder_8cpp" startline="175" endline="196">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_ac95834d044aab7993513e2bea6832b20_1ac95834d044aab7993513e2bea6832b20" compoundref="test_2_f4_matrix_builder_8cpp" startline="112" endline="131">TEST</referencedby>
+        <referencedby refid="test_2_f4_matrix_builder_8cpp_af3893dac4fb13f523a52a00549b2ce19_1af3893dac4fb13f523a52a00549b2ce19" compoundref="test_2_f4_matrix_builder_8cpp" startline="80" endline="110">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_afdd2a6cafa7f9e955a5d66cfb1dc9b33_1afdd2a6cafa7f9e955a5d66cfb1dc9b33" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_f4_matrix_builder_a2e840b449e003508ad9c7bb44adcb29c_1a2e840b449e003508ad9c7bb44adcb29c" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+        <definition>const Monoid &amp; F4MatrixBuilder::monoid</definition>
+        <argsstring>() const</argsstring>
+        <name>monoid</name>
+        <qualifiedname>F4MatrixBuilder::monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="83" column="16" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="83" bodyend="83"/>
+        <references refid="class_poly_ring_af2410633daff4cfc0687d62433fcaf3e_1af2410633daff4cfc0687d62433fcaf3e" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="505" endline="505">PolyRing::monoid</references>
+        <references refid="class_f4_matrix_builder_a43fc227fd5de46bf8ccaa65d837ec34a_1a43fc227fd5de46bf8ccaa65d837ec34a" compoundref="_f4_matrix_builder_8hpp" startline="82" endline="82">ring</references>
+        <referencedby refid="class_f4_matrix_builder_a9b63b330046c57965fe9d0873efe3238_1a9b63b330046c57965fe9d0873efe3238" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="99" endline="113">addPolynomialToMatrix</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="353" endline="412">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="230" endline="272">createColumn</referencedby>
+        <referencedby refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="51" endline="70">F4MatrixBuilder</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_ab5c9502af3ba2e105f086cb44e9d046e_1ab5c9502af3ba2e105f086cb44e9d046e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_f4_matrix_builder_a278a8d81e86f0a84245c4566c99cd0e8_1a278a8d81e86f0a84245c4566c99cd0e8" kindref="member">Field</ref> &amp;</type>
+        <definition>const Field &amp; F4MatrixBuilder::field</definition>
+        <argsstring>() const</argsstring>
+        <name>field</name>
+        <qualifiedname>F4MatrixBuilder::field</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="84" column="15" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="84" bodyend="84"/>
+        <references refid="class_poly_ring_a1eca7e83311171f540e046f237f31907_1a1eca7e83311171f540e046f237f31907" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="506" endline="506">PolyRing::field</references>
+        <references refid="class_f4_matrix_builder_a43fc227fd5de46bf8ccaa65d837ec34a_1a43fc227fd5de46bf8ccaa65d837ec34a" compoundref="_f4_matrix_builder_8hpp" startline="82" endline="82">ring</references>
+        <referencedby refid="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="353" endline="412">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a65a9e17af17e29aec4cf79cefc97c4c1_1a65a9e17af17e29aec4cf79cefc97c4c1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="274" endline="305">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_acc4c82697e6b57c22a45b8a17d039bd1_1acc4c82697e6b57c22a45b8a17d039bd1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="307" endline="351">appendRowTop</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a0311c439d5fcc395441230c4d1fce283_1a0311c439d5fcc395441230c4d1fce283" kindref="member">MATHICGB_NO_INLINE</ref> std::pair&lt; <ref refid="class_f4_matrix_builder_a1aec5db56ea8907bb1a4c05b946f5475_1a1aec5db56ea8907bb1a4c05b946f5475" kindref="member">LeftRightColIndex</ref>, <ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref> &gt;</type>
+        <definition>auto F4MatrixBuilder::createColumn</definition>
+        <argsstring>(ConstMonoRef monoA, ConstMonoRef monoB, TaskFeeder &amp;feeder)</argsstring>
+        <name>createColumn</name>
+        <qualifiedname>F4MatrixBuilder::createColumn</qualifiedname>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>monoA</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>monoB</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_a44f099cf940e7f2d428ee7c33b11a138_1a44f099cf940e7f2d428ee7c33b11a138" kindref="member">TaskFeeder</ref> &amp;</type>
+          <declname>feeder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a column with monomial label x and schedules a new row to reduce that column if possible. Here x is monoA if monoB is null and otherwise x is the product of monoA and monoB. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="113" column="3" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="230" bodyend="272"/>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a08ce667fd3225fcfd77a0a17962c7ae1_1a08ce667fd3225fcfd77a0a17962c7ae1" compoundref="_f4_matrix_builder_8hpp" startline="94">F4MatrixBuilder::RowTask::addToTop</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a7bbabc9cd3e7bc886b244557633b76c0_1a7bbabc9cd3e7bc886b244557633b76c0" compoundref="_f4_matrix_builder_8hpp" startline="95">F4MatrixBuilder::RowTask::desiredLead</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_builder_a3b0655ddef0ad284f4e9170be02106ab_1a3b0655ddef0ad284f4e9170be02106ab" compoundref="_f4_matrix_builder_8hpp" startline="169">mBasis</references>
+        <references refid="class_f4_matrix_builder_a10fb7bd6ddecd97953657677607de518_1a10fb7bd6ddecd97953657677607de518" compoundref="_f4_matrix_builder_8hpp" startline="165">mCreateColumnLock</references>
+        <references refid="class_f4_matrix_builder_ab175c8ccb49fb1c9da6dff278340aa39_1ab175c8ccb49fb1c9da6dff278340aa39" compoundref="_f4_matrix_builder_8hpp" startline="166">mLeftColCount</references>
+        <references refid="class_f4_matrix_builder_abe2a0e17d1ac82a0a00170222cffdb05_1abe2a0e17d1ac82a0a00170222cffdb05" compoundref="_f4_matrix_builder_8hpp" startline="173">mMap</references>
+        <references refid="class_f4_matrix_builder_afdd2a6cafa7f9e955a5d66cfb1dc9b33_1afdd2a6cafa7f9e955a5d66cfb1dc9b33" compoundref="_f4_matrix_builder_8hpp" startline="83" endline="83">monoid</references>
+        <references refid="class_f4_matrix_builder_a6db0aa6a5f622a5b37dcfeef9cadaebf_1a6db0aa6a5f622a5b37dcfeef9cadaebf" compoundref="_f4_matrix_builder_8hpp" startline="167">mRightColCount</references>
+        <references refid="class_f4_matrix_builder_a58701cf6f34198c982bf5c1ab8cb54d0_1a58701cf6f34198c982bf5c1ab8cb54d0" compoundref="_f4_matrix_builder_8hpp" startline="168">mTmp</references>
+        <references refid="struct_f4_matrix_builder_1_1_row_task_a297e17733c94a5e419f384a46b4d1ee9_1a297e17733c94a5e419f384a46b4d1ee9" compoundref="_f4_matrix_builder_8hpp" startline="96">F4MatrixBuilder::RowTask::poly</references>
+        <references refid="namespacemathic_aba2df5396ea54101a096481c819534dc_1aba2df5396ea54101a096481c819534dc" compoundref="error_8cpp" startline="5" endline="7">mathic::reportError</references>
+        <referencedby refid="class_f4_matrix_builder_a65a9e17af17e29aec4cf79cefc97c4c1_1a65a9e17af17e29aec4cf79cefc97c4c1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="274" endline="305">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a7c9b7f56dd4f7a4883fe7a4e68975336_1a7c9b7f56dd4f7a4883fe7a4e68975336" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="41" endline="49">createTwoColumns</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_acc4c82697e6b57c22a45b8a17d039bd1_1acc4c82697e6b57c22a45b8a17d039bd1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixBuilder::appendRowTop</definition>
+        <argsstring>(ConstMonoRef multiple, const Poly &amp;poly, QuadMatrixBuilder &amp;builder, TaskFeeder &amp;feeder)</argsstring>
+        <name>appendRowTop</name>
+        <qualifiedname>F4MatrixBuilder::appendRowTop</qualifiedname>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>multiple</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <param>
+          <type><ref refid="class_quad_matrix_builder" kindref="compound">QuadMatrixBuilder</ref> &amp;</type>
+          <declname>builder</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_a44f099cf940e7f2d428ee7c33b11a138_1a44f099cf940e7f2d428ee7c33b11a138" kindref="member">TaskFeeder</ref> &amp;</type>
+          <declname>feeder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="115" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="307" bodyend="351"/>
+        <references refid="class_quad_matrix_builder_ac7772324fb92d6b739b529aaef81f94a_1ac7772324fb92d6b739b529aaef81f94a" compoundref="_quad_matrix_builder_8hpp" startline="127" endline="133">QuadMatrixBuilder::appendEntryTop</references>
+        <references refid="class_poly_a68059d976d906aefc4b27ffb3f161413_1a68059d976d906aefc4b27ffb3f161413" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="254" endline="254">Poly::begin</references>
+        <references refid="class_f4_matrix_builder_a7c9b7f56dd4f7a4883fe7a4e68975336_1a7c9b7f56dd4f7a4883fe7a4e68975336" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="41" endline="49">createTwoColumns</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_poly_a3bb1f2f4573f50b3a66dca85a91ea995_1a3bb1f2f4573f50b3a66dca85a91ea995" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="255" endline="255">Poly::end</references>
+        <references refid="class_f4_matrix_builder_ab5c9502af3ba2e105f086cb44e9d046e_1ab5c9502af3ba2e105f086cb44e9d046e" compoundref="_f4_matrix_builder_8hpp" startline="84" endline="84">field</references>
+        <references refid="class_f4_matrix_builder_a7d768cf6b2ebd8388d5072b1fa4c92fa_1a7d768cf6b2ebd8388d5072b1fa4c92fa">findOrCreateColumn</references>
+        <references refid="class_monomial_map_1_1_reader_adf4c37bfe21e7cded5c54d273b672199_1adf4c37bfe21e7cded5c54d273b672199" compoundref="_monomial_map_8hpp" startline="122" endline="128">MonomialMap&lt; T &gt;::Reader::findTwoProducts</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_builder_abe2a0e17d1ac82a0a00170222cffdb05_1abe2a0e17d1ac82a0a00170222cffdb05" compoundref="_f4_matrix_builder_8hpp" startline="173">mMap</references>
+        <references refid="class_quad_matrix_builder_acf80601d56d870a135a77ec42e2d5c3a_1acf80601d56d870a135a77ec42e2d5c3a" compoundref="_quad_matrix_builder_8hpp" startline="135" endline="138">QuadMatrixBuilder::rowDoneTopLeftAndRight</references>
+        <references refid="class_poly_ad9dbce336e782d53bee5cfb4ebb34c41_1ad9dbce336e782d53bee5cfb4ebb34c41" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="48" endline="48">Poly::termCount</references>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixBuilder::appendRowBottom</definition>
+        <argsstring>(const Poly &amp;poly, ConstMonoRef multiply, const Poly &amp;sPairPoly, ConstMonoRef sPairMultiply, QuadMatrixBuilder &amp;builder, TaskFeeder &amp;feeder)</argsstring>
+        <name>appendRowBottom</name>
+        <qualifiedname>F4MatrixBuilder::appendRowBottom</qualifiedname>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>poly</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>multiply</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_poly" kindref="compound">Poly</ref> &amp;</type>
+          <declname>sPairPoly</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>sPairMultiply</declname>
+        </param>
+        <param>
+          <type><ref refid="class_quad_matrix_builder" kindref="compound">QuadMatrixBuilder</ref> &amp;</type>
+          <declname>builder</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_a44f099cf940e7f2d428ee7c33b11a138_1a44f099cf940e7f2d428ee7c33b11a138" kindref="member">TaskFeeder</ref> &amp;</type>
+          <declname>feeder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="122" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="353" bodyend="412"/>
+        <references refid="class_quad_matrix_builder_a460520468190fbc32ea3e78652ec2904_1a460520468190fbc32ea3e78652ec2904" compoundref="_quad_matrix_builder_8hpp" startline="152" endline="158">QuadMatrixBuilder::appendEntryBottom</references>
+        <references refid="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="353" endline="412">appendRowBottom</references>
+        <references refid="class_poly_a68059d976d906aefc4b27ffb3f161413_1a68059d976d906aefc4b27ffb3f161413" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="254" endline="254">Poly::begin</references>
+        <references refid="class_poly_ring_a5fe0ecb7c437a6cb5a098dfac4a64aa0_1a5fe0ecb7c437a6cb5a098dfac4a64aa0" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="686" endline="692">PolyRing::coefficientSubtract</references>
+        <references refid="class_mono_monoid_a48d8666e2c503586cef03ee9bcc18589_1a48d8666e2c503586cef03ee9bcc18589" compoundref="_mono_monoid_8hpp" startline="796" endline="826">MonoMonoid&lt; E, HC, SH, SO &gt;::compare</references>
+        <references refid="class_poly_a3bb1f2f4573f50b3a66dca85a91ea995_1a3bb1f2f4573f50b3a66dca85a91ea995" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="255" endline="255">Poly::end</references>
+        <references refid="class_f4_matrix_builder_ab5c9502af3ba2e105f086cb44e9d046e_1ab5c9502af3ba2e105f086cb44e9d046e" compoundref="_f4_matrix_builder_8hpp" startline="84" endline="84">field</references>
+        <references refid="class_f4_matrix_builder_a7d768cf6b2ebd8388d5072b1fa4c92fa_1a7d768cf6b2ebd8388d5072b1fa4c92fa">findOrCreateColumn</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_ab89310b3f2f97e4e9415fc5a51549612_1ab89310b3f2f97e4e9415fc5a51549612" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="20">GT</references>
+        <references refid="class_poly_a03c1b4cfe055d871ea5c1822c14b6257_1a03c1b4cfe055d871ea5c1822c14b6257" compoundref="submodules_2mathicgb_2src_2mathicgb_2poly_8hpp" startline="47" endline="47">Poly::isZero</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_aaf56b99cbe34023f42ce5b7878c827d8_1aaf56b99cbe34023f42ce5b7878c827d8" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="18">LT</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_builder_abe2a0e17d1ac82a0a00170222cffdb05_1abe2a0e17d1ac82a0a00170222cffdb05" compoundref="_f4_matrix_builder_8hpp" startline="173">mMap</references>
+        <references refid="class_f4_matrix_builder_afdd2a6cafa7f9e955a5d66cfb1dc9b33_1afdd2a6cafa7f9e955a5d66cfb1dc9b33" compoundref="_f4_matrix_builder_8hpp" startline="83" endline="83">monoid</references>
+        <references refid="class_f4_matrix_builder_a43fc227fd5de46bf8ccaa65d837ec34a_1a43fc227fd5de46bf8ccaa65d837ec34a" compoundref="_f4_matrix_builder_8hpp" startline="82" endline="82">ring</references>
+        <referencedby refid="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="353" endline="412">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="115" endline="228">buildMatrixAndClear</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a65a9e17af17e29aec4cf79cefc97c4c1_1a65a9e17af17e29aec4cf79cefc97c4c1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void F4MatrixBuilder::appendRowBottom</definition>
+        <argsstring>(ConstMonoRef multiple, bool negate, Poly::ConstTermIterator begin, Poly::ConstTermIterator end, QuadMatrixBuilder &amp;builder, TaskFeeder &amp;feeder)</argsstring>
+        <name>appendRowBottom</name>
+        <qualifiedname>F4MatrixBuilder::appendRowBottom</qualifiedname>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>multiple</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>negate</declname>
+        </param>
+        <param>
+          <type><ref refid="class_poly_1_1_const_term_iterator" kindref="compound">Poly::ConstTermIterator</ref></type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type><ref refid="class_poly_1_1_const_term_iterator" kindref="compound">Poly::ConstTermIterator</ref></type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="class_quad_matrix_builder" kindref="compound">QuadMatrixBuilder</ref> &amp;</type>
+          <declname>builder</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_a44f099cf940e7f2d428ee7c33b11a138_1a44f099cf940e7f2d428ee7c33b11a138" kindref="member">TaskFeeder</ref> &amp;</type>
+          <declname>feeder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="131" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="274" bodyend="305"/>
+        <references refid="class_quad_matrix_builder_a460520468190fbc32ea3e78652ec2904_1a460520468190fbc32ea3e78652ec2904" compoundref="_quad_matrix_builder_8hpp" startline="152" endline="158">QuadMatrixBuilder::appendEntryBottom</references>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="230" endline="272">createColumn</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_f4_matrix_builder_ab5c9502af3ba2e105f086cb44e9d046e_1ab5c9502af3ba2e105f086cb44e9d046e" compoundref="_f4_matrix_builder_8hpp" startline="84" endline="84">field</references>
+        <references refid="class_monomial_map_1_1_reader_aa7e4eb64e777a52aba8de26758ba633f_1aa7e4eb64e777a52aba8de26758ba633f" compoundref="_monomial_map_8hpp" startline="111" endline="116">MonomialMap&lt; T &gt;::Reader::findProduct</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_f4_matrix_builder_abe2a0e17d1ac82a0a00170222cffdb05_1abe2a0e17d1ac82a0a00170222cffdb05" compoundref="_f4_matrix_builder_8hpp" startline="173">mMap</references>
+        <references refid="class_prime_field_a8415787857df2cb06fbb56ce72b2a96f_1a8415787857df2cb06fbb56ce72b2a96f" compoundref="_prime_field_8hpp" startline="179" endline="182">PrimeField&lt; T &gt;::negativeNonZero</references>
+        <references refid="class_f4_matrix_builder_a43fc227fd5de46bf8ccaa65d837ec34a_1a43fc227fd5de46bf8ccaa65d837ec34a" compoundref="_f4_matrix_builder_8hpp" startline="82" endline="82">ring</references>
+        <references refid="class_quad_matrix_builder_a6cb9971340043ea5998b5b8ddc61767d_1a6cb9971340043ea5998b5b8ddc61767d" compoundref="_quad_matrix_builder_8hpp" startline="160" endline="163">QuadMatrixBuilder::rowDoneBottomLeftAndRight</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a7d768cf6b2ebd8388d5072b1fa4c92fa_1a7d768cf6b2ebd8388d5072b1fa4c92fa" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a0311c439d5fcc395441230c4d1fce283_1a0311c439d5fcc395441230c4d1fce283" kindref="member">MATHICGB_NO_INLINE</ref> std::pair&lt; <ref refid="class_quad_matrix_builder_1_1_left_right_col_index" kindref="compound">QuadMatrixBuilder::LeftRightColIndex</ref>, <ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref> &gt;</type>
+        <definition>MATHICGB_NO_INLINE std::pair&lt; QuadMatrixBuilder::LeftRightColIndex, ConstMonoRef &gt; F4MatrixBuilder::findOrCreateColumn</definition>
+        <argsstring>(ConstMonoRef monoA, ConstMonoRef monoB, TaskFeeder &amp;feeder)</argsstring>
+        <name>findOrCreateColumn</name>
+        <qualifiedname>F4MatrixBuilder::findOrCreateColumn</qualifiedname>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>monoA</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>monoB</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_a44f099cf940e7f2d428ee7c33b11a138_1a44f099cf940e7f2d428ee7c33b11a138" kindref="member">TaskFeeder</ref> &amp;</type>
+          <declname>feeder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="142" column="3"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af47fb666c90ea479a76ebf62448aad60_1af47fb666c90ea479a76ebf62448aad60" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="105">MATHICGB_INLINE</references>
+        <referencedby refid="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="353" endline="412">appendRowBottom</referencedby>
+        <referencedby refid="class_f4_matrix_builder_acc4c82697e6b57c22a45b8a17d039bd1_1acc4c82697e6b57c22a45b8a17d039bd1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="307" endline="351">appendRowTop</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a9eda5858cb198f2e6fee63be8716726c_1a9eda5858cb198f2e6fee63be8716726c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_af47fb666c90ea479a76ebf62448aad60_1af47fb666c90ea479a76ebf62448aad60" kindref="member">MATHICGB_INLINE</ref> std::pair&lt; <ref refid="class_quad_matrix_builder_1_1_left_right_col_index" kindref="compound">QuadMatrixBuilder::LeftRightColIndex</ref>, <ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref> &gt;</type>
+        <definition>MATHICGB_INLINE std::pair&lt; QuadMatrixBuilder::LeftRightColIndex, ConstMonoRef &gt; F4MatrixBuilder::findOrCreateColumn</definition>
+        <argsstring>(ConstMonoRef monoA, ConstMonoRef monoB, const ColReader &amp;colMap, TaskFeeder &amp;feeder)</argsstring>
+        <name>findOrCreateColumn</name>
+        <qualifiedname>F4MatrixBuilder::findOrCreateColumn</qualifiedname>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>monoA</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>monoB</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_f4_matrix_builder_adaedf586a76d8444746e8e42e46f7fcd_1adaedf586a76d8444746e8e42e46f7fcd" kindref="member">ColReader</ref> &amp;</type>
+          <declname>colMap</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_a44f099cf940e7f2d428ee7c33b11a138_1a44f099cf940e7f2d428ee7c33b11a138" kindref="member">TaskFeeder</ref> &amp;</type>
+          <declname>feeder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="150" column="3"/>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_a0311c439d5fcc395441230c4d1fce283_1a0311c439d5fcc395441230c4d1fce283" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="104">MATHICGB_NO_INLINE</references>
+      </memberdef>
+      <memberdef kind="function" id="class_f4_matrix_builder_a7c9b7f56dd4f7a4883fe7a4e68975336_1a7c9b7f56dd4f7a4883fe7a4e68975336" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="mathicgb_2src_2mathicgb_2stdinc_8h_a0311c439d5fcc395441230c4d1fce283_1a0311c439d5fcc395441230c4d1fce283" kindref="member">MATHICGB_NO_INLINE</ref> void</type>
+        <definition>MATHICGB_NO_INLINE void F4MatrixBuilder::createTwoColumns</definition>
+        <argsstring>(ConstMonoRef monoA1, ConstMonoRef monoA2, ConstMonoRef monoB, TaskFeeder &amp;feeder)</argsstring>
+        <name>createTwoColumns</name>
+        <qualifiedname>F4MatrixBuilder::createTwoColumns</qualifiedname>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>monoA1</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>monoA2</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" kindref="member">ConstMonoRef</ref></type>
+          <declname>monoB</declname>
+        </param>
+        <param>
+          <type><ref refid="class_f4_matrix_builder_a44f099cf940e7f2d428ee7c33b11a138_1a44f099cf940e7f2d428ee7c33b11a138" kindref="member">TaskFeeder</ref> &amp;</type>
+          <declname>feeder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="158" column="8" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.cpp" bodystart="41" bodyend="49"/>
+        <references refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="230" endline="272">createColumn</references>
+        <referencedby refid="class_f4_matrix_builder_acc4c82697e6b57c22a45b8a17d039bd1_1acc4c82697e6b57c22a45b8a17d039bd1" compoundref="mathicgb_2_f4_matrix_builder_8cpp" startline="307" endline="351">appendRowTop</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Class for constructing an F4 matrix. This class is reponsible for figuring out what matrix to build and then it uses <ref refid="class_quad_matrix_builder" kindref="compound">QuadMatrixBuilder</ref> to create that matrix.</para>
+<para><xrefsect id="todo_1_todo000011"><xreftitle>Todo</xreftitle><xrefdescription><para>: this class does not offer exception guarantees. It&apos;s just not very workable without an RAII monomial handle, so add one of those before fixing this. </para>
+</xrefdescription></xrefsect></para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="97">
+        <label>Atomic&lt; T &gt;</label>
+        <link refid="class_atomic"/>
+        <childnode refid="98" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="105">
+        <label>Atomic&lt; FixedSizeMonomialMap::Node * &gt;</label>
+        <link refid="class_atomic"/>
+        <childnode refid="106" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+        <childnode refid="97" relation="template-instance">
+          <edgelabel>&lt; FixedSizeMonomialMap::Node * &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="94">
+        <label>Atomic&lt; FixedSizeMonomialMap&lt; mapped_type &gt; * &gt;</label>
+        <link refid="class_atomic"/>
+        <childnode refid="95" relation="usage">
+          <edgelabel>mValue</edgelabel>
+        </childnode>
+        <childnode refid="97" relation="template-instance">
+          <edgelabel>&lt; FixedSizeMonomialMap&lt; mapped_type &gt; * &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="96">
+        <label>AtomicInternal::ChooseAtomic&lt; T, size &gt;</label>
+        <link refid="struct_atomic_internal_1_1_choose_atomic"/>
+      </node>
+      <node id="106">
+        <label>AtomicInternal::ChooseAtomic&lt; FixedSizeMonomialMap::Node *, sizeof(FixedSizeMonomialMap::Node *)&gt;</label>
+        <link refid="struct_atomic_internal_1_1_choose_atomic"/>
+        <childnode refid="96" relation="template-instance">
+          <edgelabel>&lt; FixedSizeMonomialMap::Node *, sizeof(FixedSizeMonomialMap::Node *)&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="95">
+        <label>AtomicInternal::ChooseAtomic&lt; FixedSizeMonomialMap&lt; mapped_type &gt; *, sizeof(FixedSizeMonomialMap&lt; mapped_type &gt; *)&gt;</label>
+        <link refid="struct_atomic_internal_1_1_choose_atomic"/>
+        <childnode refid="96" relation="template-instance">
+          <edgelabel>&lt; FixedSizeMonomialMap&lt; mapped_type &gt; *, sizeof(FixedSizeMonomialMap&lt; mapped_type &gt; *)&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="98">
+        <label>AtomicInternal::ChooseAtomic&lt; T, sizeof(T)&gt;</label>
+        <link refid="struct_atomic_internal_1_1_choose_atomic"/>
+        <childnode refid="96" relation="template-instance">
+          <edgelabel>&lt; T, sizeof(T)&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>CoefficientRingR</label>
+        <link refid="class_coefficient_ring_r"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="52">
+        <label>CoefficientRingZZp</label>
+        <link refid="class_coefficient_ring_z_zp"/>
+        <childnode refid="53" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>exp_table</edgelabel>
+          <edgelabel>log_table</edgelabel>
+          <edgelabel>minus_one</edgelabel>
+          <edgelabel>p</edgelabel>
+          <edgelabel>p1</edgelabel>
+          <edgelabel>zero</edgelabel>
+        </childnode>
+      </node>
+      <node id="111">
+        <label>ColIndex *</label>
+      </node>
+      <node id="64">
+        <label>EngineObject</label>
+        <link refid="class_engine_object"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>F4MatrixBuilder</label>
+        <link refid="class_f4_matrix_builder"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mCreateColumnLock</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mLeftColCount</edgelabel>
+          <edgelabel>mRightColCount</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mTmp</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mBasis</edgelabel>
+        </childnode>
+        <childnode refid="90" relation="usage">
+          <edgelabel>mMonomialsLeft</edgelabel>
+          <edgelabel>mMonomialsRight</edgelabel>
+        </childnode>
+        <childnode refid="91" relation="usage">
+          <edgelabel>mBuilder</edgelabel>
+        </childnode>
+        <childnode refid="92" relation="usage">
+          <edgelabel>mMap</edgelabel>
+        </childnode>
+        <childnode refid="117" relation="usage">
+          <edgelabel>mTodo</edgelabel>
+        </childnode>
+      </node>
+      <node id="118">
+        <label>F4MatrixBuilder::RowTask</label>
+        <link refid="struct_f4_matrix_builder_1_1_row_task"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>addToTop</edgelabel>
+        </childnode>
+        <childnode refid="119" relation="usage">
+          <edgelabel>desiredLead</edgelabel>
+          <edgelabel>sPairMultiply</edgelabel>
+        </childnode>
+        <childnode refid="87" relation="usage">
+          <edgelabel>poly</edgelabel>
+          <edgelabel>sPairPoly</edgelabel>
+        </childnode>
+      </node>
+      <node id="102">
+        <label>FixedSizeMonomialMap&lt; T &gt;</label>
+        <link refid="class_fixed_size_monomial_map"/>
+        <childnode refid="103" relation="usage">
+          <edgelabel>mHashToIndexMask</edgelabel>
+        </childnode>
+        <childnode refid="104" relation="usage">
+          <edgelabel>mBuckets</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mNodeAlloc</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mInsertionMutex</edgelabel>
+        </childnode>
+      </node>
+      <node id="101">
+        <label>FixedSizeMonomialMap&lt; mapped_type &gt;</label>
+        <link refid="class_fixed_size_monomial_map"/>
+        <childnode refid="102" relation="template-instance">
+          <edgelabel>&lt; mapped_type &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="65">
+        <label>FreeModule</label>
+        <link refid="class_free_module"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>components</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>schreyer</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>GBRing</label>
+        <link refid="class_g_b_ring"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_coeffs_ZZ</edgelabel>
+          <edgelabel>_is_skew</edgelabel>
+          <edgelabel>_schreyer_encoded</edgelabel>
+          <edgelabel>_up_order</edgelabel>
+          <edgelabel>is_solvable</edgelabel>
+          <edgelabel>is_weyl</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>K</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>zzp</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>gbvector_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>mem</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_nvars</edgelabel>
+          <edgelabel>_skew_monoms</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>_skew</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>weyl</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>solvable</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>_one</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>M2::RingInterface</label>
+        <link refid="class_m2_1_1_ring_interface"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>M2::SimpleARing&lt; ARing &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="54" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>M2::SimpleARing&lt; CoefficientRingZZp &gt;</label>
+        <link refid="class_m2_1_1_simple_a_ring"/>
+        <childnode refid="54" relation="public-inheritance">
+        </childnode>
+        <childnode refid="55" relation="template-instance">
+          <edgelabel>&lt; CoefficientRingZZp &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>Matrix</label>
+        <link refid="class_matrix"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>mSource</edgelabel>
+          <edgelabel>mTarget</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mDegreeShift</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="83">
+        <label>MonoLookup</label>
+        <link refid="class_mono_lookup"/>
+      </node>
+      <node id="73">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="74" relation="private-inheritance">
+        </childnode>
+        <childnode refid="75" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="75">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPool</label>
+        <link refid="class_mono_monoid_1_1_mono_pool"/>
+        <childnode refid="76" relation="public-inheritance">
+        </childnode>
+        <childnode refid="73" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+        <childnode refid="78" relation="usage">
+          <edgelabel>mPool</edgelabel>
+        </childnode>
+      </node>
+      <node id="70">
+        <label>MonoMonoid&lt; exponent &gt;</label>
+        <link refid="class_mono_monoid"/>
+        <childnode refid="71" relation="private-inheritance">
+        </childnode>
+        <childnode refid="73" relation="template-instance">
+          <edgelabel>&lt; exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="119">
+        <label>MonoMonoid&lt; exponent &gt;::ConstMonoPtr</label>
+      </node>
+      <node id="4">
+        <label>MonoMonoid&lt; exponent &gt;::Mono</label>
+      </node>
+      <node id="89">
+        <label>MonoMonoid&lt; exponent &gt;::MonoVector</label>
+      </node>
+      <node id="74">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="71">
+        <label>MonoMonoidInternal::Base&lt; E, HC, SH, SO &gt;</label>
+        <link refid="class_mono_monoid_internal_1_1_base"/>
+        <childnode refid="35" relation="usage">
+          <edgelabel>HasComponent</edgelabel>
+          <edgelabel>StoreHash</edgelabel>
+          <edgelabel>StoreOrder</edgelabel>
+          <edgelabel>mLexBaseOrder</edgelabel>
+          <edgelabel>mOrderIsTotalDegreeRevLex</edgelabel>
+          <edgelabel>mVarsReversed</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mComponentGradingIndex</edgelabel>
+          <edgelabel>mEntryCount</edgelabel>
+          <edgelabel>mGradingCount</edgelabel>
+          <edgelabel>mOrderIndexBegin</edgelabel>
+          <edgelabel>mOrderIndexEnd</edgelabel>
+          <edgelabel>mVarCount</edgelabel>
+        </childnode>
+        <childnode refid="72" relation="usage">
+          <edgelabel>mGradings</edgelabel>
+          <edgelabel>mHashCoefficients</edgelabel>
+        </childnode>
+      </node>
+      <node id="40">
+        <label>Monoid</label>
+        <link refid="class_monoid"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>mDegreeMonoid</edgelabel>
+          <edgelabel>trivial_monoid</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>mDegreeRing</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>mo_</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>monorder_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>first_weights_slot_</edgelabel>
+          <edgelabel>mVariableCount</edgelabel>
+          <edgelabel>monomial_bound_</edgelabel>
+          <edgelabel>monomial_size_</edgelabel>
+          <edgelabel>n_after_component_</edgelabel>
+          <edgelabel>n_before_component_</edgelabel>
+          <edgelabel>n_invertible_vars_</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>mVariableNames</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>local_vars</edgelabel>
+          <edgelabel>mDegrees</edgelabel>
+          <edgelabel>mHeftDegrees</edgelabel>
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mDegreeOfVar</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>component_up_</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>mLaurentVariablesPredicate</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>nslots_</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>overflow</edgelabel>
+        </childnode>
+      </node>
+      <node id="93">
+        <label>MonomialMap&lt; T &gt;</label>
+        <link refid="class_monomial_map"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>GrowthFactor</edgelabel>
+          <edgelabel>InitialBucketCount</edgelabel>
+          <edgelabel>MinBucketsPerEntry</edgelabel>
+          <edgelabel>mCapacityUntilGrowth</edgelabel>
+        </childnode>
+        <childnode refid="94" relation="usage">
+          <edgelabel>mMap</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mInsertionMutex</edgelabel>
+        </childnode>
+        <childnode refid="99" relation="usage">
+          <edgelabel>mOldMaps</edgelabel>
+        </childnode>
+      </node>
+      <node id="92">
+        <label>MonomialMap&lt; LeftRightColIndex &gt;</label>
+        <link refid="class_monomial_map"/>
+        <childnode refid="93" relation="template-instance">
+          <edgelabel>&lt; LeftRightColIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="43">
+        <label>MonomialOrder *</label>
+      </node>
+      <node id="41">
+        <label>MonomialOrdering</label>
+        <link refid="struct_monomial_ordering"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_hash</edgelabel>
+          <edgelabel>len</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>array</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>MutableEngineObject</label>
+        <link refid="class_mutable_engine_object"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mHashValue</edgelabel>
+          <edgelabel>mNextMutableHashValue</edgelabel>
+        </childnode>
+      </node>
+      <node id="77">
+        <label>NonCopyable&lt; T &gt;</label>
+        <link refid="class_non_copyable"/>
+      </node>
+      <node id="76">
+        <label>NonCopyable&lt; MonoPool &gt;</label>
+        <link refid="class_non_copyable"/>
+        <childnode refid="77" relation="template-instance">
+          <edgelabel>&lt; MonoPool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="87">
+        <label>Poly</label>
+        <link refid="class_poly"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="88" relation="usage">
+          <edgelabel>mCoefs</edgelabel>
+        </childnode>
+        <childnode refid="89" relation="usage">
+          <edgelabel>mMonos</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>PolyBasis</label>
+        <link refid="class_poly_basis"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>mRing</edgelabel>
+        </childnode>
+        <childnode refid="82" relation="usage">
+          <edgelabel>mMonoLookup</edgelabel>
+        </childnode>
+        <childnode refid="85" relation="usage">
+          <edgelabel>mEntries</edgelabel>
+        </childnode>
+      </node>
+      <node id="86">
+        <label>PolyBasis::Entry</label>
+        <link refid="class_poly_basis_1_1_entry"/>
+        <childnode refid="87" relation="usage">
+          <edgelabel>poly</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>leadMinimal</edgelabel>
+          <edgelabel>retired</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>nonSignatureReducerCount</edgelabel>
+          <edgelabel>possibleReducerCount</edgelabel>
+          <edgelabel>usedAsReducerCount</edgelabel>
+          <edgelabel>usedAsStartCount</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>PolyRing</label>
+        <link refid="class_poly_ring"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>trivial_poly_ring</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>mField</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>mMonoid</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>PolyRingFlat</label>
+        <link refid="class_poly_ring_flat"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>PolynomialRing</label>
+        <link refid="class_polynomial_ring"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>is_ZZ_quotient_</edgelabel>
+          <edgelabel>is_graded_</edgelabel>
+          <edgelabel>is_skew_</edgelabel>
+          <edgelabel>is_solvable_</edgelabel>
+          <edgelabel>is_weyl_</edgelabel>
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>skew_</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>coeff_type_</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>qinfo_</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>ZZ_quotient_value_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>poly_size_</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>nvars_</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>K_</edgelabel>
+          <edgelabel>denomR_</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>M_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>numerR_</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>ambientR_</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>gb_ring_</edgelabel>
+        </childnode>
+      </node>
+      <node id="69">
+        <label>PrimeField&lt; T &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mCharac</edgelabel>
+        </childnode>
+      </node>
+      <node id="68">
+        <label>PrimeField&lt; coefficient &gt;</label>
+        <link refid="class_prime_field"/>
+        <childnode refid="69" relation="template-instance">
+          <edgelabel>&lt; coefficient &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="38">
+        <label>QRingInfo</label>
+        <link refid="class_q_ring_info"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>R</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>overZZ_</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>exp_size</edgelabel>
+          <edgelabel>monom_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="91">
+        <label>QuadMatrixBuilder</label>
+        <link refid="class_quad_matrix_builder"/>
+        <childnode refid="90" relation="usage">
+          <edgelabel>mMonomialsLeft</edgelabel>
+          <edgelabel>mMonomialsRight</edgelabel>
+        </childnode>
+        <childnode refid="92" relation="usage">
+          <edgelabel>mMonomialToCol</edgelabel>
+        </childnode>
+        <childnode refid="107" relation="usage">
+          <edgelabel>mBottomLeft</edgelabel>
+          <edgelabel>mBottomRight</edgelabel>
+          <edgelabel>mTopLeft</edgelabel>
+          <edgelabel>mTopRight</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>ColIndex</label>
+      </node>
+      <node id="114">
+        <label>RawVector&lt; T &gt;</label>
+        <link refid="class_raw_vector"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mCapacityEnd</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+      </node>
+      <node id="113">
+        <label>RawVector&lt; ColIndex &gt;</label>
+        <link refid="class_raw_vector"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mCapacityEnd</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+        <childnode refid="114" relation="template-instance">
+          <edgelabel>&lt; ColIndex &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="115">
+        <label>RawVector&lt; Scalar &gt;</label>
+        <link refid="class_raw_vector"/>
+        <childnode refid="116" relation="usage">
+          <edgelabel>mBegin</edgelabel>
+          <edgelabel>mCapacityEnd</edgelabel>
+          <edgelabel>mEnd</edgelabel>
+        </childnode>
+        <childnode refid="114" relation="template-instance">
+          <edgelabel>&lt; Scalar &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Ring</label>
+        <link refid="class_ring"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>mCharacteristic</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>degree_ring</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>mHeftVector</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>AR</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>cR</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>_non_unit</edgelabel>
+          <edgelabel>minus_oneV</edgelabel>
+          <edgelabel>oneV</edgelabel>
+          <edgelabel>zeroV</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_isfield</edgelabel>
+        </childnode>
+      </node>
+      <node id="37">
+        <label>CoefficientType</label>
+      </node>
+      <node id="110">
+        <label>Scalar *</label>
+      </node>
+      <node id="66">
+        <label>SchreyerOrder</label>
+        <link refid="class_schreyer_order"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>M</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>_order</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_nslots</edgelabel>
+          <edgelabel>_rank</edgelabel>
+        </childnode>
+      </node>
+      <node id="36">
+        <label>SkewMultiplication</label>
+        <link refid="class_skew_multiplication"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_n_skew</edgelabel>
+          <edgelabel>_n_vars</edgelabel>
+          <edgelabel>_skew_list</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_skew_exp</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>skew_byte_size</edgelabel>
+        </childnode>
+      </node>
+      <node id="62">
+        <label>SolvableAlgebra</label>
+        <link refid="class_solvable_algebra"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>Q_</edgelabel>
+        </childnode>
+      </node>
+      <node id="107">
+        <label>SparseMatrix</label>
+        <link refid="class_sparse_matrix"/>
+        <childnode refid="108" relation="usage">
+          <edgelabel>mRows</edgelabel>
+        </childnode>
+        <childnode refid="112" relation="usage">
+          <edgelabel>mBlock</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>mMemoryQuantum</edgelabel>
+        </childnode>
+      </node>
+      <node id="112">
+        <label>SparseMatrix::Block</label>
+        <link refid="struct_sparse_matrix_1_1_block"/>
+        <childnode refid="113" relation="usage">
+          <edgelabel>mColIndices</edgelabel>
+        </childnode>
+        <childnode refid="115" relation="usage">
+          <edgelabel>mScalars</edgelabel>
+        </childnode>
+        <childnode refid="112" relation="usage">
+          <edgelabel>mPreviousBlock</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>mHasNoRows</edgelabel>
+        </childnode>
+      </node>
+      <node id="109">
+        <label>SparseMatrix::Row</label>
+        <link refid="struct_sparse_matrix_1_1_row"/>
+        <childnode refid="110" relation="usage">
+          <edgelabel>mScalarsBegin</edgelabel>
+          <edgelabel>mScalarsEnd</edgelabel>
+        </childnode>
+        <childnode refid="111" relation="usage">
+          <edgelabel>mIndicesBegin</edgelabel>
+          <edgelabel>mIndicesEnd</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>T</label>
+      </node>
+      <node id="61">
+        <label>WeylAlgebra</label>
+        <link refid="class_weyl_algebra"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_commutative</edgelabel>
+          <edgelabel>_derivative</edgelabel>
+          <edgelabel>_homog_var</edgelabel>
+          <edgelabel>_nderivatives</edgelabel>
+          <edgelabel>binomtable</edgelabel>
+          <edgelabel>binomtop</edgelabel>
+          <edgelabel>diffcoeffstable</edgelabel>
+          <edgelabel>diffcoeffstop</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>_homogeneous_weyl_algebra</edgelabel>
+        </childnode>
+      </node>
+      <node id="33">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="31">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="35">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="29">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="24" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="30">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="31" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="32">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="33" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="57">
+        <label>char</label>
+      </node>
+      <node id="18">
+        <label>const ARing *</label>
+      </node>
+      <node id="103">
+        <label>const HashValue</label>
+      </node>
+      <node id="116">
+        <label>Scalar</label>
+      </node>
+      <node id="34">
+        <label>const void *</label>
+      </node>
+      <node id="24">
+        <label>double</label>
+      </node>
+      <node id="50">
+        <label>overflow_type *</label>
+      </node>
+      <node id="47">
+        <label>gc_vector&lt; const_monomial &gt;</label>
+      </node>
+      <node id="49">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="67">
+        <label>gc_vector&lt; vec &gt;</label>
+      </node>
+      <node id="13">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="23">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>long</label>
+      </node>
+      <node id="78">
+        <label>memt::BufferPool</label>
+        <link refid="classmemt_1_1_buffer_pool"/>
+        <childnode refid="39" relation="usage">
+          <edgelabel>_bufferSize</edgelabel>
+        </childnode>
+        <childnode refid="79" relation="usage">
+          <edgelabel>_free</edgelabel>
+        </childnode>
+        <childnode refid="80" relation="usage">
+          <edgelabel>_blocks</edgelabel>
+        </childnode>
+      </node>
+      <node id="79">
+        <label>memt::BufferPool::FreeNode</label>
+        <link refid="structmemt_1_1_buffer_pool_1_1_free_node"/>
+        <childnode refid="79" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="80">
+        <label>memt::MemoryBlocks</label>
+        <link refid="classmemt_1_1_memory_blocks"/>
+        <childnode refid="81" relation="usage">
+          <edgelabel>_block</edgelabel>
+        </childnode>
+      </node>
+      <node id="81">
+        <label>memt::MemoryBlocks::Block</label>
+        <link refid="classmemt_1_1_memory_blocks_1_1_block"/>
+        <childnode refid="57" relation="usage">
+          <edgelabel>_begin</edgelabel>
+          <edgelabel>_end</edgelabel>
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="81" relation="usage">
+          <edgelabel>_previous</edgelabel>
+        </childnode>
+      </node>
+      <node id="42">
+        <label>mon_part</label>
+      </node>
+      <node id="28">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="27">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="25">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="26">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="11">
+        <label>our_gc_cleanup</label>
+        <link refid="classour__gc__cleanup"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="20">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>size_t</label>
+      </node>
+      <node id="58">
+        <label>slab</label>
+        <link refid="classslab"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>n_slabs</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>s</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>spinLock</label>
+      </node>
+      <node id="56">
+        <label>stash</label>
+        <link refid="classstash"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>element_size</edgelabel>
+          <edgelabel>highwater</edgelabel>
+          <edgelabel>n_allocs</edgelabel>
+          <edgelabel>n_frees</edgelabel>
+          <edgelabel>n_inuse</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>n_per_slab</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>slabs</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>free_list</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>list_spinlock</edgelabel>
+        </childnode>
+      </node>
+      <node id="46">
+        <label>std::basic_string&lt; Char &gt;</label>
+      </node>
+      <node id="2">
+        <label>std::mutex</label>
+      </node>
+      <node id="45">
+        <label>std::string</label>
+        <childnode refid="46" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="84">
+        <label>std::unique_ptr&lt; T &gt;</label>
+        <childnode refid="17" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="104">
+        <label>std::unique_ptr&lt; Atomic&lt; FixedSizeMonomialMap::Node * &gt;[]&gt;</label>
+        <childnode refid="105" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="template-instance">
+          <edgelabel>&lt; Atomic&lt; FixedSizeMonomialMap::Node * &gt;[]&gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="100">
+        <label>std::unique_ptr&lt; FixedSizeMonomialMap&lt; mapped_type &gt; &gt;</label>
+        <childnode refid="101" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="template-instance">
+          <edgelabel>&lt; FixedSizeMonomialMap&lt; mapped_type &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="82">
+        <label>std::unique_ptr&lt; MonoLookup &gt;</label>
+        <childnode refid="83" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+        <childnode refid="84" relation="template-instance">
+          <edgelabel>&lt; MonoLookup &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="17" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="90">
+        <label>std::vector&lt; ConstMonoPtr &gt;</label>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; ConstMonoPtr &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="88">
+        <label>std::vector&lt; Element &gt;</label>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; Element &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="72">
+        <label>std::vector&lt; Exponent &gt;</label>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; Exponent &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="117">
+        <label>std::vector&lt; F4MatrixBuilder::RowTask &gt;</label>
+        <childnode refid="118" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; F4MatrixBuilder::RowTask &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="85">
+        <label>std::vector&lt; PolyBasis::Entry &gt;</label>
+        <childnode refid="86" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; PolyBasis::Entry &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="108">
+        <label>std::vector&lt; SparseMatrix::Row &gt;</label>
+        <childnode refid="109" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; SparseMatrix::Row &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="48">
+        <label>std::vector&lt; bool &gt;</label>
+        <childnode refid="35" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; bool &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>std::vector&lt; int &gt;</label>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; int &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="44">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="45" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; std::string &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="99">
+        <label>std::vector&lt; std::unique_ptr&lt; FixedSizeMonomialMap&lt; mapped_type &gt; &gt; &gt;</label>
+        <childnode refid="100" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="template-instance">
+          <edgelabel>&lt; std::unique_ptr&lt; FixedSizeMonomialMap&lt; mapped_type &gt; &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="59">
+        <label>void *</label>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" line="23" column="1" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixBuilder.hpp" bodystart="23" bodyend="175"/>
+    <listofallmembers>
+      <member refid="class_f4_matrix_builder_a9b63b330046c57965fe9d0873efe3238_1a9b63b330046c57965fe9d0873efe3238" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>addPolynomialToMatrix</name></member>
+      <member refid="class_f4_matrix_builder_a670935f387941eb1acc5d942d05f8f21_1a670935f387941eb1acc5d942d05f8f21" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>addPolynomialToMatrix</name></member>
+      <member refid="class_f4_matrix_builder_a4cbda64c9505a352df8336509e0c370c_1a4cbda64c9505a352df8336509e0c370c" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>addSPolynomialToMatrix</name></member>
+      <member refid="class_f4_matrix_builder_a6209c3c0ec9dd9bac931807932210423_1a6209c3c0ec9dd9bac931807932210423" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>appendRowBottom</name></member>
+      <member refid="class_f4_matrix_builder_a65a9e17af17e29aec4cf79cefc97c4c1_1a65a9e17af17e29aec4cf79cefc97c4c1" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>appendRowBottom</name></member>
+      <member refid="class_f4_matrix_builder_acc4c82697e6b57c22a45b8a17d039bd1_1acc4c82697e6b57c22a45b8a17d039bd1" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>appendRowTop</name></member>
+      <member refid="class_f4_matrix_builder_a039ed17c341b3d6b866812a9490eee37_1a039ed17c341b3d6b866812a9490eee37" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>buildMatrixAndClear</name></member>
+      <member refid="class_f4_matrix_builder_a60a5a89296fd514177a51ee956dbb308_1a60a5a89296fd514177a51ee956dbb308" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>ColIndex</name></member>
+      <member refid="class_f4_matrix_builder_adaedf586a76d8444746e8e42e46f7fcd_1adaedf586a76d8444746e8e42e46f7fcd" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>ColReader</name></member>
+      <member refid="class_f4_matrix_builder_ac85cb6f3fd6f8adeede2d079e8652caf_1ac85cb6f3fd6f8adeede2d079e8652caf" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_f4_matrix_builder_aa1649a1468292cdcca42fd1f332bc5b6_1aa1649a1468292cdcca42fd1f332bc5b6" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>ConstMonoRef</name></member>
+      <member refid="class_f4_matrix_builder_a8fa0f91b26759330642b1c201b280d99_1a8fa0f91b26759330642b1c201b280d99" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>createColumn</name></member>
+      <member refid="class_f4_matrix_builder_a7c9b7f56dd4f7a4883fe7a4e68975336_1a7c9b7f56dd4f7a4883fe7a4e68975336" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>createTwoColumns</name></member>
+      <member refid="class_f4_matrix_builder_ad03ff987945983a7f888caf0f19bb8a6_1ad03ff987945983a7f888caf0f19bb8a6" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>F4MatrixBuilder</name></member>
+      <member refid="class_f4_matrix_builder_a278a8d81e86f0a84245c4566c99cd0e8_1a278a8d81e86f0a84245c4566c99cd0e8" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>Field</name></member>
+      <member refid="class_f4_matrix_builder_ab5c9502af3ba2e105f086cb44e9d046e_1ab5c9502af3ba2e105f086cb44e9d046e" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>field</name></member>
+      <member refid="class_f4_matrix_builder_a7d768cf6b2ebd8388d5072b1fa4c92fa_1a7d768cf6b2ebd8388d5072b1fa4c92fa" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>findOrCreateColumn</name></member>
+      <member refid="class_f4_matrix_builder_a9eda5858cb198f2e6fee63be8716726c_1a9eda5858cb198f2e6fee63be8716726c" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>findOrCreateColumn</name></member>
+      <member refid="class_f4_matrix_builder_a1aec5db56ea8907bb1a4c05b946f5475_1a1aec5db56ea8907bb1a4c05b946f5475" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>LeftRightColIndex</name></member>
+      <member refid="class_f4_matrix_builder_ab7c19a73d9ade65777d26b9f1de49f3a_1ab7c19a73d9ade65777d26b9f1de49f3a" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>Map</name></member>
+      <member refid="class_f4_matrix_builder_a3b0655ddef0ad284f4e9170be02106ab_1a3b0655ddef0ad284f4e9170be02106ab" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mBasis</name></member>
+      <member refid="class_f4_matrix_builder_a99194b1f21417f2495a85c1fffc0e4f9_1a99194b1f21417f2495a85c1fffc0e4f9" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mBuilder</name></member>
+      <member refid="class_f4_matrix_builder_a10fb7bd6ddecd97953657677607de518_1a10fb7bd6ddecd97953657677607de518" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mCreateColumnLock</name></member>
+      <member refid="class_f4_matrix_builder_ab175c8ccb49fb1c9da6dff278340aa39_1ab175c8ccb49fb1c9da6dff278340aa39" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mLeftColCount</name></member>
+      <member refid="class_f4_matrix_builder_abe2a0e17d1ac82a0a00170222cffdb05_1abe2a0e17d1ac82a0a00170222cffdb05" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mMap</name></member>
+      <member refid="class_f4_matrix_builder_a1a30c4925e52ede4eda16e8e6123a4f1_1a1a30c4925e52ede4eda16e8e6123a4f1" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mMonomialsLeft</name></member>
+      <member refid="class_f4_matrix_builder_a960602e76fb3b2374a479cdc5c384245_1a960602e76fb3b2374a479cdc5c384245" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mMonomialsRight</name></member>
+      <member refid="class_f4_matrix_builder_a2935e5677fdb98a9e0528995cb8cbbb7_1a2935e5677fdb98a9e0528995cb8cbbb7" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>Mono</name></member>
+      <member refid="class_f4_matrix_builder_a2e840b449e003508ad9c7bb44adcb29c_1a2e840b449e003508ad9c7bb44adcb29c" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>Monoid</name></member>
+      <member refid="class_f4_matrix_builder_afdd2a6cafa7f9e955a5d66cfb1dc9b33_1afdd2a6cafa7f9e955a5d66cfb1dc9b33" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>monoid</name></member>
+      <member refid="class_f4_matrix_builder_a76439f80096cb1d8a4a042108fca8224_1a76439f80096cb1d8a4a042108fca8224" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>Monomials</name></member>
+      <member refid="class_f4_matrix_builder_af4ebed84318339c8121ce7d3dae20bbc_1af4ebed84318339c8121ce7d3dae20bbc" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>MonoPtr</name></member>
+      <member refid="class_f4_matrix_builder_a9f86aee62c90b605fb3dbb73963379fd_1a9f86aee62c90b605fb3dbb73963379fd" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>MonoRef</name></member>
+      <member refid="class_f4_matrix_builder_a6db0aa6a5f622a5b37dcfeef9cadaebf_1a6db0aa6a5f622a5b37dcfeef9cadaebf" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mRightColCount</name></member>
+      <member refid="class_f4_matrix_builder_a58701cf6f34198c982bf5c1ab8cb54d0_1a58701cf6f34198c982bf5c1ab8cb54d0" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mTmp</name></member>
+      <member refid="class_f4_matrix_builder_a9edcf75c4132a871cb16cb6fd2e83bed_1a9edcf75c4132a871cb16cb6fd2e83bed" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>mTodo</name></member>
+      <member refid="class_f4_matrix_builder_a43fc227fd5de46bf8ccaa65d837ec34a_1a43fc227fd5de46bf8ccaa65d837ec34a" prot="public" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>ring</name></member>
+      <member refid="class_f4_matrix_builder_a6d95bae45aeb36ab8436a881b243ba60_1a6d95bae45aeb36ab8436a881b243ba60" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>Scalar</name></member>
+      <member refid="class_f4_matrix_builder_a44f099cf940e7f2d428ee7c33b11a138_1a44f099cf940e7f2d428ee7c33b11a138" prot="private" virt="non-virtual"><scope>F4MatrixBuilder</scope><name>TaskFeeder</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_r_e_a_d_m_e_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">##<sp/>Engine<sp/>Notes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Fall<sp/>2020<sp/>Work<sp/>in<sp/>Progress</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">1.<sp/>Parallel<sp/>directory<sp/>structure<sp/>in<sp/>e,<sp/>d,<sp/>m2</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Main<sp/>header:<sp/>`e/engine.h`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>should<sp/>be<sp/>short,<sp/>mostly<sp/>include<sp/>other<sp/>headers</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>organize<sp/>interface<sp/>functions<sp/>in<sp/>`e/interface`;<sp/>eg:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e/interface/matrix.h<sp/><sp/><sp/>//<sp/>defining<sp/>types<sp/>currently<sp/>in<sp/>engine.h</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e/interface/matrix.cpp<sp/>//<sp/>previously<sp/>x-mat.cpp</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>each<sp/>should<sp/>be<sp/>self<sp/>contained,<sp/>include<sp/>minimal<sp/>dependencies<sp/>(specifically,<sp/>not<sp/>`engine.h`)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>associated<sp/>interpreter<sp/>and<sp/>top<sp/>level<sp/>code<sp/>should<sp/>be<sp/>placed<sp/>in<sp/>appropriate<sp/>files;<sp/>eg:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>d/matrix.dd</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>m2/matrix.m2</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>unit<sp/>tests<sp/>should<sp/>be<sp/>provided<sp/>for<sp/>all<sp/>interface<sp/>routines;<sp/>eg:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e/unit-test/matrix.cpp</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Internal<sp/>routines</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>-<sp/>should<sp/>be<sp/>in<sp/>respective<sp/>directories,<sp/>filename<sp/>based<sp/>on<sp/>the<sp/>classes;<sp/>eg:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e/matrix/matrix.hpp</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e/matrix/dense.hpp</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">2.<sp/>GC<sp/>barrier<sp/>between<sp/>engine<sp/>and<sp/>front<sp/>end</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>issue:<sp/>ringelem,<sp/>our_new_delete<sp/>vs<sp/>our_new_gc</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>goal:<sp/>ability<sp/>to<sp/>hotswap<sp/>the<sp/>GC<sp/>backend<sp/>by<sp/>editing<sp/>only<sp/>one<sp/>file</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>benefit:<sp/>allow<sp/>easy<sp/>comparison<sp/>and<sp/>benchmarking</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">3.<sp/>Computations<sp/>to<sp/>be<sp/>written<sp/>or<sp/>rewritten</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>e.g.<sp/>gb,<sp/>smith<sp/>normal<sp/>form,<sp/>etc.</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Engine</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>engine.h<sp/>and<sp/>x-*</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>newdelete<sp/>hash</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Arithmetic</highlight></codeline>
+<codeline><highlight class="normal"><sp/>-<sp/>Flint</highlight></codeline>
+<codeline><highlight class="normal"><sp/>-<sp/>GMP</highlight></codeline>
+<codeline><highlight class="normal"><sp/>-<sp/>MPFR</highlight></codeline>
+<codeline><highlight class="normal"><sp/>-<sp/>Arb,<sp/>etc.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Monoids</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Rings</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>RingElements</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>RingMaps</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Matrices</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>FreeModules</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Computations</highlight></codeline>
+<codeline><highlight class="normal"><sp/>-<sp/>LLL</highlight></codeline>
+<codeline><highlight class="normal"><sp/>-<sp/>GB</highlight></codeline>
+<codeline><highlight class="normal"><sp/>-<sp/>Resolution</highlight></codeline>
+<codeline><highlight class="normal"><sp/>-<sp/>Hilbert*</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>NAG</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Util</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Interface</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">--------------------------------------------------------</highlight></codeline>
+<codeline><highlight class="normal">--<sp/>12/26/2011<sp/>MES</highlight></codeline>
+<codeline><highlight class="normal">Cleaning<sp/>up<sp/>code<sp/>todo:</highlight></codeline>
+<codeline><highlight class="normal">1.<sp/>get<sp/>gtest<sp/>working</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>i.e.<sp/>a<sp/>make<sp/>file<sp/>target</highlight></codeline>
+<codeline><highlight class="normal">2.<sp/>create<sp/>a<sp/>gtest<sp/>file</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>linking<sp/>test<sp/>file</highlight></codeline>
+<codeline><highlight class="normal">3.<sp/>DONE<sp/>tabs<sp/>--&gt;<sp/>spaces</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>DONE<sp/>put<sp/>in<sp/>tab-mode-null<sp/>into<sp/>each<sp/>file</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>change<sp/>copyrights</highlight></codeline>
+<codeline><highlight class="normal">4.<sp/>remove<sp/>as<sp/>many<sp/>includes<sp/>as<sp/>possible</highlight></codeline>
+<codeline><highlight class="normal">5.<sp/>maybe<sp/>make<sp/>a<sp/>set<sp/>of<sp/>subdirectories<sp/>of<sp/>&apos;e&apos;:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>rings</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>matrices</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>computations</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>util</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>commands</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>tests<sp/>(gtest<sp/>stuff)</highlight></codeline>
+<codeline><highlight class="normal">6.<sp/>buffer<sp/>--&gt;<sp/>use<sp/>ostringstream?</highlight></codeline>
+<codeline><highlight class="normal">7.<sp/>text-io<sp/>--&gt;<sp/>maybe<sp/>keep<sp/>these<sp/>except<sp/>for<sp/>bignum_text_out?</highlight></codeline>
+<codeline><highlight class="normal">8.<sp/>DONE<sp/>at<sp/>some<sp/>point,<sp/>merge<sp/>back<sp/>in<sp/>the<sp/>stuff<sp/>with<sp/>Jakob,<sp/>preferably<sp/>soon</highlight></codeline>
+<codeline><highlight class="normal">9.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">------------------------------------------------------</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">these<sp/>files<sp/>really<sp/>use<sp/>overflow<sp/>facilities:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>gbring.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>imonorder.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>matrix-kbasis.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>matrix.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>monoid.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>monorder.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>overflow.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>polyring.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>varpower.o</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">these<sp/>files<sp/>depends<sp/>on<sp/>overflow.hpp</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>CC.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>CCC.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>Eschreyer.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>GF.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>QQ.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>RR.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>RRR.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ZZ.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ZZp.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>comp-gb-declared.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>comp-gb.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>comp-res.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>debug.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>frac.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>freemod.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>gb-default.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>gb-homog2.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>gb-sugarless.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>gb-toric.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>gbring.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>gbweight.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>imonorder.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>matrix-kbasis.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>matrix.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>monoid.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>monorder.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>montable.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ntuple.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>overflow.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>polyring.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>qring.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>reducedgb-ZZ.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>reducedgb-field-local.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>reducedgb-field.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>reducedgb.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>res-a2-gb.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>res-a2.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>schorder.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>skewpoly.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>solvable.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>spair.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>varpower.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>weylalg.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>x-gb.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>x-mat.o</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>x-relem.o</highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/README.md"/>
+  </compounddef>
+</doxygen>

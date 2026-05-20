@@ -1,0 +1,300 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structhilb__step" kind="struct" language="C++" prot="public">
+    <compoundname>hilb_step</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="hilb_8hpp" local="no">hilb.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structhilb__step_ab17dabf47b9a929ce6b291acd2289ba4_1ab17dabf47b9a929ce6b291acd2289ba4" prot="public" static="no" mutable="no">
+        <type><ref refid="structhilb__step" kindref="compound">hilb_step</ref> *</type>
+        <definition>hilb_step* hilb_step::up</definition>
+        <argsstring></argsstring>
+        <name>up</name>
+        <qualifiedname>hilb_step::up</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="76" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhilb__step_a428f6975f057b250dbe6aad87ce97749_1a428f6975f057b250dbe6aad87ce97749" prot="public" static="no" mutable="no">
+        <type><ref refid="structhilb__step" kindref="compound">hilb_step</ref> *</type>
+        <definition>hilb_step* hilb_step::down</definition>
+        <argsstring></argsstring>
+        <name>down</name>
+        <qualifiedname>hilb_step::down</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="77" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhilb__step_afeab176b63e75a5035244b337c434e53_1afeab176b63e75a5035244b337c434e53" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_step::i</definition>
+        <argsstring></argsstring>
+        <name>i</name>
+        <qualifiedname>hilb_step::i</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="78" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhilb__step_af83d985ccb9d3b4ba6456d8c10dd2b6e_1af83d985ccb9d3b4ba6456d8c10dd2b6e" prot="public" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem hilb_step::h0</definition>
+        <argsstring></argsstring>
+        <name>h0</name>
+        <qualifiedname>hilb_step::h0</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="79" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhilb__step_a2f3980861f4b771e9557075815f84491_1a2f3980861f4b771e9557075815f84491" prot="public" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem hilb_step::h1</definition>
+        <argsstring></argsstring>
+        <name>h1</name>
+        <qualifiedname>hilb_step::h1</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="80" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhilb__step_a3ce311e89147197db05edf242dea2cdd_1a3ce311e89147197db05edf242dea2cdd" prot="public" static="no" mutable="no">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int hilb_step::first_sum</definition>
+        <argsstring></argsstring>
+        <name>first_sum</name>
+        <qualifiedname>hilb_step::first_sum</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="81" column="7" bodyfile="Macaulay2/e/hilb.hpp" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structhilb__step_abb8d0015f7f1a53b220712b79b36cf0c_1abb8d0015f7f1a53b220712b79b36cf0c" prot="public" static="no" mutable="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="class_monomial_ideal" kindref="compound">MonomialIdeal</ref> * &gt;</type>
+        <definition>gc_vector&lt;MonomialIdeal*&gt; hilb_step::monids</definition>
+        <argsstring></argsstring>
+        <name>monids</name>
+        <qualifiedname>hilb_step::monids</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/hilb.hpp" line="82" column="13" bodyfile="Macaulay2/e/hilb.hpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>hilb_step</label>
+        <link refid="structhilb__step"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="5">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="16">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="14">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>const void *</label>
+      </node>
+      <node id="9">
+        <label>double</label>
+      </node>
+      <node id="20">
+        <label>gc_vector&lt; MonomialIdeal * &gt;</label>
+      </node>
+      <node id="1">
+        <label>hilb_step</label>
+        <link refid="structhilb__step"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>down</edgelabel>
+          <edgelabel>up</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>first_sum</edgelabel>
+          <edgelabel>i</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>h0</edgelabel>
+          <edgelabel>h1</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>monids</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="7">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>long</label>
+      </node>
+      <node id="13">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="12">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="10">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="11">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="4">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/hilb.hpp" line="74" column="1" bodyfile="Macaulay2/e/hilb.hpp" bodystart="75" bodyend="83"/>
+    <listofallmembers>
+      <member refid="structhilb__step_a428f6975f057b250dbe6aad87ce97749_1a428f6975f057b250dbe6aad87ce97749" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>down</name></member>
+      <member refid="structhilb__step_a3ce311e89147197db05edf242dea2cdd_1a3ce311e89147197db05edf242dea2cdd" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>first_sum</name></member>
+      <member refid="structhilb__step_af83d985ccb9d3b4ba6456d8c10dd2b6e_1af83d985ccb9d3b4ba6456d8c10dd2b6e" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>h0</name></member>
+      <member refid="structhilb__step_a2f3980861f4b771e9557075815f84491_1a2f3980861f4b771e9557075815f84491" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>h1</name></member>
+      <member refid="structhilb__step_afeab176b63e75a5035244b337c434e53_1afeab176b63e75a5035244b337c434e53" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>i</name></member>
+      <member refid="structhilb__step_abb8d0015f7f1a53b220712b79b36cf0c_1abb8d0015f7f1a53b220712b79b36cf0c" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>monids</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>operator new[]</name></member>
+      <member refid="structhilb__step_ab17dabf47b9a929ce6b291acd2289ba4_1ab17dabf47b9a929ce6b291acd2289ba4" prot="public" virt="non-virtual"><scope>hilb_step</scope><name>up</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

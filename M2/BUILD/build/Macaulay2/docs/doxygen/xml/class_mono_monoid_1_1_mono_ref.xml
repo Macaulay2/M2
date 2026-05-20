@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_mono_monoid_1_1_mono_ref" kind="class" language="C++" prot="public">
+    <compoundname>MonoMonoid::MonoRef</compoundname>
+    <includes refid="_mono_monoid_8hpp" local="no">MonoMonoid.hpp</includes>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_mono_monoid_1_1_mono_ref_ae1633efd9e23ffb94762d2e225b2129b_1ae1633efd9e23ffb94762d2e225b2129b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class MonoMonoid</definition>
+        <argsstring></argsstring>
+        <name>MonoMonoid</name>
+        <qualifiedname>MonoMonoid::MonoRef::MonoMonoid</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_monoid" kindref="compound">MonoMonoid</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1394" column="18" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1394" bodyend="-1"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_ae1633efd9e23ffb94762d2e225b2129b_1ae1633efd9e23ffb94762d2e225b2129b" compoundref="_mono_monoid_8hpp" startline="1394">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoMonoid</references>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_ae1633efd9e23ffb94762d2e225b2129b_1ae1633efd9e23ffb94762d2e225b2129b" compoundref="_mono_monoid_8hpp" startline="1394">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoMonoid</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_mono_monoid_1_1_mono_ref_aa600e4d7983f503608465bcd4c5cc6c5_1aa600e4d7983f503608465bcd4c5cc6c5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>MonoMonoid::MonoRef::ConstMonoRef</qualifiedname>
+        <param>
+          <type>ConstMonoRef</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1395" column="18" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1395" bodyend="-1"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_aa600e4d7983f503608465bcd4c5cc6c5_1aa600e4d7983f503608465bcd4c5cc6c5" compoundref="_mono_monoid_8hpp" startline="1395">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::ConstMonoRef</references>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_aa600e4d7983f503608465bcd4c5cc6c5_1aa600e4d7983f503608465bcd4c5cc6c5" compoundref="_mono_monoid_8hpp" startline="1395">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::ConstMonoRef</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_mono_monoid_1_1_mono_ref_aa2bb4bf68783739cda005c5c9745ce20_1aa2bb4bf68783739cda005c5c9745ce20" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_mono_monoid_1_1_mono_ptr" kindref="compound">MonoPtr</ref></type>
+        <definition>const MonoPtr MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::mMono</definition>
+        <argsstring></argsstring>
+        <name>mMono</name>
+        <qualifiedname>MonoMonoid::MonoRef::mMono</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1400" column="19" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1400" bodyend="-1"/>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_a6d025c80312a2c9a0ef3741004d67893_1a6d025c80312a2c9a0ef3741004d67893" compoundref="_mono_monoid_8hpp" startline="1398" endline="1398">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::internalRawPtr</referencedby>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_abb3e3a5dc02e07920bb1990d7fdfbd30_1abb3e3a5dc02e07920bb1990d7fdfbd30" compoundref="_mono_monoid_8hpp" startline="1381" endline="1381">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoRef</referencedby>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_ac6fa86ef9374f76af3b4992c65ee6554_1ac6fa86ef9374f76af3b4992c65ee6554" compoundref="_mono_monoid_8hpp" startline="1397" endline="1397">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoRef</referencedby>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_a63b0929e4b34db22c9540d1e5b2ab3c2_1a63b0929e4b34db22c9540d1e5b2ab3c2" compoundref="_mono_monoid_8hpp" startline="1390" endline="1390">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::operator ConstMonoRef</referencedby>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_a23fed1b5fcc8daca8f6942303109a5cb_1a23fed1b5fcc8daca8f6942303109a5cb" compoundref="_mono_monoid_8hpp" startline="1383" endline="1383">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::ptr</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_mono_monoid_1_1_mono_ref_abb3e3a5dc02e07920bb1990d7fdfbd30_1abb3e3a5dc02e07920bb1990d7fdfbd30" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoRef</definition>
+        <argsstring>(const MonoRef &amp;mono)</argsstring>
+        <name>MonoRef</name>
+        <qualifiedname>MonoMonoid::MonoRef::MonoRef</qualifiedname>
+        <param>
+          <type>const MonoRef &amp;</type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1381" column="5" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1381" bodyend="1381"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_aa2bb4bf68783739cda005c5c9745ce20_1aa2bb4bf68783739cda005c5c9745ce20" compoundref="_mono_monoid_8hpp" startline="1400">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::mMono</references>
+        <references refid="class_mono_monoid_1_1_mono_ref_abb3e3a5dc02e07920bb1990d7fdfbd30_1abb3e3a5dc02e07920bb1990d7fdfbd30" compoundref="_mono_monoid_8hpp" startline="1381" endline="1381">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoRef</references>
+        <references refid="class_mono_monoid_1_1_mono_ref_a23fed1b5fcc8daca8f6942303109a5cb_1a23fed1b5fcc8daca8f6942303109a5cb" compoundref="_mono_monoid_8hpp" startline="1383" endline="1383">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::ptr</references>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_abb3e3a5dc02e07920bb1990d7fdfbd30_1abb3e3a5dc02e07920bb1990d7fdfbd30" compoundref="_mono_monoid_8hpp" startline="1381" endline="1381">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoRef</referencedby>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_a0253192daac8e12f375627a1b67d8602_1a0253192daac8e12f375627a1b67d8602">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::operator=</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_monoid_1_1_mono_ref_a23fed1b5fcc8daca8f6942303109a5cb_1a23fed1b5fcc8daca8f6942303109a5cb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_monoid_1_1_mono_ptr" kindref="compound">MonoPtr</ref></type>
+        <definition>MonoPtr MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::ptr</definition>
+        <argsstring>() const</argsstring>
+        <name>ptr</name>
+        <qualifiedname>MonoMonoid::MonoRef::ptr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1383" column="13" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1383" bodyend="1383"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_aa2bb4bf68783739cda005c5c9745ce20_1aa2bb4bf68783739cda005c5c9745ce20" compoundref="_mono_monoid_8hpp" startline="1400">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::mMono</references>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_abb3e3a5dc02e07920bb1990d7fdfbd30_1abb3e3a5dc02e07920bb1990d7fdfbd30" compoundref="_mono_monoid_8hpp" startline="1381" endline="1381">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoRef</referencedby>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_a05dbf50546be1d53c7a9304a1958532d_1a05dbf50546be1d53c7a9304a1958532d" compoundref="_mono_monoid_8hpp" startline="1388" endline="1388">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::operator MonoPtr</referencedby>
+        <referencedby refid="class_mono_monoid_1_1_mono_ref_a16ba4ebe6b46d68b4a6aaabc69aed8f7_1a16ba4ebe6b46d68b4a6aaabc69aed8f7" compoundref="_mono_monoid_8hpp" startline="1384" endline="1384">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::operator&amp;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_monoid_1_1_mono_ref_a16ba4ebe6b46d68b4a6aaabc69aed8f7_1a16ba4ebe6b46d68b4a6aaabc69aed8f7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_monoid_1_1_mono_ptr" kindref="compound">MonoPtr</ref></type>
+        <definition>MonoPtr MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::operator&amp;</definition>
+        <argsstring>() const</argsstring>
+        <name>operator&amp;</name>
+        <qualifiedname>MonoMonoid::MonoRef::operator&amp;</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1384" column="13" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1384" bodyend="1384"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_a23fed1b5fcc8daca8f6942303109a5cb_1a23fed1b5fcc8daca8f6942303109a5cb" compoundref="_mono_monoid_8hpp" startline="1383" endline="1383">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::ptr</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_monoid_1_1_mono_ref_a05dbf50546be1d53c7a9304a1958532d_1a05dbf50546be1d53c7a9304a1958532d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::operator MonoPtr</definition>
+        <argsstring>() const</argsstring>
+        <name>operator MonoPtr</name>
+        <qualifiedname>MonoMonoid::MonoRef::operator MonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000027"><xreftitle>Todo</xreftitle><xrefdescription><para>: Get rid of this as soon as all code has been migrated to observe the ptr/ref distinction. Kill it with fire! </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1388" column="5" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1388" bodyend="1388"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_a23fed1b5fcc8daca8f6942303109a5cb_1a23fed1b5fcc8daca8f6942303109a5cb" compoundref="_mono_monoid_8hpp" startline="1383" endline="1383">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::ptr</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_monoid_1_1_mono_ref_a63b0929e4b34db22c9540d1e5b2ab3c2_1a63b0929e4b34db22c9540d1e5b2ab3c2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::operator ConstMonoRef</definition>
+        <argsstring>() const</argsstring>
+        <name>operator ConstMonoRef</name>
+        <qualifiedname>MonoMonoid::MonoRef::operator ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1390" column="5" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1390" bodyend="1390"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_aa2bb4bf68783739cda005c5c9745ce20_1aa2bb4bf68783739cda005c5c9745ce20" compoundref="_mono_monoid_8hpp" startline="1400">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::mMono</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_mono_monoid_1_1_mono_ref_a0253192daac8e12f375627a1b67d8602_1a0253192daac8e12f375627a1b67d8602" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::operator=</definition>
+        <argsstring>(const MonoRef &amp;)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>MonoMonoid::MonoRef::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mono_monoid_1_1_mono_ref_abb3e3a5dc02e07920bb1990d7fdfbd30_1abb3e3a5dc02e07920bb1990d7fdfbd30" kindref="member">MonoRef</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1393" column="10"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_abb3e3a5dc02e07920bb1990d7fdfbd30_1abb3e3a5dc02e07920bb1990d7fdfbd30" compoundref="_mono_monoid_8hpp" startline="1381" endline="1381">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoRef</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_monoid_1_1_mono_ref_ac6fa86ef9374f76af3b4992c65ee6554_1ac6fa86ef9374f76af3b4992c65ee6554" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::MonoRef</definition>
+        <argsstring>(MonoPtr mono)</argsstring>
+        <name>MonoRef</name>
+        <qualifiedname>MonoMonoid::MonoRef::MonoRef</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_monoid_1_1_mono_ptr" kindref="compound">MonoPtr</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1397" column="5" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1397" bodyend="1397"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_aa2bb4bf68783739cda005c5c9745ce20_1aa2bb4bf68783739cda005c5c9745ce20" compoundref="_mono_monoid_8hpp" startline="1400">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::mMono</references>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_monoid_1_1_mono_ref_a6d025c80312a2c9a0ef3741004d67893_1a6d025c80312a2c9a0ef3741004d67893" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_monoid_ae9b5367df07812686595674cb928d780_1ae9b5367df07812686595674cb928d780" kindref="member">Exponent</ref> *</type>
+        <definition>Exponent * MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::internalRawPtr</definition>
+        <argsstring>() const</argsstring>
+        <name>internalRawPtr</name>
+        <qualifiedname>MonoMonoid::MonoRef::internalRawPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1398" column="14" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1398" bodyend="1398"/>
+        <references refid="class_mono_monoid_1_1_mono_ref_aa2bb4bf68783739cda005c5c9745ce20_1aa2bb4bf68783739cda005c5c9745ce20" compoundref="_mono_monoid_8hpp" startline="1400">MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef::mMono</references>
+        <references refid="class_mono_monoid_a5dae05f5d36e8cbc33ec2bfececa0556_1a5dae05f5d36e8cbc33ec2bfececa0556" compoundref="_mono_monoid_8hpp" startline="1767" endline="1769">MonoMonoid&lt; E, HC, SH, SO &gt;::rawPtr</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>Exponent *</label>
+      </node>
+      <node id="2">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoPtr</label>
+        <link refid="class_mono_monoid_1_1_mono_ptr"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mMono</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>MonoMonoid&lt; E, HC, SH, SO &gt;::MonoRef</label>
+        <link refid="class_mono_monoid_1_1_mono_ref"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mMono</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" line="1379" column="3" bodyfile="submodules/mathicgb/src/mathicgb/MonoMonoid.hpp" bodystart="1379" bodyend="1401"/>
+    <listofallmembers>
+      <member refid="class_mono_monoid_1_1_mono_ref_aa600e4d7983f503608465bcd4c5cc6c5_1aa600e4d7983f503608465bcd4c5cc6c5" prot="private" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>ConstMonoRef</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_a6d025c80312a2c9a0ef3741004d67893_1a6d025c80312a2c9a0ef3741004d67893" prot="private" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>internalRawPtr</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_aa2bb4bf68783739cda005c5c9745ce20_1aa2bb4bf68783739cda005c5c9745ce20" prot="private" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>mMono</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_ae1633efd9e23ffb94762d2e225b2129b_1ae1633efd9e23ffb94762d2e225b2129b" prot="private" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>MonoMonoid</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_abb3e3a5dc02e07920bb1990d7fdfbd30_1abb3e3a5dc02e07920bb1990d7fdfbd30" prot="public" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>MonoRef</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_ac6fa86ef9374f76af3b4992c65ee6554_1ac6fa86ef9374f76af3b4992c65ee6554" prot="private" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>MonoRef</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_a63b0929e4b34db22c9540d1e5b2ab3c2_1a63b0929e4b34db22c9540d1e5b2ab3c2" prot="public" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>operator ConstMonoRef</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_a05dbf50546be1d53c7a9304a1958532d_1a05dbf50546be1d53c7a9304a1958532d" prot="public" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>operator MonoPtr</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_a16ba4ebe6b46d68b4a6aaabc69aed8f7_1a16ba4ebe6b46d68b4a6aaabc69aed8f7" prot="public" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>operator&amp;</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_a0253192daac8e12f375627a1b67d8602_1a0253192daac8e12f375627a1b67d8602" prot="private" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>operator=</name></member>
+      <member refid="class_mono_monoid_1_1_mono_ref_a23fed1b5fcc8daca8f6942303109a5cb_1a23fed1b5fcc8daca8f6942303109a5cb" prot="public" virt="non-virtual"><scope>MonoMonoid::MonoRef</scope><name>ptr</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

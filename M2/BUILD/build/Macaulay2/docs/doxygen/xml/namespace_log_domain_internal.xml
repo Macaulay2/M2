@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_log_domain_internal" kind="namespace" language="C++">
+    <compoundname>LogDomainInternal</compoundname>
+    <innerclass refid="struct_log_domain_internal_1_1_select_value" prot="public">LogDomainInternal::SelectValue</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_tag__" prot="public">LogDomainInternal::Tag_</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_tag__0" prot="public">LogDomainInternal::Tag_0</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_tag__1" prot="public">LogDomainInternal::Tag_1</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_select_value_3_01_tag__0_3_01int_01_4_00_01_default_01_4" prot="public">LogDomainInternal::SelectValue&lt; Tag_0&lt; int &gt;, Default &gt;</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_select_value_3_01_tag__1_3_01int_01_4_00_01_default_01_4" prot="public">LogDomainInternal::SelectValue&lt; Tag_1&lt; int &gt;, Default &gt;</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_lambda_runner" prot="public">LogDomainInternal::LambdaRunner</innerclass>
+    <innerclass refid="struct_log_domain_internal_1_1_log_alias_registerer" prot="public">LogDomainInternal::LogAliasRegisterer</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_log_domain_internal_a29779d254f4b39661110f9f7a5d7e3fe_1a29779d254f4b39661110f9f7a5d7e3fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class L</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="struct_log_domain_internal_1_1_lambda_runner" kindref="compound">LambdaRunner</ref>&lt; L &gt;</type>
+        <definition>LambdaRunner&lt; L &gt; LogDomainInternal::lambdaRunner</definition>
+        <argsstring>(L &amp;l)</argsstring>
+        <name>lambdaRunner</name>
+        <qualifiedname>LogDomainInternal::lambdaRunner</qualifiedname>
+        <param>
+          <type>L &amp;</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="203" column="16" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="203" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_log_domain_internal_a9e16b152efb1aecd91e1b39647804200_1a9e16b152efb1aecd91e1b39647804200" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class L</type>
+          </param>
+          <param>
+            <type>class <ref refid="struct_t" kindref="compound">T</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void LogDomainInternal::operator+</definition>
+        <argsstring>(LambdaRunner&lt; L &gt; runner, T &amp;&amp;lambda)</argsstring>
+        <name>operator+</name>
+        <qualifiedname>LogDomainInternal::operator+</qualifiedname>
+        <param>
+          <type><ref refid="struct_log_domain_internal_1_1_lambda_runner" kindref="compound">LambdaRunner</ref>&lt; L &gt;</type>
+          <declname>runner</declname>
+        </param>
+        <param>
+          <type><ref refid="struct_t" kindref="compound">T</ref> &amp;&amp;</type>
+          <declname>lambda</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="208" column="8" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="208" bodyend="210"/>
+        <references refid="struct_log_domain_internal_1_1_lambda_runner_a67889a83edc6a86f5fe2f5c76a2906cf_1a67889a83edc6a86f5fe2f5c76a2906cf" compoundref="_log_domain_8hpp" startline="201">LogDomainInternal::LambdaRunner&lt; L &gt;::log</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="184" column="1"/>
+  </compounddef>
+</doxygen>

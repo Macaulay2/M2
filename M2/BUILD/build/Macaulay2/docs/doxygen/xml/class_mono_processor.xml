@@ -1,0 +1,634 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_mono_processor" kind="class" language="C++" prot="public">
+    <compoundname>MonoProcessor</compoundname>
+    <includes refid="_mono_processor_8hpp" local="no">MonoProcessor.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class M</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_mono_processor_ae371b9d75c0f949bb6759c405097d41a_1ae371b9d75c0f949bb6759c405097d41a" prot="public" static="no">
+        <type>M</type>
+        <definition>typedef M MonoProcessor&lt; M &gt;::Monoid</definition>
+        <argsstring></argsstring>
+        <name>Monoid</name>
+        <qualifiedname>MonoProcessor::Monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="18" column="13" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_processor_a58430caec0d83ae215d391dbdf0b1168_1a58430caec0d83ae215d391dbdf0b1168" prot="public" static="no">
+        <type><ref refid="class_mono_monoid_a4fb9a94a4afe06f1c7c2ce8b4a9f4fc7_1a4fb9a94a4afe06f1c7c2ce8b4a9f4fc7" kindref="member">Monoid::VarIndex</ref></type>
+        <definition>typedef Monoid::VarIndex MonoProcessor&lt; M &gt;::VarIndex</definition>
+        <argsstring></argsstring>
+        <name>VarIndex</name>
+        <qualifiedname>MonoProcessor::VarIndex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="19" column="37" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_processor_a780efc0b48046ccebc1934e3c2bd0d5d_1a780efc0b48046ccebc1934e3c2bd0d5d" prot="public" static="no">
+        <type><ref refid="class_mono_monoid_a5320bb9390152110faabfa58beef109e_1a5320bb9390152110faabfa58beef109e" kindref="member">Monoid::Component</ref></type>
+        <definition>typedef Monoid::Component MonoProcessor&lt; M &gt;::Component</definition>
+        <argsstring></argsstring>
+        <name>Component</name>
+        <qualifiedname>MonoProcessor::Component</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="20" column="38" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_processor_a5a5ffbaa5d9a52fec282202f7b17d221_1a5a5ffbaa5d9a52fec282202f7b17d221" prot="public" static="no">
+        <type>Monoid::MonoVector</type>
+        <definition>typedef Monoid::MonoVector MonoProcessor&lt; M &gt;::MonoVector</definition>
+        <argsstring></argsstring>
+        <name>MonoVector</name>
+        <qualifiedname>MonoProcessor::MonoVector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="21" column="39" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_processor_a2558ea7526305aca450f94344951f074_1a2558ea7526305aca450f94344951f074" prot="public" static="no">
+        <type>Monoid::MonoRef</type>
+        <definition>typedef Monoid::MonoRef MonoProcessor&lt; M &gt;::MonoRef</definition>
+        <argsstring></argsstring>
+        <name>MonoRef</name>
+        <qualifiedname>MonoProcessor::MonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="22" column="36" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_processor_aaad52dd992442bc27992a2cf08b354c4_1aaad52dd992442bc27992a2cf08b354c4" prot="public" static="no">
+        <type>Monoid::ConstMonoRef</type>
+        <definition>typedef Monoid::ConstMonoRef MonoProcessor&lt; M &gt;::ConstMonoRef</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoRef</name>
+        <qualifiedname>MonoProcessor::ConstMonoRef</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="23" column="41" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_mono_processor_af3806aaee0e3268f7b2c50c7149b50d3_1af3806aaee0e3268f7b2c50c7149b50d3" prot="public" static="no">
+        <type>Monoid::ConstMonoPtr</type>
+        <definition>typedef Monoid::ConstMonoPtr MonoProcessor&lt; M &gt;::ConstMonoPtr</definition>
+        <argsstring></argsstring>
+        <name>ConstMonoPtr</name>
+        <qualifiedname>MonoProcessor::ConstMonoPtr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="24" column="41" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_mono_processor_ac2c98073bed020ede37705a3524dab5f_1ac2c98073bed020ede37705a3524dab5f" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoProcessor&lt; M &gt;::mOrderFromLeft</definition>
+        <argsstring></argsstring>
+        <name>mOrderFromLeft</name>
+        <qualifiedname>MonoProcessor::mOrderFromLeft</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="125" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_mono_processor_aa1089e9bd025f376facbb288a71d8c11_1aa1089e9bd025f376facbb288a71d8c11" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoProcessor&lt; M &gt;::mComponentsAscendingDesired</definition>
+        <argsstring></argsstring>
+        <name>mComponentsAscendingDesired</name>
+        <qualifiedname>MonoProcessor::mComponentsAscendingDesired</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="126" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_mono_processor_a3ed5153ce7d69fd18c955cfe65d0bc31_1a3ed5153ce7d69fd18c955cfe65d0bc31" prot="private" static="no" mutable="no">
+        <type><ref refid="class_mono_processor_a780efc0b48046ccebc1934e3c2bd0d5d_1a780efc0b48046ccebc1934e3c2bd0d5d" kindref="member">Component</ref></type>
+        <definition>Component MonoProcessor&lt; M &gt;::mComponentCount</definition>
+        <argsstring></argsstring>
+        <name>mComponentCount</name>
+        <qualifiedname>MonoProcessor::mComponentCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="127" column="13" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_mono_processor_a3ed7722e524a1f6333876d4dd5de29cf_1a3ed7722e524a1f6333876d4dd5de29cf" prot="private" static="no" mutable="no">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoProcessor&lt; M &gt;::mSchreyering</definition>
+        <argsstring></argsstring>
+        <name>mSchreyering</name>
+        <qualifiedname>MonoProcessor::mSchreyering</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="128" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_mono_processor_a734e40dce8e37dd88c7ca374c1f4bba7_1a734e40dce8e37dd88c7ca374c1f4bba7" prot="private" static="no" mutable="no">
+        <type><ref refid="class_mono_processor_a5a5ffbaa5d9a52fec282202f7b17d221_1a5a5ffbaa5d9a52fec282202f7b17d221" kindref="member">MonoVector</ref></type>
+        <definition>MonoVector MonoProcessor&lt; M &gt;::mSchreyerMultipliersMemory</definition>
+        <argsstring></argsstring>
+        <name>mSchreyerMultipliersMemory</name>
+        <qualifiedname>MonoProcessor::mSchreyerMultipliersMemory</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="129" column="14" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_mono_processor_a870c6eacd48045fa6f1e1277177d1759_1a870c6eacd48045fa6f1e1277177d1759" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_mono_processor_af3806aaee0e3268f7b2c50c7149b50d3_1af3806aaee0e3268f7b2c50c7149b50d3" kindref="member">ConstMonoPtr</ref> &gt;</type>
+        <definition>std::vector&lt;ConstMonoPtr&gt; MonoProcessor&lt; M &gt;::mSchreyerMultipliers</definition>
+        <argsstring></argsstring>
+        <name>mSchreyerMultipliers</name>
+        <qualifiedname>MonoProcessor::mSchreyerMultipliers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="130" column="15" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_mono_processor_a7923340396c7ef2a1dc85df1643df019_1a7923340396c7ef2a1dc85df1643df019" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MonoProcessor&lt; M &gt;::MonoProcessor</definition>
+        <argsstring>(const Monoid &amp;monoid, const bool componentsAscendingDesired, const bool schreyering)</argsstring>
+        <name>MonoProcessor</name>
+        <qualifiedname>MonoProcessor::MonoProcessor</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mono_processor_ae371b9d75c0f949bb6759c405097d41a_1ae371b9d75c0f949bb6759c405097d41a" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+          <declname>monoid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>componentsAscendingDesired</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>schreyering</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="26" column="3" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="26" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_a22472ce37d4bbcc1a23519fade3b6314_1a22472ce37d4bbcc1a23519fade3b6314" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoProcessor&lt; M &gt;::setComponentsAscendingDesired</definition>
+        <argsstring>(bool value)</argsstring>
+        <name>setComponentsAscendingDesired</name>
+        <qualifiedname>MonoProcessor::setComponentsAscendingDesired</qualifiedname>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="38" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="38" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_a34c17c163f6b037456e9942fc5926b32_1a34c17c163f6b037456e9942fc5926b32" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoProcessor&lt; M &gt;::componentsAscendingDesired</definition>
+        <argsstring>() const</argsstring>
+        <name>componentsAscendingDesired</name>
+        <qualifiedname>MonoProcessor::componentsAscendingDesired</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="41" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="41" bodyend="41"/>
+        <referencedby refid="class_mono_processor_ac209e7937df04fc200bdd8e945a6a406_1ac209e7937df04fc200bdd8e945a6a406" compoundref="_mono_processor_8hpp" startline="95" endline="98">MonoProcessor&lt; Monoid &gt;::needToReverseComponents</referencedby>
+        <referencedby refid="class_mathic_i_o_a5d3527830cbb2b07bad2bd389d101b29_1a5d3527830cbb2b07bad2bd389d101b29" compoundref="_mathic_i_o_8hpp" startline="218" endline="232">MathicIO&lt; M, BF &gt;::writeRing</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_addb30d92f5cee29850045a2030adee4f_1addb30d92f5cee29850045a2030adee4f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoProcessor&lt; M &gt;::setSchreyering</definition>
+        <argsstring>(bool value)</argsstring>
+        <name>setSchreyering</name>
+        <qualifiedname>MonoProcessor::setSchreyering</qualifiedname>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="43" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="43" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_ad2addbcad09094b9420c754202aa770d_1ad2addbcad09094b9420c754202aa770d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoProcessor&lt; M &gt;::schreyering</definition>
+        <argsstring>() const</argsstring>
+        <name>schreyering</name>
+        <qualifiedname>MonoProcessor::schreyering</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="44" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="44" bodyend="44"/>
+        <referencedby refid="class_mathic_i_o_a5d3527830cbb2b07bad2bd389d101b29_1a5d3527830cbb2b07bad2bd389d101b29" compoundref="_mathic_i_o_8hpp" startline="218" endline="232">MathicIO&lt; M, BF &gt;::writeRing</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_ae80f811a5e60fcc950578eea44b89b5d_1ae80f811a5e60fcc950578eea44b89b5d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoProcessor&lt; M &gt;::setSchreyerMultipliers</definition>
+        <argsstring>(const Basis &amp;basis)</argsstring>
+        <name>setSchreyerMultipliers</name>
+        <qualifiedname>MonoProcessor::setSchreyerMultipliers</qualifiedname>
+        <param>
+          <type>const <ref refid="class_basis" kindref="compound">Basis</ref> &amp;</type>
+          <declname>basis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="46" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="46" bodyend="51"/>
+        <referencedby refid="class_mono_processor_ae80f811a5e60fcc950578eea44b89b5d_1ae80f811a5e60fcc950578eea44b89b5d" compoundref="_mono_processor_8hpp" startline="46" endline="51">MonoProcessor&lt; Monoid &gt;::setSchreyerMultipliers</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_a73472c8dedf14b55467bae35bf87fbb8_1a73472c8dedf14b55467bae35bf87fbb8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoProcessor&lt; M &gt;::setSchreyerMultipliers</definition>
+        <argsstring>(MonoVector &amp;&amp;moduleAdjustments)</argsstring>
+        <name>setSchreyerMultipliers</name>
+        <qualifiedname>MonoProcessor::setSchreyerMultipliers</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_processor_a5a5ffbaa5d9a52fec282202f7b17d221_1a5a5ffbaa5d9a52fec282202f7b17d221" kindref="member">MonoVector</ref> &amp;&amp;</type>
+          <declname>moduleAdjustments</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="53" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="53" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_ae190c575b82287aa6361d6a20c29d76c_1ae190c575b82287aa6361d6a20c29d76c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoProcessor&lt; M &gt;::preprocess</definition>
+        <argsstring>(MonoRef mono) const</argsstring>
+        <name>preprocess</name>
+        <qualifiedname>MonoProcessor::preprocess</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_processor_a2558ea7526305aca450f94344951f074_1a2558ea7526305aca450f94344951f074" kindref="member">MonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="75" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="75" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_a187a30b735531145fc50dc95a7ec3b11_1a187a30b735531145fc50dc95a7ec3b11" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoProcessor&lt; M &gt;::postprocess</definition>
+        <argsstring>(MonoRef mono) const</argsstring>
+        <name>postprocess</name>
+        <qualifiedname>MonoProcessor::postprocess</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_processor_a2558ea7526305aca450f94344951f074_1a2558ea7526305aca450f94344951f074" kindref="member">MonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="82" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="82" bodyend="89"/>
+        <referencedby refid="class_sig_poly_basis_ae4f3f72951e82a4f4c68dd962976b6d9_1ae4f3f72951e82a4f4c68dd962976b6d9" compoundref="_sig_poly_basis_8cpp" startline="393" endline="418">SigPolyBasis::displayFancy</referencedby>
+        <referencedby refid="class_sig_poly_basis_a1d94ea7e132a321d526bc70b02fba62e_1a1d94ea7e132a321d526bc70b02fba62e" compoundref="_sig_poly_basis_8cpp" startline="420" endline="423">SigPolyBasis::postprocess</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_abd77ccc63c447404af407827af6309db_1abd77ccc63c447404af407827af6309db" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoProcessor&lt; M &gt;::processingNeeded</definition>
+        <argsstring>() const</argsstring>
+        <name>processingNeeded</name>
+        <qualifiedname>MonoProcessor::processingNeeded</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="91" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="91" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_ac209e7937df04fc200bdd8e945a6a406_1ac209e7937df04fc200bdd8e945a6a406" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoProcessor&lt; M &gt;::needToReverseComponents</definition>
+        <argsstring>() const</argsstring>
+        <name>needToReverseComponents</name>
+        <qualifiedname>MonoProcessor::needToReverseComponents</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="95" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="95" bodyend="98"/>
+        <referencedby refid="class_mono_processor_a187a30b735531145fc50dc95a7ec3b11_1a187a30b735531145fc50dc95a7ec3b11" compoundref="_mono_processor_8hpp" startline="82" endline="89">MonoProcessor&lt; Monoid &gt;::postprocess</referencedby>
+        <referencedby refid="class_mono_processor_ae190c575b82287aa6361d6a20c29d76c_1ae190c575b82287aa6361d6a20c29d76c" compoundref="_mono_processor_8hpp" startline="75" endline="80">MonoProcessor&lt; Monoid &gt;::preprocess</referencedby>
+        <referencedby refid="class_mono_processor_abd77ccc63c447404af407827af6309db_1abd77ccc63c447404af407827af6309db" compoundref="_mono_processor_8hpp" startline="91" endline="93">MonoProcessor&lt; Monoid &gt;::processingNeeded</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_a3747a74db429104ff92241de4363eb9d_1a3747a74db429104ff92241de4363eb9d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MonoProcessor&lt; M &gt;::hasSchreyerMultipliers</definition>
+        <argsstring>() const</argsstring>
+        <name>hasSchreyerMultipliers</name>
+        <qualifiedname>MonoProcessor::hasSchreyerMultipliers</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="100" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="100" bodyend="102"/>
+        <referencedby refid="class_mono_processor_ad14650f1b86e5f84b24da4c6fb2a1563_1ad14650f1b86e5f84b24da4c6fb2a1563" compoundref="_mono_processor_8hpp" startline="117" endline="123">MonoProcessor&lt; Monoid &gt;::moduleAdjustment</referencedby>
+        <referencedby refid="class_mono_processor_a187a30b735531145fc50dc95a7ec3b11_1a187a30b735531145fc50dc95a7ec3b11" compoundref="_mono_processor_8hpp" startline="82" endline="89">MonoProcessor&lt; Monoid &gt;::postprocess</referencedby>
+        <referencedby refid="class_mono_processor_ae190c575b82287aa6361d6a20c29d76c_1ae190c575b82287aa6361d6a20c29d76c" compoundref="_mono_processor_8hpp" startline="75" endline="80">MonoProcessor&lt; Monoid &gt;::preprocess</referencedby>
+        <referencedby refid="class_mono_processor_abd77ccc63c447404af407827af6309db_1abd77ccc63c447404af407827af6309db" compoundref="_mono_processor_8hpp" startline="91" endline="93">MonoProcessor&lt; Monoid &gt;::processingNeeded</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_af6a47c167d10753ee20c105e951a6b63_1af6a47c167d10753ee20c105e951a6b63" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoProcessor&lt; M &gt;::setComponentCount</definition>
+        <argsstring>(Component count)</argsstring>
+        <name>setComponentCount</name>
+        <qualifiedname>MonoProcessor::setComponentCount</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_processor_a780efc0b48046ccebc1934e3c2bd0d5d_1a780efc0b48046ccebc1934e3c2bd0d5d" kindref="member">Component</ref></type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="104" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="104" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_a5944a1e27e56cfe541b49ce71801f0b4_1a5944a1e27e56cfe541b49ce71801f0b4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_processor_a780efc0b48046ccebc1934e3c2bd0d5d_1a780efc0b48046ccebc1934e3c2bd0d5d" kindref="member">Component</ref></type>
+        <definition>Component MonoProcessor&lt; M &gt;::componentCount</definition>
+        <argsstring>() const</argsstring>
+        <name>componentCount</name>
+        <qualifiedname>MonoProcessor::componentCount</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="105" column="13" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="105" bodyend="105"/>
+        <referencedby refid="class_mono_processor_ad14650f1b86e5f84b24da4c6fb2a1563_1ad14650f1b86e5f84b24da4c6fb2a1563" compoundref="_mono_processor_8hpp" startline="117" endline="123">MonoProcessor&lt; Monoid &gt;::moduleAdjustment</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_a271d668fbfa0458fe8f340622c553428_1a271d668fbfa0458fe8f340622c553428" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_mono_processor_ae371b9d75c0f949bb6759c405097d41a_1ae371b9d75c0f949bb6759c405097d41a" kindref="member">Monoid</ref><ref refid="class_monoid" kindref="compound">Monoid</ref> &amp;</type>
+        <definition>const Monoid &amp; MonoProcessor&lt; M &gt;::monoid</definition>
+        <argsstring>() const</argsstring>
+        <name>monoid</name>
+        <qualifiedname>MonoProcessor::monoid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="106" column="16" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="106" bodyend="106"/>
+        <referencedby refid="class_mono_processor_ad14650f1b86e5f84b24da4c6fb2a1563_1ad14650f1b86e5f84b24da4c6fb2a1563" compoundref="_mono_processor_8hpp" startline="117" endline="123">MonoProcessor&lt; Monoid &gt;::moduleAdjustment</referencedby>
+        <referencedby refid="class_mono_processor_ac209e7937df04fc200bdd8e945a6a406_1ac209e7937df04fc200bdd8e945a6a406" compoundref="_mono_processor_8hpp" startline="95" endline="98">MonoProcessor&lt; Monoid &gt;::needToReverseComponents</referencedby>
+        <referencedby refid="class_mono_processor_a187a30b735531145fc50dc95a7ec3b11_1a187a30b735531145fc50dc95a7ec3b11" compoundref="_mono_processor_8hpp" startline="82" endline="89">MonoProcessor&lt; Monoid &gt;::postprocess</referencedby>
+        <referencedby refid="class_mono_processor_ae190c575b82287aa6361d6a20c29d76c_1ae190c575b82287aa6361d6a20c29d76c" compoundref="_mono_processor_8hpp" startline="75" endline="80">MonoProcessor&lt; Monoid &gt;::preprocess</referencedby>
+        <referencedby refid="class_mono_processor_a5ee8154780574642c3c91ddbbf98c5df_1a5ee8154780574642c3c91ddbbf98c5df" compoundref="_mono_processor_8hpp" startline="111" endline="115">MonoProcessor&lt; Monoid &gt;::reverseComponent</referencedby>
+        <referencedby refid="class_mono_processor_ae80f811a5e60fcc950578eea44b89b5d_1ae80f811a5e60fcc950578eea44b89b5d" compoundref="_mono_processor_8hpp" startline="46" endline="51">MonoProcessor&lt; Monoid &gt;::setSchreyerMultipliers</referencedby>
+        <referencedby refid="class_mono_processor_a73472c8dedf14b55467bae35bf87fbb8_1a73472c8dedf14b55467bae35bf87fbb8" compoundref="_mono_processor_8hpp" startline="53" endline="73">MonoProcessor&lt; Monoid &gt;::setSchreyerMultipliers</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_mono_processor_ac1e44ac35fea98a1cff9b7867df433b2_1ac1e44ac35fea98a1cff9b7867df433b2" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoProcessor&lt; M &gt;::operator==</definition>
+        <argsstring>(const MonoProcessor &amp;) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>MonoProcessor::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mono_processor" kindref="compound">MonoProcessor</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="109" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_a5ee8154780574642c3c91ddbbf98c5df_1a5ee8154780574642c3c91ddbbf98c5df" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void MonoProcessor&lt; M &gt;::reverseComponent</definition>
+        <argsstring>(MonoRef mono) const</argsstring>
+        <name>reverseComponent</name>
+        <qualifiedname>MonoProcessor::reverseComponent</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_processor_a2558ea7526305aca450f94344951f074_1a2558ea7526305aca450f94344951f074" kindref="member">MonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="111" column="8" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="111" bodyend="115"/>
+        <referencedby refid="class_mono_processor_a187a30b735531145fc50dc95a7ec3b11_1a187a30b735531145fc50dc95a7ec3b11" compoundref="_mono_processor_8hpp" startline="82" endline="89">MonoProcessor&lt; Monoid &gt;::postprocess</referencedby>
+        <referencedby refid="class_mono_processor_ae190c575b82287aa6361d6a20c29d76c_1ae190c575b82287aa6361d6a20c29d76c" compoundref="_mono_processor_8hpp" startline="75" endline="80">MonoProcessor&lt; Monoid &gt;::preprocess</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_mono_processor_ad14650f1b86e5f84b24da4c6fb2a1563_1ad14650f1b86e5f84b24da4c6fb2a1563" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_mono_processor_aaad52dd992442bc27992a2cf08b354c4_1aaad52dd992442bc27992a2cf08b354c4" kindref="member">ConstMonoRef</ref></type>
+        <definition>ConstMonoRef MonoProcessor&lt; M &gt;::moduleAdjustment</definition>
+        <argsstring>(ConstMonoRef mono) const</argsstring>
+        <name>moduleAdjustment</name>
+        <qualifiedname>MonoProcessor::moduleAdjustment</qualifiedname>
+        <param>
+          <type><ref refid="class_mono_processor_aaad52dd992442bc27992a2cf08b354c4_1aaad52dd992442bc27992a2cf08b354c4" kindref="member">ConstMonoRef</ref></type>
+          <declname>mono</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="117" column="16" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="117" bodyend="123"/>
+        <referencedby refid="class_mono_processor_a187a30b735531145fc50dc95a7ec3b11_1a187a30b735531145fc50dc95a7ec3b11" compoundref="_mono_processor_8hpp" startline="82" endline="89">MonoProcessor&lt; Monoid &gt;::postprocess</referencedby>
+        <referencedby refid="class_mono_processor_ae190c575b82287aa6361d6a20c29d76c_1ae190c575b82287aa6361d6a20c29d76c" compoundref="_mono_processor_8hpp" startline="75" endline="80">MonoProcessor&lt; Monoid &gt;::preprocess</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Does pre- and post-processing of monomials to implement module monomial orders not directly supported by the monoid. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>MonoProcessor&lt; M &gt;</label>
+        <link refid="class_mono_processor"/>
+      </node>
+      <node id="3">
+        <label>MonoProcessor&lt; MonoMonoid&lt; exponent &gt; &gt;</label>
+        <link refid="class_mono_processor"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; MonoMonoid&lt; exponent &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MonoProcessor&lt; Monoid &gt;</label>
+        <link refid="class_mono_processor"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; Monoid &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>MonoMonoid&lt; exponent &gt;::MonoVector</label>
+      </node>
+      <node id="1">
+        <label>MonoProcessor&lt; M &gt;</label>
+        <link refid="class_mono_processor"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mComponentsAscendingDesired</edgelabel>
+          <edgelabel>mOrderFromLeft</edgelabel>
+          <edgelabel>mSchreyering</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mComponentCount</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mSchreyerMultipliersMemory</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>mSchreyerMultipliers</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Component</label>
+      </node>
+      <node id="7">
+        <label>T</label>
+      </node>
+      <node id="2">
+        <label>bool</label>
+        <link refid="classbool"/>
+      </node>
+      <node id="6">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="7" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>std::vector&lt; ConstMonoPtr &gt;</label>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; ConstMonoPtr &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" line="16" column="1" bodyfile="submodules/mathicgb/src/mathicgb/MonoProcessor.hpp" bodystart="16" bodyend="131"/>
+    <listofallmembers>
+      <member refid="class_mono_processor_a780efc0b48046ccebc1934e3c2bd0d5d_1a780efc0b48046ccebc1934e3c2bd0d5d" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>Component</name></member>
+      <member refid="class_mono_processor_a5944a1e27e56cfe541b49ce71801f0b4_1a5944a1e27e56cfe541b49ce71801f0b4" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>componentCount</name></member>
+      <member refid="class_mono_processor_a34c17c163f6b037456e9942fc5926b32_1a34c17c163f6b037456e9942fc5926b32" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>componentsAscendingDesired</name></member>
+      <member refid="class_mono_processor_af3806aaee0e3268f7b2c50c7149b50d3_1af3806aaee0e3268f7b2c50c7149b50d3" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>ConstMonoPtr</name></member>
+      <member refid="class_mono_processor_aaad52dd992442bc27992a2cf08b354c4_1aaad52dd992442bc27992a2cf08b354c4" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>ConstMonoRef</name></member>
+      <member refid="class_mono_processor_a3747a74db429104ff92241de4363eb9d_1a3747a74db429104ff92241de4363eb9d" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>hasSchreyerMultipliers</name></member>
+      <member refid="class_mono_processor_a3ed5153ce7d69fd18c955cfe65d0bc31_1a3ed5153ce7d69fd18c955cfe65d0bc31" prot="private" virt="non-virtual"><scope>MonoProcessor</scope><name>mComponentCount</name></member>
+      <member refid="class_mono_processor_aa1089e9bd025f376facbb288a71d8c11_1aa1089e9bd025f376facbb288a71d8c11" prot="private" virt="non-virtual"><scope>MonoProcessor</scope><name>mComponentsAscendingDesired</name></member>
+      <member refid="class_mono_processor_ad14650f1b86e5f84b24da4c6fb2a1563_1ad14650f1b86e5f84b24da4c6fb2a1563" prot="private" virt="non-virtual"><scope>MonoProcessor</scope><name>moduleAdjustment</name></member>
+      <member refid="class_mono_processor_ae371b9d75c0f949bb6759c405097d41a_1ae371b9d75c0f949bb6759c405097d41a" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>Monoid</name></member>
+      <member refid="class_mono_processor_a271d668fbfa0458fe8f340622c553428_1a271d668fbfa0458fe8f340622c553428" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>monoid</name></member>
+      <member refid="class_mono_processor_a7923340396c7ef2a1dc85df1643df019_1a7923340396c7ef2a1dc85df1643df019" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>MonoProcessor</name></member>
+      <member refid="class_mono_processor_a2558ea7526305aca450f94344951f074_1a2558ea7526305aca450f94344951f074" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>MonoRef</name></member>
+      <member refid="class_mono_processor_a5a5ffbaa5d9a52fec282202f7b17d221_1a5a5ffbaa5d9a52fec282202f7b17d221" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>MonoVector</name></member>
+      <member refid="class_mono_processor_ac2c98073bed020ede37705a3524dab5f_1ac2c98073bed020ede37705a3524dab5f" prot="private" virt="non-virtual"><scope>MonoProcessor</scope><name>mOrderFromLeft</name></member>
+      <member refid="class_mono_processor_a3ed7722e524a1f6333876d4dd5de29cf_1a3ed7722e524a1f6333876d4dd5de29cf" prot="private" virt="non-virtual"><scope>MonoProcessor</scope><name>mSchreyering</name></member>
+      <member refid="class_mono_processor_a870c6eacd48045fa6f1e1277177d1759_1a870c6eacd48045fa6f1e1277177d1759" prot="private" virt="non-virtual"><scope>MonoProcessor</scope><name>mSchreyerMultipliers</name></member>
+      <member refid="class_mono_processor_a734e40dce8e37dd88c7ca374c1f4bba7_1a734e40dce8e37dd88c7ca374c1f4bba7" prot="private" virt="non-virtual"><scope>MonoProcessor</scope><name>mSchreyerMultipliersMemory</name></member>
+      <member refid="class_mono_processor_ac209e7937df04fc200bdd8e945a6a406_1ac209e7937df04fc200bdd8e945a6a406" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>needToReverseComponents</name></member>
+      <member refid="class_mono_processor_ac1e44ac35fea98a1cff9b7867df433b2_1ac1e44ac35fea98a1cff9b7867df433b2" prot="private" virt="non-virtual"><scope>MonoProcessor</scope><name>operator==</name></member>
+      <member refid="class_mono_processor_a187a30b735531145fc50dc95a7ec3b11_1a187a30b735531145fc50dc95a7ec3b11" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>postprocess</name></member>
+      <member refid="class_mono_processor_ae190c575b82287aa6361d6a20c29d76c_1ae190c575b82287aa6361d6a20c29d76c" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>preprocess</name></member>
+      <member refid="class_mono_processor_abd77ccc63c447404af407827af6309db_1abd77ccc63c447404af407827af6309db" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>processingNeeded</name></member>
+      <member refid="class_mono_processor_a5ee8154780574642c3c91ddbbf98c5df_1a5ee8154780574642c3c91ddbbf98c5df" prot="private" virt="non-virtual"><scope>MonoProcessor</scope><name>reverseComponent</name></member>
+      <member refid="class_mono_processor_ad2addbcad09094b9420c754202aa770d_1ad2addbcad09094b9420c754202aa770d" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>schreyering</name></member>
+      <member refid="class_mono_processor_af6a47c167d10753ee20c105e951a6b63_1af6a47c167d10753ee20c105e951a6b63" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>setComponentCount</name></member>
+      <member refid="class_mono_processor_a22472ce37d4bbcc1a23519fade3b6314_1a22472ce37d4bbcc1a23519fade3b6314" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>setComponentsAscendingDesired</name></member>
+      <member refid="class_mono_processor_addb30d92f5cee29850045a2030adee4f_1addb30d92f5cee29850045a2030adee4f" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>setSchreyering</name></member>
+      <member refid="class_mono_processor_ae80f811a5e60fcc950578eea44b89b5d_1ae80f811a5e60fcc950578eea44b89b5d" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>setSchreyerMultipliers</name></member>
+      <member refid="class_mono_processor_a73472c8dedf14b55467bae35bf87fbb8_1a73472c8dedf14b55467bae35bf87fbb8" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>setSchreyerMultipliers</name></member>
+      <member refid="class_mono_processor_a58430caec0d83ae215d391dbdf0b1168_1a58430caec0d83ae215d391dbdf0b1168" prot="public" virt="non-virtual"><scope>MonoProcessor</scope><name>VarIndex</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

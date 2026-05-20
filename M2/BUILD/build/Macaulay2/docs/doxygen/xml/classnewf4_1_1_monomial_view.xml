@@ -1,0 +1,582 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classnewf4_1_1_monomial_view" kind="class" language="C++" prot="public">
+    <compoundname>newf4::MonomialView</compoundname>
+    <includes refid="_monomial_view_8hpp" local="no">MonomialView.hpp</includes>
+    <innerclass refid="classnewf4_1_1_monomial_view_1_1_monomial_iterator" prot="public">newf4::MonomialView::MonomialIterator</innerclass>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref> *</type>
+        <definition>MonomialInt* newf4::MonomialView::mData</definition>
+        <argsstring></argsstring>
+        <name>mData</name>
+        <qualifiedname>newf4::MonomialView::mData</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="49" column="15" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="49" bodyend="-1"/>
+        <referencedby refid="classnewf4_1_1_monomial_view_af6ff738f2eac8ae19b4aa38b7ea6819e_1af6ff738f2eac8ae19b4aa38b7ea6819e" compoundref="_monomial_view_8hpp" startline="216" endline="216">begin</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a713ad7180edaecbd813181327d9f4273_1a713ad7180edaecbd813181327d9f4273" compoundref="_monomial_view_8hpp" startline="214" endline="214">begin</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_afe9b5541d9801a9aa8020be6287b0a47_1afe9b5541d9801a9aa8020be6287b0a47" compoundref="_monomial_view_8hpp" startline="219" endline="219">dataBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a69ae3e92a879e452a4f5e6edd075519d_1a69ae3e92a879e452a4f5e6edd075519d" compoundref="_monomial_view_8hpp" startline="221" endline="221">dataBegin</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_aca14ee649c53be8c908ee7f781e47ebf_1aca14ee649c53be8c908ee7f781e47ebf" compoundref="_monomial_view_8hpp" startline="220" endline="220">dataEnd</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_aa3f154c9efae64d5768a917ed44c9699_1aa3f154c9efae64d5768a917ed44c9699" compoundref="_monomial_view_8hpp" startline="222" endline="222">dataEnd</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a93912adb6ef2e8ef723e95514470ec31_1a93912adb6ef2e8ef723e95514470ec31" compoundref="_monomial_view_8hpp" startline="217" endline="217">end</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a8cc3f7e15991947a17025d991516b041_1a8cc3f7e15991947a17025d991516b041" compoundref="_monomial_view_8hpp" startline="215" endline="215">end</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a66f36fb53772c1c4c970adbbfe955613_1a66f36fb53772c1c4c970adbbfe955613" compoundref="_monomial_view_8hpp" startline="61" endline="66">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" compoundref="_monomial_view_8hpp" startline="52" endline="52">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a25cfbb8d8f9c74a9af1f73b0b36d5e28_1a25cfbb8d8f9c74a9af1f73b0b36d5e28" compoundref="_monomial_view_8hpp" startline="53" endline="53">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a3ca22b981300d9ecc40fbda19572279f_1a3ca22b981300d9ecc40fbda19572279f" compoundref="_monomial_view_8hpp" startline="54" endline="60">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_afad4b5fb3e6639df86778af1aa09089c_1afad4b5fb3e6639df86778af1aa09089c" compoundref="_monomial_view_8hpp" startline="70" endline="83">operator==</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>newf4::MonomialView::MonomialView</definition>
+        <argsstring>(MonomialInt *data)</argsstring>
+        <name>MonomialView</name>
+        <qualifiedname>newf4::MonomialView::MonomialView</qualifiedname>
+        <param>
+          <type><ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref> *</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="52" column="12" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="52" bodyend="52"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <referencedby refid="classnewf4_1_1_monomial_view_a4f6bb8230ce5346180464e1a065ab25b_1a4f6bb8230ce5346180464e1a065ab25b" compoundref="_monomial_view_8cpp" startline="6" endline="75">combine</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_ab5c84190ebf25acfd675d858ae4c964e_1ab5c84190ebf25acfd675d858ae4c964e" compoundref="_monomial_view_8cpp" startline="77" endline="87">lcm</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_aeaf21332438e9d76784077e74c8487c7_1aeaf21332438e9d76784077e74c8487c7" compoundref="_monomial_view_8hpp" startline="85" endline="109">monomialDivides</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a66f36fb53772c1c4c970adbbfe955613_1a66f36fb53772c1c4c970adbbfe955613" compoundref="_monomial_view_8hpp" startline="61" endline="66">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a3ca22b981300d9ecc40fbda19572279f_1a3ca22b981300d9ecc40fbda19572279f" compoundref="_monomial_view_8hpp" startline="54" endline="60">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_afad4b5fb3e6639df86778af1aa09089c_1afad4b5fb3e6639df86778af1aa09089c" compoundref="_monomial_view_8hpp" startline="70" endline="83">operator==</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_abc719cf9c623e00edd5e2675c9b788e1_1abc719cf9c623e00edd5e2675c9b788e1" compoundref="_monomial_view_8cpp" startline="89" endline="99">product</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a263582297283be5560126dc1c69b2925_1a263582297283be5560126dc1c69b2925" compoundref="_monomial_view_8cpp" startline="103" endline="113">quotient</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a25cfbb8d8f9c74a9af1f73b0b36d5e28_1a25cfbb8d8f9c74a9af1f73b0b36d5e28" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>newf4::MonomialView::MonomialView</definition>
+        <argsstring>(std::vector&lt; MonomialInt &gt; &amp;data)</argsstring>
+        <name>MonomialView</name>
+        <qualifiedname>newf4::MonomialView::MonomialView</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref> &gt; &amp;</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="53" column="12" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="53" bodyend="53"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a3ca22b981300d9ecc40fbda19572279f_1a3ca22b981300d9ecc40fbda19572279f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>newf4::MonomialView::MonomialView</definition>
+        <argsstring>(std::vector&lt; MonomialInt &gt; data, MemoryBlock &amp;block)</argsstring>
+        <name>MonomialView</name>
+        <qualifiedname>newf4::MonomialView::MonomialView</qualifiedname>
+        <param>
+          <type>std::vector&lt; <ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref> &gt;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref> &amp;</type>
+          <declname>block</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="54" column="3" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="54" bodyend="60"/>
+        <references refid="class_memory_block_abfac6dbe4c86a0abd31c1d6db282ff35_1abfac6dbe4c86a0abd31c1d6db282ff35" compoundref="_memory_block_8hpp" startline="65" endline="68">MemoryBlock::allocateArray</references>
+        <references refid="classnewf4_1_1_monomial_view_afe9b5541d9801a9aa8020be6287b0a47_1afe9b5541d9801a9aa8020be6287b0a47" compoundref="_monomial_view_8hpp" startline="219" endline="219">dataBegin</references>
+        <references refid="classnewf4_1_1_monomial_view_aca14ee649c53be8c908ee7f781e47ebf_1aca14ee649c53be8c908ee7f781e47ebf" compoundref="_monomial_view_8hpp" startline="220" endline="220">dataEnd</references>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <references refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" compoundref="_monomial_view_8hpp" startline="52" endline="52">MonomialView</references>
+        <references refid="res-tasking-example_8cpp_adf7de668fd10266afe331f579a8178ee_1adf7de668fd10266afe331f579a8178ee">rng</references>
+        <references refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a66f36fb53772c1c4c970adbbfe955613_1a66f36fb53772c1c4c970adbbfe955613" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>newf4::MonomialView::MonomialView</definition>
+        <argsstring>(const MonomialView &amp;m, MemoryBlock &amp;block)</argsstring>
+        <name>MonomialView</name>
+        <qualifiedname>newf4::MonomialView::MonomialView</qualifiedname>
+        <param>
+          <type>const MonomialView &amp;</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref> &amp;</type>
+          <declname>block</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="61" column="3" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="61" bodyend="66"/>
+        <references refid="class_memory_block_abfac6dbe4c86a0abd31c1d6db282ff35_1abfac6dbe4c86a0abd31c1d6db282ff35" compoundref="_memory_block_8hpp" startline="65" endline="68">MemoryBlock::allocateArray</references>
+        <references refid="classnewf4_1_1_monomial_view_afe9b5541d9801a9aa8020be6287b0a47_1afe9b5541d9801a9aa8020be6287b0a47" compoundref="_monomial_view_8hpp" startline="219" endline="219">dataBegin</references>
+        <references refid="classnewf4_1_1_monomial_view_aca14ee649c53be8c908ee7f781e47ebf_1aca14ee649c53be8c908ee7f781e47ebf" compoundref="_monomial_view_8hpp" startline="220" endline="220">dataEnd</references>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <references refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" compoundref="_monomial_view_8hpp" startline="52" endline="52">MonomialView</references>
+        <references refid="res-tasking-example_8cpp_adf7de668fd10266afe331f579a8178ee_1adf7de668fd10266afe331f579a8178ee">rng</references>
+        <references refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t newf4::MonomialView::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>newf4::MonomialView::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="68" column="10" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="68" bodyend="68"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <referencedby refid="classnewf4_1_1_monomial_view_a4f6bb8230ce5346180464e1a065ab25b_1a4f6bb8230ce5346180464e1a065ab25b" compoundref="_monomial_view_8cpp" startline="6" endline="75">combine</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_aca14ee649c53be8c908ee7f781e47ebf_1aca14ee649c53be8c908ee7f781e47ebf" compoundref="_monomial_view_8hpp" startline="220" endline="220">dataEnd</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_aa3f154c9efae64d5768a917ed44c9699_1aa3f154c9efae64d5768a917ed44c9699" compoundref="_monomial_view_8hpp" startline="222" endline="222">dataEnd</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a93912adb6ef2e8ef723e95514470ec31_1a93912adb6ef2e8ef723e95514470ec31" compoundref="_monomial_view_8hpp" startline="217" endline="217">end</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a8cc3f7e15991947a17025d991516b041_1a8cc3f7e15991947a17025d991516b041" compoundref="_monomial_view_8hpp" startline="215" endline="215">end</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_aeaf21332438e9d76784077e74c8487c7_1aeaf21332438e9d76784077e74c8487c7" compoundref="_monomial_view_8hpp" startline="85" endline="109">monomialDivides</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a66f36fb53772c1c4c970adbbfe955613_1a66f36fb53772c1c4c970adbbfe955613" compoundref="_monomial_view_8hpp" startline="61" endline="66">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a3ca22b981300d9ecc40fbda19572279f_1a3ca22b981300d9ecc40fbda19572279f" compoundref="_monomial_view_8hpp" startline="54" endline="60">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_afad4b5fb3e6639df86778af1aa09089c_1afad4b5fb3e6639df86778af1aa09089c" compoundref="_monomial_view_8hpp" startline="70" endline="83">operator==</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_afad4b5fb3e6639df86778af1aa09089c_1afad4b5fb3e6639df86778af1aa09089c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool newf4::MonomialView::operator==</definition>
+        <argsstring>(const MonomialView &amp;monom) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>newf4::MonomialView::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>monom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="70" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="70" bodyend="83"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <references refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" compoundref="_monomial_view_8hpp" startline="52" endline="52">MonomialView</references>
+        <references refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a340e345fc1fe70c0e347d4b2b2216ee3_1a340e345fc1fe70c0e347d4b2b2216ee3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref></type>
+        <definition>MonomialInt newf4::MonomialView::simpleDegree</definition>
+        <argsstring>() const</argsstring>
+        <name>simpleDegree</name>
+        <qualifiedname>newf4::MonomialView::simpleDegree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="112" column="22" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="112" bodyend="118"/>
+        <references refid="classnewf4_1_1_monomial_view_a713ad7180edaecbd813181327d9f4273_1a713ad7180edaecbd813181327d9f4273" compoundref="_monomial_view_8hpp" startline="214" endline="214">begin</references>
+        <references refid="classnewf4_1_1_monomial_view_a8cc3f7e15991947a17025d991516b041_1a8cc3f7e15991947a17025d991516b041" compoundref="_monomial_view_8hpp" startline="215" endline="215">end</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_ae58a99293e21efcc0e4f900a39a9b1a3_1ae58a99293e21efcc0e4f900a39a9b1a3" compoundref="_monomial_lookup_table_8cpp" startline="75" endline="93">newf4::MonomialLookupTable::findAllDivisees</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_af09bdbceb3819a6a457f5e605f1b5f33_1af09bdbceb3819a6a457f5e605f1b5f33" compoundref="_monomial_lookup_table_8cpp" startline="44" endline="65">newf4::MonomialLookupTable::findAllDivisors</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_a08bc04266cceedf64f97928fff2d3cba_1a08bc04266cceedf64f97928fff2d3cba" compoundref="_monomial_lookup_table_8cpp" startline="10" endline="20">newf4::MonomialLookupTable::insertMonomial</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a713ad7180edaecbd813181327d9f4273_1a713ad7180edaecbd813181327d9f4273" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_monomial_view_1_1_monomial_iterator" kindref="compound">MonomialIterator</ref>&lt; true &gt;</type>
+        <definition>MonomialIterator&lt; true &gt; newf4::MonomialView::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>newf4::MonomialView::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="214" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="214" bodyend="214"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <referencedby refid="classnewf4_1_1_monomial_view_a4f6bb8230ce5346180464e1a065ab25b_1a4f6bb8230ce5346180464e1a065ab25b" compoundref="_monomial_view_8cpp" startline="6" endline="75">combine</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a2ac9172cc202f714a93fe0765555763e_1a2ac9172cc202f714a93fe0765555763e" compoundref="_monomial_view_8cpp" startline="115" endline="140">display</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_aeaf21332438e9d76784077e74c8487c7_1aeaf21332438e9d76784077e74c8487c7" compoundref="_monomial_view_8hpp" startline="85" endline="109">monomialDivides</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a340e345fc1fe70c0e347d4b2b2216ee3_1a340e345fc1fe70c0e347d4b2b2216ee3" compoundref="_monomial_view_8hpp" startline="112" endline="118">simpleDegree</referencedby>
+        <referencedby refid="namespacenewf4_ab0f2bf6487cec9e3f6f82435f2b15246_1ab0f2bf6487cec9e3f6f82435f2b15246" compoundref="_polynomial_list_8hpp" startline="295" endline="321">newf4::toStream</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a8cc3f7e15991947a17025d991516b041_1a8cc3f7e15991947a17025d991516b041" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_monomial_view_1_1_monomial_iterator" kindref="compound">MonomialIterator</ref>&lt; true &gt;</type>
+        <definition>MonomialIterator&lt; true &gt; newf4::MonomialView::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>newf4::MonomialView::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="215" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="215" bodyend="215"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <references refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</references>
+        <referencedby refid="classnewf4_1_1_monomial_view_a4f6bb8230ce5346180464e1a065ab25b_1a4f6bb8230ce5346180464e1a065ab25b" compoundref="_monomial_view_8cpp" startline="6" endline="75">combine</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a2ac9172cc202f714a93fe0765555763e_1a2ac9172cc202f714a93fe0765555763e" compoundref="_monomial_view_8cpp" startline="115" endline="140">display</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_aeaf21332438e9d76784077e74c8487c7_1aeaf21332438e9d76784077e74c8487c7" compoundref="_monomial_view_8hpp" startline="85" endline="109">monomialDivides</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a340e345fc1fe70c0e347d4b2b2216ee3_1a340e345fc1fe70c0e347d4b2b2216ee3" compoundref="_monomial_view_8hpp" startline="112" endline="118">simpleDegree</referencedby>
+        <referencedby refid="namespacenewf4_ab0f2bf6487cec9e3f6f82435f2b15246_1ab0f2bf6487cec9e3f6f82435f2b15246" compoundref="_polynomial_list_8hpp" startline="295" endline="321">newf4::toStream</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_af6ff738f2eac8ae19b4aa38b7ea6819e_1af6ff738f2eac8ae19b4aa38b7ea6819e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_monomial_view_1_1_monomial_iterator" kindref="compound">MonomialIterator</ref>&lt; false &gt;</type>
+        <definition>MonomialIterator&lt; false &gt; newf4::MonomialView::begin</definition>
+        <argsstring>()</argsstring>
+        <name>begin</name>
+        <qualifiedname>newf4::MonomialView::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="216" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="216" bodyend="216"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a93912adb6ef2e8ef723e95514470ec31_1a93912adb6ef2e8ef723e95514470ec31" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_monomial_view_1_1_monomial_iterator" kindref="compound">MonomialIterator</ref>&lt; false &gt;</type>
+        <definition>MonomialIterator&lt; false &gt; newf4::MonomialView::end</definition>
+        <argsstring>()</argsstring>
+        <name>end</name>
+        <qualifiedname>newf4::MonomialView::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="217" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="217" bodyend="217"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <references refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_afe9b5541d9801a9aa8020be6287b0a47_1afe9b5541d9801a9aa8020be6287b0a47" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref> *</type>
+        <definition>MonomialInt * newf4::MonomialView::dataBegin</definition>
+        <argsstring>()</argsstring>
+        <name>dataBegin</name>
+        <qualifiedname>newf4::MonomialView::dataBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="219" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="219" bodyend="219"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_a08bc04266cceedf64f97928fff2d3cba_1a08bc04266cceedf64f97928fff2d3cba" compoundref="_monomial_lookup_table_8cpp" startline="10" endline="20">newf4::MonomialLookupTable::insertMonomial</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a66f36fb53772c1c4c970adbbfe955613_1a66f36fb53772c1c4c970adbbfe955613" compoundref="_monomial_view_8hpp" startline="61" endline="66">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a3ca22b981300d9ecc40fbda19572279f_1a3ca22b981300d9ecc40fbda19572279f" compoundref="_monomial_view_8hpp" startline="54" endline="60">MonomialView</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_aca14ee649c53be8c908ee7f781e47ebf_1aca14ee649c53be8c908ee7f781e47ebf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref> *</type>
+        <definition>MonomialInt * newf4::MonomialView::dataEnd</definition>
+        <argsstring>()</argsstring>
+        <name>dataEnd</name>
+        <qualifiedname>newf4::MonomialView::dataEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="220" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="220" bodyend="220"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <references refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</references>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_a08bc04266cceedf64f97928fff2d3cba_1a08bc04266cceedf64f97928fff2d3cba" compoundref="_monomial_lookup_table_8cpp" startline="10" endline="20">newf4::MonomialLookupTable::insertMonomial</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a66f36fb53772c1c4c970adbbfe955613_1a66f36fb53772c1c4c970adbbfe955613" compoundref="_monomial_view_8hpp" startline="61" endline="66">MonomialView</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a3ca22b981300d9ecc40fbda19572279f_1a3ca22b981300d9ecc40fbda19572279f" compoundref="_monomial_view_8hpp" startline="54" endline="60">MonomialView</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a69ae3e92a879e452a4f5e6edd075519d_1a69ae3e92a879e452a4f5e6edd075519d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref> *</type>
+        <definition>MonomialInt * newf4::MonomialView::dataBegin</definition>
+        <argsstring>() const</argsstring>
+        <name>dataBegin</name>
+        <qualifiedname>newf4::MonomialView::dataBegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="221" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="221" bodyend="221"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_aa3f154c9efae64d5768a917ed44c9699_1aa3f154c9efae64d5768a917ed44c9699" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenewf4_af26c6bab86460d2ca94e3ba54f65eac2_1af26c6bab86460d2ca94e3ba54f65eac2" kindref="member">MonomialInt</ref> *</type>
+        <definition>MonomialInt * newf4::MonomialView::dataEnd</definition>
+        <argsstring>() const</argsstring>
+        <name>dataEnd</name>
+        <qualifiedname>newf4::MonomialView::dataEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="222" column="8" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="222" bodyend="222"/>
+        <references refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" compoundref="_monomial_view_8hpp" startline="49">mData</references>
+        <references refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_aeaf21332438e9d76784077e74c8487c7_1aeaf21332438e9d76784077e74c8487c7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>static bool newf4::MonomialView::monomialDivides</definition>
+        <argsstring>(const MonomialView &amp;divisor, const MonomialView &amp;divisee)</argsstring>
+        <name>monomialDivides</name>
+        <qualifiedname>newf4::MonomialView::monomialDivides</qualifiedname>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>divisor</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>divisee</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="85" column="22" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="85" bodyend="109"/>
+        <references refid="classnewf4_1_1_monomial_view_a713ad7180edaecbd813181327d9f4273_1a713ad7180edaecbd813181327d9f4273" compoundref="_monomial_view_8hpp" startline="214" endline="214">begin</references>
+        <references refid="classnewf4_1_1_monomial_view_a8cc3f7e15991947a17025d991516b041_1a8cc3f7e15991947a17025d991516b041" compoundref="_monomial_view_8hpp" startline="215" endline="215">end</references>
+        <references refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" compoundref="_monomial_view_8hpp" startline="52" endline="52">MonomialView</references>
+        <references refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</references>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_ae58a99293e21efcc0e4f900a39a9b1a3_1ae58a99293e21efcc0e4f900a39a9b1a3" compoundref="_monomial_lookup_table_8cpp" startline="75" endline="93">newf4::MonomialLookupTable::findAllDivisees</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_lookup_table_af09bdbceb3819a6a457f5e605f1b5f33_1af09bdbceb3819a6a457f5e605f1b5f33" compoundref="_monomial_lookup_table_8cpp" startline="44" endline="65">newf4::MonomialLookupTable::findAllDivisors</referencedby>
+        <referencedby refid="_new_f4_test_8cpp_a3acddebfd667dc54d9793914fa3ffb0b_1a3acddebfd667dc54d9793914fa3ffb0b" compoundref="_new_f4_test_8cpp" startline="146" endline="188">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a4f6bb8230ce5346180464e1a065ab25b_1a4f6bb8230ce5346180464e1a065ab25b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref></type>
+        <definition>MonomialView newf4::MonomialView::combine</definition>
+        <argsstring>(const MonomialView &amp;left, const MonomialView &amp;right, bool copyLeft, bool copyRight, std::function&lt; int(int, int)&gt;, MemoryBlock &amp;block)</argsstring>
+        <name>combine</name>
+        <qualifiedname>newf4::MonomialView::combine</qualifiedname>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>left</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>right</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>copyLeft</declname>
+        </param>
+        <param>
+          <type><ref refid="classbool" kindref="compound">bool</ref></type>
+          <declname>copyRight</declname>
+        </param>
+        <param>
+          <type>std::function&lt; <ref refid="classint" kindref="compound">int</ref>(<ref refid="classint" kindref="compound">int</ref>, <ref refid="classint" kindref="compound">int</ref>)&gt;</type>
+        </param>
+        <param>
+          <type><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref> &amp;</type>
+          <declname>block</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="120" column="23" bodyfile="Macaulay2/e/gb-f4/MonomialView.cpp" bodystart="6" bodyend="75"/>
+        <references refid="class_memory_block_abfac6dbe4c86a0abd31c1d6db282ff35_1abfac6dbe4c86a0abd31c1d6db282ff35" compoundref="_memory_block_8hpp" startline="65" endline="68">MemoryBlock::allocateArray</references>
+        <references refid="classnewf4_1_1_monomial_view_a713ad7180edaecbd813181327d9f4273_1a713ad7180edaecbd813181327d9f4273" compoundref="_monomial_view_8hpp" startline="214" endline="214">begin</references>
+        <references refid="classnewf4_1_1_monomial_view_a8cc3f7e15991947a17025d991516b041_1a8cc3f7e15991947a17025d991516b041" compoundref="_monomial_view_8hpp" startline="215" endline="215">end</references>
+        <references refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" compoundref="_monomial_view_8hpp" startline="52" endline="52">MonomialView</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="res-tasking-example_8cpp_adf7de668fd10266afe331f579a8178ee_1adf7de668fd10266afe331f579a8178ee">rng</references>
+        <references refid="class_memory_block_a4b88b7a973793352118cf9faa8a6b982_1a4b88b7a973793352118cf9faa8a6b982" compoundref="_memory_block_8hpp" startline="78" endline="84">MemoryBlock::shrinkLastAllocate</references>
+        <references refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" compoundref="_monomial_view_8hpp" startline="68" endline="68">size</references>
+        <referencedby refid="classnewf4_1_1_monomial_view_ab5c84190ebf25acfd675d858ae4c964e_1ab5c84190ebf25acfd675d858ae4c964e" compoundref="_monomial_view_8cpp" startline="77" endline="87">lcm</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_abc719cf9c623e00edd5e2675c9b788e1_1abc719cf9c623e00edd5e2675c9b788e1" compoundref="_monomial_view_8cpp" startline="89" endline="99">product</referencedby>
+        <referencedby refid="classnewf4_1_1_monomial_view_a263582297283be5560126dc1c69b2925_1a263582297283be5560126dc1c69b2925" compoundref="_monomial_view_8cpp" startline="103" endline="113">quotient</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_ab5c84190ebf25acfd675d858ae4c964e_1ab5c84190ebf25acfd675d858ae4c964e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref></type>
+        <definition>MonomialView newf4::MonomialView::lcm</definition>
+        <argsstring>(const MonomialView &amp;left, const MonomialView &amp;right, MemoryBlock &amp;block)</argsstring>
+        <name>lcm</name>
+        <qualifiedname>newf4::MonomialView::lcm</qualifiedname>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>left</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>right</declname>
+        </param>
+        <param>
+          <type><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref> &amp;</type>
+          <declname>block</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="127" column="23" bodyfile="Macaulay2/e/gb-f4/MonomialView.cpp" bodystart="77" bodyend="87"/>
+        <references refid="classnewf4_1_1_monomial_view_a4f6bb8230ce5346180464e1a065ab25b_1a4f6bb8230ce5346180464e1a065ab25b" compoundref="_monomial_view_8cpp" startline="6" endline="75">combine</references>
+        <references refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" compoundref="_monomial_view_8hpp" startline="52" endline="52">MonomialView</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_abc719cf9c623e00edd5e2675c9b788e1_1abc719cf9c623e00edd5e2675c9b788e1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref></type>
+        <definition>MonomialView newf4::MonomialView::product</definition>
+        <argsstring>(const MonomialView &amp;left, const MonomialView &amp;right, MemoryBlock &amp;block)</argsstring>
+        <name>product</name>
+        <qualifiedname>newf4::MonomialView::product</qualifiedname>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>left</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>right</declname>
+        </param>
+        <param>
+          <type><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref> &amp;</type>
+          <declname>block</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="131" column="23" bodyfile="Macaulay2/e/gb-f4/MonomialView.cpp" bodystart="89" bodyend="99"/>
+        <references refid="classnewf4_1_1_monomial_view_a4f6bb8230ce5346180464e1a065ab25b_1a4f6bb8230ce5346180464e1a065ab25b" compoundref="_monomial_view_8cpp" startline="6" endline="75">combine</references>
+        <references refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" compoundref="_monomial_view_8hpp" startline="52" endline="52">MonomialView</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a263582297283be5560126dc1c69b2925_1a263582297283be5560126dc1c69b2925" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref></type>
+        <definition>MonomialView newf4::MonomialView::quotient</definition>
+        <argsstring>(const MonomialView &amp;left, const MonomialView &amp;right, MemoryBlock &amp;block)</argsstring>
+        <name>quotient</name>
+        <qualifiedname>newf4::MonomialView::quotient</qualifiedname>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>left</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" kindref="member">MonomialView</ref> &amp;</type>
+          <declname>right</declname>
+        </param>
+        <param>
+          <type><ref refid="class_memory_block" kindref="compound">MemoryBlock</ref> &amp;</type>
+          <declname>block</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="137" column="23" bodyfile="Macaulay2/e/gb-f4/MonomialView.cpp" bodystart="103" bodyend="113"/>
+        <references refid="classnewf4_1_1_monomial_view_a4f6bb8230ce5346180464e1a065ab25b_1a4f6bb8230ce5346180464e1a065ab25b" compoundref="_monomial_view_8cpp" startline="6" endline="75">combine</references>
+        <references refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" compoundref="_monomial_view_8hpp" startline="52" endline="52">MonomialView</references>
+      </memberdef>
+      <memberdef kind="function" id="classnewf4_1_1_monomial_view_a2ac9172cc202f714a93fe0765555763e_1a2ac9172cc202f714a93fe0765555763e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void newf4::MonomialView::display</definition>
+        <argsstring>(std::ostream &amp;o, const std::vector&lt; std::string &gt; &amp;varnames, const newf4::MonomialView &amp;m)</argsstring>
+        <name>display</name>
+        <qualifiedname>newf4::MonomialView::display</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>o</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; std::string &gt; &amp;</type>
+          <declname>varnames</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnewf4_1_1_monomial_view" kindref="compound">newf4::MonomialView</ref> &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="224" column="15" bodyfile="Macaulay2/e/gb-f4/MonomialView.cpp" bodystart="115" bodyend="140"/>
+        <references refid="classnewf4_1_1_monomial_view_a713ad7180edaecbd813181327d9f4273_1a713ad7180edaecbd813181327d9f4273" compoundref="_monomial_view_8hpp" startline="214" endline="214">begin</references>
+        <references refid="classnewf4_1_1_monomial_view_a8cc3f7e15991947a17025d991516b041_1a8cc3f7e15991947a17025d991516b041" compoundref="_monomial_view_8hpp" startline="215" endline="215">end</references>
+        <referencedby refid="class_basic_poly_abeb85e4579b213319254e2dd30923675_1abeb85e4579b213319254e2dd30923675" compoundref="_basic_poly_8cpp" startline="77" endline="116">BasicPoly::display</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>int32_t</label>
+      </node>
+      <node id="1">
+        <label>newf4::MonomialView</label>
+        <link refid="classnewf4_1_1_monomial_view"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>mData</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/gb-f4/MonomialView.hpp" line="46" column="1" bodyfile="Macaulay2/e/gb-f4/MonomialView.hpp" bodystart="47" bodyend="228"/>
+    <listofallmembers>
+      <member refid="classnewf4_1_1_monomial_view_a713ad7180edaecbd813181327d9f4273_1a713ad7180edaecbd813181327d9f4273" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>begin</name></member>
+      <member refid="classnewf4_1_1_monomial_view_af6ff738f2eac8ae19b4aa38b7ea6819e_1af6ff738f2eac8ae19b4aa38b7ea6819e" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>begin</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a4f6bb8230ce5346180464e1a065ab25b_1a4f6bb8230ce5346180464e1a065ab25b" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>combine</name></member>
+      <member refid="classnewf4_1_1_monomial_view_afe9b5541d9801a9aa8020be6287b0a47_1afe9b5541d9801a9aa8020be6287b0a47" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>dataBegin</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a69ae3e92a879e452a4f5e6edd075519d_1a69ae3e92a879e452a4f5e6edd075519d" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>dataBegin</name></member>
+      <member refid="classnewf4_1_1_monomial_view_aca14ee649c53be8c908ee7f781e47ebf_1aca14ee649c53be8c908ee7f781e47ebf" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>dataEnd</name></member>
+      <member refid="classnewf4_1_1_monomial_view_aa3f154c9efae64d5768a917ed44c9699_1aa3f154c9efae64d5768a917ed44c9699" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>dataEnd</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a2ac9172cc202f714a93fe0765555763e_1a2ac9172cc202f714a93fe0765555763e" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>display</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a8cc3f7e15991947a17025d991516b041_1a8cc3f7e15991947a17025d991516b041" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>end</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a93912adb6ef2e8ef723e95514470ec31_1a93912adb6ef2e8ef723e95514470ec31" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>end</name></member>
+      <member refid="classnewf4_1_1_monomial_view_ab5c84190ebf25acfd675d858ae4c964e_1ab5c84190ebf25acfd675d858ae4c964e" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>lcm</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a271dc025d514d26d202f120a52dbb2d8_1a271dc025d514d26d202f120a52dbb2d8" prot="private" virt="non-virtual"><scope>newf4::MonomialView</scope><name>mData</name></member>
+      <member refid="classnewf4_1_1_monomial_view_aeaf21332438e9d76784077e74c8487c7_1aeaf21332438e9d76784077e74c8487c7" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>monomialDivides</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a260339f96a3fd3e92d179b10751ea671_1a260339f96a3fd3e92d179b10751ea671" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>MonomialView</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a25cfbb8d8f9c74a9af1f73b0b36d5e28_1a25cfbb8d8f9c74a9af1f73b0b36d5e28" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>MonomialView</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a3ca22b981300d9ecc40fbda19572279f_1a3ca22b981300d9ecc40fbda19572279f" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>MonomialView</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a66f36fb53772c1c4c970adbbfe955613_1a66f36fb53772c1c4c970adbbfe955613" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>MonomialView</name></member>
+      <member refid="classnewf4_1_1_monomial_view_afad4b5fb3e6639df86778af1aa09089c_1afad4b5fb3e6639df86778af1aa09089c" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>operator==</name></member>
+      <member refid="classnewf4_1_1_monomial_view_abc719cf9c623e00edd5e2675c9b788e1_1abc719cf9c623e00edd5e2675c9b788e1" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>product</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a263582297283be5560126dc1c69b2925_1a263582297283be5560126dc1c69b2925" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>quotient</name></member>
+      <member refid="classnewf4_1_1_monomial_view_a340e345fc1fe70c0e347d4b2b2216ee3_1a340e345fc1fe70c0e347d4b2b2216ee3" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>simpleDegree</name></member>
+      <member refid="classnewf4_1_1_monomial_view_ac5b8196f5540c82dc210c7fae05a27db_1ac5b8196f5540c82dc210c7fae05a27db" prot="public" virt="non-virtual"><scope>newf4::MonomialView</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

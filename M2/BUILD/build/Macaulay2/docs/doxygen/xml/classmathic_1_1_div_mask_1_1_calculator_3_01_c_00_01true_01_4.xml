@@ -1,0 +1,236 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4" kind="class" language="C++" prot="public">
+    <compoundname>mathic::DivMask::Calculator&lt; C, true &gt;</compoundname>
+    <includes refid="_div_mask_8h" local="no">DivMask.h</includes>
+    <templateparamlist>
+      <param>
+        <type>class C</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a70b4768652987b1c5ac134e2aff82b37_1a70b4768652987b1c5ac134e2aff82b37" prot="private" static="no">
+        <type>C::Exponent</type>
+        <definition>typedef C::Exponent mathic::DivMask::Calculator&lt; C, true &gt;::Exponent</definition>
+        <argsstring></argsstring>
+        <name>Exponent</name>
+        <qualifiedname>mathic::DivMask::Calculator&lt; C, true &gt;::Exponent</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="196" column="34" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a85d9a302130745bfeced009d38d0f952_1a85d9a302130745bfeced009d38d0f952" prot="private" static="no">
+        <type>std::vector&lt; std::pair&lt; <ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref>, <ref refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a70b4768652987b1c5ac134e2aff82b37_1a70b4768652987b1c5ac134e2aff82b37" kindref="member">Exponent</ref> &gt; &gt;</type>
+        <definition>typedef std::vector&lt;std::pair&lt;size_t, Exponent&gt; &gt; mathic::DivMask::Calculator&lt; C, true &gt;::BitContainer</definition>
+        <argsstring></argsstring>
+        <name>BitContainer</name>
+        <qualifiedname>mathic::DivMask::Calculator&lt; C, true &gt;::BitContainer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If entry at index i is the pair (var,exp) then the bit at index var in a bit mask is 1 if the exponent of var in the monomial is strictly greater than exp. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="200" column="25" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a321448f91f09654870408d397c90d7e2_1a321448f91f09654870408d397c90d7e2" prot="private" static="no" mutable="no">
+        <type><ref refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a85d9a302130745bfeced009d38d0f952_1a85d9a302130745bfeced009d38d0f952" kindref="member">BitContainer</ref></type>
+        <definition>BitContainer mathic::DivMask::Calculator&lt; C, true &gt;::_bits</definition>
+        <argsstring></argsstring>
+        <name>_bits</name>
+        <qualifiedname>mathic::DivMask::Calculator&lt; C, true &gt;::_bits</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="201" column="18" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="201" bodyend="-1"/>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a8e61c01a591f17ee5414a43b27e01313_1a8e61c01a591f17ee5414a43b27e01313" compoundref="_div_mask_8h" startline="332" endline="342">compute</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_aa68b3910ce9898ff1a4a116b80e29130_1aa68b3910ce9898ff1a4a116b80e29130" compoundref="_div_mask_8h" startline="207" endline="310">rebuild</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a60530346d446fd6be9f609f481476d99_1a60530346d446fd6be9f609f481476d99" compoundref="_div_mask_8h" startline="314" endline="327">rebuildDefault</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a342e48babfcadd85158e83ce6f60eea5_1a342e48babfcadd85158e83ce6f60eea5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>mathic::DivMask::Calculator&lt; C, true &gt;::Calculator</definition>
+        <argsstring>(const C &amp;conf)</argsstring>
+        <name>Calculator</name>
+        <qualifiedname>mathic::DivMask::Calculator&lt; C, true &gt;::Calculator</qualifiedname>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="177" column="5" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="177" bodyend="177"/>
+        <references refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a60530346d446fd6be9f609f481476d99_1a60530346d446fd6be9f609f481476d99" compoundref="_div_mask_8h" startline="314" endline="327">rebuildDefault</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_aa68b3910ce9898ff1a4a116b80e29130_1aa68b3910ce9898ff1a4a116b80e29130" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Iter</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mathic::DivMask::Calculator&lt; C, true &gt;::rebuild</definition>
+        <argsstring>(Iter begin, Iter end, const C &amp;conf)</argsstring>
+        <name>rebuild</name>
+        <qualifiedname>mathic::DivMask::Calculator&lt; C, true &gt;::rebuild</qualifiedname>
+        <param>
+          <type>Iter</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>Iter</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Change the meaning of the bits in the div masks produced by this object to something that will likely work well for entries in [begin, end). All div masks will have to be recomputed after this. Mixing div masks computed before a call to <ref refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_aa68b3910ce9898ff1a4a116b80e29130_1aa68b3910ce9898ff1a4a116b80e29130" kindref="member">rebuild()</ref> with ones after has unpredictable results. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="185" column="10" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="207" bodyend="310"/>
+        <references refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a321448f91f09654870408d397c90d7e2_1a321448f91f09654870408d397c90d7e2" compoundref="_div_mask_8h" startline="201">_bits</references>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="namespacemathic_aecb317110595cb0a869c9c19c7be0f50_1aecb317110595cb0a869c9c19c7be0f50" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="94">mathic::BitsPerByte</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="mathic_2src_2mathic_2stdinc_8h_a7accdfa2726cda4a06c87fc8f08c0f68_1a7accdfa2726cda4a06c87fc8f08c0f68" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="89">MATHIC_ASSERT</references>
+        <references refid="polyroots_8cpp_affe776513b24d84b39af8ab0930fef7f_1affe776513b24d84b39af8ab0930fef7f" compoundref="polyroots_8cpp" startline="50">max</references>
+        <references refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a60530346d446fd6be9f609f481476d99_1a60530346d446fd6be9f609f481476d99" compoundref="_div_mask_8h" startline="314" endline="327">rebuildDefault</references>
+        <references refid="structmathic_1_1_div_mask_1_1_var_data_a62828b46a59a8e6ab503911bcd04ef10_1a62828b46a59a8e6ab503911bcd04ef10" compoundref="_div_mask_8h" startline="154">mathic::DivMask::VarData::split</references>
+        <references refid="structmathic_1_1_div_mask_1_1_var_data_a7e068376390b20340208d2d952507db5_1a7e068376390b20340208d2d952507db5" compoundref="_div_mask_8h" startline="148">mathic::DivMask::VarData::var</references>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a60530346d446fd6be9f609f481476d99_1a60530346d446fd6be9f609f481476d99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mathic::DivMask::Calculator&lt; C, true &gt;::rebuildDefault</definition>
+        <argsstring>(const C &amp;conf)</argsstring>
+        <name>rebuildDefault</name>
+        <qualifiedname>mathic::DivMask::Calculator&lt; C, true &gt;::rebuildDefault</qualifiedname>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Rebuilds without the benefit of knowing a range of entries that the div masks are supposed to work well for. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="189" column="10" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="314" bodyend="327"/>
+        <references refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a321448f91f09654870408d397c90d7e2_1a321448f91f09654870408d397c90d7e2" compoundref="_div_mask_8h" startline="201">_bits</references>
+        <references refid="namespacemathic_aecb317110595cb0a869c9c19c7be0f50_1aecb317110595cb0a869c9c19c7be0f50" compoundref="mathic_2src_2mathic_2stdinc_8h" startline="94">mathic::BitsPerByte</references>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a342e48babfcadd85158e83ce6f60eea5_1a342e48babfcadd85158e83ce6f60eea5" compoundref="_div_mask_8h" startline="177" endline="177">Calculator</referencedby>
+        <referencedby refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_aa68b3910ce9898ff1a4a116b80e29130_1aa68b3910ce9898ff1a4a116b80e29130" compoundref="_div_mask_8h" startline="207" endline="310">rebuild</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a8e61c01a591f17ee5414a43b27e01313_1a8e61c01a591f17ee5414a43b27e01313" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class <ref refid="struct_t" kindref="compound">T</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmathic_1_1_div_mask_a85bdf54b8d22bdc9464ea04177725e77_1a85bdf54b8d22bdc9464ea04177725e77" kindref="member">DivMask::MaskType</ref></type>
+        <definition>DivMask::MaskType mathic::DivMask::Calculator&lt; C, true &gt;::compute</definition>
+        <argsstring>(const T &amp;t, const C &amp;conf) const</argsstring>
+        <name>compute</name>
+        <qualifiedname>mathic::DivMask::Calculator&lt; C, true &gt;::compute</qualifiedname>
+        <param>
+          <type>const <ref refid="struct_t" kindref="compound">T</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const C &amp;</type>
+          <declname>conf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Computes a div mask for t. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathic/src/mathic/DivMask.h" line="193" column="23" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="332" bodyend="342"/>
+        <references refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a321448f91f09654870408d397c90d7e2_1a321448f91f09654870408d397c90d7e2" compoundref="_div_mask_8h" startline="201">_bits</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="table_8c_adec21d234619c8f0afbf0914249837b1_1adec21d234619c8f0afbf0914249837b1" compoundref="table_8c" startline="13">T</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>mathic::DivMask::Calculator&lt; Configuration, NullCalculator &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_calculator"/>
+      </node>
+      <node id="1">
+        <label>mathic::DivMask::Calculator&lt; C, true &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4"/>
+        <childnode refid="2" relation="template-instance">
+          <edgelabel>&lt; C, true &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>T</label>
+      </node>
+      <node id="5">
+        <label>mathic::DivMask::Calculator&lt; Configuration, NullCalculator &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_calculator"/>
+      </node>
+      <node id="1">
+        <label>mathic::DivMask::Calculator&lt; C, true &gt;</label>
+        <link refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_bits</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; C, true &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::vector&lt; T &gt;</label>
+        <childnode refid="4" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::vector&lt; std::pair&lt; size_t, Exponent &gt; &gt;</label>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; std::pair&lt; size_t, Exponent &gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathic/src/mathic/DivMask.h" line="175" column="5" bodyfile="submodules/mathic/src/mathic/DivMask.h" bodystart="175" bodyend="202"/>
+    <listofallmembers>
+      <member refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a321448f91f09654870408d397c90d7e2_1a321448f91f09654870408d397c90d7e2" prot="private" virt="non-virtual"><scope>mathic::DivMask::Calculator&lt; C, true &gt;</scope><name>_bits</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a85d9a302130745bfeced009d38d0f952_1a85d9a302130745bfeced009d38d0f952" prot="private" virt="non-virtual"><scope>mathic::DivMask::Calculator&lt; C, true &gt;</scope><name>BitContainer</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a342e48babfcadd85158e83ce6f60eea5_1a342e48babfcadd85158e83ce6f60eea5" prot="public" virt="non-virtual"><scope>mathic::DivMask::Calculator&lt; C, true &gt;</scope><name>Calculator</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a8e61c01a591f17ee5414a43b27e01313_1a8e61c01a591f17ee5414a43b27e01313" prot="public" virt="non-virtual"><scope>mathic::DivMask::Calculator&lt; C, true &gt;</scope><name>compute</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a70b4768652987b1c5ac134e2aff82b37_1a70b4768652987b1c5ac134e2aff82b37" prot="private" virt="non-virtual"><scope>mathic::DivMask::Calculator&lt; C, true &gt;</scope><name>Exponent</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_aa68b3910ce9898ff1a4a116b80e29130_1aa68b3910ce9898ff1a4a116b80e29130" prot="public" virt="non-virtual"><scope>mathic::DivMask::Calculator&lt; C, true &gt;</scope><name>rebuild</name></member>
+      <member refid="classmathic_1_1_div_mask_1_1_calculator_3_01_c_00_01true_01_4_a60530346d446fd6be9f609f481476d99_1a60530346d446fd6be9f609f481476d99" prot="public" virt="non-virtual"><scope>mathic::DivMask::Calculator&lt; C, true &gt;</scope><name>rebuildDefault</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

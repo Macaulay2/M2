@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_module_monom_less_than" kind="class" language="C++" prot="public">
+    <compoundname>ModuleMonomLessThan</compoundname>
+    <includes refid="monomial-collection_8hpp" local="no">monomial-collection.hpp</includes>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_module_monom_less_than_a5c5d1a0a1ea66c35d414ee9263035602_1a5c5d1a0a1ea66c35d414ee9263035602" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool ModuleMonomLessThan::operator()</definition>
+        <argsstring>(const ModuleMonom &amp;a, const ModuleMonom &amp;b) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>ModuleMonomLessThan::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="class_module_monom" kindref="compound">ModuleMonom</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_module_monom" kindref="compound">ModuleMonom</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/monomial-collection.hpp" line="150" column="8" bodyfile="Macaulay2/e/monomial-collection.hpp" bodystart="150" bodyend="154"/>
+        <references refid="class_module_monom_a98f193e3093cc4e3d9bd1386183c2efd_1a98f193e3093cc4e3d9bd1386183c2efd" compoundref="_polynomial_8hpp" startline="143" endline="157">ModuleMonom::compare</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_abaab8d42f075ee8ddc9b70951d3fd6cd_1abaab8d42f075ee8ddc9b70951d3fd6cd" compoundref="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp" startline="19">EQ</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Strict-weak-order comparator on <computeroutput><ref refid="class_module_monom" kindref="compound">ModuleMonom</ref></computeroutput>, used by <computeroutput><ref refid="class_ints_set_a5cd9bf01c6f5dc112d8391f235bd7857_1a5cd9bf01c6f5dc112d8391f235bd7857" kindref="member">IntsSet::sort</ref></computeroutput> to reorder the insertion-ordered <computeroutput>mElements</computeroutput> list. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Defers to <computeroutput><ref refid="class_module_monom_a98f193e3093cc4e3d9bd1386183c2efd_1a98f193e3093cc4e3d9bd1386183c2efd" kindref="member">ModuleMonom::compare</ref></computeroutput> and treats anything <computeroutput>&lt;= <ref refid="submodules_2mathicgb_2src_2mathicgb_2polyring_8hpp_abaab8d42f075ee8ddc9b70951d3fd6cd_1abaab8d42f075ee8ddc9b70951d3fd6cd" kindref="member">EQ</ref></computeroutput> as &quot;less than&quot;, so equal monomials get a stable position from <computeroutput>std::sort</computeroutput>&apos;s tiebreaker rather than from this comparator. </para>
+    </detaileddescription>
+    <location file="Macaulay2/e/monomial-collection.hpp" line="147" column="1" bodyfile="Macaulay2/e/monomial-collection.hpp" bodystart="148" bodyend="155"/>
+    <listofallmembers>
+      <member refid="class_module_monom_less_than_a5c5d1a0a1ea66c35d414ee9263035602_1a5c5d1a0a1ea66c35d414ee9263035602" prot="public" virt="non-virtual"><scope>ModuleMonomLessThan</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

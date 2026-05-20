@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structcci__struct" kind="struct" language="C++" prot="public">
+    <compoundname>cci_struct</compoundname>
+    <includes refid="ringelem_8hpp" local="no">ringelem.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structcci__struct_a4f14f6d26ff9cb3128f2dead907f7cb1_1a4f14f6d26ff9cb3128f2dead907f7cb1" prot="public" static="no" mutable="no">
+        <type>__mpfi_struct</type>
+        <definition>__mpfi_struct cci_struct::re</definition>
+        <argsstring></argsstring>
+        <name>re</name>
+        <qualifiedname>cci_struct::re</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="71" column="17" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="71" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a03ce69619528ba4e51f4a18ee2bf07b4_1a03ce69619528ba4e51f4a18ee2bf07b4" compoundref="aring-_c_ci_8hpp" startline="576" endline="586">M2::ARingCCi::abs</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a1fc294a735abf02eb148c3e0472ccc46_1a1fc294a735abf02eb148c3e0472ccc46" compoundref="aring-_c_ci_8hpp" startline="335" endline="341">M2::ARingCCi::add</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aa2588499982cc70ff190baf16735d807_1aa2588499982cc70ff190baf16735d807" compoundref="aring-_c_ci_8hpp" startline="109" endline="118">M2::ARingCCi::compare_elems</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aa8847316604d89466e1879f15bc67133_1aa8847316604d89466e1879f15bc67133" compoundref="aring-_c_ci_8hpp" startline="85" endline="93">M2::ARingCCi::computeHashValue</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a8e5cd654a80da06f78a6e00f06ea1eb4_1a8e5cd654a80da06f78a6e00f06ea1eb4" compoundref="aring-_c_ci_8hpp" startline="195" endline="199">M2::ARingCCi::copy</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aadbfa738b185b565233b44dc50872a2e_1aadbfa738b185b565233b44dc50872a2e" compoundref="aring-_c_ci_8hpp" startline="491" endline="499">M2::ARingCCi::diameter</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a3c76b4ecf5209daf6a297db4f6851c72_1a3c76b4ecf5209daf6a297db4f6851c72" compoundref="aring-_c_ci_8cpp" startline="6" endline="20">M2::ARingCCi::elem_text_out</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a2ac389d4b297a5f806886cc4ac037f1a_1a2ac389d4b297a5f806886cc4ac037f1a" compoundref="aring-_c_ci_8hpp" startline="544" endline="557">M2::ARingCCi::eval</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a38a6f5950e2b4d0f1e204c252232f000_1a38a6f5950e2b4d0f1e204c252232f000" compoundref="aring-_c_ci_8hpp" startline="166" endline="171">M2::ARingCCi::init_set</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a9ce80ffe6dc4ad1fcc343b7c9097ec14_1a9ce80ffe6dc4ad1fcc343b7c9097ec14" compoundref="aring-_c_ci_8hpp" startline="120" endline="120">M2::ARingCCi::is_empty</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a8f55aebc3cd3f24346f5f368a8bf7c5f_1a8f55aebc3cd3f24346f5f368a8bf7c5f" compoundref="aring-_c_ci_8hpp" startline="103" endline="107">M2::ARingCCi::is_equal</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_abde22d3f5648d007bad756069f99cbd6_1abde22d3f5648d007bad756069f99cbd6" compoundref="aring-_c_ci_8hpp" startline="121" endline="121">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_afa6abab5217d05fd29bc6f26c0de6b5c_1afa6abab5217d05fd29bc6f26c0de6b5c" compoundref="aring-_c_ci_8hpp" startline="122" endline="122">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a5cb2d97375746e3f3b1abc22895fcee1_1a5cb2d97375746e3f3b1abc22895fcee1" compoundref="aring-_c_ci_8hpp" startline="123" endline="123">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a3f5f7436dda9e1ccc47053db27c16a93_1a3f5f7436dda9e1ccc47053db27c16a93" compoundref="aring-_c_ci_8hpp" startline="127" endline="127">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ac70ff9d81e63d3ebeff7369158139ea1_1ac70ff9d81e63d3ebeff7369158139ea1" compoundref="aring-_c_ci_8hpp" startline="126" endline="126">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a3c57581e95a9ae5c435bd7e138fe2250_1a3c57581e95a9ae5c435bd7e138fe2250" compoundref="aring-_c_ci_8hpp" startline="124" endline="124">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ad68d9841a9b1d77f7bfacda1be91ba83_1ad68d9841a9b1d77f7bfacda1be91ba83" compoundref="aring-_c_ci_8hpp" startline="125" endline="125">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aa29d8da6407fe052198ebed946d56460_1aa29d8da6407fe052198ebed946d56460" compoundref="aring-_c_ci_8hpp" startline="129" endline="129">M2::ARingCCi::is_subset</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ae991fd166a38e7f6635738823c0de83f_1ae991fd166a38e7f6635738823c0de83f" compoundref="aring-_c_ci_8hpp" startline="100" endline="102">M2::ARingCCi::is_zero</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a50f7b0277991397f23a93ae6e3bf062e_1a50f7b0277991397f23a93ae6e3bf062e" compoundref="aring-_c_ci_8hpp" startline="486" endline="489">M2::ARingCCi::midpoint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a8b4f17e5aea2bd11d5743642a43beab5_1a8b4f17e5aea2bd11d5743642a43beab5" compoundref="aring-_c_ci_8hpp" startline="375" endline="390">M2::ARingCCi::mult</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a6dd3a071955ab89cf08545b177e5016b_1a6dd3a071955ab89cf08545b177e5016b" compoundref="aring-_c_ci_8hpp" startline="312" endline="316">M2::ARingCCi::negate</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_af9b717715ba68db2ca1168e6a7f149cf_1af9b717715ba68db2ca1168e6a7f149cf" compoundref="aring-_c_ci_8hpp" startline="404" endline="433">M2::ARingCCi::power</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a14658ecf773520625915fb1f5b9d5c53_1a14658ecf773520625915fb1f5b9d5c53" compoundref="aring-_c_ci_8hpp" startline="436" endline="479">M2::ARingCCi::power_mpz</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aa7ae9af3cf0dc3d8e022620ee2fac48d_1aa7ae9af3cf0dc3d8e022620ee2fac48d" compoundref="aring-_c_ci_8hpp" startline="293" endline="296">M2::ARingCCi::realPartReference</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a4f4ee28194438ca2e607f0e13eb728a0_1a4f4ee28194438ca2e607f0e13eb728a0" compoundref="aring-_c_ci_8hpp" startline="173" endline="177">M2::ARingCCi::set</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ab15296dd4091be65779c4deddf36d0f0_1ab15296dd4091be65779c4deddf36d0f0" compoundref="aring-_c_ci_8hpp" startline="275" endline="280">M2::ARingCCi::set_from_ComplexInterval</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ab6bd938028ad1e26767267693c12917d_1ab6bd938028ad1e26767267693c12917d" compoundref="aring-_c_ci_8hpp" startline="302" endline="305">M2::ARingCCi::set_real_part</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a43efd7db6b316f634e6d293b7d3d1bd1_1a43efd7db6b316f634e6d293b7d3d1bd1" compoundref="aring-_c_ci_8hpp" startline="355" endline="361">M2::ARingCCi::subtract</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a917416f4d089a223e170482139f26963_1a917416f4d089a223e170482139f26963" compoundref="aring-_c_ci_8hpp" startline="481" endline="484">M2::ARingCCi::swap</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a3f65fbcc27b1286d53ff3697c70734e8_1a3f65fbcc27b1286d53ff3697c70734e8" compoundref="aring-_c_ci_8hpp" startline="138" endline="148">M2::ARingCCi::to_ring_elem</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ad6377211116f3c5114da441771e017f6_1ad6377211116f3c5114da441771e017f6" compoundref="aring-_c_ci_8hpp" startline="594" endline="604">M2::ARingCCi::toBigComplex</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structcci__struct_a0abadd873ac39e3aefaac4b839bf4b09_1a0abadd873ac39e3aefaac4b839bf4b09" prot="public" static="no" mutable="no">
+        <type>__mpfi_struct</type>
+        <definition>__mpfi_struct cci_struct::im</definition>
+        <argsstring></argsstring>
+        <name>im</name>
+        <qualifiedname>cci_struct::im</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/ringelem.hpp" line="72" column="17" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="72" bodyend="-1"/>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a03ce69619528ba4e51f4a18ee2bf07b4_1a03ce69619528ba4e51f4a18ee2bf07b4" compoundref="aring-_c_ci_8hpp" startline="576" endline="586">M2::ARingCCi::abs</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a1fc294a735abf02eb148c3e0472ccc46_1a1fc294a735abf02eb148c3e0472ccc46" compoundref="aring-_c_ci_8hpp" startline="335" endline="341">M2::ARingCCi::add</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aa2588499982cc70ff190baf16735d807_1aa2588499982cc70ff190baf16735d807" compoundref="aring-_c_ci_8hpp" startline="109" endline="118">M2::ARingCCi::compare_elems</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aa8847316604d89466e1879f15bc67133_1aa8847316604d89466e1879f15bc67133" compoundref="aring-_c_ci_8hpp" startline="85" endline="93">M2::ARingCCi::computeHashValue</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a8e5cd654a80da06f78a6e00f06ea1eb4_1a8e5cd654a80da06f78a6e00f06ea1eb4" compoundref="aring-_c_ci_8hpp" startline="195" endline="199">M2::ARingCCi::copy</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aadbfa738b185b565233b44dc50872a2e_1aadbfa738b185b565233b44dc50872a2e" compoundref="aring-_c_ci_8hpp" startline="491" endline="499">M2::ARingCCi::diameter</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a3c76b4ecf5209daf6a297db4f6851c72_1a3c76b4ecf5209daf6a297db4f6851c72" compoundref="aring-_c_ci_8cpp" startline="6" endline="20">M2::ARingCCi::elem_text_out</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a2ac389d4b297a5f806886cc4ac037f1a_1a2ac389d4b297a5f806886cc4ac037f1a" compoundref="aring-_c_ci_8hpp" startline="544" endline="557">M2::ARingCCi::eval</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aeeb720b109ea98cbde1326de21675938_1aeeb720b109ea98cbde1326de21675938" compoundref="aring-_c_ci_8hpp" startline="297" endline="301">M2::ARingCCi::imaginaryPartReference</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a38a6f5950e2b4d0f1e204c252232f000_1a38a6f5950e2b4d0f1e204c252232f000" compoundref="aring-_c_ci_8hpp" startline="166" endline="171">M2::ARingCCi::init_set</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a9ce80ffe6dc4ad1fcc343b7c9097ec14_1a9ce80ffe6dc4ad1fcc343b7c9097ec14" compoundref="aring-_c_ci_8hpp" startline="120" endline="120">M2::ARingCCi::is_empty</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a8f55aebc3cd3f24346f5f368a8bf7c5f_1a8f55aebc3cd3f24346f5f368a8bf7c5f" compoundref="aring-_c_ci_8hpp" startline="103" endline="107">M2::ARingCCi::is_equal</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_abde22d3f5648d007bad756069f99cbd6_1abde22d3f5648d007bad756069f99cbd6" compoundref="aring-_c_ci_8hpp" startline="121" endline="121">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_afa6abab5217d05fd29bc6f26c0de6b5c_1afa6abab5217d05fd29bc6f26c0de6b5c" compoundref="aring-_c_ci_8hpp" startline="122" endline="122">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a5cb2d97375746e3f3b1abc22895fcee1_1a5cb2d97375746e3f3b1abc22895fcee1" compoundref="aring-_c_ci_8hpp" startline="123" endline="123">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a3f5f7436dda9e1ccc47053db27c16a93_1a3f5f7436dda9e1ccc47053db27c16a93" compoundref="aring-_c_ci_8hpp" startline="127" endline="127">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ac70ff9d81e63d3ebeff7369158139ea1_1ac70ff9d81e63d3ebeff7369158139ea1" compoundref="aring-_c_ci_8hpp" startline="126" endline="126">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a3c57581e95a9ae5c435bd7e138fe2250_1a3c57581e95a9ae5c435bd7e138fe2250" compoundref="aring-_c_ci_8hpp" startline="124" endline="124">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ad68d9841a9b1d77f7bfacda1be91ba83_1ad68d9841a9b1d77f7bfacda1be91ba83" compoundref="aring-_c_ci_8hpp" startline="125" endline="125">M2::ARingCCi::is_member</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_aa29d8da6407fe052198ebed946d56460_1aa29d8da6407fe052198ebed946d56460" compoundref="aring-_c_ci_8hpp" startline="129" endline="129">M2::ARingCCi::is_subset</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ae991fd166a38e7f6635738823c0de83f_1ae991fd166a38e7f6635738823c0de83f" compoundref="aring-_c_ci_8hpp" startline="100" endline="102">M2::ARingCCi::is_zero</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a50f7b0277991397f23a93ae6e3bf062e_1a50f7b0277991397f23a93ae6e3bf062e" compoundref="aring-_c_ci_8hpp" startline="486" endline="489">M2::ARingCCi::midpoint</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a8b4f17e5aea2bd11d5743642a43beab5_1a8b4f17e5aea2bd11d5743642a43beab5" compoundref="aring-_c_ci_8hpp" startline="375" endline="390">M2::ARingCCi::mult</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a6dd3a071955ab89cf08545b177e5016b_1a6dd3a071955ab89cf08545b177e5016b" compoundref="aring-_c_ci_8hpp" startline="312" endline="316">M2::ARingCCi::negate</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_af9b717715ba68db2ca1168e6a7f149cf_1af9b717715ba68db2ca1168e6a7f149cf" compoundref="aring-_c_ci_8hpp" startline="404" endline="433">M2::ARingCCi::power</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a14658ecf773520625915fb1f5b9d5c53_1a14658ecf773520625915fb1f5b9d5c53" compoundref="aring-_c_ci_8hpp" startline="436" endline="479">M2::ARingCCi::power_mpz</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a4f4ee28194438ca2e607f0e13eb728a0_1a4f4ee28194438ca2e607f0e13eb728a0" compoundref="aring-_c_ci_8hpp" startline="173" endline="177">M2::ARingCCi::set</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ab15296dd4091be65779c4deddf36d0f0_1ab15296dd4091be65779c4deddf36d0f0" compoundref="aring-_c_ci_8hpp" startline="275" endline="280">M2::ARingCCi::set_from_ComplexInterval</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a12b3eab0a76fa90b69ac726b7df12baa_1a12b3eab0a76fa90b69ac726b7df12baa" compoundref="aring-_c_ci_8hpp" startline="306" endline="309">M2::ARingCCi::set_imaginary_part</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a43efd7db6b316f634e6d293b7d3d1bd1_1a43efd7db6b316f634e6d293b7d3d1bd1" compoundref="aring-_c_ci_8hpp" startline="355" endline="361">M2::ARingCCi::subtract</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a917416f4d089a223e170482139f26963_1a917416f4d089a223e170482139f26963" compoundref="aring-_c_ci_8hpp" startline="481" endline="484">M2::ARingCCi::swap</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_a3f65fbcc27b1286d53ff3697c70734e8_1a3f65fbcc27b1286d53ff3697c70734e8" compoundref="aring-_c_ci_8hpp" startline="138" endline="148">M2::ARingCCi::to_ring_elem</referencedby>
+        <referencedby refid="class_m2_1_1_a_ring_c_ci_ad6377211116f3c5114da441771e017f6_1ad6377211116f3c5114da441771e017f6" compoundref="aring-_c_ci_8hpp" startline="594" endline="604">M2::ARingCCi::toBigComplex</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="1">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/ringelem.hpp" line="69" column="1" bodyfile="Macaulay2/e/ringelem.hpp" bodystart="70" bodyend="73"/>
+    <listofallmembers>
+      <member refid="structcci__struct_a0abadd873ac39e3aefaac4b839bf4b09_1a0abadd873ac39e3aefaac4b839bf4b09" prot="public" virt="non-virtual"><scope>cci_struct</scope><name>im</name></member>
+      <member refid="structcci__struct_a4f14f6d26ff9cb3128f2dead907f7cb1_1a4f14f6d26ff9cb3128f2dead907f7cb1" prot="public" virt="non-virtual"><scope>cci_struct</scope><name>re</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

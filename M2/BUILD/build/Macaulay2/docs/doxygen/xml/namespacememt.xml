@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespacememt" kind="namespace" language="C++">
+    <compoundname>memt</compoundname>
+    <innerclass refid="classmemt_1_1_arena" prot="public">memt::Arena</innerclass>
+    <innerclass refid="classmemt_1_1_arena_vector" prot="public">memt::ArenaVector</innerclass>
+    <innerclass refid="classmemt_1_1_buffer_pool" prot="public">memt::BufferPool</innerclass>
+    <innerclass refid="classmemt_1_1_memory_blocks" prot="public">memt::MemoryBlocks</innerclass>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacememt_a47580b7af9bf3c93ec79aebf3cdb47ef_1a47580b7af9bf3c93ec79aebf3cdb47ef" prot="public" static="yes" mutable="no">
+        <type>const unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>const unsigned int memt::MemoryAlignment</definition>
+        <argsstring></argsstring>
+        <name>MemoryAlignment</name>
+        <qualifiedname>memt::MemoryAlignment</qualifiedname>
+        <initializer>= static_cast&lt;unsigned <ref refid="classint" kindref="compound">int</ref>&gt;(sizeof(void*))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The alignment that memory allocators must ensure. In other words allocators must return pointer addresses that are divisible by MemoryAlignment. MemoryAlignment must be a power of 2. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/memtailor/src/memtailor/stdinc.h" line="101" column="29" bodyfile="submodules/memtailor/src/memtailor/stdinc.h" bodystart="101" bodyend="-1"/>
+        <referencedby refid="classmemt_1_1_memory_blocks_a3b07816c8ea4e348c113c26736bcaaca_1a3b07816c8ea4e348c113c26736bcaaca" compoundref="_memory_blocks_8h" startline="191" endline="204">memt::MemoryBlocks::alignNoOverflow</referencedby>
+        <referencedby refid="classmemt_1_1_memory_blocks_a7ff3251b8a83e64bb00c2258ea88c818_1a7ff3251b8a83e64bb00c2258ea88c818" compoundref="_memory_blocks_8h" startline="206" endline="223">memt::MemoryBlocks::alignThrowOnOverflow</referencedby>
+        <referencedby refid="classmemt_1_1_arena_af0d0d8ab8d64c23bd5f1f6a07b07e632_1af0d0d8ab8d64c23bd5f1f6a07b07e632" compoundref="_arena_8h" startline="271" endline="300">memt::Arena::alloc</referencedby>
+        <referencedby refid="classmemt_1_1_arena_af5f72a623a7c617366418178826d9a4f_1af5f72a623a7c617366418178826d9a4f" compoundref="_arena_8cpp" startline="39" endline="52">memt::Arena::growCapacity</referencedby>
+        <referencedby refid="_memory_blocks_test_8cpp_a40d67d9fdf7c705bf25ff8ef02af4653_1a40d67d9fdf7c705bf25ff8ef02af4653" compoundref="_memory_blocks_test_8cpp" startline="28" endline="49">TEST</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacememt_ab69a6bc87967cc9bee3db542de8aa464_1ab69a6bc87967cc9bee3db542de8aa464" prot="public" static="yes" mutable="no">
+        <type>const unsigned <ref refid="classint" kindref="compound">int</ref></type>
+        <definition>const unsigned int memt::BitsPerByte</definition>
+        <argsstring></argsstring>
+        <name>BitsPerByte</name>
+        <qualifiedname>memt::BitsPerByte</qualifiedname>
+        <initializer>= 8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/memtailor/src/memtailor/stdinc.h" line="103" column="29" bodyfile="submodules/memtailor/src/memtailor/stdinc.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/memtailor/src/memtailor/Arena.cpp" line="7" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,264 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="flint_8cpp" kind="file" language="C++">
+    <compoundname>flint.cpp</compoundname>
+    <includes refid="flint_8h" local="yes">interface/flint.h</includes>
+    <includes refid="gmp-util_8h" local="yes">interface/gmp-util.h</includes>
+    <includes local="no">iostream</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">M2/gc-include.h</includes>
+    <includes local="no">flint/fmpz.h</includes>
+    <includes local="no">flint/fmpz_factor.h</includes>
+    <includes local="yes">error.h</includes>
+    <incdepgraph>
+      <node id="3">
+        <label>engine-includes.hpp</label>
+        <link refid="engine-includes_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Macaulay2/e/interface/flint.cpp</label>
+        <link refid="flint_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>interface/flint.h</label>
+        <link refid="flint_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>interface/gmp-util.h</label>
+        <link refid="gmp-util_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>interface/m2-types.h</label>
+        <link refid="m2-types_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>M2/config.h</label>
+      </node>
+      <node id="8">
+        <label>M2/gc-include.h</label>
+      </node>
+      <node id="7">
+        <label>M2/math-include.h</label>
+      </node>
+      <node id="14">
+        <label>error.h</label>
+      </node>
+      <node id="12">
+        <label>flint/fmpz.h</label>
+      </node>
+      <node id="13">
+        <label>flint/fmpz_factor.h</label>
+      </node>
+      <node id="10">
+        <label>iostream</label>
+      </node>
+      <node id="6">
+        <label>stdint.h</label>
+      </node>
+      <node id="11">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="flint_8cpp_aa6d50580684413c3a42c3c85a1343da4_1aa6d50580684413c3a42c3c85a1343da4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool rawZZisPrime</definition>
+        <argsstring>(gmp_ZZ a)</argsstring>
+        <name>rawZZisPrime</name>
+        <param>
+          <type><ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="cone_8cpp_af88c4910204275f4d605135b7acb1558_1af88c4910204275f4d605135b7acb1558" kindref="member">Integer</ref> primality and factorization interface routines via Flint </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/flint.cpp" line="18" column="9" bodyfile="Macaulay2/e/interface/flint.cpp" bodystart="18" bodyend="30"/>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+      </memberdef>
+      <memberdef kind="function" id="flint_8cpp_ab40a7d44c5311ebdb77e9fbcf30f8bb7_1ab40a7d44c5311ebdb77e9fbcf30f8bb7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref></type>
+        <definition>M2_bool rawZZisProbablePrime</definition>
+        <argsstring>(gmp_ZZ a)</argsstring>
+        <name>rawZZisProbablePrime</name>
+        <param>
+          <type><ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref></type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/flint.cpp" line="32" column="9" bodyfile="Macaulay2/e/interface/flint.cpp" bodystart="32" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="flint_8cpp_a00c794f788e90f4a5a418191dd4090f4_1a00c794f788e90f4a5a418191dd4090f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>gmp_arrayZZ</type>
+        <definition>gmp_arrayZZ flintToFrontend</definition>
+        <argsstring>(std::vector&lt; fmpz_t &gt;)</argsstring>
+        <name>flintToFrontend</name>
+        <param>
+          <type>std::vector&lt; fmpz_t &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/flint.cpp" line="44" column="13" declfile="Macaulay2/e/interface/flint.cpp" declline="44" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="flint_8cpp_a1eb32926011e361250060e3240a14ad8_1a1eb32926011e361250060e3240a14ad8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>gmp_arrayZZ</type>
+        <definition>gmp_arrayZZ rawZZfactor</definition>
+        <argsstring>(gmp_ZZ x)</argsstring>
+        <name>rawZZfactor</name>
+        <param>
+          <type><ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref></type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/interface/flint.cpp" line="46" column="13" bodyfile="Macaulay2/e/interface/flint.cpp" bodystart="46" bodyend="82"/>
+        <references refid="m2-mem_8h_a31dcc58936c13ff01270d6ee43733178_1a31dcc58936c13ff01270d6ee43733178" compoundref="m2-mem_8h" startline="140">getmemarraytype</references>
+        <references refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" compoundref="gmp-util_8h" startline="44" endline="54">mpz_reallocate_limbs</references>
+        <references refid="newdelete_8hpp_a4b6a76f68cebc914ce819a24aedda112_1a4b6a76f68cebc914ce819a24aedda112" compoundref="newdelete_8hpp" startline="84">newitem</references>
+        <references refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b">result</references>
+        <references refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" compoundref="overflow-test_8cpp" startline="66">x</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;<ref refid="flint_8h" kindref="compound">interface/flint.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="gmp-util_8h" kindref="compound">interface/gmp-util.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>needs<sp/>to<sp/>be<sp/>included<sp/>before<sp/>any<sp/>flint<sp/>files<sp/>are<sp/>included.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;M2/gc-include.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>GCC<sp/>diagnostic<sp/>push</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>GCC<sp/>diagnostic<sp/>ignored<sp/>&quot;-Wconversion&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;flint/fmpz.h&gt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>fmpz_t,<sp/>fmpz,<sp/>fmpz_clear,<sp/>fmpz_init...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;flint/fmpz_factor.h&gt;</highlight><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>fmpz_factor,<sp/>fmpz_factor_clear,<sp/>fmpz...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>GCC<sp/>diagnostic<sp/>pop</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;error.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="flint_8cpp_aa6d50580684413c3a42c3c85a1343da4_1aa6d50580684413c3a42c3c85a1343da4" refkind="member"><highlight class="normal"><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref><sp/><ref refid="flint_8cpp_aa6d50580684413c3a42c3c85a1343da4_1aa6d50580684413c3a42c3c85a1343da4" kindref="member">rawZZisPrime</ref>(<ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref><sp/>a)</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/>fmpz_t<sp/>n;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>fmpz_init(n);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/>fmpz_set_mpz(n,<sp/>a);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ret<sp/>=<sp/>fmpz_is_prime(n);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>fmpz_clear(n);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(ret&lt;0)<sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" kindref="member">ERROR</ref>(</highlight><highlight class="stringliteral">&quot;flint&apos;s<sp/>is_prime<sp/>failed&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;fmpz_is_prime<sp/>returned<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>ret<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ret;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="flint_8cpp_ab40a7d44c5311ebdb77e9fbcf30f8bb7_1ab40a7d44c5311ebdb77e9fbcf30f8bb7" refkind="member"><highlight class="normal"><ref refid="m2-types_8h_a7070aa7b07cda16d387ba6be4bd917fa_1a7070aa7b07cda16d387ba6be4bd917fa" kindref="member">M2_bool</ref><sp/><ref refid="flint_8cpp_ab40a7d44c5311ebdb77e9fbcf30f8bb7_1ab40a7d44c5311ebdb77e9fbcf30f8bb7" kindref="member">rawZZisProbablePrime</ref>(<ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref><sp/>a)</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/>fmpz_t<sp/>n;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>fmpz_init(n);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>fmpz_set_mpz(n,<sp/>a);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ret<sp/>=<sp/>fmpz_is_probabprime(n);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/>fmpz_clear(n);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ret;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/>TODO:<sp/>not<sp/>yet<sp/>implemented<sp/>or<sp/>connected<sp/>to<sp/>top<sp/>level</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>function<sp/>is<sp/>intended<sp/>to<sp/>copy<sp/>data<sp/>to<sp/>front<sp/>end<sp/>type.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="flint_8cpp_a00c794f788e90f4a5a418191dd4090f4_1a00c794f788e90f4a5a418191dd4090f4" refkind="member"><highlight class="normal">gmp_arrayZZ<sp/><ref refid="flint_8cpp_a00c794f788e90f4a5a418191dd4090f4_1a00c794f788e90f4a5a418191dd4090f4" kindref="member">flintToFrontend</ref>(std::vector&lt;fmpz_t&gt;);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="flint_8cpp_a1eb32926011e361250060e3240a14ad8_1a1eb32926011e361250060e3240a14ad8" refkind="member"><highlight class="normal">gmp_arrayZZ<sp/><ref refid="flint_8cpp_a1eb32926011e361250060e3240a14ad8_1a1eb32926011e361250060e3240a14ad8" kindref="member">rawZZfactor</ref>(<ref refid="m2-types_8h_a8a5e1d7abe325f6446ab419df1e1dc31_1a8a5e1d7abe325f6446ab419df1e1dc31" kindref="member">gmp_ZZ</ref><sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>fmpz_t<sp/>n;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>fmpz_init(n);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>fmpz_set_mpz(n,<sp/><ref refid="overflow-test_8cpp_aa07f992d22249e2bef61db62f71671b2_1aa07f992d22249e2bef61db62f71671b2" kindref="member">x</ref>);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//std::cout<sp/>&lt;&lt;<sp/>&quot;factoring<sp/>fmpz<sp/>&quot;<sp/>&lt;&lt;<sp/>static_cast&lt;void*&gt;(n)<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>fmpz_factor_t<sp/>factor;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>fmpz_factor_init(factor);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>fmpz_factor(factor,n);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>len<sp/>=<sp/>factor-&gt;num;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>gmp_arrayZZ<sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref><sp/>=<sp/><ref refid="m2-mem_8h_a31dcc58936c13ff01270d6ee43733178_1a31dcc58936c13ff01270d6ee43733178" kindref="member">getmemarraytype</ref>(gmp_arrayZZ,2*len+1);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>-&gt;len<sp/>=<sp/>2*len+1;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>__mpz_struct<sp/>*tmp;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>sign<sp/>is<sp/>the<sp/>first<sp/>element<sp/>of<sp/>the<sp/>result.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>tmp<sp/>=<sp/><ref refid="newdelete_8hpp_a4b6a76f68cebc914ce819a24aedda112_1a4b6a76f68cebc914ce819a24aedda112" kindref="member">newitem</ref>(__mpz_struct);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>mpz_init(tmp);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/>mpz_set_si(tmp,<sp/>factor-&gt;sign);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(tmp);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>-&gt;array[0]<sp/>=<sp/>tmp;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;len;<sp/>i++)<sp/>{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Get<sp/>the<sp/>i-th<sp/>factor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>tmp<sp/>=<sp/><ref refid="newdelete_8hpp_a4b6a76f68cebc914ce819a24aedda112_1a4b6a76f68cebc914ce819a24aedda112" kindref="member">newitem</ref>(__mpz_struct);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>mpz_init(tmp);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>fmpz_get_mpz(tmp,factor-&gt;p<sp/>+<sp/>i);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(tmp);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>-&gt;array[2*i+1]<sp/>=<sp/>tmp;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Get<sp/>the<sp/>i-th<sp/>factor<sp/>and<sp/>its<sp/>exponent</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>tmp<sp/>=<sp/><ref refid="newdelete_8hpp_a4b6a76f68cebc914ce819a24aedda112_1a4b6a76f68cebc914ce819a24aedda112" kindref="member">newitem</ref>(__mpz_struct);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>mpz_init(tmp);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>fmpz_get_mpz(tmp,(fmpz<sp/>*)(factor-&gt;exp<sp/>+<sp/>i));</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="gmp-util_8h_ac1d9cec5a8df3154d9dfbf08b298419c_1ac1d9cec5a8df3154d9dfbf08b298419c" kindref="member">mpz_reallocate_limbs</ref>(tmp);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>-&gt;array[2*i+2]<sp/>=<sp/>tmp;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>fmpz_factor_clear(factor);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/>fmpz_clear(n);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="m2-mem_8cpp_aeace12b3a5c753d4ece1a0e89acb729b_1aeace12b3a5c753d4ece1a0e89acb729b" kindref="member">result</ref>;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="Macaulay2/e/interface/flint.cpp"/>
+  </compounddef>
+</doxygen>

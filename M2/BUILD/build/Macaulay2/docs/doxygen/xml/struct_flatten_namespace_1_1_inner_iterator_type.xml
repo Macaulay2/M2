@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_flatten_namespace_1_1_inner_iterator_type" kind="struct" language="C++" prot="public">
+    <compoundname>FlattenNamespace::InnerIteratorType</compoundname>
+    <includes refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" local="no">Range.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class OuterIterator</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="struct_flatten_namespace_1_1_inner_iterator_type_ad6e5d13a72be08133aae9fcd25defd54_1ad6e5d13a72be08133aae9fcd25defd54" prot="public" static="no">
+        <type>std::decay&lt; decltype(std::begin(*OuterIterator()))&gt;::type</type>
+        <definition>typedef std::decay&lt;decltype(std::begin(*OuterIterator()))&gt;::type FlattenNamespace::InnerIteratorType&lt; OuterIterator &gt;::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <qualifiedname>FlattenNamespace::InnerIteratorType::type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="396" column="40" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="396" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>FlattenNamespace::InnerIteratorType&lt; OuterIterator &gt;</label>
+        <link refid="struct_flatten_namespace_1_1_inner_iterator_type"/>
+      </node>
+      <node id="2">
+        <label>FlattenNamespace::type&lt; OuterIterator &gt;</label>
+        <link refid="struct_flatten_namespace_1_1_inner_iterator_type"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; OuterIterator &gt;::type</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="submodules/mathicgb/src/mathicgb/Range.hpp" line="395" column="3" bodyfile="submodules/mathicgb/src/mathicgb/Range.hpp" bodystart="395" bodyend="397"/>
+    <listofallmembers>
+      <member refid="struct_flatten_namespace_1_1_inner_iterator_type_ad6e5d13a72be08133aae9fcd25defd54_1ad6e5d13a72be08133aae9fcd25defd54" prot="public" virt="non-virtual"><scope>FlattenNamespace::InnerIteratorType</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

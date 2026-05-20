@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="structfrac__elem" kind="struct" language="C++" prot="public">
+    <compoundname>frac_elem</compoundname>
+    <includes refid="frac_8hpp" local="no">frac.hpp</includes>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structfrac__elem_a9f845989d42942789cf19281b5bd7e09_1a9f845989d42942789cf19281b5bd7e09" prot="public" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem frac_elem::numer</definition>
+        <argsstring></argsstring>
+        <name>numer</name>
+        <qualifiedname>frac_elem::numer</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/frac.hpp" line="41" column="13" bodyfile="Macaulay2/e/frac.hpp" bodystart="41" bodyend="-1"/>
+        <referencedby refid="class_fraction_field_a7493d0b44726fdce09b5bd2577cde655_1a7493d0b44726fdce09b5bd2577cde655" compoundref="frac_8cpp" startline="468" endline="489">FractionField::add</referencedby>
+        <referencedby refid="class_fraction_field_a195f8b32752039bd2856d57e8bc1e63e_1a195f8b32752039bd2856d57e8bc1e63e" compoundref="frac_8cpp" startline="388" endline="395">FractionField::compare_elems</referencedby>
+        <referencedby refid="class_fraction_field_a5b2b327c2123f9fe0b0d53fb47d5c53e_1a5b2b327c2123f9fe0b0d53fb47d5c53e" compoundref="frac_8cpp" startline="81" endline="86">FractionField::computeHashValue</referencedby>
+        <referencedby refid="class_fraction_field_a8eda2ae4390038386d115cf997dfb52f_1a8eda2ae4390038386d115cf997dfb52f" compoundref="frac_8cpp" startline="397" endline="404">FractionField::copy</referencedby>
+        <referencedby refid="class_fraction_field_a8ca42e51522bb562f07b2ea8775f6a58_1a8ca42e51522bb562f07b2ea8775f6a58" compoundref="frac_8cpp" startline="589" endline="599">FractionField::divide</referencedby>
+        <referencedby refid="class_fraction_field_a03fce5f1799251874a484053e79cedde_1a03fce5f1799251874a484053e79cedde" compoundref="frac_8cpp" startline="232" endline="250">FractionField::elem_text_out</referencedby>
+        <referencedby refid="class_fraction_field_a650c87ab0fbfd6fd6aac5fd1f43343a5_1a650c87ab0fbfd6fd6aac5fd1f43343a5" compoundref="frac_8cpp" startline="611" endline="630">FractionField::eval</referencedby>
+        <referencedby refid="class_fraction_field_add8a16928615eb84428c9af5f791c14a_1add8a16928615eb84428c9af5f791c14a" compoundref="frac_8cpp" startline="260" endline="266">FractionField::from_int</referencedby>
+        <referencedby refid="class_fraction_field_ae29b291c2e7899c458c81d8dd795f048_1ae29b291c2e7899c458c81d8dd795f048" compoundref="frac_8cpp" startline="252" endline="258">FractionField::from_long</referencedby>
+        <referencedby refid="class_fraction_field_a84edbf6d4fb0bd59db79db992b93d16a_1a84edbf6d4fb0bd59db79db992b93d16a" compoundref="frac_8cpp" startline="268" endline="276">FractionField::from_rational</referencedby>
+        <referencedby refid="class_fraction_field_a7a71467521d226dc66ad5a4243db83ae_1a7a71467521d226dc66ad5a4243db83ae" compoundref="frac_8cpp" startline="688" endline="697">FractionField::homogenize</referencedby>
+        <referencedby refid="class_fraction_field_a32c58554a38bfb8ba18c59534539164f_1a32c58554a38bfb8ba18c59534539164f" compoundref="frac_8cpp" startline="662" endline="686">FractionField::homogenize</referencedby>
+        <referencedby refid="class_fraction_field_a32750a2f1f8a315d0de34b42780e70c6_1a32750a2f1f8a315d0de34b42780e70c6" compoundref="frac_8cpp" startline="286" endline="293">FractionField::index_of_var</referencedby>
+        <referencedby refid="class_fraction_field_ae87ab39d591aeeb457428841e712c291_1ae87ab39d591aeeb457428841e712c291" compoundref="frac_8cpp" startline="413" endline="434">FractionField::internal_add_to</referencedby>
+        <referencedby refid="class_fraction_field_ad62d96fe52dd13f7303ef112c4420fff_1ad62d96fe52dd13f7303ef112c4420fff" compoundref="frac_8cpp" startline="407" endline="411">FractionField::internal_negate_to</referencedby>
+        <referencedby refid="class_fraction_field_a12dc3fab0cdb2854fce1dbd3d2cfdae9_1a12dc3fab0cdb2854fce1dbd3d2cfdae9" compoundref="frac_8cpp" startline="436" endline="457">FractionField::internal_subtract_to</referencedby>
+        <referencedby refid="class_fraction_field_a6b6b2351e9af44d4b7fd2a0d4242fb33_1a6b6b2351e9af44d4b7fd2a0d4242fb33" compoundref="frac_8cpp" startline="581" endline="587">FractionField::invert</referencedby>
+        <referencedby refid="class_fraction_field_ab63440af6f4b99851a00fb841c3482da_1ab63440af6f4b99851a00fb841c3482da" compoundref="frac_8cpp" startline="371" endline="386">FractionField::is_equal</referencedby>
+        <referencedby refid="class_fraction_field_a52bf2a244348c527f0a54adce7b0932b_1a52bf2a244348c527f0a54adce7b0932b" compoundref="frac_8cpp" startline="632" endline="639">FractionField::is_homogeneous</referencedby>
+        <referencedby refid="class_fraction_field_a09db89cf6cc89d729e474a0738ac1f18_1a09db89cf6cc89d729e474a0738ac1f18" compoundref="frac_8cpp" startline="325" endline="359">FractionField::lift</referencedby>
+        <referencedby refid="class_fraction_field_a7456bfb44797a457a623c874f531d7ce_1a7456bfb44797a457a623c874f531d7ce" compoundref="frac_8cpp" startline="191" endline="218">FractionField::lower_content</referencedby>
+        <referencedby refid="class_fraction_field_a4312ee467d095377629b689aa86138e2_1a4312ee467d095377629b689aa86138e2" compoundref="frac_8cpp" startline="514" endline="522">FractionField::mult</referencedby>
+        <referencedby refid="class_fraction_field_ab438bddec4ce5dbaaddf18145d09b3c3_1ab438bddec4ce5dbaaddf18145d09b3c3" compoundref="frac_8cpp" startline="641" endline="650">FractionField::multi_degree</referencedby>
+        <referencedby refid="class_fraction_field_ab7d8355badf5dbd1698a2d43ec4f3ea1_1ab7d8355badf5dbd1698a2d43ec4f3ea1" compoundref="frac_8cpp" startline="459" endline="466">FractionField::negate</referencedby>
+        <referencedby refid="class_fraction_field_a6fdf270875823c56409d0034fcdb94da_1a6fdf270875823c56409d0034fcdb94da" compoundref="frac_8cpp" startline="69" endline="73">FractionField::numerator</referencedby>
+        <referencedby refid="class_fraction_field_a4add83c03653e33851706932ce1b78c0_1a4add83c03653e33851706932ce1b78c0" compoundref="frac_8cpp" startline="524" endline="548">FractionField::power</referencedby>
+        <referencedby refid="class_fraction_field_a9cc747df6eb0f3c62b218d4c87f78352_1a9cc747df6eb0f3c62b218d4c87f78352" compoundref="frac_8cpp" startline="549" endline="579">FractionField::power</referencedby>
+        <referencedby refid="class_fraction_field_a061a70ae42aecfbcfbc93d290025a0a8_1a061a70ae42aecfbcfbc93d290025a0a8" compoundref="frac_8cpp" startline="308" endline="323">FractionField::promote</referencedby>
+        <referencedby refid="class_fraction_field_a6b31efd1b127a96642c6e3e8f97531f1_1a6b31efd1b127a96642c6e3e8f97531f1" compoundref="frac_8cpp" startline="89" endline="100">FractionField::set_non_unit_frac</referencedby>
+        <referencedby refid="class_fraction_field_a7e0bb0da2c18133c5026023be412c618_1a7e0bb0da2c18133c5026023be412c618" compoundref="frac_8cpp" startline="108" endline="180">FractionField::simplify</referencedby>
+        <referencedby refid="class_fraction_field_a0e64be34a0395fed9449669b4b3745cd_1a0e64be34a0395fed9449669b4b3745cd" compoundref="frac_8cpp" startline="491" endline="512">FractionField::subtract</referencedby>
+        <referencedby refid="class_fraction_field_ae6d4dec99efffa8e4f69534edb01e1fd_1ae6d4dec99efffa8e4f69534edb01e1fd" compoundref="frac_8cpp" startline="295" endline="306">FractionField::support</referencedby>
+        <referencedby refid="class_fraction_field_af4ff3757a0617dda18087d471ea6b428_1af4ff3757a0617dda18087d471ea6b428" compoundref="frac_8cpp" startline="278" endline="284">FractionField::var</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structfrac__elem_ad25c31c4a3fda9879b5cf0ef73b49b0c_1ad25c31c4a3fda9879b5cf0ef73b49b0c" prot="public" static="no" mutable="no">
+        <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+        <definition>ring_elem frac_elem::denom</definition>
+        <argsstring></argsstring>
+        <name>denom</name>
+        <qualifiedname>frac_elem::denom</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/frac.hpp" line="42" column="13" bodyfile="Macaulay2/e/frac.hpp" bodystart="42" bodyend="-1"/>
+        <referencedby refid="class_fraction_field_a7493d0b44726fdce09b5bd2577cde655_1a7493d0b44726fdce09b5bd2577cde655" compoundref="frac_8cpp" startline="468" endline="489">FractionField::add</referencedby>
+        <referencedby refid="class_fraction_field_a195f8b32752039bd2856d57e8bc1e63e_1a195f8b32752039bd2856d57e8bc1e63e" compoundref="frac_8cpp" startline="388" endline="395">FractionField::compare_elems</referencedby>
+        <referencedby refid="class_fraction_field_a5b2b327c2123f9fe0b0d53fb47d5c53e_1a5b2b327c2123f9fe0b0d53fb47d5c53e" compoundref="frac_8cpp" startline="81" endline="86">FractionField::computeHashValue</referencedby>
+        <referencedby refid="class_fraction_field_a8eda2ae4390038386d115cf997dfb52f_1a8eda2ae4390038386d115cf997dfb52f" compoundref="frac_8cpp" startline="397" endline="404">FractionField::copy</referencedby>
+        <referencedby refid="class_fraction_field_ad03d0be4ae260241c36e0d0c8b524ab2_1ad03d0be4ae260241c36e0d0c8b524ab2" compoundref="frac_8cpp" startline="75" endline="79">FractionField::denominator</referencedby>
+        <referencedby refid="class_fraction_field_a8ca42e51522bb562f07b2ea8775f6a58_1a8ca42e51522bb562f07b2ea8775f6a58" compoundref="frac_8cpp" startline="589" endline="599">FractionField::divide</referencedby>
+        <referencedby refid="class_fraction_field_a03fce5f1799251874a484053e79cedde_1a03fce5f1799251874a484053e79cedde" compoundref="frac_8cpp" startline="232" endline="250">FractionField::elem_text_out</referencedby>
+        <referencedby refid="class_fraction_field_a650c87ab0fbfd6fd6aac5fd1f43343a5_1a650c87ab0fbfd6fd6aac5fd1f43343a5" compoundref="frac_8cpp" startline="611" endline="630">FractionField::eval</referencedby>
+        <referencedby refid="class_fraction_field_add8a16928615eb84428c9af5f791c14a_1add8a16928615eb84428c9af5f791c14a" compoundref="frac_8cpp" startline="260" endline="266">FractionField::from_int</referencedby>
+        <referencedby refid="class_fraction_field_ae29b291c2e7899c458c81d8dd795f048_1ae29b291c2e7899c458c81d8dd795f048" compoundref="frac_8cpp" startline="252" endline="258">FractionField::from_long</referencedby>
+        <referencedby refid="class_fraction_field_a84edbf6d4fb0bd59db79db992b93d16a_1a84edbf6d4fb0bd59db79db992b93d16a" compoundref="frac_8cpp" startline="268" endline="276">FractionField::from_rational</referencedby>
+        <referencedby refid="class_fraction_field_a7a71467521d226dc66ad5a4243db83ae_1a7a71467521d226dc66ad5a4243db83ae" compoundref="frac_8cpp" startline="688" endline="697">FractionField::homogenize</referencedby>
+        <referencedby refid="class_fraction_field_a32c58554a38bfb8ba18c59534539164f_1a32c58554a38bfb8ba18c59534539164f" compoundref="frac_8cpp" startline="662" endline="686">FractionField::homogenize</referencedby>
+        <referencedby refid="class_fraction_field_a32750a2f1f8a315d0de34b42780e70c6_1a32750a2f1f8a315d0de34b42780e70c6" compoundref="frac_8cpp" startline="286" endline="293">FractionField::index_of_var</referencedby>
+        <referencedby refid="class_fraction_field_ae87ab39d591aeeb457428841e712c291_1ae87ab39d591aeeb457428841e712c291" compoundref="frac_8cpp" startline="413" endline="434">FractionField::internal_add_to</referencedby>
+        <referencedby refid="class_fraction_field_a12dc3fab0cdb2854fce1dbd3d2cfdae9_1a12dc3fab0cdb2854fce1dbd3d2cfdae9" compoundref="frac_8cpp" startline="436" endline="457">FractionField::internal_subtract_to</referencedby>
+        <referencedby refid="class_fraction_field_a6b6b2351e9af44d4b7fd2a0d4242fb33_1a6b6b2351e9af44d4b7fd2a0d4242fb33" compoundref="frac_8cpp" startline="581" endline="587">FractionField::invert</referencedby>
+        <referencedby refid="class_fraction_field_ab63440af6f4b99851a00fb841c3482da_1ab63440af6f4b99851a00fb841c3482da" compoundref="frac_8cpp" startline="371" endline="386">FractionField::is_equal</referencedby>
+        <referencedby refid="class_fraction_field_a52bf2a244348c527f0a54adce7b0932b_1a52bf2a244348c527f0a54adce7b0932b" compoundref="frac_8cpp" startline="632" endline="639">FractionField::is_homogeneous</referencedby>
+        <referencedby refid="class_fraction_field_a09db89cf6cc89d729e474a0738ac1f18_1a09db89cf6cc89d729e474a0738ac1f18" compoundref="frac_8cpp" startline="325" endline="359">FractionField::lift</referencedby>
+        <referencedby refid="class_fraction_field_a7456bfb44797a457a623c874f531d7ce_1a7456bfb44797a457a623c874f531d7ce" compoundref="frac_8cpp" startline="191" endline="218">FractionField::lower_content</referencedby>
+        <referencedby refid="class_fraction_field_a4312ee467d095377629b689aa86138e2_1a4312ee467d095377629b689aa86138e2" compoundref="frac_8cpp" startline="514" endline="522">FractionField::mult</referencedby>
+        <referencedby refid="class_fraction_field_ab438bddec4ce5dbaaddf18145d09b3c3_1ab438bddec4ce5dbaaddf18145d09b3c3" compoundref="frac_8cpp" startline="641" endline="650">FractionField::multi_degree</referencedby>
+        <referencedby refid="class_fraction_field_ab7d8355badf5dbd1698a2d43ec4f3ea1_1ab7d8355badf5dbd1698a2d43ec4f3ea1" compoundref="frac_8cpp" startline="459" endline="466">FractionField::negate</referencedby>
+        <referencedby refid="class_fraction_field_a4add83c03653e33851706932ce1b78c0_1a4add83c03653e33851706932ce1b78c0" compoundref="frac_8cpp" startline="524" endline="548">FractionField::power</referencedby>
+        <referencedby refid="class_fraction_field_a9cc747df6eb0f3c62b218d4c87f78352_1a9cc747df6eb0f3c62b218d4c87f78352" compoundref="frac_8cpp" startline="549" endline="579">FractionField::power</referencedby>
+        <referencedby refid="class_fraction_field_a061a70ae42aecfbcfbc93d290025a0a8_1a061a70ae42aecfbcfbc93d290025a0a8" compoundref="frac_8cpp" startline="308" endline="323">FractionField::promote</referencedby>
+        <referencedby refid="class_fraction_field_a6b31efd1b127a96642c6e3e8f97531f1_1a6b31efd1b127a96642c6e3e8f97531f1" compoundref="frac_8cpp" startline="89" endline="100">FractionField::set_non_unit_frac</referencedby>
+        <referencedby refid="class_fraction_field_a7e0bb0da2c18133c5026023be412c618_1a7e0bb0da2c18133c5026023be412c618" compoundref="frac_8cpp" startline="108" endline="180">FractionField::simplify</referencedby>
+        <referencedby refid="class_fraction_field_a0e64be34a0395fed9449669b4b3745cd_1a0e64be34a0395fed9449669b4b3745cd" compoundref="frac_8cpp" startline="491" endline="512">FractionField::subtract</referencedby>
+        <referencedby refid="class_fraction_field_ae6d4dec99efffa8e4f69534edb01e1fd_1ae6d4dec99efffa8e4f69534edb01e1fd" compoundref="frac_8cpp" startline="295" endline="306">FractionField::support</referencedby>
+        <referencedby refid="class_fraction_field_af4ff3757a0617dda18087d471ea6b428_1af4ff3757a0617dda18087d471ea6b428" compoundref="frac_8cpp" startline="278" endline="284">FractionField::var</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>Nterm</label>
+        <link refid="struct_nterm"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>coeff</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>monom</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>__mpfi_struct</label>
+      </node>
+      <node id="16">
+        <label>__mpfr_struct</label>
+      </node>
+      <node id="14">
+        <label>cc_doubles_struct</label>
+        <link refid="structcc__doubles__struct"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>cc_struct</label>
+        <link refid="structcc__struct"/>
+        <childnode refid="16" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>cci_struct</label>
+        <link refid="structcci__struct"/>
+        <childnode refid="18" relation="usage">
+          <edgelabel>im</edgelabel>
+          <edgelabel>re</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>const void *</label>
+      </node>
+      <node id="9">
+        <label>double</label>
+      </node>
+      <node id="1">
+        <label>frac_elem</label>
+        <link refid="structfrac__elem"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>int</label>
+        <link refid="classint"/>
+      </node>
+      <node id="7">
+        <label>local_elem</label>
+        <link refid="structlocal__elem"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>denom</edgelabel>
+          <edgelabel>numer</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>long</label>
+      </node>
+      <node id="13">
+        <label>mpfi_srcptr</label>
+      </node>
+      <node id="12">
+        <label>mpfr_srcptr</label>
+      </node>
+      <node id="10">
+        <label>mpq_srcptr</label>
+      </node>
+      <node id="11">
+        <label>mpz_srcptr</label>
+      </node>
+      <node id="6">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+      <node id="2">
+        <label>ring_elem</label>
+        <link refid="unionring__elem"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>poly_val</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>schur_poly_val</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>local_val</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>int_val</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>long_val</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>double_val</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>mpq_val</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>mpz_val</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>mpfr_val</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mpfi_val</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>cc_doubles_val</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>cc_val</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>cci_val</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mPolyVal</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>schur_poly</label>
+        <link refid="classschur__poly"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/frac.hpp" line="39" column="1" bodyfile="Macaulay2/e/frac.hpp" bodystart="40" bodyend="43"/>
+    <listofallmembers>
+      <member refid="structfrac__elem_ad25c31c4a3fda9879b5cf0ef73b49b0c_1ad25c31c4a3fda9879b5cf0ef73b49b0c" prot="public" virt="non-virtual"><scope>frac_elem</scope><name>denom</name></member>
+      <member refid="structfrac__elem_a9f845989d42942789cf19281b5bd7e09_1a9f845989d42942789cf19281b5bd7e09" prot="public" virt="non-virtual"><scope>frac_elem</scope><name>numer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

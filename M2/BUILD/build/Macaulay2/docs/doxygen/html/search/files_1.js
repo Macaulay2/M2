@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['basicpoly_2ecpp_0',['BasicPoly.cpp',['../_basic_poly_8cpp.html',1,'']]],
+  ['basicpoly_2ehpp_1',['BasicPoly.hpp',['../_basic_poly_8hpp.html',1,'']]],
+  ['basicpolylist_2ecpp_2',['BasicPolyList.cpp',['../_basic_poly_list_8cpp.html',1,'']]],
+  ['basicpolylist_2ehpp_3',['BasicPolyList.hpp',['../_basic_poly_list_8hpp.html',1,'']]],
+  ['basicpolylistparser_2ecpp_4',['BasicPolyListParser.cpp',['../_basic_poly_list_parser_8cpp.html',1,'']]],
+  ['basicpolylistparser_2ehpp_5',['BasicPolyListParser.hpp',['../_basic_poly_list_parser_8hpp.html',1,'']]],
+  ['basics_2dtest_2ecpp_6',['basics-test.cpp',['../basics-test_8cpp.html',1,'']]],
+  ['basis_2ecpp_7',['Basis.cpp',['../_macaulay2_2e_2gb-f4_2_basis_8cpp.html',1,'(Global Namespace)'],['../submodules_2mathicgb_2src_2mathicgb_2_basis_8cpp.html',1,'(Global Namespace)']]],
+  ['basis_2ehpp_8',['Basis.hpp',['../_macaulay2_2e_2gb-f4_2_basis_8hpp.html',1,'(Global Namespace)'],['../submodules_2mathicgb_2src_2mathicgb_2_basis_8hpp.html',1,'(Global Namespace)']]],
+  ['betti_2ecpp_9',['betti.cpp',['../betti_8cpp.html',1,'']]],
+  ['betti_2ehpp_10',['betti.hpp',['../betti_8hpp.html',1,'']]],
+  ['bibasis_2ecpp_11',['bibasis.cpp',['../bibasis_8cpp.html',1,'']]],
+  ['bibasis_2ehpp_12',['bibasis.hpp',['../bibasis_8hpp.html',1,'']]],
+  ['binarykdtree_2eh_13',['BinaryKDTree.h',['../_binary_k_d_tree_8h.html',1,'']]],
+  ['bittriangle_2ecpp_14',['BitTriangle.cpp',['../mathic_2_bit_triangle_8cpp.html',1,'(Global Namespace)'],['../test_2_bit_triangle_8cpp.html',1,'(Global Namespace)']]],
+  ['bittriangle_2eh_15',['BitTriangle.h',['../_bit_triangle_8h.html',1,'']]],
+  ['boolparameter_2ecpp_16',['BoolParameter.cpp',['../_bool_parameter_8cpp.html',1,'']]],
+  ['boolparameter_2eh_17',['BoolParameter.h',['../_bool_parameter_8h.html',1,'']]],
+  ['buffer_2ecpp_18',['buffer.cpp',['../buffer_8cpp.html',1,'']]],
+  ['buffer_2ehpp_19',['buffer.hpp',['../buffer_8hpp.html',1,'']]],
+  ['bufferpool_2ecpp_20',['BufferPool.cpp',['../_buffer_pool_8cpp.html',1,'']]],
+  ['bufferpool_2eh_21',['BufferPool.h',['../_buffer_pool_8h.html',1,'']]],
+  ['bufferpooltest_2ecpp_22',['BufferPoolTest.cpp',['../_buffer_pool_test_8cpp.html',1,'']]]
+];

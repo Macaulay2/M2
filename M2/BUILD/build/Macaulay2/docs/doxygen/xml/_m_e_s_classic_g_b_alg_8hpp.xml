@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="_m_e_s_classic_g_b_alg_8hpp" kind="file" language="C++">
+    <compoundname>MESClassicGBAlg.hpp</compoundname>
+    <includes local="no">functional</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>submodules/mathicgb/src/mathicgb/MESClassicGBAlg.hpp</label>
+        <link refid="_m_e_s_classic_g_b_alg_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>functional</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structmgb_f4_1_1_classic_g_b_alg_params" prot="public">mgbF4::ClassicGBAlgParams</innerclass>
+    <innernamespace refid="namespacemgb_f4">mgbF4</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>Parts<sp/>taken<sp/>from<sp/>MathicGB<sp/>copyright<sp/>2012<sp/>all<sp/>rights<sp/>reserved.<sp/>MathicGB<sp/>comes<sp/>with<sp/>ABSOLUTELY</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>NO<sp/>WARRANTY<sp/>and<sp/>is<sp/>licensed<sp/>as<sp/>GPL<sp/>v2.0<sp/>or<sp/>later<sp/>-<sp/>see<sp/>LICENSE.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Changes<sp/>Copyright<sp/>2021<sp/>Michael<sp/>Stillman.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>__classic_gb_alg_hpp__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__classic_gb_alg_hpp__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;functional&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="namespacemgb_f4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemgb_f4" kindref="compound">mgbF4</ref><sp/>{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_reducer" kindref="compound">Reducer</ref>;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_basis" kindref="compound">Basis</ref>;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="structmgb_f4_1_1_classic_g_b_alg_params" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmgb_f4_1_1_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref><sp/>{</highlight></codeline>
+<codeline lineno="15" refid="structmgb_f4_1_1_classic_g_b_alg_params_a68f56e85bf236c32ef280d1f9a1a7c97_1a68f56e85bf236c32ef280d1f9a1a7c97" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_reducer" kindref="compound">Reducer</ref>*<sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_a68f56e85bf236c32ef280d1f9a1a7c97_1a68f56e85bf236c32ef280d1f9a1a7c97" kindref="member">reducer</ref>;</highlight></codeline>
+<codeline lineno="16" refid="structmgb_f4_1_1_classic_g_b_alg_params_ab71b801111d3b9445b3dce4e8fc27b6a_1ab71b801111d3b9445b3dce4e8fc27b6a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_ab71b801111d3b9445b3dce4e8fc27b6a_1ab71b801111d3b9445b3dce4e8fc27b6a" kindref="member">monoLookupType</ref>;</highlight></codeline>
+<codeline lineno="17" refid="structmgb_f4_1_1_classic_g_b_alg_params_a1ce3335274209bf6ae3606245245af83_1a1ce3335274209bf6ae3606245245af83" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_a1ce3335274209bf6ae3606245245af83_1a1ce3335274209bf6ae3606245245af83" kindref="member">preferSparseReducers</ref>;</highlight></codeline>
+<codeline lineno="18" refid="structmgb_f4_1_1_classic_g_b_alg_params_a7d15252f0d6b001fd293b948ed47ac07_1a7d15252f0d6b001fd293b948ed47ac07" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_a7d15252f0d6b001fd293b948ed47ac07_1a7d15252f0d6b001fd293b948ed47ac07" kindref="member">sPairQueueType</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="20" refid="structmgb_f4_1_1_classic_g_b_alg_params_a328b65d007c2c8f5f5de365f7a673c55_1a328b65d007c2c8f5f5de365f7a673c55" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_a328b65d007c2c8f5f5de365f7a673c55_1a328b65d007c2c8f5f5de365f7a673c55" kindref="member">breakAfter</ref>;</highlight></codeline>
+<codeline lineno="21" refid="structmgb_f4_1_1_classic_g_b_alg_params_aa55a2ffe5fc12e88a0074295ea4c96fa_1aa55a2ffe5fc12e88a0074295ea4c96fa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_aa55a2ffe5fc12e88a0074295ea4c96fa_1aa55a2ffe5fc12e88a0074295ea4c96fa" kindref="member">printInterval</ref>;</highlight></codeline>
+<codeline lineno="22" refid="structmgb_f4_1_1_classic_g_b_alg_params_a32372ca018774df1e04b3531c3006415_1a32372ca018774df1e04b3531c3006415" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_a32372ca018774df1e04b3531c3006415_1a32372ca018774df1e04b3531c3006415" kindref="member">sPairGroupSize</ref>;</highlight></codeline>
+<codeline lineno="23" refid="structmgb_f4_1_1_classic_g_b_alg_params_a8fa88c44e293f8c3f7703d266ed01b93_1a8fa88c44e293f8c3f7703d266ed01b93" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_a8fa88c44e293f8c3f7703d266ed01b93_1a8fa88c44e293f8c3f7703d266ed01b93" kindref="member">reducerMemoryQuantum</ref>;</highlight></codeline>
+<codeline lineno="24" refid="structmgb_f4_1_1_classic_g_b_alg_params_a08fad97eae2db0b2368fc354f27b4ab7_1a08fad97eae2db0b2368fc354f27b4ab7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_a08fad97eae2db0b2368fc354f27b4ab7_1a08fad97eae2db0b2368fc354f27b4ab7" kindref="member">useAutoTopReduction</ref>;</highlight></codeline>
+<codeline lineno="25" refid="structmgb_f4_1_1_classic_g_b_alg_params_a442717a289bbbdec67023f75a58ffc32_1a442717a289bbbdec67023f75a58ffc32" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_a442717a289bbbdec67023f75a58ffc32_1a442717a289bbbdec67023f75a58ffc32" kindref="member">useAutoTailReduction</ref>;</highlight></codeline>
+<codeline lineno="26" refid="structmgb_f4_1_1_classic_g_b_alg_params_a226478dbca5916bc6deef118a3c862a8_1a226478dbca5916bc6deef118a3c862a8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::function&lt;<ref refid="classbool" kindref="compound">bool</ref>(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">)&gt;<sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params_a226478dbca5916bc6deef118a3c862a8_1a226478dbca5916bc6deef118a3c862a8" kindref="member">callback</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="29" refid="namespacemgb_f4_a61c91872a6f3fae49531483524cef60f_1a61c91872a6f3fae49531483524cef60f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_basis" kindref="compound">Basis</ref><sp/><ref refid="namespacemgb_f4_a61c91872a6f3fae49531483524cef60f_1a61c91872a6f3fae49531483524cef60f" kindref="member">computeGBClassicAlg</ref>(<ref refid="class_basis" kindref="compound">Basis</ref>&amp;&amp;<sp/>inputBasis,<sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref><sp/>params);</highlight></codeline>
+<codeline lineno="30" refid="namespacemgb_f4_a0727fc2091051bc198190b4609ad21d5_1a0727fc2091051bc198190b4609ad21d5" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="class_basis" kindref="compound">Basis</ref><sp/><ref refid="namespacemgb_f4_a0727fc2091051bc198190b4609ad21d5_1a0727fc2091051bc198190b4609ad21d5" kindref="member">computeModuleGBClassicAlg</ref>(<ref refid="class_basis" kindref="compound">Basis</ref>&amp;&amp;<sp/>inputBasis,<sp/><ref refid="structmgb_f4_1_1_classic_g_b_alg_params" kindref="compound">ClassicGBAlgParams</ref><sp/>params);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Local<sp/>Variables:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//<sp/>compile-command:<sp/>&quot;make<sp/>-C<sp/>$M2BUILDDIR/Macaulay2/e<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/>indent-tabs-mode:<sp/>nil</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/>End:</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="submodules/mathicgb/src/mathicgb/MESClassicGBAlg.hpp"/>
+  </compounddef>
+</doxygen>

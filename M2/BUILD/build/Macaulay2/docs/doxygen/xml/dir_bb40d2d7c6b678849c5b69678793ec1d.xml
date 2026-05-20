@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_bb40d2d7c6b678849c5b69678793ec1d" kind="dir">
+    <compoundname>submodules/mathic/src/test</compoundname>
+    <innerfile refid="test_2_bit_triangle_8cpp">BitTriangle.cpp</innerfile>
+    <innerfile refid="_div_finder_8cpp">DivFinder.cpp</innerfile>
+    <innerfile refid="_hash_table_8cpp">HashTable.cpp</innerfile>
+    <innerfile refid="_pair_queue_8cpp">PairQueue.cpp</innerfile>
+    <innerfile refid="submodules_2mathic_2src_2test_2test_main_8cpp">testMain.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathic/src/test/"/>
+  </compounddef>
+</doxygen>

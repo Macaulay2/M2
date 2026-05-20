@@ -1,0 +1,518 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_polynomial" kind="class" language="C++" prot="public">
+    <compoundname>Polynomial</compoundname>
+    <basecompoundref refid="structour__new__delete" prot="public" virt="non-virtual">our_new_delete</basecompoundref>
+    <includes refid="_polynomial_8hpp" local="no">Polynomial.hpp</includes>
+    <innerclass refid="class_polynomial_1_1const__iterator" prot="public">Polynomial::const_iterator</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename <ref refid="struct_coefficient_ring_type" kindref="compound">CoefficientRingType</ref></type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_polynomial_a5a4b673cab5b861118cf8051011f9ec0_1a5a4b673cab5b861118cf8051011f9ec0" prot="private" static="no">
+        <type><ref refid="struct_coefficient_ring_type_a5e4200103568520ad84641f18c2db5bd_1a5e4200103568520ad84641f18c2db5bd" kindref="member">CoefficientRingType::ElementType</ref></type>
+        <definition>typedef CoefficientRingType::ElementType Polynomial&lt; CoefficientRingType &gt;::ElementType</definition>
+        <argsstring></argsstring>
+        <name>ElementType</name>
+        <qualifiedname>Polynomial::ElementType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="213" column="53" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="213" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_polynomial_aa871c3ad018cafa21e02a190558c8f76_1aa871c3ad018cafa21e02a190558c8f76" prot="public" static="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="class_polynomial_a5a4b673cab5b861118cf8051011f9ec0_1a5a4b673cab5b861118cf8051011f9ec0" kindref="member">ElementType</ref> &gt;</type>
+        <definition>using Polynomial&lt; CoefficientRingType &gt;::coeffVector =  gc_vector&lt;ElementType&gt;</definition>
+        <argsstring></argsstring>
+        <name>coeffVector</name>
+        <qualifiedname>Polynomial::coeffVector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="215" column="3" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_polynomial_a396eb724c4efb0dae6f1ee986aaca359_1a396eb724c4efb0dae6f1ee986aaca359" prot="public" static="no">
+        <type><ref refid="newdelete_8hpp_a372d8395e2d40d72e37f3f32375dd58a_1a372d8395e2d40d72e37f3f32375dd58a" kindref="member">gc_vector</ref>&lt; <ref refid="classint" kindref="compound">int</ref> &gt;</type>
+        <definition>using Polynomial&lt; CoefficientRingType &gt;::monomVector =  gc_vector&lt;int&gt;</definition>
+        <argsstring></argsstring>
+        <name>monomVector</name>
+        <qualifiedname>Polynomial::monomVector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="216" column="3" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_polynomial_ad5b49abc7a9fd654f4619d6a64262a6a_1ad5b49abc7a9fd654f4619d6a64262a6a" prot="public" static="no">
+        <type>coeffVector::iterator</type>
+        <definition>typedef coeffVector::iterator Polynomial&lt; CoefficientRingType &gt;::coeffIterator</definition>
+        <argsstring></argsstring>
+        <name>coeffIterator</name>
+        <qualifiedname>Polynomial::coeffIterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="218" column="42" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_polynomial_a2448c81b790a6295a1e2cecdf8a87fa6_1a2448c81b790a6295a1e2cecdf8a87fa6" prot="public" static="no">
+        <type>monomVector::iterator</type>
+        <definition>typedef monomVector::iterator Polynomial&lt; CoefficientRingType &gt;::monomIterator</definition>
+        <argsstring></argsstring>
+        <name>monomIterator</name>
+        <qualifiedname>Polynomial::monomIterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="219" column="33" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_polynomial_a684ecf1a135b9659d7850e8646f15929_1a684ecf1a135b9659d7850e8646f15929" prot="public" static="no">
+        <type>coeffVector::const_iterator</type>
+        <definition>typedef coeffVector::const_iterator Polynomial&lt; CoefficientRingType &gt;::coeffConstIterator</definition>
+        <argsstring></argsstring>
+        <name>coeffConstIterator</name>
+        <qualifiedname>Polynomial::coeffConstIterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="221" column="48" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_polynomial_a3292a36e721304268087c3d099a613d9_1a3292a36e721304268087c3d099a613d9" prot="public" static="no">
+        <type>monomVector::const_iterator</type>
+        <definition>typedef monomVector::const_iterator Polynomial&lt; CoefficientRingType &gt;::monomConstIterator</definition>
+        <argsstring></argsstring>
+        <name>monomConstIterator</name>
+        <qualifiedname>Polynomial::monomConstIterator</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="222" column="39" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="222" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="class_polynomial_a4ae4e8604a482bb95955b0db6f0401dc_1a4ae4e8604a482bb95955b0db6f0401dc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class M2FreeAlgebra</definition>
+        <argsstring></argsstring>
+        <name>M2FreeAlgebra</name>
+        <qualifiedname>Polynomial::M2FreeAlgebra</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_free_algebra" kindref="compound">M2FreeAlgebra</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="208" column="16" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="208" bodyend="-1"/>
+        <references refid="class_polynomial_a4ae4e8604a482bb95955b0db6f0401dc_1a4ae4e8604a482bb95955b0db6f0401dc" compoundref="_polynomial_8hpp" startline="208">Polynomial&lt; CoefficientRingType &gt;::M2FreeAlgebra</references>
+        <referencedby refid="class_polynomial_a4ae4e8604a482bb95955b0db6f0401dc_1a4ae4e8604a482bb95955b0db6f0401dc" compoundref="_polynomial_8hpp" startline="208">Polynomial&lt; CoefficientRingType &gt;::M2FreeAlgebra</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_polynomial_a1bbdbe363c09655d85954c061ba6f448_1a1bbdbe363c09655d85954c061ba6f448" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class M2FreeAlgebraOrQuotient</definition>
+        <argsstring></argsstring>
+        <name>M2FreeAlgebraOrQuotient</name>
+        <qualifiedname>Polynomial::M2FreeAlgebraOrQuotient</qualifiedname>
+        <param>
+          <type><ref refid="class_m2_free_algebra_or_quotient" kindref="compound">M2FreeAlgebraOrQuotient</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="209" column="16" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="209" bodyend="-1"/>
+        <references refid="class_polynomial_a1bbdbe363c09655d85954c061ba6f448_1a1bbdbe363c09655d85954c061ba6f448" compoundref="_polynomial_8hpp" startline="209">Polynomial&lt; CoefficientRingType &gt;::M2FreeAlgebraOrQuotient</references>
+        <referencedby refid="class_polynomial_a1bbdbe363c09655d85954c061ba6f448_1a1bbdbe363c09655d85954c061ba6f448" compoundref="_polynomial_8hpp" startline="209">Polynomial&lt; CoefficientRingType &gt;::M2FreeAlgebraOrQuotient</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_polynomial_a35d93f57fdd5ab4298b4bfa1df5f6cc4_1a35d93f57fdd5ab4298b4bfa1df5f6cc4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class FreeAlgebra</definition>
+        <argsstring></argsstring>
+        <name>FreeAlgebra</name>
+        <qualifiedname>Polynomial::FreeAlgebra</qualifiedname>
+        <param>
+          <type><ref refid="class_free_algebra" kindref="compound">FreeAlgebra</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="210" column="16" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="210" bodyend="-1"/>
+        <references refid="class_polynomial_a35d93f57fdd5ab4298b4bfa1df5f6cc4_1a35d93f57fdd5ab4298b4bfa1df5f6cc4" compoundref="_polynomial_8hpp" startline="210">Polynomial&lt; CoefficientRingType &gt;::FreeAlgebra</references>
+        <referencedby refid="class_polynomial_a35d93f57fdd5ab4298b4bfa1df5f6cc4_1a35d93f57fdd5ab4298b4bfa1df5f6cc4" compoundref="_polynomial_8hpp" startline="210">Polynomial&lt; CoefficientRingType &gt;::FreeAlgebra</referencedby>
+      </memberdef>
+      <memberdef kind="friend" id="class_polynomial_a3c4a368796300cef75048c0b0e07f6f6_1a3c4a368796300cef75048c0b0e07f6f6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class NCF4</definition>
+        <argsstring></argsstring>
+        <name>NCF4</name>
+        <qualifiedname>Polynomial::NCF4</qualifiedname>
+        <param>
+          <type><ref refid="class_n_c_f4" kindref="compound">NCF4</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="211" column="16" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="211" bodyend="-1"/>
+        <references refid="class_polynomial_a3c4a368796300cef75048c0b0e07f6f6_1a3c4a368796300cef75048c0b0e07f6f6" compoundref="_polynomial_8hpp" startline="211">Polynomial&lt; CoefficientRingType &gt;::NCF4</references>
+        <referencedby refid="class_polynomial_a3c4a368796300cef75048c0b0e07f6f6_1a3c4a368796300cef75048c0b0e07f6f6" compoundref="_polynomial_8hpp" startline="211">Polynomial&lt; CoefficientRingType &gt;::NCF4</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" prot="private" static="no" mutable="no">
+        <type><ref refid="class_polynomial_aa871c3ad018cafa21e02a190558c8f76_1aa871c3ad018cafa21e02a190558c8f76" kindref="member">coeffVector</ref></type>
+        <definition>coeffVector Polynomial&lt; CoefficientRingType &gt;::mCoefficients</definition>
+        <argsstring></argsstring>
+        <name>mCoefficients</name>
+        <qualifiedname>Polynomial::mCoefficients</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="312" column="15" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="312" bodyend="-1"/>
+        <referencedby refid="class_polynomial_a572094743a2c6952e6d828bfee4e54a4_1a572094743a2c6952e6d828bfee4e54a4" compoundref="_polynomial_8hpp" startline="292" endline="292">Polynomial&lt; CoefficientRingType &gt;::beginCoeff</referencedby>
+        <referencedby refid="class_polynomial_a41e9914604a74b5d267f74e7015f7087_1a41e9914604a74b5d267f74e7015f7087" compoundref="_polynomial_8hpp" startline="282" endline="285">Polynomial&lt; CoefficientRingType &gt;::cbegin</referencedby>
+        <referencedby refid="class_polynomial_ab8bf906f1cde1a37a1a8c653201a78d7_1ab8bf906f1cde1a37a1a8c653201a78d7" compoundref="_polynomial_8hpp" startline="295" endline="295">Polynomial&lt; CoefficientRingType &gt;::cbeginCoeff</referencedby>
+        <referencedby refid="class_polynomial_adae4172aaf57a3a282b8362470aa8efc_1adae4172aaf57a3a282b8362470aa8efc" compoundref="_polynomial_8hpp" startline="287" endline="290">Polynomial&lt; CoefficientRingType &gt;::cend</referencedby>
+        <referencedby refid="class_polynomial_a3f85d6eef7fff72b9cba89e5592a10f4_1a3f85d6eef7fff72b9cba89e5592a10f4" compoundref="_polynomial_8hpp" startline="298" endline="298">Polynomial&lt; CoefficientRingType &gt;::cendCoeff</referencedby>
+        <referencedby refid="class_polynomial_a3e725c41d47b62d92d517b95490ebb8f_1a3e725c41d47b62d92d517b95490ebb8f" compoundref="_polynomial_8hpp" startline="293" endline="293">Polynomial&lt; CoefficientRingType &gt;::endCoeff</referencedby>
+        <referencedby refid="class_polynomial_a378541f0ca2bfdace51b903c0f57bdb5_1a378541f0ca2bfdace51b903c0f57bdb5" compoundref="_polynomial_8hpp" startline="309" endline="309">Polynomial&lt; CoefficientRingType &gt;::getCoeffInserter</referencedby>
+        <referencedby refid="class_polynomial_a71d83d8f4d8fca6bbcb29a7c0263eb2c_1a71d83d8f4d8fca6bbcb29a7c0263eb2c" compoundref="_polynomial_8hpp" startline="301" endline="301">Polynomial&lt; CoefficientRingType &gt;::getElementArray</referencedby>
+        <referencedby refid="class_polynomial_a5536a9f42333f834e8e57132d41ff251_1a5536a9f42333f834e8e57132d41ff251" compoundref="_polynomial_8hpp" startline="306" endline="306">Polynomial&lt; CoefficientRingType &gt;::numTerms</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="class_polynomial_ae7ab781f2a3ae55a380b2d57db48f8f4_1ae7ab781f2a3ae55a380b2d57db48f8f4" prot="private" static="no" mutable="no">
+        <type><ref refid="class_polynomial_a396eb724c4efb0dae6f1ee986aaca359_1a396eb724c4efb0dae6f1ee986aaca359" kindref="member">monomVector</ref></type>
+        <definition>monomVector Polynomial&lt; CoefficientRingType &gt;::mMonomials</definition>
+        <argsstring></argsstring>
+        <name>mMonomials</name>
+        <qualifiedname>Polynomial::mMonomials</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="313" column="15" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="313" bodyend="-1"/>
+        <referencedby refid="class_polynomial_a41e9914604a74b5d267f74e7015f7087_1a41e9914604a74b5d267f74e7015f7087" compoundref="_polynomial_8hpp" startline="282" endline="285">Polynomial&lt; CoefficientRingType &gt;::cbegin</referencedby>
+        <referencedby refid="class_polynomial_aab4b4237f45e0f3b33ad825ef2482ce6_1aab4b4237f45e0f3b33ad825ef2482ce6" compoundref="_polynomial_8hpp" startline="296" endline="296">Polynomial&lt; CoefficientRingType &gt;::cbeginMonom</referencedby>
+        <referencedby refid="class_polynomial_adae4172aaf57a3a282b8362470aa8efc_1adae4172aaf57a3a282b8362470aa8efc" compoundref="_polynomial_8hpp" startline="287" endline="290">Polynomial&lt; CoefficientRingType &gt;::cend</referencedby>
+        <referencedby refid="class_polynomial_ab3d6803b12298136ac054913d7a75edf_1ab3d6803b12298136ac054913d7a75edf" compoundref="_polynomial_8hpp" startline="299" endline="299">Polynomial&lt; CoefficientRingType &gt;::cendMonom</referencedby>
+        <referencedby refid="class_polynomial_a99da63990dd52192d7e659b38461f301_1a99da63990dd52192d7e659b38461f301" compoundref="_polynomial_8hpp" startline="304" endline="304">Polynomial&lt; CoefficientRingType &gt;::getMonomInserter</referencedby>
+        <referencedby refid="class_polynomial_aefcb39d36bce2123198defdf2eac95a8_1aefcb39d36bce2123198defdf2eac95a8" compoundref="_polynomial_8hpp" startline="303" endline="303">Polynomial&lt; CoefficientRingType &gt;::getMonomVector</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_polynomial_a41e9914604a74b5d267f74e7015f7087_1a41e9914604a74b5d267f74e7015f7087" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator Polynomial&lt; CoefficientRingType &gt;::cbegin</definition>
+        <argsstring>() const</argsstring>
+        <name>cbegin</name>
+        <qualifiedname>Polynomial::cbegin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="282" column="18" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="282" bodyend="285"/>
+        <references refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" compoundref="_polynomial_8hpp" startline="312">Polynomial&lt; CoefficientRingType &gt;::mCoefficients</references>
+        <references refid="class_polynomial_ae7ab781f2a3ae55a380b2d57db48f8f4_1ae7ab781f2a3ae55a380b2d57db48f8f4" compoundref="_polynomial_8hpp" startline="313">Polynomial&lt; CoefficientRingType &gt;::mMonomials</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_adae4172aaf57a3a282b8362470aa8efc_1adae4172aaf57a3a282b8362470aa8efc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_1_1const__iterator" kindref="compound">const_iterator</ref></type>
+        <definition>const_iterator Polynomial&lt; CoefficientRingType &gt;::cend</definition>
+        <argsstring>() const</argsstring>
+        <name>cend</name>
+        <qualifiedname>Polynomial::cend</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="287" column="18" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="287" bodyend="290"/>
+        <references refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" compoundref="_polynomial_8hpp" startline="312">Polynomial&lt; CoefficientRingType &gt;::mCoefficients</references>
+        <references refid="class_polynomial_ae7ab781f2a3ae55a380b2d57db48f8f4_1ae7ab781f2a3ae55a380b2d57db48f8f4" compoundref="_polynomial_8hpp" startline="313">Polynomial&lt; CoefficientRingType &gt;::mMonomials</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_a572094743a2c6952e6d828bfee4e54a4_1a572094743a2c6952e6d828bfee4e54a4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_ad5b49abc7a9fd654f4619d6a64262a6a_1ad5b49abc7a9fd654f4619d6a64262a6a" kindref="member">coeffIterator</ref></type>
+        <definition>coeffIterator Polynomial&lt; CoefficientRingType &gt;::beginCoeff</definition>
+        <argsstring>()</argsstring>
+        <name>beginCoeff</name>
+        <qualifiedname>Polynomial::beginCoeff</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="292" column="17" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="292" bodyend="292"/>
+        <references refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" compoundref="_polynomial_8hpp" startline="312">Polynomial&lt; CoefficientRingType &gt;::mCoefficients</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_a3e725c41d47b62d92d517b95490ebb8f_1a3e725c41d47b62d92d517b95490ebb8f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_ad5b49abc7a9fd654f4619d6a64262a6a_1ad5b49abc7a9fd654f4619d6a64262a6a" kindref="member">coeffIterator</ref></type>
+        <definition>coeffIterator Polynomial&lt; CoefficientRingType &gt;::endCoeff</definition>
+        <argsstring>()</argsstring>
+        <name>endCoeff</name>
+        <qualifiedname>Polynomial::endCoeff</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="293" column="17" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="293" bodyend="293"/>
+        <references refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" compoundref="_polynomial_8hpp" startline="312">Polynomial&lt; CoefficientRingType &gt;::mCoefficients</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_ab8bf906f1cde1a37a1a8c653201a78d7_1ab8bf906f1cde1a37a1a8c653201a78d7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_a684ecf1a135b9659d7850e8646f15929_1a684ecf1a135b9659d7850e8646f15929" kindref="member">coeffConstIterator</ref></type>
+        <definition>coeffConstIterator Polynomial&lt; CoefficientRingType &gt;::cbeginCoeff</definition>
+        <argsstring>() const</argsstring>
+        <name>cbeginCoeff</name>
+        <qualifiedname>Polynomial::cbeginCoeff</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="295" column="22" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="295" bodyend="295"/>
+        <references refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" compoundref="_polynomial_8hpp" startline="312">Polynomial&lt; CoefficientRingType &gt;::mCoefficients</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_aab4b4237f45e0f3b33ad825ef2482ce6_1aab4b4237f45e0f3b33ad825ef2482ce6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_a3292a36e721304268087c3d099a613d9_1a3292a36e721304268087c3d099a613d9" kindref="member">monomConstIterator</ref></type>
+        <definition>monomConstIterator Polynomial&lt; CoefficientRingType &gt;::cbeginMonom</definition>
+        <argsstring>() const</argsstring>
+        <name>cbeginMonom</name>
+        <qualifiedname>Polynomial::cbeginMonom</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="296" column="22" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="296" bodyend="296"/>
+        <references refid="class_polynomial_ae7ab781f2a3ae55a380b2d57db48f8f4_1ae7ab781f2a3ae55a380b2d57db48f8f4" compoundref="_polynomial_8hpp" startline="313">Polynomial&lt; CoefficientRingType &gt;::mMonomials</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_a3f85d6eef7fff72b9cba89e5592a10f4_1a3f85d6eef7fff72b9cba89e5592a10f4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_a684ecf1a135b9659d7850e8646f15929_1a684ecf1a135b9659d7850e8646f15929" kindref="member">coeffConstIterator</ref></type>
+        <definition>coeffConstIterator Polynomial&lt; CoefficientRingType &gt;::cendCoeff</definition>
+        <argsstring>() const</argsstring>
+        <name>cendCoeff</name>
+        <qualifiedname>Polynomial::cendCoeff</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="298" column="22" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="298" bodyend="298"/>
+        <references refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" compoundref="_polynomial_8hpp" startline="312">Polynomial&lt; CoefficientRingType &gt;::mCoefficients</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_ab3d6803b12298136ac054913d7a75edf_1ab3d6803b12298136ac054913d7a75edf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_a3292a36e721304268087c3d099a613d9_1a3292a36e721304268087c3d099a613d9" kindref="member">monomConstIterator</ref></type>
+        <definition>monomConstIterator Polynomial&lt; CoefficientRingType &gt;::cendMonom</definition>
+        <argsstring>() const</argsstring>
+        <name>cendMonom</name>
+        <qualifiedname>Polynomial::cendMonom</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="299" column="22" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="299" bodyend="299"/>
+        <references refid="class_polynomial_ae7ab781f2a3ae55a380b2d57db48f8f4_1ae7ab781f2a3ae55a380b2d57db48f8f4" compoundref="_polynomial_8hpp" startline="313">Polynomial&lt; CoefficientRingType &gt;::mMonomials</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_a71d83d8f4d8fca6bbcb29a7c0263eb2c_1a71d83d8f4d8fca6bbcb29a7c0263eb2c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_polynomial_aa871c3ad018cafa21e02a190558c8f76_1aa871c3ad018cafa21e02a190558c8f76" kindref="member">coeffVector</ref> &amp;</type>
+        <definition>const coeffVector &amp; Polynomial&lt; CoefficientRingType &gt;::getElementArray</definition>
+        <argsstring>() const</argsstring>
+        <name>getElementArray</name>
+        <qualifiedname>Polynomial::getElementArray</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="301" column="22" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="301" bodyend="301"/>
+        <references refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" compoundref="_polynomial_8hpp" startline="312">Polynomial&lt; CoefficientRingType &gt;::mCoefficients</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_aefcb39d36bce2123198defdf2eac95a8_1aefcb39d36bce2123198defdf2eac95a8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_polynomial_a396eb724c4efb0dae6f1ee986aaca359_1a396eb724c4efb0dae6f1ee986aaca359" kindref="member">monomVector</ref> &amp;</type>
+        <definition>const monomVector &amp; Polynomial&lt; CoefficientRingType &gt;::getMonomVector</definition>
+        <argsstring>() const</argsstring>
+        <name>getMonomVector</name>
+        <qualifiedname>Polynomial::getMonomVector</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="303" column="22" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="303" bodyend="303"/>
+        <references refid="class_polynomial_ae7ab781f2a3ae55a380b2d57db48f8f4_1ae7ab781f2a3ae55a380b2d57db48f8f4" compoundref="_polynomial_8hpp" startline="313">Polynomial&lt; CoefficientRingType &gt;::mMonomials</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_a99da63990dd52192d7e659b38461f301_1a99da63990dd52192d7e659b38461f301" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_a396eb724c4efb0dae6f1ee986aaca359_1a396eb724c4efb0dae6f1ee986aaca359" kindref="member">monomVector</ref> &amp;</type>
+        <definition>monomVector &amp; Polynomial&lt; CoefficientRingType &gt;::getMonomInserter</definition>
+        <argsstring>()</argsstring>
+        <name>getMonomInserter</name>
+        <qualifiedname>Polynomial::getMonomInserter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="304" column="16" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="304" bodyend="304"/>
+        <references refid="class_polynomial_ae7ab781f2a3ae55a380b2d57db48f8f4_1ae7ab781f2a3ae55a380b2d57db48f8f4" compoundref="_polynomial_8hpp" startline="313">Polynomial&lt; CoefficientRingType &gt;::mMonomials</references>
+      </memberdef>
+      <memberdef kind="function" id="class_polynomial_a5536a9f42333f834e8e57132d41ff251_1a5536a9f42333f834e8e57132d41ff251" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="m2-mem_8h_afb0843d0fb27ea1b89117293f9a01605_1afb0843d0fb27ea1b89117293f9a01605" kindref="member">size_t</ref></type>
+        <definition>size_t Polynomial&lt; CoefficientRingType &gt;::numTerms</definition>
+        <argsstring>() const</argsstring>
+        <name>numTerms</name>
+        <qualifiedname>Polynomial::numTerms</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="306" column="10" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="306" bodyend="306"/>
+        <references refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" compoundref="_polynomial_8hpp" startline="312">Polynomial&lt; CoefficientRingType &gt;::mCoefficients</references>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="class_polynomial_a378541f0ca2bfdace51b903c0f57bdb5_1a378541f0ca2bfdace51b903c0f57bdb5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="class_polynomial_aa871c3ad018cafa21e02a190558c8f76_1aa871c3ad018cafa21e02a190558c8f76" kindref="member">coeffVector</ref> &amp;</type>
+        <definition>coeffVector &amp; Polynomial&lt; CoefficientRingType &gt;::getCoeffInserter</definition>
+        <argsstring>()</argsstring>
+        <name>getCoeffInserter</name>
+        <qualifiedname>Polynomial::getCoeffInserter</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/Polynomial.hpp" line="309" column="16" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="309" bodyend="309"/>
+        <references refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" compoundref="_polynomial_8hpp" startline="312">Polynomial&lt; CoefficientRingType &gt;::mCoefficients</references>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Polynomial&lt; CoefficientRingType &gt;</label>
+        <link refid="class_polynomial"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Polynomial&lt; CoefficientRingType &gt;</label>
+        <link refid="class_polynomial"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>mCoefficients</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>mMonomials</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>gc_vector&lt; ElementType &gt;</label>
+      </node>
+      <node id="4">
+        <label>gc_vector&lt; int &gt;</label>
+        <link refid="classgc__vector_3_01int_01_4"/>
+      </node>
+      <node id="2">
+        <label>our_new_delete</label>
+        <link refid="structour__new__delete"/>
+      </node>
+    </collaborationgraph>
+    <location file="Macaulay2/e/Polynomial.hpp" line="206" column="1" bodyfile="Macaulay2/e/Polynomial.hpp" bodystart="207" bodyend="314"/>
+    <listofallmembers>
+      <member refid="class_polynomial_a572094743a2c6952e6d828bfee4e54a4_1a572094743a2c6952e6d828bfee4e54a4" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>beginCoeff</name></member>
+      <member refid="class_polynomial_a41e9914604a74b5d267f74e7015f7087_1a41e9914604a74b5d267f74e7015f7087" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>cbegin</name></member>
+      <member refid="class_polynomial_ab8bf906f1cde1a37a1a8c653201a78d7_1ab8bf906f1cde1a37a1a8c653201a78d7" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>cbeginCoeff</name></member>
+      <member refid="class_polynomial_aab4b4237f45e0f3b33ad825ef2482ce6_1aab4b4237f45e0f3b33ad825ef2482ce6" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>cbeginMonom</name></member>
+      <member refid="class_polynomial_adae4172aaf57a3a282b8362470aa8efc_1adae4172aaf57a3a282b8362470aa8efc" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>cend</name></member>
+      <member refid="class_polynomial_a3f85d6eef7fff72b9cba89e5592a10f4_1a3f85d6eef7fff72b9cba89e5592a10f4" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>cendCoeff</name></member>
+      <member refid="class_polynomial_ab3d6803b12298136ac054913d7a75edf_1ab3d6803b12298136ac054913d7a75edf" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>cendMonom</name></member>
+      <member refid="class_polynomial_a684ecf1a135b9659d7850e8646f15929_1a684ecf1a135b9659d7850e8646f15929" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>coeffConstIterator</name></member>
+      <member refid="class_polynomial_ad5b49abc7a9fd654f4619d6a64262a6a_1ad5b49abc7a9fd654f4619d6a64262a6a" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>coeffIterator</name></member>
+      <member refid="class_polynomial_aa871c3ad018cafa21e02a190558c8f76_1aa871c3ad018cafa21e02a190558c8f76" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>coeffVector</name></member>
+      <member refid="class_polynomial_a5a4b673cab5b861118cf8051011f9ec0_1a5a4b673cab5b861118cf8051011f9ec0" prot="private" virt="non-virtual"><scope>Polynomial</scope><name>ElementType</name></member>
+      <member refid="class_polynomial_a3e725c41d47b62d92d517b95490ebb8f_1a3e725c41d47b62d92d517b95490ebb8f" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>endCoeff</name></member>
+      <member refid="class_polynomial_a35d93f57fdd5ab4298b4bfa1df5f6cc4_1a35d93f57fdd5ab4298b4bfa1df5f6cc4" prot="private" virt="non-virtual"><scope>Polynomial</scope><name>FreeAlgebra</name></member>
+      <member refid="class_polynomial_a378541f0ca2bfdace51b903c0f57bdb5_1a378541f0ca2bfdace51b903c0f57bdb5" prot="private" virt="non-virtual"><scope>Polynomial</scope><name>getCoeffInserter</name></member>
+      <member refid="class_polynomial_a71d83d8f4d8fca6bbcb29a7c0263eb2c_1a71d83d8f4d8fca6bbcb29a7c0263eb2c" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>getElementArray</name></member>
+      <member refid="class_polynomial_a99da63990dd52192d7e659b38461f301_1a99da63990dd52192d7e659b38461f301" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>getMonomInserter</name></member>
+      <member refid="class_polynomial_aefcb39d36bce2123198defdf2eac95a8_1aefcb39d36bce2123198defdf2eac95a8" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>getMonomVector</name></member>
+      <member refid="class_polynomial_a4ae4e8604a482bb95955b0db6f0401dc_1a4ae4e8604a482bb95955b0db6f0401dc" prot="private" virt="non-virtual"><scope>Polynomial</scope><name>M2FreeAlgebra</name></member>
+      <member refid="class_polynomial_a1bbdbe363c09655d85954c061ba6f448_1a1bbdbe363c09655d85954c061ba6f448" prot="private" virt="non-virtual"><scope>Polynomial</scope><name>M2FreeAlgebraOrQuotient</name></member>
+      <member refid="class_polynomial_a689f57b0fd3e554d940981251627738e_1a689f57b0fd3e554d940981251627738e" prot="private" virt="non-virtual"><scope>Polynomial</scope><name>mCoefficients</name></member>
+      <member refid="class_polynomial_ae7ab781f2a3ae55a380b2d57db48f8f4_1ae7ab781f2a3ae55a380b2d57db48f8f4" prot="private" virt="non-virtual"><scope>Polynomial</scope><name>mMonomials</name></member>
+      <member refid="class_polynomial_a3292a36e721304268087c3d099a613d9_1a3292a36e721304268087c3d099a613d9" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>monomConstIterator</name></member>
+      <member refid="class_polynomial_a2448c81b790a6295a1e2cecdf8a87fa6_1a2448c81b790a6295a1e2cecdf8a87fa6" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>monomIterator</name></member>
+      <member refid="class_polynomial_a396eb724c4efb0dae6f1ee986aaca359_1a396eb724c4efb0dae6f1ee986aaca359" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>monomVector</name></member>
+      <member refid="class_polynomial_a3c4a368796300cef75048c0b0e07f6f6_1a3c4a368796300cef75048c0b0e07f6f6" prot="private" virt="non-virtual"><scope>Polynomial</scope><name>NCF4</name></member>
+      <member refid="class_polynomial_a5536a9f42333f834e8e57132d41ff251_1a5536a9f42333f834e8e57132d41ff251" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>numTerms</name></member>
+      <member refid="structour__new__delete_aba2db4efe401e64df3df03b8a83ef441_1aba2db4efe401e64df3df03b8a83ef441" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a6a9bd401c73bb4d433c63f8cfeccdf89_1a6a9bd401c73bb4d433c63f8cfeccdf89" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>operator delete</name></member>
+      <member refid="structour__new__delete_a4736729ac8e596923dbb435d49938c8b_1a4736729ac8e596923dbb435d49938c8b" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_afab4c8d83fd2bd59db3be7b1f5354eae_1afab4c8d83fd2bd59db3be7b1f5354eae" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>operator delete[]</name></member>
+      <member refid="structour__new__delete_a1daacbe80bcb4ff475e603a376d57d07_1a1daacbe80bcb4ff475e603a376d57d07" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_a9c98f166b6028261e2cb4a753faa2e3d_1a9c98f166b6028261e2cb4a753faa2e3d" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>operator new</name></member>
+      <member refid="structour__new__delete_ab08062c08b8a0f702b2d6f1e11486b75_1ab08062c08b8a0f702b2d6f1e11486b75" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>operator new[]</name></member>
+      <member refid="structour__new__delete_a4652cb3fca8b1c34be67afdf2ab2feb1_1a4652cb3fca8b1c34be67afdf2ab2feb1" prot="public" virt="non-virtual"><scope>Polynomial</scope><name>operator new[]</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

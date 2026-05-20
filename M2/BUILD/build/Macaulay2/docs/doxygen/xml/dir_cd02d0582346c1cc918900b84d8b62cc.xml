@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="dir_cd02d0582346c1cc918900b84d8b62cc" kind="dir">
+    <compoundname>submodules/memtailor/src</compoundname>
+    <innerdir refid="dir_acc960db17bf76fcd5d561877ece2c17">submodules/memtailor/src/memtailor</innerdir>
+    <innerdir refid="dir_fa3012de94f964e0c0bb3377f95d36b7">submodules/memtailor/src/test</innerdir>
+    <innerfile refid="memtailor_8cpp">memtailor.cpp</innerfile>
+    <innerfile refid="memtailor_8h">memtailor.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/memtailor/src/"/>
+  </compounddef>
+</doxygen>

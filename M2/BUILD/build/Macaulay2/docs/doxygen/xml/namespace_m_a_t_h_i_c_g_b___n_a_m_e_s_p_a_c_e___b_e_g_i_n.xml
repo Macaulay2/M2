@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n" kind="namespace" language="C++">
+    <compoundname>MATHICGB_NAMESPACE_BEGIN</compoundname>
+    <innerclass refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row" prot="public">MATHICGB_NAMESPACE_BEGIN::DenseRow</innerclass>
+    <innerclass refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_mono_lookup" prot="public">MATHICGB_NAMESPACE_BEGIN::ConcreteMonoLookup</innerclass>
+    <innerclass refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_concrete_factory" prot="public">MATHICGB_NAMESPACE_BEGIN::ConcreteFactory</innerclass>
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a52e1c129dcd5167d9c403b56af7a6fa2_1a52e1c129dcd5167d9c403b56af7a6fa2" prot="public" static="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* MATHICGB_NAMESPACE_BEGIN::QuadMatrixExtension</definition>
+        <argsstring></argsstring>
+        <name>QuadMatrixExtension</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::QuadMatrixExtension</qualifiedname>
+        <initializer>= &quot;.qmat&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.cpp" line="19" column="21" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a09b95cbebdca934448809e60108e61db_1a09b95cbebdca934448809e60108e61db" prot="public" static="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* MATHICGB_NAMESPACE_BEGIN::LowerRightMatrixExtension</definition>
+        <argsstring></argsstring>
+        <name>LowerRightMatrixExtension</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::LowerRightMatrixExtension</qualifiedname>
+        <initializer>= &quot;.brmat&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.cpp" line="20" column="21" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a57c043684fd6865a8a71fff5cf253e50_1a57c043684fd6865a8a71fff5cf253e50" prot="public" static="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char* MATHICGB_NAMESPACE_BEGIN::ReducedLowerRightMatrixExtension</definition>
+        <argsstring></argsstring>
+        <name>ReducedLowerRightMatrixExtension</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::ReducedLowerRightMatrixExtension</qualifiedname>
+        <initializer>= &quot;.rbrmat&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.cpp" line="21" column="21" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a3d9ae301dc68d3a026a6803d7251058a_1a3d9ae301dc68d3a026a6803d7251058a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool MATHICGB_NAMESPACE_BEGIN::fileExists</definition>
+        <argsstring>(const std::string fileName)</argsstring>
+        <name>fileExists</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::fileExists</qualifiedname>
+        <param>
+          <type>const std::string</type>
+          <declname>fileName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the file exists - or more precisely if it can be opened for reading. Using this function to create a file only if it does not exist implies a race condition in that the file could have been crated after checking if it exists and before (re)creating it. Do not use this approach if that is not acceptable. The advantage here is that this is portable. There could be a solution with freopen, but unfortunately freopen is allowed to fail on any change to the mode so it is not a portable solution. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/cli/MatrixAction.cpp" line="31" column="8" bodyfile="submodules/mathicgb/src/cli/MatrixAction.cpp" bodystart="31" bodyend="33"/>
+        <references refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a3d9ae301dc68d3a026a6803d7251058a_1a3d9ae301dc68d3a026a6803d7251058a" compoundref="_matrix_action_8cpp" startline="31" endline="33">fileExists</references>
+        <references refid="class_c_file_a3653fcdff9706f3faa473f6bab31cfdb_1a3653fcdff9706f3faa473f6bab31cfdb" compoundref="_c_file_8hpp" startline="32" endline="32">CFile::hasFile</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a3d9ae301dc68d3a026a6803d7251058a_1a3d9ae301dc68d3a026a6803d7251058a" compoundref="_matrix_action_8cpp" startline="31" endline="33">fileExists</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_af2f2098c6db54690c4d15c8633ddb9f1_1af2f2098c6db54690c4d15c8633ddb9f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref></type>
+        <definition>SparseMatrix MATHICGB_NAMESPACE_BEGIN::reduce</definition>
+        <argsstring>(const QuadMatrix &amp;qm, SparseMatrix::Scalar modulus)</argsstring>
+        <name>reduce</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::reduce</qualifiedname>
+        <param>
+          <type>const <ref refid="class_quad_matrix" kindref="compound">QuadMatrix</ref> &amp;</type>
+          <declname>qm</declname>
+        </param>
+        <param>
+          <type><ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="194" column="16" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="194" bodyend="322"/>
+        <references refid="class_sparse_matrix_afee8df92e09bf6ca8e4245804e974f40_1afee8df92e09bf6ca8e4245804e974f40" compoundref="_sparse_matrix_8hpp" startline="205" endline="219">SparseMatrix::appendEntry</references>
+        <references refid="ringelem_8cpp_a7dc3f254421434195d252afe59ba8dac_1a7dc3f254421434195d252afe59ba8dac" compoundref="ringelem_8cpp" startline="4" endline="4">begin</references>
+        <references refid="class_quad_matrix_aecdf93433a2e8045053a62ac4e333c31_1aecdf93433a2e8045053a62ac4e333c31" compoundref="_quad_matrix_8hpp" startline="55">QuadMatrix::bottomLeft</references>
+        <references refid="class_quad_matrix_ac9c8e03eefe3a8c8c4bc50632513cbb0_1ac9c8e03eefe3a8c8c4bc50632513cbb0" compoundref="_quad_matrix_8hpp" startline="56">QuadMatrix::bottomRight</references>
+        <references refid="class_quad_matrix_aee46a18f20599872567f793e776d93b3_1aee46a18f20599872567f793e776d93b3" compoundref="_quad_matrix_8cpp" startline="75" endline="84">QuadMatrix::computeLeftColCount</references>
+        <references refid="class_quad_matrix_a5b4818fdff23da227846a08d7e90d8ea_1a5b4818fdff23da227846a08d7e90d8ea" compoundref="_quad_matrix_8cpp" startline="86" endline="95">QuadMatrix::computeRightColCount</references>
+        <references refid="class_sparse_matrix_a45fa9770b7bdf388413935896c3e9b15_1a45fa9770b7bdf388413935896c3e9b15" compoundref="_sparse_matrix_8hpp" startline="121" endline="124">SparseMatrix::emptyRow</references>
+        <references refid="ringelem_8cpp_a9e12da0d68ca4715109c3198cbe62a66_1a9e12da0d68ca4715109c3198cbe62a66" compoundref="ringelem_8cpp" startline="5" endline="5">end</references>
+        <references refid="class_sparse_matrix_abf18fefa828c1d68ff4cd9cab6ea054b_1abf18fefa828c1d68ff4cd9cab6ea054b" compoundref="_sparse_matrix_8hpp" startline="154" endline="158">SparseMatrix::leadCol</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_sparse_matrix_a3c771bf1134f36766d1e7459fc81be03_1a3c771bf1134f36766d1e7459fc81be03" compoundref="_sparse_matrix_8hpp" startline="98" endline="98">SparseMatrix::memoryQuantum</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <references refid="class_sparse_matrix_ad9fe5f5a2455d3a86d2f1be34aad933a_1ad9fe5f5a2455d3a86d2f1be34aad933a" compoundref="_sparse_matrix_8hpp" startline="126" endline="130">SparseMatrix::rowBegin</references>
+        <references refid="class_sparse_matrix_ab78c27fba04c0e3a58ac9a6dbce2f4fa_1ab78c27fba04c0e3a58ac9a6dbce2f4fa" compoundref="_sparse_matrix_8hpp" startline="96" endline="96">SparseMatrix::rowCount</references>
+        <references refid="class_sparse_matrix_a7a3329e55ce4bc9e9aea16c3a5513e59_1a7a3329e55ce4bc9e9aea16c3a5513e59" compoundref="_sparse_matrix_8hpp" startline="186" endline="200">SparseMatrix::rowDone</references>
+        <references refid="class_sparse_matrix_ad259276dc9d681df0652d08f96739de7_1ad259276dc9d681df0652d08f96739de7" compoundref="_sparse_matrix_8hpp" startline="138" endline="142">SparseMatrix::rowEnd</references>
+        <references refid="class_quad_matrix_a3ca582bef2c879cb15051796d76763b1_1a3ca582bef2c879cb15051796d76763b1" compoundref="_quad_matrix_8hpp" startline="53">QuadMatrix::topLeft</references>
+        <references refid="class_quad_matrix_a6beca5e807bb8bb6cf977175e3058cf0_1a6beca5e807bb8bb6cf977175e3058cf0" compoundref="_quad_matrix_8hpp" startline="54">QuadMatrix::topRight</references>
+        <references refid="godbolt_test_8cpp_a627f44b64b5d8d3ae8cb6a675f164405_1a627f44b64b5d8d3ae8cb6a675f164405" compoundref="godbolt_test_8cpp" startline="35">zero</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a300ae6201167713c02e6b1dc776f958d_1a300ae6201167713c02e6b1dc776f958d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref></type>
+        <definition>SparseMatrix MATHICGB_NAMESPACE_BEGIN::reduceToEchelonFormSparse</definition>
+        <argsstring>(const SparseMatrix &amp;toReduce, const SparseMatrix::Scalar modulus)</argsstring>
+        <name>reduceToEchelonFormSparse</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::reduceToEchelonFormSparse</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref> &amp;</type>
+          <declname>toReduce</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="324" column="16" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="324" bodyend="400"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a97a5785346d4b6238c2f0183146e41fa_1a97a5785346d4b6238c2f0183146e41fa" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="116" endline="123">MATHICGB_NAMESPACE_BEGIN::DenseRow::addRow</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a642a72ec863b5ef0f48f419fc7d77b62_1a642a72ec863b5ef0f48f419fc7d77b62" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="96" endline="96">MATHICGB_NAMESPACE_BEGIN::DenseRow::appendTo</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a157c04959b0f7f2db2c43a589b288bb6_1a157c04959b0f7f2db2c43a589b288bb6" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="81" endline="84">MATHICGB_NAMESPACE_BEGIN::DenseRow::clear</references>
+        <references refid="class_sparse_matrix_a89726a8163d623b6a61d63107f1d09bd_1a89726a8163d623b6a61d63107f1d09bd" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="227" endline="237">SparseMatrix::computeColCount</references>
+        <references refid="class_sparse_matrix_a45fa9770b7bdf388413935896c3e9b15_1a45fa9770b7bdf388413935896c3e9b15" compoundref="_sparse_matrix_8hpp" startline="121" endline="124">SparseMatrix::emptyRow</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2413fcea0a589585e643abc500a7ee56_1a2413fcea0a589585e643abc500a7ee56" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="98" endline="114">MATHICGB_NAMESPACE_BEGIN::DenseRow::makeUnitary</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a300ae6201167713c02e6b1dc776f958d_1a300ae6201167713c02e6b1dc776f958d" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="324" endline="400">reduceToEchelonFormSparse</references>
+        <references refid="class_sparse_matrix_ab78c27fba04c0e3a58ac9a6dbce2f4fa_1ab78c27fba04c0e3a58ac9a6dbce2f4fa" compoundref="_sparse_matrix_8hpp" startline="96" endline="96">SparseMatrix::rowCount</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3dbc5e9230f94d1f22fc5ee20e441ce5_1a3dbc5e9230f94d1f22fc5ee20e441ce5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="168" endline="188">MATHICGB_NAMESPACE_BEGIN::DenseRow::rowReduceByUnitary</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a300ae6201167713c02e6b1dc776f958d_1a300ae6201167713c02e6b1dc776f958d" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="324" endline="400">reduceToEchelonFormSparse</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a45306678f821408d44aa25a3f68d8b57_1a45306678f821408d44aa25a3f68d8b57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref></type>
+        <definition>SparseMatrix MATHICGB_NAMESPACE_BEGIN::reduceToEchelonForm</definition>
+        <argsstring>(const SparseMatrix &amp;toReduce, const SparseMatrix::Scalar modulus)</argsstring>
+        <name>reduceToEchelonForm</name>
+        <qualifiedname>MATHICGB_NAMESPACE_BEGIN::reduceToEchelonForm</qualifiedname>
+        <param>
+          <type>const <ref refid="class_sparse_matrix" kindref="compound">SparseMatrix</ref> &amp;</type>
+          <declname>toReduce</declname>
+        </param>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_a4413311e64dffaa4ed9fb0f44efec0b9_1a4413311e64dffaa4ed9fb0f44efec0b9" kindref="member">SparseMatrix::Scalar</ref></type>
+          <declname>modulus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" line="402" column="16" bodyfile="submodules/mathicgb/src/mathicgb/F4MatrixReducer.cpp" bodystart="402" bodyend="556"/>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a157c04959b0f7f2db2c43a589b288bb6_1a157c04959b0f7f2db2c43a589b288bb6" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="81" endline="84">MATHICGB_NAMESPACE_BEGIN::DenseRow::clear</references>
+        <references refid="class_sparse_matrix_a8624e99c23cc0d0d9f517909b85883f5_1a8624e99c23cc0d0d9f517909b85883f5" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="239" endline="252">SparseMatrix::clear</references>
+        <references refid="class_sparse_matrix_a89726a8163d623b6a61d63107f1d09bd_1a89726a8163d623b6a61d63107f1d09bd" compoundref="mathicgb_2_sparse_matrix_8cpp" startline="227" endline="237">SparseMatrix::computeColCount</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2112315da0150450afc6d7072fa78440_1a2112315da0150450afc6d7072fa78440" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="79" endline="79">MATHICGB_NAMESPACE_BEGIN::DenseRow::empty</references>
+        <references refid="class_sparse_matrix_a45fa9770b7bdf388413935896c3e9b15_1a45fa9770b7bdf388413935896c3e9b15" compoundref="_sparse_matrix_8hpp" startline="121" endline="124">SparseMatrix::emptyRow</references>
+        <references refid="class_sparse_matrix_1_1_const_row_iterator_a6cf3f2c955efca5a341da770e237b185_1a6cf3f2c955efca5a341da770e237b185" compoundref="_sparse_matrix_8hpp" startline="300" endline="300">SparseMatrix::ConstRowIterator::index</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a2413fcea0a589585e643abc500a7ee56_1a2413fcea0a589585e643abc500a7ee56" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="98" endline="114">MATHICGB_NAMESPACE_BEGIN::DenseRow::makeUnitary</references>
+        <references refid="mathicgb_2src_2mathicgb_2stdinc_8h_af2e11803d5e6e20eeab7bd8144c721a0_1af2e11803d5e6e20eeab7bd8144c721a0" compoundref="mathicgb_2src_2mathicgb_2stdinc_8h" startline="139">MATHICGB_ASSERT</references>
+        <references refid="class_sparse_matrix_a3c771bf1134f36766d1e7459fc81be03_1a3c771bf1134f36766d1e7459fc81be03" compoundref="_sparse_matrix_8hpp" startline="98" endline="98">SparseMatrix::memoryQuantum</references>
+        <references refid="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp_ac20b1ffc07c4258287b97217efa97a97_1ac20b1ffc07c4258287b97217efa97a97" compoundref="submodules_2mathicgb_2src_2mathicgb_2_range_8hpp" startline="49" endline="51">range</references>
+        <references refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a45306678f821408d44aa25a3f68d8b57_1a45306678f821408d44aa25a3f68d8b57" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="402" endline="556">reduceToEchelonForm</references>
+        <references refid="class_sparse_matrix_ad9fe5f5a2455d3a86d2f1be34aad933a_1ad9fe5f5a2455d3a86d2f1be34aad933a" compoundref="_sparse_matrix_8hpp" startline="126" endline="130">SparseMatrix::rowBegin</references>
+        <references refid="class_sparse_matrix_ab78c27fba04c0e3a58ac9a6dbce2f4fa_1ab78c27fba04c0e3a58ac9a6dbce2f4fa" compoundref="_sparse_matrix_8hpp" startline="96" endline="96">SparseMatrix::rowCount</references>
+        <references refid="class_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_1_1_dense_row_a3dbc5e9230f94d1f22fc5ee20e441ce5_1a3dbc5e9230f94d1f22fc5ee20e441ce5" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="168" endline="188">MATHICGB_NAMESPACE_BEGIN::DenseRow::rowReduceByUnitary</references>
+        <referencedby refid="namespace_m_a_t_h_i_c_g_b___n_a_m_e_s_p_a_c_e___b_e_g_i_n_a45306678f821408d44aa25a3f68d8b57_1a45306678f821408d44aa25a3f68d8b57" compoundref="mathicgb_2_f4_matrix_reducer_8cpp" startline="402" endline="556">reduceToEchelonForm</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="submodules/mathicgb/src/cli/MatrixAction.cpp" line="18" column="1"/>
+  </compounddef>
+</doxygen>

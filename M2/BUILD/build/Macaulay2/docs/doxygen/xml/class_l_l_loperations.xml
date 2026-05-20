@@ -1,0 +1,281 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="class_l_l_loperations" kind="class" language="C++" prot="public">
+    <compoundname>LLLoperations</compoundname>
+    <includes refid="_l_l_l_8hpp" local="no">LLL.hpp</includes>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_l_l_loperations_a914376331396c5b5d680e3c15063f44a_1a914376331396c5b5d680e3c15063f44a" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool LLLoperations::checkThreshold</definition>
+        <argsstring>(ring_elem num, ring_elem den)</argsstring>
+        <name>checkThreshold</name>
+        <qualifiedname>LLLoperations::checkThreshold</qualifiedname>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>num</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>den</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/LLL.hpp" line="51" column="15" bodyfile="Macaulay2/e/LLL.cpp" bodystart="10" bodyend="26"/>
+        <references refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" compoundref="ringelem_8hpp" startline="125" endline="125">ring_elem::get_mpz</references>
+        <referencedby refid="class_l_l_loperations_ab40b19c4f402ba4b78a429df0528c91f_1ab40b19c4f402ba4b78a429df0528c91f" compoundref="_l_l_l_8cpp" startline="28" endline="70">initializeLLL</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_l_l_loperations_a9f45b347ed1503be9cae55eca4d574ac_1a9f45b347ed1503be9cae55eca4d574ac" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool LLLoperations::Lovasz</definition>
+        <argsstring>(MutableMatrix *lambda, int k, ring_elem alphaTop, ring_elem alphaBottom)</argsstring>
+        <name>Lovasz</name>
+        <qualifiedname>LLLoperations::Lovasz</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>lambda</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>alphaTop</declname>
+        </param>
+        <param>
+          <type><ref refid="unionring__elem" kindref="compound">ring_elem</ref></type>
+          <declname>alphaBottom</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/LLL.hpp" line="53" column="15" bodyfile="Macaulay2/e/LLL.cpp" bodystart="72" bodyend="106"/>
+        <references refid="class_mutable_matrix_a56128821c2eb57f3704e59937bd0472e_1a56128821c2eb57f3704e59937bd0472e">MutableMatrix::get_entry</references>
+        <references refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" compoundref="ringelem_8hpp" startline="125" endline="125">ring_elem::get_mpz</references>
+        <referencedby refid="class_l_l_loperations_a8585ee10dff27f8094843601568222f0_1a8585ee10dff27f8094843601568222f0" compoundref="_l_l_l_8cpp" startline="241" endline="354">doLLL</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_l_l_loperations_ad3814bc975837e7e8e8dc7bce14946d1_1ad3814bc975837e7e8e8dc7bce14946d1" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LLLoperations::REDI</definition>
+        <argsstring>(int k, int ell, MutableMatrix *A, MutableMatrix *Achange, MutableMatrix *lambda)</argsstring>
+        <name>REDI</name>
+        <qualifiedname>LLLoperations::REDI</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>ell</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>Achange</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>lambda</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/LLL.hpp" line="58" column="15" bodyfile="Macaulay2/e/LLL.cpp" bodystart="108" bodyend="141"/>
+        <references refid="class_mutable_matrix_ac2b3de66cc9d5a345d81e3117a03597f_1ac2b3de66cc9d5a345d81e3117a03597f">MutableMatrix::column_op</references>
+        <references refid="class_mutable_matrix_a56128821c2eb57f3704e59937bd0472e_1a56128821c2eb57f3704e59937bd0472e">MutableMatrix::get_entry</references>
+        <references refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" compoundref="ringelem_8hpp" startline="125" endline="125">ring_elem::get_mpz</references>
+        <referencedby refid="class_l_l_loperations_a8585ee10dff27f8094843601568222f0_1a8585ee10dff27f8094843601568222f0" compoundref="_l_l_l_8cpp" startline="241" endline="354">doLLL</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_l_l_loperations_a65b42ad21ab70cd48b457c6831cb3ce7_1a65b42ad21ab70cd48b457c6831cb3ce7" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void LLLoperations::SWAPI</definition>
+        <argsstring>(int k, int kmax, MutableMatrix *A, MutableMatrix *Achange, MutableMatrix *lambda)</argsstring>
+        <name>SWAPI</name>
+        <qualifiedname>LLLoperations::SWAPI</qualifiedname>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>kmax</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>Achange</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>lambda</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/LLL.hpp" line="64" column="15" bodyfile="Macaulay2/e/LLL.cpp" bodystart="143" bodyend="239"/>
+        <references refid="class_mutable_matrix_a56128821c2eb57f3704e59937bd0472e_1a56128821c2eb57f3704e59937bd0472e">MutableMatrix::get_entry</references>
+        <references refid="unionring__elem_aeb2b58dce5525fe3f7eb7f3bcb42bc26_1aeb2b58dce5525fe3f7eb7f3bcb42bc26" compoundref="ringelem_8hpp" startline="125" endline="125">ring_elem::get_mpz</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="class_mutable_matrix_a38d41cdc9e3ff6d994ec3d7007e2d322_1a38d41cdc9e3ff6d994ec3d7007e2d322">MutableMatrix::interchange_columns</references>
+        <references refid="m2-mem_8cpp_a2fc91f4e89bc37f261db820d231da2e5_1a2fc91f4e89bc37f261db820d231da2e5" compoundref="m2-mem_8cpp" startline="271">s</references>
+        <references refid="class_mutable_matrix_af0175fcb3d11970c4de37c3e769f27f6_1af0175fcb3d11970c4de37c3e769f27f6">MutableMatrix::set_entry</references>
+        <referencedby refid="class_l_l_loperations_a8585ee10dff27f8094843601568222f0_1a8585ee10dff27f8094843601568222f0" compoundref="_l_l_l_8cpp" startline="241" endline="354">doLLL</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_l_l_loperations_ab40b19c4f402ba4b78a429df0528c91f_1ab40b19c4f402ba4b78a429df0528c91f" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool LLLoperations::initializeLLL</definition>
+        <argsstring>(const MutableMatrix *A, gmp_QQ threshold, MutableMatrix *&amp;LLLstate)</argsstring>
+        <name>initializeLLL</name>
+        <qualifiedname>LLLoperations::initializeLLL</qualifiedname>
+        <param>
+          <type>const <ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a9e221a0854c8b82eea2959ee7a271b54_1a9e221a0854c8b82eea2959ee7a271b54" kindref="member">gmp_QQ</ref></type>
+          <declname>threshold</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *&amp;</type>
+          <declname>LLLstate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/LLL.hpp" line="71" column="15" bodyfile="Macaulay2/e/LLL.cpp" bodystart="28" bodyend="70"/>
+        <references refid="class_l_l_loperations_a914376331396c5b5d680e3c15063f44a_1a914376331396c5b5d680e3c15063f44a" compoundref="_l_l_l_8cpp" startline="10" endline="26">checkThreshold</references>
+        <references refid="class_mutable_matrix_a06fd89ccadc291361d82c6abcaf16e52_1a06fd89ccadc291361d82c6abcaf16e52">MutableMatrix::dot_product</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_mutable_matrix_ad146cd609596d0a9476679ac859257a3_1ad146cd609596d0a9476679ac859257a3">MutableMatrix::get_ring</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="class_mutable_matrix_a8dec4e03de9c0adecb0f97e1eaa55ccb_1a8dec4e03de9c0adecb0f97e1eaa55ccb">MutableMatrix::is_dense</references>
+        <references refid="class_mutable_matrix_a30be137116d098d73a677476902998bd_1a30be137116d098d73a677476902998bd">MutableMatrix::n_cols</references>
+        <references refid="class_mutable_matrix_af0175fcb3d11970c4de37c3e769f27f6_1af0175fcb3d11970c4de37c3e769f27f6">MutableMatrix::set_entry</references>
+        <references refid="class_mutable_matrix_a71a0332f401170c8992dfc6705dffb85_1a71a0332f401170c8992dfc6705dffb85" compoundref="mat_8cpp" startline="54" endline="67">MutableMatrix::zero_matrix</references>
+        <referencedby refid="class_l_l_loperations_a74d8b7d5f0c381dbf507fa4121a3c8a7_1a74d8b7d5f0c381dbf507fa4121a3c8a7" compoundref="_l_l_l_8cpp" startline="356" endline="369">LLL</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="class_l_l_loperations_a8585ee10dff27f8094843601568222f0_1a8585ee10dff27f8094843601568222f0" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classint" kindref="compound">int</ref></type>
+        <definition>int LLLoperations::doLLL</definition>
+        <argsstring>(MutableMatrix *A, MutableMatrix *Achange, MutableMatrix *LLLstate, int nsteps=-1)</argsstring>
+        <name>doLLL</name>
+        <qualifiedname>LLLoperations::doLLL</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>Achange</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>LLLstate</declname>
+        </param>
+        <param>
+          <type><ref refid="classint" kindref="compound">int</ref></type>
+          <declname>nsteps</declname>
+          <defval>-1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/LLL.hpp" line="76" column="14" bodyfile="Macaulay2/e/LLL.cpp" bodystart="241" bodyend="354"/>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a3db879f5519e91c07967fa94797a495b" compoundref="computation_8h" startline="67">COMP_DONE_STEPS</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a4d0bf106616c16bfc00b23413067fc63" compoundref="computation_8h" startline="54">COMP_ERROR</references>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213af7f83acff45b8cb3944b17a21c048b06" compoundref="computation_8h" startline="55">COMP_INTERRUPTED</references>
+        <references refid="class_mutable_matrix_a06fd89ccadc291361d82c6abcaf16e52_1a06fd89ccadc291361d82c6abcaf16e52">MutableMatrix::dot_product</references>
+        <references refid="text-io_8cpp_a5bd0b57b7653fb12e1dcaa8c4d09ce4e_1a5bd0b57b7653fb12e1dcaa8c4d09ce4e" compoundref="text-io_8cpp" startline="41" endline="45">emit</references>
+        <references refid="m2-mem_8cpp_ac9bcbe19995a8140cd4ec61773cd6e67_1ac9bcbe19995a8140cd4ec61773cd6e67" compoundref="m2-mem_8cpp" startline="55">ERROR</references>
+        <references refid="class_mutable_matrix_a56128821c2eb57f3704e59937bd0472e_1a56128821c2eb57f3704e59937bd0472e">MutableMatrix::get_entry</references>
+        <references refid="gauss_8cpp_a5ad190417a478c3f15fa01ef9ee9bac9_1a5ad190417a478c3f15fa01ef9ee9bac9" compoundref="relem_8cpp" startline="13">globalZZ</references>
+        <references refid="class_l_l_loperations_a9f45b347ed1503be9cae55eca4d574ac_1a9f45b347ed1503be9cae55eca4d574ac" compoundref="_l_l_l_8cpp" startline="72" endline="106">Lovasz</references>
+        <references refid="m2-types_8cpp_aa0f82116567de78d2d8d5cee3a26eebc_1aa0f82116567de78d2d8d5cee3a26eebc" compoundref="m2-types_8cpp" startline="52">M2_gbTrace</references>
+        <references refid="class_mutable_matrix_a30be137116d098d73a677476902998bd_1a30be137116d098d73a677476902998bd">MutableMatrix::n_cols</references>
+        <references refid="m2-types_8cpp_a9652bd683300dd969acdf07396e1c1dd_1a9652bd683300dd969acdf07396e1c1dd" compoundref="m2-types_8cpp" startline="49">newline</references>
+        <references refid="class_l_l_loperations_ad3814bc975837e7e8e8dc7bce14946d1_1ad3814bc975837e7e8e8dc7bce14946d1" compoundref="_l_l_l_8cpp" startline="108" endline="141">REDI</references>
+        <references refid="classbuffer_a766e85d3b4488fbf3c6579398d8bb0f4_1a766e85d3b4488fbf3c6579398d8bb0f4" compoundref="buffer_8hpp" startline="67" endline="67">buffer::reset</references>
+        <references refid="class_mutable_matrix_af0175fcb3d11970c4de37c3e769f27f6_1af0175fcb3d11970c4de37c3e769f27f6">MutableMatrix::set_entry</references>
+        <references refid="classbuffer_a39972fb7c929bb9e42ed60cddbc1109f_1a39972fb7c929bb9e42ed60cddbc1109f" compoundref="buffer_8hpp" startline="70" endline="74">buffer::str</references>
+        <references refid="class_l_l_loperations_a65b42ad21ab70cd48b457c6831cb3ce7_1a65b42ad21ab70cd48b457c6831cb3ce7" compoundref="_l_l_l_8cpp" startline="143" endline="239">SWAPI</references>
+        <references refid="interrupted_8cpp_a5035d07c37876dc3b866e1d4457ff390_1a5035d07c37876dc3b866e1d4457ff390" compoundref="interrupted_8cpp" startline="6" endline="6">system_interrupted</references>
+        <referencedby refid="class_l_l_loperations_a74d8b7d5f0c381dbf507fa4121a3c8a7_1a74d8b7d5f0c381dbf507fa4121a3c8a7" compoundref="_l_l_l_8cpp" startline="356" endline="369">LLL</referencedby>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_l_l_loperations_a74d8b7d5f0c381dbf507fa4121a3c8a7_1a74d8b7d5f0c381dbf507fa4121a3c8a7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classbool" kindref="compound">bool</ref></type>
+        <definition>bool LLLoperations::LLL</definition>
+        <argsstring>(MutableMatrix *M, MutableMatrix *U, gmp_QQ threshold)</argsstring>
+        <name>LLL</name>
+        <qualifiedname>LLLoperations::LLL</qualifiedname>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>M</declname>
+        </param>
+        <param>
+          <type><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref> *</type>
+          <declname>U</declname>
+        </param>
+        <param>
+          <type><ref refid="m2-types_8h_a9e221a0854c8b82eea2959ee7a271b54_1a9e221a0854c8b82eea2959ee7a271b54" kindref="member">gmp_QQ</ref></type>
+          <declname>threshold</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="Macaulay2/e/LLL.hpp" line="87" column="15" bodyfile="Macaulay2/e/LLL.cpp" bodystart="356" bodyend="369"/>
+        <references refid="computation_8h_aed0217a90e756a9ee4da649f09850213_1aed0217a90e756a9ee4da649f09850213a45f992597e767ffedbba1563ebfa6045" compoundref="computation_8h" startline="58">COMP_DONE</references>
+        <references refid="class_l_l_loperations_a8585ee10dff27f8094843601568222f0_1a8585ee10dff27f8094843601568222f0" compoundref="_l_l_l_8cpp" startline="241" endline="354">doLLL</references>
+        <references refid="m2-mem_8cpp_a1c6306973edadb50294a656e3927fcba_1a1c6306973edadb50294a656e3927fcba" compoundref="m2-mem_8cpp" startline="103" endline="110">freemem</references>
+        <references refid="class_l_l_loperations_ab40b19c4f402ba4b78a429df0528c91f_1ab40b19c4f402ba4b78a429df0528c91f" compoundref="_l_l_l_8cpp" startline="28" endline="70">initializeLLL</references>
+        <referencedby refid="mutable-matrix_8cpp_a3f58c11388da92233a6d28b7830eb8ac_1a3f58c11388da92233a6d28b7830eb8ac" compoundref="mutable-matrix_8cpp" startline="605" endline="623">rawLLL</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Static-method namespace for the LLL lattice-basis reduction algorithm operating on a <computeroutput><ref refid="class_mutable_matrix" kindref="compound">MutableMatrix</ref></computeroutput>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Holds no state <mdash/> every method is <computeroutput>static</computeroutput> <mdash/> and implements the standard Lovasz / REDI / SWAPI primitives that the engine&apos;s LLL driver calls. Works over rings where the comparison threshold <computeroutput>alphaTop / alphaBottom</computeroutput> can be evaluated (typically <computeroutput><ref refid="ringelem_8hpp_a845589cbe81fb92f0ca26c8b911f8f38_1a845589cbe81fb92f0ca26c8b911f8f38" kindref="member">QQ</ref></computeroutput> or <computeroutput><ref refid="ringelem_8hpp_afea72c39052b53d15e7acad8d36847c1_1afea72c39052b53d15e7acad8d36847c1" kindref="member">ZZ</ref></computeroutput> with a rational alpha). </para>
+    </detaileddescription>
+    <location file="Macaulay2/e/LLL.hpp" line="49" column="1" bodyfile="Macaulay2/e/LLL.hpp" bodystart="50" bodyend="92"/>
+    <listofallmembers>
+      <member refid="class_l_l_loperations_a914376331396c5b5d680e3c15063f44a_1a914376331396c5b5d680e3c15063f44a" prot="private" virt="non-virtual"><scope>LLLoperations</scope><name>checkThreshold</name></member>
+      <member refid="class_l_l_loperations_a8585ee10dff27f8094843601568222f0_1a8585ee10dff27f8094843601568222f0" prot="private" virt="non-virtual"><scope>LLLoperations</scope><name>doLLL</name></member>
+      <member refid="class_l_l_loperations_ab40b19c4f402ba4b78a429df0528c91f_1ab40b19c4f402ba4b78a429df0528c91f" prot="private" virt="non-virtual"><scope>LLLoperations</scope><name>initializeLLL</name></member>
+      <member refid="class_l_l_loperations_a74d8b7d5f0c381dbf507fa4121a3c8a7_1a74d8b7d5f0c381dbf507fa4121a3c8a7" prot="public" virt="non-virtual"><scope>LLLoperations</scope><name>LLL</name></member>
+      <member refid="class_l_l_loperations_a9f45b347ed1503be9cae55eca4d574ac_1a9f45b347ed1503be9cae55eca4d574ac" prot="private" virt="non-virtual"><scope>LLLoperations</scope><name>Lovasz</name></member>
+      <member refid="class_l_l_loperations_ad3814bc975837e7e8e8dc7bce14946d1_1ad3814bc975837e7e8e8dc7bce14946d1" prot="private" virt="non-virtual"><scope>LLLoperations</scope><name>REDI</name></member>
+      <member refid="class_l_l_loperations_a65b42ad21ab70cd48b457c6831cb3ce7_1a65b42ad21ab70cd48b457c6831cb3ce7" prot="private" virt="non-virtual"><scope>LLLoperations</scope><name>SWAPI</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

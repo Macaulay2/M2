@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.15.0" xml:lang="en-US">
+  <compounddef id="struct_log_domain_internal_1_1_lambda_runner" kind="struct" language="C++" prot="public">
+    <compoundname>LogDomainInternal::LambdaRunner</compoundname>
+    <includes refid="_log_domain_8hpp" local="no">LogDomain.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>class L</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_log_domain_internal_1_1_lambda_runner_a67889a83edc6a86f5fe2f5c76a2906cf_1a67889a83edc6a86f5fe2f5c76a2906cf" prot="public" static="no" mutable="no">
+        <type>L &amp;</type>
+        <definition>L&amp; LogDomainInternal::LambdaRunner&lt; L &gt;::log</definition>
+        <argsstring></argsstring>
+        <name>log</name>
+        <qualifiedname>LogDomainInternal::LambdaRunner::log</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="201" column="23" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="201" bodyend="-1"/>
+        <referencedby refid="namespace_log_domain_internal_a9e16b152efb1aecd91e1b39647804200_1a9e16b152efb1aecd91e1b39647804200" compoundref="_log_domain_8hpp" startline="208" endline="210">LogDomainInternal::operator+</referencedby>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>L &amp;</label>
+      </node>
+      <node id="1">
+        <label>LogDomainInternal::LambdaRunner&lt; L &gt;</label>
+        <link refid="struct_log_domain_internal_1_1_lambda_runner"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>log</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="submodules/mathicgb/src/mathicgb/LogDomain.hpp" line="201" column="3" bodyfile="submodules/mathicgb/src/mathicgb/LogDomain.hpp" bodystart="201" bodyend="201"/>
+    <listofallmembers>
+      <member refid="struct_log_domain_internal_1_1_lambda_runner_a67889a83edc6a86f5fe2f5c76a2906cf_1a67889a83edc6a86f5fe2f5c76a2906cf" prot="public" virt="non-virtual"><scope>LogDomainInternal::LambdaRunner</scope><name>log</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
